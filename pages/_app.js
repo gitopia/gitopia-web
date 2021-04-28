@@ -1,14 +1,14 @@
-import '../styles/globals.css'
-import 'rsuite/dist/styles/rsuite-dark.css'
-import Header from '../components/header'
+import "../styles/globals.css";
+import "rsuite/dist/styles/rsuite-dark.css";
+import Header from "../components/header";
 
 function MyApp({ Component, pageProps }) {
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <Component {...pageProps} />
     </>
-  )
+  );
 }
 
-export default MyApp
+export default MyApp;
