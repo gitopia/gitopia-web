@@ -2,6 +2,14 @@
 <g filter="url(#filter0_ii)">
 <circle cx="110" cy="110" r="110" fill="#5957AA"/>
 </g>
+<g opacity="0.5">
+<path d="M109.49 63.2451L81.0996 110.357L109.49 97.4536V63.2451Z" fill="white"/>
+<path d="M109.49 97.4536L81.0996 110.357L109.49 127.143V97.4536Z" fill="white"/>
+<path d="M137.886 110.357L109.49 63.2451V97.4536L137.886 110.357Z" fill="white"/>
+<path d="M109.49 127.143L137.886 110.357L109.49 97.4536V127.143Z" fill="white"/>
+<path d="M81.0996 115.744L109.49 155.755V132.52L81.0996 115.744Z" fill="white"/>
+<path d="M109.49 132.52V155.755L137.902 115.744L109.49 132.52Z" fill="white"/>
+</g>
 <defs>
 <filter id="filter0_ii" x="-41" y="-7" width="265" height="228" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
