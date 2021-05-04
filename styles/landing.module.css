@@ -6,6 +6,8 @@
   position: relative;
   z-index: 1;
   overflow-x: clip;
+  /* perspective: 1px;
+  perspective-origin: 0 0; */
 }
 
 .header {
@@ -202,10 +204,11 @@
 }
 
 .circleSection {
-  min-height: 800px;
-  padding-top: 150px;
+  min-height: 620px;
   background: url("/landing-ellipse.svg") no-repeat;
   background-position-x: center;
+  background-position-y: -120px;
+  background-size: 1600px;
   position: relative;
   z-index: 1;
 }
@@ -226,10 +229,19 @@
   color: #66ce67;
 }
 
-.platformCircles {
+.platformCirclesWrapper {
+  /* perspective: 1px;
+  perspective-origin: 0 0; */
   position: relative;
   z-index: -1;
   pointer-events: none;
+  height: 0;
+  transform-origin: 0 0;
+}
+.platformCircles {
+  transition: transform 0.1s linear;
+  /* position: "absolute"; */
+  will-change: transform;
 }
 
 .storageSection {
