@@ -252,30 +252,73 @@
   display: flex;
   width: 100%;
   margin-top: 100px;
+  justify-content: center;
 }
 
 .storageAnimSource {
-  width: 300px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  overflow: clip;
+  mask-image: linear-gradient(
+    to left,
+    rgba(0, 0, 0, 1) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  border-right: 1px solid white;
 }
 
-.storageAnimBarrier {
-  width: 180px;
-  position: relative;
-  height: 350px;
-}
-
-.storageAnimBarrierLine {
-  height: 100%;
-  border-left: 1px solid white;
+.storageCircle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid #37264c;
+  background: #19072f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: absolute;
-  left: 92px;
+  left: 0;
+}
+.storageCircleContent1 {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffab2e;
+}
+.storageCircleContent2 {
+  width: 12px;
+  height: 12px;
+  background: #883be6;
+}
+.storageCircleContent3 {
+  width: 0px;
+  height: 0px;
+  border: 8px solid transparent;
+  border-top: 12px solid #66ce67;
+  margin-top: 12px;
 }
 
+.storageAnimSourceLane {
+  height: 25%;
+  width: 100%;
+  border-bottom: 1px dashed rgba(131, 131, 131, 0.3);
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.storageAnimSourceLane:first-of-type {
+  border-top: 1px dashed rgba(131, 131, 131, 0.3);
+}
+.storageAnimBarrier {
+  width: 30px;
+}
 .storageAnimBarrierCircle {
   width: 180px;
   height: 180px;
-  position: absolute;
+  position: relative;
   top: 80px;
+  left: -90px;
   border-radius: 50%;
   border: 1px solid white;
   background: url("/logo-g.svg") no-repeat, #19072f;
@@ -284,12 +327,38 @@
 }
 
 .storageAnimSink {
-  width: 350px;
-  height: 350px;
-  position: relative;
-  left: -50px;
+  width: 330px;
+  height: 340px;
+  margin-right: 40px;
   background: url("/landing-storage.svg") no-repeat;
-  background-size: contain;
+  background-size: 330px;
+  background-blend-mode: color-dodge, normal;
+  background-position: 0px;
+  mask-image: url("/landing-storage-mask.svg");
+  mask-size: 330px;
+}
+
+.storageAnimSinkFlash {
+  width: 80px;
+  height: 340px;
+  background: linear-gradient(
+      to left,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 1) 50%,
+      rgba(255, 255, 255, 0) 100%
+    )
+    no-repeat;
+  animation: flash 2.5s ease-in-out 0.5s infinite;
+}
+
+@keyframes flash {
+  from {
+    transform: translateX(-300px);
+  }
+
+  to {
+    transform: translateX(350px);
+  }
 }
 
 .decentralizedSection {
@@ -455,7 +524,7 @@
 
 .roadmapActions {
   position: absolute;
-  left: calc(45% + 330px);
+  left: calc(45% + 220px);
 }
 
 .roadmapActionItem {
@@ -472,7 +541,7 @@
 .roadmapYearStart {
   transform: rotate(90deg);
   position: absolute;
-  left: 45%;
+  left: calc(45% - 120px);
   font-size: 18px;
   top: -50px;
 }
@@ -480,7 +549,7 @@
 .roadmapYearEnd {
   transform: rotate(90deg);
   position: absolute;
-  left: 45%;
+  left: calc(45% - 120px);
   font-size: 18px;
   bottom: -50px;
 }

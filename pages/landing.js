@@ -13,11 +13,17 @@ const pCircles = [
   { url: "circle6.svg", x: -50, y: -150, z: 18, mx: -100 },
   { url: "circle7.svg", x: 70, y: -420, z: 20, mx: 70 },
 ];
+const globContentStyles = [
+  styles.storageCircleContent1,
+  styles.storageCircleContent2,
+  styles.storageCircleContent3,
+];
 let scrollOffset = 0,
   lastOffset = 0,
   isMobile = true,
-  isAnimatingCircles = false;
-let platformCircles;
+  isAnimatingCircles = false,
+  isAnimatingGlob = false;
+let platformCircles, storageLanes, storageAnimSource;
 
 function updateOffset() {
   if (window.innerWidth > 960) {
@@ -43,13 +49,40 @@ function animateCircles() {
   }
 }
 
+function addOrUpdateGlobs() {
+  for (let currentLane of storageLanes) {
+    if (currentLane.children.length < 3) {
+      const glob = document.createElement("div"),
+        globContent = document.createElement("span"),
+        style = Math.floor(Math.random() * 3),
+        timing = 0.75 + Math.random();
+      glob.className = styles.storageCircle;
+      glob.style =
+        "transition: transform " +
+        timing +
+        "s cubic-bezier(" +
+        (0.2 + Math.random() / 2) +
+        ", 0, " +
+        (0.2 + Math.random() / 3) +
+        ", 1.0) " +
+        (1.75 - timing) +
+        "s; transform: translateX(-50px);";
+      globContent.className = globContentStyles[style];
+      glob.appendChild(globContent);
+      currentLane.appendChild(glob);
+      glob.addEventListener("transitionend", () => {
+        glob.remove();
+      });
+    }
+  }
+}
+
 export default function Landing() {
   useEffect(() => {
     if (window) {
       platformCircles = document.getElementsByClassName("platformCircles");
       window.addEventListener("scroll", updateOffset);
       window.addEventListener("resize", updateOffset);
-      console.log(platformCircles && platformCircles[0]);
       if (platformCircles && platformCircles[0]) {
         platformCircles[0].addEventListener("transitionstart", () => {
           isAnimatingCircles = true;
@@ -62,6 +95,33 @@ export default function Landing() {
           }
         });
       }
+      storageLanes = document.getElementsByClassName(
+        styles.storageAnimSourceLane
+      );
+      storageAnimSource = document.getElementById("storageAnimSource");
+      const storageAnimSinkFlash = document.getElementById(
+        "storageAnimSinkFlash"
+      );
+
+      addOrUpdateGlobs();
+      storageAnimSinkFlash.addEventListener("animationiteration", () => {
+        window.requestAnimationFrame(() => {
+          let atLeastOne = false;
+          for (let currentLane of storageLanes) {
+            const flip = Math.random() < 0.7;
+            if (flip) {
+              atLeastOne = true;
+              currentLane.children[0].style.transform = "translateX(400px)";
+            }
+          }
+          if (!atLeastOne) {
+            storageLanes[
+              Math.floor(Math.random() * 4)
+            ].children[0].style.transform = "translateX(400px)";
+          }
+        });
+        window.requestIdleCallback(addOrUpdateGlobs);
+      });
     }
 
     return () => {
@@ -171,13 +231,22 @@ export default function Landing() {
             Open source code and all the collaboration data should be preserved
             forever, therefore there is a need for a permanent store.
           </div>
-          <div className={styles.storageAnim}>
-            <div className={styles.storageAnimSource}></div>
-            <div className={styles.storageAnimBarrier}>
-              <div className={styles.storageAnimBarrierLine}></div>
-              <div className={styles.storageAnimBarrierCircle}></div>
-            </div>
-            <div className={styles.storageAnimSink}></div>
+        </div>
+        <div className={styles.storageAnim} id="storageAnimSource">
+          <div className={styles.storageAnimSource}>
+            <div className={styles.storageAnimSourceLane}></div>
+            <div className={styles.storageAnimSourceLane}></div>
+            <div className={styles.storageAnimSourceLane}></div>
+            <div className={styles.storageAnimSourceLane}></div>
+          </div>
+          <div className={styles.storageAnimBarrier}>
+            <div className={styles.storageAnimBarrierCircle}></div>
+          </div>
+          <div className={styles.storageAnimSink}>
+            <div
+              className={styles.storageAnimSinkFlash}
+              id="storageAnimSinkFlash"
+            ></div>
           </div>
         </div>
       </section>
@@ -444,7 +513,7 @@ export default function Landing() {
         <defs>
           <filter
             id="filter1_f"
-            x="0.664062"
+            x="-100"
             y="0"
             width="1343.33"
             height="1589.02"
