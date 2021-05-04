@@ -5,35 +5,69 @@ import styles from "../styles/landing.module.css";
 import { update } from "lodash";
 
 const pCircles = [
-  { url: "circle1.svg", x: -470, y: -520, z: 10, mx: -100 },
-  { url: "circle2.svg", x: 330, y: -250, z: 12, mx: 440 },
-  { url: "circle3.svg", x: -530, y: -30, z: 14, mx: -150 },
-  { url: "circle4.svg", x: 250, y: 70, z: 16, mx: 500 },
-  { url: "circle5.svg", x: 500, y: 180, z: 16, mx: 850 },
-  { url: "circle6.svg", x: -100, y: 190, z: 18, mx: -100 },
-  { url: "circle7.svg", x: 70, y: -120, z: 20, mx: 70 },
+  { url: "circle1.svg", x: -70, y: -420, z: 7, mx: -100 },
+  { url: "circle2.svg", x: 430, y: -200, z: 9, mx: 440 },
+  { url: "circle3.svg", x: -480, y: -100, z: 13, mx: -150 },
+  { url: "circle4.svg", x: 80, y: 70, z: 15, mx: 500 },
+  { url: "circle5.svg", x: 130, y: 180, z: 16, mx: 850 },
+  { url: "circle6.svg", x: -50, y: -150, z: 18, mx: -100 },
+  { url: "circle7.svg", x: 70, y: -420, z: 20, mx: 70 },
 ];
+let scrollOffset = 0,
+  lastOffset = 0,
+  isMobile = true,
+  isAnimatingCircles = false;
+let platformCircles;
+
+function updateOffset() {
+  if (window.innerWidth > 960) {
+    scrollOffset = window.pageYOffset;
+    isMobile = false;
+  } else {
+    scrollOffset = 0;
+    isMobile = true;
+  }
+  if (!isAnimatingCircles) animateCircles();
+}
+
+function animateCircles() {
+  let i = 0;
+  for (let circle of platformCircles) {
+    circle.style =
+      "transform: translateX(" +
+      (isMobile ? pCircles[i].mx : pCircles[i].x) +
+      "px) translateY(" +
+      (pCircles[i].y - scrollOffset / pCircles[i].z) +
+      "px);";
+    i++;
+  }
+}
 
 export default function Landing() {
-  const [offset, setOffset] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-
   useEffect(() => {
-    function updateCircles() {
-      if (window.innerWidth > 960) {
-        setOffset(window.pageYOffset);
-        setIsMobile(false);
-      } else {
-        setIsMobile(true);
-      }
-    }
     if (window) {
-      window.addEventListener("scroll", updateCircles);
+      platformCircles = document.getElementsByClassName("platformCircles");
+      window.addEventListener("scroll", updateOffset);
+      window.addEventListener("resize", updateOffset);
+      console.log(platformCircles && platformCircles[0]);
+      if (platformCircles && platformCircles[0]) {
+        platformCircles[0].addEventListener("transitionstart", () => {
+          isAnimatingCircles = true;
+        });
+        platformCircles[0].addEventListener("transitionend", () => {
+          isAnimatingCircles = false;
+          if (lastOffset !== scrollOffset) {
+            lastOffset = scrollOffset;
+            window.requestAnimationFrame(animateCircles);
+          }
+        });
+      }
     }
 
     return () => {
       if (window) {
-        window.removeEventListener("scroll", updateCircles);
+        window.removeEventListener("scroll", updateOffset);
+        window.removeEventListener("resize", updateOffset);
       }
     };
   }, []);
@@ -110,23 +144,16 @@ export default function Landing() {
             optimized for high throughput and fast finality. And IBC enables
             other IBC compatible chains to integrate directly with Gitopia.
           </div>
-          <div className={styles.platformCircles}>
+          <div className={styles.platformCirclesWrapper}>
             {pCircles.map((circle) => {
               return (
                 <img
                   key={circle.url}
                   src={circle.url}
-                  style={{
-                    position: "absolute",
-                    willChange: "transform",
-                    transition: "transfrom 0.1s linear",
-                    transform:
-                      "translateX(" +
-                      (isMobile ? circle.mx : circle.x) +
-                      "px) translateY(" +
-                      (circle.y - offset / circle.z) +
-                      "px)",
-                  }}
+                  className={classnames([
+                    styles.platformCircles,
+                    "platformCircles",
+                  ])}
                 />
               );
             })}
@@ -351,8 +378,104 @@ export default function Landing() {
         </div>
       </section>
 
-      <img className={styles.blob1} src="/blob1.svg" />
-      <img className={styles.blob2} src="/blob2.svg" />
+      <svg
+        className={styles.blob1}
+        width="874"
+        height="871"
+        viewBox="0 0 874 871"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g filter="url(#filter0_f)">
+          <path
+            d="M479.033 25.3481C43.5333 237.849 192.123 539.409 -45.9179 604.874C-283.959 670.339 -530 530.439 -595.465 292.398C-660.93 54.3567 -521.029 -191.684 -282.988 -257.149C-44.9472 -322.614 1001.03 -171.152 479.033 25.3481Z"
+            fill="url(#paint0_radial)"
+          />
+        </g>
+        <defs>
+          <filter
+            id="filter0_f"
+            x="-861.58"
+            y="-522.617"
+            width="1734.73"
+            height="1393.61"
+            filterUnits="userSpaceOnUse"
+            color-interpolation-filters="sRGB"
+          >
+            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feBlend
+              mode="normal"
+              in="SourceGraphic"
+              in2="BackgroundImageFix"
+              result="shape"
+            />
+            <feGaussianBlur
+              stdDeviation="125"
+              result="effect1_foregroundBlur"
+            />
+          </filter>
+          <radialGradient
+            id="paint0_radial"
+            cx="0"
+            cy="0"
+            r="1"
+            gradientUnits="userSpaceOnUse"
+            gradientTransform="translate(-164.453 173.863) rotate(74.6229) scale(447.014)"
+          >
+            <stop offset="0.442708" stop-color="#992D81" />
+            <stop offset="1" stop-color="#6029DB" />
+          </radialGradient>
+        </defs>
+      </svg>
+      <svg
+        className={styles.blob2}
+        width="726"
+        height="1590"
+        viewBox="-200 0 726 1590"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g filter="url(#filter1_f)">
+          <path
+            d="M1094 738.021C1094 974.399 932.377 1339.02 695.999 1339.02C459.621 1339.02 320.499 1094.02 259.499 720.021C198.499 346.021 466.499 159.021 659.999 293.521C853.499 428.021 1094 501.643 1094 738.021Z"
+            fill="url(#paint1_radial)"
+          />
+        </g>
+        <defs>
+          <filter
+            id="filter1_f"
+            x="0.664062"
+            y="0"
+            width="1343.33"
+            height="1589.02"
+            filterUnits="userSpaceOnUse"
+            color-interpolation-filters="sRGB"
+          >
+            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feBlend
+              mode="normal"
+              in="SourceGraphic"
+              in2="BackgroundImageFix"
+              result="shape"
+            />
+            <feGaussianBlur
+              stdDeviation="125"
+              result="effect2_foregroundBlur"
+            />
+          </filter>
+          <radialGradient
+            id="paint1_radial"
+            cx="0"
+            cy="0"
+            r="1"
+            gradientUnits="userSpaceOnUse"
+            gradientTransform="translate(665.999 738.02) rotate(90) scale(428 428)"
+          >
+            <stop stop-color="#992D81" />
+            <stop offset="1" stop-color="#6029DB" />
+          </radialGradient>
+        </defs>
+      </svg>
 
       <footer className={styles.footer}>
         <div className={styles.transitionRow} style={{ width: 960 }}>
