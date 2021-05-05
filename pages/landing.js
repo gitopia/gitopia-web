@@ -55,18 +55,24 @@ function addOrUpdateGlobs() {
       const glob = document.createElement("div"),
         globContent = document.createElement("span"),
         style = Math.floor(Math.random() * 3),
-        timing = 0.75 + Math.random();
+        overallTiming = Math.random() < 0.8 ? 3 : 6;
+      let animTiming =
+        overallTiming == 3
+          ? 1.5 * (0.5 + Math.random() / 2)
+          : 5.5 * (0.75 + Math.random() / 4);
+      animTiming = animTiming.toFixed(1);
+      let delayTiming = overallTiming - animTiming;
       glob.className = styles.storageCircle;
       glob.style =
         "transition: transform " +
-        timing +
+        animTiming +
         "s cubic-bezier(" +
-        (0.2 + Math.random() / 2) +
+        (0.25 + Math.random() / 2) +
         ", 0, " +
-        (0.2 + Math.random() / 3) +
+        (0.25 + Math.random() / 2) +
         ", 1.0) " +
-        (1.75 - timing) +
-        "s; transform: translateX(-50px);";
+        delayTiming +
+        "s; transform: translateX(-80px);";
       globContent.className = globContentStyles[style];
       glob.appendChild(globContent);
       currentLane.appendChild(glob);
@@ -106,18 +112,15 @@ export default function Landing() {
       addOrUpdateGlobs();
       storageAnimSinkFlash.addEventListener("animationiteration", () => {
         window.requestAnimationFrame(() => {
-          let atLeastOne = false;
           for (let currentLane of storageLanes) {
-            const flip = Math.random() < 0.7;
-            if (flip) {
-              atLeastOne = true;
-              currentLane.children[0].style.transform = "translateX(400px)";
+            const flip1 = Math.random() < 0.8,
+              flip2 = Math.random() < 0.5;
+            if (flip1 && currentLane.children[0]) {
+              currentLane.children[0].style.transform = "translateX(500px)";
             }
-          }
-          if (!atLeastOne) {
-            storageLanes[
-              Math.floor(Math.random() * 4)
-            ].children[0].style.transform = "translateX(400px)";
+            if (flip2 && currentLane.children[1]) {
+              currentLane.children[1].style.transform = "translateX(500px)";
+            }
           }
         });
         window.requestIdleCallback(addOrUpdateGlobs);
@@ -391,20 +394,28 @@ export default function Landing() {
             <span className={styles.roadmapYearEnd}>2022</span>
           </div>
           <div className={styles.roadmapActions}>
-            <span class={styles.roadmapActionItem}>MVP Implementation</span>
-            <span class={styles.roadmapActionItem}>Gitopia Main chain</span>
-            <span class={styles.roadmapActionItem}>Gitopia Webapp</span>
-            <span class={styles.roadmapActionItem}>Git Remote Helper</span>
-            <span class={styles.roadmapActionItem}>Github Mirror Action</span>
-            <span class={styles.roadmapActionItem}>Web Wallet</span>
-            <span class={styles.roadmapActionItem}>Explorer</span>
-            <span class={styles.roadmapActionItem}>Exchange Listing</span>
-            <span class={styles.roadmapActionItem}>Ecosystem Partnerships</span>
-            <span class={styles.roadmapActionItem}>Governance workflows</span>
-            <span class={styles.roadmapActionItem}>IBC Interface</span>
-            <span class={styles.roadmapActionItem}>Desktop app</span>
-            <span class={styles.roadmapActionItem}>C1/CD Integrations</span>
-            <span class={styles.roadmapActionItem}>Static Code Analsys</span>
+            <span className={styles.roadmapActionItem}>MVP Implementation</span>
+            <span className={styles.roadmapActionItem}>Gitopia Main chain</span>
+            <span className={styles.roadmapActionItem}>Gitopia Webapp</span>
+            <span className={styles.roadmapActionItem}>Git Remote Helper</span>
+            <span className={styles.roadmapActionItem}>
+              Github Mirror Action
+            </span>
+            <span className={styles.roadmapActionItem}>Web Wallet</span>
+            <span className={styles.roadmapActionItem}>Explorer</span>
+            <span className={styles.roadmapActionItem}>Exchange Listing</span>
+            <span className={styles.roadmapActionItem}>
+              Ecosystem Partnerships
+            </span>
+            <span className={styles.roadmapActionItem}>
+              Governance workflows
+            </span>
+            <span className={styles.roadmapActionItem}>IBC Interface</span>
+            <span className={styles.roadmapActionItem}>Desktop app</span>
+            <span className={styles.roadmapActionItem}>C1/CD Integrations</span>
+            <span className={styles.roadmapActionItem}>
+              Static Code Analsys
+            </span>
           </div>
         </div>
       </section>
@@ -469,9 +480,9 @@ export default function Landing() {
             width="1734.73"
             height="1393.61"
             filterUnits="userSpaceOnUse"
-            color-interpolation-filters="sRGB"
+            colorInterpolationFilters="sRGB"
           >
-            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
             <feBlend
               mode="normal"
               in="SourceGraphic"
@@ -491,8 +502,8 @@ export default function Landing() {
             gradientUnits="userSpaceOnUse"
             gradientTransform="translate(-164.453 173.863) rotate(74.6229) scale(447.014)"
           >
-            <stop offset="0.442708" stop-color="#992D81" />
-            <stop offset="1" stop-color="#6029DB" />
+            <stop offset="0.442708" stopColor="#992D81" />
+            <stop offset="1" stopColor="#6029DB" />
           </radialGradient>
         </defs>
       </svg>
@@ -518,9 +529,9 @@ export default function Landing() {
             width="1343.33"
             height="1589.02"
             filterUnits="userSpaceOnUse"
-            color-interpolation-filters="sRGB"
+            colorInterpolationFilters="sRGB"
           >
-            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
             <feBlend
               mode="normal"
               in="SourceGraphic"
@@ -540,8 +551,8 @@ export default function Landing() {
             gradientUnits="userSpaceOnUse"
             gradientTransform="translate(665.999 738.02) rotate(90) scale(428 428)"
           >
-            <stop stop-color="#992D81" />
-            <stop offset="1" stop-color="#6029DB" />
+            <stop stopColor="#992D81" />
+            <stop offset="1" stopColor="#6029DB" />
           </radialGradient>
         </defs>
       </svg>

@@ -265,7 +265,7 @@
     rgba(0, 0, 0, 1) 50%,
     rgba(0, 0, 0, 0) 100%
   );
-  border-right: 1px solid white;
+  border-right: 2px solid #cbd4dd;
 }
 
 .storageCircle {
@@ -320,7 +320,7 @@
   top: 80px;
   left: -90px;
   border-radius: 50%;
-  border: 1px solid white;
+  border: 2px solid #cbd4dd;
   background: url("/logo-g.svg") no-repeat, #19072f;
   background-size: 100px;
   background-position: 54% 42%;
@@ -344,16 +344,17 @@
   background: linear-gradient(
       to left,
       rgba(255, 255, 255, 0),
-      rgba(255, 255, 255, 1) 50%,
+      rgba(255, 255, 255, 1) 40%,
+      rgba(255, 255, 255, 1) 60%,
       rgba(255, 255, 255, 0) 100%
     )
     no-repeat;
-  animation: flash 2.5s ease-in-out 0.5s infinite;
+  animation: flash 2s ease-in-out 1s infinite;
 }
 
 @keyframes flash {
   from {
-    transform: translateX(-300px);
+    transform: translateX(-350px);
   }
 
   to {
