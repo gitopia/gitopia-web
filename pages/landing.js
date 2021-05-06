@@ -1,17 +1,15 @@
-import { Button, Grid, Row, Col, Icon, IconButton, Dropdown } from "rsuite";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import classnames from "classnames";
 import styles from "../styles/landing.module.css";
-import { update } from "lodash";
 
 const pCircles = [
-  { url: "circle1.svg", x: -70, y: -420, z: 7, mx: -100 },
-  { url: "circle2.svg", x: 430, y: -200, z: 9, mx: 440 },
-  { url: "circle3.svg", x: -480, y: -100, z: 13, mx: -150 },
-  { url: "circle4.svg", x: 80, y: 70, z: 15, mx: 500 },
-  { url: "circle5.svg", x: 130, y: 180, z: 16, mx: 850 },
-  { url: "circle6.svg", x: -50, y: -150, z: 18, mx: -100 },
-  { url: "circle7.svg", x: 70, y: -420, z: 20, mx: 70 },
+  { url: "circle1.svg", x: -70, y: -420, z: 7, mx: -120, my: -500 },
+  { url: "circle2.svg", x: 430, y: -200, z: 9, mx: 440, my: -280 },
+  { url: "circle3.svg", x: -480, y: -100, z: 13, mx: -600, my: -220 },
+  { url: "circle4.svg", x: 80, y: 70, z: 15, mx: 800, my: 0 },
+  { url: "circle5.svg", x: 130, y: 180, z: 16, mx: 450, my: 100 },
+  { url: "circle6.svg", x: -50, y: -150, z: 18, mx: -500, my: -400 },
+  { url: "circle7.svg", x: 70, y: -420, z: 20, mx: -700, my: -100 },
 ];
 const globContentStyles = [
   styles.storageCircleContent1,
@@ -26,7 +24,7 @@ let scrollOffset = 0,
 let platformCircles, storageLanes, storageAnimSource;
 
 function updateOffset() {
-  if (window.innerWidth > 960) {
+  if (window.innerWidth > 1023) {
     scrollOffset = window.pageYOffset;
     isMobile = false;
   } else {
@@ -43,7 +41,9 @@ function animateCircles() {
       "transform: translateX(" +
       (isMobile ? pCircles[i].mx : pCircles[i].x) +
       "px) translateY(" +
-      (pCircles[i].y - scrollOffset / pCircles[i].z) +
+      (isMobile
+        ? pCircles[i].my
+        : pCircles[i].y - scrollOffset / pCircles[i].z) +
       "px);";
     i++;
   }
@@ -84,6 +84,8 @@ function addOrUpdateGlobs() {
 }
 
 export default function Landing() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   useEffect(() => {
     if (window) {
       platformCircles = document.getElementsByClassName("platformCircles");
@@ -137,50 +139,111 @@ export default function Landing() {
 
   return (
     <div className={styles.wrapper}>
-      <header className={styles.header}>
+      <header className={(menuOpen ? "bg-purple " : "") + styles.header}>
         <div className={styles.headerLogo}></div>
-        <div className={styles.headerLine}>
-          <div className={styles.headerLinks}>
-            <a href="#">Explore</a>
-            <a href="#">Blog</a>
-            <a href="#">Open Source</a>
-            <a href="#">White Paper</a>
-            <span>|</span>
-            <a href="#">Try the MVP</a>
+        <div className={styles.headerMenuIcon}>
+          <button
+            className={
+              "text-white cursor-pointer text-xl leading-none px-2 py-2 border-transparent rounded block outline-none focus:outline-none " +
+              (menuOpen ? "hidden" : "")
+            }
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <svg
+              fill="white"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 92 92"
+              width={24}
+              height={24}
+            >
+              <path
+                id="XMLID_101_"
+                d="M78,23.5H14c-3.6,0-6.5-2.9-6.5-6.5s2.9-6.5,6.5-6.5h64c3.6,0,6.5,2.9,6.5,6.5S81.6,23.5,78,23.5z M84.5,46
+	c0-3.6-2.9-6.5-6.5-6.5H14c-3.6,0-6.5,2.9-6.5,6.5s2.9,6.5,6.5,6.5h64C81.6,52.5,84.5,49.6,84.5,46z M84.5,75c0-3.6-2.9-6.5-6.5-6.5
+	H14c-3.6,0-6.5,2.9-6.5,6.5s2.9,6.5,6.5,6.5h64C81.6,81.5,84.5,78.6,84.5,75z"
+              />
+            </svg>
+          </button>
+          <button
+            className={
+              "text-white cursor-pointer text-xl leading-none px-2 py-2 border-transparent rounded block outline-none focus:outline-none " +
+              (menuOpen ? "" : "hidden")
+            }
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <svg
+              fill="white"
+              xmlns="http://www.w3.org/2000/svg"
+              width={26}
+              height={26}
+              viewBox="0 0 92 92"
+            >
+              <path
+                id="XMLID_732_"
+                d="M70.7,64.3c1.8,1.8,1.8,4.6,0,6.4c-0.9,0.9-2,1.3-3.2,1.3c-1.2,0-2.3-0.4-3.2-1.3L46,52.4L27.7,70.7
+         c-0.9,0.9-2,1.3-3.2,1.3s-2.3-0.4-3.2-1.3c-1.8-1.8-1.8-4.6,0-6.4L39.6,46L21.3,27.7c-1.8-1.8-1.8-4.6,0-6.4c1.8-1.8,4.6-1.8,6.4,0
+         L46,39.6l18.3-18.3c1.8-1.8,4.6-1.8,6.4,0c1.8,1.8,1.8,4.6,0,6.4L52.4,46L70.7,64.3z"
+              />
+            </svg>
+          </button>
+        </div>
+        <div
+          className={
+            "lg:flex flex-grow items-center justify-end " +
+            (menuOpen
+              ? " flex justify-center absolute left-0 right-0 bg-purple pt-4 pb-4 z-10 shadow-2xl "
+              : " hidden ") +
+            styles.headerMenu
+          }
+        >
+          <div className={styles.row}>
+            <ul className="flex flex-col lg:flex-row list-none lg:ml-auto w-full">
+              <li className={menuOpen ? "w-full" : "mr-4"}>
+                <a
+                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
+                  href="#"
+                >
+                  Exlpore
+                </a>
+              </li>
+              <li className={menuOpen ? "" : "mr-4"}>
+                <a
+                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
+                  href="#"
+                >
+                  Blog
+                </a>
+              </li>
+              <li className={menuOpen ? "" : "mr-4"}>
+                <a
+                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
+                  href="#"
+                >
+                  Open Source
+                </a>
+              </li>
+              <li className={menuOpen ? "" : "mr-4"}>
+                <a
+                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
+                  href="#"
+                >
+                  White Paper
+                </a>
+              </li>
+              <li>
+                <a
+                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
+                  href="#"
+                >
+                  Try the MVP
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
-        <div className={styles.headerMenu}>
-          <Dropdown
-            renderTitle={() => {
-              return (
-                <IconButton
-                  circle
-                  icon={<Icon icon="bars" />}
-                  size="lg"
-                  appearance="link"
-                ></IconButton>
-              );
-            }}
-            placement="leftStart"
-          >
-            <Dropdown.Item>
-              <a href="#">Explore</a>
-            </Dropdown.Item>
-            <Dropdown.Item>
-              <a href="#">Blog</a>
-            </Dropdown.Item>
-            <Dropdown.Item>
-              <a href="#">Open Source</a>
-            </Dropdown.Item>
-            <Dropdown.Item>
-              <a href="#">White Paper</a>
-            </Dropdown.Item>
-            <Dropdown.Item divider />
-            <Dropdown.Item>
-              <a href="#">Try the MVP</a>
-            </Dropdown.Item>
-          </Dropdown>
-        </div>
+        <div className={styles.headerLine}></div>
       </header>
 
       <section className={classnames([styles.section, styles.heroSection])}>
@@ -191,9 +254,14 @@ export default function Landing() {
           <div className={styles.byline}>
             Join the new age decentralized code collaboration platform
           </div>
-          <Button className={classnames([styles.button, styles.primaryCTA])}>
-            Get Started
-          </Button>
+          <div className={styles.primaryCTA}>
+            <button
+              type="button"
+              class="px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+            >
+              Get Started
+            </button>
+          </div>
         </div>
       </section>
 
@@ -293,9 +361,14 @@ export default function Landing() {
               nodes that are incentivised for high availability and good
               behaviour.
             </div>
-            <Button className={classnames([styles.ml16, styles.primaryCTA])}>
-              Get Started
-            </Button>
+            <div className={styles.primaryCTA}>
+              <button
+                type="button"
+                class="ml-4 px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              >
+                Get Started
+              </button>
+            </div>
           </div>
           <div className={styles.decentralizedImage}></div>
         </div>
@@ -317,9 +390,12 @@ export default function Landing() {
                 responsible for platform moderation.
               </div>
             </div>
-            <Button className={classnames([styles.ml16, styles.secondaryCTA])}>
+            <button
+              type="button"
+              class="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+            >
               Read Our Terms
-            </Button>
+            </button>
           </div>
         </div>
       </section>
@@ -341,9 +417,12 @@ export default function Landing() {
                 the future of Gitopia.
               </div>
             </div>
-            <Button className={classnames([styles.ml16, styles.secondaryCTA])}>
+            <button
+              type="button"
+              class="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+            >
               Read Our Terms
-            </Button>
+            </button>
           </div>
         </div>
       </section>
@@ -394,27 +473,41 @@ export default function Landing() {
             <span className={styles.roadmapYearEnd}>2022</span>
           </div>
           <div className={styles.roadmapActions}>
-            <span className={styles.roadmapActionItem}>MVP Implementation</span>
-            <span className={styles.roadmapActionItem}>Gitopia Main chain</span>
-            <span className={styles.roadmapActionItem}>Gitopia Webapp</span>
-            <span className={styles.roadmapActionItem}>Git Remote Helper</span>
-            <span className={styles.roadmapActionItem}>
-              Github Mirror Action
+            <span class={styles.roadmapActionItem}>MVP Implementation</span>
+            <span class={styles.roadmapActionItem}>
+              Start developing Gitopia blockchain built with Cosmos-SDK
             </span>
-            <span className={styles.roadmapActionItem}>Web Wallet</span>
-            <span className={styles.roadmapActionItem}>Explorer</span>
-            <span className={styles.roadmapActionItem}>Exchange Listing</span>
-            <span className={styles.roadmapActionItem}>
-              Ecosystem Partnerships
+            <span class={styles.roadmapActionItem}>
+              Launch first version of Gitopia Webapp
             </span>
-            <span className={styles.roadmapActionItem}>
-              Governance workflows
+            <span class={styles.roadmapActionItem}>
+              Release the git remote helper for Gitopia
             </span>
-            <span className={styles.roadmapActionItem}>IBC Interface</span>
-            <span className={styles.roadmapActionItem}>Desktop app</span>
-            <span className={styles.roadmapActionItem}>C1/CD Integrations</span>
-            <span className={styles.roadmapActionItem}>
-              Static Code Analsys
+            <span class={styles.roadmapActionItem}>
+              Release the GitHub Mirror Action for easy migration from GitHub
+            </span>
+            <span class={styles.roadmapActionItem}>
+              Gitopia Web Wallet release
+            </span>
+            <span class={styles.roadmapActionItem}>
+              Gitopia Explorer release
+            </span>
+            <span class={styles.roadmapActionItem}>
+              Exchange listings of LORE token
+            </span>
+            <span class={styles.roadmapActionItem}>Ecosystem Partnerships</span>
+            <span class={styles.roadmapActionItem}>
+              Release Organization/Repository governance
+            </span>
+            <span class={styles.roadmapActionItem}>Release IBC Interface</span>
+            <span class={styles.roadmapActionItem}>
+              Launch Gitopia Desktop app
+            </span>
+            <span class={styles.roadmapActionItem}>
+              Support CI/CD Integrations
+            </span>
+            <span class={styles.roadmapActionItem}>
+              Release Static Code Analysis
             </span>
           </div>
         </div>
@@ -558,18 +651,21 @@ export default function Landing() {
       </svg>
 
       <footer className={styles.footer}>
-        <div className={styles.transitionRow} style={{ width: 960 }}>
-          <div className={styles.footerLogo}></div>
-          <div className={styles.footerLinks}>
-            <a href="#">About Us</a>
+        <div className={styles.footerLogo}></div>
+        <div className={styles.footerLinks}>
+          <a href="#">About Us</a>
 
-            <a href="#">White Paper</a>
+          <a href="#">White Paper</a>
 
-            <a href="#">Deck</a>
-          </div>
-          <div>
-            <Button className={styles.primaryCTA}>Contact Us</Button>
-          </div>
+          <a href="#">Deck</a>
+        </div>
+        <div>
+          <button
+            type="button"
+            class="px-8 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+          >
+            Contact Us
+          </button>
         </div>
       </footer>
     </div>
