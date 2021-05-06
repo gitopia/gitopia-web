@@ -257,7 +257,7 @@ export default function Landing() {
           <div className={styles.primaryCTA}>
             <button
               type="button"
-              class="px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              className="px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
             >
               Get Started
             </button>
@@ -364,7 +364,7 @@ export default function Landing() {
             <div className={styles.primaryCTA}>
               <button
                 type="button"
-                class="ml-4 px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                className="ml-4 px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               >
                 Get Started
               </button>
@@ -392,7 +392,7 @@ export default function Landing() {
             </div>
             <button
               type="button"
-              class="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              className="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
             >
               Read Our Terms
             </button>
@@ -419,7 +419,7 @@ export default function Landing() {
             </div>
             <button
               type="button"
-              class="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              className="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
             >
               Read Our Terms
             </button>
@@ -473,40 +473,44 @@ export default function Landing() {
             <span className={styles.roadmapYearEnd}>2022</span>
           </div>
           <div className={styles.roadmapActions}>
-            <span class={styles.roadmapActionItem}>MVP Implementation</span>
-            <span class={styles.roadmapActionItem}>
+            <span className={styles.roadmapActionItem}>MVP Implementation</span>
+            <span className={styles.roadmapActionItem}>
               Start developing Gitopia blockchain built with Cosmos-SDK
             </span>
-            <span class={styles.roadmapActionItem}>
+            <span className={styles.roadmapActionItem}>
               Launch first version of Gitopia Webapp
             </span>
-            <span class={styles.roadmapActionItem}>
+            <span className={styles.roadmapActionItem}>
               Release the git remote helper for Gitopia
             </span>
-            <span class={styles.roadmapActionItem}>
+            <span className={styles.roadmapActionItem}>
               Release the GitHub Mirror Action for easy migration from GitHub
             </span>
-            <span class={styles.roadmapActionItem}>
+            <span className={styles.roadmapActionItem}>
               Gitopia Web Wallet release
             </span>
-            <span class={styles.roadmapActionItem}>
+            <span className={styles.roadmapActionItem}>
               Gitopia Explorer release
             </span>
-            <span class={styles.roadmapActionItem}>
+            <span className={styles.roadmapActionItem}>
               Exchange listings of LORE token
             </span>
-            <span class={styles.roadmapActionItem}>Ecosystem Partnerships</span>
-            <span class={styles.roadmapActionItem}>
+            <span className={styles.roadmapActionItem}>
+              Ecosystem Partnerships
+            </span>
+            <span className={styles.roadmapActionItem}>
               Release Organization/Repository governance
             </span>
-            <span class={styles.roadmapActionItem}>Release IBC Interface</span>
-            <span class={styles.roadmapActionItem}>
+            <span className={styles.roadmapActionItem}>
+              Release IBC Interface
+            </span>
+            <span className={styles.roadmapActionItem}>
               Launch Gitopia Desktop app
             </span>
-            <span class={styles.roadmapActionItem}>
+            <span className={styles.roadmapActionItem}>
               Support CI/CD Integrations
             </span>
-            <span class={styles.roadmapActionItem}>
+            <span className={styles.roadmapActionItem}>
               Release Static Code Analysis
             </span>
           </div>
@@ -662,7 +666,7 @@ export default function Landing() {
         <div>
           <button
             type="button"
-            class="px-8 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+            className="px-8 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
           >
             Contact Us
           </button>
