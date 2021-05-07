@@ -4,6 +4,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        transparent: "transparent",
+        current: "currentColor",
         green: {
           50: "#DBFFDB",
           DEFAULT: "#66ce67",
@@ -16,6 +18,9 @@ module.exports = {
           400: "#b78af0",
           900: "#5a3b82",
         },
+      },
+      screens: {
+        lg: "1024px",
       },
     },
   },
