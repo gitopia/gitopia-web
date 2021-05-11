@@ -8,7 +8,7 @@ const pCircles = [
     url: "landing-circles.svg#circle1",
     x: -70,
     y: -420,
-    z: 7,
+    z: 12,
     mx: -120,
     my: -500,
     r: 220,
@@ -17,7 +17,7 @@ const pCircles = [
     url: "landing-circles.svg#circle2",
     x: 430,
     y: -200,
-    z: 9,
+    z: 6,
     mx: 440,
     my: -280,
     r: 166,
@@ -26,7 +26,7 @@ const pCircles = [
     url: "landing-circles.svg#circle3",
     x: -480,
     y: -100,
-    z: 13,
+    z: 10,
     mx: -600,
     my: -220,
     r: 160,
@@ -35,7 +35,7 @@ const pCircles = [
     url: "landing-circles.svg#circle4",
     x: 80,
     y: 70,
-    z: 15,
+    z: 8,
     mx: 800,
     my: 0,
     r: 134,
@@ -44,7 +44,7 @@ const pCircles = [
     url: "landing-circles.svg#circle5",
     x: 130,
     y: 180,
-    z: 16,
+    z: 10,
     mx: 450,
     my: 100,
     r: 72,
@@ -53,7 +53,7 @@ const pCircles = [
     url: "landing-circles.svg#circle6",
     x: -500,
     y: -150,
-    z: 18,
+    z: 16,
     mx: -500,
     my: -400,
     r: 148,
@@ -62,7 +62,7 @@ const pCircles = [
     url: "landing-circles.svg#circle7",
     x: -700,
     y: 100,
-    z: 20,
+    z: 14,
     mx: -700,
     my: -100,
     r: 110,
@@ -108,15 +108,15 @@ function animateCircles() {
 
 function addOrUpdateGlobs() {
   for (let currentLane of storageLanes) {
-    if (currentLane.children.length < 3) {
+    if (currentLane.children.length < 5) {
       const glob = document.createElement("div"),
         globContent = document.createElement("span"),
         style = Math.floor(Math.random() * 3),
-        overallTiming = Math.random() < 0.8 ? 3 : 6;
+        overallTiming = Math.random() < 0.7 ? 5 : 10;
       let animTiming =
-        overallTiming == 3
-          ? 1.5 * (0.5 + Math.random() / 2)
-          : 5.5 * (0.75 + Math.random() / 4);
+        overallTiming == 4
+          ? 2 * (0.5 + Math.random() / 2)
+          : 4 * (0.75 + Math.random() / 4);
       animTiming = animTiming.toFixed(1);
       let delayTiming = overallTiming - animTiming;
       glob.className = styles.storageCircle;
@@ -397,7 +397,9 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className={styles.section}>
+      <section
+        className={classnames([styles.section, styles.transitionSection])}
+      >
         <div className={styles.transitionRow}>
           <div className={classnames([styles.hlVertical, styles.mr100])}>
             <span>
@@ -602,53 +604,37 @@ export default function Landing() {
 
       <section className={styles.section}>
         <h3 className={styles.h3}>Meet the Team</h3>
-        <div className={styles.teamWrapper}>
-          <div className={styles.teamColWrapper}>
-            <div className={styles.teamCard}>
-              <img
-                className={styles.teamImage}
-                src="/team1.jpg"
-                loading="lazy"
-              />
-              <div className={styles.teamLabel}>
-                <div className={styles.teamName}>Parth Oberoi</div>
-                <div className={styles.teamDesig}>CEO & Founder</div>
-              </div>
-            </div>
-            <div className={styles.teamCard}>
-              <img
-                className={styles.teamImage}
-                src="/team1.jpg"
-                loading="lazy"
-              />
-              <div className={styles.teamLabel}>
-                <div className={styles.teamName}>Parth Oberoi</div>
-                <div className={styles.teamDesig}>CEO & Founder</div>
-              </div>
+        <div
+          className={"grid grid-rows-9 grid-cols-2 gap-2 " + styles.teamWrapper}
+        >
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img className={styles.teamImage} src="/team1.jpg" loading="lazy" />
+            <div className={styles.teamLabel}>
+              <div className={styles.teamName}>Parth Oberoi</div>
+              <div className={styles.teamDesig}>CEO & Founder</div>
             </div>
           </div>
-          <div className={styles.teamColWrapper}>
-            <div className={styles.teamCard}>
-              <img
-                className={styles.teamImage}
-                src="/team1.jpg"
-                loading="lazy"
-              />
-              <div className={styles.teamLabel}>
-                <div className={styles.teamName}>Parth Oberoi</div>
-                <div className={styles.teamDesig}>CEO & Founder</div>
-              </div>
+          <div className={"block row-span-1 " + styles.bufferCard}></div>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img className={styles.teamImage} src="/team2.jpg" loading="lazy" />
+            <div className={styles.teamLabel}>
+              <div className={styles.teamName}>Parth Oberoi</div>
+              <div className={styles.teamDesig}>CEO & Founder</div>
             </div>
-            <div className={styles.teamCard}>
-              <img
-                className={styles.teamImage}
-                src="/team1.jpg"
-                loading="lazy"
-              />
-              <div className={styles.teamLabel}>
-                <div className={styles.teamName}>Parth Oberoi</div>
-                <div className={styles.teamDesig}>CEO & Founder</div>
-              </div>
+          </div>
+
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img className={styles.teamImage} src="/team3.jpg" loading="lazy" />
+            <div className={styles.teamLabel}>
+              <div className={styles.teamName}>Parth Oberoi</div>
+              <div className={styles.teamDesig}>CEO & Founder</div>
+            </div>
+          </div>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img className={styles.teamImage} src="/team4.jpg" loading="lazy" />
+            <div className={styles.teamLabel}>
+              <div className={styles.teamName}>Parth Oberoi</div>
+              <div className={styles.teamDesig}>CEO & Founder</div>
             </div>
           </div>
         </div>

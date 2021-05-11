@@ -232,9 +232,16 @@
   white-space: nowrap;
 }
 .platformCircles {
-  transition: transform 0.1s linear;
+  transition: transform 0.4s ease-out;
   will-change: transform;
   display: inline;
+}
+
+.platformCircles:nth-child(1),
+.platformCircles:nth-child(1),
+.platformCircles:nth-child(4),
+.platformCircles:nth-child(7) {
+  transition: transform 0.2s ease-out;
 }
 
 .storageSection {
@@ -342,7 +349,7 @@
       rgba(255, 255, 255, 0) 100%
     )
     no-repeat;
-  animation: flash 2s ease-in-out 1s infinite;
+  animation: flash 2.5s ease-in-out 2.5s infinite;
 }
 
 @keyframes flash {
@@ -401,32 +408,56 @@
   justify-content: center;
   background-image: url("/logo-g.svg");
   background-repeat: no-repeat;
-  background-size: 80px;
+  background-size: 70px;
   background-position: 50%;
-  background-color: rgba(255, 233, 253, 0.05);
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  background-color: rgb(37 19 57);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   position: relative;
+  top: 5px;
+  border: 5px solid rgba(136, 59, 230, 1);
+  border-bottom: none;
 }
 
-/* .midLogo:before,
+.midLogo:before,
 .midLogo:after {
   content: "";
   position: absolute;
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   bottom: 0px;
-  background: rgba(255, 233, 253, 0.05);
-} */
+}
 
 .midLogo:after {
-  right: -25px;
-  border-bottom-left-radius: 25px;
+  right: -20px;
+  background: #19072f
+    radial-gradient(
+      circle at right top,
+      rgba(0, 0, 0, 0) calc(55% - 1px),
+      rgb(136, 59, 230) calc(55% - 1px + 0.3px),
+      rgb(136, 59, 230) calc(55% - 1px + 5px),
+      rgb(37, 19, 57) calc(55% - 1px + 5px + 0.3px),
+      rgb(37, 19, 57) 100%
+    )
+    repeat scroll 0% 0% / auto padding-box border-box;
 }
 
 .midLogo::before {
-  left: -25px;
-  border-bottom-right-radius: 25px;
+  left: -20px;
+  background: #19072f
+    radial-gradient(
+      circle at left top,
+      rgba(0, 0, 0, 0) calc(55% - 1px),
+      rgb(136, 59, 230) calc(55% - 1px + 0.3px),
+      rgb(136, 59, 230) calc(55% - 1px + 5px),
+      rgb(37, 19, 57) calc(55% - 1px + 5px + 0.3px),
+      rgb(37, 19, 57) 100%
+    )
+    repeat scroll 0% 0% / auto padding-box border-box;
+}
+
+.transitionSection {
+  border-bottom: 5px solid rgba(136, 59, 230, 1);
 }
 
 .transitionRow {
@@ -601,6 +632,10 @@
   margin-bottom: 4px;
 }
 
+.bufferCard {
+  height: 145px;
+}
+
 .teamImage {
   position: absolute;
   left: 0;
@@ -633,7 +668,6 @@
 .teamWrapper {
   margin-top: 100px;
   width: 940px;
-  display: flex;
 }
 
 .teamColWrapper:nth-child(2) {
@@ -679,9 +713,6 @@
     height: auto;
     border-bottom: none;
   }
-}
-
-@media (max-width: 1024px) {
   .header {
     display: block;
     padding: 40px 44px;
@@ -700,6 +731,7 @@
   }
 
   .byline {
+    font-size: 20px;
     max-width: none;
     position: relative;
     z-index: 1;
@@ -782,9 +814,12 @@
     opacity: 0.1;
   }
   .teamCard {
-    width: 180px;
-    height: 260px;
+    width: 300px;
+    height: 392px;
     overflow: hidden;
+  }
+  .bufferCard {
+    height: 95px;
   }
   .teamWrapper {
     width: auto;
@@ -819,5 +854,31 @@
   .blob1,
   .blob2 {
     opacity: 0.3;
+  }
+}
+
+@media (max-width: 640px) {
+  .teamCard {
+    width: 180px;
+    height: 260px;
+    overflow: hidden;
+  }
+  .bufferCard {
+    height: 60px;
+  }
+  .blob1,
+  .blob2 {
+    display: none;
+  }
+  .h1 {
+    font-size: 44px;
+  }
+
+  .h3 {
+    font-size: 32px;
+  }
+
+  .byline {
+    font-size: 18px;
   }
 }
