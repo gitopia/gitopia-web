@@ -10,7 +10,7 @@ const pCircles = [
     y: -420,
     z: 12,
     mx: -120,
-    my: -500,
+    my: -570,
     r: 220,
   },
   {
@@ -340,7 +340,7 @@ export default function Landing() {
         </svg>
         <div className={styles.row}>
           <h3 className={classnames([styles.h3, styles.hlHorizontal])}>
-            Built on Cosmos
+            Built with Cosmos SDK
           </h3>
           <div className={classnames([styles.b16, styles.circleSectionDesc])}>
             Gitopia is an application specific blockchain built on Cosmos. It is
@@ -441,7 +441,7 @@ export default function Landing() {
             <div className={styles.primaryCTA}>
               <button
                 type="button"
-                className="ml-4 px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                className="lg:ml-4 px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               >
                 Get Started
               </button>
@@ -608,7 +608,7 @@ export default function Landing() {
           className={"grid grid-rows-9 grid-cols-2 gap-2 " + styles.teamWrapper}
         >
           <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/team1.jpg" loading="lazy" />
+            <img className={styles.teamImage} src="/parth.jpg" loading="lazy" />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Parth Oberoi</div>
               <div className={styles.teamDesig}>CEO & Founder</div>
@@ -616,25 +616,43 @@ export default function Landing() {
           </div>
           <div className={"block row-span-1 " + styles.bufferCard}></div>
           <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/team2.jpg" loading="lazy" />
+            <img className={styles.teamImage} src="/faza.jpg" loading="lazy" />
             <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Parth Oberoi</div>
-              <div className={styles.teamDesig}>CEO & Founder</div>
-            </div>
-          </div>
-
-          <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/team3.jpg" loading="lazy" />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Parth Oberoi</div>
+              <div className={styles.teamName}>Faza Mohamood</div>
               <div className={styles.teamDesig}>CEO & Founder</div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/team4.jpg" loading="lazy" />
+            <img
+              className={styles.teamImage}
+              src="/alphonsa.jpg"
+              loading="lazy"
+            />
             <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Parth Oberoi</div>
-              <div className={styles.teamDesig}>CEO & Founder</div>
+              <div className={styles.teamName}>Alphonsa Neil</div>
+              <div className={styles.teamDesig}>Marketing</div>
+            </div>
+          </div>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/snehil.jpg"
+              loading="lazy"
+            />
+            <div className={styles.teamLabel}>
+              <div className={styles.teamName}>Snehil Buxy</div>
+              <div className={styles.teamDesig}>Blockchain Developer</div>
+            </div>
+          </div>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/kushagra.jpg"
+              loading="lazy"
+            />
+            <div className={styles.teamLabel}>
+              <div className={styles.teamName}>Kushagra</div>
+              <div className={styles.teamDesig}>Marketing</div>
             </div>
           </div>
         </div>
