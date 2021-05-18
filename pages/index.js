@@ -655,6 +655,13 @@ export default function Landing() {
               <div className={styles.teamDesig}>Marketing</div>
             </div>
           </div>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img className={styles.teamImage} src="/stian.jpg" loading="lazy" />
+            <div className={styles.teamLabel}>
+              <div className={styles.teamName}>Stian</div>
+              <div className={styles.teamDesig}>Design</div>
+            </div>
+          </div>
         </div>
       </section>
 
