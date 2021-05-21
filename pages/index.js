@@ -8,7 +8,7 @@ const pCircles = [
     url: "landing-circles.svg#circle1",
     x: -70,
     y: -420,
-    z: 12,
+    z: 11,
     mx: -120,
     my: -570,
     r: 220,
@@ -17,7 +17,7 @@ const pCircles = [
     url: "landing-circles.svg#circle2",
     x: 430,
     y: -200,
-    z: 6,
+    z: 5,
     mx: 440,
     my: -280,
     r: 166,
@@ -26,7 +26,7 @@ const pCircles = [
     url: "landing-circles.svg#circle3",
     x: -480,
     y: -100,
-    z: 10,
+    z: 9,
     mx: -600,
     my: -220,
     r: 160,
@@ -35,7 +35,7 @@ const pCircles = [
     url: "landing-circles.svg#circle4",
     x: 80,
     y: 70,
-    z: 8,
+    z: 7,
     mx: 800,
     my: 0,
     r: 134,
@@ -44,7 +44,7 @@ const pCircles = [
     url: "landing-circles.svg#circle5",
     x: 130,
     y: 180,
-    z: 10,
+    z: 9,
     mx: 450,
     my: 100,
     r: 72,
@@ -53,7 +53,7 @@ const pCircles = [
     url: "landing-circles.svg#circle6",
     x: -500,
     y: -150,
-    z: 16,
+    z: 15,
     mx: -500,
     my: -400,
     r: 148,
@@ -62,7 +62,7 @@ const pCircles = [
     url: "landing-circles.svg#circle7",
     x: -700,
     y: 100,
-    z: 14,
+    z: 13,
     mx: -700,
     my: -100,
     r: 110,
@@ -112,10 +112,10 @@ function addOrUpdateGlobs() {
       const glob = document.createElement("div"),
         globContent = document.createElement("span"),
         style = Math.floor(Math.random() * 3),
-        overallTiming = Math.random() < 0.7 ? 5 : 10;
+        overallTiming = Math.random() < 0.3 ? 4 : 8;
       let animTiming =
         overallTiming == 4
-          ? 2 * (0.5 + Math.random() / 2)
+          ? 2 * (0.75 + Math.random() / 4)
           : 4 * (0.75 + Math.random() / 4);
       animTiming = animTiming.toFixed(1);
       let delayTiming = overallTiming - animTiming;
@@ -334,8 +334,7 @@ export default function Landing() {
       </section>
 
       <section className={classnames([styles.section, styles.circleSection])}>
-        <div className={styles.circleSectionEllipse}></div>
-        <svg width={1600} height={610} className={styles.circleSectionEllipse}>
+        <svg className={styles.circleSectionEllipse}>
           <use xlinkHref="landing-circles.svg#ellipse"></use>
         </svg>
         <div className={styles.row}>
@@ -767,11 +766,15 @@ export default function Landing() {
       <footer className={styles.footer}>
         <div className={styles.footerLogo}></div>
         <div className={styles.footerLinks}>
-          <a href="#">About Us</a>
-
           <a href="#">White Paper</a>
 
-          <a href="#">Deck</a>
+          <a href="#">Twitter</a>
+
+          <a href="#">Telegram</a>
+
+          <a href="#">Medium</a>
+
+          <a href="#">Discord</a>
         </div>
         <div>
           <button

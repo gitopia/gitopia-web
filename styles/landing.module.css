@@ -202,9 +202,11 @@
 }
 
 .circleSectionEllipse {
-  top: -120px;
+  top: -10vw;
   position: absolute;
   z-index: -1;
+  width: 100%;
+  height: 45vw;
 }
 
 .circleSectionDesc {
@@ -232,16 +234,9 @@
   white-space: nowrap;
 }
 .platformCircles {
-  transition: transform 0.4s ease-out;
+  transition: transform 0.15s linear;
   will-change: transform;
   display: inline;
-}
-
-.platformCircles:nth-child(1),
-.platformCircles:nth-child(1),
-.platformCircles:nth-child(4),
-.platformCircles:nth-child(7) {
-  transition: transform 0.2s ease-out;
 }
 
 .storageSection {
@@ -349,7 +344,7 @@
       rgba(255, 255, 255, 0) 100%
     )
     no-repeat;
-  animation: flash 2.5s ease-in-out 2.5s infinite;
+  animation: flash 2s ease-in-out 2s infinite;
 }
 
 @keyframes flash {
@@ -839,6 +834,7 @@
   }
   .footerLinks {
     margin-bottom: 50px;
+    flex-direction: row;
   }
   .blob1,
   .blob2 {
@@ -880,5 +876,14 @@
 
   .primaryCTA {
     width: 100%;
+  }
+
+  .footerLinks {
+    margin-bottom: 24px;
+    flex-direction: column;
+  }
+
+  .footerLinks a {
+    margin-bottom: 24px;
   }
 }
