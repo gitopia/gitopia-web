@@ -52,6 +52,8 @@
 
 .heroSection {
   min-height: 720px;
+  position: relative;
+  z-index: 2;
 }
 
 .wings {
@@ -137,8 +139,9 @@
 }
 
 .primaryCTA {
-  width: 322px;
-  display: inline-block;
+  width: 500px;
+  display: inline-flex;
+  justify-content: center;
 }
 
 .secondaryCTA {
@@ -876,6 +879,7 @@
 
   .primaryCTA {
     width: 100%;
+    flex-direction: column;
   }
 
   .footerLinks {
