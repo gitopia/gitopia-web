@@ -273,23 +273,16 @@ export default function Landing() {
         >
           <div className={styles.row}>
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto w-full">
-              {/* <li className={menuOpen ? "w-full" : "mr-4"}>
-                <a
-                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="#"
-                >
-                  About
-                </a>
-              </li> */}
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="#"
+                  href="https://gitopia.org/whitepaper.pdf"
+                  target="_blank"
                 >
                   Whitepaper
                 </a>
               </li>
-              <li className={menuOpen ? "" : "mr-4"}>
+              <li>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href="https://medium.com/gitopia"
@@ -298,25 +291,7 @@ export default function Landing() {
                   Blog
                 </a>
               </li>
-              {/* <li className={menuOpen ? "" : "mr-4"}>
-                <a
-                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="https://discord.gg/mVpQVW3vKE"
-                  target="_blank"
-                >
-                  Community
-                </a>
-              </li> */}
-              <li className="border-b-2 lg:border-r-2 lg:border-b-0 border-white border-opacity-10 w-full h-2 mb-4 lg:h-6 lg:w-1 lg:mr-4 lg:mb-0 mt-2"></li>
-              <li>
-                <a
-                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="https://discord.gg/mVpQVW3vKE"
-                  target="_blank"
-                >
-                  Join Community
-                </a>
-              </li>
+              {/* <li className="border-b-2 lg:border-r-2 lg:border-b-0 border-white border-opacity-10 w-full h-2 mb-4 lg:h-6 lg:w-1 lg:mr-4 lg:mb-0 mt-2"></li> */}
             </ul>
           </div>
         </div>
@@ -334,15 +309,52 @@ export default function Landing() {
           </div>
           <div className={styles.primaryCTA}>
             <button
-              onclick={() => {
+              onClick={() => {
                 if (window) {
                   window.open("https://discord.gg/mVpQVW3vKE");
                 }
               }}
               type="button"
-              className="px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              className="flex inline-flex items-center justify-center h-14 px-8 py-4 w-full md:w-auto mr-4 mb-8 md:mb-0 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
             >
-              Join Community!
+              <svg
+                width="42"
+                height="30"
+                viewBox="0 0 42 30"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="mr-4"
+              >
+                <path
+                  d="M35.6668 4.00016C35.6668 4.00016 31.463 0.709329 26.5002 0.333496L26.0528 1.22908C30.539 2.32816 32.5978 3.89933 34.7502 5.8335C31.0404 3.93966 27.3802 2.16683 21.0002 2.16683C14.6202 2.16683 10.9599 3.93966 7.25016 5.8335C9.4025 3.89933 11.8518 2.15216 15.9475 1.22908L15.5002 0.333496C10.2935 0.823913 6.3335 4.00016 6.3335 4.00016C6.3335 4.00016 1.63925 10.8073 0.833496 24.1668C5.5635 29.6237 12.7502 29.6668 12.7502 29.6668L14.2535 27.6648C11.7015 26.7775 8.82316 25.1944 6.3335 22.3335C9.30166 24.5793 13.7814 26.9168 21.0002 26.9168C28.2189 26.9168 32.6987 24.5793 35.6668 22.3335C33.1781 25.1944 30.2997 26.7775 27.7468 27.6648L29.2502 29.6668C29.2502 29.6668 36.4368 29.6237 41.1668 24.1668C40.3611 10.8073 35.6668 4.00016 35.6668 4.00016ZM15.0418 20.5002C13.269 20.5002 11.8335 18.8593 11.8335 16.8335C11.8335 14.8077 13.269 13.1668 15.0418 13.1668C16.8147 13.1668 18.2502 14.8077 18.2502 16.8335C18.2502 18.8593 16.8147 20.5002 15.0418 20.5002ZM26.9585 20.5002C25.1857 20.5002 23.7502 18.8593 23.7502 16.8335C23.7502 14.8077 25.1857 13.1668 26.9585 13.1668C28.7313 13.1668 30.1668 14.8077 30.1668 16.8335C30.1668 18.8593 28.7313 20.5002 26.9585 20.5002Z"
+                  fill="white"
+                />
+              </svg>
+              <span>Join Our Discord</span>
+            </button>
+            <button
+              onClick={() => {
+                if (window) {
+                  window.open("https://t.me/Gitopia");
+                }
+              }}
+              type="button"
+              className="flex inline-flex items-center justify-center h-14 px-8 py-4 w-full md:w-auto rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+            >
+              <svg
+                width="30"
+                height="27"
+                viewBox="0 0 30 27"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="mr-4"
+              >
+                <path
+                  d="M27.3288 0.495365C26.9677 0.52164 26.6132 0.606367 26.2792 0.74624H26.2747C25.9541 0.873365 24.4297 1.51461 22.1122 2.48661L13.8074 5.98424C7.84832 8.49299 1.99045 10.9635 1.99045 10.9635L2.0602 10.9365C2.0602 10.9365 1.65632 11.0692 1.23445 11.3584C0.973816 11.5242 0.749543 11.7412 0.575197 11.9962C0.368197 12.3 0.201698 12.7646 0.263573 13.245C0.364823 14.0572 0.891322 14.5444 1.26932 14.8132C1.65182 15.0855 2.01632 15.2126 2.01632 15.2126H2.02532L7.5187 17.0632C7.76507 17.8541 9.1927 22.5476 9.53582 23.6287C9.73832 24.2745 9.9352 24.6784 10.1816 24.9866C10.3008 25.1441 10.4403 25.2757 10.6079 25.3815C10.6951 25.4322 10.788 25.4722 10.8847 25.5007L10.8284 25.4872C10.8453 25.4917 10.8588 25.5052 10.8712 25.5097C10.9162 25.5221 10.9466 25.5266 11.0039 25.5356C11.8736 25.7989 12.5722 25.2589 12.5722 25.2589L12.6116 25.2274L15.8549 22.2742L21.2909 26.4446L21.4147 26.4975C22.5476 26.9947 23.6951 26.718 24.3014 26.2297C24.9123 25.7381 25.1497 25.1092 25.1497 25.1092L25.1891 25.008L29.3898 3.48787C29.5091 2.95687 29.5394 2.45962 29.4078 1.97699C29.2721 1.48854 28.9587 1.06845 28.5292 0.799115C28.1685 0.579869 27.7503 0.474045 27.3288 0.495365ZM27.2152 2.80162C27.2107 2.87249 27.2242 2.86462 27.1927 3.00074V3.01312L23.0313 24.3094C23.0133 24.3397 22.9829 24.4061 22.8997 24.4725C22.8119 24.5422 22.7422 24.5861 22.3766 24.441L15.7278 19.3436L11.7116 23.0044L12.5553 17.6156L23.4183 7.49061C23.8661 7.07436 23.7164 6.98662 23.7164 6.98662C23.7479 6.47586 23.0403 6.83699 23.0403 6.83699L9.34232 15.3229L9.33782 15.3004L2.77232 13.0897V13.0852L2.75545 13.0819C2.76696 13.078 2.77823 13.0735 2.7892 13.0684L2.8252 13.0504L2.86007 13.038C2.86007 13.038 8.72245 10.5675 14.6816 8.05874C17.6651 6.80211 20.6711 5.53649 22.9829 4.55999C25.2948 3.58912 27.0037 2.87699 27.1004 2.83874C27.1927 2.80274 27.1488 2.80274 27.2152 2.80274V2.80162Z"
+                  fill="white"
+                />
+              </svg>
+              <span>Join Our Telegram</span>
             </button>
           </div>
         </div>
@@ -381,7 +393,10 @@ export default function Landing() {
             })}
           </div>
           <div className={styles.circleSectionLink}>
-            Learn more about Gitopia <a>here</a>
+            Learn more about Gitopia{" "}
+            <a href="https://gitopia.org/whitepaper.pdf" target="_blank">
+              here
+            </a>
           </div>
         </div>
       </section>
@@ -453,10 +468,15 @@ export default function Landing() {
               The application is served by a decentralized network of Gitopia
               nodes, incentivised for high availability and good behaviour.
             </div>
-            <div className={styles.primaryCTA}>
+            <div>
               <button
                 type="button"
-                className="lg:ml-4 px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                onClick={() => {
+                  if (window) {
+                    window.open("https://gitopia.org/whitepaper.pdf");
+                  }
+                }}
+                className="ml-4 px-16 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               >
                 Learn more
               </button>
@@ -488,6 +508,11 @@ export default function Landing() {
             </div>
             <button
               type="button"
+              onClick={() => {
+                if (window) {
+                  window.open("https://gitopia.org/whitepaper.pdf");
+                }
+              }}
               className="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
             >
               Learn more
@@ -515,6 +540,11 @@ export default function Landing() {
             </div>
             <button
               type="button"
+              onClick={() => {
+                if (window) {
+                  window.open("https://gitopia.org/whitepaper.pdf");
+                }
+              }}
               className="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
             >
               Learn more
@@ -784,7 +814,7 @@ export default function Landing() {
         <div className={styles.footerLinks}>
           {/* <a href="#">About Us</a> */}
 
-          <a href="#">Whitepaper</a>
+          <a href="https://gitopia.org/whitepaper.pdf">Whitepaper</a>
 
           <a href="https://twitter.com/gitopiaOrg" target="_blank">
             Twitter
@@ -804,7 +834,7 @@ export default function Landing() {
         </div>
         <div>
           <button
-            onclick={() => {
+            onClick={() => {
               if (window) {
                 window.open("https://t.me/Gitopia");
               }
