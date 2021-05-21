@@ -207,6 +207,12 @@ export default function Landing() {
           name="keywords"
           content="code, collaboration, decentralized, git"
         />
+        <script
+          async
+          defer
+          data-domain="gitopia.org"
+          src="https://plausible.io/js/plausible.js"
+        />
       </Head>
       <header className={(menuOpen ? "bg-purple " : "") + styles.header}>
         <div className={styles.headerLogo}></div>
