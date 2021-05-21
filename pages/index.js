@@ -273,45 +273,48 @@ export default function Landing() {
         >
           <div className={styles.row}>
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto w-full">
-              <li className={menuOpen ? "w-full" : "mr-4"}>
+              {/* <li className={menuOpen ? "w-full" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href="#"
                 >
-                  Exlpore
+                  About
+                </a>
+              </li> */}
+              <li className={menuOpen ? "" : "mr-4"}>
+                <a
+                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
+                  href="#"
+                >
+                  Whitepaper
                 </a>
               </li>
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="#"
+                  href="https://medium.com/gitopia"
+                  target="_blank"
                 >
                   Blog
                 </a>
               </li>
-              <li className={menuOpen ? "" : "mr-4"}>
+              {/* <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="#"
+                  href="https://discord.gg/mVpQVW3vKE"
+                  target="_blank"
                 >
-                  Open Source
+                  Community
                 </a>
-              </li>
-              <li className={menuOpen ? "" : "mr-4"}>
-                <a
-                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="#"
-                >
-                  White Paper
-                </a>
-              </li>
+              </li> */}
               <li className="border-b-2 lg:border-r-2 lg:border-b-0 border-white border-opacity-10 w-full h-2 mb-4 lg:h-6 lg:w-1 lg:mr-4 lg:mb-0 mt-2"></li>
               <li>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="#"
+                  href="https://discord.gg/mVpQVW3vKE"
+                  target="_blank"
                 >
-                  Try the MVP
+                  Join Community
                 </a>
               </li>
             </ul>
@@ -323,17 +326,23 @@ export default function Landing() {
       <section className={classnames([styles.section, styles.heroSection])}>
         <div className={styles.row}>
           <h1 className={classnames([styles.h1, styles.wings])}>
-            Decentralized Open Source Community
+            The Future of Code Collaboration
           </h1>
           <div className={styles.byline}>
-            Join the new age decentralized code collaboration platform
+            A new age decentralized code collaboration platform for developers
+            to collaborate, BUIDL, and get rewarded.
           </div>
           <div className={styles.primaryCTA}>
             <button
+              onclick={() => {
+                if (window) {
+                  window.open("https://discord.gg/mVpQVW3vKE");
+                }
+              }}
               type="button"
               className="px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
             >
-              Get Started
+              Join Community!
             </button>
           </div>
         </div>
@@ -348,9 +357,11 @@ export default function Landing() {
             Built with Cosmos SDK
           </h3>
           <div className={classnames([styles.b16, styles.circleSectionDesc])}>
-            Gitopia is an application specific blockchain built on Cosmos. It is
-            optimized for high throughput and fast finality. And IBC enables
-            other IBC compatible chains to integrate directly with Gitopia.
+            Gitopia is developed using the Cosmos SDK framework. The use of
+            Cosmos SDK has enabled us to leverage the Tendermint BFT consensus
+            engine and build the blockchain that is optimized for Gitopia’s use
+            case. Also, IBC enables other IBC compatible chains to integrate
+            directly with Gitopia.
           </div>
           <div className={styles.platformCirclesWrapper}>
             {pCircles.map((circle) => {
@@ -370,7 +381,7 @@ export default function Landing() {
             })}
           </div>
           <div className={styles.circleSectionLink}>
-            Learn more about our <a>integration here</a>
+            Learn more about Gitopia <a>here</a>
           </div>
         </div>
       </section>
@@ -379,8 +390,8 @@ export default function Landing() {
         <div className={styles.row}>
           <h3 className={styles.h3}>Permanent Storage</h3>
           <div className={styles.b16}>
-            Open source code and all the collaboration data should be preserved
-            forever, therefore there is a need for a permanent store.
+            A global, permanent, and unalterable record of every single revision
+            ever made.
           </div>
         </div>
         <div className={styles.storageAnim} id="storageAnimSource">
@@ -431,24 +442,23 @@ export default function Landing() {
             <div className={classnames([styles.hlVertical, styles.mb36])}>
               <span>
                 <div className={styles.b18}>
-                  Decentralized Network of Gitopia provides high availability
-                  and stable network.
+                  A Decentralized Network of Gitopia nodes provides high
+                  availability and reliable service.
                 </div>
               </span>
             </div>
             <div
               className={classnames([styles.decentralizedDesc, styles.mb36])}
             >
-              Application will be served by a decentralized network of Gitopia
-              nodes that are incentivised for high availability and good
-              behaviour.
+              The application is served by a decentralized network of Gitopia
+              nodes, incentivised for high availability and good behaviour.
             </div>
             <div className={styles.primaryCTA}>
               <button
                 type="button"
                 className="lg:ml-4 px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               >
-                Get Started
+                Learn more
               </button>
             </div>
           </div>
@@ -471,16 +481,16 @@ export default function Landing() {
           <div className={styles.cgEndCol}>
             <div className={classnames([styles.hlBorder, styles.mb36])}>
               <div>
-                Source code once pushed cannot be taken down from the Gitopia
-                blockchain. Community decides the content policies and are
-                responsible for platform moderation.
+                There is no central authority that can take down any repository
+                on Gitopia. Instead, the community decides the content policies
+                and is responsible for platform moderation.
               </div>
             </div>
             <button
               type="button"
               className="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
             >
-              Read Our Terms
+              Learn more
             </button>
           </div>
         </div>
@@ -497,17 +507,17 @@ export default function Landing() {
           <div className={styles.cgEndCol}>
             <div className={classnames([styles.hlBorder, styles.mb36])}>
               <div>
-                In Gitopia, all the platform-related decisions will be taken
-                with the involvement of validators and delegators in a
-                transparent manner. They can vote on proposals and help shape
-                the future of Gitopia.
+                In Gitopia, all the platform-related decisions are taken with
+                the involvement of validators and delegators in a transparent
+                manner. They create proposals as well as vote and help shape the
+                future of Gitopia.
               </div>
             </div>
             <button
               type="button"
               className="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
             >
-              Read Our Terms
+              Learn more
             </button>
           </div>
         </div>
@@ -565,7 +575,7 @@ export default function Landing() {
           <div className={styles.roadmapActions}>
             <span className={styles.roadmapActionItem}>MVP Implementation</span>
             <span className={styles.roadmapActionItem}>
-              Start developing Gitopia blockchain built with Cosmos-SDK
+              Start developing Gitopia blockchain built with Cosmos SDK
             </span>
             <span className={styles.roadmapActionItem}>
               Launch first version of Gitopia Webapp
@@ -623,8 +633,8 @@ export default function Landing() {
           <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/faza.jpg" loading="lazy" />
             <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Faza Mohamood</div>
-              <div className={styles.teamDesig}>CEO & Founder</div>
+              <div className={styles.teamName}>Faza Mahamood</div>
+              <div className={styles.teamDesig}>CTO & Founder</div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
@@ -635,7 +645,7 @@ export default function Landing() {
             />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Alphonsa Neil</div>
-              <div className={styles.teamDesig}>Marketing</div>
+              <div className={styles.teamDesig}>Operations</div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
@@ -646,7 +656,7 @@ export default function Landing() {
             />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Snehil Buxy</div>
-              <div className={styles.teamDesig}>Blockchain Developer</div>
+              <div className={styles.teamDesig}>Senior Developer</div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
@@ -656,14 +666,14 @@ export default function Landing() {
               loading="lazy"
             />
             <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Kushagra</div>
+              <div className={styles.teamName}>Kushagra Singh</div>
               <div className={styles.teamDesig}>Marketing</div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/stian.jpg" loading="lazy" />
             <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Stian</div>
+              <div className={styles.teamName}>Stian Sandsgaard</div>
               <div className={styles.teamDesig}>Design</div>
             </div>
           </div>
@@ -772,18 +782,33 @@ export default function Landing() {
       <footer className={styles.footer}>
         <div className={styles.footerLogo}></div>
         <div className={styles.footerLinks}>
-          <a href="#">White Paper</a>
+          {/* <a href="#">About Us</a> */}
 
-          <a href="#">Twitter</a>
+          <a href="#">Whitepaper</a>
 
-          <a href="#">Telegram</a>
+          <a href="https://twitter.com/gitopiaOrg" target="_blank">
+            Twitter
+          </a>
 
-          <a href="#">Medium</a>
+          <a href="https://t.me/Gitopia" target="_blank">
+            Telegram
+          </a>
 
-          <a href="#">Discord</a>
+          <a href="https://medium.com/gitopia" target="_blank">
+            Medium
+          </a>
+
+          <a href="https://discord.gg/mVpQVW3vKE" target="_blank">
+            Discord
+          </a>
         </div>
         <div>
           <button
+            onclick={() => {
+              if (window) {
+                window.open("https://t.me/Gitopia");
+              }
+            }}
             type="button"
             className="px-28 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
           >
