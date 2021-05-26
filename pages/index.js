@@ -5,7 +5,7 @@ import styles from "../styles/landing.module.css";
 
 const pCircles = [
   {
-    url: "landing-circles.svg#circle1",
+    url: "#circle1",
     x: -70,
     y: -420,
     z: 11,
@@ -14,7 +14,7 @@ const pCircles = [
     r: 220,
   },
   {
-    url: "landing-circles.svg#circle2",
+    url: "#circle2",
     x: 430,
     y: -200,
     z: 5,
@@ -23,7 +23,7 @@ const pCircles = [
     r: 166,
   },
   {
-    url: "landing-circles.svg#circle3",
+    url: "#circle3",
     x: -480,
     y: -100,
     z: 9,
@@ -32,7 +32,7 @@ const pCircles = [
     r: 160,
   },
   {
-    url: "landing-circles.svg#circle4",
+    url: "#circle4",
     x: 80,
     y: 70,
     z: 7,
@@ -41,7 +41,7 @@ const pCircles = [
     r: 134,
   },
   {
-    url: "landing-circles.svg#circle5",
+    url: "#circle5",
     x: 130,
     y: 180,
     z: 9,
@@ -50,7 +50,7 @@ const pCircles = [
     r: 72,
   },
   {
-    url: "landing-circles.svg#circle6",
+    url: "#circle6",
     x: -500,
     y: -150,
     z: 15,
@@ -59,7 +59,7 @@ const pCircles = [
     r: 148,
   },
   {
-    url: "landing-circles.svg#circle7",
+    url: "#circle7",
     x: -700,
     y: 100,
     z: 13,
@@ -182,7 +182,11 @@ export default function Landing() {
             }
           }
         });
-        window.requestIdleCallback(addOrUpdateGlobs);
+        if (window.requestIdleCallback) {
+          window.requestIdleCallback(addOrUpdateGlobs);
+        } else {
+          setTimeout(addOrUpdateGlobs, 0);
+        }
       });
     }
 
@@ -361,8 +365,572 @@ export default function Landing() {
       </section>
 
       <section className={classnames([styles.section, styles.circleSection])}>
-        <svg className={styles.circleSectionEllipse}>
-          <use xlinkHref="landing-circles.svg#ellipse"></use>
+        <svg width="0" height="0">
+          <symbol
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 220 220"
+            id="circle1"
+          >
+            <defs>
+              <filter
+                id="filter1_ii"
+                x="-41"
+                y="-7"
+                width="265"
+                height="228"
+                filterUnits="userSpaceOnUse"
+                colorInterpolationFilters="sRGB"
+              >
+                <feFlood
+                  flood-opacity="0"
+                  result="BackgroundImageFix"
+                ></feFlood>
+                <feBlend
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                ></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="-41" dy="-7"></feOffset>
+                <feGaussianBlur stdDeviation="25"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0"></feColorMatrix>
+                <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="4" dy="1"></feOffset>
+                <feGaussianBlur stdDeviation="5"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 0.418889 0 0 0 0 0.868067 0 0 0 0 0.966667 0 0 0 1 0"></feColorMatrix>
+                <feBlend
+                  in2="effect1_innerShadow"
+                  result="effect2_innerShadow"
+                ></feBlend>
+              </filter>
+            </defs>
+            <g filter="url(#filter1_ii)">
+              <circle cx="110" cy="110" r="110" fill="#5957AA"></circle>
+            </g>
+            <g opacity=".5" fill-rule="evenodd" clip-rule="evenodd" fill="#fff">
+              <path d="M111.301 41.329c-.658-.606-.998-.617-1.055-.617-.057 0-.396.011-1.054.617-.676.621-1.483 1.694-2.353 3.349-1.737 3.303-3.399 8.296-4.832 14.739C99.154 72.25 97.361 90.135 97.361 110s1.793 37.75 4.646 50.583c1.433 6.443 3.095 11.436 4.832 14.739.87 1.655 1.677 2.728 2.353 3.349.658.606.997.617 1.054.617.057 0 .397-.011 1.055-.617.676-.621 1.483-1.694 2.353-3.349 1.737-3.303 3.399-8.296 4.831-14.739 2.854-12.833 4.647-30.718 4.647-50.583s-1.793-37.75-4.647-50.583c-1.432-6.443-3.094-11.436-4.831-14.739-.87-1.655-1.677-2.728-2.353-3.35zM126.374 110c0-40.058-7.221-72.53-16.128-72.53S94.119 69.941 94.119 110c0 40.057 7.22 72.53 16.127 72.53s16.128-32.473 16.128-72.53z"></path>
+              <path d="M170.282 76.575c.196-.872.036-1.17.008-1.218-.028-.048-.207-.337-1.061-.603-.877-.275-2.211-.437-4.08-.363-3.732.149-8.89 1.207-15.19 3.188-12.547 3.947-28.943 11.339-46.157 21.27-17.215 9.933-31.817 20.428-41.511 29.314-4.867 4.461-8.363 8.396-10.357 11.551-1 1.581-1.525 2.816-1.726 3.711-.195.871-.035 1.17-.008 1.218.028.048.207.336 1.062.603.877.274 2.21.437 4.08.363 3.732-.149 8.89-1.207 15.19-3.189 12.547-3.947 28.943-11.338 46.157-21.27 17.214-9.932 31.817-20.427 41.511-29.313 4.867-4.461 8.362-8.397 10.357-11.551.999-1.58 1.524-2.816 1.725-3.71zm-122.889 69.69c4.454 7.709 36.204-2.278 70.916-22.307 34.712-20.028 59.242-42.514 54.789-50.223-4.454-7.709-36.204 2.278-70.917 22.307-34.712 20.028-59.241 42.514-54.788 50.223z"></path>
+              <path d="M173.098 146.265c4.453-7.709-20.077-30.195-54.789-50.223-34.712-20.029-66.462-30.016-70.916-22.307-4.453 7.71 20.076 30.195 54.788 50.223 34.713 20.029 66.463 30.016 70.917 22.307zM50.2 75.357c.028-.049.208-.337 1.062-.603.877-.275 2.21-.437 4.08-.363 3.732.149 8.89 1.207 15.19 3.188 12.547 3.947 28.943 11.339 46.157 21.27 17.214 9.933 31.817 20.428 41.511 29.314 4.867 4.461 8.362 8.396 10.357 11.551.999 1.581 1.524 2.816 1.725 3.711.196.872.036 1.17.008 1.218-.028.048-.207.336-1.061.603-.877.274-2.211.437-4.08.363-3.732-.149-8.89-1.207-15.19-3.189-12.547-3.947-28.943-11.338-46.157-21.27-17.215-9.932-31.817-20.427-41.511-29.313-4.867-4.461-8.363-8.397-10.357-11.551-1-1.58-1.525-2.816-1.726-3.71-.195-.873-.035-1.171-.008-1.219z"></path>
+              <path d="M63.887 89.688c2.817 0 5.1 2.285 5.1 5.103a5.102 5.102 0 11-10.2 0 5.102 5.102 0 015.1-5.103zm81.062-17.474a5.102 5.102 0 010 10.206 5.102 5.102 0 110-10.206zm-44.98 80.092a5.102 5.102 0 110 10.201 5.101 5.101 0 110-10.201zm9.993-50.983a8.64 8.64 0 11.001 17.279 8.64 8.64 0 01-.001-17.279z"></path>
+            </g>
+          </symbol>
+          <symbol
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 166 166"
+            id="circle2"
+          >
+            <defs>
+              <filter
+                id="filter2_ii"
+                x="-41"
+                y="-7"
+                width="207"
+                height="174"
+                filterUnits="userSpaceOnUse"
+                colorInterpolationFilters="sRGB"
+              >
+                <feFlood
+                  flood-opacity="0"
+                  result="BackgroundImageFix"
+                ></feFlood>
+                <feBlend
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                ></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="-41" dy="-7"></feOffset>
+                <feGaussianBlur stdDeviation="25"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0"></feColorMatrix>
+                <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="-7" dy="1"></feOffset>
+                <feGaussianBlur stdDeviation="5"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 0.966667 0 0 0 0 0.747556 0 0 0 0 0.418889 0 0 0 1 0"></feColorMatrix>
+                <feBlend
+                  in2="effect1_innerShadow"
+                  result="effect2_innerShadow"
+                ></feBlend>
+              </filter>
+            </defs>
+            <g filter="url(#filter2_ii)">
+              <circle
+                r="83"
+                transform="matrix(-1 0 0 1 83 83)"
+                fill="#AA7057"
+              ></circle>
+            </g>
+            <path
+              opacity=".5"
+              d="M106.977 68.996c-.883-7.589-7.482-10.056-15.829-10.627l-.167-10.59-6.416.109.184 10.308c-1.693.04-3.428.09-5.153.184l-.195-10.352-6.416.108.199 10.535c-1.412.056-2.781.1-4.108.134l-.011-.043-8.885.17.137 6.87s4.743-.167 4.669-.101c2.61-.055 3.476 1.462 3.735 2.774l.192 12.055c.184-.003.41-.017.702.043a3.7 3.7 0 01-.69 0l.284 16.865c-.105.81-.58 2.134-2.37 2.154.067.074-4.668.1-4.668.1l-1.154 7.72 8.39-.13c1.564-.005 3.073-.041 4.594-.034l.19 10.675 6.416-.108-.167-10.589c1.747-.008 3.494-.016 5.144-.044l.199 10.535 6.415-.108-.19-10.675c10.826-.829 18.35-3.674 19.074-13.857.617-8.175-3.294-11.777-9.465-13.162 3.753-1.972 6.014-5.386 5.36-10.919zm-8.608 23.022c.156 7.968-13.554 7.314-17.91 7.377l-.249-14.158c4.357-.062 18.04-1.565 18.159 6.781zm-3.324-19.963c.112 7.29-11.3 6.619-14.923 6.669l-.216-12.832c3.623-.05 15.001-1.395 15.14 6.163z"
+              fill="#fff"
+            ></path>
+          </symbol>
+          <symbol
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 160 160"
+            id="circle3"
+          >
+            <defs>
+              <filter
+                id="filter3_ii"
+                x="-41"
+                y="-7"
+                width="205"
+                height="168"
+                filterUnits="userSpaceOnUse"
+                colorInterpolationFilters="sRGB"
+              >
+                <feFlood
+                  flood-opacity="0"
+                  result="BackgroundImageFix"
+                ></feFlood>
+                <feBlend
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                ></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="-41" dy="-7"></feOffset>
+                <feGaussianBlur stdDeviation="25"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0"></feColorMatrix>
+                <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="4" dy="1"></feOffset>
+                <feGaussianBlur stdDeviation="5"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 0.418889 0 0 0 0 0.868067 0 0 0 0 0.966667 0 0 0 1 0"></feColorMatrix>
+                <feBlend
+                  in2="effect1_innerShadow"
+                  result="effect2_innerShadow"
+                ></feBlend>
+              </filter>
+            </defs>
+            <g filter="url(#filter3_ii)">
+              <circle cx="80" cy="80" r="80" fill="#5778AA"></circle>
+            </g>
+            <g opacity=".5" fill="#fff">
+              <path d="M79.493 46.152L58.411 81.137l21.082-9.582V46.152z"></path>
+              <path d="M79.493 71.555L58.41 81.137l21.082 12.465V71.555zm21.086 9.582L79.493 46.152v25.403l21.086 9.582z"></path>
+              <path d="M79.493 93.602l21.086-12.465-21.086-9.582v22.047zM58.41 85.137l21.083 29.711V97.594L58.41 85.137zm21.083 12.457v17.254l21.097-29.711-21.097 12.457z"></path>
+            </g>
+          </symbol>
+
+          <symbol
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 134 134"
+            id="circle4"
+          >
+            <defs>
+              <filter
+                id="filter4_ii"
+                x="-41"
+                y="-7"
+                width="175"
+                height="141"
+                filterUnits="userSpaceOnUse"
+                colorInterpolationFilters="sRGB"
+              >
+                <feFlood
+                  flood-opacity="0"
+                  result="BackgroundImageFix"
+                ></feFlood>
+                <feBlend
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                ></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="-41" dy="-7"></feOffset>
+                <feGaussianBlur stdDeviation="25"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0"></feColorMatrix>
+                <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="-4" dy="-4"></feOffset>
+                <feGaussianBlur stdDeviation="5"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 0.966667 0 0 0 0 0.747556 0 0 0 0 0.418889 0 0 0 1 0"></feColorMatrix>
+                <feBlend
+                  in2="effect1_innerShadow"
+                  result="effect2_innerShadow"
+                ></feBlend>
+              </filter>
+            </defs>
+            <g filter="url(#filter4_ii)">
+              <circle
+                r="67"
+                transform="matrix(-1 0 0 1 67 67)"
+                fill="#AA7057"
+              ></circle>
+            </g>
+          </symbol>
+          <symbol
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 72 72"
+            id="circle5"
+          >
+            <defs>
+              <filter
+                id="filter5_ii"
+                x="-41"
+                y="-7"
+                width="113"
+                height="79"
+                filterUnits="userSpaceOnUse"
+                colorInterpolationFilters="sRGB"
+              >
+                <feFlood
+                  flood-opacity="0"
+                  result="BackgroundImageFix"
+                ></feFlood>
+                <feBlend
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                ></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="-41" dy="-7"></feOffset>
+                <feGaussianBlur stdDeviation="25"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0"></feColorMatrix>
+                <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="-3" dy="-1"></feOffset>
+                <feGaussianBlur stdDeviation="5"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 0.889978 0 0 0 0 0.418889 0 0 0 0 0.966667 0 0 0 1 0"></feColorMatrix>
+                <feBlend
+                  in2="effect1_innerShadow"
+                  result="effect2_innerShadow"
+                ></feBlend>
+              </filter>
+            </defs>
+            <g filter="url(#filter5_ii)">
+              <circle
+                r="36"
+                transform="matrix(-1 0 0 1 36 36)"
+                fill="#AA576B"
+              ></circle>
+            </g>
+          </symbol>
+          <symbol
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 110 110"
+            id="circle7"
+          >
+            <defs>
+              <filter
+                id="filter6_iif"
+                x="-17.21"
+                y=".474"
+                width="126.737"
+                height="109.053"
+                filterUnits="userSpaceOnUse"
+                colorInterpolationFilters="sRGB"
+              >
+                <feFlood
+                  flood-opacity="0"
+                  result="BackgroundImageFix"
+                ></feFlood>
+                <feBlend
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                ></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="-30.21" dy="-5.158"></feOffset>
+                <feGaussianBlur stdDeviation="18.421"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0"></feColorMatrix>
+                <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="2.947" dy=".737"></feOffset>
+                <feGaussianBlur stdDeviation="3.684"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 0.418889 0 0 0 0 0.868067 0 0 0 0 0.966667 0 0 0 1 0"></feColorMatrix>
+                <feBlend
+                  in2="effect1_innerShadow"
+                  result="effect2_innerShadow"
+                ></feBlend>
+                <feGaussianBlur
+                  stdDeviation="6.263"
+                  result="effect3_foregroundBlur"
+                ></feGaussianBlur>
+              </filter>
+            </defs>
+            <g opacity=".3" filter="url(#filter6_iif)">
+              <circle cx="55" cy="55" r="42" fill="#213A5F"></circle>
+            </g>
+          </symbol>
+          <symbol
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 148 148"
+            id="circle6"
+          >
+            <defs>
+              <filter
+                id="filter7_iif"
+                x="-24"
+                y="0"
+                width="172"
+                height="148"
+                filterUnits="userSpaceOnUse"
+                colorInterpolationFilters="sRGB"
+              >
+                <feFlood
+                  flood-opacity="0"
+                  result="BackgroundImageFix"
+                ></feFlood>
+                <feBlend
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                ></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="-41" dy="-7"></feOffset>
+                <feGaussianBlur stdDeviation="25"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0"></feColorMatrix>
+                <feBlend in2="shape" result="effect1_innerShadow"></feBlend>
+                <feColorMatrix
+                  in="SourceAlpha"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                ></feColorMatrix>
+                <feOffset dx="4" dy="1"></feOffset>
+                <feGaussianBlur stdDeviation="5"></feGaussianBlur>
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                ></feComposite>
+                <feColorMatrix values="0 0 0 0 0.418889 0 0 0 0 0.868067 0 0 0 0 0.966667 0 0 0 1 0"></feColorMatrix>
+                <feBlend
+                  in2="effect1_innerShadow"
+                  result="effect2_innerShadow"
+                ></feBlend>
+                <feGaussianBlur
+                  stdDeviation="8.5"
+                  result="effect3_foregroundBlur"
+                ></feGaussianBlur>
+              </filter>
+            </defs>
+            <g opacity=".3" filter="url(#filter7_iif)">
+              <circle cx="74" cy="74" r="57" fill="#5778AA"></circle>
+            </g>
+          </symbol>
+        </svg>
+        <svg
+          width={1600}
+          height={610}
+          viewBox="0 0 1600 610"
+          className={styles.circleSectionEllipse}
+        >
+          <defs>
+            <filter
+              id="filter0_i"
+              x="-148.084"
+              y="127.923"
+              width="1896.17"
+              height="657.59"
+              filterUnits="userSpaceOnUse"
+              colorInterpolationFilters="sRGB"
+            >
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feBlend
+                mode="normal"
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <feColorMatrix
+                in="SourceAlpha"
+                type="matrix"
+                values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                result="hardAlpha"
+              />
+              <feOffset dy="4" />
+              <feGaussianBlur stdDeviation="40" />
+              <feComposite
+                in2="hardAlpha"
+                operator="arithmetic"
+                k2="-1"
+                k3="1"
+              />
+              <feColorMatrix
+                type="matrix"
+                values="0 0 0 0 0.533333 0 0 0 0 0.231373 0 0 0 0 0.901961 0 0 0 1 0"
+              />
+              <feBlend mode="normal" in2="shape" result="effect1_innerShadow" />
+            </filter>
+            <linearGradient
+              id="paint0_linear"
+              x1="800"
+              y1="481.098"
+              x2="800"
+              y2="180.118"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="#C4C4C4" />
+              <stop offset="1" stop-color="#C4C4C4" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <mask
+            id="mask0"
+            mask-type="alpha"
+            maskUnits="userSpaceOnUse"
+            x="0"
+            y="0"
+            width="1600"
+            height="610"
+          >
+            <rect
+              width="1600"
+              height="609"
+              transform="matrix(1 0 0 -1 0 609.021)"
+              fill="#paint0_linear"
+            />
+          </mask>
+          <g mask="url(#mask0)">
+            <g filter="url(#filter0_i)">
+              <path
+                d="M-148.084 781.512C-148.084 608.17 -48.197 441.927 129.603 319.355C307.404 196.783 548.553 127.923 800.001 127.923C1051.45 127.923 1292.6 196.783 1470.4 319.355C1648.2 441.926 1748.09 608.169 1748.09 781.512L800.001 781.512L-148.084 781.512Z"
+                fill="#19072F"
+              />
+            </g>
+          </g>
         </svg>
         <div className={styles.row}>
           <h3 className={classnames([styles.h3, styles.hlHorizontal])}>
@@ -387,7 +955,7 @@ export default function Landing() {
                     "platformCircles",
                   ])}
                 >
-                  <use xlinkHref={circle.url}></use>
+                  <use href={circle.url}></use>
                 </svg>
               );
             })}
@@ -718,12 +1286,6 @@ export default function Landing() {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g filter="url(#filter0_f)">
-          <path
-            d="M479.033 25.3481C43.5333 237.849 192.123 539.409 -45.9179 604.874C-283.959 670.339 -530 530.439 -595.465 292.398C-660.93 54.3567 -521.029 -191.684 -282.988 -257.149C-44.9472 -322.614 1001.03 -171.152 479.033 25.3481Z"
-            fill="url(#paint0_radial)"
-          />
-        </g>
         <defs>
           <filter
             id="filter0_f"
@@ -758,6 +1320,12 @@ export default function Landing() {
             <stop offset="1" stopColor="#6029DB" />
           </radialGradient>
         </defs>
+        <g filter="url(#filter0_f)">
+          <path
+            d="M479.033 25.3481C43.5333 237.849 192.123 539.409 -45.9179 604.874C-283.959 670.339 -530 530.439 -595.465 292.398C-660.93 54.3567 -521.029 -191.684 -282.988 -257.149C-44.9472 -322.614 1001.03 -171.152 479.033 25.3481Z"
+            fill="url(#paint0_radial)"
+          />
+        </g>
       </svg>
       <svg
         className={styles.blob2}
@@ -767,12 +1335,6 @@ export default function Landing() {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g filter="url(#filter1_f)">
-          <path
-            d="M1094 738.021C1094 974.399 932.377 1339.02 695.999 1339.02C459.621 1339.02 320.499 1094.02 259.499 720.021C198.499 346.021 466.499 159.021 659.999 293.521C853.499 428.021 1094 501.643 1094 738.021Z"
-            fill="url(#paint1_radial)"
-          />
-        </g>
         <defs>
           <filter
             id="filter1_f"
@@ -792,7 +1354,7 @@ export default function Landing() {
             />
             <feGaussianBlur
               stdDeviation="125"
-              result="effect2_foregroundBlur"
+              result="effect1_foregroundBlur"
             />
           </filter>
           <radialGradient
@@ -807,6 +1369,12 @@ export default function Landing() {
             <stop offset="1" stopColor="#6029DB" />
           </radialGradient>
         </defs>
+        <g filter="url(#filter1_f)">
+          <path
+            d="M1094 738.021C1094 974.399 932.377 1339.02 695.999 1339.02C459.621 1339.02 320.499 1094.02 259.499 720.021C198.499 346.021 466.499 159.021 659.999 293.521C853.499 428.021 1094 501.643 1094 738.021Z"
+            fill="url(#paint1_radial)"
+          />
+        </g>
       </svg>
 
       <footer className={styles.footer}>
@@ -840,7 +1408,7 @@ export default function Landing() {
               }
             }}
             type="button"
-            className="px-28 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+            className="px-16 lg:px-28 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
           >
             Contact Us
           </button>
