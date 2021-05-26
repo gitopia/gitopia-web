@@ -5,7 +5,7 @@
   background: #19072f;
   position: relative;
   z-index: 1;
-  overflow-x: clip;
+  overflow-x: hidden;
   color: #e2ebf2;
 }
 
@@ -257,7 +257,7 @@
   width: 400px;
   display: flex;
   flex-direction: column;
-  overflow: clip;
+  overflow: hidden;
   mask-image: linear-gradient(
     to left,
     rgba(0, 0, 0, 1) 50%,
@@ -553,6 +553,12 @@
   display: block;
   height: 103.5px;
   font-size: 18px;
+}
+
+@media only screen and (-webkit-device-pixel-ratio: 2) {
+  .roadmapActionItem {
+    height: 99.5px;
+  }
 }
 
 .roadmapGraph {
