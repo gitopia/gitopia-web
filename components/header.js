@@ -1,57 +1,72 @@
-import Image from "next/image";
-import {
-  Navbar,
-  Nav,
-  Icon,
-  Dropdown,
-  Tag,
-  InputGroup,
-  AutoComplete,
-} from "rsuite";
-
-const data = ["gitopia", "git-remote-gitopia", "gitopia-mirror-action"];
-
 export default function Header() {
   return (
-    <Navbar appearance="subtle">
-      <Navbar.Header>
-        <a href="/" className="navbar-brand logo">
-          <Image
-            src="/logo-white.svg"
-            alt="Gitopia logo"
-            width={112}
-            height={56}
-          ></Image>
-        </a>
-      </Navbar.Header>
-      <Navbar.Body>
-        <Nav>
-          <InputGroup
-            inside
-            style={{ width: 350, display: "inline-flex", margin: 10 }}
+    <div className="navbar mb-2 shadow-lg bg-neutral text-neutral-content">
+      <div className="flex-none hidden lg:flex">
+        <button className="btn btn-square btn-ghost">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            className="inline-block w-6 h-6 stroke-current"
           >
-            <AutoComplete
-              data={data}
-              placeholder="Search repositories / wallets"
-            />
-            <InputGroup.Addon>
-              <Icon icon="search" />
-            </InputGroup.Addon>
-          </InputGroup>
-          <Nav.Item>Repositories</Nav.Item>
-          <Nav.Item>Proposals</Nav.Item>
-          <Nav.Item>Issues</Nav.Item>
-        </Nav>
-        <Nav pullRight>
-          <Nav.Item>
-            <Tag color="violet">0 LORE</Tag>
-          </Nav.Item>
-          <Dropdown icon={<Icon icon="user" />} title="Wallet Disconnected">
-            <Dropdown.Item>Profile</Dropdown.Item>
-            <Dropdown.Item>Settings</Dropdown.Item>
-          </Dropdown>
-        </Nav>
-      </Navbar.Body>
-    </Navbar>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <div className="flex-1 px-2 mx-2 lg:flex">
+        <img width={120} height={30} src="/logo-white.svg"></img>
+      </div>
+      <div className="flex-1 lg:flex-none">
+        <div className="form-control">
+          <input
+            type="text"
+            placeholder="Search"
+            className="input input-ghost"
+          />
+        </div>
+      </div>
+      <div className="flex-none mr-4">
+        <button className="btn btn-square btn-ghost">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            className="inline-block w-6 h-6 stroke-current"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <div className="flex-none mr-4">
+        <div className="dropdown dropdown-end">
+          <div tabIndex="0" className="avatar">
+            <div className="rounded-full w-10 h-10 m-1">
+              <img src="https://i.pravatar.cc/500?img=32" />
+            </div>
+          </div>
+          <ul className="shadow menu dropdown-content bg-base-100 rounded-box w-52">
+            <li>
+              <a>Item 1</a>
+            </li>
+            <li>
+              <a>Item 2</a>
+            </li>
+            <li>
+              <a>Item 3</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   );
 }

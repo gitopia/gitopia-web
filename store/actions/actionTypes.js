@@ -1,15 +1,3 @@
-// export const SET_ACTIVE_WALLET = "SET_ACTIVE_WALLET";
-// export const SET_ACTIVE_CLIENT = "SET_ACTIVE_CLIENT";
-// export const ADD_WALLET = "ADD_WALLET";
-// export const PATH_INCREMENT = "PATH_INCREMENT";
-// export const ADD_ACCOUNT = "ADD_ACCOUNT";
-// export const SET_RELAYERS = "SET_RELAYERS";
-// export const SET_SELECTED_ADDRESS = "SET_SELECTED_ADDRESS";
-// export const SET_BACKUP_STATE = "SET_BACKUP_STATE";
-// export const ADD_MESSAGE_TYPE = "ADD_MESSAGE_TYPE";
-// export const SIGN_OUT = "SIGN_OUT";
-// export const STORE_WALLETS = "STORE_WALLETS";
-
 export const walletActions = {
   SET_ACTIVE_WALLET: "SET_ACTIVE_WALLET",
   SET_ACTIVE_CLIENT: "SET_ACTIVE_CLIENT",

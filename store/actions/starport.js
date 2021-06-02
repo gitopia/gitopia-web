@@ -26,7 +26,7 @@ export const setStatusState = async (dispatch, getState) => {
   try {
     const { data } = await axios.get(`${state.starportUrl}/status`);
     const { status, env } = data;
-    console.log("Polling backend", data);
+    // console.log("Polling backend", data);
 
     // const GITPOD = env.vue_app_custom_url && new URL(env.vue_app_custom_url)
 

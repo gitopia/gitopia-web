@@ -10,7 +10,11 @@ module.exports = {
           50: "#DBFFDB",
           DEFAULT: "#66ce67",
           400: "#8BD18B",
-          900: "#3A9F3B",
+          900: "#33AB34",
+        },
+        red: {
+          DEFAULT: "#D82F28",
+          900: "#D82F28",
         },
         purple: {
           50: "#DBFFDB",
@@ -29,5 +33,8 @@ module.exports = {
       backgroundColor: ["active"],
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: ["light"],
+  },
 };

@@ -24,11 +24,17 @@ export const unlockWallet = ({ name, password }) => {
     const state = getState().wallet;
     const encryptedWallet =
       state.wallets[state.wallets.findIndex((x) => x.name === name)].wallet;
-    const wallet = JSON.parse(
-      CryptoJS.AES.decrypt(encryptedWallet, password).toString(
-        CryptoJS.enc.Utf8
-      )
-    );
+    let wallet;
+    try {
+      wallet = JSON.parse(
+        CryptoJS.AES.decrypt(encryptedWallet, password).toString(
+          CryptoJS.enc.Utf8
+        )
+      );
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
     dispatch({ type: walletActions.SET_ACTIVE_WALLET, payload: { wallet } });
     if (wallet.accounts.length > 0) {
       const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
@@ -52,9 +58,10 @@ export const unlockWallet = ({ name, password }) => {
           payload: { address: account.address },
         });
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     }
+    return true;
   };
 };
 
