@@ -25,9 +25,15 @@ const initStore = (context) => {
   // }
   console.log("initStore server?", isServer);
 
+  const composeEnhancers =
+    (typeof window !== "undefined" &&
+      window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
+    compose;
   return createStore(
     reducer,
-    applyMiddleware(thunk) //Applying redux-thunk middleware
+    composeEnhancers(
+      applyMiddleware(thunk) //Applying redux-thunk middleware
+    )
   );
 };
 
