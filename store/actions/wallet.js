@@ -132,7 +132,7 @@ export const createWalletWithMnemonic = ({
   name = null,
   mnemonic,
   HDpath = "m/44'/118'/0'/0",
-  prefix = "cosmos",
+  prefix = "gitopia",
   password = null,
 }) => {
   return async (dispatch, getState) => {
@@ -217,7 +217,7 @@ export const restoreWallet = ({ encrypted, password }) => {
   };
 };
 
-export const signInWithPrivateKey = ({ prefix = "cosmos", privKey }) => {
+export const signInWithPrivateKey = ({ prefix = "gitopia", privKey }) => {
   return async (dispatch, getState) => {
     const state = getState();
     const pKey = keyFromWif(privKey.trim());

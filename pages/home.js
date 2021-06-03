@@ -2,6 +2,7 @@ import Head from "next/head";
 import Header from "../components/header";
 import CreateWallet from "../components/createWallet";
 import CurrentWallet from "../components/currentWallet";
+import CreateRepository from "../components/createRepository"
 import BackendStatus from "../components/backendStatus";
 
 export default function Home(props) {
@@ -17,6 +18,8 @@ export default function Home(props) {
           <CurrentWallet />
           <div className="divider" />
           <CreateWallet />
+          <div className="divider" />
+          <CreateRepository />
           <div className="divider" />
           <BackendStatus />
         </div>

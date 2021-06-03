@@ -14,7 +14,7 @@ const rpcNode =
   "http://localhost:26657";
 const addrPrefix =
   //  process.env.VUE_APP_ADDRESS_PREFIX ||
-  "cosmos";
+  "gitopia";
 const wsNode =
   // (GITPOD && `wss://26657-${GITPOD.hostname}/websocket`) ||
   // (process.env.VUE_APP_WS_TENDERMINT &&
@@ -32,7 +32,7 @@ export const setStatusState = async (dispatch, getState) => {
 
     const starportUrl =
       // (GITPOD && `${GITPOD.protocol}//12345-${GITPOD.hostname}`) ||
-      "http://localhost:12345";
+      "http://localhost:8080";
 
     const frontendUrl =
       // (GITPOD && `${GITPOD.protocol}//8080-${GITPOD.hostname}`) ||
@@ -68,7 +68,7 @@ export const setStatusState = async (dispatch, getState) => {
 
     const addrPrefix =
       // VUE_APP_ADDRESS_PREFIX ||
-      "cosmos";
+      "gitopia";
 
     const envState = getState().env;
     const getTXApi =

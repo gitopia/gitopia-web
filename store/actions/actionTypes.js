@@ -12,6 +12,11 @@ export const walletActions = {
   STORE_WALLETS: "STORE_WALLETS",
 };
 
+export const repositoryActions = {
+  ADD_REPOSITORY: "ADD_REPOSITORY",
+  STORE_REPOSITORYS: "STORE_REPOSITORYS",
+};
+
 export const envActions = {
   SET_CONFIG: "SET_CONFIG",
   CONNECT: "CONNECT",
