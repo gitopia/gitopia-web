@@ -2,7 +2,7 @@ import { starportActions } from "../actions/actionTypes";
 
 const initialState = {
   _timer: null,
-  starportUrl: "http://localhost:12345",
+  starportUrl: "http://localhost:8080",
   frontendUrl: "",
   backend: {
     env: {
