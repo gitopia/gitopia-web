@@ -104,7 +104,8 @@ export async function getStaticProps(context) {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: "blocking",
+    // fallback: "blocking",
+    fallback: false,
   };
 }
 
@@ -139,7 +140,10 @@ export default function Home({ orgData, repositories, activities }) {
         repositories.map((repo, index) => {
           return (
             <List.Item key={index} index={index}>
-              <Button appearance="link" href={orgData.name + "/" + repo.repoName}>
+              <Button
+                appearance="link"
+                href={orgData.name + "/" + repo.repoName}
+              >
                 {repo.repoName}
               </Button>
             </List.Item>

@@ -4,17 +4,25 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next export",
     "start": "next start"
   },
   "dependencies": {
     "@apollo/client": "^3.3.12",
+    "classnames": "^2.3.1",
     "date-fns": "^2.19.0",
+    "framer-motion": "^4",
     "graphql": "^15.5.0",
     "lodash": "^4.17.21",
     "next": "10.0.9",
+    "preact": "^10.5.13",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "rsuite": "^4.9.3"
+    "rsuite": "^4.9.4"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.2.5",
+    "postcss": "^8.2.13",
+    "tailwindcss": "^2.1.2"
   }
 }
