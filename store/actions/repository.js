@@ -1,6 +1,6 @@
 import { removeFragmentSpreadFromDocument } from "@apollo/client/utilities";
 import { repositoryActions, envActions } from "./actionTypes";
-import { txClient } from "../module/index"
+import { txClient } from "gitopiajs";
 import {
   DirectSecp256k1HdWallet,
   DirectSecp256k1Wallet,
@@ -10,18 +10,13 @@ import {
 import { stringToPath } from "@cosmjs/crypto";
 import CryptoJS from "crypto-js";
 
-
-
 async function initTxClient(accountSigner) {
   return await txClient(accountSigner, {
-      addr: "http://localhost:26657"
+    addr: "http://localhost:26657",
   });
 }
 
-export const createRepository = ({
-  name = null,
-  description = null,
-}) => {
+export const createRepository = ({ name = null, description = null }) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
     /*
@@ -32,8 +27,7 @@ export const createRepository = ({
     const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
       state.activeWallet.mnemonic,
       stringToPath(
-        state.activeWallet.HDpath +
-          state.activeWallet.accounts[0].pathIncrement
+        state.activeWallet.HDpath + state.activeWallet.accounts[0].pathIncrement
       ),
       state.activeWallet.prefix
     );
@@ -44,13 +38,20 @@ export const createRepository = ({
       owner: acc.address,
       description: description,
     };
-    
+
     //dispatch({ type: repositoryActions.ADD_REPOSITORY, payload: { repository } });
     console.log(acc);
     console.log(repository);
     try {
-      const msg = await (await initTxClient(accountSigner)).msgCreateRepository(repository);
-      const result = await (await initTxClient(accountSigner)).signAndBroadcast([msg], { fee: { amount: [], gas: "200000" }, memo: "" });
+      const msg = await (
+        await initTxClient(accountSigner)
+      ).msgCreateRepository(repository);
+      const result = await (
+        await initTxClient(accountSigner)
+      ).signAndBroadcast([msg], {
+        fee: { amount: [], gas: "200000" },
+        memo: "",
+      });
       console.log(result);
     } catch (e) {
       console.log(e);
@@ -59,4 +60,3 @@ export const createRepository = ({
     //dispatch({ type: repositoryActions.STORE_REPOSITORYS });
   };
 };
-      
