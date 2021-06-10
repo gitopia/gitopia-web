@@ -30,7 +30,9 @@ export default function TextInput(
       />
       {props.hint.shown && (
         <label className="label">
-          <span className="label-text-alt">{props.hint.message}</span>
+          <span className={"label-text-alt text-" + props.hint.type}>
+            {props.hint.message}
+          </span>
         </label>
       )}
     </div>
