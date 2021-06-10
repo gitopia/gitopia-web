@@ -1,8 +1,8 @@
 export default function Header() {
   return (
-    <div className="navbar mb-2 shadow-lg bg-neutral text-neutral-content">
-      <div className="flex-none hidden lg:flex">
-        <button className="btn btn-square btn-ghost">
+    <div className="navbar border-b border-grey bg-base-100 text-base-content">
+      <div className="flex-none lg:hidden">
+        <label for="main-drawer" class="btn btn-square btn-ghost">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -16,36 +16,45 @@ export default function Header() {
               d="M4 6h16M4 12h16M4 18h16"
             ></path>
           </svg>
-        </button>
+        </label>
       </div>
-      <div className="flex-1 px-2 mx-2 lg:flex">
+      <div className="flex-none px-6 w-64">
         <img width={120} height={30} src="/logo-white.svg"></img>
       </div>
-      <div className="flex-1 lg:flex-none">
-        <div className="form-control">
-          <input
-            type="text"
-            placeholder="Search"
-            className="input input-ghost"
-          />
+      <div className="flex-none mr-6">
+        <div class="form-control">
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Search"
+              class="w-full pr-16 input input-ghost input-bordered"
+            />
+            <button class="absolute right-0 top-0 rounded-l-none btn btn-ghost">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
+      <div class="items-stretch">
+        <a class="btn btn-ghost btn-sm rounded-btn">Explore</a>
+        <a class="btn btn-ghost btn-sm rounded-btn">Marketplace</a>
+      </div>
+      <div className="flex-1"></div>
       <div className="flex-none mr-4">
-        <button className="btn btn-square btn-ghost">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="inline-block w-6 h-6 stroke-current"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-            ></path>
-          </svg>
-        </button>
+        <button className="btn btn-primary btn-sm px-4 ">Connect Wallet</button>
       </div>
       <div className="flex-none mr-4">
         <div className="dropdown dropdown-end">
@@ -54,7 +63,7 @@ export default function Header() {
               <img src="https://i.pravatar.cc/500?img=32" />
             </div>
           </div>
-          <ul className="shadow menu dropdown-content bg-base-100 rounded-box w-52">
+          <ul className="shadow menu dropdown-content bg-base-200 rounded-box w-52">
             <li>
               <a>Item 1</a>
             </li>
