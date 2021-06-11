@@ -41,7 +41,7 @@ module.exports = {
         "box-grad-tl":
           "linear-gradient(73.14deg, #3D264C -35.57%, rgba(61, 38, 76, 0) 25.95%);",
         "box-grad-v":
-          "linear-gradient(180deg, rgba(216, 185, 255, 0) 0%, rgba(216, 185, 255, 0.1) 100%);",
+          "linear-gradient(0deg, rgba(216, 185, 255, 0) 0%, rgba(216, 185, 255, 0.1) 100%);",
       }),
     },
   },
