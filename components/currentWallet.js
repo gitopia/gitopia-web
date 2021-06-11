@@ -55,59 +55,52 @@ function CurrentWallet(props) {
   }, [props.activeWallet]);
 
   return (
-    <div className="card lg:card-side inline-block shadow bordered max-w-xs w-full">
-      <div className="card-body">
-        <h6>
-          Active Wallet: {props.activeWallet ? props.activeWallet.name : ""}
-        </h6>
-        <div className="flex items-center">
-          <h3>Wallets({props.wallets.length}):</h3>
-
-          <select
-            className="select select-bordered select-sm w-24"
-            value={selectedWallet}
-            onChange={(e) => {
-              startUnlockingWallet(e.target.value);
-            }}
-          >
-            {props.wallets.map((wallet) => {
-              const isSelected =
-                wallet.name ===
-                (props.activeWallet ? props.activeWallet.name : "");
-              return (
-                <option value={wallet.name} selected={isSelected}>
-                  {wallet.name}
-                </option>
-              );
-            })}
-          </select>
+    <div className="card max-w-sm w-full p-4">
+      {isUnlocking ? (
+        <div className="w-48">
+          <TextInput
+            type="password"
+            name="wallet_password"
+            label={"Password for " + selectedWallet}
+            placeholder="Password"
+            value={password}
+            setValue={setPassword}
+            hint={passwordHint}
+          />
+          <div className="card-actions">
+            <button className="btn btn-primary" onClick={unlockWallet}>
+              Unlock
+            </button>
+            <button className="btn btn-ghost" onClick={resetWallet}>
+              Cancel
+            </button>
+          </div>
         </div>
-
-        {isUnlocking ? (
-          <>
-            <div className="form-control">
-              <TextInput
-                type="password"
-                name="wallet_password"
-                placeholder={"Password for " + selectedWallet}
-                value={password}
-                setValue={setPassword}
-                hint={passwordHint}
-              />
-            </div>
-            <div className="card-actions">
-              <button className="btn btn-primary" onClick={unlockWallet}>
-                Unlock
+      ) : (
+        <div className="flex flex-col">
+          {props.wallets.map((wallet, i) => {
+            const isSelected =
+              wallet.name ===
+              (props.activeWallet ? props.activeWallet.name : "");
+            return (
+              <button
+                onClick={(e) => {
+                  startUnlockingWallet(wallet.name);
+                }}
+                className={
+                  "btn rounded-full px-4 mb-1 avatar relative " +
+                  (isSelected ? "btn-disabled" : "btn-ghost")
+                }
+              >
+                <div className="rounded-full w-10 h-10 absolute left-1">
+                  <img src={"https://i.pravatar.cc/500?img=" + i} />
+                </div>
+                <div className="ml-10 mr-2">{wallet.name}</div>
               </button>
-              <button className="btn btn-ghost" onClick={resetWallet}>
-                Cancel
-              </button>
-            </div>
-          </>
-        ) : (
-          ""
-        )}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

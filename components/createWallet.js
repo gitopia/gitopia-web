@@ -3,6 +3,7 @@ import * as bip39 from "bip39";
 import { connect } from "react-redux";
 import { createWalletWithMnemonic } from "../store/actions/wallet";
 import TextInput from "./textInput";
+import { useRouter } from "next/router";
 
 function CreateWallet(props) {
   const [mnemonic, setMnemonic] = useState(bip39.generateMnemonic(256));
@@ -25,6 +26,7 @@ function CreateWallet(props) {
     message: "",
   });
   const [walletCreated, setWalletCreated] = useState(false);
+  const router = useRouter();
 
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });
@@ -94,60 +96,87 @@ function CreateWallet(props) {
   };
 
   return (
-    <div className="card lg:card-side inline-block shadow bordered max-w-xs w-full">
+    <>
       {walletCreated ? (
-        <div className="card-body">
-          <h2 className="card-title">Recovery phase</h2>
-          <div className="">{mnemonic}</div>
-          <div className="card-actions">
-            <button className="btn btn-primary" onClick={newCreateWallet}>
-              Ok
-            </button>
+        <>
+          <div className="text-6xl mt-12 mb-6">Recovery Phrase</div>
+          <div className="text-sm mb-8">
+            If you ever lose your login information, you can use this phrase to
+            recover your account
           </div>
-        </div>
+          <div className="max-w-2xl w-full p-4">
+            <ul className="grid grid-cols-6 grid-rows-4 gap-5 list-decimal list-inside">
+              {mnemonic.split(" ").map((word, i) => {
+                return <li>{word}</li>;
+              })}
+            </ul>
+          </div>
+          <div className="max-w-md w-full p-4">
+            <div className="card-actions">
+              <button className="btn btn-outline btn-block">
+                Download Backup
+              </button>
+              <button
+                className="btn btn-secondary btn-block"
+                onClick={() => {
+                  router.push("/home");
+                }}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </>
       ) : (
-        <div className="card-body">
-          <h2 className="card-title">Create Wallet</h2>
-          <div className="form-control mb-1">
-            <TextInput
-              type="text"
-              name="wallet_name"
-              placeholder="Wallet Name"
-              value={name}
-              setValue={setName}
-              hint={nameHint}
-            />
+        <>
+          <div className="text-6xl mt-12 mb-6">Create Wallet</div>
+          <div className="text-xs mb-8">
+            Your wallet is your login information to access the app
           </div>
-          <div className="form-control mb-1">
-            <TextInput
-              type="password"
-              name="wallet_password"
-              placeholder="Password"
-              value={password}
-              setValue={setPassword}
-              hint={passwordHint}
-            />
+
+          <div className="max-w-md w-full p-4">
+            <div className="form-control mb-1">
+              <TextInput
+                type="text"
+                name="wallet_name"
+                placeholder="Wallet Name"
+                value={name}
+                setValue={setName}
+                hint={nameHint}
+              />
+            </div>
+            <div className="form-control mb-1">
+              <TextInput
+                type="password"
+                name="wallet_password"
+                placeholder="Password"
+                value={password}
+                setValue={setPassword}
+                hint={passwordHint}
+              />
+            </div>
+            <div className="form-control">
+              <TextInput
+                type="password"
+                name="wallet_confirm_password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                setValue={setConfirmPassword}
+                hint={confirmPasswordHint}
+              />
+            </div>
+            <div className="card-actions">
+              <button
+                className="btn btn-secondary btn-block"
+                onClick={createWallet}
+              >
+                Create
+              </button>
+            </div>
           </div>
-          <div className="form-control">
-            <TextInput
-              type="password"
-              name="wallet_confirm_password"
-              placeholder="Confirm Password"
-              className="input input-primary input-bordered"
-              value={confirmPassword}
-              setValue={setConfirmPassword}
-              hint={confirmPasswordHint}
-            />
-          </div>
-          <div className="card-actions">
-            <button className="btn btn-primary" onClick={createWallet}>
-              Create
-            </button>
-            <button className="btn btn-ghost">Cancel</button>
-          </div>
-        </div>
+        </>
       )}
-    </div>
+    </>
   );
 }
 

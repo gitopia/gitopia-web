@@ -1,4 +1,18 @@
-export default function Header() {
+import { useState, useEffect } from "react";
+import { connect } from "react-redux";
+import Link from "next/link";
+import ClickAwayListener from "react-click-away-listener";
+import CurrentWallet from "./currentWallet";
+
+function Header(props) {
+  const [menuState, setMenuState] = useState(1);
+
+  const onUserMenuClose = () => {
+    setMenuState(1);
+  };
+
+  useEffect(onUserMenuClose, [props.activeWallet]);
+
   return (
     <div className="navbar border-b border-grey bg-base-100 text-base-content">
       <div className="flex-none lg:hidden">
@@ -54,28 +68,105 @@ export default function Header() {
       </div>
       <div className="flex-1"></div>
       <div className="flex-none mr-4">
-        <button className="btn btn-primary btn-sm px-4 ">Connect Wallet</button>
-      </div>
-      <div className="flex-none mr-4">
-        <div className="dropdown dropdown-end">
-          <div tabIndex="0" className="avatar">
-            <div className="rounded-full w-10 h-10 m-1">
-              <img src="https://i.pravatar.cc/500?img=32" />
+        <ClickAwayListener onClickAway={onUserMenuClose}>
+          <div
+            className={
+              "dropdown dropdown-end " +
+              (menuState !== 1 ? "dropdown-open" : "")
+            }
+          >
+            <button
+              tabIndex="0"
+              className={
+                "btn btn-primary rounded-full px-4 avatar relative " +
+                (props.activeWallet ? "btn-outline" : "")
+              }
+            >
+              <div className="rounded-full w-10 h-10 absolute left-1">
+                {props.activeWallet ? (
+                  <img
+                    src={
+                      "https://i.pravatar.cc/500?img=" +
+                      props.wallets.findIndex(
+                        (x) => x.name === props.activeWallet.name
+                      )
+                    }
+                  />
+                ) : (
+                  ""
+                )}
+              </div>
+              <div
+                className={"mr-2 " + (props.activeWallet ? "ml-10" : "ml-2")}
+              >
+                {props.activeWallet
+                  ? props.activeWallet.name
+                  : "Connect Wallet"}
+              </div>
+            </button>
+            <div className="shadow dropdown-content bg-base-300 rounded-box mt-2">
+              {menuState === 2 && <CurrentWallet />}
+              {menuState === 1 && (
+                <ul className="menu w-48 rounded-box">
+                  {props.activeWallet ? (
+                    <>
+                      <li>
+                        <a>Assets</a>
+                      </li>
+                      <li>
+                        <a>Transactions</a>
+                      </li>
+                      <li className="h-4">
+                        <div className="border-b border-grey mt-2"></div>
+                      </li>{" "}
+                    </>
+                  ) : (
+                    ""
+                  )}
+
+                  <li>
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        setMenuState(2);
+                        e.preventDefault();
+                      }}
+                    >
+                      {props.activeWallet ? "Switch" : "Saved"} Wallet
+                    </a>
+                  </li>
+                  <li>
+                    <Link href="/login">
+                      <a>Create New Wallet</a>
+                    </Link>
+                  </li>
+                  {props.activeWallet ? (
+                    <>
+                      <li className="h-4">
+                        <div className="border-b border-grey mt-2"></div>
+                      </li>
+                      <li>
+                        <a>Log Out</a>
+                      </li>
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </ul>
+              )}
             </div>
           </div>
-          <ul className="shadow menu dropdown-content bg-base-200 rounded-box w-52">
-            <li>
-              <a>Item 1</a>
-            </li>
-            <li>
-              <a>Item 2</a>
-            </li>
-            <li>
-              <a>Item 3</a>
-            </li>
-          </ul>
-        </div>
+        </ClickAwayListener>
       </div>
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    wallets: state.wallet.wallets,
+    activeWallet: state.wallet.activeWallet,
+  };
+};
+
+export default connect(mapStateToProps, {})(Header);

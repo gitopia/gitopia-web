@@ -1,7 +1,5 @@
 import Head from "next/head";
 import Header from "../components/header";
-import CreateWallet from "../components/createWallet";
-import CurrentWallet from "../components/currentWallet";
 import CreateRepository from "../components/createRepository";
 import BackendStatus from "../components/backendStatus";
 
@@ -23,38 +21,39 @@ export default function Home(props) {
               <option>Org: yEarn Finance</option>
             </select>
           </div>
-          <div className="p-8">
-            <div className="text-md border-b border-grey py-2 mb-4">
+          <div className="my-8">
+            <div className="text-md mx-8 border-b border-grey py-2 mb-4">
               Personal
             </div>
-            <ul class="menumenu-compact">
+            <ul class="menu compact mx-4">
               <li className="mb-2">
-                <a class="text-sm">Item 1</a>
+                <a class="rounded">Item 1</a>
               </li>
               <li>
-                <a class="text-sm">Item 2</a>
+                <a class="rounded">Item 2</a>
               </li>
             </ul>
           </div>
-          <div className="p-8">
-            <div className="text-md border-b border-grey py-2 mb-4">
+          <div className="my-8">
+            <div className="text-md mx-8 border-b border-grey py-2 mb-4">
               Decentralized
             </div>
-            <ul class="menumenu-compact">
+            <ul class="menu compact mx-4">
               <li className="mb-2">
-                <a class="text-sm">Item 1</a>
+                <a class="rounded">Item 1</a>
               </li>
               <li className="mb-2">
-                <a class="text-sm">Item 2</a>
+                <a class="rounded">Item 2</a>
               </li>
               <li className="mb-2">
-                <a class="text-sm">Item 3</a>
+                <a class="rounded">Item 3</a>
               </li>
               <li>
-                <a class="text-sm">Item 4</a>
+                <a class="rounded">Item 4</a>
               </li>
             </ul>
           </div>
+          <BackendStatus />
         </div>
         <div className="flex-1 ">
           <main className="container mx-auto max-w-screen-lg py-12">
@@ -75,7 +74,7 @@ export default function Home(props) {
             </div>
             <div className="flex mb-4">
               <div className="flex flex-1 mr-2 bg-box-grad-tl bg-base-200 p-4 rounded-md">
-                <div className="flex-none bg-box-grad-v w-40 h-full rounded-md">
+                <div className="flex-none bg-box-grad-v w-40 h-full rounded-md flex items-center">
                   <img src="repository.svg" />
                 </div>
                 <div className="flex flex-col px-8 py-12">
@@ -89,7 +88,7 @@ export default function Home(props) {
                 </div>
               </div>
               <div className="flex flex-1 ml-2 bg-box-grad-tl bg-base-200 p-4 rounded-md">
-                <div className="flex-none bg-box-grad-v w-40 h-full rounded-md"></div>
+                <div className="flex-none bg-box-grad-v w-40 h-full rounded-md flex items-center"></div>
                 <div className="flex flex-col px-8 py-12">
                   <div className="text-lg mb-8">Create a New Organisation</div>
                   <div className="text-xs mb-8">
@@ -168,8 +167,7 @@ export default function Home(props) {
               <CreateWallet />
               <div className="divider" />
               <CreateRepository />
-              <div className="divider" />
-              <BackendStatus /> */}
+              */}
             </div>
           </main>
         </div>

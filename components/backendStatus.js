@@ -7,40 +7,42 @@ import {
 
 function BackendStatus(props) {
   useEffect(() => {
-    props.startStarportPolling();
+    // props.startStarportPolling();
     return props.stopStarportPolling;
   }, []);
 
   return (
-    <div>
-      <h3>Services running</h3>
-      <div className="grid grid-cols-3 w-64">
-        <div>
-          <span>Panel</span>
+    <div className="px-8 my-8">
+      <div className="text-md border-b border-grey py-2 mb-4">
+        Services running
+      </div>
+      <div className="grid grid-rows-3 w-64">
+        <div className="mb-2">
           <span
             className={
-              "ml-2 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
+              "mr-2 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
               (props.isFrontendRunning ? "bg-green-900" : "bg-red-900")
             }
           />
+          <span className="text-sm">Panel</span>
         </div>
-        <div>
-          <span>API</span>
+        <div className="mb-2">
           <span
             className={
-              "ml-2 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
+              "mr-2 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
               (props.isApiRunning ? "bg-green-900" : "bg-red-900")
             }
           />
+          <span className="text-sm">API</span>
         </div>
-        <div>
-          <span>RPC</span>
+        <div className="mb-2">
           <span
             className={
-              "ml-2 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
+              "mr-2 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
               (props.isRpcRunning ? "bg-green-900" : "bg-red-900")
             }
           />
+          <span className="text-sm">RPC</span>
         </div>
       </div>
     </div>
