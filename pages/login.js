@@ -2,6 +2,14 @@ import Head from "next/head";
 import SimpleHeader from "../components/simpleHeader";
 import { useState } from "react";
 import CreateWallet from "../components/createWallet";
+import RecoverWallet from "../components/recoverWallet";
+
+/*
+Wizard Steps
+1 - Default selection screen
+2 - Create new wallet
+3 - Recover existing wallet
+*/
 
 export default function Login(props) {
   const [step, setStep] = useState(1);
@@ -77,6 +85,7 @@ export default function Login(props) {
         )}
 
         {step === 2 && <CreateWallet />}
+        {step === 3 && <RecoverWallet />}
       </div>
       <div className="flex-none text-center mb-4">
         <a className="text-xs uppercase mr-8">Privacy Policy</a>

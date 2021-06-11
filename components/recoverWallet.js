@@ -1,12 +1,17 @@
 import { useState } from "react";
-import * as bip39 from "bip39";
 import { connect } from "react-redux";
+import * as bip39 from "bip39";
 import { createWalletWithMnemonic } from "../store/actions/wallet";
 import TextInput from "./textInput";
 import { useRouter } from "next/router";
 
-function CreateWallet(props) {
-  const [mnemonic, setMnemonic] = useState(bip39.generateMnemonic(256));
+function RecoverWallet(props) {
+  const [mnemonic, setMnemonic] = useState("");
+  const [mnemonicHint, setMnemonicHint] = useState({
+    shown: false,
+    type: "error",
+    message: "",
+  });
   const [name, setName] = useState("");
   const [nameHint, setNameHint] = useState({
     shown: false,
@@ -25,10 +30,11 @@ function CreateWallet(props) {
     type: "error",
     message: "",
   });
-  const [walletCreated, setWalletCreated] = useState(false);
+  const [mnemonicValidated, setMnemonicValidated] = useState(false);
   const router = useRouter();
 
   const hideHints = () => {
+    setMnemonicHint({ ...mnemonicHint, shown: false });
     setNameHint({ ...nameHint, shown: false });
     setPasswordHint({ ...passwordHint, shown: false });
     setConfirmPasswordHint({ ...confirmPasswordHint, shown: false });
@@ -74,6 +80,29 @@ function CreateWallet(props) {
     return true;
   };
 
+  const validateMnemonic = () => {
+    hideHints();
+    if (mnemonic === "") {
+      setMnemonicHint({
+        ...mnemonicHint,
+        shown: true,
+        message: "Please enter recovery phrase",
+      });
+      return false;
+    }
+
+    if (!bip39.validateMnemonic(mnemonic)) {
+      setMnemonicHint({
+        ...mnemonicHint,
+        shown: true,
+        message: "Please enter 24 valid english words",
+      });
+      console.log(mnemonic.split(" ").length);
+      return false;
+    }
+    return true;
+  };
+
   const createWallet = async () => {
     if (validateWallet()) {
       let res = await props.createWalletWithMnemonic({
@@ -82,7 +111,13 @@ function CreateWallet(props) {
         password,
       });
       console.log(res);
-      setWalletCreated(true);
+      router.push("/home");
+    }
+  };
+
+  const recoverWallet = () => {
+    if (validateMnemonic()) {
+      setMnemonicValidated(true);
     }
   };
 
@@ -92,44 +127,16 @@ function CreateWallet(props) {
     setPassword("");
     setConfirmPassword("");
     setMnemonic(bip39.generateMnemonic(256));
-    setWalletCreated(false);
+    setMnemonicValidated(false);
   };
 
   return (
     <>
-      {walletCreated ? (
+      {mnemonicValidated ? (
         <>
-          <div className="text-6xl mt-12 mb-6">Recovery Phrase</div>
+          <div className="text-6xl mt-12 mb-6">Recover Wallet</div>
           <div className="text-sm mb-8">
-            If you ever lose your login information, you can use this phrase to
-            recover your account
-          </div>
-          <div className="max-w-2xl w-full p-4">
-            <ul className="grid grid-cols-6 grid-rows-4 gap-5 list-decimal list-inside">
-              {mnemonic.split(" ").map((word, i) => {
-                return <li>{word}</li>;
-              })}
-            </ul>
-          </div>
-          <div className="max-w-md w-full p-4">
-            <button className="btn btn-outline btn-block">
-              Download Backup
-            </button>
-            <button
-              className="btn btn-secondary btn-block"
-              onClick={() => {
-                router.push("/home");
-              }}
-            >
-              Done
-            </button>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="text-6xl mt-12 mb-6">Create Wallet</div>
-          <div className="text-xs mb-8">
-            Your wallet is your login information to access the app
+            Enter a name and password for your recovered wallet
           </div>
 
           <div className="max-w-md w-full p-4">
@@ -168,7 +175,35 @@ function CreateWallet(props) {
                 className="btn btn-secondary btn-block"
                 onClick={createWallet}
               >
-                Create
+                Recover
+              </button>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="text-6xl mt-12 mb-6">Recover Wallet</div>
+          <div className="text-xs mb-8">
+            Enter your wallet recovery phrase to log in
+          </div>
+          <div className="max-w-md w-full p-4">
+            <div className="mb-5">
+              <TextInput
+                type="text"
+                name="mnemonic"
+                placeholder="24 word recovery phrase"
+                value={mnemonic}
+                setValue={setMnemonic}
+                hint={mnemonicHint}
+                multiline={true}
+              />
+            </div>
+            <div className="">
+              <button
+                className="btn btn-secondary btn-block"
+                onClick={recoverWallet}
+              >
+                Recover
               </button>
             </div>
           </div>
@@ -186,4 +221,4 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   createWalletWithMnemonic,
-})(CreateWallet);
+})(RecoverWallet);
