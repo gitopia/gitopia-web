@@ -105,7 +105,7 @@ export default function Home(props) {
               <div>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-12 w-12 border rounded p-2 inline ml-2 mr-6 opacity-60"
+                  className="h-12 w-12 border rounded-md p-2 inline ml-2 mr-6 opacity-60"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

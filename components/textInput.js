@@ -23,7 +23,7 @@ export default function TextInput(
           name={props.name}
           placeholder={props.placeholder}
           className={
-            "input input-bordered h-24 " +
+            "input input-bordered h-24 py-2 " +
             (props.hint.shown ? "input-" + props.hint.type : "")
           }
           value={props.value}

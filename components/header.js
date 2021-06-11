@@ -1,19 +1,23 @@
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import ClickAwayListener from "react-click-away-listener";
 import CurrentWallet from "./currentWallet";
 
 /*
-Menu Steps
+Menu States
 1 - Default menu
 2 - Wallet selection
 */
 
 function Header(props) {
   const [menuState, setMenuState] = useState(1);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
 
   const onUserMenuClose = () => {
+    setMenuOpen(false);
     setMenuState(1);
   };
 
@@ -77,8 +81,7 @@ function Header(props) {
         <ClickAwayListener onClickAway={onUserMenuClose}>
           <div
             className={
-              "dropdown dropdown-end " +
-              (menuState !== 1 ? "dropdown-open" : "")
+              "dropdown dropdown-end " + (menuOpen ? "dropdown-open" : "")
             }
           >
             <button
@@ -87,6 +90,12 @@ function Header(props) {
                 "btn btn-primary rounded-full px-4 avatar relative " +
                 (props.activeWallet ? "btn-outline" : "")
               }
+              onClick={(e) => {
+                if (!props.activeWallet && !props.wallets.length) {
+                  router.push("/login");
+                }
+                setMenuOpen(true);
+              }}
             >
               <div className="rounded-full w-10 h-10 absolute left-1">
                 {props.activeWallet ? (

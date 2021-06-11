@@ -134,7 +134,7 @@ function RecoverWallet(props) {
     <>
       {mnemonicValidated ? (
         <>
-          <div className="text-6xl mt-12 mb-6">Recover Wallet</div>
+          <div className="text-6xl mb-6">Recover Wallet</div>
           <div className="text-sm mb-8">
             Enter a name and password for your recovered wallet
           </div>
@@ -182,7 +182,7 @@ function RecoverWallet(props) {
         </>
       ) : (
         <>
-          <div className="text-6xl mt-12 mb-6">Recover Wallet</div>
+          <div className="text-6xl mb-6">Recover Wallet</div>
           <div className="text-xs mb-8">
             Enter your wallet recovery phrase to log in
           </div>

@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function SimpleHeader(props) {
   return (
     <div className="navbar bg-base-100 text-base-content">
-      <div className="container mx-auto py-4">
+      <div className="container mx-auto py-7">
         <div className="flex-none">
           <Link href="/home">
             <img
