@@ -4,6 +4,12 @@ import Link from "next/link";
 import ClickAwayListener from "react-click-away-listener";
 import CurrentWallet from "./currentWallet";
 
+/*
+Menu Steps
+1 - Default menu
+2 - Wallet selection
+*/
+
 function Header(props) {
   const [menuState, setMenuState] = useState(1);
 
