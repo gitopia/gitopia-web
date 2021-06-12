@@ -82,9 +82,19 @@ export default function Home(props) {
                   <div className="text-xs mb-8">
                     Begin from scratch or import an excisting repository
                   </div>
-                  <button className="btn btn-outline btn-md">
+                  <a
+                    href="#create-repo"
+                    className="btn btn-outline btn-md modal-button"
+                  >
                     Create a Repository
-                  </button>
+                  </a>
+                  <div>
+                    <div id="create-repo" class="modal">
+                      <div class="modal-box max-w-md">
+                        <CreateRepository />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="flex flex-1 ml-2 bg-box-grad-tl bg-base-200 p-4 rounded-md">
@@ -160,14 +170,6 @@ export default function Home(props) {
                   Read More
                 </a>
               </div>
-            </div>
-            <div>
-              {/* <CurrentWallet />
-              <div className="divider" />
-              <CreateWallet />
-              <div className="divider" />
-              <CreateRepository />
-              */}
             </div>
           </main>
         </div>
