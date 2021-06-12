@@ -27,7 +27,11 @@ function CreateRepository(props) {
   const validateRepository = () => {
     hideHints();
     if (name === "") {
-      setNameHint({ ...nameHint, shown: true, message: "Please enter a repository name" });
+      setNameHint({
+        ...nameHint,
+        shown: true,
+        message: "Please enter a repository name",
+      });
       return false;
     }
     let alreadyAvailable = false;
@@ -60,7 +64,7 @@ function CreateRepository(props) {
     if (validateRepository()) {
       let res = await props.createRepository({
         name,
-        description
+        description,
       });
       console.log(res);
       setRepositoryCreated(true);
@@ -75,18 +79,22 @@ function CreateRepository(props) {
   };
 
   return (
-    <div className="card lg:card-side inline-block shadow bordered max-w-xs w-full">
+    <div className="w-full">
       {repositoryCreated ? (
-        <div className="card-body">
+        <div className="p-4">
           <h2 className="card-title">Repository Created Successfully</h2>
-          <div className="card-actions">
-            <button className="btn btn-primary" onClick={newCreateRepository}>
+          <div className="modal-action">
+            <a
+              href="#"
+              className="btn btn-primary"
+              onClick={newCreateRepository}
+            >
               Ok
-            </button>
+            </a>
           </div>
         </div>
       ) : (
-        <div className="card-body">
+        <div className="p-4">
           <h2 className="card-title">Create Repository</h2>
           <div className="form-control mb-1">
             <TextInput
@@ -103,17 +111,19 @@ function CreateRepository(props) {
               type="text"
               name="repository_description"
               placeholder="Description"
-              className="input input-primary input-bordered"
+              multiline={true}
               value={description}
               setValue={setDescription}
               hint={descriptionHint}
             />
           </div>
-          <div className="card-actions">
+          <div className="modal-action">
             <button className="btn btn-primary" onClick={createRepository}>
               Create
             </button>
-            <button className="btn btn-ghost">Cancel</button>
+            <a href="#" className="btn btn-ghost" onClick={newCreateRepository}>
+              Cancel
+            </a>
           </div>
         </div>
       )}
