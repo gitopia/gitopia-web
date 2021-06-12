@@ -202,7 +202,7 @@ export default function Landing() {
     <div className={styles.wrapper}>
       <Head>
         <title>Gitopia</title>
-        <link rel="icon" href="/favicon.svg" />
+        <link rel="icon" href="/favicon.png" />
         <meta
           name="description"
           content="The new age decentralized code collaboration platform"

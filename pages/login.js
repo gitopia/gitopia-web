@@ -20,7 +20,7 @@ export default function Login(props) {
     >
       <Head>
         <title>Gitopia - Login</title>
-        <link rel="icon" href="/favicon.svg" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       <SimpleHeader />
 

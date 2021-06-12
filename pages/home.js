@@ -8,7 +8,7 @@ export default function Home(props) {
     <div data-theme="dark" className="bg-base-100 text-base-content">
       <Head>
         <title>Gitopia</title>
-        <link rel="icon" href="/favicon.svg" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
       <div className="flex">
