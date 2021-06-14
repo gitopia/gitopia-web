@@ -26,7 +26,7 @@ function Header(props) {
   return (
     <div className="navbar border-b border-grey bg-base-100 text-base-content">
       <div className="flex-none lg:hidden">
-        <label for="main-drawer" class="btn btn-square btn-ghost">
+        <label htmlFor="main-drawer" className="btn btn-square btn-ghost">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -46,14 +46,14 @@ function Header(props) {
         <img width={120} height={30} src="/logo-white.svg"></img>
       </div>
       <div className="flex-none mr-6">
-        <div class="form-control">
-          <div class="relative">
+        <div className="form-control">
+          <div className="relative">
             <input
               type="text"
               placeholder="Search"
-              class="w-full pr-16 input input-ghost input-bordered"
+              className="w-full pr-16 input input-ghost input-bordered"
             />
-            <button class="absolute right-0 top-0 rounded-l-none btn btn-ghost">
+            <button className="absolute right-0 top-0 rounded-l-none btn btn-ghost">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -72,9 +72,9 @@ function Header(props) {
           </div>
         </div>
       </div>
-      <div class="items-stretch">
-        <a class="btn btn-ghost btn-sm rounded-btn">Explore</a>
-        <a class="btn btn-ghost btn-sm rounded-btn">Marketplace</a>
+      <div className="items-stretch">
+        <a className="btn btn-ghost btn-sm rounded-btn">Explore</a>
+        <a className="btn btn-ghost btn-sm rounded-btn">Marketplace</a>
       </div>
       <div className="flex-1"></div>
       <div className="flex-none mr-4">

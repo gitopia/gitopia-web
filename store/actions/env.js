@@ -1,7 +1,8 @@
+import Client from "@starport/client-js";
 import { starportActions, envActions } from "./actionTypes";
 
-export const init = (config) => {
-  return async (dispatch) => {
+export const init = (initConfig) => {
+  return async (dispatch, getState) => {
     //TODO fix actions and dispatch
     //     if (this._actions['common/starport/init']) {
     //       try {
@@ -18,9 +19,9 @@ export const init = (config) => {
     //       }
     //     } else {
     try {
-      await config();
+      config(initConfig)(dispatch, getState);
     } catch (e) {
-      console.error("Env:Config", "Could not configure environment");
+      console.error("Env:Config", "Could not configure environment", e);
     }
     // }
   };
@@ -76,16 +77,15 @@ export const config = (
           rpcAddr: config.rpcNode,
           wsAddr: config.wsNode,
         });
-        client.on("ws-status", (status) =>
-          dispatch({ type: envActions.SET_WS_STATUS, payload: { status } })
-        );
-        client.on("api-status", (status) =>
-          dispatch({ type: envActions.SET_API_STATUS, payload: { status } })
-        );
-        client.on("rpc-status", (status) =>
-          dispatch({ type: envActions.SET_RPC_STATUS, payload: { status } })
-        );
-        console.log("config", config);
+        client.on("ws-status", (status) => {
+          dispatch({ type: envActions.SET_WS_STATUS, payload: { status } });
+        });
+        client.on("api-status", (status) => {
+          dispatch({ type: envActions.SET_API_STATUS, payload: { status } });
+        });
+        client.on("rpc-status", (status) => {
+          dispatch({ type: envActions.SET_RPC_STATUS, payload: { status } });
+        });
         dispatch({ type: envActions.SET_CONFIG, payload: { config } });
         dispatch({ type: envActions.CONNECT, payload: { client } });
         dispatch({ type: envActions.INITIALIZE_WS_COMPLETE });

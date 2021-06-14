@@ -15,9 +15,9 @@ export default function SimpleHeader(props) {
           </Link>
         </div>
         <div className="flex-1"></div>
-        <div class="items-stretch">
-          <a class="btn btn-ghost btn-sm rounded-btn">Login</a>
-          <a class="btn btn-ghost btn-sm rounded-btn">Contact Us</a>
+        <div className="items-stretch">
+          <a className="btn btn-ghost btn-sm rounded-btn">Login</a>
+          <a className="btn btn-ghost btn-sm rounded-btn">Contact Us</a>
         </div>
       </div>
     </div>
