@@ -23,7 +23,7 @@ const initStore = (context) => {
   //Setup Redux Debuger
   // composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
   // }
-  console.log("initStore server?", isServer);
+  // console.log("initStore server?", isServer);
 
   const composeEnhancers =
     (typeof window !== "undefined" &&

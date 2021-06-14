@@ -75,7 +75,7 @@
     ripemd160 "^2.0.2"
     sha.js "^2.4.11"
 
-"@cosmjs/amino@^0.25.4":
+"@cosmjs/amino@^0.25.0", "@cosmjs/amino@^0.25.4":
   version "0.25.4"
   resolved "https://registry.yarnpkg.com/@cosmjs/amino/-/amino-0.25.4.tgz#478da0e5933b50d22e412e17dcf6784eeeb7d937"
   integrity sha512-S22PlzC/VoJirv5UpDYe4XIVtOHKHxGLYgpgBkv10P4vpEhD872R0G7dRfiZZ35lMbu0+vvJxn3e/pEOEVGcuA==
@@ -128,7 +128,7 @@
     bech32 "^1.1.4"
     readonly-date "^1.0.0"
 
-"@cosmjs/encoding@^0.25.4":
+"@cosmjs/encoding@^0.25.0", "@cosmjs/encoding@^0.25.4":
   version "0.25.4"
   resolved "https://registry.yarnpkg.com/@cosmjs/encoding/-/encoding-0.25.4.tgz#7589f350410e91728f8377fef782117382873da6"
   integrity sha512-wYwYYbCGwDyhaROX6EyZBaiMqpTME8oo7KaRChS6O/6w5hZcfWAyo0NVaHCv8atxt/h0lYroazEXxOVKY+uo6A==
@@ -164,12 +164,21 @@
   dependencies:
     bn.js "^4.11.8"
 
-"@cosmjs/math@^0.25.4":
+"@cosmjs/math@^0.25.0", "@cosmjs/math@^0.25.4":
   version "0.25.4"
   resolved "https://registry.yarnpkg.com/@cosmjs/math/-/math-0.25.4.tgz#1a70b26c18f990654dfd195a1a2b544b48269572"
   integrity sha512-mnf5TgDObjx1yt1Vxkr3k/vncTL4FPRu3eSHjYM+EyQeNmy/Dld0fHFWxELeGqlQ09kVuqFY1jkKG2R96YRHww==
   dependencies:
     bn.js "^4.11.8"
+
+"@cosmjs/proto-signing@0.25.0":
+  version "0.25.0"
+  resolved "https://registry.yarnpkg.com/@cosmjs/proto-signing/-/proto-signing-0.25.0.tgz#834c3f05d452b907caf8bfa06a6dbef2001a372f"
+  integrity sha512-5nEYuY4VmzY7ul7WwIL9WI5ZshOXmp/uZrj+L0IppbTvBK0ZRCxfZwJQWfHv7kjJoNfprFapKiZZfKz8LnsCIA==
+  dependencies:
+    "@cosmjs/amino" "^0.25.0"
+    long "^4.0.0"
+    protobufjs "~6.10.2"
 
 "@cosmjs/proto-signing@^0.24.1":
   version "0.24.1"
@@ -180,7 +189,7 @@
     long "^4.0.0"
     protobufjs "~6.10.2"
 
-"@cosmjs/proto-signing@^0.25.4":
+"@cosmjs/proto-signing@^0.25.0", "@cosmjs/proto-signing@^0.25.4":
   version "0.25.4"
   resolved "https://registry.yarnpkg.com/@cosmjs/proto-signing/-/proto-signing-0.25.4.tgz#82a2bdfc105f66c8d9cdf2cfbb86e6da960ab49a"
   integrity sha512-W9qJTH0LkOY/WsCe/V2hv6px7gZZxwh8TpLEKSSh4XOUjtqKHcr2jhbdXfi1CQm5lgbvEsovdzVv8VgbtgJxDQ==
@@ -199,6 +208,22 @@
     ws "^7"
     xstream "^11.14.0"
 
+"@cosmjs/stargate@0.25.0":
+  version "0.25.0"
+  resolved "https://registry.yarnpkg.com/@cosmjs/stargate/-/stargate-0.25.0.tgz#ac3a14806d4c78116863cf77bf4f8d09667733fc"
+  integrity sha512-XKnh8QDKoYCGGviMSs+JteY1gVVkkBad+mMGcoGrBbvzDFc4Xm7alQDb/JVNWCLmALyIrqmdQ4Nfn1Znpfi9CA==
+  dependencies:
+    "@confio/ics23" "^0.6.3"
+    "@cosmjs/amino" "^0.25.0"
+    "@cosmjs/encoding" "^0.25.0"
+    "@cosmjs/math" "^0.25.0"
+    "@cosmjs/proto-signing" "^0.25.0"
+    "@cosmjs/stream" "^0.25.0"
+    "@cosmjs/tendermint-rpc" "^0.25.0"
+    "@cosmjs/utils" "^0.25.0"
+    long "^4.0.0"
+    protobufjs "~6.10.2"
+
 "@cosmjs/stargate@0.25.4":
   version "0.25.4"
   resolved "https://registry.yarnpkg.com/@cosmjs/stargate/-/stargate-0.25.4.tgz#49c0add61de229cfc725c35ec7f59e5077b04229"
@@ -215,14 +240,14 @@
     long "^4.0.0"
     protobufjs "~6.10.2"
 
-"@cosmjs/stream@^0.25.4":
+"@cosmjs/stream@^0.25.0", "@cosmjs/stream@^0.25.4":
   version "0.25.4"
   resolved "https://registry.yarnpkg.com/@cosmjs/stream/-/stream-0.25.4.tgz#9b978ee27355d6d4268ebed7be6d6d701e6ccd50"
   integrity sha512-Z/if46lnNyiGojzQgSi4ztaqDCJ4gljlmGw6hX/7MrPn5dtmaSqWjLep5CMh7moiR9ZaAeqRPTdUsb99CjiKMQ==
   dependencies:
     xstream "^11.14.0"
 
-"@cosmjs/tendermint-rpc@^0.25.4":
+"@cosmjs/tendermint-rpc@^0.25.0", "@cosmjs/tendermint-rpc@^0.25.4":
   version "0.25.4"
   resolved "https://registry.yarnpkg.com/@cosmjs/tendermint-rpc/-/tendermint-rpc-0.25.4.tgz#8fcf8850ecbc4851a2763303bda8962779ee6d2b"
   integrity sha512-F8qiSTtDcS7ZkfvX4RfodpoMG7C7kwLJ8P7umSeWe0wkLaO6NYoKcqxBGjc6E7XVy+XtJDyfF3gqNDJz5/Jtpg==
@@ -242,7 +267,7 @@
   resolved "https://registry.yarnpkg.com/@cosmjs/utils/-/utils-0.24.1.tgz#0adfefe63b7f17222bc2bc12f71296f35e7ad378"
   integrity sha512-VA3WFx1lMFb7esp9BqHWkDgMvHoA3D9w+uDRvWhVRpUpDc7RYHxMbWExASjz+gNblTCg556WJGzF64tXnf9tdQ==
 
-"@cosmjs/utils@^0.25.4":
+"@cosmjs/utils@^0.25.0", "@cosmjs/utils@^0.25.4":
   version "0.25.4"
   resolved "https://registry.yarnpkg.com/@cosmjs/utils/-/utils-0.25.4.tgz#6e617543476e9e1f72bfcb6e263b273e01e4ba93"
   integrity sha512-SRkE+Nc0hwuWdsUCQCF3HNWcxhm8UtTg2fIo8CJpecusYfKSGKzkeL1O/Ja/+xDpuTAXW2s2mfVyaAW5b5pHVQ==
@@ -417,6 +442,17 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
+"@starport/client-js@^0.1.50":
+  version "0.1.50"
+  resolved "https://registry.yarnpkg.com/@starport/client-js/-/client-js-0.1.50.tgz#9741b715bed613b177b13fc054c6fcc8b6d96e13"
+  integrity sha512-J4f11xJEK3Hp7fl84+elbl/qm2ZXXKDERSu18Sye1v0soPogP6mx2NzmP1r0g/wbTYO/DJa40K2N/LSMLgRBrw==
+  dependencies:
+    "@cosmjs/proto-signing" "0.25.0"
+    "@cosmjs/stargate" "0.25.0"
+    "@types/reconnectingwebsocket" "^1.0.6"
+    axios "^0.21.1"
+    reconnecting-websocket "^4.4.0"
+
 "@types/hoist-non-react-statics@^3.3.0":
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.1.tgz#1124aafe5118cb591977aeb1ceaaed1070eb039f"
@@ -468,6 +504,11 @@
     "@types/prop-types" "*"
     "@types/scheduler" "*"
     csstype "^3.0.2"
+
+"@types/reconnectingwebsocket@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@types/reconnectingwebsocket/-/reconnectingwebsocket-1.0.6.tgz#36bee1193e9c36bd78815a266219f74b5291f8e6"
+  integrity sha512-5kiyJhOW2T25/fN/tG4CU2AypmhSEf0SRID986X+EIq5h8SBnYP3TjQBRDnltWkm8w35IjfL5gENyRmIoDJh5w==
 
 "@types/scheduler@*":
   version "0.16.1"
@@ -2307,6 +2348,11 @@ readonly-date@^1.0.0:
   resolved "https://registry.yarnpkg.com/readonly-date/-/readonly-date-1.0.0.tgz#5af785464d8c7d7c40b9d738cbde8c646f97dcd9"
   integrity sha512-tMKIV7hlk0h4mO3JTmmVuIlJVXjKk3Sep9Bf5OH0O+758ruuVkUy2J9SttDLm91IEX/WHlXPSpxMGjPj4beMIQ==
 
+reconnecting-websocket@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/reconnecting-websocket/-/reconnecting-websocket-4.4.0.tgz#3b0e5b96ef119e78a03135865b8bb0af1b948783"
+  integrity sha512-D2E33ceRPga0NvTDhJmphEgJ7FUYF0v4lr1ki0csq06OdlxKfugGzN0dSkxM/NfqCxYELK4KcaTOUOjTV6Dcng==
+
 reduce-css-calc@^2.1.8:
   version "2.1.8"
   resolved "https://registry.yarnpkg.com/reduce-css-calc/-/reduce-css-calc-2.1.8.tgz#7ef8761a28d614980dc0c982f772c93f7a99de03"
@@ -2327,7 +2373,7 @@ redux@^4.0.0, redux@^4.0.5:
   dependencies:
     "@babel/runtime" "^7.9.2"
 
-regenerator-runtime@^0.13.4:
+regenerator-runtime@^0.13.4, regenerator-runtime@^0.13.7:
   version "0.13.7"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.7.tgz#cac2dacc8a1ea675feaabaeb8ae833898ae46f55"
   integrity sha512-a54FxoJDIr27pgf7IgeQGxmqUNYrcV338lf/6gH456HZ/PhX+5BcwHXG9ajESmwe6WRO0tAzRUrRmNONWgkrew==

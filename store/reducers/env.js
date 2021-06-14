@@ -1,7 +1,7 @@
 import { envActions } from "../actions/actionTypes";
 
 const initialState = {
-  chainId: "",
+  chainId: null,
   addrPrefix: "",
   sdkVersion: "Stargate",
   apiNode: "http://localhost:1317",

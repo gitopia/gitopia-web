@@ -12,9 +12,9 @@ export default function Home(props) {
       </Head>
       <Header />
       <div className="flex">
-        <div class="w-64 border-r border-grey">
+        <div className="w-64 border-r border-grey">
           <div className="border-b border-grey p-4">
-            <select class="select select-ghost select-md w-full max-w-xs">
+            <select className="select select-ghost select-md w-full max-w-xs">
               <option selected="selected">Snehil Buxy</option>
               <option>Org: Gitopia</option>
               <option>Org: Polygon</option>
@@ -25,12 +25,12 @@ export default function Home(props) {
             <div className="text-md mx-8 border-b border-grey py-2 mb-4">
               Personal
             </div>
-            <ul class="menu compact mx-4">
+            <ul className="menu compact mx-4">
               <li className="mb-2">
-                <a class="rounded">Item 1</a>
+                <a className="rounded">Item 1</a>
               </li>
               <li>
-                <a class="rounded">Item 2</a>
+                <a className="rounded">Item 2</a>
               </li>
             </ul>
           </div>
@@ -38,18 +38,18 @@ export default function Home(props) {
             <div className="text-md mx-8 border-b border-grey py-2 mb-4">
               Decentralized
             </div>
-            <ul class="menu compact mx-4">
+            <ul className="menu compact mx-4">
               <li className="mb-2">
-                <a class="rounded">Item 1</a>
+                <a className="rounded">Item 1</a>
               </li>
               <li className="mb-2">
-                <a class="rounded">Item 2</a>
+                <a className="rounded">Item 2</a>
               </li>
               <li className="mb-2">
-                <a class="rounded">Item 3</a>
+                <a className="rounded">Item 3</a>
               </li>
               <li>
-                <a class="rounded">Item 4</a>
+                <a className="rounded">Item 4</a>
               </li>
             </ul>
           </div>
@@ -58,14 +58,14 @@ export default function Home(props) {
         <div className="flex-1 ">
           <main className="container mx-auto max-w-screen-lg py-12">
             <div className="flex mb-12">
-              <div className>
+              <div>
                 <div className="text-xs uppercase">Welcome,</div>
                 <div className="text-lg">Snehil Buxy</div>
               </div>
               <div className="flex-1"></div>
               <div className>
                 <div className="text-xs uppercase ml-2">Show:</div>
-                <select class="select select-ghost select-xs w-32">
+                <select className="select select-ghost select-xs w-32">
                   <option selected="selected">Pull Requests</option>
                   <option>Issues</option>
                   <option>Proposals</option>
@@ -89,8 +89,8 @@ export default function Home(props) {
                     Create a Repository
                   </a>
                   <div>
-                    <div id="create-repo" class="modal">
-                      <div class="modal-box max-w-md">
+                    <div id="create-repo" className="modal">
+                      <div className="modal-box max-w-md">
                         <CreateRepository />
                       </div>
                     </div>
@@ -132,7 +132,7 @@ export default function Home(props) {
                 </div>
               </div>
 
-              <a class="btn btn-primary btn-link btn-xs">Import files</a>
+              <a className="btn btn-primary btn-link btn-xs">Import files</a>
             </div>
             <div className="">
               <div className="flex mb-6 items-center">
