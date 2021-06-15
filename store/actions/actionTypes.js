@@ -18,6 +18,7 @@ export const repositoryActions = {
 };
 
 export const envActions = {
+  SIGN_IN: "SIGN_IN",
   SET_CONFIG: "SET_CONFIG",
   CONNECT: "CONNECT",
   INITIALIZE_WS_COMPLETE: "INITIALIZE_WS_COMPLETE",

@@ -21,6 +21,13 @@ function Header(props) {
     setMenuState(1);
   };
 
+  let addressToShow;
+  if (props.selectedAddress) {
+    addressToShow = props.selectedAddress;
+    let trimText = addressToShow.slice(10, 42);
+    addressToShow = addressToShow.replace(trimText, "...");
+  }
+
   useEffect(onUserMenuClose, [props.activeWallet]);
 
   return (
@@ -125,6 +132,29 @@ function Header(props) {
                 <ul className="menu w-48 rounded-box">
                   {props.activeWallet ? (
                     <>
+                      {addressToShow && (
+                        <li>
+                          <a
+                            onClick={(e) => {
+                              navigator.clipboard.writeText(
+                                props.activeWallet.accounts[0].address
+                              );
+                              setMenuOpen(false);
+                            }}
+                          >
+                            <span className="flex-1">{addressToShow}</span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                              <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                            </svg>
+                          </a>
+                        </li>
+                      )}
                       <li>
                         <a>Assets</a>
                       </li>
@@ -181,6 +211,7 @@ const mapStateToProps = (state) => {
   return {
     wallets: state.wallet.wallets,
     activeWallet: state.wallet.activeWallet,
+    selectedAddress: state.wallet.selectedAddress,
   };
 };
 
