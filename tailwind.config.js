@@ -10,6 +10,9 @@ module.exports = {
   },
   darkMode: "media", // or 'media' or 'class'
   theme: {
+    fontFamily: {
+      sans: ["SegoeUI", "sans-serif"],
+    },
     extend: {
       colors: {
         transparent: "transparent",
