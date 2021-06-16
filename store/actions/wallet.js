@@ -4,9 +4,10 @@ import {
   DirectSecp256k1Wallet,
 } from "@cosmjs/proto-signing";
 
-// import { assertIsBroadcastTxSuccess } from '@cosmjs/stargate'
+import { assertIsBroadcastTxSuccess } from "@cosmjs/stargate";
 import { stringToPath } from "@cosmjs/crypto";
 import CryptoJS from "crypto-js";
+import { Api } from "../cosmos.bank.v1beta1/module/rest";
 // import { keyFromWif, keyToWif } from '../../../helpers/keys'
 
 // export const setActiveWallet = (dispatch, wallet) => {
@@ -57,6 +58,7 @@ export const unlockWallet = ({ name, password }) => {
           type: walletActions.SET_SELECTED_ADDRESS,
           payload: { address: account.address },
         });
+        await getBalance("token")(dispatch, getState);
       } catch (e) {
         console.error(e);
       }
@@ -238,6 +240,58 @@ export const signInWithPrivateKey = ({ prefix = "gitopia", privKey }) => {
       });
     } catch (e) {
       console.log(e);
+    }
+  };
+};
+
+export const sendTransaction = ({ message, memo, denom }) => {
+  return async (dispatch, getState) => {
+    const state = getState().wallet;
+    const fee = {
+      amount: [{ amount: "0", denom }],
+      gas: "200000",
+    };
+    try {
+      console.log({
+        add: state.selectedAddress,
+        msg: [message],
+        fee,
+        memo,
+      });
+      const result = await state.activeClient.signAndBroadcast(
+        state.selectedAddress,
+        [message],
+        fee,
+        memo
+      );
+      assertIsBroadcastTxSuccess(result);
+    } catch (e) {
+      console.log(e);
+      throw "Failed to broadcast transaction." + e;
+    }
+  };
+};
+
+export const getBalance = (denom) => {
+  return async (dispatch, getState) => {
+    const state = getState().wallet;
+    const api = new Api({ baseUrl: "http://localhost:1317" });
+    try {
+      const res = await api.queryBalance(state.selectedAddress, denom);
+      dispatch({
+        type: walletActions.UPDATE_BALANCE,
+        payload: {
+          balance: res.data.balance.amount,
+        },
+      });
+    } catch (e) {
+      dispatch({
+        type: walletActions.UPDATE_BALANCE,
+        payload: {
+          balance: 0,
+        },
+      });
+      console.error("Unable to update lore balance", e);
     }
   };
 };

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import ClickAwayListener from "react-click-away-listener";
 import CurrentWallet from "./currentWallet";
+import { getBalance } from "../store/actions/wallet";
 
 /*
 Menu States
@@ -84,6 +85,14 @@ function Header(props) {
         <a className="btn btn-ghost btn-sm rounded-btn">Marketplace</a>
       </div>
       <div className="flex-1"></div>
+      {props.activeWallet ? (
+        <div className="flex-none mr-4">
+          <div className="badge badge-secondary">{props.loreBalance} LORE</div>
+        </div>
+      ) : (
+        ""
+      )}
+
       <div className="flex-none mr-4">
         <ClickAwayListener onClickAway={onUserMenuClose}>
           <div
@@ -212,6 +221,7 @@ const mapStateToProps = (state) => {
     wallets: state.wallet.wallets,
     activeWallet: state.wallet.activeWallet,
     selectedAddress: state.wallet.selectedAddress,
+    loreBalance: state.wallet.loreBalance,
   };
 };
 

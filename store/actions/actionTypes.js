@@ -10,6 +10,7 @@ export const walletActions = {
   ADD_MESSAGE_TYPE: "ADD_MESSAGE_TYPE",
   SIGN_OUT: "SIGN_OUT",
   STORE_WALLETS: "STORE_WALLETS",
+  UPDATE_BALANCE: "UPDATE_BALANCE",
 };
 
 export const repositoryActions = {

@@ -36,6 +36,8 @@ const initialState = {
   selectedAddress: "",
   authorized: false,
   gasPrice: "0.0000025token",
+  backupState: false,
+  loreBalance: 0,
 };
 
 const reducer = (state = initialState, action) => {
@@ -141,6 +143,14 @@ const reducer = (state = initialState, action) => {
       state.authorized = false;
       return {
         ...state,
+      };
+    }
+
+    case walletActions.UPDATE_BALANCE: {
+      let { balance } = action.payload;
+      return {
+        ...state,
+        loreBalance: balance,
       };
     }
 
