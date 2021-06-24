@@ -2,6 +2,7 @@ import Head from "next/head";
 import Header from "../components/header";
 import CreateRepository from "../components/createRepository";
 import BackendStatus from "../components/backendStatus";
+import FaucetReceiver from "../components/faucetReceiver";
 
 export default function Home(props) {
   return (
@@ -54,6 +55,14 @@ export default function Home(props) {
             </ul>
           </div>
           <BackendStatus />
+          <div className="my-8">
+            <div className="text-md mx-8 border-b border-grey py-2 mb-4">
+              Faucet
+            </div>
+            <div className="mx-8">
+              <FaucetReceiver />
+            </div>
+          </div>
         </div>
         <div className="flex-1 ">
           <main className="container mx-auto max-w-screen-lg py-12">

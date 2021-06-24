@@ -29,4 +29,12 @@ module.exports = withTM({
     loader: "imgix",
     path: "http://localhost:3000/",
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/faucet",
+        destination: "http://localhost:4500",
+      },
+    ];
+  },
 });
