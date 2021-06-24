@@ -22,6 +22,7 @@ module.exports = withTM({
   ) {
     return {
       "/": { page: "/" },
+      "/home": { page: "/home" },
     };
   },
   images: {
