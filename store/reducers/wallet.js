@@ -154,6 +154,24 @@ const reducer = (state = initialState, action) => {
       };
     }
 
+    case walletActions.SET_ACTIVE_WALLET_USERNAME: {
+      let { username } = action.payload;
+      let activeWallet = { ...state.activeWallet };
+      activeWallet.username = username;
+      if (activeWallet.name && activeWallet.password) {
+        state.wallets[
+          state.wallets.findIndex((x) => x.name === activeWallet.name)
+        ].wallet = CryptoJS.AES.encrypt(
+          JSON.stringify(activeWallet),
+          activeWallet.password
+        ).toString();
+      }
+      return {
+        ...state,
+        activeWallet,
+      };
+    }
+
     default:
       return state;
   }

@@ -3,6 +3,7 @@ import Header from "../components/header";
 import CreateRepository from "../components/createRepository";
 import BackendStatus from "../components/backendStatus";
 import FaucetReceiver from "../components/faucetReceiver";
+import CreateUser from "../components/createUser";
 
 export default function Home(props) {
   return (
@@ -120,6 +121,7 @@ export default function Home(props) {
                 </div>
               </div>
             </div>
+            <CreateUser />
             <div className="flex mb-12 bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md">
               <div>
                 <svg

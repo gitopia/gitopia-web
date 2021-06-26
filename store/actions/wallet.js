@@ -8,6 +8,7 @@ import { assertIsBroadcastTxSuccess } from "@cosmjs/stargate";
 import { stringToPath } from "@cosmjs/crypto";
 import CryptoJS from "crypto-js";
 import { Api } from "../cosmos.bank.v1beta1/module/rest";
+import { txClient } from "gitopiajs";
 // import { keyFromWif, keyToWif } from '../../../helpers/keys'
 
 // export const setActiveWallet = (dispatch, wallet) => {
@@ -292,6 +293,43 @@ export const getBalance = (denom) => {
         },
       });
       console.error("Unable to update lore balance", e);
+    }
+  };
+};
+
+export const claimUsername = (username) => {
+  return async (dispatch, getState) => {
+    console.log("claimUsername", username);
+    const state = getState().wallet;
+    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
+      state.activeWallet.mnemonic,
+      stringToPath(
+        state.activeWallet.HDpath + state.activeWallet.accounts[0].pathIncrement
+      ),
+      state.activeWallet.prefix
+    );
+    let tc = await txClient(accountSigner, {
+      addr: "http://localhost:26657",
+    });
+    try {
+      const msg = await tc.msgCreateUser({
+        username: username,
+        creator: state.selectedAddress,
+      });
+      const result = await tc.signAndBroadcast([msg], {
+        fee: { amount: [], gas: "200000" },
+        memo: "",
+      });
+      console.log(result);
+      if (result.code === 0) {
+        dispatch({
+          type: walletActions.SET_ACTIVE_WALLET_USERNAME,
+          payload: { username },
+        });
+        dispatch({ type: walletActions.STORE_WALLETS });
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 };

@@ -11,10 +11,14 @@ function FaucetReceiver(props) {
     if (loading !== 0) return;
     setLoading(amount);
     axios
-      .post("/api/faucet", {
-        address: props.selectedAddress,
-        coins: [amount + "token"],
-      })
+      .post(
+        "/api/faucet",
+        {
+          address: props.selectedAddress,
+          coins: [amount + "token"],
+        },
+        { timeout: 5000 }
+      )
       .then((res) => props.getBalance("token"))
       .catch((err) => console.error(err))
       .finally(() => setLoading(0));

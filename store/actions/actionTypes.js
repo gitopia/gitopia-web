@@ -11,6 +11,7 @@ export const walletActions = {
   SIGN_OUT: "SIGN_OUT",
   STORE_WALLETS: "STORE_WALLETS",
   UPDATE_BALANCE: "UPDATE_BALANCE",
+  SET_ACTIVE_WALLET_USERNAME: "SET_ACTIVE_WALLET_USERNAME",
 };
 
 export const repositoryActions = {
