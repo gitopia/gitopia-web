@@ -1241,17 +1241,6 @@ export default function Landing() {
           <div className={"row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
-              src="/alphonsa.jpg"
-              loading="lazy"
-            />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Alphonsa Neil</div>
-              <div className={styles.teamDesig}>Operations</div>
-            </div>
-          </div>
-          <div className={"row-span-4 " + styles.teamCard}>
-            <img
-              className={styles.teamImage}
               src="/snehil.jpg"
               loading="lazy"
             />
