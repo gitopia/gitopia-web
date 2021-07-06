@@ -1267,9 +1267,9 @@ get-orientation@1.1.2:
   dependencies:
     stream-parser "^0.3.1"
 
-"gitopiajs@git+ssh://git@github.com:gitopia/gitopia.git#gitopiajs-v0.1.0-gitpkg":
-  version "0.1.0"
-  resolved "git+ssh://git@github.com:gitopia/gitopia.git#038e68f148d38f40b7b62d1f636e0e39ec037bb2"
+"gitopiajs@git+ssh://git@github.com:gitopia/gitopia.git#gitopiajs-v0.3.0-gitpkg":
+  version "0.3.0"
+  resolved "git+ssh://git@github.com:gitopia/gitopia.git#09110bdd475e2ad0116563cd2523618bcad3ae1f"
 
 glob-base@^0.3.0:
   version "0.3.0"

@@ -34,7 +34,10 @@ export const createRepository = ({ name = null, description = null }) => {
     const repository = {
       creator: acc.address,
       name: name,
-      owner: acc.address,
+      owner: JSON.stringify({
+        Type: "User",
+        ID: acc.address,
+      }),
       description: description,
     };
 
