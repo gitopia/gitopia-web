@@ -9,6 +9,7 @@ import { stringToPath } from "@cosmjs/crypto";
 import CryptoJS from "crypto-js";
 import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import { txClient } from "gitopiajs";
+import saveAs from "file-saver";
 // import { keyFromWif, keyToWif } from '../../../helpers/keys'
 
 // export const setActiveWallet = (dispatch, wallet) => {
@@ -330,6 +331,19 @@ export const claimUsername = (username) => {
       }
     } catch (e) {
       console.error(e);
+    }
+  };
+};
+
+export const downloadWalletForRemoteHelper = () => {
+  return async (dispatch, getState) => {
+    const state = getState().wallet;
+    if (state.activeWallet) {
+      const backup = JSON.stringify(state.activeWallet);
+      const blob = new Blob([backup.toString()], {
+        type: "application/json; charset=utf-8",
+      });
+      saveAs(blob, state.activeWallet.name + ".json");
     }
   };
 };

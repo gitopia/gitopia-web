@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import ClickAwayListener from "react-click-away-listener";
 import CurrentWallet from "./currentWallet";
-import { getBalance } from "../store/actions/wallet";
+import { downloadWalletForRemoteHelper } from "../store/actions/wallet";
 
 /*
 Menu States
@@ -165,6 +165,16 @@ function Header(props) {
                         </li>
                       )}
                       <li>
+                        <a
+                          onClick={(e) => {
+                            props.downloadWalletForRemoteHelper();
+                            setMenuOpen(false);
+                          }}
+                        >
+                          Download wallet for remote helper
+                        </a>
+                      </li>
+                      <li>
                         <a>Assets</a>
                       </li>
                       <li>
@@ -225,4 +235,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(Header);
+export default connect(mapStateToProps, { downloadWalletForRemoteHelper })(
+  Header
+);
