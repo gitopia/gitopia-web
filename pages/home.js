@@ -4,6 +4,7 @@ import CreateRepository from "../components/createRepository";
 import BackendStatus from "../components/backendStatus";
 import FaucetReceiver from "../components/faucetReceiver";
 import CreateUser from "../components/createUser";
+import TopRepositories from "../components/topRepositories";
 
 export default function Home(props) {
   return (
@@ -26,38 +27,7 @@ export default function Home(props) {
               <option value="4">Org: yEarn Finance</option>
             </select>
           </div>
-          <div className="my-8">
-            <div className="text-md mx-8 border-b border-grey py-2 mb-4">
-              Personal
-            </div>
-            <ul className="menu compact mx-4">
-              <li className="mb-2">
-                <a className="rounded">Item 1</a>
-              </li>
-              <li>
-                <a className="rounded">Item 2</a>
-              </li>
-            </ul>
-          </div>
-          <div className="my-8">
-            <div className="text-md mx-8 border-b border-grey py-2 mb-4">
-              Decentralized
-            </div>
-            <ul className="menu compact mx-4">
-              <li className="mb-2">
-                <a className="rounded">Item 1</a>
-              </li>
-              <li className="mb-2">
-                <a className="rounded">Item 2</a>
-              </li>
-              <li className="mb-2">
-                <a className="rounded">Item 3</a>
-              </li>
-              <li>
-                <a className="rounded">Item 4</a>
-              </li>
-            </ul>
-          </div>
+          <TopRepositories />
           <BackendStatus />
           <div className="my-8">
             <div className="text-md mx-8 border-b border-grey py-2 mb-4">
