@@ -16,11 +16,14 @@ export default function Home(props) {
       <div className="flex">
         <div className="w-64 border-r border-grey">
           <div className="border-b border-grey p-4">
-            <select className="select select-ghost select-md w-full max-w-xs">
-              <option selected="selected">Snehil Buxy</option>
-              <option>Org: Gitopia</option>
-              <option>Org: Polygon</option>
-              <option>Org: yEarn Finance</option>
+            <select
+              className="select select-ghost select-md w-full max-w-xs"
+              defaultValue="1"
+            >
+              <option value="1">Snehil Buxy</option>
+              <option value="2">Org: Gitopia</option>
+              <option value="3">Org: Polygon</option>
+              <option value="4">Org: yEarn Finance</option>
             </select>
           </div>
           <div className="my-8">
@@ -73,12 +76,15 @@ export default function Home(props) {
                 <div className="text-lg">Snehil Buxy</div>
               </div>
               <div className="flex-1"></div>
-              <div className>
+              <div>
                 <div className="text-xs uppercase ml-2">Show:</div>
-                <select className="select select-ghost select-xs w-32">
-                  <option selected="selected">Pull Requests</option>
-                  <option>Issues</option>
-                  <option>Proposals</option>
+                <select
+                  className="select select-ghost select-xs w-32"
+                  defaultValue="1"
+                >
+                  <option value="1">Pull Requests</option>
+                  <option value="2">Issues</option>
+                  <option value="3">Proposals</option>
                 </select>
               </div>
             </div>
