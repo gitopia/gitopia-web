@@ -1,4 +1,7 @@
-module.exports = {
+const withTM = require("@module-federation/next-transpile-modules")([
+  "gitopiajs",
+]); // pass the modules you would like to see transpiled
+module.exports = withTM({
   webpack(config, { dev, isServer }) {
     // ${previousConfig...}
 
@@ -19,10 +22,19 @@ module.exports = {
   ) {
     return {
       "/": { page: "/" },
+      "/home": { page: "/home" },
     };
   },
   images: {
     loader: "imgix",
-    path: "https://example.com/myaccount/",
+    path: "http://localhost:3000/",
   },
-};
+  async rewrites() {
+    return [
+      {
+        source: "/api/faucet",
+        destination: "http://localhost:4500",
+      },
+    ];
+  },
+});

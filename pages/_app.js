@@ -1,13 +1,13 @@
+import "regenerator-runtime/runtime.js";
 import "../styles/globals.css";
-// import Header from "../components/header";
+import { wrapper } from "../store";
 
 function MyApp({ Component, pageProps }) {
   return (
     <>
-      {/* <Header /> */}
       <Component {...pageProps} />
     </>
   );
 }
 
-export default MyApp;
+export default wrapper.withRedux(MyApp);
