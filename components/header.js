@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import ClickAwayListener from "react-click-away-listener";
 import CurrentWallet from "./currentWallet";
 import { downloadWalletForRemoteHelper } from "../store/actions/wallet";
-
+import shrinkAddress from "../helpers/shrinkAddress";
 /*
 Menu States
 1 - Default menu
@@ -24,9 +24,7 @@ function Header(props) {
 
   let addressToShow;
   if (props.selectedAddress) {
-    addressToShow = props.selectedAddress;
-    let trimText = addressToShow.slice(10, 42);
-    addressToShow = addressToShow.replace(trimText, "...");
+    addressToShow = shrinkAddress(props.selectedAddress);
   }
 
   useEffect(onUserMenuClose, [props.activeWallet]);

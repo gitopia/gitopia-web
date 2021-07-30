@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { txClient, queryClient } from "gitopiajs";
+import Link from "next/link";
 
 function TopRepositories(props) {
   const [repos, setRepos] = useState([]);
@@ -10,7 +11,17 @@ function TopRepositories(props) {
       const qc = await queryClient();
       const res = await qc.queryUserRepositoryAll(address);
       if (res.ok) {
-        setRepos(res.data.Repository.slice(0, 5));
+        const topRepos = res.data.Repository.slice(0, 5);
+        topRepos.forEach((r) => {
+          try {
+            const owner = JSON.parse(r.owner);
+            r.owner = owner;
+          } catch (e) {
+            console.error(e);
+          }
+        });
+        console.log(topRepos);
+        setRepos(topRepos);
       }
     } catch (e) {
       console.error(e);
@@ -32,7 +43,9 @@ function TopRepositories(props) {
         {repos.map((r) => {
           return (
             <li className="mb-2">
-              <a className="rounded">{r.name}</a>
+              <Link href={r.owner.ID + "/" + r.name}>
+                <a className="rounded">{r.name}</a>
+              </Link>
             </li>
           );
         })}
