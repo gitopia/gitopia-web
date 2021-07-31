@@ -49,12 +49,20 @@ function Header(props) {
         </label>
       </div>
       <div className="flex-none px-6 w-64">
-        <img width={120} height={30} src="/logo-white.svg"></img>
+        <Link href="/home">
+          <img
+            width={120}
+            height={30}
+            src="/logo-white.svg"
+            className="cursor-pointer"
+          ></img>
+        </Link>
       </div>
       <div className="flex-none mr-6">
         <div className="form-control">
           <div className="relative">
             <input
+              name="search"
               type="text"
               placeholder="Search"
               className="w-full pr-16 input input-ghost input-bordered"

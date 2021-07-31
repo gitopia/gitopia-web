@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@badrap/bar-of-progress": "^0.1.2",
     "@cosmjs/crypto": "^0.24.1",
     "@cosmjs/proto-signing": "^0.24.1",
     "@cosmjs/stargate": "0.25.4",

@@ -387,3 +387,7 @@ ul.mde-suggestions li[aria-selected="true"] {
   color: white;
   background-color: #0366d6;
 }
+
+.bar-of-progress {
+  z-index: 50;
+}
