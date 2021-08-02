@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Header from "../components/header";
-import CreateRepository from "../components/createRepository";
+import Link from "next/link";
 import BackendStatus from "../components/backendStatus";
 import FaucetReceiver from "../components/faucetReceiver";
 import CreateUser from "../components/createUser";
@@ -68,19 +68,11 @@ export default function Home(props) {
                   <div className="text-xs mb-8">
                     Begin from scratch or import an excisting repository
                   </div>
-                  <a
-                    href="#create-repo"
-                    className="btn btn-outline btn-md modal-button"
-                  >
-                    Create a Repository
-                  </a>
-                  <div>
-                    <div id="create-repo" className="modal">
-                      <div className="modal-box max-w-md">
-                        <CreateRepository />
-                      </div>
-                    </div>
-                  </div>
+                  <Link href="/new">
+                    <a className="btn btn-outline btn-md">
+                      Create a Repository
+                    </a>
+                  </Link>
                 </div>
               </div>
               <div className="flex flex-1 ml-2 bg-box-grad-tl bg-base-200 p-4 rounded-md">

@@ -42,7 +42,7 @@ function TopRepositories(props) {
       <ul className="menu compact mx-4">
         {repos.map((r) => {
           return (
-            <li className="mb-2">
+            <li className="mb-2" key={r.id}>
               <Link href={r.owner.ID + "/" + r.name}>
                 <a className="rounded">{r.name}</a>
               </Link>
