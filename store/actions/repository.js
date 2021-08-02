@@ -55,6 +55,7 @@ export const createRepository = ({ name = null, description = null }) => {
         memo: "",
       });
       console.log(result);
+      return result;
     } catch (e) {
       console.log(e);
     }

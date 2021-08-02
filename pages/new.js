@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Header from "../components/header";
 import TextInput from "../components/textInput";
+import { propTypes } from "react-markdown";
 
 function NewRepository(props) {
   const router = useRouter();
@@ -20,7 +21,7 @@ function NewRepository(props) {
     type: "error",
     message: "",
   });
-  const [repositoryCreated, setRepositoryCreated] = useState(false);
+  const [repositoryCreating, setRepositoryCreating] = useState(false);
 
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });
@@ -64,21 +65,18 @@ function NewRepository(props) {
   };
 
   const createRepository = async () => {
+    setRepositoryCreating(true);
     if (validateRepository()) {
       let res = await props.createRepository({
         name,
         description,
       });
       console.log(res);
-      setRepositoryCreated(true);
+      if (res && res.code === 0) {
+        router.push("/" + props.selectedAddress + "/" + name);
+      }
     }
-  };
-
-  const newCreateRepository = () => {
-    hideHints();
-    setName("");
-    setDescription("");
-    setRepositoryCreated(false);
+    setRepositoryCreating(false);
   };
 
   return (
@@ -145,7 +143,10 @@ function NewRepository(props) {
             </div>
             <div className="flex justify-end mt-4">
               <button
-                className="flex-none btn btn-primary"
+                className={
+                  "flex-none btn btn-primary " +
+                  (repositoryCreating ? "loading " : "")
+                }
                 onClick={createRepository}
               >
                 Create Repository
@@ -161,6 +162,7 @@ function NewRepository(props) {
 const mapStateToProps = (state) => {
   return {
     repositorys: state.repository.repositorys,
+    selectedAddress: state.wallet.selectedAddress,
   };
 };
 
