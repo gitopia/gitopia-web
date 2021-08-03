@@ -26,12 +26,14 @@ function RepositoryIssueCreateView(props) {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [postingIssue, setPostingIssue] = useState(false);
 
   const validateIssue = () => {
     return true;
   };
 
   const createIssue = async () => {
+    setPostingIssue(true);
     if (validateIssue()) {
       const issue = {
         title,
@@ -45,6 +47,7 @@ function RepositoryIssueCreateView(props) {
         );
       }
     }
+    setPostingIssue(false);
   };
 
   useEffect(async () => {
@@ -93,7 +96,10 @@ function RepositoryIssueCreateView(props) {
                 <MarkdownEditor value={description} setValue={setDescription} />
                 <div className="text-right mt-4">
                   <button
-                    className="btn btn-sm btn-primary"
+                    className={
+                      "btn btn-sm btn-primary " +
+                      (postingIssue ? "loading" : "")
+                    }
                     disabled={title.trim().length === 0}
                     onClick={createIssue}
                   >

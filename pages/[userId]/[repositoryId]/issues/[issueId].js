@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import dayjs from "dayjs";
+import ReactMarkdown from "react-markdown";
 
 import getUserRepository from "../../../../helpers/getUserRepository";
 import getIssue from "../../../../helpers/getIssue";
@@ -174,12 +175,14 @@ function RepositoryIssueView(props) {
                         " commented on " +
                         dayjs(issue.createdAt * 1000).format("DD MMM")}
                     </div>
-                    <div className="p-4">{issue.description}</div>
+                    <div className="p-4">
+                      <ReactMarkdown>{issue.description}</ReactMarkdown>
+                    </div>
                   </div>
                 </div>
                 {allComments.map((c) => {
                   return (
-                    <div className="flex w-full mt-8">
+                    <div className="flex w-full mt-8" key={c.id}>
                       <div className="flex-none mr-4">
                         <div className="avatar">
                           <div className="mb-8 rounded-full w-14 h-14">
@@ -193,7 +196,9 @@ function RepositoryIssueView(props) {
                             " commented on " +
                             dayjs(c.createdAt * 1000).format("DD MMM")}
                         </div>
-                        <div className="p-4">{c.body}</div>
+                        <div className="p-4">
+                          <ReactMarkdown>{c.body}</ReactMarkdown>
+                        </div>
                       </div>
                     </div>
                   );
