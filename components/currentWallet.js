@@ -91,6 +91,7 @@ function CurrentWallet(props) {
                   "btn rounded-full px-4 mb-1 avatar relative " +
                   (isSelected ? "btn-disabled" : "btn-ghost")
                 }
+                key={i}
               >
                 <div className="rounded-full w-10 h-10 absolute left-1">
                   <img src={"https://i.pravatar.cc/500?img=" + i} />

@@ -79,7 +79,10 @@ function NewRepository(props) {
   };
 
   return (
-    <div data-theme="dark" className="bg-base-100 text-base-content">
+    <div
+      data-theme="dark"
+      className="bg-base-100 text-base-content min-h-screen"
+    >
       <Head>
         <title>New Repository - Gitopia</title>
         <link rel="icon" href="/favicon.png" />

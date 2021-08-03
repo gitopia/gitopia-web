@@ -8,7 +8,10 @@ import TopRepositories from "../components/topRepositories";
 
 export default function Home(props) {
   return (
-    <div data-theme="dark" className="bg-base-100 text-base-content">
+    <div
+      data-theme="dark"
+      className="bg-base-100 text-base-content min-h-screen"
+    >
       <Head>
         <title>Gitopia</title>
         <link rel="icon" href="/favicon.png" />
@@ -38,7 +41,7 @@ export default function Home(props) {
             </div>
           </div>
         </div>
-        <div className="flex-1 ">
+        <div className="flex-1 px-4">
           <main className="container mx-auto max-w-screen-lg py-12">
             <div className="flex mb-12">
               <div>

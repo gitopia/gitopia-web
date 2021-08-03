@@ -70,7 +70,10 @@ function RepositoryIssueView(props) {
   };
 
   return (
-    <div data-theme="dark" className="bg-base-100 text-base-content">
+    <div
+      data-theme="dark"
+      className="bg-base-100 text-base-content min-h-screen"
+    >
       <Head>
         <title>{repository.name}</title>
         <link rel="icon" href="/favicon.png" />
@@ -86,7 +89,7 @@ function RepositoryIssueView(props) {
           <div className="flex mt-8">
             <div className="flex-1">
               <div>
-                <span className="text-xl">{issue.title}</span>{" "}
+                <span className="text-xl mr-2">{issue.title}</span>
                 <span className="text-xl text-neutral">#{issue.iid}</span>
               </div>
               <div className="mt-4 flex items-center">

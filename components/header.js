@@ -48,7 +48,7 @@ function Header(props) {
           </svg>
         </label>
       </div>
-      <div className="flex-none px-6 w-64">
+      <div className="flex-none px-6">
         <Link href="/home">
           <img
             width={120}
@@ -58,19 +58,19 @@ function Header(props) {
           ></img>
         </Link>
       </div>
-      <div className="flex-none mr-6">
+      <div className="flex-none mr-2">
         <div className="form-control">
           <div className="relative">
             <input
               name="search"
               type="text"
               placeholder="Search"
-              className="w-full pr-16 input input-ghost input-bordered"
+              className="w-full pr-16 input input-sm input-ghost input-bordered"
             />
-            <button className="absolute right-0 top-0 rounded-l-none btn btn-ghost">
+            <button className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

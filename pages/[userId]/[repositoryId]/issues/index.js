@@ -38,7 +38,10 @@ function RepositoryIssueView(props) {
   useEffect(getAllIssues, [repository]);
 
   return (
-    <div data-theme="dark" className="bg-base-100 text-base-content">
+    <div
+      data-theme="dark"
+      className="bg-base-100 text-base-content min-h-screen"
+    >
       <Head>
         <title>{repository.name}</title>
         <link rel="icon" href="/favicon.png" />

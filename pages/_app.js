@@ -1,5 +1,6 @@
 import "regenerator-runtime/runtime.js";
 import "../styles/globals.css";
+import "../styles/react-mde.css";
 import { wrapper } from "../store";
 import ProgressBar from "@badrap/bar-of-progress";
 import Router from "next/router";
