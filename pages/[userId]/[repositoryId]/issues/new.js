@@ -10,6 +10,8 @@ import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import MarkdownEditor from "../../../../components/markdownEditor";
 
+import { createIssue } from "../../../../store/actions/repository";
+
 function RepositoryIssueCreateView(props) {
   const router = useRouter();
   const [repository, setRepository] = useState({
@@ -17,6 +19,25 @@ function RepositoryIssueCreateView(props) {
     name: router.query.repositoryId,
     owner: { ID: router.query.userId },
   });
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  const validateIssue = () => {
+    return true;
+  };
+
+  const createIssue = () => {
+    if (validateIssue()) {
+      const issue = {
+        title,
+        description,
+        repositoryId: parseInt(repository.id),
+      };
+      console.log(issue);
+      props.createIssue(issue);
+    }
+  };
 
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.ID, repository.name);
@@ -40,23 +61,30 @@ function RepositoryIssueCreateView(props) {
           <div className="flex mt-8">
             <div className="flex flex-1">
               <div className="flex-none mr-4">
-                <div class="avatar">
-                  <div class="mb-8 rounded-full w-14 h-14">
+                <div className="avatar">
+                  <div className="mb-8 rounded-full w-14 h-14">
                     <img src="https://i.pravatar.cc/500?img=0" />
                   </div>
                 </div>
               </div>
               <div className="border border-grey rounded flex-1 p-4">
-                <div class="form-control mb-4">
+                <div className="form-control mb-4">
                   <input
                     type="text"
                     placeholder="Issue Title"
                     class="input input-md input-bordered"
+                    value={title}
+                    onChange={(e) => {
+                      setTitle(e.target.value);
+                    }}
                   />
                 </div>
-                <MarkdownEditor />
+                <MarkdownEditor value={description} setValue={setDescription} />
                 <div className="text-right mt-4">
-                  <button className="btn btn-sm btn-primary">
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={createIssue}
+                  >
                     Create Issue
                   </button>
                 </div>
@@ -133,4 +161,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryIssueCreateView);
+export default connect(mapStateToProps, { createIssue })(
+  RepositoryIssueCreateView
+);

@@ -57,9 +57,64 @@ export const createRepository = ({ name = null, description = null }) => {
       console.log(result);
       return result;
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
 
     //dispatch({ type: repositoryActions.STORE_REPOSITORYS });
+  };
+};
+
+export const createIssue = ({
+  creator = "",
+  title = "",
+  description = "",
+  authorId = 0,
+  repositoryId = 0,
+  labels = ["simple"],
+  weight = 0,
+  assigneesId = [0],
+}) => {
+  return async (dispatch, getState) => {
+    const state = getState().wallet;
+    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
+      state.activeWallet.mnemonic,
+      stringToPath(
+        state.activeWallet.HDpath + state.activeWallet.accounts[0].pathIncrement
+      ),
+      state.activeWallet.prefix
+    );
+    const [acc] = await accountSigner.getAccounts();
+    const issue = {
+      // creator: JSON.stringify({
+      //   Type: "User",
+      //   ID: acc.address,
+      // }),
+      creator: acc.address;
+      title,
+      description,
+      authorId,
+      repositoryId,
+      labels,
+      weight,
+      assigneesId,
+    };
+
+    console.log(acc);
+    console.log(issue);
+    try {
+      const msg = await (
+        await initTxClient(accountSigner)
+      ).msgCreateIssue(issue);
+      const result = await (
+        await initTxClient(accountSigner)
+      ).signAndBroadcast([msg], {
+        fee: { amount: [], gas: "200000" },
+        memo: "",
+      });
+      console.log(result);
+      return result;
+    } catch (e) {
+      console.error(e);
+    }
   };
 };

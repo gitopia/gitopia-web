@@ -3,14 +3,14 @@ import ReactMde from "react-mde";
 import ReactMarkdown from "react-markdown";
 
 function MarkdownEditor(props) {
-  const [value, setValue] = useState("");
+  // const [value, setValue] = useState("");
   const [selectedTab, setSelectedTab] = useState("write");
 
   return (
     <div className="text-neutral">
       <ReactMde
-        value={value}
-        onChange={setValue}
+        value={props.value}
+        onChange={props.setValue}
         selectedTab={selectedTab}
         onTabChange={setSelectedTab}
         generateMarkdownPreview={(markdown) => {
