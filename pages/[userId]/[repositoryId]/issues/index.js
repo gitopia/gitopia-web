@@ -13,6 +13,10 @@ import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import getIssue from "../../../../helpers/getIssue";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 
+export async function getServerSideProps() {
+  return { props: {} };
+}
+
 function RepositoryIssueView(props) {
   const router = useRouter();
   const [repository, setRepository] = useState({
@@ -168,7 +172,7 @@ function RepositoryIssueView(props) {
               <tbody>
                 {allIssues.map((i) => {
                   return (
-                    <tr>
+                    <tr key={i.iid}>
                       <td className="text-left flex">
                         {i.state === "open" ? (
                           <svg
@@ -223,7 +227,7 @@ function RepositoryIssueView(props) {
                         })}
                       </td>
                       <td>{i.comments.length}</td>
-                      <td>{dayjs(i.createdAt * 1000).format("DD MMM")}</td>
+                      <td>{dayjs(i.createdAt * 1000).format("DD MMM YYYY")}</td>
                     </tr>
                   );
                 })}

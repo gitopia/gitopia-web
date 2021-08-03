@@ -12,6 +12,10 @@ import MarkdownEditor from "../../../../components/markdownEditor";
 
 import { createIssue } from "../../../../store/actions/repository";
 
+export async function getServerSideProps() {
+  return { props: {} };
+}
+
 function RepositoryIssueCreateView(props) {
   const router = useRouter();
   const [repository, setRepository] = useState({
@@ -79,7 +83,7 @@ function RepositoryIssueCreateView(props) {
                   <input
                     type="text"
                     placeholder="Issue Title"
-                    class="input input-md input-bordered"
+                    className="input input-md input-bordered"
                     value={title}
                     onChange={(e) => {
                       setTitle(e.target.value);
@@ -90,6 +94,7 @@ function RepositoryIssueCreateView(props) {
                 <div className="text-right mt-4">
                   <button
                     className="btn btn-sm btn-primary"
+                    disabled={title.trim().length === 0}
                     onClick={createIssue}
                   >
                     Create Issue

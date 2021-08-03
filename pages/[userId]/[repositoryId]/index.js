@@ -9,6 +9,10 @@ import getUserRepository from "../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
 
+export async function getServerSideProps() {
+  return { props: {} };
+}
+
 function RepositoryView(props) {
   const router = useRouter();
   const [repository, setRepository] = useState({

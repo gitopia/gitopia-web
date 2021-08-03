@@ -17,6 +17,10 @@ import MarkdownEditor from "../../../../components/markdownEditor";
 
 import { createComment } from "../../../../store/actions/repository";
 
+export async function getServerSideProps() {
+  return { props: {} };
+}
+
 function RepositoryIssueView(props) {
   const router = useRouter();
   const [repository, setRepository] = useState({
@@ -210,6 +214,7 @@ function RepositoryIssueView(props) {
                           "btn btn-sm btn-primary " +
                           (postingComment ? "loading" : "")
                         }
+                        disabled={comment.trim().length === 0}
                         onClick={createComment}
                       >
                         Comment
