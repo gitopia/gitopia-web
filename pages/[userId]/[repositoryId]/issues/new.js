@@ -27,15 +27,19 @@ function RepositoryIssueCreateView(props) {
     return true;
   };
 
-  const createIssue = () => {
+  const createIssue = async () => {
     if (validateIssue()) {
       const issue = {
         title,
         description,
         repositoryId: parseInt(repository.id),
       };
-      console.log(issue);
-      props.createIssue(issue);
+      const res = await props.createIssue(issue);
+      if (res && res.code === 0) {
+        router.push(
+          "/" + repository.owner.ID + "/" + repository.name + "/issues"
+        );
+      }
     }
   };
 

@@ -1,7 +1,6 @@
 import shrinkAddress from "../../helpers/shrinkAddress";
 
 export default function RepositoryHeader({ repository }) {
-  console.log(repository);
   return (
     <div className="flex flex-1 mb-8">
       <div className="flex flex-1 text-primary text-xl items-center">

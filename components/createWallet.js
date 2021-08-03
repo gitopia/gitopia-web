@@ -81,7 +81,6 @@ function CreateWallet(props) {
         mnemonic,
         password,
       });
-      console.log(res);
       setWalletCreated(true);
     }
   };

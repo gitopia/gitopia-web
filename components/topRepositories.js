@@ -20,7 +20,6 @@ function TopRepositories(props) {
             console.error(e);
           }
         });
-        console.log(topRepos);
         setRepos(topRepos);
       }
     } catch (e) {

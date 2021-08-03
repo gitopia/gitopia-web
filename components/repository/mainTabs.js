@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 export default function RepositoryMainTabs({ hrefBase, active }) {
-  console.log(hrefBase);
   return (
     <div className="flex flex-1">
       <div className="tabs">

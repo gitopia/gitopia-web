@@ -42,8 +42,6 @@ export const createRepository = ({ name = null, description = null }) => {
     };
 
     //dispatch({ type: repositoryActions.ADD_REPOSITORY, payload: { repository } });
-    console.log(acc);
-    console.log(repository);
     try {
       const msg = await (
         await initTxClient(accountSigner)
@@ -54,7 +52,6 @@ export const createRepository = ({ name = null, description = null }) => {
         fee: { amount: [], gas: "200000" },
         memo: "",
       });
-      console.log(result);
       return result;
     } catch (e) {
       console.error(e);
@@ -65,7 +62,6 @@ export const createRepository = ({ name = null, description = null }) => {
 };
 
 export const createIssue = ({
-  creator = "",
   title = "",
   description = "",
   authorId = 0,
@@ -89,7 +85,7 @@ export const createIssue = ({
       //   Type: "User",
       //   ID: acc.address,
       // }),
-      creator: acc.address;
+      creator: acc.address,
       title,
       description,
       authorId,
@@ -99,8 +95,6 @@ export const createIssue = ({
       assigneesId,
     };
 
-    console.log(acc);
-    console.log(issue);
     try {
       const msg = await (
         await initTxClient(accountSigner)
@@ -111,7 +105,55 @@ export const createIssue = ({
         fee: { amount: [], gas: "200000" },
         memo: "",
       });
-      console.log(result);
+      return result;
+    } catch (e) {
+      console.error(e);
+    }
+  };
+};
+
+export const createComment = ({
+  parentId = null,
+  body = "",
+  attachments = [],
+  diffHunk = "",
+  path = "",
+  system = false,
+  authorAssociation = "",
+  commentType = "",
+}) => {
+  return async (dispatch, getState) => {
+    const state = getState().wallet;
+    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
+      state.activeWallet.mnemonic,
+      stringToPath(
+        state.activeWallet.HDpath + state.activeWallet.accounts[0].pathIncrement
+      ),
+      state.activeWallet.prefix
+    );
+    const [acc] = await accountSigner.getAccounts();
+    const comment = {
+      creator: acc.address,
+      parentId,
+      body,
+      attachments,
+      diffHunk,
+      path,
+      system,
+      authorAssociation,
+      commentType,
+    };
+
+    try {
+      const msg = await (
+        await initTxClient(accountSigner)
+      ).msgCreateComment(comment);
+      const result = await (
+        await initTxClient(accountSigner)
+      ).signAndBroadcast([msg], {
+        fee: { amount: [], gas: "200000" },
+        memo: "",
+      });
       return result;
     } catch (e) {
       console.error(e);

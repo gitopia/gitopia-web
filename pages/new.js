@@ -71,7 +71,6 @@ function NewRepository(props) {
         name,
         description,
       });
-      console.log(res);
       if (res && res.code === 0) {
         router.push("/" + props.selectedAddress + "/" + name);
       }

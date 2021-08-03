@@ -1,7 +1,6 @@
 import { txClient, queryClient } from "gitopiajs";
 
 export default async function getUserRepository(userId, repositoryName) {
-  console.log("called with", userId, repositoryName);
   if (!userId || !repositoryName) return null;
   try {
     const qc = await queryClient();

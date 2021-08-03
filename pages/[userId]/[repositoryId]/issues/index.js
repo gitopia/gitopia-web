@@ -5,10 +5,13 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import dayjs from "dayjs";
 
 import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
+import getIssue from "../../../../helpers/getIssue";
+import shrinkAddress from "../../../../helpers/shrinkAddress";
 
 function RepositoryIssueView(props) {
   const router = useRouter();
@@ -16,12 +19,23 @@ function RepositoryIssueView(props) {
     id: router.query.repositoryId,
     name: router.query.repositoryId,
     owner: { ID: router.query.userId },
+    issues: [],
   });
+
+  const [allIssues, setAllIssues] = useState([]);
 
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.ID, repository.name);
     if (r) setRepository(r);
   }, []);
+
+  const getAllIssues = async () => {
+    const pr = repository.issues.map((c) => getIssue(c));
+    const issues = await Promise.all(pr);
+    setAllIssues(issues);
+  };
+
+  useEffect(getAllIssues, [repository]);
 
   return (
     <div data-theme="dark" className="bg-base-100 text-base-content">
@@ -63,10 +77,7 @@ function RepositoryIssueView(props) {
             <table className="table w-full text-center">
               <thead>
                 <tr>
-                  <th>
-                    <input type="checkbox" />
-                  </th>
-                  <th className="w-3/5 text-left">
+                  <th className="w-7/12 text-left">
                     <button className="btn btn-xs btn-ghost">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -152,15 +163,67 @@ function RepositoryIssueView(props) {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>
-                    <input type="checkbox" />
-                  </td>
-                  <td className="text-left">Hula hoop</td>
-                  <td>Snehil</td>
-                  <td>2</td>
-                  <td>2 days ago</td>
-                </tr>
+                {allIssues.map((i) => {
+                  return (
+                    <tr>
+                      <td className="text-left flex">
+                        {i.state === "open" ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-2 relative top-1"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-2 relative top-1"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        )}
+                        <div>
+                          <div>
+                            <Link
+                              href={
+                                "/" +
+                                repository.owner.ID +
+                                "/" +
+                                repository.name +
+                                "/issues/" +
+                                i.id
+                              }
+                            >
+                              <a className="btn-neutral">{i.title}</a>
+                            </Link>
+                          </div>
+                          <div className="text-xs">
+                            #{i.iid} opened by {shrinkAddress(i.creator)}
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        {i.assignees.map((a) => {
+                          return <span>{a}</span>;
+                        })}
+                      </td>
+                      <td>{i.comments.length}</td>
+                      <td>{dayjs(i.createdAt * 1000).format("DD MMM")}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

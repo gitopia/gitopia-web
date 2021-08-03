@@ -65,7 +65,6 @@ function CreateRepository(props) {
         name,
         description,
       });
-      console.log(res);
       setRepositoryCreated(true);
     }
   };

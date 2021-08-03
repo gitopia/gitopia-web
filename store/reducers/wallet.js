@@ -15,7 +15,7 @@ const set = (key, value) => {
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
   } catch (e) {
-    console.log("Error while saving", key, e);
+    console.error("Error while saving", key, e);
   }
 };
 
@@ -24,7 +24,7 @@ const get = (key) => {
   try {
     return JSON.parse(window.localStorage.getItem(key));
   } catch (e) {
-    console.log("Error while saving", key, e);
+    console.error("Error while saving", key, e);
     return null;
   }
 };
