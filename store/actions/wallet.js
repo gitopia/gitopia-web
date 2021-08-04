@@ -271,7 +271,7 @@ export const sendTransaction = ({ message, memo, denom }) => {
 export const getBalance = (denom) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
-    const api = new Api({ baseUrl: "http://localhost:1317" });
+    const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
     try {
       const res = await api.queryBalance(state.selectedAddress, denom);
       dispatch({
@@ -303,7 +303,7 @@ export const claimUsername = (username) => {
       state.activeWallet.prefix
     );
     let tc = await txClient(accountSigner, {
-      addr: "http://localhost:26657",
+      addr: process.env.NEXT_PUBLIC_RPC_URL,
     });
     try {
       const msg = await tc.msgCreateUser({

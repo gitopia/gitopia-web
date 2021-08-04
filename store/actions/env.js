@@ -58,13 +58,13 @@ export const signIn = (signer) => {
 
 export const config = (
   config = {
-    apiNode: "http://localhost:1317",
-    rpcNode: "http://localhost:26657",
-    wsNode: "ws://localhost:26657/websocket",
+    apiNode: process.env.NEXT_PUBLIC_API_URL,
+    rpcNode: process.env.NEXT_PUBLIC_RPC_URL,
+    wsNode: process.env.NEXT_PUBLIC_WS_URL,
     chainId: "",
     addrPrefix: "",
     sdkVersion: "Stargate",
-    getTXApi: "http://localhost:26657/tx?hash=0x",
+    getTXApi: process.env.NEXT_PUBLIC_API_URL + "/tx?hash=0x",
   }
 ) => {
   return async (dispatch, getState) => {

@@ -11,7 +11,7 @@ import CryptoJS from "crypto-js";
 
 async function initTxClient(accountSigner) {
   return await txClient(accountSigner, {
-    addr: "http://localhost:26657",
+    addr: process.env.NEXT_PUBLIC_RPC_URL,
   });
 }
 
