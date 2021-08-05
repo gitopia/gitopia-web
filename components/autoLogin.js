@@ -6,7 +6,8 @@ function AutoLogin(props) {
   useEffect(async () => {
     let lastWallet;
     try {
-      lastWallet = JSON.parse(localStorage["lastWallet"]);
+      const data = localStorage["lastWallet"];
+      if (data) lastWallet = JSON.parse(data);
     } catch (e) {
       console.error(e);
     }

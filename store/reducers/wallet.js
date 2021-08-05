@@ -15,17 +15,31 @@ const set = (key, value) => {
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
   } catch (e) {
-    console.error("Error while saving", key, e);
+    console.error(e);
   }
 };
 
 const get = (key) => {
   if (isServer) return;
   try {
-    return JSON.parse(window.localStorage.getItem(key));
+    const data = window.localStorage.getItem(key);
+    if (data) {
+      return JSON.parse(data);
+    } else {
+      return null;
+    }
   } catch (e) {
-    console.error("Error while saving", key, e);
+    console.error(e);
     return null;
+  }
+};
+
+const del = (key) => {
+  if (isServer) return;
+  try {
+    window.localStorage.removeItem(key);
+  } catch (e) {
+    console.error(e);
   }
 };
 
@@ -33,7 +47,7 @@ const initialState = {
   wallets: get("wallets") || [],
   activeWallet: null,
   activeClient: null,
-  selectedAddress: "",
+  selectedAddress: null,
   authorized: false,
   gasPrice: "0.0000025token",
   backupState: false,
@@ -62,7 +76,7 @@ const reducer = (state = initialState, action) => {
     case walletActions.ADD_WALLET: {
       let { wallet } = action.payload;
       let wallets = state.wallets;
-      set("lastWallet", wallet.name);
+      set("lastWallet", wallet);
       if (wallet.name && wallet.password) {
         wallets.push({
           name: wallet.name,
@@ -137,10 +151,11 @@ const reducer = (state = initialState, action) => {
     }
 
     case walletActions.SIGN_OUT: {
-      state.selectedAddress = "";
+      state.selectedAddress = null;
       state.activeClient = null;
       state.activeWallet = null;
       state.authorized = false;
+      del("lastWallet");
       return {
         ...state,
       };

@@ -30,6 +30,8 @@ function TopRepositories(props) {
   useEffect(() => {
     if (props.selectedAddress) {
       getRepositories(props.selectedAddress);
+    } else {
+      setRepos([]);
     }
   }, [props.selectedAddress]);
 
