@@ -97,7 +97,7 @@ export const switchAccount = (address) => {
         payload: { address: account.address },
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
 };
@@ -172,7 +172,7 @@ export const createWalletWithMnemonic = ({
         payload: { address: firstAccount.address },
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
     dispatch({ type: walletActions.STORE_WALLETS });
   };
@@ -214,7 +214,7 @@ export const restoreWallet = ({ encrypted, password }) => {
         payload: { address: firstAccount.address },
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
 
     dispatch({ type: walletActions.STORE_WALLETS });
@@ -241,7 +241,7 @@ export const signInWithPrivateKey = ({ prefix = "gitopia", privKey }) => {
         payload: { address: firstAccount.address },
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
 };
@@ -254,12 +254,6 @@ export const sendTransaction = ({ message, memo, denom }) => {
       gas: "200000",
     };
     try {
-      console.log({
-        add: state.selectedAddress,
-        msg: [message],
-        fee,
-        memo,
-      });
       const result = await state.activeClient.signAndBroadcast(
         state.selectedAddress,
         [message],
@@ -268,7 +262,7 @@ export const sendTransaction = ({ message, memo, denom }) => {
       );
       assertIsBroadcastTxSuccess(result);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw "Failed to broadcast transaction." + e;
     }
   };
@@ -300,7 +294,6 @@ export const getBalance = (denom) => {
 
 export const claimUsername = (username) => {
   return async (dispatch, getState) => {
-    console.log("claimUsername", username);
     const state = getState().wallet;
     const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
       state.activeWallet.mnemonic,
@@ -321,7 +314,6 @@ export const claimUsername = (username) => {
         fee: { amount: [], gas: "200000" },
         memo: "",
       });
-      console.log(result);
       if (result.code === 0) {
         dispatch({
           type: walletActions.SET_ACTIVE_WALLET_USERNAME,

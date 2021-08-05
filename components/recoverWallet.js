@@ -97,7 +97,6 @@ function RecoverWallet(props) {
         shown: true,
         message: "Please enter 24 valid english words",
       });
-      console.log(mnemonic.split(" ").length);
       return false;
     }
     return true;
@@ -110,7 +109,6 @@ function RecoverWallet(props) {
         mnemonic,
         password,
       });
-      console.log(res);
       router.push("/home");
     }
   };

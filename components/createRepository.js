@@ -1,5 +1,4 @@
 import { useState } from "react";
-import * as bip39 from "bip39";
 import { connect } from "react-redux";
 import { createRepository } from "../store/actions/repository";
 import TextInput from "./textInput";
@@ -66,7 +65,6 @@ function CreateRepository(props) {
         name,
         description,
       });
-      console.log(res);
       setRepositoryCreated(true);
     }
   };

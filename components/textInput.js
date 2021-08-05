@@ -9,13 +9,18 @@ export default function TextInput(
     hint: { shown: false, type: "", message: "" },
     setHint: () => {},
     multiline: false,
+    className: "",
   }
 ) {
   return (
-    <div className="form-control">
-      <label className="label">
-        <span className="label-text">{props.label}</span>
-      </label>
+    <div className={"form-control " + props.className}>
+      {props.label ? (
+        <label className="label">
+          <span className="label-text">{props.label}</span>
+        </label>
+      ) : (
+        ""
+      )}
       {props.multiline ? (
         <textarea
           rows={5}
