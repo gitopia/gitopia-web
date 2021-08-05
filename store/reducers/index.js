@@ -4,6 +4,7 @@ import repositoryReducer from "./repository";
 import envReducer from "./env";
 import starportReducer from "./starport";
 // import hydrateReducer from "./hydrate";
+import { reducer as notificationsReducer } from "reapop";
 
 const rootReducer = combineReducers({
   //   hydrate: hydrateReducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   repository: repositoryReducer,
   env: envReducer,
   starport: starportReducer,
+  notifications: notificationsReducer(),
 });
 
 export default rootReducer;

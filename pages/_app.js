@@ -5,6 +5,7 @@ import { wrapper } from "../store";
 import ProgressBar from "@badrap/bar-of-progress";
 import Router from "next/router";
 import AutoLogin from "../components/autoLogin";
+import NotificationManager from "../components/notificationManager";
 
 const progress = new ProgressBar({
   size: 2,
@@ -22,6 +23,7 @@ function MyApp({ Component, pageProps }) {
     <>
       <Component {...pageProps} />
       <AutoLogin />
+      <NotificationManager />
     </>
   );
 }

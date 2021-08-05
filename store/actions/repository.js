@@ -8,6 +8,7 @@ import {
 // import { assertIsBroadcastTxSuccess } from '@cosmjs/stargate'
 import { stringToPath } from "@cosmjs/crypto";
 import CryptoJS from "crypto-js";
+import { notify } from "reapop";
 
 async function initTxClient(accountSigner) {
   return await txClient(accountSigner, {
@@ -23,6 +24,10 @@ export const createRepository = ({ name = null, description = null }) => {
       (acc) => acc.address == address
     );
     */
+    if (!state.activeWallet) {
+      dispatch(notify("Please sign in to create repository", "error"));
+      return null;
+    }
     const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
       state.activeWallet.mnemonic,
       stringToPath(
@@ -52,9 +57,17 @@ export const createRepository = ({ name = null, description = null }) => {
         fee: { amount: [], gas: "200000" },
         memo: "",
       });
-      return result;
+      if (result && result.code === 0) {
+        return { url: "/" + acc.address + "/" + name };
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+      // return result;
     } catch (e) {
       console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
     }
 
     //dispatch({ type: repositoryActions.STORE_REPOSITORYS });
@@ -72,6 +85,10 @@ export const createIssue = ({
 }) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
+    if (!state.activeWallet) {
+      dispatch(notify("Please sign in to create issue", "error"));
+      return null;
+    }
     const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
       state.activeWallet.mnemonic,
       stringToPath(
@@ -108,6 +125,7 @@ export const createIssue = ({
       return result;
     } catch (e) {
       console.error(e);
+      dispatch(notify(e.message, "error"));
     }
   };
 };
@@ -124,6 +142,10 @@ export const createComment = ({
 }) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
+    if (!state.activeWallet) {
+      dispatch(notify("Please sign in to comment", "error"));
+      return null;
+    }
     const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
       state.activeWallet.mnemonic,
       stringToPath(
@@ -157,6 +179,7 @@ export const createComment = ({
       return result;
     } catch (e) {
       console.error(e);
+      dispatch(notify(e.message, "error"));
     }
   };
 };
