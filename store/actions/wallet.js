@@ -52,7 +52,7 @@ export const unlockWallet = ({ name, password }) => {
         });
         let client = getState().env.signingClient;
         dispatch({
-          type: walletActions.SET_ACTIVE_CLIENT,
+          type: envActions.SET_SIGNING_CLIENT,
           payload: { client },
         });
         const [account] = await accountSigner.getAccounts();
@@ -90,7 +90,7 @@ export const switchAccount = (address) => {
         payload: { accountSigner, root: true },
       });
       let client = getState().env.signingClient;
-      dispatch({ type: walletActions.SET_ACTIVE_CLIENT, payload: { client } });
+      dispatch({ type: envActions.SET_SIGNING_CLIENT, payload: { client } });
       const [account] = await accountSigner.getAccounts();
       dispatch({
         type: walletActions.SET_SELECTED_ADDRESS,
@@ -165,7 +165,7 @@ export const createWalletWithMnemonic = ({
         payload: { accountSigner, root: true },
       });
       let client = getState().env.signingClient;
-      dispatch({ type: walletActions.SET_ACTIVE_CLIENT, payload: { client } });
+      dispatch({ type: envActions.SET_SIGNING_CLIENT, payload: { client } });
       const [account] = await accountSigner.getAccounts();
       dispatch({
         type: walletActions.SET_SELECTED_ADDRESS,
@@ -207,7 +207,7 @@ export const restoreWallet = ({ encrypted, password }) => {
         payload: { accountSigner, root: true },
       });
       let client = getState().env.signingClient;
-      dispatch({ type: walletActions.SET_ACTIVE_CLIENT, payload: { client } });
+      dispatch({ type: envActions.SET_SIGNING_CLIENT, payload: { client } });
       const [account] = await accountSigner.getAccounts();
       dispatch({
         type: walletActions.SET_SELECTED_ADDRESS,
@@ -234,7 +234,7 @@ export const signInWithPrivateKey = ({ prefix = "gitopia", privKey }) => {
         payload: { accountSigner, root: true },
       });
       let client = getState().env.signingClient;
-      dispatch({ type: walletActions.SET_ACTIVE_CLIENT, payload: { client } });
+      dispatch({ type: envActions.SET_SIGNING_CLIENT, payload: { client } });
       const [account] = await accountSigner.getAccounts();
       dispatch({
         type: walletActions.SET_SELECTED_ADDRESS,
@@ -242,28 +242,6 @@ export const signInWithPrivateKey = ({ prefix = "gitopia", privKey }) => {
       });
     } catch (e) {
       console.error(e);
-    }
-  };
-};
-
-export const sendTransaction = ({ message, memo, denom }) => {
-  return async (dispatch, getState) => {
-    const state = getState().wallet;
-    const fee = {
-      amount: [{ amount: "0", denom }],
-      gas: "200000",
-    };
-    try {
-      const result = await state.activeClient.signAndBroadcast(
-        state.selectedAddress,
-        [message],
-        fee,
-        memo
-      );
-      assertIsBroadcastTxSuccess(result);
-    } catch (e) {
-      console.error(e);
-      throw "Failed to broadcast transaction." + e;
     }
   };
 };
@@ -288,41 +266,6 @@ export const getBalance = (denom) => {
         },
       });
       console.error("Unable to update lore balance", e);
-    }
-  };
-};
-
-export const claimUsername = (username) => {
-  return async (dispatch, getState) => {
-    const state = getState().wallet;
-    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
-      state.activeWallet.mnemonic,
-      stringToPath(
-        state.activeWallet.HDpath + state.activeWallet.accounts[0].pathIncrement
-      ),
-      state.activeWallet.prefix
-    );
-    let tc = await txClient(accountSigner, {
-      addr: process.env.NEXT_PUBLIC_RPC_URL,
-    });
-    try {
-      const msg = await tc.msgCreateUser({
-        username: username,
-        creator: state.selectedAddress,
-      });
-      const result = await tc.signAndBroadcast([msg], {
-        fee: { amount: [], gas: "200000" },
-        memo: "",
-      });
-      if (result.code === 0) {
-        dispatch({
-          type: walletActions.SET_ACTIVE_WALLET_USERNAME,
-          payload: { username },
-        });
-        dispatch({ type: walletActions.STORE_WALLETS });
-      }
-    } catch (e) {
-      console.error(e);
     }
   };
 };

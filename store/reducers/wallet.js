@@ -46,7 +46,6 @@ const del = (key) => {
 const initialState = {
   wallets: get("wallets") || [],
   activeWallet: null,
-  activeClient: null,
   selectedAddress: null,
   authorized: false,
   gasPrice: "0.0000025token",
@@ -62,14 +61,6 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         activeWallet: wallet,
-      };
-    }
-
-    case walletActions.SET_ACTIVE_CLIENT: {
-      const { client } = action.payload;
-      return {
-        ...state,
-        activeClient: client,
       };
     }
 
@@ -139,14 +130,6 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         backupState,
-      };
-    }
-
-    case walletActions.ADD_MESSAGE_TYPE: {
-      let { typeUrl, type } = action.payload;
-      state.activeClient.registry.register(typeUrl, type);
-      return {
-        ...state,
       };
     }
 

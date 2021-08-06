@@ -1,5 +1,7 @@
 import Client from "@starport/client-js";
 import { starportActions, envActions } from "./actionTypes";
+import { queryClient, txClient } from "gitopiajs";
+import { async } from "regenerator-runtime";
 
 export const init = (initConfig) => {
   return async (dispatch, getState) => {
@@ -132,5 +134,44 @@ export const config = (
     } catch (e) {
       console.error(e);
     }
+  };
+};
+
+export const sendTransaction = ({ message, memo, denom = "token" }) => {
+  return async (dispatch, getState) => {
+    const state = getState().wallet;
+    const fee = {
+      amount: [{ amount: "0", denom }],
+      gas: "200000",
+    };
+    try {
+      const result = await state.activeClient.signAndBroadcast(
+        state.selectedAddress,
+        [message],
+        fee,
+        memo
+      );
+      assertIsBroadcastTxSuccess(result);
+      return result;
+    } catch (e) {
+      console.error(e);
+      return null;
+      // throw "Failed to broadcast transaction." + e;
+    }
+  };
+};
+
+export const setTxClient = (client) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: envActions.SET_TX_CLIENT, payload: { client } });
+  };
+};
+
+export const setQueryClient = (client) => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: envActions.SET_QUERY_CLIENT,
+      payload: { client },
+    });
   };
 };

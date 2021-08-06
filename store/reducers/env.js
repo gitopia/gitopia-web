@@ -13,6 +13,9 @@ const initialState = {
   wsConnected: false,
   getTXApi: process.env.NEXT_PUBLIC_API_URL + "/tx?hash=0x",
   initialized: false,
+  signingClient: null,
+  txClient: null,
+  queryClient: null,
 };
 
 const reducer = (state = initialState, action) => {
@@ -87,6 +90,38 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         getTXApi: txapi,
+      };
+    }
+
+    case envActions.ADD_MESSAGE_TYPE: {
+      let { typeUrl, type } = action.payload;
+      state.signingClient.registry.register(typeUrl, type);
+      return {
+        ...state,
+      };
+    }
+
+    case envActions.SET_SIGNING_CLIENT: {
+      const { client } = action.payload;
+      return {
+        ...state,
+        signingClient: client,
+      };
+    }
+
+    case envActions.SET_TX_CLIENT: {
+      const { client } = action.payload;
+      return {
+        ...state,
+        txClient: client,
+      };
+    }
+
+    case envActions.SET_QUERY_CLIENT: {
+      const { client } = action.payload;
+      return {
+        ...state,
+        queryClient: client,
       };
     }
 
