@@ -23,6 +23,8 @@ function NewRepository(props) {
   });
   const [repositoryCreating, setRepositoryCreating] = useState(false);
 
+  const sanitizedNameTest = new RegExp(/[^\w.-]/g);
+
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });
     setDescriptionHint({ ...descriptionHint, shown: false });
@@ -32,7 +34,7 @@ function NewRepository(props) {
     hideHints();
     if (name === "") {
       setNameHint({
-        ...nameHint,
+        type: "error",
         shown: true,
         message: "Please enter a repository name",
       });
@@ -47,7 +49,7 @@ function NewRepository(props) {
     });
     if (alreadyAvailable) {
       setNameHint({
-        ...nameHint,
+        type: "error",
         shown: true,
         message: "Repository name already taken",
       });
@@ -68,7 +70,7 @@ function NewRepository(props) {
     setRepositoryCreating(true);
     if (validateRepository()) {
       let res = await props.createRepository({
-        name,
+        name: name.replace(sanitizedNameTest, "-"),
         description,
       });
       if (res && res.url) {
@@ -126,7 +128,20 @@ function NewRepository(props) {
                 name="repository_name"
                 placeholder="Repository Name"
                 value={name}
-                setValue={setName}
+                setValue={(v) => {
+                  if (sanitizedNameTest.test(v)) {
+                    setNameHint({
+                      type: "info",
+                      shown: true,
+                      message:
+                        "Your repository would be named as " +
+                        v.replace(sanitizedNameTest, "-"),
+                    });
+                  } else {
+                    setNameHint({ shown: false });
+                  }
+                  setName(v);
+                }}
                 hint={nameHint}
                 className="flex-1"
               />
