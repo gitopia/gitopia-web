@@ -1,6 +1,7 @@
 const withTM = require("@module-federation/next-transpile-modules")([
   "gitopiajs",
 ]); // pass the modules you would like to see transpiled
+
 module.exports = withTM({
   webpack(config, { dev, isServer }) {
     // ${previousConfig...}
@@ -27,13 +28,13 @@ module.exports = withTM({
   },
   images: {
     loader: "imgix",
-    path: "http://localhost:3000/",
+    path: process.env.NEXT_PUBLIC_IMAGES_URL,
   },
   async rewrites() {
     return [
       {
         source: "/api/faucet",
-        destination: "http://localhost:4500",
+        destination: process.env.NEXT_PUBLIC_FAUCET_URL,
       },
     ];
   },

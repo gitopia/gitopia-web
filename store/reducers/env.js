@@ -4,14 +4,14 @@ const initialState = {
   chainId: null,
   addrPrefix: "",
   sdkVersion: "Stargate",
-  apiNode: "http://localhost:1317",
-  rpcNode: "http://localhost:26657",
-  wsNode: "ws://localhost:26657/websocket",
+  apiNode: process.env.NEXT_PUBLIC_API_URL,
+  rpcNode: process.env.NEXT_PUBLIC_RPC_URL,
+  wsNode: process.env.NEXT_PUBLIC_WS_URL,
   client: null,
   apiConnected: false,
   rpcConnected: false,
   wsConnected: false,
-  getTXApi: "http://localhost:26657/tx?hash=0x",
+  getTXApi: process.env.NEXT_PUBLIC_API_URL + "/tx?hash=0x",
   initialized: false,
 };
 
