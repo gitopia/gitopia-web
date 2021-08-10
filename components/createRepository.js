@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { connect } from "react-redux";
-import { createRepository } from "../store/actions/repository";
+import { createRepository } from "../store/actions/env";
 import TextInput from "./textInput";
 
 function CreateRepository(props) {

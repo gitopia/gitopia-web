@@ -1,13 +1,5 @@
 import { walletActions } from "../actions/actionTypes";
-import {
-  DirectSecp256k1HdWallet,
-  DirectSecp256k1Wallet,
-} from "@cosmjs/proto-signing";
-
-// import { assertIsBroadcastTxSuccess } from '@cosmjs/stargate'
-import { stringToPath } from "@cosmjs/crypto";
 import CryptoJS from "crypto-js";
-// import { keyFromWif, keyToWif } from '../../../helpers/keys'
 const isServer = typeof window === "undefined";
 
 const set = (key, value) => {
@@ -47,10 +39,12 @@ const initialState = {
   wallets: get("wallets") || [],
   activeWallet: null,
   selectedAddress: null,
-  authorized: false,
-  gasPrice: "0.0000025token",
+  gasPrice: "0.0000025" + process.env.NEXT_PUBLIC_CURRENCY_TOKEN,
   backupState: false,
   loreBalance: 0,
+  accountSigner: null,
+  txClient: null,
+  queryClient: null,
 };
 
 const reducer = (state = initialState, action) => {
@@ -135,9 +129,7 @@ const reducer = (state = initialState, action) => {
 
     case walletActions.SIGN_OUT: {
       state.selectedAddress = null;
-      state.activeClient = null;
       state.activeWallet = null;
-      state.authorized = false;
       del("lastWallet");
       return {
         ...state,
@@ -152,21 +144,11 @@ const reducer = (state = initialState, action) => {
       };
     }
 
-    case walletActions.SET_ACTIVE_WALLET_USERNAME: {
-      let { username } = action.payload;
-      let activeWallet = { ...state.activeWallet };
-      activeWallet.username = username;
-      if (activeWallet.name && activeWallet.password) {
-        state.wallets[
-          state.wallets.findIndex((x) => x.name === activeWallet.name)
-        ].wallet = CryptoJS.AES.encrypt(
-          JSON.stringify(activeWallet),
-          activeWallet.password
-        ).toString();
-      }
+    case walletActions.SET_ACCOUNT_SIGNER: {
+      let { accountSigner } = action.payload;
       return {
         ...state,
-        activeWallet,
+        accountSigner,
       };
     }
 

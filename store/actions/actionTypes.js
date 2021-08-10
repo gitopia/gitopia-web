@@ -5,13 +5,17 @@ export const walletActions = {
   ADD_ACCOUNT: "ADD_ACCOUNT",
   SET_RELAYERS: "SET_RELAYERS",
   SET_SELECTED_ADDRESS: "SET_SELECTED_ADDRESS",
+  SET_ACCOUNT_SIGNER: "SET_ACCOUNT_SIGNER",
   SET_BACKUP_STATE: "SET_BACKUP_STATE",
   SIGN_OUT: "SIGN_OUT",
   STORE_WALLETS: "STORE_WALLETS",
   UPDATE_BALANCE: "UPDATE_BALANCE",
 };
 
-export const userActions = {};
+export const userActions = {
+  SET_USER: "SET_USER",
+  SET_EMPTY_USER: "SET_EMPTY_USER",
+};
 
 export const repositoryActions = {
   ADD_REPOSITORY: "ADD_REPOSITORY",
@@ -19,7 +23,6 @@ export const repositoryActions = {
 };
 
 export const envActions = {
-  SIGN_IN: "SIGN_IN",
   SET_CONFIG: "SET_CONFIG",
   CONNECT: "CONNECT",
   INITIALIZE_WS_COMPLETE: "INITIALIZE_WS_COMPLETE",
@@ -27,10 +30,9 @@ export const envActions = {
   SET_API_STATUS: "SET_API_STATUS",
   SET_RPC_STATUS: "SET_RPC_STATUS",
   SET_TX_API: "SET_TX_API",
-  ADD_MESSAGE_TYPE: "ADD_MESSAGE_TYPE",
-  SET_SIGNING_CLIENT: "SET_SIGNING_CLIENT",
   SET_TX_CLIENT: "SET_TX_CLIENT",
   SET_QUERY_CLIENT: "SET_QUERY_CLIENT",
+  // ADD_MESSAGE_TYPE: "ADD_MESSAGE_TYPE",
 };
 
 export const starportActions = {

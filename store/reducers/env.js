@@ -13,7 +13,6 @@ const initialState = {
   wsConnected: false,
   getTXApi: process.env.NEXT_PUBLIC_API_URL + "/tx?hash=0x",
   initialized: false,
-  signingClient: null,
   txClient: null,
   queryClient: null,
 };
@@ -93,22 +92,6 @@ const reducer = (state = initialState, action) => {
       };
     }
 
-    case envActions.ADD_MESSAGE_TYPE: {
-      let { typeUrl, type } = action.payload;
-      state.signingClient.registry.register(typeUrl, type);
-      return {
-        ...state,
-      };
-    }
-
-    case envActions.SET_SIGNING_CLIENT: {
-      const { client } = action.payload;
-      return {
-        ...state,
-        signingClient: client,
-      };
-    }
-
     case envActions.SET_TX_CLIENT: {
       const { client } = action.payload;
       return {
@@ -124,6 +107,14 @@ const reducer = (state = initialState, action) => {
         queryClient: client,
       };
     }
+
+    // case envActions.ADD_MESSAGE_TYPE: {
+    //   let { typeUrl, type } = action.payload;
+    //   state.client.registry.register(typeUrl, type);
+    //   return {
+    //     ...state,
+    //   };
+    // }
 
     default:
       return state;

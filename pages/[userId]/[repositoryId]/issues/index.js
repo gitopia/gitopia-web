@@ -23,7 +23,7 @@ function RepositoryIssueView(props) {
     id: router.query.repositoryId,
     name: router.query.repositoryId,
     owner: { ID: router.query.userId },
-    issues: [],
+    issueIids: {},
   });
 
   const [allIssues, setAllIssues] = useState([]);
@@ -34,9 +34,15 @@ function RepositoryIssueView(props) {
   }, []);
 
   const getAllIssues = async () => {
-    const pr = repository.issues.map((c) => getIssue(c));
-    const issues = await Promise.all(pr);
-    setAllIssues(issues);
+    if (repository && Object.keys(repository.issueIids).length) {
+      let pr = [];
+      for (let iid in repository.issueIids) {
+        pr.push(getIssue(repository.issueIids[iid]));
+      }
+      const issues = await Promise.all(pr);
+      console.log("issues", issues);
+      setAllIssues(issues);
+    }
   };
 
   useEffect(getAllIssues, [repository]);
@@ -174,7 +180,7 @@ function RepositoryIssueView(props) {
                   return (
                     <tr key={i.iid}>
                       <td className="text-left flex">
-                        {i.state === "open" ? (
+                        {i.state === "Open" ? (
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="h-5 w-5 mr-2 relative top-1"

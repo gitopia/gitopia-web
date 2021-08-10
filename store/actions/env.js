@@ -1,59 +1,14 @@
 import Client from "@starport/client-js";
-import { starportActions, envActions } from "./actionTypes";
-import { queryClient, txClient } from "gitopiajs";
-import { async } from "regenerator-runtime";
+import { envActions } from "./actionTypes";
+import { assertIsBroadcastTxSuccess } from "@cosmjs/stargate";
+import { notify } from "reapop";
 
 export const init = (initConfig) => {
   return async (dispatch, getState) => {
-    //TODO fix actions and dispatch
-    //     if (this._actions['common/starport/init']) {
-    //       try {
-    //         await dispatch({
-    //           type: starportActions.INIT_STARPORT
-    // ,
-    //         });
-    //         // await dispatch('common/starport/init', null, { root: true })
-    //       } catch (e) {
-    //         console.error(
-    //           'Env:Init:Starport',
-    //           'Could not initialize common/starport module'
-    //         )
-    //       }
-    //     } else {
     try {
       config(initConfig)(dispatch, getState);
     } catch (e) {
       console.error("Env:Config", "Could not configure environment", e);
-    }
-    // }
-  };
-};
-
-export const setTxApi = (txapi) => {
-  return {
-    type: envActions.SET_TX_API,
-    payload: {
-      txapi,
-    },
-  };
-};
-
-// export const setConectivity = ({connection, status}) => {
-//   return (dispatch) => {
-//     dispatch({type: connection, status})
-//   }
-// }
-
-export const signIn = (signer) => {
-  return async (dispatch, getState) => {
-    const state = getState().env;
-    try {
-      await state.client.useSigner(signer);
-    } catch (e) {
-      console.error(
-        "Env:Client:Wallet",
-        "Could not create signing client with signer: " + signer
-      );
     }
   };
 };
@@ -137,41 +92,17 @@ export const config = (
   };
 };
 
-export const sendTransaction = ({ message, memo, denom = "token" }) => {
-  return async (dispatch, getState) => {
-    const state = getState().wallet;
-    const fee = {
-      amount: [{ amount: "0", denom }],
-      gas: "200000",
-    };
-    try {
-      const result = await state.activeClient.signAndBroadcast(
-        state.selectedAddress,
-        [message],
-        fee,
-        memo
-      );
-      assertIsBroadcastTxSuccess(result);
-      return result;
-    } catch (e) {
-      console.error(e);
-      return null;
-      // throw "Failed to broadcast transaction." + e;
-    }
+export const sendTransaction = async (
+  { message, memo, denom = process.env.NEXT_PUBLIC_CURRENCY_TOKEN },
+  env
+) => {
+  const fee = {
+    amount: [{ amount: "0", denom }],
+    gas: "200000",
   };
-};
-
-export const setTxClient = (client) => {
-  return async (dispatch, getState) => {
-    dispatch({ type: envActions.SET_TX_CLIENT, payload: { client } });
-  };
-};
-
-export const setQueryClient = (client) => {
-  return async (dispatch, getState) => {
-    dispatch({
-      type: envActions.SET_QUERY_CLIENT,
-      payload: { client },
-    });
-  };
+  const result = await env.txClient.signAndBroadcast([message], {
+    fee,
+    memo,
+  });
+  return result;
 };

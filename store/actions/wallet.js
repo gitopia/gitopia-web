@@ -3,23 +3,60 @@ import {
   DirectSecp256k1HdWallet,
   DirectSecp256k1Wallet,
 } from "@cosmjs/proto-signing";
-
-import { assertIsBroadcastTxSuccess } from "@cosmjs/stargate";
 import { stringToPath } from "@cosmjs/crypto";
 import CryptoJS from "crypto-js";
 import { Api } from "../cosmos.bank.v1beta1/module/rest";
-import { txClient } from "gitopiajs";
 import saveAs from "file-saver";
-// import { keyFromWif, keyToWif } from '../../../helpers/keys'
-
-// export const setActiveWallet = (dispatch, wallet) => {
-//   return
-// };
+import { queryClient, txClient } from "gitopiajs";
+import { getUserDetailsForSelectedAddress } from "./user";
 
 export const signOut = () => {
   return {
     type: walletActions.SIGN_OUT,
   };
+};
+
+const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
+  const [account] = await accountSigner.getAccounts();
+  const { env } = getState();
+  dispatch({
+    type: walletActions.SET_SELECTED_ADDRESS,
+    payload: { address: account.address },
+  });
+  dispatch({
+    type: walletActions.SET_ACCOUNT_SIGNER,
+    payload: { accountSigner },
+  });
+
+  const [tc, qc, amount] = await Promise.all([
+    txClient(accountSigner, { addr: env.rpcNode }),
+    queryClient({ addr: env.apiNode }),
+    getBalance(process.env.NEXT_PUBLIC_CURRENCY_TOKEN)(dispatch, getState),
+  ]);
+
+  dispatch({
+    type: envActions.SET_TX_CLIENT,
+    payload: {
+      client: tc,
+    },
+  });
+  dispatch({
+    type: envActions.SET_QUERY_CLIENT,
+    payload: {
+      client: qc,
+    },
+  });
+  await getUserDetailsForSelectedAddress()(dispatch, getState);
+};
+
+export const reInitClients = async (dispatch, getState) => {
+  const { activeWallet } = getState().wallet;
+  const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
+    activeWallet.mnemonic,
+    stringToPath(activeWallet.HDpath + activeWallet.accounts[0].pathIncrement),
+    activeWallet.prefix
+  );
+  await postWalletUnlocked(accountSigner, dispatch, getState);
 };
 
 export const unlockWallet = ({ name, password }) => {
@@ -46,21 +83,7 @@ export const unlockWallet = ({ name, password }) => {
         wallet.prefix
       );
       try {
-        await dispatch({
-          type: envActions.SIGN_IN,
-          payload: { accountSigner, root: true },
-        });
-        let client = getState().env.signingClient;
-        dispatch({
-          type: envActions.SET_SIGNING_CLIENT,
-          payload: { client },
-        });
-        const [account] = await accountSigner.getAccounts();
-        dispatch({
-          type: walletActions.SET_SELECTED_ADDRESS,
-          payload: { address: account.address },
-        });
-        await getBalance("token")(dispatch, getState);
+        await postWalletUnlocked(accountSigner, dispatch, getState);
       } catch (e) {
         console.error(e);
       }
@@ -85,17 +108,7 @@ export const switchAccount = (address) => {
     );
 
     try {
-      await dispatch({
-        type: envActions.SIGN_IN,
-        payload: { accountSigner, root: true },
-      });
-      let client = getState().env.signingClient;
-      dispatch({ type: envActions.SET_SIGNING_CLIENT, payload: { client } });
-      const [account] = await accountSigner.getAccounts();
-      dispatch({
-        type: walletActions.SET_SELECTED_ADDRESS,
-        payload: { address: account.address },
-      });
+      await postWalletUnlocked(accountSigner, dispatch, getState);
     } catch (e) {
       console.error(e);
     }
@@ -157,20 +170,10 @@ export const createWalletWithMnemonic = ({
     const [firstAccount] = await accountSigner.getAccounts();
     const account = { address: firstAccount.address, pathIncrement: 0 };
     wallet.accounts.push(account);
-    dispatch({ type: walletActions.ADD_WALLET, payload: { wallet } });
+    await dispatch({ type: walletActions.ADD_WALLET, payload: { wallet } });
 
     try {
-      await dispatch({
-        type: envActions.SIGN_IN,
-        payload: { accountSigner, root: true },
-      });
-      let client = getState().env.signingClient;
-      dispatch({ type: envActions.SET_SIGNING_CLIENT, payload: { client } });
-      const [account] = await accountSigner.getAccounts();
-      dispatch({
-        type: walletActions.SET_SELECTED_ADDRESS,
-        payload: { address: firstAccount.address },
-      });
+      await postWalletUnlocked(accountSigner, dispatch, getState);
     } catch (e) {
       console.error(e);
     }
@@ -196,23 +199,10 @@ export const restoreWallet = ({ encrypted, password }) => {
       stringToPath(wallet.HDpath + "0"),
       wallet.prefix
     );
-    const [firstAccount] = await accountSigner.getAccounts();
-    // commit('ADD_WALLET', wallet)
-    dispatch({ type: walletActions.ADD_WALLET, payload: { wallet } });
+    await dispatch({ type: walletActions.ADD_WALLET, payload: { wallet } });
 
-    // TODO fix dispatches below
     try {
-      await dispatch({
-        type: envActions.SIGN_IN,
-        payload: { accountSigner, root: true },
-      });
-      let client = getState().env.signingClient;
-      dispatch({ type: envActions.SET_SIGNING_CLIENT, payload: { client } });
-      const [account] = await accountSigner.getAccounts();
-      dispatch({
-        type: walletActions.SET_SELECTED_ADDRESS,
-        payload: { address: firstAccount.address },
-      });
+      await postWalletUnlocked(accountSigner, dispatch, getState);
     } catch (e) {
       console.error(e);
     }
@@ -223,23 +213,11 @@ export const restoreWallet = ({ encrypted, password }) => {
 
 export const signInWithPrivateKey = ({ prefix = "gitopia", privKey }) => {
   return async (dispatch, getState) => {
-    const state = getState();
     const pKey = keyFromWif(privKey.trim());
     const accountSigner = await DirectSecp256k1Wallet.fromKey(pKey, prefix);
-    const [firstAccount] = await accountSigner.getAccounts();
 
     try {
-      await dispatch({
-        type: envActions.SIGN_IN,
-        payload: { accountSigner, root: true },
-      });
-      let client = getState().env.signingClient;
-      dispatch({ type: envActions.SET_SIGNING_CLIENT, payload: { client } });
-      const [account] = await accountSigner.getAccounts();
-      dispatch({
-        type: walletActions.SET_SELECTED_ADDRESS,
-        payload: { address: firstAccount.address },
-      });
+      await postWalletUnlocked(accountSigner, dispatch);
     } catch (e) {
       console.error(e);
     }
