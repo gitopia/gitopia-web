@@ -64,6 +64,7 @@ function RepositoryIssueView(props) {
       const res = await props.createComment({
         parentId: issue.id,
         body: comment,
+        commentType: "Issue",
       });
       if (res && res.code === 0) {
         setComment("");
