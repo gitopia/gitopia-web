@@ -5,6 +5,7 @@ import BackendStatus from "../components/backendStatus";
 import FaucetReceiver from "../components/faucetReceiver";
 import TopRepositories from "../components/topRepositories";
 import GreetUser from "../components/greetUser";
+import DashboardSelector from "../components/dashboardSelector";
 
 export default function Home(props) {
   return (
@@ -19,17 +20,7 @@ export default function Home(props) {
       <Header />
       <div className="flex">
         <div className="w-64 border-r border-grey">
-          <div className="border-b border-grey p-4">
-            <select
-              className="select select-ghost select-md w-full max-w-xs"
-              defaultValue="1"
-            >
-              <option value="1">Snehil Buxy</option>
-              <option value="2">Org: Gitopia</option>
-              <option value="3">Org: Polygon</option>
-              <option value="4">Org: yEarn Finance</option>
-            </select>
-          </div>
+          <DashboardSelector />
           <TopRepositories />
           <BackendStatus />
           <div className="my-8">
