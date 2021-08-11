@@ -74,9 +74,11 @@ export default function Home(props) {
                     Organization is the team in which your repositories live
                     under.
                   </div>
-                  <button className="btn btn-outline btn-md">
-                    Create an Organisation
-                  </button>
+                  <Link href="/account/organizations/new">
+                    <button className="btn btn-outline btn-md">
+                      Create an Organisation
+                    </button>
+                  </Link>
                 </div>
               </div>
             </div>

@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createRepository } from "../store/actions/repository";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Header from "../components/header";
 import TextInput from "../components/textInput";
-import { propTypes } from "react-markdown";
+import shrinkAddress from "../helpers/shrinkAddress";
 
 function NewRepository(props) {
   const router = useRouter();
@@ -22,8 +22,29 @@ function NewRepository(props) {
     message: "",
   });
   const [repositoryCreating, setRepositoryCreating] = useState(false);
+  const [accountsList, setAccountsList] = useState([]);
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
+
+  useEffect(() => {
+    let newAccountsList = [];
+    if (props.address) {
+      const item = {
+        address: props.address,
+        display: props.activeWallet.name + " - " + shrinkAddress(props.address),
+      };
+      newAccountsList.push(item);
+    }
+    if (props.organizations.length) {
+      for (let i = 0; i < props.organizations.length; i++) {
+        newAccountsList.push({
+          address: null,
+          display: "Org - " + props.organizations[i],
+        });
+      }
+    }
+    setAccountsList(newAccountsList);
+  }, [props.address, props.organizations]);
 
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });
@@ -40,14 +61,7 @@ function NewRepository(props) {
       });
       return false;
     }
-    let alreadyAvailable = false;
-    props.repositorys.every((repository) => {
-      if (repository.name === name) {
-        alreadyAvailable = true;
-        return false;
-      }
-    });
-    if (alreadyAvailable) {
+    if (props.repositoryNames[name]) {
       setNameHint({
         type: "error",
         shown: true,
@@ -105,8 +119,8 @@ function NewRepository(props) {
               here.
             </div>
           </div>
-          <div className="bg-box-grad-v rounded-md mt-4 h-58 flex justify-center">
-            <img src="new-repository.svg" />
+          <div className="bg-box-grad-v rounded-md mt-4 flex justify-center">
+            <img src="new-repository.svg" className="h-58" />
           </div>
           <div className="mt-4">
             <div className="flex items-top">
@@ -116,9 +130,15 @@ function NewRepository(props) {
                 </label>
                 <select
                   className="select select-bordered select-md"
-                  defaultValue="1"
+                  defaultValue={props.address}
                 >
-                  <option value="1">Snehil Buxy</option>
+                  {accountsList.map((a, i) => {
+                    return (
+                      <option value={a.address} key={i}>
+                        {a.display}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
 
@@ -178,8 +198,10 @@ function NewRepository(props) {
 
 const mapStateToProps = (state) => {
   return {
-    repositorys: state.repository.repositorys,
-    selectedAddress: state.wallet.selectedAddress,
+    repositoryNames: state.user.repositoryNames,
+    address: state.wallet.selectedAddress,
+    activeWallet: state.wallet.activeWallet,
+    organizations: state.user.organizations,
   };
 };
 
