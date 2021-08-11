@@ -4,6 +4,7 @@ import Link from "next/link";
 import BackendStatus from "../components/backendStatus";
 import FaucetReceiver from "../components/faucetReceiver";
 import TopRepositories from "../components/topRepositories";
+import GreetUser from "../components/greetUser";
 
 export default function Home(props) {
   return (
@@ -43,10 +44,7 @@ export default function Home(props) {
         <div className="flex-1 px-4">
           <main className="container mx-auto max-w-screen-lg py-12">
             <div className="flex mb-12">
-              <div>
-                <div className="text-xs uppercase">Welcome,</div>
-                <div className="text-lg">Snehil Buxy</div>
-              </div>
+              <GreetUser />
               <div className="flex-1"></div>
               <div>
                 <div className="text-xs uppercase ml-2">Show:</div>
