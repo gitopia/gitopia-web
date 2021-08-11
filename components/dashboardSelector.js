@@ -33,7 +33,7 @@ function DashboardSelector(props) {
   return props.address ? (
     <div className="pl-2 pr-4 mt-8">
       <div className="dropdown w-full">
-        <div tabindex="0" className="m-1 btn btn-ghost btn-block">
+        <div tabIndex="0" className="m-1 btn btn-ghost btn-block">
           {selected.type === "User" ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -76,12 +76,12 @@ function DashboardSelector(props) {
           </svg>
         </div>
         <ul
-          tabindex="0"
+          tabIndex="0"
           className="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52"
         >
-          {accountsList.map((a) => {
+          {accountsList.map((a, i) => {
             return (
-              <li>
+              <li key={i}>
                 <a className="btn">{a.display}</a>
               </li>
             );

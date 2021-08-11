@@ -106,7 +106,7 @@ function CreateWallet(props) {
           <div className="max-w-2xl w-full p-4 mb-5">
             <ul className="grid grid-cols-6 grid-rows-4 gap-5 list-decimal list-inside">
               {mnemonic.split(" ").map((word, i) => {
-                return <li>{word}</li>;
+                return <li key={i}>{word}</li>;
               })}
             </ul>
           </div>

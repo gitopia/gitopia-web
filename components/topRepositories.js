@@ -21,7 +21,7 @@ function TopRepositories(props) {
     } else {
       setRepos([]);
     }
-    console.log(props);
+    console.log("repositoryNames", props.repositoryNames);
   }, [props.repositoryNames]);
 
   return (

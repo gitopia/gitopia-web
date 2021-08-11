@@ -1,7 +1,7 @@
 import { assertIsBroadcastTxSuccess } from "@cosmjs/stargate";
 import { notify } from "reapop";
 import { sendTransaction } from "./env";
-import { createUser } from "./user";
+import { createUser, getUserDetailsForSelectedAddress } from "./user";
 import { reInitClients } from "./wallet";
 
 const validatePostingEligibility = async (dispatch, getState, msgType) => {
@@ -56,6 +56,7 @@ export const createRepository = ({ name = null, description = null }) => {
       const result = await sendTransaction({ message }, env);
       console.log(result);
       if (result && result.code === 0) {
+        getUserDetailsForSelectedAddress()(dispatch, getState);
         return { url: "/" + wallet.selectedAddress + "/" + name };
       } else {
         dispatch(notify(result.rawLog, "error"));
