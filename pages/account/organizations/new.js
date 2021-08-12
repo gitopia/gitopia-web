@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { connect } from "react-redux";
-import { createOrganization } from "../../../store/actions/repository";
+import { createOrganization } from "../../../store/actions/organization";
 
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -21,7 +21,7 @@ function NewOrganization(props) {
     type: "error",
     message: "",
   });
-  const [repositoryCreating, setRepositoryCreating] = useState(false);
+  const [organizationCreating, setOrganizationCreating] = useState(false);
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
@@ -30,7 +30,7 @@ function NewOrganization(props) {
     setDescriptionHint({ ...descriptionHint, shown: false });
   };
 
-  const validateRepository = () => {
+  const validateOrganization = () => {
     hideHints();
     if (name === "") {
       setNameHint({
@@ -40,21 +40,23 @@ function NewOrganization(props) {
       });
       return false;
     }
-    let alreadyAvailable = false;
-    props.repositorys.every((repository) => {
-      if (repository.name === name) {
-        alreadyAvailable = true;
-        return false;
-      }
-    });
-    if (alreadyAvailable) {
-      setNameHint({
-        type: "error",
-        shown: true,
-        message: "Repository name already taken",
-      });
-      return false;
-    }
+    // TODO: check name availabliity
+
+    // let alreadyAvailable = false;
+    // props.organizations.every((organization) => {
+    //   if (organization.name === name) {
+    //     alreadyAvailable = true;
+    //     return false;
+    //   }
+    // });
+    // if (alreadyAvailable) {
+    //   setNameHint({
+    //     type: "error",
+    //     shown: true,
+    //     message: "Organization name already taken",
+    //   });
+    //   return false;
+    // }
     if (description === "") {
       setDescriptionHint({
         ...descriptionHint,
@@ -66,9 +68,9 @@ function NewOrganization(props) {
     return true;
   };
 
-  const createRepository = async () => {
-    setRepositoryCreating(true);
-    if (validateRepository()) {
+  const createOrganization = async () => {
+    setOrganizationCreating(true);
+    if (validateOrganization()) {
       let res = await props.createOrganization({
         name: name.replace(sanitizedNameTest, "-"),
         description,
@@ -77,7 +79,7 @@ function NewOrganization(props) {
         router.push(res.url);
       }
     }
-    setRepositoryCreating(false);
+    setOrganizationCreating(false);
   };
 
   return (
@@ -96,9 +98,9 @@ function NewOrganization(props) {
           <div className="mt-4">
             <TextInput
               type="text"
-              label="Repository Name"
-              name="repository_name"
-              placeholder="Repository Name"
+              label="Organization Name"
+              name="organization_name"
+              placeholder="Organization Name"
               value={name}
               setValue={(v) => {
                 if (sanitizedNameTest.test(v)) {
@@ -106,7 +108,7 @@ function NewOrganization(props) {
                     type: "info",
                     shown: true,
                     message:
-                      "Your repository would be named as " +
+                      "Your organization would be named as " +
                       v.replace(sanitizedNameTest, "-"),
                   });
                 } else {
@@ -120,8 +122,8 @@ function NewOrganization(props) {
           <div className="mt-4">
             <TextInput
               type="text"
-              label="Repository Description"
-              name="repository_description"
+              label="Organization Description"
+              name="organization_description"
               placeholder="Description"
               multiline={true}
               value={description}
@@ -133,9 +135,9 @@ function NewOrganization(props) {
             <button
               className={
                 "flex-none btn btn-primary " +
-                (repositoryCreating ? "loading " : "")
+                (organizationCreating ? "loading " : "")
               }
-              onClick={createRepository}
+              onClick={createOrganization}
             >
               Create Organization
             </button>
@@ -148,7 +150,6 @@ function NewOrganization(props) {
 
 const mapStateToProps = (state) => {
   return {
-    repositorys: state.repository.repositorys,
     selectedAddress: state.wallet.selectedAddress,
   };
 };
