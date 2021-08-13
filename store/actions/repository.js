@@ -40,7 +40,11 @@ export const validatePostingEligibility = async (
   return true;
 };
 
-export const createRepository = ({ name = null, description = null }) => {
+export const createRepository = ({
+  name = null,
+  description = null,
+  owner = null,
+}) => {
   return async (dispatch, getState) => {
     const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
@@ -48,17 +52,13 @@ export const createRepository = ({ name = null, description = null }) => {
     const repository = {
       creator: wallet.selectedAddress,
       name: name,
-      owner: JSON.stringify({
-        Type: "User",
-        ID: wallet.selectedAddress,
-      }),
+      owner: owner,
       description: description,
     };
 
     try {
       const message = await env.txClient.msgCreateRepository(repository);
       const result = await sendTransaction({ message }, env);
-      console.log(result);
       if (result && result.code === 0) {
         getUserDetailsForSelectedAddress()(dispatch, getState);
         return { url: "/" + wallet.selectedAddress + "/" + name };
@@ -105,7 +105,6 @@ export const createIssue = ({
     try {
       const message = await env.txClient.msgCreateIssue(issue);
       const result = await sendTransaction({ message }, env);
-      console.log(result);
       return result;
     } catch (e) {
       console.error(e);
@@ -143,7 +142,6 @@ export const createComment = ({
     try {
       const message = await env.txClient.msgCreateComment(comment);
       const result = await sendTransaction({ message }, env);
-      console.log(result);
       return result;
     } catch (e) {
       console.error(e);

@@ -21,8 +21,11 @@ function NewRepository(props) {
     type: "error",
     message: "",
   });
+  const [owner, setOwner] = useState("");
   const [repositoryCreating, setRepositoryCreating] = useState(false);
-  const [accountsList, setAccountsList] = useState([]);
+  const [accountsList, setAccountsList] = useState([
+    { value: "", display: "" },
+  ]);
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
@@ -30,7 +33,7 @@ function NewRepository(props) {
     let newAccountsList = [];
     if (props.address) {
       const item = {
-        address: props.address,
+        value: JSON.stringify({ Type: "User", ID: props.address }),
         display: props.activeWallet.name + " - " + shrinkAddress(props.address),
       };
       newAccountsList.push(item);
@@ -38,10 +41,18 @@ function NewRepository(props) {
     if (props.organizations.length) {
       for (let i = 0; i < props.organizations.length; i++) {
         newAccountsList.push({
-          address: null,
+          value: JSON.stringify({
+            Type: "Organization",
+            ID: props.organizations[i],
+          }),
           display: "Org - " + props.organizations[i],
         });
       }
+    }
+    if (accountsList.length) {
+      setOwner(accountsList[0].value);
+    } else {
+      setOwner("");
     }
     setAccountsList(newAccountsList);
   }, [props.address, props.organizations]);
@@ -86,6 +97,7 @@ function NewRepository(props) {
       let res = await props.createRepository({
         name: name.replace(sanitizedNameTest, "-"),
         description,
+        owner,
       });
       if (res && res.url) {
         router.push(res.url);
@@ -130,11 +142,14 @@ function NewRepository(props) {
                 </label>
                 <select
                   className="select select-bordered select-md"
-                  defaultValue={props.address}
+                  value={owner}
+                  onChange={(e) => {
+                    setOwner(e.target.value);
+                  }}
                 >
                   {accountsList.map((a, i) => {
                     return (
-                      <option value={a.address} key={i}>
+                      <option value={a.value} key={i}>
                         {a.display}
                       </option>
                     );

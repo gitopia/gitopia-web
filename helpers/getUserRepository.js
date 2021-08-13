@@ -13,6 +13,7 @@ export default async function getUserRepository(userId, repositoryName) {
       } catch (e) {
         console.error(e);
       }
+      console.log(r);
       return r;
     }
     return {
