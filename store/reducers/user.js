@@ -1,4 +1,5 @@
 import { userActions } from "../actions/actionTypes";
+import { get, set, del } from "../persist";
 
 const initialState = {
   creator: null,
@@ -18,6 +19,7 @@ const initialState = {
   createdAt: "0",
   updatedAt: "0",
   extensions: "",
+  currentDashboard: get("currentDashboard"),
 };
 
 const reducer = (state = initialState, action) => {
@@ -25,9 +27,19 @@ const reducer = (state = initialState, action) => {
     case userActions.SET_USER:
       const { user } = action.payload;
       return { ...state, ...user };
+
     case userActions.SET_EMPTY_USER:
-      console.log("resetting user to ", initialState);
       return { ...initialState };
+
+    case userActions.SET_CURRENT_DASHBOARD: {
+      const { type, address } = action.payload;
+      set("set currentDashboard", { type, address });
+      return {
+        ...state,
+        currentDashboard: { type, address },
+      };
+    }
+
     default:
       return { ...state };
   }

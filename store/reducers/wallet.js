@@ -1,39 +1,6 @@
 import { walletActions } from "../actions/actionTypes";
 import CryptoJS from "crypto-js";
-const isServer = typeof window === "undefined";
-
-const set = (key, value) => {
-  if (isServer) return;
-  try {
-    window.localStorage.setItem(key, JSON.stringify(value));
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-const get = (key) => {
-  if (isServer) return;
-  try {
-    const data = window.localStorage.getItem(key);
-    if (data) {
-      return JSON.parse(data);
-    } else {
-      return null;
-    }
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-};
-
-const del = (key) => {
-  if (isServer) return;
-  try {
-    window.localStorage.removeItem(key);
-  } catch (e) {
-    console.error(e);
-  }
-};
+import { set, get, del } from "../persist";
 
 const initialState = {
   wallets: get("wallets") || [],
@@ -43,8 +10,6 @@ const initialState = {
   backupState: false,
   loreBalance: 0,
   accountSigner: null,
-  txClient: null,
-  queryClient: null,
 };
 
 const reducer = (state = initialState, action) => {

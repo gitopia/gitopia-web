@@ -39,14 +39,17 @@ function FaucetReceiver(props) {
   };
 
   return (
-    <>
-      <button
-        className={"btn btn-xs " + (loading === 1 ? "loading" : "")}
-        onClick={() => getTokens(1)}
-      >
-        Claim free LORE
-      </button>
-    </>
+    <div className="my-8">
+      <div className="text-md mx-8 border-b border-grey py-2 mb-4">Faucet</div>
+      <div className="mx-8">
+        <button
+          className={"btn btn-xs " + (loading === 1 ? "loading" : "")}
+          onClick={() => getTokens(1)}
+        >
+          Claim free LORE
+        </button>
+      </div>
+    </div>
   );
 }
 

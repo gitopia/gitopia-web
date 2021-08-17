@@ -118,6 +118,7 @@ function Header(props) {
               onClick={(e) => {
                 if (!props.activeWallet && !props.wallets.length) {
                   router.push("/login");
+                  return;
                 }
                 setMenuOpen(true);
               }}

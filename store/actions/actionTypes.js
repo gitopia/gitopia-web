@@ -15,6 +15,12 @@ export const walletActions = {
 export const userActions = {
   SET_USER: "SET_USER",
   SET_EMPTY_USER: "SET_EMPTY_USER",
+  SET_CURRENT_DASHBOARD: "SET_CURRENT_DASHBOARD",
+};
+
+export const organizationActions = {
+  SET_ORGANIZATION: "SET_ORGANIZATION",
+  SET_EMPTY_ORGANIZATION: "SET_EMPTY_ORGANIZATION",
 };
 
 export const repositoryActions = {

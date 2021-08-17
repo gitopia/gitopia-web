@@ -10,15 +10,6 @@ export const createUser = (username) => {
         creator: wallet.selectedAddress,
       });
       const result = await sendTransaction({ message }, env);
-      // if (result.code === 0) {
-      // dispatch({
-      //   type: walletActions.SET_ACTIVE_WALLET_USERNAME,
-      //   payload: { username },
-      // });
-      // dispatch({ type: walletActions.STORE_WALLETS });
-      // }
-
-      console.log(result);
       return result;
     } catch (e) {
       console.error(e);
@@ -31,7 +22,6 @@ export const getUserDetailsForSelectedAddress = () => {
     const { env, wallet } = getState();
     try {
       const result = await env.queryClient.queryUser(wallet.selectedAddress);
-      console.log("queryClient", result);
       dispatch({
         type: userActions.SET_USER,
         payload: { user: result.data.User },
@@ -40,7 +30,16 @@ export const getUserDetailsForSelectedAddress = () => {
       dispatch({
         type: userActions.SET_EMPTY_USER,
       });
-      console.log(e);
     }
+  };
+};
+
+export const setCurrentDashboard = (type, address) => {
+  return async (dispatch, getState) => {
+    console.log("setCurrentDashboard", type, address);
+    dispatch({
+      type: userActions.SET_CURRENT_DASHBOARD,
+      payload: { type, address },
+    });
   };
 };
