@@ -1,43 +1,15 @@
 import { walletActions } from "../actions/actionTypes";
-import {
-  DirectSecp256k1HdWallet,
-  DirectSecp256k1Wallet,
-} from "@cosmjs/proto-signing";
-
-// import { assertIsBroadcastTxSuccess } from '@cosmjs/stargate'
-import { stringToPath } from "@cosmjs/crypto";
 import CryptoJS from "crypto-js";
-// import { keyFromWif, keyToWif } from '../../../helpers/keys'
-const isServer = typeof window === "undefined";
-
-const set = (key, value) => {
-  if (isServer) return;
-  try {
-    window.localStorage.setItem(key, JSON.stringify(value));
-  } catch (e) {
-    console.error("Error while saving", key, e);
-  }
-};
-
-const get = (key) => {
-  if (isServer) return;
-  try {
-    return JSON.parse(window.localStorage.getItem(key));
-  } catch (e) {
-    console.error("Error while saving", key, e);
-    return null;
-  }
-};
+import { set, get, del } from "../persist";
 
 const initialState = {
   wallets: get("wallets") || [],
   activeWallet: null,
-  activeClient: null,
-  selectedAddress: "",
-  authorized: false,
-  gasPrice: "0.0000025token",
+  selectedAddress: null,
+  gasPrice: "0.0000025" + process.env.NEXT_PUBLIC_CURRENCY_TOKEN,
   backupState: false,
   loreBalance: 0,
+  accountSigner: null,
 };
 
 const reducer = (state = initialState, action) => {
@@ -51,18 +23,10 @@ const reducer = (state = initialState, action) => {
       };
     }
 
-    case walletActions.SET_ACTIVE_CLIENT: {
-      const { client } = action.payload;
-      return {
-        ...state,
-        activeClient: client,
-      };
-    }
-
     case walletActions.ADD_WALLET: {
       let { wallet } = action.payload;
       let wallets = state.wallets;
-      set("lastWallet", wallet.name);
+      set("lastWallet", wallet);
       if (wallet.name && wallet.password) {
         wallets.push({
           name: wallet.name,
@@ -128,19 +92,10 @@ const reducer = (state = initialState, action) => {
       };
     }
 
-    case walletActions.ADD_MESSAGE_TYPE: {
-      let { typeUrl, type } = action.payload;
-      state.activeClient.registry.register(typeUrl, type);
-      return {
-        ...state,
-      };
-    }
-
     case walletActions.SIGN_OUT: {
-      state.selectedAddress = "";
-      state.activeClient = null;
+      state.selectedAddress = null;
       state.activeWallet = null;
-      state.authorized = false;
+      del("lastWallet");
       return {
         ...state,
       };
@@ -154,21 +109,11 @@ const reducer = (state = initialState, action) => {
       };
     }
 
-    case walletActions.SET_ACTIVE_WALLET_USERNAME: {
-      let { username } = action.payload;
-      let activeWallet = { ...state.activeWallet };
-      activeWallet.username = username;
-      if (activeWallet.name && activeWallet.password) {
-        state.wallets[
-          state.wallets.findIndex((x) => x.name === activeWallet.name)
-        ].wallet = CryptoJS.AES.encrypt(
-          JSON.stringify(activeWallet),
-          activeWallet.password
-        ).toString();
-      }
+    case walletActions.SET_ACCOUNT_SIGNER: {
+      let { accountSigner } = action.payload;
       return {
         ...state,
-        activeWallet,
+        accountSigner,
       };
     }
 

@@ -64,6 +64,7 @@ function RepositoryIssueView(props) {
       const res = await props.createComment({
         parentId: issue.id,
         body: comment,
+        commentType: "Issue",
       });
       if (res && res.code === 0) {
         setComment("");
@@ -101,10 +102,10 @@ function RepositoryIssueView(props) {
                 <span
                   className={
                     "badge badge-lg capitalize mr-4 " +
-                    (issue.state === "open" ? "badge-primary" : "badge-error")
+                    (issue.state === "Open" ? "badge-primary" : "badge-error")
                   }
                 >
-                  {issue.state === "open" ? (
+                  {issue.state === "Open" ? (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5 mr-2"

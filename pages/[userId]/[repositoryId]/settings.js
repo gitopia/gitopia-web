@@ -1,13 +1,13 @@
 import Head from "next/head";
-import Header from "../../../../components/header";
+import Header from "../../../components/header";
 
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
-import RepositoryHeader from "../../../../components/repository/header";
-import RepositoryMainTabs from "../../../../components/repository/mainTabs";
+import getUserRepository from "../../../helpers/getUserRepository";
+import RepositoryHeader from "../../../components/repository/header";
+import RepositoryMainTabs from "../../../components/repository/mainTabs";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -40,7 +40,7 @@ function RepositoryView(props) {
         <main className="container mx-auto max-w-screen-lg py-12">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
-            active="pulls"
+            active="settings"
             hrefBase={repository.owner.ID + "/" + repository.name}
           />
         </main>

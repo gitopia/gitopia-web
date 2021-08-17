@@ -1,37 +1,28 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { txClient, queryClient } from "gitopiajs";
 import Link from "next/link";
 
 function TopRepositories(props) {
   const [repos, setRepos] = useState([]);
 
-  const getRepositories = async (address) => {
-    try {
-      const qc = await queryClient();
-      const res = await qc.queryUserRepositoryAll(address);
-      if (res.ok) {
-        const topRepos = res.data.Repository.slice(0, 5);
-        topRepos.forEach((r) => {
-          try {
-            const owner = JSON.parse(r.owner);
-            r.owner = owner;
-          } catch (e) {
-            console.error(e);
-          }
-        });
-        setRepos(topRepos);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   useEffect(() => {
-    if (props.selectedAddress) {
-      getRepositories(props.selectedAddress);
+    if (Object.keys(props.repositoryNames).length) {
+      let newRepos = [],
+        maxLen = 5;
+      for (let r in props.repositoryNames) {
+        newRepos.push({
+          name: r,
+          owner: props.address,
+          id: props.repositoryNames[r],
+        });
+        if (--maxLen === 0) break;
+      }
+      setRepos(newRepos);
+    } else {
+      setRepos([]);
     }
-  }, [props.selectedAddress]);
+    console.log("repositoryNames", props.repositoryNames);
+  }, [props.repositoryNames]);
 
   return (
     <div className="my-8">
@@ -42,7 +33,7 @@ function TopRepositories(props) {
         {repos.map((r) => {
           return (
             <li className="mb-2" key={r.id}>
-              <Link href={r.owner.ID + "/" + r.name}>
+              <Link href={r.owner + "/" + r.name}>
                 <a className="rounded">{r.name}</a>
               </Link>
             </li>
@@ -55,8 +46,10 @@ function TopRepositories(props) {
 
 const mapStateToProps = (state) => {
   return {
-    activeWallet: state.wallet.activeWallet,
-    selectedAddress: state.wallet.selectedAddress,
+    address: state.wallet.selectedAddress,
+    creator: state.user.creator,
+    repositories: state.user.repositories,
+    repositoryNames: state.user.repositoryNames,
   };
 };
 

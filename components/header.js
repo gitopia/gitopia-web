@@ -4,7 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import ClickAwayListener from "react-click-away-listener";
 import CurrentWallet from "./currentWallet";
-import { downloadWalletForRemoteHelper } from "../store/actions/wallet";
+import {
+  downloadWalletForRemoteHelper,
+  signOut,
+} from "../store/actions/wallet";
 import shrinkAddress from "../helpers/shrinkAddress";
 /*
 Menu States
@@ -115,6 +118,7 @@ function Header(props) {
               onClick={(e) => {
                 if (!props.activeWallet && !props.wallets.length) {
                   router.push("/login");
+                  return;
                 }
                 setMenuOpen(true);
               }}
@@ -136,9 +140,18 @@ function Header(props) {
               <div
                 className={"mr-2 " + (props.activeWallet ? "ml-10" : "ml-2")}
               >
-                {props.activeWallet
-                  ? props.activeWallet.name
-                  : "Connect Wallet"}
+                {props.activeWallet ? (
+                  <>
+                    <div className="text-xs text-left">
+                      {props.activeWallet.name}
+                    </div>
+                    <div className="text-xs text-base-content">
+                      {addressToShow}
+                    </div>
+                  </>
+                ) : (
+                  "Connect Wallet"
+                )}
               </div>
             </button>
             <div className="shadow dropdown-content bg-base-300 rounded-box mt-2">
@@ -147,29 +160,18 @@ function Header(props) {
                 <ul className="menu w-48 rounded-box">
                   {props.activeWallet ? (
                     <>
-                      {addressToShow && (
-                        <li>
-                          <a
-                            onClick={(e) => {
-                              navigator.clipboard.writeText(
-                                props.activeWallet.accounts[0].address
-                              );
-                              setMenuOpen(false);
-                            }}
-                          >
-                            <span className="flex-1">{addressToShow}</span>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
-                              <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
-                            </svg>
-                          </a>
-                        </li>
-                      )}
+                      <li>
+                        <a
+                          onClick={(e) => {
+                            navigator.clipboard.writeText(
+                              props.selectedAddress
+                            );
+                            setMenuOpen(false);
+                          }}
+                        >
+                          <span className="flex-1">Copy Address</span>
+                        </a>
+                      </li>
                       <li>
                         <a
                           onClick={(e) => {
@@ -177,7 +179,7 @@ function Header(props) {
                             setMenuOpen(false);
                           }}
                         >
-                          Download wallet for remote helper
+                          Download Wallet
                         </a>
                       </li>
                       <li>
@@ -216,7 +218,7 @@ function Header(props) {
                         <div className="border-b border-grey mt-2"></div>
                       </li>
                       <li>
-                        <a>Log Out</a>
+                        <a onClick={props.signOut}>Log Out</a>
                       </li>
                     </>
                   ) : (
@@ -241,6 +243,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { downloadWalletForRemoteHelper })(
-  Header
-);
+export default connect(mapStateToProps, {
+  downloadWalletForRemoteHelper,
+  signOut,
+})(Header);

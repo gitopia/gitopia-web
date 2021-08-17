@@ -2,7 +2,7 @@ import { queryClient } from "gitopiajs";
 
 export default async function getIssue(issueId) {
   try {
-    const qc = await queryClient();
+    const qc = await queryClient({ addr: process.env.NEXT_PUBLIC_API_URL });
     const res = await qc.queryIssue(issueId);
     if (res.ok) {
       let i = res.data.Issue;

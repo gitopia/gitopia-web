@@ -1,63 +1,76 @@
-import { repositoryActions, envActions } from "./actionTypes";
-import { txClient } from "gitopiajs";
-import {
-  DirectSecp256k1HdWallet,
-  DirectSecp256k1Wallet,
-} from "@cosmjs/proto-signing";
+import { assertIsBroadcastTxSuccess } from "@cosmjs/stargate";
+import { notify } from "reapop";
+import { sendTransaction } from "./env";
+import { createUser, getUserDetailsForSelectedAddress } from "./user";
+import { reInitClients } from "./wallet";
 
-// import { assertIsBroadcastTxSuccess } from '@cosmjs/stargate'
-import { stringToPath } from "@cosmjs/crypto";
-import CryptoJS from "crypto-js";
+export const validatePostingEligibility = async (
+  dispatch,
+  getState,
+  msgType
+) => {
+  const { wallet, env, user } = getState();
 
-async function initTxClient(accountSigner) {
-  return await txClient(accountSigner, {
-    addr: process.env.NEXT_PUBLIC_RPC_URL,
-  });
-}
+  if (!wallet.selectedAddress) {
+    dispatch(notify("Please sign in to create " + msgType, "error"));
+    return false;
+  }
 
-export const createRepository = ({ name = null, description = null }) => {
+  if (!user.creator) {
+    if (wallet.loreBalance <= 0.000005) {
+      dispatch(notify("Balance low for creating " + msgType, "error"));
+      return false;
+    } else {
+      dispatch(
+        notify(
+          "No associated user found for this adddress, creating... ",
+          "info"
+        )
+      );
+      await createUser(wallet.activeWallet.name)(dispatch, getState);
+      await reInitClients(dispatch, getState);
+    }
+  }
+
+  if (wallet.loreBalance <= 0.0000025) {
+    dispatch(notify("Balance low for creating " + msgType, "error"));
+    return false;
+  }
+
+  return true;
+};
+
+export const createRepository = ({
+  name = null,
+  description = null,
+  owner = null,
+}) => {
   return async (dispatch, getState) => {
-    const state = getState().wallet;
-    /*
-    const accountIndex = state.activeWallet.accounts.findIndex(
-      (acc) => acc.address == address
-    );
-    */
-    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
-      state.activeWallet.mnemonic,
-      stringToPath(
-        state.activeWallet.HDpath + state.activeWallet.accounts[0].pathIncrement
-      ),
-      state.activeWallet.prefix
-    );
-    const [acc] = await accountSigner.getAccounts();
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+      return null;
     const repository = {
-      creator: acc.address,
+      creator: wallet.selectedAddress,
       name: name,
-      owner: JSON.stringify({
-        Type: "User",
-        ID: acc.address,
-      }),
+      owner: owner,
       description: description,
     };
 
-    //dispatch({ type: repositoryActions.ADD_REPOSITORY, payload: { repository } });
     try {
-      const msg = await (
-        await initTxClient(accountSigner)
-      ).msgCreateRepository(repository);
-      const result = await (
-        await initTxClient(accountSigner)
-      ).signAndBroadcast([msg], {
-        fee: { amount: [], gas: "200000" },
-        memo: "",
-      });
-      return result;
+      const message = await env.txClient.msgCreateRepository(repository);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        getUserDetailsForSelectedAddress()(dispatch, getState);
+        return { url: "/" + wallet.selectedAddress + "/" + name };
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
     } catch (e) {
       console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
     }
-
-    //dispatch({ type: repositoryActions.STORE_REPOSITORYS });
   };
 };
 
@@ -66,26 +79,20 @@ export const createIssue = ({
   description = "",
   authorId = 0,
   repositoryId = 0,
-  labels = ["simple"],
+  labels = [],
   weight = 0,
-  assigneesId = [0],
+  assigneesId = [],
 }) => {
   return async (dispatch, getState) => {
-    const state = getState().wallet;
-    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
-      state.activeWallet.mnemonic,
-      stringToPath(
-        state.activeWallet.HDpath + state.activeWallet.accounts[0].pathIncrement
-      ),
-      state.activeWallet.prefix
-    );
-    const [acc] = await accountSigner.getAccounts();
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "issue")))
+      return null;
     const issue = {
       // creator: JSON.stringify({
       //   Type: "User",
       //   ID: acc.address,
       // }),
-      creator: acc.address,
+      creator: wallet.selectedAddress,
       title,
       description,
       authorId,
@@ -96,18 +103,12 @@ export const createIssue = ({
     };
 
     try {
-      const msg = await (
-        await initTxClient(accountSigner)
-      ).msgCreateIssue(issue);
-      const result = await (
-        await initTxClient(accountSigner)
-      ).signAndBroadcast([msg], {
-        fee: { amount: [], gas: "200000" },
-        memo: "",
-      });
+      const message = await env.txClient.msgCreateIssue(issue);
+      const result = await sendTransaction({ message }, env);
       return result;
     } catch (e) {
       console.error(e);
+      dispatch(notify(e.message, "error"));
     }
   };
 };
@@ -123,17 +124,11 @@ export const createComment = ({
   commentType = "",
 }) => {
   return async (dispatch, getState) => {
-    const state = getState().wallet;
-    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
-      state.activeWallet.mnemonic,
-      stringToPath(
-        state.activeWallet.HDpath + state.activeWallet.accounts[0].pathIncrement
-      ),
-      state.activeWallet.prefix
-    );
-    const [acc] = await accountSigner.getAccounts();
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+      return null;
     const comment = {
-      creator: acc.address,
+      creator: wallet.selectedAddress,
       parentId,
       body,
       attachments,
@@ -145,18 +140,12 @@ export const createComment = ({
     };
 
     try {
-      const msg = await (
-        await initTxClient(accountSigner)
-      ).msgCreateComment(comment);
-      const result = await (
-        await initTxClient(accountSigner)
-      ).signAndBroadcast([msg], {
-        fee: { amount: [], gas: "200000" },
-        memo: "",
-      });
+      const message = await env.txClient.msgCreateComment(comment);
+      const result = await sendTransaction({ message }, env);
       return result;
     } catch (e) {
       console.error(e);
+      dispatch(notify(e.message, "error"));
     }
   };
 };

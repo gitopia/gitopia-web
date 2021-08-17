@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createRepository } from "../store/actions/repository";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Header from "../components/header";
 import TextInput from "../components/textInput";
-import { propTypes } from "react-markdown";
+import shrinkAddress from "../helpers/shrinkAddress";
 
 function NewRepository(props) {
   const router = useRouter();
@@ -21,7 +21,41 @@ function NewRepository(props) {
     type: "error",
     message: "",
   });
+  const [owner, setOwner] = useState("");
   const [repositoryCreating, setRepositoryCreating] = useState(false);
+  const [accountsList, setAccountsList] = useState([
+    { value: "", display: "" },
+  ]);
+
+  const sanitizedNameTest = new RegExp(/[^\w.-]/g);
+
+  useEffect(() => {
+    let newAccountsList = [];
+    if (props.address) {
+      const item = {
+        value: JSON.stringify({ Type: "User", ID: props.address }),
+        display: props.activeWallet.name + " - " + shrinkAddress(props.address),
+      };
+      newAccountsList.push(item);
+    }
+    if (props.organizations.length) {
+      for (let i = 0; i < props.organizations.length; i++) {
+        newAccountsList.push({
+          value: JSON.stringify({
+            Type: "Organization",
+            ID: props.organizations[i],
+          }),
+          display: "Org - " + props.organizations[i],
+        });
+      }
+    }
+    if (accountsList.length) {
+      setOwner(accountsList[0].value);
+    } else {
+      setOwner("");
+    }
+    setAccountsList(newAccountsList);
+  }, [props.address, props.organizations]);
 
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });
@@ -32,22 +66,15 @@ function NewRepository(props) {
     hideHints();
     if (name === "") {
       setNameHint({
-        ...nameHint,
+        type: "error",
         shown: true,
         message: "Please enter a repository name",
       });
       return false;
     }
-    let alreadyAvailable = false;
-    props.repositorys.every((repository) => {
-      if (repository.name === name) {
-        alreadyAvailable = true;
-        return false;
-      }
-    });
-    if (alreadyAvailable) {
+    if (props.repositoryNames[name]) {
       setNameHint({
-        ...nameHint,
+        type: "error",
         shown: true,
         message: "Repository name already taken",
       });
@@ -68,11 +95,12 @@ function NewRepository(props) {
     setRepositoryCreating(true);
     if (validateRepository()) {
       let res = await props.createRepository({
-        name,
+        name: name.replace(sanitizedNameTest, "-"),
         description,
+        owner,
       });
-      if (res && res.code === 0) {
-        router.push("/" + props.selectedAddress + "/" + name);
+      if (res && res.url) {
+        router.push(res.url);
       }
     }
     setRepositoryCreating(false);
@@ -103,8 +131,8 @@ function NewRepository(props) {
               here.
             </div>
           </div>
-          <div className="bg-box-grad-v rounded-md mt-4 h-58 flex justify-center">
-            <img src="new-repository.svg" />
+          <div className="bg-box-grad-v rounded-md mt-4 flex justify-center">
+            <img src="new-repository.svg" className="h-58" />
           </div>
           <div className="mt-4">
             <div className="flex items-top">
@@ -114,9 +142,18 @@ function NewRepository(props) {
                 </label>
                 <select
                   className="select select-bordered select-md"
-                  defaultValue="1"
+                  value={owner}
+                  onChange={(e) => {
+                    setOwner(e.target.value);
+                  }}
                 >
-                  <option value="1">Snehil Buxy</option>
+                  {accountsList.map((a, i) => {
+                    return (
+                      <option value={a.value} key={i}>
+                        {a.display}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
 
@@ -126,7 +163,20 @@ function NewRepository(props) {
                 name="repository_name"
                 placeholder="Repository Name"
                 value={name}
-                setValue={setName}
+                setValue={(v) => {
+                  if (sanitizedNameTest.test(v)) {
+                    setNameHint({
+                      type: "info",
+                      shown: true,
+                      message:
+                        "Your repository would be named as " +
+                        v.replace(sanitizedNameTest, "-"),
+                    });
+                  } else {
+                    setNameHint({ shown: false });
+                  }
+                  setName(v);
+                }}
                 hint={nameHint}
                 className="flex-1"
               />
@@ -163,8 +213,10 @@ function NewRepository(props) {
 
 const mapStateToProps = (state) => {
   return {
-    repositorys: state.repository.repositorys,
-    selectedAddress: state.wallet.selectedAddress,
+    repositoryNames: state.user.repositoryNames,
+    address: state.wallet.selectedAddress,
+    activeWallet: state.wallet.activeWallet,
+    organizations: state.user.organizations,
   };
 };
 

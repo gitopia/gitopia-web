@@ -1,11 +1,8 @@
 import Head from "next/head";
-import Header from "../components/header";
-import BackendStatus from "../components/backendStatus";
-import FaucetReceiver from "../components/faucetReceiver";
-import TopRepositories from "../components/topRepositories";
-import UserDashboard from "../components/dashboard/user";
-
-import DashboardSelector from "../components/dashboard/dashboardSelector";
+import Header from "../../../components/header";
+import BackendStatus from "../../../components/backendStatus";
+import FaucetReceiver from "../../../components/faucetReceiver";
+import DashboardSelector from "../../../components/dashboard/dashboardSelector";
 
 export default function Home(props) {
   return (
@@ -21,13 +18,10 @@ export default function Home(props) {
       <div className="flex">
         <div className="w-64 border-r border-grey">
           <DashboardSelector />
-          <TopRepositories />
           <BackendStatus />
           <FaucetReceiver />
         </div>
-        <div className="flex-1 px-4">
-          <UserDashboard />
-        </div>
+        <div className="flex-1 px-4"></div>
       </div>
     </div>
   );
