@@ -5,7 +5,12 @@ import _, { sortBy } from "lodash";
 
 const fetchGitObject = async (repoId, objectSha) => {
   let obj = null;
-  await fetch("http://localhost:3000/api/objects/" + repoId + "/" + objectSha, {
+  const baseUrl =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000/api/objects"
+      : process.env.NEXT_PUBLIC_OBJECTS_URL;
+
+  await fetch(baseUrl + "/" + repoId + "/" + objectSha, {
     method: "GET", // *GET, POST, PUT, DELETE, etc.
     mode: "cors", // no-cors, *cors, same-origin
     cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
