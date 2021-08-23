@@ -36,6 +36,10 @@ module.exports = withTM({
         source: "/api/faucet",
         destination: process.env.NEXT_PUBLIC_FAUCET_URL,
       },
+      {
+        source: "/api/objects/:path*",
+        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/:path*",
+      },
     ];
   },
 });
