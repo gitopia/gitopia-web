@@ -153,6 +153,8 @@ const findEntity = async (repoId, oid, type, projectRoot, path) => {
       const fileObj = await loadFile(repoId, oid, projectRoot);
       return fileObj;
     }
+  } else {
+    return await loadDirectory(repoId, oid, projectRoot, true);
   }
 };
 

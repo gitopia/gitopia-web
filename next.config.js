@@ -1,5 +1,6 @@
 const withTM = require("@module-federation/next-transpile-modules")([
   "gitopiajs",
+  "react-syntax-highlighter",
 ]); // pass the modules you would like to see transpiled
 
 module.exports = withTM({
