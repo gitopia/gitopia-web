@@ -23,7 +23,7 @@ export async function getServerSideProps() {
   return { props: {} };
 }
 
-function RepositoryView(props) {
+function RepositoryTreeView(props) {
   const router = useRouter();
   const [repository, setRepository] = useState({
     id: router.query.repositoryId,
@@ -58,25 +58,31 @@ function RepositoryView(props) {
         router.query.userId,
         repoPath
       );
-      if (res && res.commit) {
-        setCommitDetail(res.commit);
-      }
-      if (res && res.entity) {
-        if (res.entity.tree) {
-          setEntityList(res.entity.tree);
-          setFile(null);
-        } else if (res.entity.blob) {
-          setEntityList([]);
-          try {
-            let decodedFile = new TextDecoder().decode(res.entity.blob);
-            setFile(decodedFile);
-            let filename = repoPath[repoPath.length - 1] || "";
-            let extension = filename.split(".").pop() || "";
-            setFileSyntax(extension);
-          } catch (e) {
-            console.error(e);
-          }
+      if (res) {
+        if (res.commit) {
+          setCommitDetail(res.commit);
         }
+        if (res.entity) {
+          if (res.entity.tree) {
+            setEntityList(res.entity.tree);
+            setFile(null);
+          } else if (res.entity.blob) {
+            setEntityList([]);
+            try {
+              let decodedFile = new TextDecoder().decode(res.entity.blob);
+              setFile(decodedFile);
+              let filename = repoPath[repoPath.length - 1] || "";
+              let extension = filename.split(".").pop() || "";
+              setFileSyntax(extension);
+            } catch (e) {
+              console.error(e);
+            }
+          }
+        } else {
+          console.log("Entity Not found");
+        }
+      } else {
+        console.log("Repo Not found");
       }
     }
   }, [router.query]);
@@ -128,7 +134,7 @@ function RepositoryView(props) {
                 </div>
               </div>
               <div className="ml-4">
-                <div class="text-sm breadcrumbs">
+                <div className="text-sm breadcrumbs">
                   <ul>
                     <li>
                       <Link
@@ -145,9 +151,8 @@ function RepositoryView(props) {
                     </li>
                     {repoPath.map((p, i) => {
                       return (
-                        <li>
+                        <li key={"breadcrumb" + i}>
                           <Link
-                            key={"breadcrumb" + i}
                             href={[
                               "",
                               router.query.userId,
@@ -212,11 +217,9 @@ function RepositoryView(props) {
                         ...repoPath,
                         e.path,
                       ].join("/")}
+                      key={"entity" + i}
                     >
-                      <a
-                        className="flex px-2 py-2 items-center hover:bg-neutral"
-                        key={i}
-                      >
+                      <a className="flex px-2 py-2 items-center hover:bg-neutral">
                         {e.type === "blob" ? (
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -280,4 +283,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryView);
+export default connect(mapStateToProps, {})(RepositoryTreeView);
