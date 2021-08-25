@@ -27,6 +27,11 @@ function TopRepositories(props) {
         Top Repositories
       </div>
       <ul className="menu compact mx-4">
+        <li className="mb-2">
+          <Link href={"/bitcoin/bitcoin/"}>
+            <a className="rounded">Bitcoin</a>
+          </Link>
+        </li>
         {repos.map((r) => {
           return (
             <li className="mb-2" key={r.id}>

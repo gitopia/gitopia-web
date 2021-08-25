@@ -38,10 +38,13 @@ function RepositoryView(props) {
     oid: "",
   });
 
+  const isDemoRepo = repository.name === "bitcoin";
+  console.log("idDemoRepo", isDemoRepo);
+
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.ID, repository.name);
     if (r) setRepository(r);
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && isDemoRepo) {
       const res = await initRepository(
         "5",
         "803ef70fd9f65ef800567ff9456fac525bc3e3c2",
@@ -105,76 +108,74 @@ function RepositoryView(props) {
             active="code"
             hrefBase={repository.owner.ID + "/" + repository.name}
           />
-          {/* {repository.branches.length ? ( */}
-
-          <div className="">
-            <div className="flex justify-start mt-8">
-              <div className="">
-                <BranchSelector repository={repository} />
+          {isDemoRepo ? (
+            <div className="">
+              <div className="flex justify-start mt-8">
+                <div className="">
+                  <BranchSelector repository={repository} />
+                </div>
+                <div className="ml-4">
+                  <Link
+                    href={
+                      repository.owner.ID + "/" + repository.name + "/branches"
+                    }
+                  >
+                    <a className="btn btn-ghost btn-sm">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-2"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+                      </svg>
+                      {repository.branches.length || 14} Branches
+                    </a>
+                  </Link>
+                </div>
               </div>
-              <div className="ml-4">
-                <Link
-                  href={
-                    repository.owner.ID + "/" + repository.name + "/branches"
-                  }
-                >
-                  <a className="btn btn-ghost btn-sm">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 mr-2"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
-                    </svg>
-                    {repository.branches.length} Branches
-                  </a>
-                </Link>
+              <div className="flex mt-8">
+                <div className="flex-1 border border-gray-700 rounded overflow-hidden">
+                  <CommitDetailRow commitDetail={commitDetail} />
+                  <FileBrowser
+                    entityList={entityList}
+                    query={{ commitId: "master", ...router.query }}
+                  />
+                </div>
+                <div className="flex-none w-64 pl-8">
+                  <div>
+                    <div className="flex-1 text-left px-3 mb-1">About</div>
+
+                    <div className="text-xs px-3">No description</div>
+                  </div>
+                  <div className="divider"></div>
+                  <div>
+                    <div className="flex-1 text-left px-3 mb-1">Releases</div>
+
+                    <div className="text-xs px-3">None yet</div>
+                  </div>
+                  <div className="divider"></div>
+                  <div>
+                    <div className="flex-1 text-left  px-3 mb-1">Packages</div>
+
+                    <div className="text-xs px-3">None yet</div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex mt-8">
+                {readmeFile ? (
+                  <div className="flex-1 border border-gray-700 rounded overflow-hidden p-4 markdown-body">
+                    <ReactMarkdown>{readmeFile}</ReactMarkdown>
+                  </div>
+                ) : (
+                  <div>No readme file</div>
+                )}
+                <div className="flex-none w-64 pl-8"></div>
               </div>
             </div>
-            <div className="flex mt-8">
-              <div className="flex-1 border border-gray-700 rounded overflow-hidden">
-                <CommitDetailRow commitDetail={commitDetail} />
-                <FileBrowser
-                  entityList={entityList}
-                  query={{ commitId: "master", ...router.query }}
-                />
-              </div>
-              <div className="flex-none w-64 pl-8">
-                <div>
-                  <div className="flex-1 text-left px-3 mb-1">About</div>
-
-                  <div className="text-xs px-3">No description</div>
-                </div>
-                <div className="divider"></div>
-                <div>
-                  <div className="flex-1 text-left px-3 mb-1">Releases</div>
-
-                  <div className="text-xs px-3">None yet</div>
-                </div>
-                <div className="divider"></div>
-                <div>
-                  <div className="flex-1 text-left  px-3 mb-1">Packages</div>
-
-                  <div className="text-xs px-3">None yet</div>
-                </div>
-              </div>
-            </div>
-            <div className="flex mt-8">
-              {readmeFile ? (
-                <div className="flex-1 border border-gray-700 rounded overflow-hidden p-4 markdown-body">
-                  <ReactMarkdown>{readmeFile}</ReactMarkdown>
-                </div>
-              ) : (
-                <div>No readme file</div>
-              )}
-              <div className="flex-none w-64 pl-8"></div>
-            </div>
-          </div>
-
-          {/* ) : ( */}
-          {/* <EmptyRepository repository={repository} /> */}
-          {/* )} */}
+          ) : (
+            <EmptyRepository repository={repository} />
+          )}
         </main>
       </div>
     </div>

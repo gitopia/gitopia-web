@@ -22,19 +22,7 @@ export default function Home(props) {
       <div className="flex">
         <div className="w-64 border-r border-grey">
           <DashboardSelector />
-          {/* <TopRepositories /> */}
-          <div className="my-8">
-            <div className="text-md mx-8 border-b border-grey py-2 mb-4">
-              Top Repositories
-            </div>
-            <ul className="menu compact mx-4">
-              <li className="mb-2">
-                <Link href={"/bitcoin/bitcoin/"}>
-                  <a className="rounded">Bitcoin</a>
-                </Link>
-              </li>
-            </ul>
-          </div>
+          <TopRepositories />
           <BackendStatus />
           <FaucetReceiver />
         </div>

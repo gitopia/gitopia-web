@@ -15,11 +15,7 @@ export default function EmptyRepository(props) {
                 name="repository-url"
                 type="text"
                 value={
-                  "https://gitopia.org/" +
-                  repository.owner.ID +
-                  "/" +
-                  repository.name +
-                  ".git"
+                  "gitopia://" + repository.owner.ID + "/" + repository.name
                 }
                 readOnly={true}
                 className="w-full pr-16 input input-ghost input-bordered"

@@ -6,7 +6,7 @@ export default function RepositoryHeader({ repository }) {
       <div className="flex flex-1 text-primary text-xl items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 mr-2 relative top-1"
+          className="h-6 w-6 mr-2 relative top-px"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
