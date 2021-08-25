@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import Head from "next/head";
 import Header from "../components/header";
 import BackendStatus from "../components/backendStatus";
@@ -5,10 +7,26 @@ import FaucetReceiver from "../components/faucetReceiver";
 import TopRepositories from "../components/topRepositories";
 import UserDashboard from "../components/dashboard/user";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import DashboardSelector from "../components/dashboard/dashboardSelector";
+import getHomeUrl from "../helpers/getHomeUrl";
 
-export default function Home(props) {
+function Home(props) {
+  const router = useRouter();
+  useEffect(() => {
+    console.log(
+      "user dashboard",
+      props.selectedAddress,
+      props.currentDashboard
+    );
+    if (props.selectedAddress !== props.currentDashboard) {
+      const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
+      console.log(newUrl);
+      router.push(newUrl);
+    }
+  }, [props.dashboards, props.currentDashboard]);
+
   return (
     <div
       data-theme="dark"
@@ -33,3 +51,13 @@ export default function Home(props) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    currentDashboard: state.user.currentDashboard,
+    dashboards: state.user.dashboards,
+    selectedAddress: state.wallet.selectedAddress,
+  };
+};
+
+export default connect(mapStateToProps, {})(Home);

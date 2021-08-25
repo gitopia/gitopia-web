@@ -9,6 +9,7 @@ import {
   signOut,
 } from "../store/actions/wallet";
 import shrinkAddress from "../helpers/shrinkAddress";
+import getHomeUrl from "../helpers/getHomeUrl";
 import _ from "lodash";
 /*
 Menu States
@@ -33,20 +34,14 @@ function Header(props) {
 
   useEffect(onUserMenuClose, [props.activeWallet]);
 
-  const getHomeUrl = () => {
-    const home = _.find(
-      props.dashboards,
-      (d) => d.id === props.currentDashboard
-    );
-    return home ? home.url : "/home";
-  };
+  const [homeUrl, setHomeUrl] = useState(
+    getHomeUrl(props.dashboards, props.currentDashboard)
+  );
 
-  const [homeUrl, setHomeUrl] = useState(getHomeUrl());
-
-  useEffect(() => setHomeUrl(getHomeUrl()), [
-    props.dashboards,
-    props.currentDashboard,
-  ]);
+  useEffect(
+    () => setHomeUrl(getHomeUrl(props.dashboards, props.currentDashboard)),
+    [props.dashboards, props.currentDashboard]
+  );
 
   return (
     <div className="navbar border-b border-grey bg-base-100 text-base-content">

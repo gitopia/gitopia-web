@@ -1,10 +1,22 @@
+import { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import Head from "next/head";
 import Header from "../../../components/header";
 import BackendStatus from "../../../components/backendStatus";
 import FaucetReceiver from "../../../components/faucetReceiver";
 import DashboardSelector from "../../../components/dashboard/dashboardSelector";
+import getHomeUrl from "../../../helpers/getHomeUrl";
+import { useRouter } from "next/router";
 
-export default function Home(props) {
+function OrgDashboard(props) {
+  const router = useRouter();
+  useEffect(() => {
+    console.log("org dashboard", router.query.orgId, props.currentDashboard);
+    if (router.query.orgId !== props.currentDashboard) {
+      router.push(getHomeUrl(props.dashboards, props.currentDashboard));
+    }
+  }, [props.currentDashboard]);
+
   return (
     <div
       data-theme="dark"
@@ -26,3 +38,12 @@ export default function Home(props) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    currentDashboard: state.user.currentDashboard,
+    dashboards: state.user.dashboards,
+  };
+};
+
+export default connect(mapStateToProps, {})(OrgDashboard);

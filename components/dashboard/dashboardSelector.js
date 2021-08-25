@@ -111,7 +111,6 @@ function DashboardSelector(props) {
                       setSelected(a);
                       props.setCurrentDashboard(a.id);
                       setMenuOpen(false);
-                      router.push(a.url);
                     }}
                   >
                     {a.type === "User" ? (
