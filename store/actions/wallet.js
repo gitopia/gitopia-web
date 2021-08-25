@@ -8,7 +8,8 @@ import CryptoJS from "crypto-js";
 import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import saveAs from "file-saver";
 import { queryClient, txClient } from "gitopiajs";
-import { getUserDetailsForSelectedAddress } from "./user";
+import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
+import _ from "lodash";
 
 export const signOut = () => {
   return {
@@ -47,13 +48,17 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
     },
   });
   await getUserDetailsForSelectedAddress()(dispatch, getState);
-  dispatch({
+  await dispatch({
     type: userActions.INIT_DASHBOARDS,
     payload: {
       name: getState().wallet.activeWallet.name,
       id: account.address,
     },
   });
+  const { user } = getState();
+  if (!_.find(user.dashboards, (d) => d.id === user.currentDashboard)) {
+    await setCurrentDashboard(account.address)(dispatch, getState);
+  }
 };
 
 export const reInitClients = async (dispatch, getState) => {

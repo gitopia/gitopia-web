@@ -48,7 +48,8 @@ function NewRepository(props) {
     //   }),
     // ];
     setAccountsList([...props.dashboards]);
-  }, [props.dashboards]);
+    setOwnerId(props.currentDashboard);
+  }, [props.dashboards, props.currentDashboard]);
 
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });

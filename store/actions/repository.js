@@ -1,8 +1,13 @@
 import { assertIsBroadcastTxSuccess } from "@cosmjs/stargate";
 import { notify } from "reapop";
 import { sendTransaction } from "./env";
-import { createUser, getUserDetailsForSelectedAddress } from "./user";
+import {
+  createUser,
+  getUserDetailsForSelectedAddress,
+  setCurrentDashboard,
+} from "./user";
 import { reInitClients } from "./wallet";
+import { userActions } from "./actionTypes";
 
 export const validatePostingEligibility = async (
   dispatch,
@@ -46,14 +51,17 @@ export const createRepository = ({
   ownerId = null,
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env, user } = getState();
+    const { wallet } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
     let owner;
-    user.dashboards.map((d) => {
+    const { user } = getState();
+    user.dashboards.every((d) => {
       if (d.id === ownerId) {
         owner = JSON.stringify({ Type: d.type, ID: d.id });
+        return false;
       }
+      return true;
     });
     const repository = {
       creator: wallet.selectedAddress,
@@ -61,6 +69,7 @@ export const createRepository = ({
       owner: owner,
       description: description,
     };
+    const { env } = getState();
 
     try {
       const message = await env.txClient.msgCreateRepository(repository);
