@@ -34,12 +34,11 @@ export const getUserDetailsForSelectedAddress = () => {
   };
 };
 
-export const setCurrentDashboard = (type, address) => {
+export const setCurrentDashboard = (id) => {
   return async (dispatch, getState) => {
-    console.log("setCurrentDashboard", type, address);
     dispatch({
       type: userActions.SET_CURRENT_DASHBOARD,
-      payload: { type, address },
+      payload: { id },
     });
   };
 };

@@ -16,6 +16,7 @@ export const userActions = {
   SET_USER: "SET_USER",
   SET_EMPTY_USER: "SET_EMPTY_USER",
   SET_CURRENT_DASHBOARD: "SET_CURRENT_DASHBOARD",
+  INIT_DASHBOARDS: "INIT_DASHBOARDS",
 };
 
 export const organizationActions = {

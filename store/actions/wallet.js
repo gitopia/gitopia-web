@@ -1,4 +1,4 @@
-import { walletActions, envActions } from "./actionTypes";
+import { walletActions, envActions, userActions } from "./actionTypes";
 import {
   DirectSecp256k1HdWallet,
   DirectSecp256k1Wallet,
@@ -47,6 +47,13 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
     },
   });
   await getUserDetailsForSelectedAddress()(dispatch, getState);
+  dispatch({
+    type: userActions.INIT_DASHBOARDS,
+    payload: {
+      name: getState().wallet.activeWallet.name,
+      id: account.address,
+    },
+  });
 };
 
 export const reInitClients = async (dispatch, getState) => {

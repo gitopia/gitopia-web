@@ -1,8 +1,12 @@
 import { assertIsBroadcastTxSuccess } from "@cosmjs/stargate";
 import { notify } from "reapop";
 import { sendTransaction } from "./env";
-import { createUser, getUserDetailsForSelectedAddress } from "./user";
-import { reInitClients } from "./wallet";
+import {
+  createUser,
+  getUserDetailsForSelectedAddress,
+  setCurrentDashboard,
+} from "./user";
+import { userActions } from "./actionTypes";
 import { validatePostingEligibility } from "./repository";
 
 export const createOrganization = ({ name = null, description = null }) => {
@@ -21,7 +25,15 @@ export const createOrganization = ({ name = null, description = null }) => {
       const result = await sendTransaction({ message }, env);
       console.log(result);
       if (result && result.code === 0) {
-        getUserDetailsForSelectedAddress()(dispatch, getState);
+        await getUserDetailsForSelectedAddress()(dispatch, getState);
+        dispatch({
+          type: userActions.INIT_DASHBOARDS,
+          payload: {
+            name: wallet.activeWallet.name,
+            id: wallet.selectedAddress,
+          },
+        });
+        setCurrentDashboard(wallet.selectedAddress)(dispatch, getState);
         return { url: "/home" };
       } else {
         dispatch(notify(result.rawLog, "error"));

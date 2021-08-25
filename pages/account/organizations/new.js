@@ -40,23 +40,23 @@ function NewOrganization(props) {
       });
       return false;
     }
-    // TODO: check name availabliity
 
-    // let alreadyAvailable = false;
-    // props.organizations.every((organization) => {
-    //   if (organization.name === name) {
-    //     alreadyAvailable = true;
-    //     return false;
-    //   }
-    // });
-    // if (alreadyAvailable) {
-    //   setNameHint({
-    //     type: "error",
-    //     shown: true,
-    //     message: "Organization name already taken",
-    //   });
-    //   return false;
-    // }
+    let alreadyAvailable = false;
+    props.organizations.every((o) => {
+      if (o.name === name) {
+        alreadyAvailable = true;
+        return false;
+      }
+      return true;
+    });
+    if (alreadyAvailable) {
+      setNameHint({
+        type: "error",
+        shown: true,
+        message: "Organization name already taken",
+      });
+      return false;
+    }
     if (description === "") {
       setDescriptionHint({
         ...descriptionHint,
@@ -151,6 +151,7 @@ function NewOrganization(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
+    organizations: state.user.organizations,
   };
 };
 

@@ -21,7 +21,7 @@ function NewRepository(props) {
     type: "error",
     message: "",
   });
-  const [owner, setOwner] = useState("");
+  const [ownerId, setOwnerId] = useState(props.currentDashboard);
   const [repositoryCreating, setRepositoryCreating] = useState(false);
   const [accountsList, setAccountsList] = useState([
     { value: "", display: "" },
@@ -30,32 +30,25 @@ function NewRepository(props) {
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
   useEffect(() => {
-    let newAccountsList = [];
-    if (props.address) {
-      const item = {
-        value: JSON.stringify({ Type: "User", ID: props.address }),
-        display: props.activeWallet.name + " - " + shrinkAddress(props.address),
-      };
-      newAccountsList.push(item);
-    }
-    if (props.organizations.length) {
-      for (let i = 0; i < props.organizations.length; i++) {
-        newAccountsList.push({
-          value: JSON.stringify({
-            Type: "Organization",
-            ID: props.organizations[i],
-          }),
-          display: "Org - " + props.organizations[i],
-        });
-      }
-    }
-    if (accountsList.length) {
-      setOwner(accountsList[0].value);
-    } else {
-      setOwner("");
-    }
-    setAccountsList(newAccountsList);
-  }, [props.address, props.organizations]);
+    // const newAccountsList = [
+    //   ...props.dashboards.map((d) => {
+    //     const acc = {
+    //       ...d,
+    //     };
+
+    //     if (d.id === props.currentDashboard) {
+    //       console.log("same", d.id);
+    //       setOwnerId(d.id);
+    //     }
+    //     if (!props.currentDashboard && d.type === "User") {
+    //       console.log("not same");
+    //       setOwnerId(d.id);
+    //     }
+    //     return acc;
+    //   }),
+    // ];
+    setAccountsList([...props.dashboards]);
+  }, [props.dashboards]);
 
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });
@@ -72,7 +65,24 @@ function NewRepository(props) {
       });
       return false;
     }
-    if (props.repositoryNames[name]) {
+    if (name.length < 3) {
+      setNameHint({
+        type: "error",
+        shown: true,
+        message: "Repository name must have atleat 3 characters",
+      });
+      return false;
+    }
+    let alreadyAvailable = false,
+      sanitizedName = name.replace(sanitizedNameTest, "-");
+    props.repositories.every((r) => {
+      if (r.name === sanitizedName) {
+        alreadyAvailable = true;
+        return false;
+      }
+      return true;
+    });
+    if (alreadyAvailable) {
       setNameHint({
         type: "error",
         shown: true,
@@ -94,10 +104,15 @@ function NewRepository(props) {
   const createRepository = async () => {
     setRepositoryCreating(true);
     if (validateRepository()) {
+      console.log("create Repo", {
+        name: name.replace(sanitizedNameTest, "-"),
+        description,
+        ownerId,
+      });
       let res = await props.createRepository({
         name: name.replace(sanitizedNameTest, "-"),
         description,
-        owner,
+        ownerId,
       });
       if (res && res.url) {
         router.push(res.url);
@@ -142,15 +157,16 @@ function NewRepository(props) {
                 </label>
                 <select
                   className="select select-bordered select-md"
-                  value={owner}
+                  value={ownerId}
                   onChange={(e) => {
-                    setOwner(e.target.value);
+                    console.log("onchange");
+                    setOwnerId(e.target.value);
                   }}
                 >
                   {accountsList.map((a, i) => {
                     return (
-                      <option value={a.value} key={i}>
-                        {a.display}
+                      <option value={a.id} key={i}>
+                        {a.name + " - " + shrinkAddress(a.id)}
                       </option>
                     );
                   })}
@@ -213,10 +229,9 @@ function NewRepository(props) {
 
 const mapStateToProps = (state) => {
   return {
-    repositoryNames: state.user.repositoryNames,
-    address: state.wallet.selectedAddress,
-    activeWallet: state.wallet.activeWallet,
-    organizations: state.user.organizations,
+    repositories: state.user.repositories,
+    dashboards: state.user.dashboards,
+    currentDashboard: state.user.currentDashboard,
   };
 };
 

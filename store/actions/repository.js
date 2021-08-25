@@ -43,12 +43,18 @@ export const validatePostingEligibility = async (
 export const createRepository = ({
   name = null,
   description = null,
-  owner = null,
+  ownerId = null,
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
+    const { wallet, env, user } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
+    let owner;
+    user.dashboards.map((d) => {
+      if (d.id === ownerId) {
+        owner = JSON.stringify({ Type: d.type, ID: d.id });
+      }
+    });
     const repository = {
       creator: wallet.selectedAddress,
       name: name,

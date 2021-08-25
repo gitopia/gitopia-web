@@ -6,23 +6,20 @@ function TopRepositories(props) {
   const [repos, setRepos] = useState([]);
 
   useEffect(() => {
-    if (Object.keys(props.repositoryNames).length) {
+    if (props.repositories.length) {
       let newRepos = [],
-        maxLen = 5;
-      for (let r in props.repositoryNames) {
+        maxLen = Math.min(props.repositories.length, 5);
+      for (let i = 0; i < maxLen; i++) {
         newRepos.push({
-          name: r,
+          ...props.repositories[i],
           owner: props.address,
-          id: props.repositoryNames[r],
         });
-        if (--maxLen === 0) break;
       }
       setRepos(newRepos);
     } else {
       setRepos([]);
     }
-    console.log("repositoryNames", props.repositoryNames);
-  }, [props.repositoryNames]);
+  }, [props.repositories]);
 
   return (
     <div className="my-8">
@@ -49,7 +46,6 @@ const mapStateToProps = (state) => {
     address: state.wallet.selectedAddress,
     creator: state.user.creator,
     repositories: state.user.repositories,
-    repositoryNames: state.user.repositoryNames,
   };
 };
 

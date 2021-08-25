@@ -9,6 +9,7 @@ import {
   signOut,
 } from "../store/actions/wallet";
 import shrinkAddress from "../helpers/shrinkAddress";
+import _ from "lodash";
 /*
 Menu States
 1 - Default menu
@@ -32,6 +33,21 @@ function Header(props) {
 
   useEffect(onUserMenuClose, [props.activeWallet]);
 
+  const getHomeUrl = () => {
+    const home = _.find(
+      props.dashboards,
+      (d) => d.id === props.currentDashboard
+    );
+    return home ? home.url : "/home";
+  };
+
+  const [homeUrl, setHomeUrl] = useState(getHomeUrl());
+
+  useEffect(() => setHomeUrl(getHomeUrl()), [
+    props.dashboards,
+    props.currentDashboard,
+  ]);
+
   return (
     <div className="navbar border-b border-grey bg-base-100 text-base-content">
       <div className="flex-none lg:hidden">
@@ -52,7 +68,7 @@ function Header(props) {
         </label>
       </div>
       <div className="flex-none px-6">
-        <Link href="/home">
+        <Link href={homeUrl}>
           <img
             width={120}
             height={30}
@@ -240,6 +256,8 @@ const mapStateToProps = (state) => {
     activeWallet: state.wallet.activeWallet,
     selectedAddress: state.wallet.selectedAddress,
     loreBalance: state.wallet.loreBalance,
+    currentDashboard: state.user.currentDashboard,
+    dashboards: state.user.dashboards,
   };
 };
 
