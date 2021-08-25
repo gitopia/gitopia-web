@@ -11,7 +11,7 @@ import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
 
 import { initRepository } from "../../../../../store/actions/git";
 
-import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import vscdarkplus from "react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus";
 import BranchSelector from "../../../../../components/repository/branchSelector";
 import Breadcrumbs from "../../../../../components/repository/breadcrumbs";
