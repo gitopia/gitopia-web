@@ -106,13 +106,20 @@ function Header(props) {
         </div>
       </div>
       <div className="items-stretch">
-        <a className="btn btn-ghost btn-sm rounded-btn">Explore</a>
-        <a className="btn btn-ghost btn-sm rounded-btn">Marketplace</a>
+        <a
+          className="btn btn-ghost btn-sm rounded-btn"
+          href="https://explorer.gitopia.com/"
+          target="_blank"
+        >
+          Explorer
+        </a>
       </div>
       <div className="flex-1"></div>
       {props.activeWallet ? (
         <div className="flex-none mr-4">
-          <div className="badge badge-secondary">{props.loreBalance} LORE</div>
+          <div className="badge badge-secondary">
+            {props.loreBalance / 100000} LORE
+          </div>
         </div>
       ) : (
         ""

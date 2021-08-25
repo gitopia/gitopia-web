@@ -35,7 +35,9 @@ function UserDashboard(props) {
           </div>
         </div>
         <div className="flex flex-1 ml-2 bg-box-grad-tl bg-base-200 p-4 rounded-md">
-          <div className="flex-none bg-box-grad-v w-40 h-full rounded-md flex items-center"></div>
+          <div className="flex-none bg-box-grad-v w-40 h-full rounded-md flex items-center">
+            <img src="repository.svg" />
+          </div>
           <div className="flex flex-col px-8 py-12">
             <div className="text-lg mb-8">Create a New Organisation</div>
             <div className="text-xs mb-8">

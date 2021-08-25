@@ -4,6 +4,7 @@ import BackendStatus from "../components/backendStatus";
 import FaucetReceiver from "../components/faucetReceiver";
 import TopRepositories from "../components/topRepositories";
 import UserDashboard from "../components/dashboard/user";
+import Link from "next/link";
 
 import DashboardSelector from "../components/dashboard/dashboardSelector";
 
@@ -21,7 +22,19 @@ export default function Home(props) {
       <div className="flex">
         <div className="w-64 border-r border-grey">
           <DashboardSelector />
-          <TopRepositories />
+          {/* <TopRepositories /> */}
+          <div className="my-8">
+            <div className="text-md mx-8 border-b border-grey py-2 mb-4">
+              Top Repositories
+            </div>
+            <ul className="menu compact mx-4">
+              <li className="mb-2">
+                <Link href={"/bitcoin/bitcoin/"}>
+                  <a className="rounded">Bitcoin</a>
+                </Link>
+              </li>
+            </ul>
+          </div>
           <BackendStatus />
           <FaucetReceiver />
         </div>

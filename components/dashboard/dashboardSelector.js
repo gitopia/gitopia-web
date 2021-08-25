@@ -12,7 +12,8 @@ function DashboardSelector(props) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    let userAcc = {};
+    let userAcc = {},
+      toSelect;
     const newAccountsList = [
       ...props.dashboards.map((d) => {
         const acc = {
@@ -21,13 +22,16 @@ function DashboardSelector(props) {
 
         if (d.type === "User") userAcc = acc;
         if (d.id === props.currentDashboard) {
-          setSelected(acc);
+          toSelect = acc;
         }
         return acc;
       }),
     ];
-    if (!selected.id) {
+
+    if (!toSelect) {
       setSelected(userAcc);
+    } else {
+      setSelected(toSelect);
     }
     setAccountsList(newAccountsList);
   }, [props.dashboards, props.currentDashboard]);
