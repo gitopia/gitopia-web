@@ -118,7 +118,7 @@ function Header(props) {
       {props.activeWallet ? (
         <div className="flex-none mr-4">
           <div className="badge badge-secondary">
-            {props.loreBalance / 100000} LORE
+            {props.loreBalance / 1000000} LORE
           </div>
         </div>
       ) : (
