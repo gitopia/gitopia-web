@@ -150,10 +150,8 @@ function Header(props) {
                 {props.activeWallet ? (
                   <img
                     src={
-                      "https://i.pravatar.cc/500?img=" +
-                      props.wallets.findIndex(
-                        (x) => x.name === props.activeWallet.name
-                      )
+                      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
+                      props.activeWallet.name
                     }
                   />
                 ) : (
