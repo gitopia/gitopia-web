@@ -4,10 +4,19 @@ import Header from "../../../components/header";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
+import Link from "next/link";
+import ReactMarkdown from "react-markdown";
+
+import { initRepository } from "../../../store/actions/git";
 
 import getUserRepository from "../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
+import EmptyRepository from "../../../components/repository/emptyRepository";
+import BranchSelector from "../../../components/repository/branchSelector";
+import Breadcrumbs from "../../../components/repository/breadcrumbs";
+import CommitDetailRow from "../../../components/repository/commitDetailRow";
+import FileBrowser from "../../../components/repository/fileBrowser";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -19,11 +28,64 @@ function RepositoryView(props) {
     id: router.query.repositoryId,
     name: router.query.repositoryId,
     owner: { ID: router.query.userId },
+    branches: [],
+  });
+
+  const [entityList, setEntityList] = useState([]);
+  const [readmeFile, setReadmeFile] = useState(null);
+  const [commitDetail, setCommitDetail] = useState({
+    commit: { author: {}, message: "" },
+    oid: "",
   });
 
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.ID, repository.name);
     if (r) setRepository(r);
+    if (typeof window !== "undefined") {
+      const res = await initRepository(
+        "5",
+        "803ef70fd9f65ef800567ff9456fac525bc3e3c2",
+        "bitcoin",
+        router.query.userId,
+        []
+      );
+      if (res) {
+        if (res.commit) {
+          setCommitDetail(res.commit);
+        }
+        if (res.entity) {
+          if (res.entity.tree) {
+            setEntityList(res.entity.tree);
+          }
+        } else {
+          console.log("Entity Not found");
+        }
+      } else {
+        console.log("Repo Not found");
+      }
+      const readme = await initRepository(
+        "5",
+        "803ef70fd9f65ef800567ff9456fac525bc3e3c2",
+        "bitcoin",
+        router.query.userId,
+        ["README.md"]
+      );
+      if (readme) {
+        if (readme.entity) {
+          if (readme.entity.blob) {
+            try {
+              let decodedFile = new TextDecoder().decode(readme.entity.blob);
+              setReadmeFile(decodedFile);
+            } catch (e) {
+              console.error(e);
+              setReadmeFile(null);
+            }
+          }
+        } else {
+          console.log("Entity Not found");
+        }
+      }
+    }
   }, []);
 
   return (
@@ -43,134 +105,76 @@ function RepositoryView(props) {
             active="code"
             hrefBase={repository.owner.ID + "/" + repository.name}
           />
-          <div className="flex border-2 border-grey rounded-md px-8 py-2 mt-16 items-center">
-            <div className="flex-none w-72 text-xl">Quick Setup</div>
-            <div className="flex-1 flex items-center">
-              <div className="tabs flex-none mr-4">
-                <div className="tab tab-bordered tab-active">HTTPS</div>
-                <div className="tab tab-bordered">SSH</div>
+          {/* {repository.branches.length ? ( */}
+
+          <div className="">
+            <div className="flex justify-start mt-8">
+              <div className="">
+                <BranchSelector repository={repository} />
               </div>
-              <div className="form-control flex-1">
-                <div className="relative">
-                  <input
-                    name="repository-url"
-                    type="text"
-                    value={
-                      "https://gitopia.org/" +
-                      repository.owner.ID +
-                      "/" +
-                      repository.name +
-                      ".git"
-                    }
-                    readOnly={true}
-                    className="w-full pr-16 input input-ghost input-bordered"
-                  />
-                  <button className="absolute right-0 top-0 rounded-md-l-none btn btn-ghost">
+              <div className="ml-4">
+                <Link
+                  href={
+                    repository.owner.ID + "/" + repository.name + "/branches"
+                  }
+                >
+                  <a className="btn btn-ghost btn-sm">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+                      className="h-5 w-5 mr-2"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                      />
+                      <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
                     </svg>
-                  </button>
+                    {repository.branches.length} Branches
+                  </a>
+                </Link>
+              </div>
+            </div>
+            <div className="flex mt-8">
+              <div className="flex-1 border border-gray-700 rounded overflow-hidden">
+                <CommitDetailRow commitDetail={commitDetail} />
+                <FileBrowser
+                  entityList={entityList}
+                  query={{ commitId: "master", ...router.query }}
+                />
+              </div>
+              <div className="flex-none w-64 pl-8">
+                <div>
+                  <div className="flex-1 text-left px-3 mb-1">About</div>
+
+                  <div className="text-xs px-3">No description</div>
+                </div>
+                <div className="divider"></div>
+                <div>
+                  <div className="flex-1 text-left px-3 mb-1">Releases</div>
+
+                  <div className="text-xs px-3">None yet</div>
+                </div>
+                <div className="divider"></div>
+                <div>
+                  <div className="flex-1 text-left  px-3 mb-1">Packages</div>
+
+                  <div className="text-xs px-3">None yet</div>
                 </div>
               </div>
+            </div>
+            <div className="flex mt-8">
+              {readmeFile ? (
+                <div className="flex-1 border border-gray-700 rounded overflow-hidden p-4 markdown-body">
+                  <ReactMarkdown>{readmeFile}</ReactMarkdown>
+                </div>
+              ) : (
+                <div>No readme file</div>
+              )}
+              <div className="flex-none w-64 pl-8"></div>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-4 mt-16">
-            <div className="border-2 border-grey rounded-md p-8 h-96 flex flex-col">
-              <div className="flex-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-                  />
-                </svg>
-              </div>
-              <div className="flex-none py-4">
-                <div className="text-xl mb-4">
-                  Push existing repository from command line
-                </div>
-                <div className="w-44">
-                  <button className="btn btn-primary btn-xs btn-block">
-                    Copy commands
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="border-2 border-grey rounded-md p-8 flex flex-col">
-              <div className="flex-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                  />
-                </svg>
-              </div>
-              <div className="flex-none py-4">
-                <div className="text-xl mb-4">
-                  Import code from another repository
-                </div>
-                <div className="w-44">
-                  <button className="btn btn-primary btn-xs btn-block">
-                    Copy commands
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="border-2 border-grey rounded-md p-8 flex flex-col">
-              <div className="flex-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-              <div className="flex-none py-4">
-                <div className="text-xl mb-4">
-                  Create a new repository from command line
-                </div>
-                <div className="w-44">
-                  <button className="btn btn-primary btn-xs btn-block">
-                    Copy commands
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+
+          {/* ) : ( */}
+          {/* <EmptyRepository repository={repository} /> */}
+          {/* )} */}
         </main>
       </div>
     </div>

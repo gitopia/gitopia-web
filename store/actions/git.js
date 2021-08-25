@@ -158,12 +158,7 @@ const findEntity = async (repoId, oid, type, projectRoot, path) => {
   }
 };
 
-export const loadDirectory = async (
-  repoId,
-  oid,
-  projectRoot,
-  sorted = false
-) => {
+const loadDirectory = async (repoId, oid, projectRoot, sorted = false) => {
   await ensureGitObject(repoId, oid, projectRoot);
   let parsedTreeObject = null;
   try {
@@ -179,7 +174,7 @@ export const loadDirectory = async (
   return parsedTreeObject;
 };
 
-export const loadFile = async (repoId, oid, projectRoot) => {
+const loadFile = async (repoId, oid, projectRoot) => {
   await ensureGitObject(repoId, oid, projectRoot);
   let parsedBlobObject = null;
   try {
