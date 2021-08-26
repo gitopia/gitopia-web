@@ -77,7 +77,12 @@ function RepositoryIssueCreateView(props) {
               <div className="flex-none mr-4">
                 <div className="avatar">
                   <div className="mb-8 rounded-full w-14 h-14">
-                    <img src="https://i.pravatar.cc/500?img=0" />
+                    <img
+                      src={
+                        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+                        props.activeWallet.name
+                      }
+                    />
                   </div>
                 </div>
               </div>
@@ -176,6 +181,7 @@ function RepositoryIssueCreateView(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
+    activeWallet: state.wallet.activeWallet,
   };
 };
 

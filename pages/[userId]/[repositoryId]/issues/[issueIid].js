@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 import ReactMarkdown from "react-markdown";
 
 import getUserRepository from "../../../../helpers/getUserRepository";
-import getIssue from "../../../../helpers/getIssue";
+import getRepositoryIssue from "../../../../helpers/getRepositoryIssue";
 import getComment from "../../../../helpers/getComment";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import RepositoryHeader from "../../../../components/repository/header";
@@ -30,7 +30,8 @@ function RepositoryIssueView(props) {
     owner: { ID: router.query.userId },
   });
   const [issue, setIssue] = useState({
-    id: router.query.issueId,
+    iid: router.query.issueIid,
+    creator: "",
     comments: [],
   });
   const [allComments, setAllComments] = useState([]);
@@ -40,7 +41,7 @@ function RepositoryIssueView(props) {
   useEffect(async () => {
     const [r, i] = await Promise.all([
       getUserRepository(repository.owner.ID, repository.name),
-      getIssue(issue.id),
+      getRepositoryIssue(repository.owner.ID, repository.name, issue.iid),
     ]);
     if (r) setRepository(r);
     if (i) setIssue(i);
@@ -68,7 +69,11 @@ function RepositoryIssueView(props) {
       });
       if (res && res.code === 0) {
         setComment("");
-        const i = await getIssue(issue.id);
+        const i = await getRepositoryIssue(
+          repository.owner.ID,
+          repository.name,
+          issue.iid
+        );
         setIssue(i);
       }
     }
@@ -95,8 +100,8 @@ function RepositoryIssueView(props) {
           <div className="flex mt-8">
             <div className="flex-1">
               <div>
-                <span className="text-xl mr-2">{issue.title}</span>
-                <span className="text-xl text-neutral">#{issue.iid}</span>
+                <span className="text-3xl mr-2">{issue.title}</span>
+                <span className="text-3xl text-neutral">#{issue.iid}</span>
               </div>
               <div className="mt-4 flex items-center">
                 <span
@@ -166,7 +171,12 @@ function RepositoryIssueView(props) {
                   <div className="flex-none mr-4">
                     <div className="avatar">
                       <div className="mb-8 rounded-full w-14 h-14">
-                        <img src="https://i.pravatar.cc/500?img=0" />
+                        <img
+                          src={
+                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+                            issue.creator.slice(-1)
+                          }
+                        />
                       </div>
                     </div>
                   </div>
@@ -187,7 +197,12 @@ function RepositoryIssueView(props) {
                       <div className="flex-none mr-4">
                         <div className="avatar">
                           <div className="mb-8 rounded-full w-14 h-14">
-                            <img src="https://i.pravatar.cc/500?img=0" />
+                            <img
+                              src={
+                                "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+                                c.creator.slice(-1)
+                              }
+                            />
                           </div>
                         </div>
                       </div>
@@ -208,7 +223,12 @@ function RepositoryIssueView(props) {
                   <div className="flex-none mr-4">
                     <div className="avatar">
                       <div className="mb-8 rounded-full w-14 h-14">
-                        <img src="https://i.pravatar.cc/500?img=0" />
+                        <img
+                          src={
+                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+                            (props.activeWallet ? props.activeWallet.name : "")
+                          }
+                        />
                       </div>
                     </div>
                   </div>
@@ -261,6 +281,7 @@ function RepositoryIssueView(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
+    activeWallet: state.wallet.activeWallet,
   };
 };
 

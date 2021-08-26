@@ -92,11 +92,10 @@ export const createRepository = ({
 export const createIssue = ({
   title = "",
   description = "",
-  authorId = 0,
   repositoryId = 0,
   labels = [],
   weight = 0,
-  assigneesId = [],
+  assignees = [],
 }) => {
   return async (dispatch, getState) => {
     const { wallet, env } = getState();
@@ -110,16 +109,18 @@ export const createIssue = ({
       creator: wallet.selectedAddress,
       title,
       description,
-      authorId,
       repositoryId,
       labels,
       weight,
-      assigneesId,
+      assignees,
     };
+
+    console.log("issue", issue);
 
     try {
       const message = await env.txClient.msgCreateIssue(issue);
       const result = await sendTransaction({ message }, env);
+      console.log(result);
       return result;
     } catch (e) {
       console.error(e);

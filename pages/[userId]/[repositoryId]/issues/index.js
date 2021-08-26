@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
-import getIssue from "../../../../helpers/getIssue";
+import getRepositoryIssueAll from "../../../../helpers/getRepositoryIssueAll";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 
 export async function getServerSideProps() {
@@ -23,7 +23,7 @@ function RepositoryIssueView(props) {
     id: router.query.repositoryId,
     name: router.query.repositoryId,
     owner: { ID: router.query.userId },
-    issueIids: {},
+    issues: [],
   });
 
   const [allIssues, setAllIssues] = useState([]);
@@ -34,13 +34,11 @@ function RepositoryIssueView(props) {
   }, []);
 
   const getAllIssues = async () => {
-    if (repository && Object.keys(repository.issueIids).length) {
-      let pr = [];
-      for (let iid in repository.issueIids) {
-        pr.push(getIssue(repository.issueIids[iid]));
-      }
-      const issues = await Promise.all(pr);
-      console.log("issues", issues);
+    if (repository) {
+      const issues = await getRepositoryIssueAll(
+        repository.owner.ID,
+        repository.name
+      );
       setAllIssues(issues);
     }
   };
@@ -216,7 +214,7 @@ function RepositoryIssueView(props) {
                                 "/" +
                                 repository.name +
                                 "/issues/" +
-                                i.id
+                                i.iid
                               }
                             >
                               <a className="btn-neutral">{i.title}</a>
