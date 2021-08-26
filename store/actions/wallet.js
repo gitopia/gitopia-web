@@ -32,7 +32,7 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
   const [tc, qc, amount] = await Promise.all([
     txClient(accountSigner, { addr: env.rpcNode }),
     queryClient({ addr: env.apiNode }),
-    getBalance(process.env.NEXT_PUBLIC_CURRENCY_TOKEN)(dispatch, getState),
+    getBalance()(dispatch, getState),
   ]);
 
   dispatch({
@@ -236,12 +236,15 @@ export const signInWithPrivateKey = ({ prefix = "gitopia", privKey }) => {
   };
 };
 
-export const getBalance = (denom) => {
+export const getBalance = () => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
     const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
     try {
-      const res = await api.queryBalance(state.selectedAddress, denom);
+      const res = await api.queryBalance(
+        state.selectedAddress,
+        process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+      );
       dispatch({
         type: walletActions.UPDATE_BALANCE,
         payload: {
