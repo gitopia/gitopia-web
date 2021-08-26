@@ -186,7 +186,7 @@ function RepositoryIssueView(props) {
                         " commented on " +
                         dayjs(issue.createdAt * 1000).format("DD MMM")}
                     </div>
-                    <div className="p-4">
+                    <div className="p-4 markdown-body">
                       <ReactMarkdown>{issue.description}</ReactMarkdown>
                     </div>
                   </div>
@@ -212,7 +212,7 @@ function RepositoryIssueView(props) {
                             " commented on " +
                             dayjs(c.createdAt * 1000).format("DD MMM")}
                         </div>
-                        <div className="p-4">
+                        <div className="p-4 markdown-body">
                           <ReactMarkdown>{c.body}</ReactMarkdown>
                         </div>
                       </div>
@@ -232,7 +232,7 @@ function RepositoryIssueView(props) {
                       </div>
                     </div>
                   </div>
-                  <div className="border border-grey rounded flex-1 p-4">
+                  <div className="border border-grey rounded flex-1 p-4 markdown-body">
                     <MarkdownEditor value={comment} setValue={setComment} />
                     <div className="text-right mt-4">
                       <button
