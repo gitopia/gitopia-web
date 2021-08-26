@@ -28,10 +28,10 @@ module.exports = {
           900: "#D82F28",
         },
         purple: {
-          50: "#DBFFDB",
+          50: "#D9BAFF",
           DEFAULT: "#883BE6",
           400: "#b78af0",
-          900: "#5a3b82",
+          900: "#6927B9",
         },
         grey: {
           DEFAULT: "#404450",
@@ -64,7 +64,7 @@ module.exports = {
           secondary: "#883BE6",
           "secondary-focus": "#A76BF0",
           "secondary-content": "#ffffff",
-          accent: "#37cdbe",
+          accent: "#0883AA",
           "accent-focus": "#2aa79b",
           "accent-content": "#ffffff",
           neutral: "#3d4451",
