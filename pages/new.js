@@ -6,6 +6,7 @@ import Head from "next/head";
 import Header from "../components/header";
 import TextInput from "../components/textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
+import Footer from "../components/footer";
 
 function NewRepository(props) {
   const router = useRouter();
@@ -125,15 +126,15 @@ function NewRepository(props) {
   return (
     <div
       data-theme="dark"
-      className="bg-base-100 text-base-content min-h-screen"
+      className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
         <title>New Repository - Gitopia</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex">
-        <main className="container mx-auto max-w-screen-lg py-12">
+      <div className="flex flex-1">
+        <main className="container mx-auto max-w-screen-lg min-h-full py-12">
           <div className="text-2xl">Create a new repository</div>
           <div className="flex justify-between mt-4">
             <div className="w-96 text-sm">
@@ -224,6 +225,7 @@ function NewRepository(props) {
           </div>
         </main>
       </div>
+      <Footer />
     </div>
   );
 }

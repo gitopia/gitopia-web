@@ -12,6 +12,7 @@ import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import getRepositoryIssueAll from "../../../../helpers/getRepositoryIssueAll";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
+import Footer from "../../../../components/footer";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -48,14 +49,14 @@ function RepositoryIssueView(props) {
   return (
     <div
       data-theme="dark"
-      className="bg-base-100 text-base-content min-h-screen"
+      className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
         <title>{repository.name}</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex">
+      <div className="flex flex-1">
         <main className="container mx-auto max-w-screen-lg py-12">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
@@ -72,17 +73,21 @@ function RepositoryIssueView(props) {
                 />
               </div>
             </div>
-            <Link
-              href={
-                "/" +
-                repository.owner.ID +
-                "/" +
-                repository.name +
-                "/issues/new"
-              }
-            >
-              <button className="btn btn-primary btn-sm">New Issue</button>
-            </Link>
+            <div className="flex-none w-36">
+              <Link
+                href={
+                  "/" +
+                  repository.owner.ID +
+                  "/" +
+                  repository.name +
+                  "/issues/new"
+                }
+              >
+                <button className="btn btn-primary btn-sm btn-block">
+                  New Issue
+                </button>
+              </Link>
+            </div>
           </div>
           <div className="mt-8">
             <table className="table w-full text-center">
@@ -240,6 +245,7 @@ function RepositoryIssueView(props) {
           </div>
         </main>
       </div>
+      <Footer />
     </div>
   );
 }

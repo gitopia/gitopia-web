@@ -15,11 +15,6 @@ import getHomeUrl from "../helpers/getHomeUrl";
 function Home(props) {
   const router = useRouter();
   useEffect(() => {
-    console.log(
-      "user dashboard",
-      props.selectedAddress,
-      props.currentDashboard
-    );
     if (props.selectedAddress !== props.currentDashboard) {
       const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
       console.log(newUrl);
@@ -30,14 +25,14 @@ function Home(props) {
   return (
     <div
       data-theme="dark"
-      className="bg-base-100 text-base-content min-h-screen"
+      className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
         <title>Gitopia</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex">
+      <div className="flex-1 flex">
         <div className="w-64 border-r border-grey">
           <DashboardSelector />
           <TopRepositories />

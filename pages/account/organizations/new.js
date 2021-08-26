@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Header from "../../../components/header";
 import TextInput from "../../../components/textInput";
+import Footer from "../../../components/footer";
 
 function NewOrganization(props) {
   const router = useRouter();
@@ -85,14 +86,14 @@ function NewOrganization(props) {
   return (
     <div
       data-theme="dark"
-      className="bg-base-100 text-base-content min-h-screen"
+      className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
         <title>New Organization - Gitopia</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex">
+      <div className="flex flex-1">
         <main className="container mx-auto max-w-md py-12">
           <div className="text-2xl">Create a new organization</div>
           <div className="mt-4">
@@ -144,6 +145,7 @@ function NewOrganization(props) {
           </div>
         </main>
       </div>
+      <Footer />
     </div>
   );
 }

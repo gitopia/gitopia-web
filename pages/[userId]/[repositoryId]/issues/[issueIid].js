@@ -15,6 +15,7 @@ import shrinkAddress from "../../../../helpers/shrinkAddress";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import MarkdownEditor from "../../../../components/markdownEditor";
+import Footer from "../../../../components/footer";
 
 import { createComment } from "../../../../store/actions/repository";
 
@@ -83,14 +84,14 @@ function RepositoryIssueView(props) {
   return (
     <div
       data-theme="dark"
-      className="bg-base-100 text-base-content min-h-screen"
+      className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
         <title>{repository.name}</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex">
+      <div className="flex flex-1">
         <main className="container mx-auto max-w-screen-lg py-12">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
@@ -106,51 +107,34 @@ function RepositoryIssueView(props) {
               <div className="mt-4 flex items-center">
                 <span
                   className={
-                    "badge badge-lg capitalize mr-4 " +
-                    (issue.state === "Open" ? "badge-primary" : "badge-error")
+                    "flex items-center rounded-full border pl-4 pr-6 py-2 mr-4 " +
+                    (issue.state === "Open"
+                      ? "border-green-900"
+                      : "border-red-900")
                   }
                 >
-                  {issue.state === "Open" ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 mr-2"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 mr-2"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                  {issue.state}
+                  <span
+                    className={
+                      "mr-4 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
+                      (issue.state === "Open" ? "bg-green-900" : "bg-red-900")
+                    }
+                  />
+                  <span className="text-type uppercase">{issue.state}</span>
                 </span>
-                <span className="text-xs mr-2">
+                <span className="text-xs mr-2 text-type-secondary">
                   {shrinkAddress(issue.creator) +
                     " opened this issue on " +
                     dayjs(issue.createdAt * 1000).format("DD MMM")}
                 </span>
-                <span className="text-xs mr-2">&middot;</span>
-                <span className="text-xs">
+                <span className="text-xl mr-2 text-type-secondary">
+                  &middot;
+                </span>
+                <span className="text-xs text-type-secondary">
                   {issue.comments.length + " comments"}
                 </span>
               </div>
             </div>
-            <div>
+            <div className="flex-none w-36">
               <Link
                 href={
                   "/" +
@@ -160,7 +144,9 @@ function RepositoryIssueView(props) {
                   "/issues/new"
                 }
               >
-                <button className="btn btn-primary btn-sm">New Issue</button>
+                <button className="btn btn-primary btn-sm btn-block">
+                  New Issue
+                </button>
               </Link>
             </div>
           </div>
@@ -170,7 +156,7 @@ function RepositoryIssueView(props) {
                 <div className="flex w-full">
                   <div className="flex-none mr-4">
                     <div className="avatar">
-                      <div className="mb-8 rounded-full w-14 h-14">
+                      <div className="mb-8 rounded-full w-10 h-10">
                         <img
                           src={
                             "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
@@ -181,7 +167,7 @@ function RepositoryIssueView(props) {
                     </div>
                   </div>
                   <div className="border border-grey rounded flex-1">
-                    <div className="text-xs px-4 py-2 bg-neutral">
+                    <div className="text-xs px-4 py-2 bg-base-200 rounded-t">
                       {shrinkAddress(issue.creator) +
                         " commented on " +
                         dayjs(issue.createdAt * 1000).format("DD MMM")}
@@ -196,7 +182,7 @@ function RepositoryIssueView(props) {
                     <div className="flex w-full mt-8" key={c.id}>
                       <div className="flex-none mr-4">
                         <div className="avatar">
-                          <div className="mb-8 rounded-full w-14 h-14">
+                          <div className="mb-8 rounded-full w-10 h-10">
                             <img
                               src={
                                 "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
@@ -207,7 +193,7 @@ function RepositoryIssueView(props) {
                         </div>
                       </div>
                       <div className="border border-grey rounded flex-1">
-                        <div className="text-xs px-4 py-2 bg-neutral">
+                        <div className="text-xs px-4 py-2 bg-base-200 rounded-t">
                           {shrinkAddress(c.creator) +
                             " commented on " +
                             dayjs(c.createdAt * 1000).format("DD MMM")}
@@ -222,7 +208,7 @@ function RepositoryIssueView(props) {
                 <div className="flex w-full mt-8">
                   <div className="flex-none mr-4">
                     <div className="avatar">
-                      <div className="mb-8 rounded-full w-14 h-14">
+                      <div className="mb-8 rounded-full w-10 h-10">
                         <img
                           src={
                             "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
@@ -232,19 +218,25 @@ function RepositoryIssueView(props) {
                       </div>
                     </div>
                   </div>
-                  <div className="border border-grey rounded flex-1 p-4 markdown-body">
-                    <MarkdownEditor value={comment} setValue={setComment} />
+                  <div className="border border-grey rounded flex-1 p-4">
+                    <MarkdownEditor
+                      value={comment}
+                      setValue={setComment}
+                      classes={{ preview: ["markdown-body"] }}
+                    />
                     <div className="text-right mt-4">
-                      <button
-                        className={
-                          "btn btn-sm btn-primary " +
-                          (postingComment ? "loading" : "")
-                        }
-                        disabled={comment.trim().length === 0}
-                        onClick={createComment}
-                      >
-                        Comment
-                      </button>
+                      <div className="inline-block w-36">
+                        <button
+                          className={
+                            "btn btn-sm btn-primary btn-block " +
+                            (postingComment ? "loading" : "")
+                          }
+                          disabled={comment.trim().length === 0}
+                          onClick={createComment}
+                        >
+                          Comment
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -274,6 +266,7 @@ function RepositoryIssueView(props) {
           </div>
         </main>
       </div>
+      <Footer />
     </div>
   );
 }

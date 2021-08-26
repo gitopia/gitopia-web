@@ -4,6 +4,7 @@ import SimpleHeader from "../components/simpleHeader";
 import { useState } from "react";
 import CreateWallet from "../components/createWallet";
 import RecoverWallet from "../components/recoverWallet";
+import Footer from "../components/footer";
 
 /*
 Wizard Steps
@@ -24,7 +25,6 @@ export default function Login(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <SimpleHeader />
-
       <div className="flex-1 container mx-auto flex flex-col justify-center items-center min-h-full relative">
         {step === 1 ? (
           <>
@@ -92,11 +92,7 @@ export default function Login(props) {
         {step === 2 && <CreateWallet />}
         {step === 3 && <RecoverWallet />}
       </div>
-      <div className="flex-none text-center mb-4">
-        <a className="text-xs uppercase mr-8">Privacy Policy</a>
-        <a className="text-xs uppercase mr-8">Terms Of Service</a>
-        <a className="text-xs uppercase">Security</a>
-      </div>
+      <Footer />
     </div>
   );
 }

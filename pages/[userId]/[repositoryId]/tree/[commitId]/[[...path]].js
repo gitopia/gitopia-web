@@ -17,6 +17,7 @@ import BranchSelector from "../../../../../components/repository/branchSelector"
 import Breadcrumbs from "../../../../../components/repository/breadcrumbs";
 import CommitDetailRow from "../../../../../components/repository/commitDetailRow";
 import FileBrowser from "../../../../../components/repository/fileBrowser";
+import Footer from "../../../../../components/footer";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -89,14 +90,14 @@ function RepositoryTreeView(props) {
   return (
     <div
       data-theme="dark"
-      className="bg-base-100 text-base-content min-h-screen"
+      className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
         <title>{repository.name}</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex">
+      <div className="flex flex-1">
         <main className="container mx-auto max-w-screen-lg py-12">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
@@ -132,6 +133,7 @@ function RepositoryTreeView(props) {
           </div>
         </main>
       </div>
+      <Footer />
     </div>
   );
 }

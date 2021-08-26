@@ -20,14 +20,14 @@ function OrgDashboard(props) {
   return (
     <div
       data-theme="dark"
-      className="bg-base-100 text-base-content min-h-screen"
+      className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
         <title>Gitopia</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex">
+      <div className="flex flex-1">
         <div className="w-64 border-r border-grey">
           <DashboardSelector />
           <BackendStatus />

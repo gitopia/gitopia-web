@@ -10,7 +10,9 @@ export default function EmptyRepository(props) {
       <div className="flex border-2 border-grey rounded-md px-8 py-2 mt-16 items-center">
         <div className="flex-none w-72 text-xl">Quick Setup</div>
         <div className="flex-1 flex items-center">
-          <div className="flex-none text-sm mr-4">Remote</div>
+          <div className="flex-none text-xs uppercase text-type-secondary mr-4 font-bold">
+            Remote
+          </div>
           <div className="form-control flex-1">
             <div className="relative">
               <input
@@ -69,7 +71,7 @@ export default function EmptyRepository(props) {
               Push existing repository from command line
             </div>
             <div className="w-44">
-              <button className="btn btn-primary btn-xs btn-block">
+              <button className="btn btn-primary btn-sm btn-block">
                 Copy commands
               </button>
             </div>
@@ -97,7 +99,7 @@ export default function EmptyRepository(props) {
               Import code from another repository
             </div>
             <div className="w-44">
-              <button className="btn btn-primary btn-xs btn-block">
+              <button className="btn btn-primary btn-sm btn-block">
                 Copy commands
               </button>
             </div>
@@ -125,7 +127,7 @@ export default function EmptyRepository(props) {
               Create a new repository from command line
             </div>
             <div className="w-44">
-              <button className="btn btn-primary btn-xs btn-block">
+              <button className="btn btn-primary btn-sm btn-block">
                 Copy commands
               </button>
             </div>
