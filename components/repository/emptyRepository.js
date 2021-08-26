@@ -1,26 +1,32 @@
+import { notify } from "reapop";
+import { useDispatch } from "react-redux";
+
 export default function EmptyRepository(props) {
   const { repository } = props;
+  const remoteUrl = "gitopia://" + repository.owner.ID + "/" + repository.name;
+  const dispatch = useDispatch();
   return (
     <>
       <div className="flex border-2 border-grey rounded-md px-8 py-2 mt-16 items-center">
         <div className="flex-none w-72 text-xl">Quick Setup</div>
         <div className="flex-1 flex items-center">
-          <div className="tabs flex-none mr-4">
-            <div className="tab tab-bordered tab-active">HTTPS</div>
-            <div className="tab tab-bordered">SSH</div>
-          </div>
+          <div className="flex-none text-sm mr-4">Remote</div>
           <div className="form-control flex-1">
             <div className="relative">
               <input
                 name="repository-url"
                 type="text"
-                value={
-                  "gitopia://" + repository.owner.ID + "/" + repository.name
-                }
+                value={remoteUrl}
                 readOnly={true}
                 className="w-full pr-16 input input-ghost input-bordered"
               />
-              <button className="absolute right-0 top-0 rounded-md-l-none btn btn-ghost">
+              <button
+                className="absolute right-0 top-0 rounded-md-l-none btn btn-ghost"
+                onClick={(e) => {
+                  navigator.clipboard.writeText(remoteUrl);
+                  dispatch(notify("Copied to clipboard", "info"));
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"

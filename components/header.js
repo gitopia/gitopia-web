@@ -11,6 +11,7 @@ import {
 import shrinkAddress from "../helpers/shrinkAddress";
 import getHomeUrl from "../helpers/getHomeUrl";
 import _ from "lodash";
+import { notify } from "reapop";
 /*
 Menu States
 1 - Default menu
@@ -122,7 +123,7 @@ function Header(props) {
         <div className="flex-1"></div>
         {props.activeWallet ? (
           <div className="flex-none mr-4">
-            <div className="badge badge-secondary">
+            <div className="badge bg-purple-900">
               {props.loreBalance / 1000000} LORE
             </div>
           </div>
@@ -193,6 +194,7 @@ function Header(props) {
                                 props.selectedAddress
                               );
                               setMenuOpen(false);
+                              props.notify("Copied to clipboard", "info");
                             }}
                           >
                             <span className="flex-1">Copy Address</span>
@@ -275,4 +277,5 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   downloadWalletForRemoteHelper,
   signOut,
+  notify,
 })(Header);

@@ -134,7 +134,7 @@ function NewOrganization(props) {
           <div className="flex justify-end mt-4">
             <button
               className={
-                "flex-none btn btn-primary " +
+                "flex-none btn btn-primary btn-wide " +
                 (organizationCreating ? "loading " : "")
               }
               onClick={createOrganization}
