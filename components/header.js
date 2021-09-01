@@ -73,7 +73,7 @@ function Header(props) {
             </svg>
           </label>
         </div>
-        <div className="flex-none px-6">
+        <div className="flex-none px-6 w-64">
           <Link href={homeUrl}>
             <img
               width={120}

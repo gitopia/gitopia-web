@@ -34,6 +34,7 @@ function RepositoryIssueView(props) {
     iid: router.query.issueIid,
     creator: "",
     comments: [],
+    assignees: [],
   });
   const [allComments, setAllComments] = useState([]);
 
@@ -241,7 +242,11 @@ function RepositoryIssueView(props) {
               <div>
                 <div className="flex-1 text-left px-3 mb-1">Assignees</div>
 
-                <div className="text-xs px-3">No one</div>
+                <div className="text-xs px-3">
+                  {issue.assignees.length
+                    ? issue.assignees.map((a) => shrinkAddress(a)).join(", ")
+                    : "No one"}
+                </div>
               </div>
               <div className="divider"></div>
               <div>

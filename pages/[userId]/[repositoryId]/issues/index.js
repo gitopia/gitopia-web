@@ -196,9 +196,11 @@ function RepositoryIssueView(props) {
                         </div>
                       </td>
                       <td>
-                        {i.assignees.map((a) => {
-                          return <span>{a}</span>;
-                        })}
+                        {i.assignees
+                          .map((a) => {
+                            return shrinkAddress(a);
+                          })
+                          .join(", ")}
                       </td>
                       <td>{i.comments.length}</td>
                       <td>{dayjs(i.createdAt * 1000).format("DD MMM YYYY")}</td>
