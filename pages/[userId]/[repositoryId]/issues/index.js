@@ -95,33 +95,19 @@ function RepositoryIssueView(props) {
                 <tr>
                   <th className="w-7/12 text-left">
                     <button className="btn btn-xs btn-ghost">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-2"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+                      <span
+                        className={
+                          "mr-2 h-2 w-2 rounded-md justify-self-end self-center inline-block bg-green-900"
+                        }
+                      />
                       <span>Open</span>
                     </button>
                     <button className="btn btn-xs btn-ghost">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-2"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+                      <span
+                        className={
+                          "mr-2 h-2 w-2 rounded-md justify-self-end self-center inline-block bg-red-900"
+                        }
+                      />
                       <span>Closed</span>
                     </button>
                   </th>
@@ -183,33 +169,12 @@ function RepositoryIssueView(props) {
                   return (
                     <tr key={i.iid}>
                       <td className="text-left flex">
-                        {i.state === "Open" ? (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 mr-2 relative top-1"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        ) : (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 mr-2 relative top-1"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        )}
+                        <span
+                          className={
+                            "mr-4 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
+                            (i.state === "Open" ? "bg-green-900" : "bg-red-900")
+                          }
+                        />
                         <div>
                           <div>
                             <Link

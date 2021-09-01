@@ -56,7 +56,6 @@ const reducer = (state = initialState, action) => {
           };
         }),
       ];
-      console.log("dashboards", dashboards);
       return { ...state, dashboards };
     }
 

@@ -14,10 +14,10 @@ import getComment from "../../../../helpers/getComment";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
-import MarkdownEditor from "../../../../components/markdownEditor";
 import Footer from "../../../../components/footer";
-
-import { createComment } from "../../../../store/actions/repository";
+import CommentEditor from "../../../../components/repository/commentEditor";
+import CommentView from "../../../../components/repository/commentView";
+import { deleteComment } from "../../../../store/actions/repository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -36,8 +36,6 @@ function RepositoryIssueView(props) {
     comments: [],
   });
   const [allComments, setAllComments] = useState([]);
-  const [comment, setComment] = useState("");
-  const [postingComment, setPostingComment] = useState(false);
 
   useEffect(async () => {
     const [r, i] = await Promise.all([
@@ -46,6 +44,7 @@ function RepositoryIssueView(props) {
     ]);
     if (r) setRepository(r);
     if (i) setIssue(i);
+    console.log(i);
   }, []);
 
   const getAllComments = async () => {
@@ -54,32 +53,42 @@ function RepositoryIssueView(props) {
     setAllComments(comments);
   };
 
+  const createNewCommentSuccess = async () => {
+    const i = await getRepositoryIssue(
+      repository.owner.ID,
+      repository.name,
+      issue.iid
+    );
+    setIssue(i);
+  };
+
   useEffect(getAllComments, [issue]);
 
-  const validateComment = () => {
-    return true;
-  };
-
-  const createComment = async () => {
-    setPostingComment(true);
-    if (validateComment()) {
-      const res = await props.createComment({
-        parentId: issue.id,
-        body: comment,
-        commentType: "Issue",
-      });
-      if (res && res.code === 0) {
-        setComment("");
-        const i = await getRepositoryIssue(
-          repository.owner.ID,
-          repository.name,
-          issue.iid
-        );
-        setIssue(i);
-      }
-    }
-    setPostingComment(false);
-  };
+  const editMenu = (
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" class="m-1 btn btn-square btn-xs btn-ghost">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+        </svg>
+      </div>
+      <ul
+        tabindex="0"
+        class="shadow menu dropdown-content bg-base-300 rounded-box w-32"
+      >
+        <li>
+          <a>Edit</a>
+        </li>
+        <li>
+          <a>Delete</a>
+        </li>
+      </ul>
+    </div>
+  );
 
   return (
     <div
@@ -167,42 +176,45 @@ function RepositoryIssueView(props) {
                     </div>
                   </div>
                   <div className="border border-grey rounded flex-1">
-                    <div className="text-xs px-4 py-2 bg-base-200 rounded-t">
-                      {shrinkAddress(issue.creator) +
-                        " commented on " +
-                        dayjs(issue.createdAt * 1000).format("DD MMM")}
+                    <div className="flex text-xs px-4 py-2 bg-base-200 rounded-t items-center">
+                      <div className="flex-1">
+                        {shrinkAddress(issue.creator) +
+                          " commented on " +
+                          dayjs(issue.createdAt * 1000).format("DD MMM")}
+                      </div>
+                      {/* <div className="flex-none">
+                        {issue.creator === props.selectedAddress
+                          ? editMenu
+                          : ""}
+                      </div> */}
                     </div>
                     <div className="p-4 markdown-body">
                       <ReactMarkdown>{issue.description}</ReactMarkdown>
                     </div>
                   </div>
                 </div>
-                {allComments.map((c) => {
+                {allComments.map((c, i) => {
                   return (
-                    <div className="flex w-full mt-8" key={c.id}>
-                      <div className="flex-none mr-4">
-                        <div className="avatar">
-                          <div className="mb-8 rounded-full w-10 h-10">
-                            <img
-                              src={
-                                "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                                c.creator.slice(-1)
-                              }
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="border border-grey rounded flex-1">
-                        <div className="text-xs px-4 py-2 bg-base-200 rounded-t">
-                          {shrinkAddress(c.creator) +
-                            " commented on " +
-                            dayjs(c.createdAt * 1000).format("DD MMM")}
-                        </div>
-                        <div className="p-4 markdown-body">
-                          <ReactMarkdown>{c.body}</ReactMarkdown>
-                        </div>
-                      </div>
-                    </div>
+                    <CommentView
+                      comment={c}
+                      userAddress={props.selectedAddress}
+                      onUpdate={async (id) => {
+                        const newComment = await getComment(id);
+                        const newAllComments = [...allComments];
+                        newAllComments[i] = newComment;
+                        setAllComments(newAllComments);
+                      }}
+                      onDelete={async (id) => {
+                        console.log("onDelete", id);
+                        const res = await props.deleteComment({ id });
+                        console.log(res);
+                        if (res && res.code === 0) {
+                          const newAllComments = [...allComments];
+                          newAllComments.splice(i, 1);
+                          setAllComments(newAllComments);
+                        }
+                      }}
+                    />
                   );
                 })}
                 <div className="flex w-full mt-8">
@@ -218,27 +230,10 @@ function RepositoryIssueView(props) {
                       </div>
                     </div>
                   </div>
-                  <div className="border border-grey rounded flex-1 p-4">
-                    <MarkdownEditor
-                      value={comment}
-                      setValue={setComment}
-                      classes={{ preview: ["markdown-body"] }}
-                    />
-                    <div className="text-right mt-4">
-                      <div className="inline-block w-36">
-                        <button
-                          className={
-                            "btn btn-sm btn-primary btn-block " +
-                            (postingComment ? "loading" : "")
-                          }
-                          disabled={comment.trim().length === 0}
-                          onClick={createComment}
-                        >
-                          Comment
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  <CommentEditor
+                    issueId={issue.id}
+                    onSuccess={createNewCommentSuccess}
+                  />
                 </div>
               </div>
             </div>
@@ -278,4 +273,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { createComment })(RepositoryIssueView);
+export default connect(mapStateToProps, { deleteComment })(RepositoryIssueView);

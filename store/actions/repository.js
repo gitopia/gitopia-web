@@ -165,3 +165,47 @@ export const createComment = ({
     }
   };
 };
+
+export const updateComment = ({ id = null, body = "", attachments = [] }) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+      return null;
+    const comment = {
+      creator: wallet.selectedAddress,
+      id,
+      body,
+      attachments,
+    };
+
+    try {
+      const message = await env.txClient.msgUpdateComment(comment);
+      const result = await sendTransaction({ message }, env);
+      return result;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const deleteComment = ({ id = null }) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+      return null;
+    const comment = {
+      creator: wallet.selectedAddress,
+      id,
+    };
+    console.log(comment);
+    try {
+      const message = await env.txClient.msgDeleteComment(comment);
+      const result = await sendTransaction({ message }, env);
+      return result;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
