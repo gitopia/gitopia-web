@@ -8,6 +8,7 @@ import {
 } from "./user";
 import { reInitClients } from "./wallet";
 import { userActions } from "./actionTypes";
+import { async } from "regenerator-runtime";
 
 export const validatePostingEligibility = async (
   dispatch,
@@ -201,6 +202,27 @@ export const deleteComment = ({ id = null }) => {
     console.log(comment);
     try {
       const message = await env.txClient.msgDeleteComment(comment);
+      const result = await sendTransaction({ message }, env);
+      return result;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const toggleIssueState = ({ id = null }) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+      return null;
+    const comment = {
+      creator: wallet.selectedAddress,
+      id,
+    };
+    console.log(comment);
+    try {
+      const message = await env.txClient.msgToggleIssueState(comment);
       const result = await sendTransaction({ message }, env);
       return result;
     } catch (e) {

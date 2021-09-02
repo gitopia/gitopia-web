@@ -52,8 +52,11 @@ function CommentView({
             </div>
             <div className="flex-none">
               {comment.creator === userAddress ? (
-                <div class="dropdown dropdown-end">
-                  <div tabIndex="0" class="m-1 btn btn-square btn-xs btn-ghost">
+                <div className="dropdown dropdown-end">
+                  <div
+                    tabIndex="0"
+                    className="m-1 btn btn-square btn-xs btn-ghost"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
@@ -65,7 +68,7 @@ function CommentView({
                   </div>
                   <ul
                     tabIndex="0"
-                    class="shadow menu dropdown-content bg-base-300 rounded-box w-32"
+                    className="shadow menu dropdown-content bg-base-300 rounded-box w-32"
                   >
                     <li>
                       <a
@@ -101,14 +104,14 @@ function CommentView({
         type="checkbox"
         checked={confirmDelete}
         readOnly
-        class="modal-toggle"
+        className="modal-toggle"
       />
-      <div class="modal">
-        <div class="modal-box">
+      <div className="modal">
+        <div className="modal-box">
           <p>Are you sure ?</p>
-          <div class="modal-action">
+          <div className="modal-action">
             <label
-              class="btn btn-sm"
+              className="btn btn-sm"
               onClick={() => {
                 setConfirmDelete(false);
               }}
@@ -116,7 +119,9 @@ function CommentView({
               Cancel
             </label>
             <label
-              class={"btn btn-sm btn-primary " + (isDeleting ? "loading" : "")}
+              className={
+                "btn btn-sm btn-primary " + (isDeleting ? "loading" : "")
+              }
               onClick={async () => {
                 setIsDeleting(true);
                 if (onDelete) await onDelete(comment.id);

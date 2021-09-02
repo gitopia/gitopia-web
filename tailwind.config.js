@@ -42,6 +42,12 @@ module.exports = {
         grey: {
           DEFAULT: "#404450",
         },
+        pink: {
+          50: "#FFB0DB",
+          DEFAULT: "#E83D99",
+          400: "#F364B2",
+          900: "#C52A7D",
+        },
         type: {
           DEFAULT: "#E2EBF2",
           secondary: "#ADBECB",
@@ -80,9 +86,9 @@ module.exports = {
           secondary: "#883BE6",
           "secondary-focus": "#A76BF0",
           "secondary-content": "#FFFFFF",
-          accent: "#0883AA",
-          "accent-focus": "#2aa79b",
-          "accent-content": "#767C87",
+          accent: "#C52A7D",
+          "accent-focus": "#E83D99",
+          "accent-content": "#FFFFFF",
           neutral: "#3d4451",
           "neutral-focus": "#2a2e37",
           "neutral-content": "#ffffff",

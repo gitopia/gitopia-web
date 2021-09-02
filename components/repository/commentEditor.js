@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { connect } from "react-redux";
 import MarkdownEditor from "../markdownEditor";
-import { createComment, updateComment } from "../../store/actions/repository";
+import {
+  createComment,
+  updateComment,
+  toggleIssueState,
+} from "../../store/actions/repository";
 
 function CommentEditor({
   commentId = null,
@@ -10,10 +14,12 @@ function CommentEditor({
   isEdit = false,
   onSuccess = null,
   onCancel = null,
+  issueState = "Open",
   ...props
 }) {
   const [comment, setComment] = useState(initialComment);
   const [postingComment, setPostingComment] = useState(false);
+  const [togglingIssue, setTogglingIssue] = useState(false);
 
   const validateComment = () => {
     return true;
@@ -58,6 +64,31 @@ function CommentEditor({
         classes={{ preview: ["markdown-body"] }}
       />
       <div className="text-right mt-4">
+        {!isEdit ? (
+          <div className="inline-block w-36 mr-4">
+            <button
+              className={
+                "btn btn-sm btn-accent btn-outline btn-block " +
+                (togglingIssue ? "loading" : "")
+              }
+              onClick={async () => {
+                setTogglingIssue(true);
+                const res = await props.toggleIssueState({ id: issueId });
+                console.log(res);
+                if (res && res.code === 0) {
+                  if (onSuccess) {
+                    await onSuccess();
+                  }
+                }
+                setTogglingIssue(false);
+              }}
+            >
+              {issueState === "Open" ? "Close" : "Open"} Issue
+            </button>
+          </div>
+        ) : (
+          ""
+        )}
         {onCancel ? (
           <div className="inline-block w-36 mr-4">
             <button
@@ -91,6 +122,8 @@ const mapStateToProps = (state) => {
   return {};
 };
 
-export default connect(mapStateToProps, { createComment, updateComment })(
-  CommentEditor
-);
+export default connect(mapStateToProps, {
+  createComment,
+  updateComment,
+  toggleIssueState,
+})(CommentEditor);

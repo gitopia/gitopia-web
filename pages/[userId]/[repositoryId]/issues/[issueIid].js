@@ -17,7 +17,10 @@ import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
 import CommentEditor from "../../../../components/repository/commentEditor";
 import CommentView from "../../../../components/repository/commentView";
-import { deleteComment } from "../../../../store/actions/repository";
+import {
+  deleteComment,
+  toggleIssueState,
+} from "../../../../store/actions/repository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -54,7 +57,7 @@ function RepositoryIssueView(props) {
     setAllComments(comments);
   };
 
-  const createNewCommentSuccess = async () => {
+  const refreshIssue = async () => {
     const i = await getRepositoryIssue(
       repository.owner.ID,
       repository.name,
@@ -233,7 +236,8 @@ function RepositoryIssueView(props) {
                   </div>
                   <CommentEditor
                     issueId={issue.id}
-                    onSuccess={createNewCommentSuccess}
+                    issueState={issue.state}
+                    onSuccess={refreshIssue}
                   />
                 </div>
               </div>
@@ -241,7 +245,6 @@ function RepositoryIssueView(props) {
             <div className="flex-none w-64 pl-8">
               <div>
                 <div className="flex-1 text-left px-3 mb-1">Assignees</div>
-
                 <div className="text-xs px-3">
                   {issue.assignees.length
                     ? issue.assignees.map((a) => shrinkAddress(a)).join(", ")
