@@ -265,3 +265,34 @@ export const renameRepository = ({ id = null, name = "" }) => {
     }
   };
 };
+
+export const updateCollaborator = ({ id = null, user = null, role = null }) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+      return null;
+    const { env, wallet } = getState();
+    const collaborator = {
+      creator: wallet.selectedAddress,
+      id,
+      user,
+      role,
+    };
+
+    try {
+      const message = await env.txClient.msgUpdateRepositoryCollaborator(
+        collaborator
+      );
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};

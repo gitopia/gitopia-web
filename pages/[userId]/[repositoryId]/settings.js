@@ -11,6 +11,7 @@ import RepositoryMainTabs from "../../../components/repository/mainTabs";
 import Footer from "../../../components/footer";
 import TextInput from "../../../components/textInput";
 import RenameRepository from "../../../components/repository/renameRepository";
+import CollaboratorsList from "../../../components/repository/collaboratorsList";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -23,13 +24,6 @@ function RepositoryView(props) {
     name: router.query.repositoryId,
     owner: { ID: router.query.userId },
     collaborators: [],
-  });
-
-  const [collabAddress, setCollabAddress] = useState("");
-  const [collabHint, setCollabHint] = useState({
-    shown: false,
-    type: "error",
-    message: "",
   });
 
   useEffect(async () => {
@@ -135,53 +129,7 @@ function RepositoryView(props) {
                   Collaborators
                 </div>
                 <div className="py-4">
-                  <table className="table w-full">
-                    <thead>
-                      <tr>
-                        <th>Collaborator</th>
-                        <th className="w-36">Role</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {repository.collaborators.map((c) => (
-                        <tr>
-                          <td>{c.address}</td>
-                          <td>{c.role}</td>
-                          <td>
-                            <button className="btn btn-sm btn-accent btn-outline btn-block">
-                              Remove
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                      <tr>
-                        <td>
-                          <TextInput
-                            value={collabAddress}
-                            setValue={setCollabAddress}
-                            hint={collabHint}
-                            size="sm"
-                          />
-                        </td>
-                        <td>
-                          <select
-                            className="select select-bordered w-full select-sm"
-                            defaultValue={3}
-                          >
-                            <option value="1">Owner</option>
-                            <option value="2">Maintainer</option>
-                            <option value="3">Reviewer</option>
-                          </select>
-                        </td>
-                        <td>
-                          <button className="btn btn-sm btn-primary btn-outline btn-block">
-                            Add
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <CollaboratorsList collaborators={repository.collaborators} />
                 </div>
               </div>
               <div className="mt-8 divide-y divide-grey">
