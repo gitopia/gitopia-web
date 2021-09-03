@@ -9,6 +9,7 @@ import getUserRepository from "../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
 import Footer from "../../../components/footer";
+import TextInput from "../../../components/textInput";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -22,9 +23,19 @@ function RepositoryView(props) {
     owner: { ID: router.query.userId },
   });
 
+  const [name, setName] = useState("");
+  const [nameHint, setNameHint] = useState({
+    shown: false,
+    type: "error",
+    message: "",
+  });
+
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.ID, repository.name);
-    if (r) setRepository(r);
+    if (r) {
+      setRepository(r);
+      setName(r.name);
+    }
   }, []);
 
   return (
@@ -44,6 +55,144 @@ function RepositoryView(props) {
             active="settings"
             hrefBase={repository.owner.ID + "/" + repository.name}
           />
+          <div className="flex mt-8">
+            <div className="flex-none w-64">
+              <ul className="menu py-4">
+                <li>
+                  <a className="rounded" href="#repository">
+                    Repository
+                  </a>
+                </li>
+                <li>
+                  <a className="rounded" href="#permissions">
+                    Permissions
+                  </a>
+                </li>
+                <li>
+                  <a className="rounded" href="#sponsorship">
+                    Sponsorship
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div className="flex-1 px-4">
+              <div className="divide-y divide-grey">
+                <div className="text-2xl py-6" id="repository">
+                  Repository
+                </div>
+                <div className="flex py-6 items-center">
+                  <div className="flex-1 py-2 mr-8">
+                    <TextInput
+                      type="text"
+                      name="repository_name"
+                      placeholder="Repository Name"
+                      value={name}
+                      setValue={setName}
+                      hint={nameHint}
+                    />
+                  </div>
+                  <div className="flex-none w-52">
+                    <button className="btn btn-sm btn-block">
+                      Change Name
+                    </button>
+                  </div>
+                </div>
+                <div className="flex py-6 items-center">
+                  <div className="flex-1 mr-8">
+                    <div className="label-text">Transfer Ownership</div>
+                    <div className="label-text-alt text-type-secondary">
+                      Transfer this repository to another use or to an
+                      organization where you have the ability to create
+                      repositories
+                    </div>
+                  </div>
+                  <div className="flex-none w-52">
+                    <button className="btn btn-sm btn-block btn-accent btn-outline">
+                      Transfer Ownership
+                    </button>
+                  </div>
+                </div>
+                <div className="flex py-6 items-center">
+                  <div className="flex-1 mr-8">
+                    <div className="label-text">Archive Repository</div>
+                    <div className="label-text-alt text-type-secondary">
+                      Mark this repository as archived and read-only
+                    </div>
+                  </div>
+                  <div className="flex-none w-52">
+                    {" "}
+                    <button className="btn btn-sm btn-block btn-accent btn-outline">
+                      Archive Repository
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-8 divide-y divide-grey">
+                <div className="text-2xl py-6" id="permissions">
+                  Permissions
+                </div>
+                <div className="form-control py-4">
+                  <label className="cursor-pointer label">
+                    <div>
+                      <div className="label-text">Allow merge commits</div>
+                      <div className="label-text-alt text-type-secondary">
+                        Add all commits from the head branch to the base branch
+                        with merge commit
+                      </div>
+                    </div>
+                    <input type="checkbox" className="toggle toggle-primary" />
+                  </label>
+                </div>
+                <div className="form-control py-4">
+                  <label className="cursor-pointer label">
+                    <div>
+                      <div className="label-text">Allow squash commits</div>
+                      <div className="label-text-alt text-type-secondary">
+                        Combine all commits from the head branch into a single
+                        commit in the base branch
+                      </div>
+                    </div>
+                    <input type="checkbox" className="toggle toggle-primary" />
+                  </label>
+                </div>
+                <div className="form-control py-4">
+                  <label className="cursor-pointer label">
+                    <div>
+                      <div className="label-text">Allow rebase commits</div>
+                      <div className="label-text-alt text-type-secondary">
+                        Add all commits from the head branch onto the base
+                        branch individually
+                      </div>
+                    </div>
+                    <input type="checkbox" className="toggle toggle-primary" />
+                  </label>
+                </div>
+                <div className="form-control py-4">
+                  <label className="cursor-pointer label">
+                    <div>
+                      <div className="label-text">Allow Forking</div>
+                      <div className="label-text-alt text-type-secondary">
+                        Add all commits from the head branch onto the base
+                        branch individually
+                      </div>
+                    </div>
+                    <input type="checkbox" className="toggle toggle-primary" />
+                  </label>
+                </div>
+                <div className="form-control py-4">
+                  <label className="cursor-pointer label">
+                    <div>
+                      <div className="label-text">Enable Issues</div>
+                      <div className="label-text-alt text-type-secondary">
+                        Allow people to raise issues
+                      </div>
+                    </div>
+                    <input type="checkbox" className="toggle toggle-primary" />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
         </main>
       </div>
       <Footer />
