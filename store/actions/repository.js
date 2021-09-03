@@ -224,10 +224,44 @@ export const toggleIssueState = ({ id = null }) => {
     try {
       const message = await env.txClient.msgToggleIssueState(comment);
       const result = await sendTransaction({ message }, env);
-      return result;
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
     } catch (e) {
       console.error(e);
       dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const renameRepository = ({ id = null, name = "" }) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+      return null;
+    const { env, wallet } = getState();
+    const repository = {
+      creator: wallet.selectedAddress,
+      id,
+      name,
+    };
+
+    try {
+      const message = await env.txClient.msgRenameRepository(repository);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        getUserDetailsForSelectedAddress()(dispatch, getState);
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
     }
   };
 };

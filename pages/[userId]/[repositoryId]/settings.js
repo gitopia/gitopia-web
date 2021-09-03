@@ -10,6 +10,7 @@ import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
 import Footer from "../../../components/footer";
 import TextInput from "../../../components/textInput";
+import RenameRepository from "../../../components/repository/renameRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -21,22 +22,25 @@ function RepositoryView(props) {
     id: router.query.repositoryId,
     name: router.query.repositoryId,
     owner: { ID: router.query.userId },
+    collaborators: [],
   });
 
-  const [name, setName] = useState("");
-  const [nameHint, setNameHint] = useState({
+  const [collabAddress, setCollabAddress] = useState("");
+  const [collabHint, setCollabHint] = useState({
     shown: false,
     type: "error",
     message: "",
   });
 
   useEffect(async () => {
-    const r = await getUserRepository(repository.owner.ID, repository.name);
+    const r = await getUserRepository(
+      router.query.userId,
+      router.query.repositoryId
+    );
     if (r) {
       setRepository(r);
-      setName(r.name);
     }
-  }, []);
+  }, [router.query]);
 
   return (
     <div
@@ -64,13 +68,13 @@ function RepositoryView(props) {
                   </a>
                 </li>
                 <li>
-                  <a className="rounded" href="#permissions">
-                    Permissions
+                  <a className="rounded" href="#collaborators">
+                    Collaborators
                   </a>
                 </li>
                 <li>
-                  <a className="rounded" href="#sponsorship">
-                    Sponsorship
+                  <a className="rounded" href="#permissions">
+                    Permissions
                   </a>
                 </li>
               </ul>
@@ -80,22 +84,21 @@ function RepositoryView(props) {
                 <div className="text-2xl py-6" id="repository">
                   Repository
                 </div>
-                <div className="flex py-6 items-center">
-                  <div className="flex-1 py-2 mr-8">
-                    <TextInput
-                      type="text"
-                      name="repository_name"
-                      placeholder="Repository Name"
-                      value={name}
-                      setValue={setName}
-                      hint={nameHint}
-                    />
-                  </div>
-                  <div className="flex-none w-52">
-                    <button className="btn btn-sm btn-block">
-                      Change Name
-                    </button>
-                  </div>
+                <div className="py-6">
+                  <RenameRepository
+                    currentName={repository.name}
+                    repoId={repository.id}
+                    onSuccess={async (newRepoName) => {
+                      const url = [
+                        "",
+                        repository.owner.ID,
+                        newRepoName,
+                        "settings",
+                      ].join("/");
+                      console.log("goto", url);
+                      router.push(url);
+                    }}
+                  />
                 </div>
                 <div className="flex py-6 items-center">
                   <div className="flex-1 mr-8">
@@ -125,6 +128,60 @@ function RepositoryView(props) {
                       Archive Repository
                     </button>
                   </div>
+                </div>
+              </div>
+              <div className="mt-8 divide-y divide-grey">
+                <div className="text-2xl py-6" id="collaborators">
+                  Collaborators
+                </div>
+                <div className="py-4">
+                  <table className="table w-full">
+                    <thead>
+                      <tr>
+                        <th>Collaborator</th>
+                        <th className="w-36">Role</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {repository.collaborators.map((c) => (
+                        <tr>
+                          <td>{c.address}</td>
+                          <td>{c.role}</td>
+                          <td>
+                            <button className="btn btn-sm btn-accent btn-outline btn-block">
+                              Remove
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      <tr>
+                        <td>
+                          <TextInput
+                            value={collabAddress}
+                            setValue={setCollabAddress}
+                            hint={collabHint}
+                            size="sm"
+                          />
+                        </td>
+                        <td>
+                          <select
+                            className="select select-bordered w-full select-sm"
+                            defaultValue={3}
+                          >
+                            <option value="1">Owner</option>
+                            <option value="2">Maintainer</option>
+                            <option value="3">Reviewer</option>
+                          </select>
+                        </td>
+                        <td>
+                          <button className="btn btn-sm btn-primary btn-outline btn-block">
+                            Add
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
               <div className="mt-8 divide-y divide-grey">

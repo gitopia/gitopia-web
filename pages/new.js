@@ -31,23 +31,6 @@ function NewRepository(props) {
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
   useEffect(() => {
-    // const newAccountsList = [
-    //   ...props.dashboards.map((d) => {
-    //     const acc = {
-    //       ...d,
-    //     };
-
-    //     if (d.id === props.currentDashboard) {
-    //       console.log("same", d.id);
-    //       setOwnerId(d.id);
-    //     }
-    //     if (!props.currentDashboard && d.type === "User") {
-    //       console.log("not same");
-    //       setOwnerId(d.id);
-    //     }
-    //     return acc;
-    //   }),
-    // ];
     setAccountsList([...props.dashboards]);
     setOwnerId(props.currentDashboard);
   }, [props.dashboards, props.currentDashboard]);
