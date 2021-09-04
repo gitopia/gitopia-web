@@ -1,6 +1,13 @@
-export default function BranchSelector(props) {
+import Link from "next/link";
+
+export default function BranchSelector({
+  branches = [],
+  branchName = "master",
+  baseUrl,
+  ...props
+}) {
   return (
-    <div className={"dropdown dropdown-end"}>
+    <div className={"dropdown"} tabIndex="0">
       <div className="btn btn-sm btn-outline">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -10,7 +17,7 @@ export default function BranchSelector(props) {
         >
           <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
         </svg>
-        <div className="flex-1 text-left">master</div>
+        <div className="flex-1 text-left">{branchName}</div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5"
@@ -23,6 +30,20 @@ export default function BranchSelector(props) {
             clipRule="evenodd"
           />
         </svg>
+      </div>
+      <div className="shadow-lg dropdown-content bg-base-300 rounded mt-2">
+        <ul className="menu rounded">
+          {branches.map((b, i) => {
+            const cleanName = b.name.replace("refs/heads/", "");
+            return (
+              <li key={"branch-selector" + i}>
+                <Link href={baseUrl + "/tree/" + cleanName}>
+                  <a className="text-sm whitespace-nowrap">{cleanName}</a>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
   );

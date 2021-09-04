@@ -1,21 +1,19 @@
 import Link from "next/link";
 
-export default function FileBrowser({ entityList, query }) {
-  const repoPath = query.path || [];
+export default function FileBrowser({
+  entityList,
+  baseUrl,
+  repoPath = [],
+  branchName,
+  repoName,
+}) {
+  console.log("filebrowser", baseUrl, branchName, repoPath);
   return (
     <>
       {entityList.map((e, i) => {
         return (
           <Link
-            href={[
-              "",
-              query.userId,
-              query.repositoryId,
-              "tree",
-              query.commitId,
-              ...repoPath,
-              e.path,
-            ].join("/")}
+            href={[baseUrl, "tree", branchName, ...repoPath, e.path].join("/")}
             key={"entity" + i}
           >
             <a className="flex px-2 py-2 items-center hover:bg-neutral">

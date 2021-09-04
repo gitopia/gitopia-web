@@ -6,9 +6,10 @@ import _, { sortBy } from "lodash";
 const fetchGitObject = async (repoId, objectSha) => {
   let obj = null;
   const baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:3000/api/objects"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL;
+    // process.env.NODE_ENV === "development"
+    //   ? "http://localhost:3000/api/objects"
+    //   : process.env.NEXT_PUBLIC_OBJECTS_URL;
+    process.env.NEXT_PUBLIC_OBJECTS_URL + "/objects";
 
   await fetch(baseUrl + "/" + repoId + "/" + objectSha, {
     method: "GET", // *GET, POST, PUT, DELETE, etc.
@@ -46,10 +47,12 @@ const fetchGitObject = async (repoId, objectSha) => {
 };
 
 const getLocalGitObjectPath = (projectRoot, oid) => {
-  const dirpath = `${projectRoot}/.git/objects/${oid.slice(0, 2)}`;
-  const filepath = `${dirpath}/${oid.slice(2)}`;
-
-  return { dirpath, filepath };
+  if (projectRoot && oid) {
+    const dirpath = `${projectRoot}/.git/objects/${oid.slice(0, 2)}`;
+    const filepath = `${dirpath}/${oid.slice(2)}`;
+    return { dirpath, filepath };
+  }
+  return { dirpath: null, filepath: null };
 };
 
 const writeGitObject = async (projectRoot, oid, object) => {
@@ -73,10 +76,12 @@ const ensureGitObject = async (repoId, oid, projectRoot) => {
       fileFound = null;
     }
   } catch (e) {}
+  console.log("object file cache", fileFound);
   if (fileFound) {
     return;
   }
   const object = await fetchGitObject(repoId, oid);
+  console.log("object file downloaded", object);
   await writeGitObject(projectRoot, oid, object);
 };
 
@@ -94,21 +99,30 @@ export const initRepository = async (
   const projectRoot = getLocalProjectRoot(repoName, userId);
   await mkdir(projectRoot);
   await ensureGitObject(repoId, repoHead, projectRoot);
-  const parsedCommitObject = await git.readCommit({
-    fs,
-    dir: projectRoot,
-    oid: repoHead,
-  });
+  let parsedCommitObject;
+  try {
+    parsedCommitObject = await git.readCommit({
+      fs,
+      dir: projectRoot,
+      oid: repoHead,
+    });
+  } catch (e) {
+    console.error(e);
+  }
   console.log("parsedCommitObject", parsedCommitObject);
-  const foundEntity = await findEntity(
-    repoId,
-    parsedCommitObject.commit.tree,
-    "tree",
-    projectRoot,
-    Array(...path)
-  );
-  console.log("Entity", foundEntity);
-  return { commit: parsedCommitObject, entity: foundEntity };
+  if (parsedCommitObject) {
+    const foundEntity = await findEntity(
+      repoId,
+      parsedCommitObject.commit.tree,
+      "tree",
+      projectRoot,
+      Array(...path)
+    );
+    console.log("Entity", foundEntity);
+    return { commit: parsedCommitObject, entity: foundEntity };
+  } else {
+    return { commit: null, entity: null };
+  }
 };
 
 const findEntity = async (repoId, oid, type, projectRoot, path) => {

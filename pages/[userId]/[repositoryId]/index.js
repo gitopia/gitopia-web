@@ -18,6 +18,7 @@ import Breadcrumbs from "../../../components/repository/breadcrumbs";
 import CommitDetailRow from "../../../components/repository/commitDetailRow";
 import FileBrowser from "../../../components/repository/fileBrowser";
 import Footer from "../../../components/footer";
+import getBranchSha from "../../../helpers/getBranchSha";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -29,6 +30,7 @@ function RepositoryView(props) {
     id: router.query.repositoryId,
     name: router.query.repositoryId,
     owner: { ID: router.query.userId },
+    defaultBranch: "master",
     branches: [],
   });
 
@@ -39,17 +41,14 @@ function RepositoryView(props) {
     oid: "",
   });
 
-  const isDemoRepo = repository.name === "bitcoin";
-  console.log("idDemoRepo", isDemoRepo);
-
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.ID, repository.name);
     if (r) setRepository(r);
-    if (typeof window !== "undefined" && isDemoRepo) {
+    if (typeof window !== "undefined") {
       const res = await initRepository(
-        "5",
-        "803ef70fd9f65ef800567ff9456fac525bc3e3c2",
-        "bitcoin",
+        r.id,
+        getBranchSha(r.branches, r.defaultBranch),
+        r.name,
         router.query.userId,
         []
       );
@@ -68,12 +67,13 @@ function RepositoryView(props) {
         console.log("Repo Not found");
       }
       const readme = await initRepository(
-        "5",
-        "803ef70fd9f65ef800567ff9456fac525bc3e3c2",
-        "bitcoin",
+        r.id,
+        getBranchSha(r.branches, r.defaultBranch),
+        r.name,
         router.query.userId,
         ["README.md"]
       );
+
       if (readme) {
         if (readme.entity) {
           if (readme.entity.blob) {
@@ -109,16 +109,24 @@ function RepositoryView(props) {
             active="code"
             hrefBase={repository.owner.ID + "/" + repository.name}
           />
-          {isDemoRepo ? (
+          {repository.branches.length ? (
             <div className="">
               <div className="flex justify-start mt-8">
                 <div className="">
-                  <BranchSelector repository={repository} />
+                  <BranchSelector
+                    branches={repository.branches}
+                    baseUrl={"/" + repository.owner.ID + "/" + repository.name}
+                    branchName={repository.defaultBranch}
+                  />
                 </div>
                 <div className="ml-4">
                   <Link
                     href={
-                      repository.owner.ID + "/" + repository.name + "/branches"
+                      "/" +
+                      repository.owner.ID +
+                      "/" +
+                      repository.name +
+                      "/branches"
                     }
                   >
                     <a className="btn btn-ghost btn-sm">
@@ -140,14 +148,16 @@ function RepositoryView(props) {
                   <CommitDetailRow commitDetail={commitDetail} />
                   <FileBrowser
                     entityList={entityList}
-                    query={{ commitId: "master", ...router.query }}
+                    branchName={repository.defaultBranch}
+                    baseUrl={"/" + repository.owner.ID + "/" + repository.name}
+                    repoPath={[]}
                   />
                 </div>
                 <div className="flex-none w-64 pl-8">
                   <div>
                     <div className="flex-1 text-left px-3 mb-1">About</div>
 
-                    <div className="text-xs px-3">No description</div>
+                    <div className="text-xs px-3">{repository.description}</div>
                   </div>
                   <div className="divider"></div>
                   <div>

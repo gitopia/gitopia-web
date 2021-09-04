@@ -46,8 +46,8 @@ export default function RepositoryHeader({ repository }) {
           >
             <g transform="scale(1.5,1.5) translate(2,2)">
               <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M11.9011 5.95056C9.1074 5.00429 6.89683 2.79373 5.95056 0C5.00429 2.79373 2.79373 5.00429 0 5.95056C2.79373 6.89683 5.00429 9.1074 5.95056 11.9011C6.89683 9.1074 9.1074 6.89683 11.9011 5.95056Z"
               />
             </g>
