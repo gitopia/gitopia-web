@@ -34,7 +34,7 @@ export default function RepositoryHeader({ repository }) {
             />
           </svg>
 
-          <span>Watchers - 0</span>
+          <span>Watchers - {repository.stargazers.length}</span>
         </div>
         <div className="divider divider-vertical"></div>
         <div className="flex items-center text-xs uppercase text-type-secondary font-bold">
@@ -74,7 +74,7 @@ export default function RepositoryHeader({ repository }) {
             <circle cx="17.4998" cy="5.5" r="2.5" />
           </svg>
 
-          <span>Forks - 0</span>
+          <span>Forks - {repository.forks.length}</span>
         </div>
       </div>
     </div>

@@ -8,16 +8,30 @@ export default function BranchSelector({
 }) {
   return (
     <div className={"dropdown"} tabIndex="0">
-      <div className="btn btn-sm btn-outline">
+      <div className="btn btn-sm btn-outline items-center">
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 mr-2"
-          viewBox="0 0 20 20"
+          viewBox="0 0 24 24"
           fill="currentColor"
+          stroke="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
         >
-          <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+          <g transform="scale(0.9)">
+            <path
+              d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
+              stroke="currentColor"
+              strokeWidth="2"
+              fill="none"
+            />
+            <circle cx="8.5" cy="18.5" r="2.5" fill="currentColor" />
+            <circle cx="8.5" cy="5.5" r="2.5" fill="currentColor" />
+            <path
+              d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
+              fill="currentColor"
+            />
+          </g>
         </svg>
-        <div className="flex-1 text-left">{branchName}</div>
+        <div className="flex-1 text-left px-2">{branchName}</div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5"

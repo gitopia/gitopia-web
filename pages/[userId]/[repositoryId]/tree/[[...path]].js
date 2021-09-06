@@ -30,6 +30,8 @@ function RepositoryTreeView(props) {
     id: router.query.repositoryId,
     name: router.query.repositoryId,
     owner: { ID: router.query.userId },
+    forks: [],
+    stargazers: [],
   });
 
   const [entityList, setEntityList] = useState([]);

@@ -32,6 +32,8 @@ function RepositoryView(props) {
     owner: { ID: router.query.userId },
     defaultBranch: "master",
     branches: [],
+    forks: [],
+    stargazers: [],
   });
 
   const [entityList, setEntityList] = useState([]);
@@ -131,12 +133,36 @@ function RepositoryView(props) {
                   >
                     <a className="btn btn-ghost btn-sm">
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-2"
-                        viewBox="0 0 20 20"
+                        viewBox="0 0 24 24"
                         fill="currentColor"
+                        stroke="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
                       >
-                        <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+                        <g transform="scale(0.9)">
+                          <path
+                            d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            fill="none"
+                          />
+                          <circle
+                            cx="8.5"
+                            cy="18.5"
+                            r="2.5"
+                            fill="currentColor"
+                          />
+                          <circle
+                            cx="8.5"
+                            cy="5.5"
+                            r="2.5"
+                            fill="currentColor"
+                          />
+                          <path
+                            d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
+                            fill="currentColor"
+                          />
+                        </g>
                       </svg>
                       {repository.branches.length || 14} Branches
                     </a>
@@ -153,20 +179,20 @@ function RepositoryView(props) {
                     repoPath={[]}
                   />
                 </div>
-                <div className="flex-none w-64 pl-8">
-                  <div>
+                <div className="flex-none w-64 pl-8 divide-y divide-grey">
+                  <div className="pb-8">
                     <div className="flex-1 text-left px-3 mb-1">About</div>
 
                     <div className="text-xs px-3">{repository.description}</div>
                   </div>
-                  <div className="divider"></div>
-                  <div>
+
+                  <div className="py-8">
                     <div className="flex-1 text-left px-3 mb-1">Releases</div>
 
                     <div className="text-xs px-3">None yet</div>
                   </div>
-                  <div className="divider"></div>
-                  <div>
+
+                  <div className="py-8">
                     <div className="flex-1 text-left  px-3 mb-1">Packages</div>
 
                     <div className="text-xs px-3">None yet</div>

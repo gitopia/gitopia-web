@@ -32,6 +32,8 @@ function RepositoryIssueView(props) {
     id: router.query.repositoryId,
     name: router.query.repositoryId,
     owner: { ID: router.query.userId },
+    forks: [],
+    stargazers: [],
   });
   const [issue, setIssue] = useState({
     iid: router.query.issueIid,

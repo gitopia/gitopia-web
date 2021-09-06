@@ -25,6 +25,8 @@ function RepositoryIssueCreateView(props) {
     name: router.query.repositoryId,
     owner: { ID: router.query.userId },
     collaborators: [],
+    forks: [],
+    stargazers: [],
   });
 
   const [title, setTitle] = useState("");
@@ -84,7 +86,7 @@ function RepositoryIssueCreateView(props) {
             <div className="flex flex-1">
               <div className="flex-none mr-4">
                 <div className="avatar">
-                  <div className="mb-8 rounded-full w-14 h-14">
+                  <div className="mb-8 rounded-full w-10 h-10">
                     <img
                       src={
                         "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +

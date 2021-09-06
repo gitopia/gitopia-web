@@ -20,6 +20,8 @@ function RepositoryView(props) {
     id: router.query.repositoryId,
     name: router.query.repositoryId,
     owner: { ID: router.query.userId },
+    forks: [],
+    stargazers: [],
   });
 
   useEffect(async () => {
