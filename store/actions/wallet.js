@@ -10,6 +10,7 @@ import saveAs from "file-saver";
 import { queryClient, txClient } from "gitopiajs";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import _ from "lodash";
+import { getOrganizationDetailsForDashboard } from "./organization";
 
 export const signOut = () => {
   return {
@@ -56,7 +57,11 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
     },
   });
   const { user } = getState();
-  if (!_.find(user.dashboards, (d) => d.id === user.currentDashboard)) {
+  const dashboard = _.find(
+    user.dashboards,
+    (d) => d.id === user.currentDashboard
+  );
+  if (!dashboard) {
     await setCurrentDashboard(account.address)(dispatch, getState);
   }
 };

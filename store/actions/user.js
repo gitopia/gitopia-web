@@ -1,5 +1,6 @@
 import { userActions } from "./actionTypes";
 import { sendTransaction } from "./env";
+import { getOrganizationDetailsForDashboard } from "./organization";
 
 export const createUser = (username) => {
   return async (dispatch, getState) => {

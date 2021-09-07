@@ -35,7 +35,11 @@ function Home(props) {
       <div className="flex-1 flex">
         <div className="w-64 border-r border-grey">
           <DashboardSelector />
-          <TopRepositories />
+          <TopRepositories
+            repositories={props.repositories.map((r) => {
+              return { owner: props.selectedAddress, ...r };
+            })}
+          />
           <BackendStatus />
           <FaucetReceiver />
         </div>
@@ -52,6 +56,7 @@ const mapStateToProps = (state) => {
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
     selectedAddress: state.wallet.selectedAddress,
+    repositories: state.user.repositories,
   };
 };
 

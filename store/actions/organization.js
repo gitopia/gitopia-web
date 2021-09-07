@@ -6,7 +6,7 @@ import {
   getUserDetailsForSelectedAddress,
   setCurrentDashboard,
 } from "./user";
-import { userActions } from "./actionTypes";
+import { userActions, organizationActions } from "./actionTypes";
 import { validatePostingEligibility } from "./repository";
 
 export const createOrganization = ({ name = null, description = null }) => {
@@ -43,6 +43,26 @@ export const createOrganization = ({ name = null, description = null }) => {
       console.error(e);
       dispatch(notify(e.message, "error"));
       return null;
+    }
+  };
+};
+
+export const getOrganizationDetailsForDashboard = () => {
+  return async (dispatch, getState) => {
+    const { env, user } = getState();
+    try {
+      const result = await env.queryClient.queryOrganization(
+        user.currentDashboard
+      );
+      console.log(result);
+      dispatch({
+        type: organizationActions.SET_ORGANIZATION,
+        payload: { organization: result.data.Organization },
+      });
+    } catch (e) {
+      dispatch({
+        type: organizationActions.SET_EMPTY_ORGANIZATION,
+      });
     }
   };
 };

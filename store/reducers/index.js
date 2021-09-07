@@ -5,6 +5,7 @@ import starportReducer from "./starport";
 // import hydrateReducer from "./hydrate";
 import { reducer as notificationsReducer } from "reapop";
 import userReducer from "./user";
+import organizationReducer from "./organization";
 
 const rootReducer = combineReducers({
   //   hydrate: hydrateReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   starport: starportReducer,
   user: userReducer,
   notifications: notificationsReducer(),
+  organization: organizationReducer,
 });
 
 export default rootReducer;
