@@ -19,8 +19,11 @@ import CommentEditor from "../../../../components/repository/commentEditor";
 import CommentView from "../../../../components/repository/commentView";
 import {
   deleteComment,
-  toggleIssueState,
+  updateIssue,
 } from "../../../../store/actions/repository";
+import AssigneeSelector from "../../../../components/repository/assigneeSelector";
+import LabelSelector from "../../../../components/repository/labelSelector";
+import getIssueAllLabels from "../../../../helpers/getIssueAllLabels";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -40,18 +43,25 @@ function RepositoryIssueView(props) {
     creator: "",
     comments: [],
     assignees: [],
+    labels: [],
   });
   const [allComments, setAllComments] = useState([]);
+  const [allLabels, setAllLabels] = useState([]);
 
   useEffect(async () => {
     const [r, i] = await Promise.all([
-      getUserRepository(repository.owner.ID, repository.name),
-      getRepositoryIssue(repository.owner.ID, repository.name, issue.iid),
+      getUserRepository(router.query.userId, router.query.repositoryId),
+      getRepositoryIssue(
+        router.query.userId,
+        router.query.repositoryId,
+        router.query.issueIid
+      ),
     ]);
+    const al = await getIssueAllLabels(r.id);
     if (r) setRepository(r);
     if (i) setIssue(i);
-    console.log(i);
-  }, []);
+    setAllLabels(al);
+  }, [router.query]);
 
   const getAllComments = async () => {
     const pr = issue.comments.map((c) => getComment(c));
@@ -188,11 +198,6 @@ function RepositoryIssueView(props) {
                           " commented on " +
                           dayjs(issue.createdAt * 1000).format("DD MMM")}
                       </div>
-                      {/* <div className="flex-none">
-                        {issue.creator === props.selectedAddress
-                          ? editMenu
-                          : ""}
-                      </div> */}
                     </div>
                     <div className="p-4 markdown-body">
                       <ReactMarkdown>{issue.description}</ReactMarkdown>
@@ -211,9 +216,7 @@ function RepositoryIssueView(props) {
                         setAllComments(newAllComments);
                       }}
                       onDelete={async (id) => {
-                        console.log("onDelete", id);
                         const res = await props.deleteComment({ id });
-                        console.log(res);
                         if (res && res.code === 0) {
                           const newAllComments = [...allComments];
                           newAllComments.splice(i, 1);
@@ -244,23 +247,56 @@ function RepositoryIssueView(props) {
                 </div>
               </div>
             </div>
-            <div className="flex-none w-64 pl-8">
-              <div>
-                <div className="flex-1 text-left px-3 mb-1">Assignees</div>
+            <div className="flex-none w-64 pl-8 divide-y divide-grey">
+              <div className="pb-8">
+                <AssigneeSelector
+                  assignees={issue.assignees}
+                  collaborators={repository.collaborators}
+                  onChange={async (list) => {
+                    const res = await props.updateIssue({
+                      issueId: issue.id,
+                      assignees: list,
+                    });
+
+                    if (res) refreshIssue();
+                  }}
+                />
                 <div className="text-xs px-3">
                   {issue.assignees.length
                     ? issue.assignees.map((a) => shrinkAddress(a)).join(", ")
                     : "No one"}
                 </div>
               </div>
-              <div className="divider"></div>
-              <div>
-                <div className="flex-1 text-left px-3 mb-1">Labels</div>
+              <div className="py-8">
+                <LabelSelector
+                  labels={issue.labels}
+                  onChange={async (list) => {
+                    const res = await props.updateIssue({
+                      issueId: issue.id,
+                      labels: list,
+                    });
 
-                <div className="text-xs px-3">None yet</div>
+                    if (res) refreshIssue();
+                  }}
+                />
+                <div className="text-xs px-3">
+                  {issue.labels.length
+                    ? issue.labels.map((l) => {
+                        let label = allLabels[l] ?? { name: "", color: "" };
+
+                        return (
+                          <span
+                            className="badge badge-sm p-2 border-0 mr-2 mb-2"
+                            style={{ backgroundColor: label.color }}
+                          >
+                            {label.name}
+                          </span>
+                        );
+                      })
+                    : "None yet"}
+                </div>
               </div>
-              <div className="divider"></div>
-              <div>
+              <div className="py-8">
                 <div className="flex-1 text-left  px-3 mb-1">
                   Linked Pull Requests
                 </div>
@@ -283,4 +319,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { deleteComment })(RepositoryIssueView);
+export default connect(mapStateToProps, { deleteComment, updateIssue })(
+  RepositoryIssueView
+);

@@ -181,7 +181,7 @@ function Header(props) {
                   )}
                 </div>
               </button>
-              <div className="shadow dropdown-content bg-base-300 rounded-box mt-2">
+              <div className="shadow dropdown-content bg-base-300 rounded-box mt-1">
                 {menuState === 2 && <CurrentWallet />}
                 {menuState === 1 && (
                   <ul className="menu w-48 rounded-box">

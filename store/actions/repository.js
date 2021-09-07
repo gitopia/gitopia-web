@@ -296,3 +296,43 @@ export const updateCollaborator = ({ id = null, user = null, role = null }) => {
     }
   };
 };
+
+export const updateIssue = ({
+  title = null,
+  description = null,
+  issueId = null,
+  labels = null,
+  weight = null,
+  assignees = null,
+}) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "issue")))
+      return null;
+    const issue = {
+      creator: wallet.selectedAddress,
+      issueId,
+      ...{ title },
+      ...{ description },
+      ...{ labels },
+      ...{ assignees },
+      ...{ weight },
+    };
+    console.log("issue", issue);
+
+    try {
+      const message = await env.txClient.msgUpdateIssue(issue);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+      return result;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
