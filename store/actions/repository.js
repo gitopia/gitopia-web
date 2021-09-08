@@ -80,7 +80,7 @@ export const createRepository = ({
       console.log(result);
       if (result && result.code === 0) {
         getUserDetailsForSelectedAddress()(dispatch, getState);
-        let url = "/" + wallet.selectedAddress + "/" + name;
+        let url = "/" + ownerId + "/" + name;
         console.log(url);
         return { url };
       } else {

@@ -11,7 +11,7 @@ function CollaboratorsList({ repoId, collaborators, ...props }) {
     type: "error",
     message: "",
   });
-  const [collabRole, setCollabRole] = useState(3);
+  const [collabRole, setCollabRole] = useState("READ");
   const [isAdding, setIsAdding] = useState(false);
 
   const validateCollaborator = async () => {
@@ -80,9 +80,11 @@ function CollaboratorsList({ repoId, collaborators, ...props }) {
               value={collabRole}
               onChange={(e) => setCollabRole(e.target.value)}
             >
-              <option value="1">Owner</option>
-              <option value="2">Maintainer</option>
-              <option value="3">Reviewer</option>
+              <option value="READ">Read</option>
+              <option value="TRIAGE">Triage</option>
+              <option value="WRITE">Write</option>
+              <option value="MAINTAIN">Maintain</option>
+              <option value="ADMIN">Admin</option>
             </select>
           </td>
           <td style={{ verticalAlign: "top" }}>
