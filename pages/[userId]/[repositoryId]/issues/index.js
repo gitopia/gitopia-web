@@ -174,7 +174,7 @@ function RepositoryIssueView(props) {
                         <span
                           className={
                             "mr-4 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
-                            (i.state === "Open" ? "bg-green-900" : "bg-red-900")
+                            (i.state === "OPEN" ? "bg-green-900" : "bg-red-900")
                           }
                         />
                         <div>

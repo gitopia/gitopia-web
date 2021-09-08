@@ -156,12 +156,13 @@ function RepositoryIssueCreateView(props) {
                 />
                 <div className="text-xs px-3">
                   {labels.length
-                    ? labels.map((l) => {
+                    ? labels.map((l, i) => {
                         let label = allLabels[l] || { name: "", color: "" };
                         return (
                           <span
                             className="badge badge-sm p-2 border-0 mr-2 mb-2"
                             style={{ backgroundColor: label.color }}
+                            key={"issueLabel" + i}
                           >
                             {label.name}
                           </span>

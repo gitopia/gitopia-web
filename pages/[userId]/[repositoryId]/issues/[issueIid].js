@@ -133,7 +133,7 @@ function RepositoryIssueView(props) {
                 <span
                   className={
                     "flex items-center rounded-full border pl-4 pr-6 py-2 mr-4 " +
-                    (issue.state === "Open"
+                    (issue.state === "OPEN"
                       ? "border-green-900"
                       : "border-red-900")
                   }
@@ -141,7 +141,7 @@ function RepositoryIssueView(props) {
                   <span
                     className={
                       "mr-4 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
-                      (issue.state === "Open" ? "bg-green-900" : "bg-red-900")
+                      (issue.state === "OPEN" ? "bg-green-900" : "bg-red-900")
                     }
                   />
                   <span className="text-type uppercase">{issue.state}</span>
@@ -281,13 +281,16 @@ function RepositoryIssueView(props) {
                 />
                 <div className="text-xs px-3">
                   {issue.labels.length
-                    ? issue.labels.map((l) => {
-                        let label = allLabels[l] ?? { name: "", color: "" };
-
+                    ? issue.labels.map((l, i) => {
+                        let label = allLabels[l] ?? {
+                          name: "",
+                          color: "",
+                        };
                         return (
                           <span
                             className="badge badge-sm p-2 border-0 mr-2 mb-2"
                             style={{ backgroundColor: label.color }}
+                            key={"issueLabel" + i}
                           >
                             {label.name}
                           </span>

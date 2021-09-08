@@ -313,11 +313,11 @@ export const updateIssue = ({
     const issue = {
       creator: wallet.selectedAddress,
       issueId,
-      ...{ title },
-      ...{ description },
-      ...{ labels },
-      ...{ assignees },
-      ...{ weight },
+      ...(title && { title }),
+      ...(description && { description }),
+      ...(labels && { labels }),
+      ...(assignees && { assignees }),
+      ...(weight && { weight }),
     };
     console.log("issue", issue);
 
