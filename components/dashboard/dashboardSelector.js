@@ -8,56 +8,33 @@ import { useRouter } from "next/router";
 function DashboardSelector(props) {
   const router = useRouter();
   const [accountsList, setAccountsList] = useState([]);
-  const [selected, setSelected] = useState({ display: "", type: "User" });
+  const [selected, setSelected] = useState({});
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    let newAccountsList = [];
-    if (props.address) {
-      const item = {
-        type: "User",
-        address: props.address,
-        name: props.username,
-        display: props.username ? props.username : shrinkAddress(props.address),
-        url: "/home",
-      };
-      newAccountsList.push(item);
-    }
-    if (props.organizations.length) {
-      for (let i = 0; i < props.organizations.length; i++) {
-        const item = {
-          type: "Organization",
-          address: props.organizations[i],
-          name: null,
-          display: "Org - " + props.organizations[i],
-          url: "/orgs/" + props.organizations[i] + "/dashboard",
+    let userAcc = {},
+      toSelect;
+    const newAccountsList = [
+      ...props.dashboards.map((d) => {
+        const acc = {
+          ...d,
         };
-        newAccountsList.push(item);
-      }
-    }
-    let toSelectItem = null;
-    newAccountsList.map((l) => {
-      if (
-        props.currentDashboard &&
-        props.currentDashboard.address === l.address
-      ) {
-        toSelectItem = l;
-      }
-    });
-    console.log(
-      "useEffect currentDashboard",
-      props.currentDashboard,
-      toSelectItem
-    );
-    if (toSelectItem) {
-      setSelected(toSelectItem);
-    } else if (newAccountsList.length) {
-      setSelected(newAccountsList[0]);
+
+        if (d.type === "User") userAcc = acc;
+        if (d.id === props.currentDashboard) {
+          toSelect = acc;
+        }
+        return acc;
+      }),
+    ];
+
+    if (!toSelect) {
+      setSelected(userAcc);
     } else {
-      setSelected({ display: "", type: "User" });
+      setSelected(toSelect);
     }
     setAccountsList(newAccountsList);
-  }, [props.address, props.organizations]);
+  }, [props.dashboards, props.currentDashboard]);
 
   return props.address ? (
     <div className="pl-2 pr-4 mt-8">
@@ -105,7 +82,9 @@ function DashboardSelector(props) {
                 />
               </svg>
             )}
-            <div className="flex-1 text-left">{selected.display}</div>
+            <div className="flex-1 text-left">
+              <div className="text-md">{selected.name}</div>
+            </div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -130,9 +109,8 @@ function DashboardSelector(props) {
                     className="flex-nowrap"
                     onClick={() => {
                       setSelected(a);
-                      props.setCurrentDashboard(a.type, a.address);
+                      props.setCurrentDashboard(a.id);
                       setMenuOpen(false);
-                      router.push(a.url);
                     }}
                   >
                     {a.type === "User" ? (
@@ -162,7 +140,9 @@ function DashboardSelector(props) {
                         />
                       </svg>
                     )}
-                    <span className="flex-1 text-left ">{a.display}</span>
+                    <div className="flex-1 text-left">
+                      <div className="text-md">{a.name}</div>
+                    </div>
                   </a>
                 </li>
               );
@@ -179,9 +159,8 @@ function DashboardSelector(props) {
 const mapStateToProps = (state) => {
   return {
     address: state.wallet.selectedAddress,
-    username: state.user.username,
-    organizations: state.user.organizations,
     currentDashboard: state.user.currentDashboard,
+    dashboards: state.user.dashboards,
   };
 };
 

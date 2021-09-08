@@ -1,7 +1,10 @@
 import { useState } from "react";
 import * as bip39 from "bip39";
 import { connect } from "react-redux";
-import { createWalletWithMnemonic } from "../store/actions/wallet";
+import {
+  createWalletWithMnemonic,
+  downloadWalletForRemoteHelper,
+} from "../store/actions/wallet";
 import TextInput from "./textInput";
 import { useRouter } from "next/router";
 
@@ -111,7 +114,10 @@ function CreateWallet(props) {
             </ul>
           </div>
           <div className="max-w-md w-full p-4">
-            <button className="btn btn-outline btn-block mb-5">
+            <button
+              className="btn btn-outline btn-block mb-5"
+              onClick={props.downloadWalletForRemoteHelper}
+            >
               Download Backup
             </button>
             <button
@@ -185,4 +191,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   createWalletWithMnemonic,
+  downloadWalletForRemoteHelper,
 })(CreateWallet);

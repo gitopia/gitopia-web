@@ -29,6 +29,7 @@ export default function NotificationManager() {
         dismissNotification={(id) => dispatch(dismissNotification(id))}
         // 4. Pass a builtIn theme or a custom theme.
         theme={atalhoTheme}
+        smallScreenBreakpoint={() => 0}
       />
     </div>
   );

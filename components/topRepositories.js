@@ -1,28 +1,23 @@
 import { useEffect, useState } from "react";
-import { connect } from "react-redux";
 import Link from "next/link";
 
-function TopRepositories(props) {
+function TopRepositories({ repositories = [] }) {
   const [repos, setRepos] = useState([]);
 
   useEffect(() => {
-    if (Object.keys(props.repositoryNames).length) {
+    if (repositories.length) {
       let newRepos = [],
-        maxLen = 5;
-      for (let r in props.repositoryNames) {
+        maxLen = Math.min(repositories.length, 5);
+      for (let i = 0; i < maxLen; i++) {
         newRepos.push({
-          name: r,
-          owner: props.address,
-          id: props.repositoryNames[r],
+          ...repositories[i],
         });
-        if (--maxLen === 0) break;
       }
       setRepos(newRepos);
     } else {
       setRepos([]);
     }
-    console.log("repositoryNames", props.repositoryNames);
-  }, [props.repositoryNames]);
+  }, [repositories]);
 
   return (
     <div className="my-8">
@@ -33,7 +28,7 @@ function TopRepositories(props) {
         {repos.map((r) => {
           return (
             <li className="mb-2" key={r.id}>
-              <Link href={r.owner + "/" + r.name}>
+              <Link href={"/" + r.owner + "/" + r.name}>
                 <a className="rounded">{r.name}</a>
               </Link>
             </li>
@@ -44,13 +39,4 @@ function TopRepositories(props) {
   );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    address: state.wallet.selectedAddress,
-    creator: state.user.creator,
-    repositories: state.user.repositories,
-    repositoryNames: state.user.repositoryNames,
-  };
-};
-
-export default connect(mapStateToProps, {})(TopRepositories);
+export default TopRepositories;

@@ -1,8 +1,14 @@
 import { assertIsBroadcastTxSuccess } from "@cosmjs/stargate";
 import { notify } from "reapop";
 import { sendTransaction } from "./env";
-import { createUser, getUserDetailsForSelectedAddress } from "./user";
+import {
+  createUser,
+  getUserDetailsForSelectedAddress,
+  setCurrentDashboard,
+} from "./user";
 import { reInitClients } from "./wallet";
+import { userActions } from "./actionTypes";
+import { async } from "regenerator-runtime";
 
 export const validatePostingEligibility = async (
   dispatch,
@@ -43,25 +49,40 @@ export const validatePostingEligibility = async (
 export const createRepository = ({
   name = null,
   description = null,
-  owner = null,
+  ownerId = null,
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
+    const { wallet } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
+    let ownerType;
+    const { user } = getState();
+    user.dashboards.every((d) => {
+      if (d.id === ownerId) {
+        ownerType = d.type == "User" ? "USER" : "ORGANIZATION";
+        return false;
+      }
+      return true;
+    });
     const repository = {
       creator: wallet.selectedAddress,
       name: name,
-      owner: owner,
+      ownerId,
+      ownerType,
       description: description,
     };
+    console.log("repository", repository);
+    const { env } = getState();
 
     try {
       const message = await env.txClient.msgCreateRepository(repository);
       const result = await sendTransaction({ message }, env);
+      console.log(result);
       if (result && result.code === 0) {
         getUserDetailsForSelectedAddress()(dispatch, getState);
-        return { url: "/" + wallet.selectedAddress + "/" + name };
+        let url = "/" + ownerId + "/" + name;
+        console.log(url);
+        return { url };
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
@@ -77,34 +98,31 @@ export const createRepository = ({
 export const createIssue = ({
   title = "",
   description = "",
-  authorId = 0,
   repositoryId = 0,
   labels = [],
   weight = 0,
-  assigneesId = [],
+  assignees = [],
 }) => {
   return async (dispatch, getState) => {
     const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "issue")))
       return null;
     const issue = {
-      // creator: JSON.stringify({
-      //   Type: "User",
-      //   ID: acc.address,
-      // }),
       creator: wallet.selectedAddress,
       title,
       description,
-      authorId,
       repositoryId,
       labels,
       weight,
-      assigneesId,
+      assignees,
     };
+
+    console.log("issue", issue);
 
     try {
       const message = await env.txClient.msgCreateIssue(issue);
       const result = await sendTransaction({ message }, env);
+      console.log(result);
       return result;
     } catch (e) {
       console.error(e);
@@ -142,6 +160,176 @@ export const createComment = ({
     try {
       const message = await env.txClient.msgCreateComment(comment);
       const result = await sendTransaction({ message }, env);
+      return result;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const updateComment = ({ id = null, body = "", attachments = [] }) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+      return null;
+    const comment = {
+      creator: wallet.selectedAddress,
+      id,
+      body,
+      attachments,
+    };
+
+    try {
+      const message = await env.txClient.msgUpdateComment(comment);
+      const result = await sendTransaction({ message }, env);
+      return result;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const deleteComment = ({ id = null }) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+      return null;
+    const comment = {
+      creator: wallet.selectedAddress,
+      id,
+    };
+    console.log(comment);
+    try {
+      const message = await env.txClient.msgDeleteComment(comment);
+      const result = await sendTransaction({ message }, env);
+      return result;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const toggleIssueState = ({ id = null }) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+      return null;
+    const comment = {
+      creator: wallet.selectedAddress,
+      id,
+    };
+    console.log(comment);
+    try {
+      const message = await env.txClient.msgToggleIssueState(comment);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const renameRepository = ({ id = null, name = "" }) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+      return null;
+    const { env, wallet } = getState();
+    const repository = {
+      creator: wallet.selectedAddress,
+      id,
+      name,
+    };
+
+    try {
+      const message = await env.txClient.msgRenameRepository(repository);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        getUserDetailsForSelectedAddress()(dispatch, getState);
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
+
+export const updateCollaborator = ({ id = null, user = null, role = null }) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+      return null;
+    const { env, wallet } = getState();
+    const collaborator = {
+      creator: wallet.selectedAddress,
+      id,
+      user,
+      role,
+    };
+
+    try {
+      const message = await env.txClient.msgUpdateRepositoryCollaborator(
+        collaborator
+      );
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
+
+export const updateIssue = ({
+  title = null,
+  description = null,
+  issueId = null,
+  labels = null,
+  weight = null,
+  assignees = null,
+}) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "issue")))
+      return null;
+    const issue = {
+      creator: wallet.selectedAddress,
+      issueId,
+      ...(title && { title }),
+      ...(description && { description }),
+      ...(labels && { labels }),
+      ...(assignees && { assignees }),
+      ...(weight && { weight }),
+    };
+    console.log("issue", issue);
+
+    try {
+      const message = await env.txClient.msgUpdateIssue(issue);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
       return result;
     } catch (e) {
       console.error(e);

@@ -1,7 +1,10 @@
 export default function shrinkAddress(address) {
   if (address) {
     let trimText = address.slice(10, 42);
-    return address.replace(trimText, "...");
+    if (trimText.length) {
+      return address.replace(trimText, "...");
+    }
+    return address;
   }
   return "";
 }

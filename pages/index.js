@@ -211,12 +211,6 @@ export default function Landing() {
           name="keywords"
           content="code, collaboration, decentralized, git"
         />
-        <script
-          async
-          defer
-          data-domain="gitopia.org"
-          src="https://plausible.io/js/plausible.js"
-        />
       </Head>
       <header className={(menuOpen ? "bg-purple " : "") + styles.header}>
         <div className={styles.headerLogo}></div>
@@ -280,7 +274,16 @@ export default function Landing() {
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="https://gitopia.org/whitepaper.pdf"
+                  href="/home"
+                  target="_blank"
+                >
+                  Try Testnet
+                </a>
+              </li>
+              <li className={menuOpen ? "" : "mr-4"}>
+                <a
+                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
+                  href="https://gitopia.com/whitepaper.pdf"
                   target="_blank"
                 >
                   Whitepaper
@@ -962,7 +965,7 @@ export default function Landing() {
           </div>
           <div className={styles.circleSectionLink}>
             Learn more about Gitopia{" "}
-            <a href="https://gitopia.org/whitepaper.pdf" target="_blank">
+            <a href="https://gitopia.com/whitepaper.pdf" target="_blank">
               here
             </a>
           </div>
@@ -1041,7 +1044,7 @@ export default function Landing() {
                 type="button"
                 onClick={() => {
                   if (window) {
-                    window.open("https://gitopia.org/whitepaper.pdf");
+                    window.open("https://gitopia.com/whitepaper.pdf");
                   }
                 }}
                 className="ml-4 px-16 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -1078,7 +1081,7 @@ export default function Landing() {
               type="button"
               onClick={() => {
                 if (window) {
-                  window.open("https://gitopia.org/whitepaper.pdf");
+                  window.open("https://gitopia.com/whitepaper.pdf");
                 }
               }}
               className="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -1110,7 +1113,7 @@ export default function Landing() {
               type="button"
               onClick={() => {
                 if (window) {
-                  window.open("https://gitopia.org/whitepaper.pdf");
+                  window.open("https://gitopia.com/whitepaper.pdf");
                 }
               }}
               className="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -1233,17 +1236,6 @@ export default function Landing() {
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Faza Mahamood</div>
               <div className={styles.teamDesig}>CTO & Founder</div>
-            </div>
-          </div>
-          <div className={"row-span-4 " + styles.teamCard}>
-            <img
-              className={styles.teamImage}
-              src="/alphonsa.jpg"
-              loading="lazy"
-            />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Alphonsa Neil</div>
-              <div className={styles.teamDesig}>Operations</div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
@@ -1382,7 +1374,7 @@ export default function Landing() {
         <div className={styles.footerLinks}>
           {/* <a href="#">About Us</a> */}
 
-          <a href="https://gitopia.org/whitepaper.pdf">Whitepaper</a>
+          <a href="https://gitopia.com/whitepaper.pdf">Whitepaper</a>
 
           <a href="https://twitter.com/gitopiaOrg" target="_blank">
             Twitter

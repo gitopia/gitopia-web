@@ -94,7 +94,12 @@ function CurrentWallet(props) {
                 key={i}
               >
                 <div className="rounded-full w-10 h-10 absolute left-1">
-                  <img src={"https://i.pravatar.cc/500?img=" + i} />
+                  <img
+                    src={
+                      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+                      wallet.name
+                    }
+                  />
                 </div>
                 <div className="ml-10 mr-2">{wallet.name}</div>
               </button>

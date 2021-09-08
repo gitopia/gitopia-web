@@ -12,17 +12,16 @@ export default function RepositoryMainTabs({ hrefBase, active }) {
             }
           >
             <svg
+              viewBox="0 0 24 24"
+              fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+              className="h-6 w-6 mr-2"
+              stroke="currentColor"
             >
-              <path
-                fillRule="evenodd"
-                d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
+              <path d="M9.5 7L4.5 12L9.5 17" strokeWidth="2" />
+              <path d="M14.5 7L19.5 12L14.5 17" strokeWidth="2" />
             </svg>
+
             <span>Code</span>
           </a>
         </Link>
@@ -34,14 +33,18 @@ export default function RepositoryMainTabs({ hrefBase, active }) {
             }
           >
             <svg
+              viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+              className="h-6 w-6 mr-2"
             >
-              <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-              <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
+              <path
+                transform="translate(0,2)"
+                d="M5.93782 16.5L12 6L18.0622 16.5H5.93782Z"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
             </svg>
+
             <span>Issues</span>
           </a>
         </Link>
@@ -53,14 +56,26 @@ export default function RepositoryMainTabs({ hrefBase, active }) {
             }
           >
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
-              viewBox="0 0 20 20"
+              viewBox="0 0 24 24"
               fill="currentColor"
+              stroke="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 mr-2"
             >
-              <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" />
-              <path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 110 2h-2v-2z" />
+              <path
+                d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="none"
+              />
+              <circle cx="8.5" cy="18.5" r="2.5" fill="currentColor" />
+              <circle cx="8.5" cy="5.5" r="2.5" fill="currentColor" />
+              <path
+                d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
+                fill="currentColor"
+              />
             </svg>
+
             <span>Pull Requests</span>
           </a>
         </Link>

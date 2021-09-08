@@ -8,7 +8,6 @@ const initialState = {
   followers: [],
   following: [],
   repositories: [],
-  repositoryNames: {},
   teams: [],
   members: {},
   location: "",

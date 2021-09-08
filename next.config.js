@@ -1,5 +1,6 @@
 const withTM = require("@module-federation/next-transpile-modules")([
   "gitopiajs",
+  "react-syntax-highlighter",
 ]); // pass the modules you would like to see transpiled
 
 module.exports = withTM({
@@ -35,6 +36,10 @@ module.exports = withTM({
       {
         source: "/api/faucet",
         destination: process.env.NEXT_PUBLIC_FAUCET_URL,
+      },
+      {
+        source: "/api/objects/:path*",
+        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/:path*",
       },
     ];
   },

@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Header from "../../../components/header";
 import TextInput from "../../../components/textInput";
+import Footer from "../../../components/footer";
 
 function NewOrganization(props) {
   const router = useRouter();
@@ -40,23 +41,23 @@ function NewOrganization(props) {
       });
       return false;
     }
-    // TODO: check name availabliity
 
-    // let alreadyAvailable = false;
-    // props.organizations.every((organization) => {
-    //   if (organization.name === name) {
-    //     alreadyAvailable = true;
-    //     return false;
-    //   }
-    // });
-    // if (alreadyAvailable) {
-    //   setNameHint({
-    //     type: "error",
-    //     shown: true,
-    //     message: "Organization name already taken",
-    //   });
-    //   return false;
-    // }
+    let alreadyAvailable = false;
+    props.organizations.every((o) => {
+      if (o.name === name) {
+        alreadyAvailable = true;
+        return false;
+      }
+      return true;
+    });
+    if (alreadyAvailable) {
+      setNameHint({
+        type: "error",
+        shown: true,
+        message: "Organization name already taken",
+      });
+      return false;
+    }
     if (description === "") {
       setDescriptionHint({
         ...descriptionHint,
@@ -85,14 +86,14 @@ function NewOrganization(props) {
   return (
     <div
       data-theme="dark"
-      className="bg-base-100 text-base-content min-h-screen"
+      className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
         <title>New Organization - Gitopia</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex">
+      <div className="flex flex-1">
         <main className="container mx-auto max-w-md py-12">
           <div className="text-2xl">Create a new organization</div>
           <div className="mt-4">
@@ -134,7 +135,7 @@ function NewOrganization(props) {
           <div className="flex justify-end mt-4">
             <button
               className={
-                "flex-none btn btn-primary " +
+                "flex-none btn btn-primary btn-wide " +
                 (organizationCreating ? "loading " : "")
               }
               onClick={createOrganization}
@@ -144,6 +145,7 @@ function NewOrganization(props) {
           </div>
         </main>
       </div>
+      <Footer />
     </div>
   );
 }
@@ -151,6 +153,7 @@ function NewOrganization(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
+    organizations: state.user.organizations,
   };
 };
 

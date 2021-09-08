@@ -10,6 +10,7 @@ export default function TextInput(
     setHint: () => {},
     multiline: false,
     className: "",
+    size: "md",
   }
 ) {
   return (
@@ -43,6 +44,8 @@ export default function TextInput(
           placeholder={props.placeholder}
           className={
             "input input-bordered " +
+            ("input-" + props.size) +
+            " " +
             (props.hint.shown ? "input-" + props.hint.type : "")
           }
           value={props.value}

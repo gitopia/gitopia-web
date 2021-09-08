@@ -9,8 +9,6 @@ const initialState = {
   followers: [],
   following: [],
   repositories: [],
-  repositories_archived: [],
-  repositoryNames: {},
   organizations: [],
   starred_repos: [],
   subscriptions: "",
@@ -20,6 +18,7 @@ const initialState = {
   updatedAt: "0",
   extensions: "",
   currentDashboard: get("currentDashboard"),
+  dashboards: [],
 };
 
 const reducer = (state = initialState, action) => {
@@ -32,12 +31,32 @@ const reducer = (state = initialState, action) => {
       return { ...initialState };
 
     case userActions.SET_CURRENT_DASHBOARD: {
-      const { type, address } = action.payload;
-      set("set currentDashboard", { type, address });
+      const { id } = action.payload;
+      set("currentDashboard", id);
       return {
         ...state,
-        currentDashboard: { type, address },
+        currentDashboard: id,
       };
+    }
+
+    case userActions.INIT_DASHBOARDS: {
+      const { name, id } = action.payload;
+      const dashboards = [
+        {
+          type: "User",
+          name,
+          id,
+          url: "/home",
+        },
+        ...state.organizations.map((o) => {
+          return {
+            type: "Organization",
+            ...o,
+            url: "/orgs/" + o.id + "/dashboard",
+          };
+        }),
+      ];
+      return { ...state, dashboards };
     }
 
     default:
