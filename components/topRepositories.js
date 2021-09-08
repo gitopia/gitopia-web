@@ -5,7 +5,6 @@ function TopRepositories({ repositories = [] }) {
   const [repos, setRepos] = useState([]);
 
   useEffect(() => {
-    console.log("repoitories", repositories);
     if (repositories.length) {
       let newRepos = [],
         maxLen = Math.min(repositories.length, 5);

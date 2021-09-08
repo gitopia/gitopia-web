@@ -29,7 +29,7 @@ function RepositoryView(props) {
   const [repository, setRepository] = useState({
     id: router.query.repositoryId,
     name: router.query.repositoryId,
-    owner: { ID: router.query.userId },
+    owner: { id: router.query.userId },
     defaultBranch: "master",
     branches: [],
     forks: [],
@@ -44,7 +44,8 @@ function RepositoryView(props) {
   });
 
   useEffect(async () => {
-    const r = await getUserRepository(repository.owner.ID, repository.name);
+    const r = await getUserRepository(repository.owner.id, repository.name);
+    console.log("r", r);
     if (r) setRepository(r);
     if (typeof window !== "undefined") {
       const res = await initRepository(
@@ -109,7 +110,7 @@ function RepositoryView(props) {
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
             active="code"
-            hrefBase={repository.owner.ID + "/" + repository.name}
+            hrefBase={repository.owner.id + "/" + repository.name}
           />
           {repository.branches.length ? (
             <div className="">
@@ -117,7 +118,7 @@ function RepositoryView(props) {
                 <div className="">
                   <BranchSelector
                     branches={repository.branches}
-                    baseUrl={"/" + repository.owner.ID + "/" + repository.name}
+                    baseUrl={"/" + repository.owner.id + "/" + repository.name}
                     branchName={repository.defaultBranch}
                   />
                 </div>
@@ -125,7 +126,7 @@ function RepositoryView(props) {
                   <Link
                     href={
                       "/" +
-                      repository.owner.ID +
+                      repository.owner.id +
                       "/" +
                       repository.name +
                       "/branches"
@@ -175,7 +176,7 @@ function RepositoryView(props) {
                   <FileBrowser
                     entityList={entityList}
                     branchName={repository.defaultBranch}
-                    baseUrl={"/" + repository.owner.ID + "/" + repository.name}
+                    baseUrl={"/" + repository.owner.id + "/" + repository.name}
                     repoPath={[]}
                   />
                 </div>

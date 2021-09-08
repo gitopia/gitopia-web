@@ -5,11 +5,9 @@ import _, { sortBy } from "lodash";
 
 const fetchGitObject = async (repoId, objectSha) => {
   let obj = null;
-  const baseUrl =
-    // process.env.NODE_ENV === "development"
-    //   ? "http://localhost:3000/api/objects"
-    //   : process.env.NEXT_PUBLIC_OBJECTS_URL;
-    process.env.NEXT_PUBLIC_OBJECTS_URL + "/objects";
+  const baseUrl = process.env.NEXT_PUBLIC_OBJECTS_URL + "/objects";
+
+  if (!repoId || !objectSha) return null;
 
   await fetch(baseUrl + "/" + repoId + "/" + objectSha, {
     method: "GET", // *GET, POST, PUT, DELETE, etc.
@@ -81,8 +79,12 @@ const ensureGitObject = async (repoId, oid, projectRoot) => {
     return;
   }
   const object = await fetchGitObject(repoId, oid);
-  console.log("object file downloaded", object);
-  await writeGitObject(projectRoot, oid, object);
+  if (object) {
+    console.log("object file downloaded", object);
+    await writeGitObject(projectRoot, oid, object);
+  } else {
+    console.error("Unable to download object");
+  }
 };
 
 export const getLocalProjectRoot = (repoName, userId) => {

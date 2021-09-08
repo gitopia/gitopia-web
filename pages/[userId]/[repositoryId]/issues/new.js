@@ -25,7 +25,7 @@ function RepositoryIssueCreateView(props) {
   const [repository, setRepository] = useState({
     id: router.query.repositoryId,
     name: router.query.repositoryId,
-    owner: { ID: router.query.userId },
+    owner: { id: router.query.userId },
     collaborators: [],
     forks: [],
     stargazers: [],
@@ -55,7 +55,7 @@ function RepositoryIssueCreateView(props) {
       const res = await props.createIssue(issue);
       if (res && res.code === 0) {
         router.push(
-          "/" + repository.owner.ID + "/" + repository.name + "/issues"
+          "/" + repository.owner.id + "/" + repository.name + "/issues"
         );
       }
     }
@@ -63,7 +63,7 @@ function RepositoryIssueCreateView(props) {
   };
 
   useEffect(async () => {
-    const r = await getUserRepository(repository.owner.ID, repository.name);
+    const r = await getUserRepository(repository.owner.id, repository.name);
     console.log(r);
     if (r) {
       setRepository(r);
@@ -88,7 +88,7 @@ function RepositoryIssueCreateView(props) {
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
             active="issues"
-            hrefBase={repository.owner.ID + "/" + repository.name}
+            hrefBase={repository.owner.id + "/" + repository.name}
           />
           <div className="flex mt-8">
             <div className="flex flex-1">

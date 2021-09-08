@@ -34,7 +34,7 @@ function RepositoryIssueView(props) {
   const [repository, setRepository] = useState({
     id: router.query.repositoryId,
     name: router.query.repositoryId,
-    owner: { ID: router.query.userId },
+    owner: { id: router.query.userId },
     forks: [],
     stargazers: [],
   });
@@ -71,7 +71,7 @@ function RepositoryIssueView(props) {
 
   const refreshIssue = async () => {
     const i = await getRepositoryIssue(
-      repository.owner.ID,
+      repository.owner.id,
       repository.name,
       issue.iid
     );
@@ -121,7 +121,7 @@ function RepositoryIssueView(props) {
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
             active="issues"
-            hrefBase={repository.owner.ID + "/" + repository.name}
+            hrefBase={repository.owner.id + "/" + repository.name}
           />
           <div className="flex mt-8">
             <div className="flex-1">
@@ -163,7 +163,7 @@ function RepositoryIssueView(props) {
               <Link
                 href={
                   "/" +
-                  repository.owner.ID +
+                  repository.owner.id +
                   "/" +
                   repository.name +
                   "/issues/new"

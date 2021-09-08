@@ -55,11 +55,11 @@ export const createRepository = ({
     const { wallet } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
-    let owner;
+    let ownerType;
     const { user } = getState();
     user.dashboards.every((d) => {
       if (d.id === ownerId) {
-        owner = JSON.stringify({ Type: d.type, ID: d.id });
+        ownerType = d.type == "User" ? "USER" : "ORGANIZATION";
         return false;
       }
       return true;
@@ -67,17 +67,22 @@ export const createRepository = ({
     const repository = {
       creator: wallet.selectedAddress,
       name: name,
-      owner: owner,
+      ownerId,
+      ownerType,
       description: description,
     };
+    console.log("repository", repository);
     const { env } = getState();
 
     try {
       const message = await env.txClient.msgCreateRepository(repository);
       const result = await sendTransaction({ message }, env);
+      console.log(result);
       if (result && result.code === 0) {
         getUserDetailsForSelectedAddress()(dispatch, getState);
-        return { url: "/" + wallet.selectedAddress + "/" + name };
+        let url = "/" + wallet.selectedAddress + "/" + name;
+        console.log(url);
+        return { url };
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
@@ -103,10 +108,6 @@ export const createIssue = ({
     if (!(await validatePostingEligibility(dispatch, getState, "issue")))
       return null;
     const issue = {
-      // creator: JSON.stringify({
-      //   Type: "User",
-      //   ID: acc.address,
-      // }),
       creator: wallet.selectedAddress,
       title,
       description,

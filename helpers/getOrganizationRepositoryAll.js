@@ -1,12 +1,13 @@
 import { txClient, queryClient } from "gitopiajs";
 
-export default async function getUserRepository(userId, repositoryName) {
-  if (!userId || !repositoryName) return null;
+export default async function getOrganizationRepositoryAll(orgId) {
+  if (!orgId) return null;
   try {
     const qc = await queryClient({ addr: process.env.NEXT_PUBLIC_API_URL });
-    const res = await qc.queryUserRepository(userId, repositoryName);
+    // TODO: use queryOrganizationRepositoryAll
+    const res = await qc.queryOrganization(orgId);
     if (res.ok) {
-      return res.data.Repository;
+      return res.data.Organization.repositories;
     }
     return {
       id: "",

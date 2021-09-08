@@ -29,7 +29,7 @@ function RepositoryTreeView(props) {
   const [repository, setRepository] = useState({
     id: router.query.repositoryId,
     name: router.query.repositoryId,
-    owner: { ID: router.query.userId },
+    owner: { id: router.query.userId },
     forks: [],
     stargazers: [],
   });
@@ -49,7 +49,7 @@ function RepositoryTreeView(props) {
 
   useEffect(async () => {
     console.log("query", router.query);
-    const r = await getUserRepository(repository.owner.ID, repository.name);
+    const r = await getUserRepository(repository.owner.id, repository.name);
     if (r) {
       setRepository({
         ...r,
@@ -126,7 +126,7 @@ function RepositoryTreeView(props) {
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
             active="code"
-            hrefBase={repository.owner.ID + "/" + repository.name}
+            hrefBase={repository.owner.id + "/" + repository.name}
           />
           <div className="">
             <div className="flex justify-start mt-8">
@@ -134,13 +134,13 @@ function RepositoryTreeView(props) {
                 <BranchSelector
                   branches={repository.branches}
                   branchName={branchName}
-                  baseUrl={"/" + repository.owner.ID + "/" + repository.name}
+                  baseUrl={"/" + repository.owner.id + "/" + repository.name}
                 />
               </div>
               <div className="ml-4">
                 <Breadcrumbs
                   branchName={branchName}
-                  baseUrl={"/" + repository.owner.ID + "/" + repository.name}
+                  baseUrl={"/" + repository.owner.id + "/" + repository.name}
                   repoPath={repoPath}
                   repoName={repository.name}
                 />
@@ -152,7 +152,7 @@ function RepositoryTreeView(props) {
                 <FileBrowser
                   entityList={entityList}
                   branchName={branchName}
-                  baseUrl={"/" + repository.owner.ID + "/" + repository.name}
+                  baseUrl={"/" + repository.owner.id + "/" + repository.name}
                   repoPath={repoPath}
                   repoName={repository.name}
                 />

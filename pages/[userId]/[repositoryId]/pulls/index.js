@@ -19,13 +19,13 @@ function RepositoryView(props) {
   const [repository, setRepository] = useState({
     id: router.query.repositoryId,
     name: router.query.repositoryId,
-    owner: { ID: router.query.userId },
+    owner: { id: router.query.userId },
     forks: [],
     stargazers: [],
   });
 
   useEffect(async () => {
-    const r = await getUserRepository(repository.owner.ID, repository.name);
+    const r = await getUserRepository(repository.owner.id, repository.name);
     if (r) setRepository(r);
   }, []);
 
@@ -44,7 +44,7 @@ function RepositoryView(props) {
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
             active="pulls"
-            hrefBase={repository.owner.ID + "/" + repository.name}
+            hrefBase={repository.owner.id + "/" + repository.name}
           />
         </main>
       </div>

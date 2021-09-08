@@ -23,7 +23,7 @@ function RepositoryIssueView(props) {
   const [repository, setRepository] = useState({
     id: router.query.repositoryId,
     name: router.query.repositoryId,
-    owner: { ID: router.query.userId },
+    owner: { id: router.query.userId },
     issues: [],
     forks: [],
     stargazers: [],
@@ -32,14 +32,14 @@ function RepositoryIssueView(props) {
   const [allIssues, setAllIssues] = useState([]);
 
   useEffect(async () => {
-    const r = await getUserRepository(repository.owner.ID, repository.name);
+    const r = await getUserRepository(repository.owner.id, repository.name);
     if (r) setRepository(r);
   }, []);
 
   const getAllIssues = async () => {
     if (repository) {
       const issues = await getRepositoryIssueAll(
-        repository.owner.ID,
+        repository.owner.id,
         repository.name
       );
       setAllIssues(issues);
@@ -63,7 +63,7 @@ function RepositoryIssueView(props) {
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
             active="issues"
-            hrefBase={repository.owner.ID + "/" + repository.name}
+            hrefBase={repository.owner.id + "/" + repository.name}
           />
           <div className="flex mt-8">
             <div className="form-control flex-1 mr-8">
@@ -79,7 +79,7 @@ function RepositoryIssueView(props) {
               <Link
                 href={
                   "/" +
-                  repository.owner.ID +
+                  repository.owner.id +
                   "/" +
                   repository.name +
                   "/issues/new"
@@ -182,7 +182,7 @@ function RepositoryIssueView(props) {
                             <Link
                               href={
                                 "/" +
-                                repository.owner.ID +
+                                repository.owner.id +
                                 "/" +
                                 repository.name +
                                 "/issues/" +

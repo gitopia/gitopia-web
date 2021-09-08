@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 
 export default function EmptyRepository(props) {
   const { repository } = props;
-  const remoteUrl = "gitopia://" + repository.owner.ID + "/" + repository.name;
+  const remoteUrl = "gitopia://" + repository.owner.id + "/" + repository.name;
   const dispatch = useDispatch();
   return (
     <>

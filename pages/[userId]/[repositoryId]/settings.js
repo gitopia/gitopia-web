@@ -22,7 +22,7 @@ function RepositoryView(props) {
   const [repository, setRepository] = useState({
     id: router.query.repositoryId,
     name: router.query.repositoryId,
-    owner: { ID: router.query.userId },
+    owner: { id: router.query.userId },
     collaborators: [],
     forks: [],
     stargazers: [],
@@ -53,7 +53,7 @@ function RepositoryView(props) {
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
             active="settings"
-            hrefBase={repository.owner.ID + "/" + repository.name}
+            hrefBase={repository.owner.id + "/" + repository.name}
           />
           <div className="flex mt-8">
             <div className="flex-none w-64">
@@ -87,7 +87,7 @@ function RepositoryView(props) {
                     onSuccess={async (newRepoName) => {
                       const url = [
                         "",
-                        repository.owner.ID,
+                        repository.owner.id,
                         newRepoName,
                         "settings",
                       ].join("/");

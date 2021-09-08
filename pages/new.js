@@ -7,6 +7,8 @@ import Header from "../components/header";
 import TextInput from "../components/textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
 import Footer from "../components/footer";
+import _ from "lodash";
+import getOrganizationRepositoryAll from "../helpers/getOrganizationRepositoryAll";
 
 function NewRepository(props) {
   const router = useRouter();
@@ -40,7 +42,7 @@ function NewRepository(props) {
     setDescriptionHint({ ...descriptionHint, shown: false });
   };
 
-  const validateRepository = () => {
+  const validateRepository = async () => {
     hideHints();
     if (name === "") {
       setNameHint({
@@ -60,13 +62,28 @@ function NewRepository(props) {
     }
     let alreadyAvailable = false,
       sanitizedName = name.replace(sanitizedNameTest, "-");
-    props.repositories.every((r) => {
-      if (r.name === sanitizedName) {
-        alreadyAvailable = true;
-        return false;
+    let acc = _.find(accountsList, (a) => a.id === ownerId);
+    if (acc && acc.type === "User") {
+      props.repositories.every((r) => {
+        if (r.name === sanitizedName) {
+          alreadyAvailable = true;
+          return false;
+        }
+        return true;
+      });
+    } else if (acc && acc.type === "Organization") {
+      const repos = await getOrganizationRepositoryAll(ownerId);
+      if (repos) {
+        repos.every((r) => {
+          if (r.name === sanitizedName) {
+            alreadyAvailable = true;
+            return false;
+          }
+          return true;
+        });
       }
-      return true;
-    });
+    }
+
     if (alreadyAvailable) {
       setNameHint({
         type: "error",
@@ -88,7 +105,7 @@ function NewRepository(props) {
 
   const createRepository = async () => {
     setRepositoryCreating(true);
-    if (validateRepository()) {
+    if (await validateRepository()) {
       console.log("create Repo", {
         name: name.replace(sanitizedNameTest, "-"),
         description,

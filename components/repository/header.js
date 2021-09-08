@@ -15,7 +15,7 @@ export default function RepositoryHeader({ repository }) {
           <rect x="7" y="18" width="10" height="2" />
         </svg>
 
-        <div className="mr-2">{shrinkAddress(repository.owner.ID)}</div>
+        <div className="mr-2">{shrinkAddress(repository.owner.id)}</div>
         <div className="mr-2">/</div>
         <div>{repository.name}</div>
       </div>
