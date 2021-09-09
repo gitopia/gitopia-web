@@ -127,7 +127,7 @@ function RepositoryTreeView(props) {
                 return (
                   <div
                     key={"commit" + i}
-                    className="flex border border-gray-700 rounded overflow-hidden mt-4 px-4 py-2"
+                    className="flex border border-grey rounded overflow-hidden mt-4 px-4 py-2"
                   >
                     <div className="flex-1 flex">
                       <div className="avatar">

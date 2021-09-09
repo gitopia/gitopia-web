@@ -173,6 +173,7 @@ function RepositoryTreeView(props) {
                     style={vscdarkplus}
                     language={fileSyntax}
                     showLineNumbers
+                    customStyle={{ margin: 0, background: "transparent" }}
                   >
                     {file}
                   </SyntaxHighlighter>
