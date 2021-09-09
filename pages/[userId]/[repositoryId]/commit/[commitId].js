@@ -9,6 +9,7 @@ import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
+import { getCommits } from "../../../../store/actions/git";
 import { parseDiff, Diff, Hunk } from "react-diff-view";
 import getDiff from "../../../../helpers/getDiff";
 import getDiffStat from "../../../../helpers/getDiffStat";
@@ -91,14 +92,20 @@ function RepositoryTreeView(props) {
       setRepository({
         ...r,
       });
-      const diff = await getDiff(
-        0,
-        "0466379ec278f6f65f4a3c5a9ffa1a70f7bcdfd5",
-        "fdfedf6ab895aec6fc10a76eeece654fbb61c79d"
+      const c = await getCommits(
+        r.id,
+        router.query.commitId,
+        r.name,
+        router.query.userId,
+        1
       );
-      const files = parseDiff(diff, { nearbySequences: "zip" });
-      setFiles(files);
-      console.log(files);
+      console.log(c);
+      if (c && c.length === 2) {
+        const diff = await getDiff(r.id, router.query.commitId, c[1].oid);
+        const files = parseDiff(diff, { nearbySequences: "zip" });
+        setFiles(files);
+        console.log(files);
+      }
     }
   }, [router.query]);
 
@@ -113,7 +120,7 @@ function RepositoryTreeView(props) {
       </Head>
       <Header />
       <div className="flex flex-1">
-        <main className="container mx-auto max-w-screen-lg py-12 px-4">
+        <main className="py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
             active="code"

@@ -51,7 +51,7 @@ export default function BranchSelector({
             const cleanName = b.name.replace("refs/heads/", "");
             return (
               <li key={"branch-selector" + i}>
-                <Link href={baseUrl + "/tree/" + cleanName}>
+                <Link href={baseUrl + "/" + cleanName}>
                   <a className="text-sm whitespace-nowrap">{cleanName}</a>
                 </Link>
               </li>

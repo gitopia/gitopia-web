@@ -118,7 +118,13 @@ function RepositoryView(props) {
                 <div className="">
                   <BranchSelector
                     branches={repository.branches}
-                    baseUrl={"/" + repository.owner.id + "/" + repository.name}
+                    baseUrl={
+                      "/" +
+                      repository.owner.id +
+                      "/" +
+                      repository.name +
+                      "/tree"
+                    }
                     branchName={repository.defaultBranch}
                   />
                 </div>
@@ -172,7 +178,17 @@ function RepositoryView(props) {
               </div>
               <div className="flex mt-8">
                 <div className="flex-1 border border-gray-700 rounded overflow-hidden">
-                  <CommitDetailRow commitDetail={commitDetail} />
+                  <CommitDetailRow
+                    commitDetail={commitDetail}
+                    commitInBranchLink={
+                      "/" +
+                      repository.owner.id +
+                      "/" +
+                      repository.name +
+                      "/commits/" +
+                      repository.defaultBranch
+                    }
+                  />
                   <FileBrowser
                     entityList={entityList}
                     branchName={repository.defaultBranch}

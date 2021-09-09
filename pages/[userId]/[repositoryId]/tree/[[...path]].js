@@ -134,7 +134,9 @@ function RepositoryTreeView(props) {
                 <BranchSelector
                   branches={repository.branches}
                   branchName={branchName}
-                  baseUrl={"/" + repository.owner.id + "/" + repository.name}
+                  baseUrl={
+                    "/" + repository.owner.id + "/" + repository.name + "/tree"
+                  }
                 />
               </div>
               <div className="ml-4">
@@ -148,7 +150,17 @@ function RepositoryTreeView(props) {
             </div>
             <div className="flex mt-4">
               <div className="flex-1 border border-gray-700 rounded overflow-hidden">
-                <CommitDetailRow commitDetail={commitDetail} />
+                <CommitDetailRow
+                  commitDetail={commitDetail}
+                  commitInBranchLink={
+                    "/" +
+                    repository.owner.id +
+                    "/" +
+                    repository.name +
+                    "/commits/" +
+                    branchName
+                  }
+                />
                 <FileBrowser
                   entityList={entityList}
                   branchName={branchName}

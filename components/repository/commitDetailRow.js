@@ -1,6 +1,11 @@
 import dayjs from "dayjs";
+import Link from "next/link";
 
-export default function CommitDetailRow({ commitDetail }) {
+export default function CommitDetailRow({
+  commitDetail,
+  commitInBranchLink = "",
+}) {
+  console.log("commitInBranchLink", commitInBranchLink);
   return (
     <div className="flex px-2 py-4 bg-base-200 items-center">
       <svg
@@ -21,7 +26,11 @@ export default function CommitDetailRow({ commitDetail }) {
       <div className="mr-4 flex-1 whitespace-nowrap overflow-hidden overflow-ellipsis">
         {commitDetail.commit.message}
       </div>
-      <div className="mr-4 flex-none">{commitDetail.oid.slice(0, 6)}</div>
+      <div className="mr-4 flex-none">
+        <Link href={commitInBranchLink}>
+          <a className="btn-link">{commitDetail.oid.slice(0, 6)}</a>
+        </Link>
+      </div>
       <div className="flex-none">
         {dayjs(
           (commitDetail.commit.author.timestamp +
