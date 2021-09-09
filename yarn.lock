@@ -2406,6 +2406,11 @@ printj@~1.1.0:
   resolved "https://registry.yarnpkg.com/printj/-/printj-1.1.2.tgz#d90deb2975a8b9f600fb3a1c94e3f4c53c78a222"
   integrity sha512-zA2SmoLaxZyArQTOPj5LXecR+RagfPSU5Kw1qP+jkWeNlrq+eJZyY2oS68SU1Z/7/myXM4lo9716laOFAVStCQ==
 
+prism-color-variables@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/prism-color-variables/-/prism-color-variables-1.0.1.tgz#ab2f9603e4014ff6b10bc99b9b71369233326004"
+  integrity sha512-ooWpzManQwobU5DNxWyFeffSABAQGWVVcon8E5AGUU4fgKqwdPw14M3gbS0c1YzDtf7Tv3G6PWsvELe16YWUYg==
+
 prismjs@^1.22.0, prismjs@~1.24.0:
   version "1.24.1"
   resolved "https://registry.yarnpkg.com/prismjs/-/prismjs-1.24.1.tgz#c4d7895c4d6500289482fa8936d9cdd192684036"

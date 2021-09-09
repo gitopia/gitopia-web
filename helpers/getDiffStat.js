@@ -1,6 +1,6 @@
-export default async function getDiff(repoId, commitSha1, commitSha2) {
+export default async function getDiffStat(repoId, commitSha1, commitSha2) {
   let obj = "";
-  const baseUrl = "/api/diff";
+  const baseUrl = "/api/diff-stat";
 
   await fetch(baseUrl + "/" + repoId + "/" + commitSha1 + "/" + commitSha2, {
     method: "GET", // *GET, POST, PUT, DELETE, etc.
