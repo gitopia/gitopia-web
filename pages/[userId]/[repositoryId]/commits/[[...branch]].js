@@ -20,7 +20,7 @@ export async function getServerSideProps() {
   return { props: {} };
 }
 
-function RepositoryTreeView(props) {
+function RepositoryCommitTreeView(props) {
   const router = useRouter();
   const [repository, setRepository] = useState({
     id: router.query.repositoryId,
@@ -64,7 +64,9 @@ function RepositoryTreeView(props) {
     setLoadingMore(true);
     const res = await getCommits(
       repository.id,
-      hasMore ? hasMore : getBranchSha(repository.branches, branchName),
+      hasMore
+        ? hasMore
+        : getBranchSha(branchName, repository.branches, repository.tags),
       repository.name,
       router.query.userId,
       9
@@ -201,4 +203,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryTreeView);
+export default connect(mapStateToProps, {})(RepositoryCommitTreeView);

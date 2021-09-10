@@ -45,12 +45,12 @@ function RepositoryView(props) {
 
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.id, repository.name);
-    console.log("r", r);
+    console.log("repository", r);
     if (r) setRepository(r);
     if (typeof window !== "undefined") {
       const res = await initRepository(
         r.id,
-        getBranchSha(r.branches, r.defaultBranch),
+        getBranchSha(r.defaultBranch, r.branches),
         r.name,
         router.query.userId,
         []
@@ -71,7 +71,7 @@ function RepositoryView(props) {
       }
       const readme = await initRepository(
         r.id,
-        getBranchSha(r.branches, r.defaultBranch),
+        getBranchSha(r.defaultBranch, r.branches),
         r.name,
         router.query.userId,
         ["README.md"]
@@ -118,6 +118,7 @@ function RepositoryView(props) {
                 <div className="">
                   <BranchSelector
                     branches={repository.branches}
+                    tags={repository.tags}
                     baseUrl={
                       "/" +
                       repository.owner.id +
@@ -144,7 +145,7 @@ function RepositoryView(props) {
                         fill="currentColor"
                         stroke="currentColor"
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
+                        className="h-5 w-5 mr-1"
                       >
                         <g transform="scale(0.9)">
                           <path
@@ -171,7 +172,38 @@ function RepositoryView(props) {
                           />
                         </g>
                       </svg>
-                      {repository.branches.length || 14} Branches
+                      {repository.branches.length} Branches
+                    </a>
+                  </Link>
+                </div>
+                <div className="ml-4">
+                  <Link
+                    href={
+                      "/" +
+                      repository.owner.id +
+                      "/" +
+                      repository.name +
+                      "/tags"
+                    }
+                  >
+                    <a className="btn btn-ghost btn-sm">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          transform="scale(0.9)
+                          translate(0, 2)"
+                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                        />
+                      </svg>
+                      {repository.tags.length} Tags
                     </a>
                   </Link>
                 </div>

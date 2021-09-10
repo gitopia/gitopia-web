@@ -7,7 +7,6 @@ export default function FileBrowser({
   branchName,
   repoName,
 }) {
-  console.log("filebrowser", baseUrl, branchName, repoPath);
   return (
     <>
       {entityList.map((e, i) => {
