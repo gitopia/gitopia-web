@@ -1,5 +1,4 @@
 import Head from "next/head";
-import Image from "next/image";
 import SimpleHeader from "../components/simpleHeader";
 import { useState } from "react";
 import CreateWallet from "../components/createWallet";
@@ -40,7 +39,7 @@ export default function Login(props) {
                     setStep(2);
                   }}
                 >
-                  <Image src="new-wallet.svg" width="179px" height="131px" />
+                  <img src="/new-wallet.svg" width="179px" height="131px" />
                   <div className="mt-4">Create new wallet</div>
                 </button>
                 <button
@@ -49,8 +48,8 @@ export default function Login(props) {
                     setStep(3);
                   }}
                 >
-                  <Image
-                    src="existing-wallet.svg"
+                  <img
+                    src="/existing-wallet.svg"
                     width="179px"
                     height="131px"
                   />

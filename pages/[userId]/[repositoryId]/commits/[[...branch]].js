@@ -150,7 +150,7 @@ function RepositoryCommitTreeView(props) {
                     <div className="flex-none">
                       <span className="mr-4">
                         {dayjs(c.commit.author.timestamp * 1000).format(
-                          "DD-MM-YYYY"
+                          "DD MMM YY"
                         )}
                       </span>
                       <Link
