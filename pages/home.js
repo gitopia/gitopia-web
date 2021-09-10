@@ -40,7 +40,7 @@ function Home(props) {
               return { owner: props.selectedAddress, ...r };
             })}
           />
-          <BackendStatus />
+          {/* <BackendStatus /> */}
           <FaucetReceiver />
         </div>
         <div className="flex-1 px-4">

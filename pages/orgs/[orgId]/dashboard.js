@@ -39,7 +39,7 @@ function OrgDashboard(props) {
               return { owner: props.currentDashboard, ...r };
             })}
           />
-          <BackendStatus />
+          {/* <BackendStatus /> */}
           <FaucetReceiver />
         </div>
         <div className="flex-1 px-4">
