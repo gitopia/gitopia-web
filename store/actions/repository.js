@@ -13,7 +13,8 @@ import { async } from "regenerator-runtime";
 export const validatePostingEligibility = async (
   dispatch,
   getState,
-  msgType
+  msgType,
+  numberOfTransactions = 1
 ) => {
   const { wallet, env, user } = getState();
 
@@ -38,7 +39,7 @@ export const validatePostingEligibility = async (
     }
   }
 
-  if (wallet.loreBalance <= 0.0000025) {
+  if (wallet.loreBalance <= 0.0000025 * numberOfTransactions) {
     dispatch(notify("Balance low for creating " + msgType, "error"));
     return false;
   }
@@ -331,6 +332,110 @@ export const updateIssue = ({
         return null;
       }
       return result;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const updateIssueAssignees = ({
+  issueId = null,
+  addedAssignees = [],
+  removedAssignees = [],
+}) => {
+  console.log(issueId, addedAssignees, removedAssignees);
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
+      return null;
+    const issueAddAssignees = {
+      creator: wallet.selectedAddress,
+      id: issueId,
+      assignees: addedAssignees,
+    };
+    const issueRemoveAssignees = {
+      creator: wallet.selectedAddress,
+      id: issueId,
+      assignees: removedAssignees,
+    };
+    console.log("add assignees", issueAddAssignees);
+    console.log("remove assignees", issueRemoveAssignees);
+
+    try {
+      let message1, message2, result1, result2;
+      if (addedAssignees.length) {
+        message1 = await env.txClient.msgAddIssueAssignees(issueAddAssignees);
+        result1 = await sendTransaction({ message }, env);
+        if (result1 && result1.code !== 0) {
+          dispatch(notify(result1.rawLog, "error"));
+          // return null;
+        }
+      }
+      if (removedAssignees.length) {
+        message2 = await env.txClient.msgRemoveIssueAssignees(
+          issueRemoveAssignees
+        );
+        result2 = await sendTransaction({ message }, env);
+        if (result2 && result2.code !== 0) {
+          dispatch(notify(result2.rawLog, "error"));
+          // return null;
+        }
+      }
+
+      return { result1, result2 };
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const updateIssueLabels = ({
+  issueId = null,
+  addedAssignees = [],
+  removedAssignees = [],
+}) => {
+  console.log(issueId, addedAssignees, removedAssignees);
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
+      return null;
+    const issueAddAssignees = {
+      creator: wallet.selectedAddress,
+      id: issueId,
+      assignees: addedAssignees,
+    };
+    const issueRemoveAssignees = {
+      creator: wallet.selectedAddress,
+      id: issueId,
+      assignees: removedAssignees,
+    };
+    console.log("add assignees", issueAddAssignees);
+    console.log("remove assignees", issueRemoveAssignees);
+
+    try {
+      let message1, message2, result1, result2;
+      // if (addedAssignees.length) {
+      //   message1 = await env.txClient.msgAddIssueAssignees(issueAddAssignees);
+      //   result1 = await sendTransaction({ message }, env);
+      //   if (result1 && result1.code !== 0) {
+      //     dispatch(notify(result1.rawLog, "error"));
+      //     return null;
+      //   }
+      // }
+      if (removedAssignees.length) {
+        message2 = await env.txClient.msgRemoveIssueAssignees(
+          issueRemoveAssignees
+        );
+        result2 = await sendTransaction({ message }, env);
+        if (result2 && result2.code !== 0) {
+          dispatch(notify(result2.rawLog, "error"));
+          return null;
+        }
+      }
+
+      return { result1, result2 };
     } catch (e) {
       console.error(e);
       dispatch(notify(e.message, "error"));

@@ -17,9 +17,11 @@ import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
 import CommentEditor from "../../../../components/repository/commentEditor";
 import CommentView from "../../../../components/repository/commentView";
+import SystemCommentView from "../../../../components/repository/systemCommentView";
 import {
   deleteComment,
   updateIssue,
+  updateIssueAssignees,
 } from "../../../../store/actions/repository";
 import AssigneeSelector from "../../../../components/repository/assigneeSelector";
 import LabelSelector from "../../../../components/repository/labelSelector";
@@ -61,11 +63,13 @@ function RepositoryIssueView(props) {
     if (r) setRepository(r);
     if (i) setIssue(i);
     setAllLabels(al);
+    console.log(i);
   }, [router.query]);
 
   const getAllComments = async () => {
     const pr = issue.comments.map((c) => getComment(c));
     const comments = await Promise.all(pr);
+    console.log(comments);
     setAllComments(comments);
   };
 
@@ -205,26 +209,30 @@ function RepositoryIssueView(props) {
                   </div>
                 </div>
                 {allComments.map((c, i) => {
-                  return (
-                    <CommentView
-                      comment={c}
-                      userAddress={props.selectedAddress}
-                      onUpdate={async (id) => {
-                        const newComment = await getComment(id);
-                        const newAllComments = [...allComments];
-                        newAllComments[i] = newComment;
-                        setAllComments(newAllComments);
-                      }}
-                      onDelete={async (id) => {
-                        const res = await props.deleteComment({ id });
-                        if (res && res.code === 0) {
+                  if (c.system) {
+                    return <SystemCommentView comment={c} />;
+                  } else {
+                    return (
+                      <CommentView
+                        comment={c}
+                        userAddress={props.selectedAddress}
+                        onUpdate={async (id) => {
+                          const newComment = await getComment(id);
                           const newAllComments = [...allComments];
-                          newAllComments.splice(i, 1);
+                          newAllComments[i] = newComment;
                           setAllComments(newAllComments);
-                        }
-                      }}
-                    />
-                  );
+                        }}
+                        onDelete={async (id) => {
+                          const res = await props.deleteComment({ id });
+                          if (res && res.code === 0) {
+                            const newAllComments = [...allComments];
+                            newAllComments.splice(i, 1);
+                            setAllComments(newAllComments);
+                          }
+                        }}
+                      />
+                    );
+                  }
                 })}
                 <div className="flex w-full mt-8">
                   <div className="flex-none mr-4">
@@ -253,9 +261,18 @@ function RepositoryIssueView(props) {
                   assignees={issue.assignees}
                   collaborators={repository.collaborators}
                   onChange={async (list) => {
-                    const res = await props.updateIssue({
+                    console.log("list", list);
+                    const removedAssignees = issue.assignees.filter(
+                      (x) => !list.includes(x)
+                    );
+                    const addedAssignees = list.filter(
+                      (x) => !removedAssignees.includes(x)
+                    );
+
+                    const res = await props.updateIssueAssignees({
                       issueId: issue.id,
-                      assignees: list,
+                      addedAssignees,
+                      removedAssignees,
                     });
 
                     if (res) refreshIssue();
@@ -322,6 +339,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { deleteComment, updateIssue })(
-  RepositoryIssueView
-);
+export default connect(mapStateToProps, {
+  deleteComment,
+  updateIssue,
+  updateIssueAssignees,
+})(RepositoryIssueView);

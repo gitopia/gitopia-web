@@ -20,7 +20,7 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
       setValidateAddressError("Address already present");
       return false;
     }
-    if (address !== "" && validAddress.test(address)) {
+    if (address.trim() !== "" && validAddress.test(address)) {
       const res = await getUser(address);
       if (res) {
         setValidateAddressError(null);
@@ -83,9 +83,10 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
             autoComplete="off"
             onKeyUp={async (e) => {
               // if (e.code === "Enter") {
-              if (await validateUserAddress(e.target.value)) {
-                setNewAssignees([...newAssignees, e.target.value]);
-                setCheckMap({ ...checkMap, [e.target.value]: true });
+              const val = e.target.value;
+              if (await validateUserAddress(val)) {
+                setNewAssignees([...newAssignees, val]);
+                setCheckMap({ ...checkMap, [val]: true });
                 e.target.value = "";
               }
               // } else {
