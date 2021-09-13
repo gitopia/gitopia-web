@@ -366,7 +366,7 @@ export const updateIssueAssignees = ({
       let message1, message2, result1, result2;
       if (addedAssignees.length) {
         message1 = await env.txClient.msgAddIssueAssignees(issueAddAssignees);
-        result1 = await sendTransaction({ message }, env);
+        result1 = await sendTransaction({ message: message1 }, env);
         if (result1 && result1.code !== 0) {
           dispatch(notify(result1.rawLog, "error"));
           // return null;
@@ -376,7 +376,7 @@ export const updateIssueAssignees = ({
         message2 = await env.txClient.msgRemoveIssueAssignees(
           issueRemoveAssignees
         );
-        result2 = await sendTransaction({ message }, env);
+        result2 = await sendTransaction({ message: message2 }, env);
         if (result2 && result2.code !== 0) {
           dispatch(notify(result2.rawLog, "error"));
           // return null;
