@@ -43,6 +43,14 @@ const reducer = (state = initialState, action) => {
       };
     }
 
+    case walletActions.REMOVE_WALLET: {
+      let { name } = action.payload;
+      return {
+        ...state,
+        wallets: state.wallets.filter((x) => x.name !== name),
+      };
+    }
+
     case walletActions.PATH_INCREMENT: {
       let activeWallet = state.activeWallet;
       activeWallet.pathIncrement += 1;
