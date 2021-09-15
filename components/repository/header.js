@@ -1,4 +1,5 @@
 import shrinkAddress from "../../helpers/shrinkAddress";
+import Link from "next/link";
 
 export default function RepositoryHeader({ repository }) {
   return (
@@ -15,7 +16,11 @@ export default function RepositoryHeader({ repository }) {
           <rect x="7" y="18" width="10" height="2" />
         </svg>
 
-        <div className="mr-2">{shrinkAddress(repository.owner.id)}</div>
+        <div className="mr-2">
+          <Link href={"/" + repository.owner.id}>
+            {shrinkAddress(repository.owner.id)}
+          </Link>
+        </div>
         <div className="mr-2">/</div>
         <div>{repository.name}</div>
       </div>
