@@ -7,6 +7,7 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
   const [validateAddressError, setValidateAddressError] = useState(null);
   const [checkMap, setCheckMap] = useState({});
   const menuDiv = useRef(null);
+  const inputEl = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
   const validAddress = new RegExp("gitopia[a-z0-9]{39}");
 
@@ -54,7 +55,14 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
   }, [assignees]);
 
   return (
-    <div className={"dropdown dropdown-end w-full"} tabIndex="0" ref={menuDiv}>
+    <div
+      className={"dropdown dropdown-end w-full"}
+      tabIndex="0"
+      ref={menuDiv}
+      onClick={() => {
+        if (inputEl && inputEl.current) inputEl.current.focus();
+      }}
+    >
       <button
         className={
           "btn btn-sm btn-block btn-ghost " + (isSaving ? "loading" : "")
@@ -81,6 +89,7 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
             type="text"
             placeholder="Search By Address"
             autoComplete="off"
+            ref={inputEl}
             onKeyUp={async (e) => {
               // if (e.code === "Enter") {
               const val = e.target.value;
