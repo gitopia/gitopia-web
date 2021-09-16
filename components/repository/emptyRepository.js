@@ -7,7 +7,7 @@ export default function EmptyRepository(props) {
   const dispatch = useDispatch();
   return (
     <>
-      <div className="flex border-2 border-grey rounded-md px-8 py-2 mt-16 items-center">
+      <div className="flex rounded-md py-2 mt-16 items-center">
         <div className="flex-none w-72 text-xl">Quick Setup</div>
         <div className="flex-1 flex items-center">
           <div className="flex-none text-xs uppercase text-type-secondary mr-4 font-bold">
@@ -23,7 +23,7 @@ export default function EmptyRepository(props) {
                 className="w-full pr-16 input input-ghost input-bordered"
               />
               <button
-                className="absolute right-0 top-0 rounded-md-l-none btn btn-ghost"
+                className="absolute right-0 top-0 rounded btn btn-ghost"
                 onClick={(e) => {
                   navigator.clipboard.writeText(remoteUrl);
                   dispatch(notify("Copied to clipboard", "info"));
@@ -48,9 +48,9 @@ export default function EmptyRepository(props) {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-4 mt-16">
-        <div className="border-2 border-grey rounded-md p-8 h-96 flex flex-col">
-          <div className="flex-1">
+      <div className="mt-8">
+        <div className="rounded-md py-8">
+          <div className="mb-8 text-type-tertiary">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -66,19 +66,29 @@ export default function EmptyRepository(props) {
               />
             </svg>
           </div>
-          <div className="flex-none py-4">
-            <div className="text-xl mb-4">
-              Push existing repository from command line
+          <div className="py-4">
+            <div className="flex mb-4">
+              <div className="flex-1 text-xl">
+                Push existing repository from command line
+              </div>
+              <div className="flex-none w-44">
+                <button className="btn btn-primary btn-outline btn-sm btn-block">
+                  Copy commands
+                </button>
+              </div>
             </div>
-            <div className="w-44">
-              <button className="btn btn-primary btn-sm btn-block">
-                Copy commands
-              </button>
+            <div class="mockup-code mb-4">
+              <pre data-prefix="$">
+                <code>git remote add origin {remoteUrl}</code>
+              </pre>
+              <pre data-prefix="$">
+                <code>git push -u origin master</code>
+              </pre>
             </div>
           </div>
         </div>
-        <div className="border-2 border-grey rounded-md p-8 flex flex-col">
-          <div className="flex-1">
+        <div className="rounded-md py-8 flex flex-col">
+          <div className="flex-1 mb-8">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -95,18 +105,20 @@ export default function EmptyRepository(props) {
             </svg>
           </div>
           <div className="flex-none py-4">
-            <div className="text-xl mb-4">
-              Import code from another repository
-            </div>
-            <div className="w-44">
-              <button className="btn btn-primary btn-sm btn-block">
-                Copy commands
-              </button>
+            <div className="flex mb-4">
+              <div className="flex-1 text-xl">
+                Import code from another repository
+              </div>
+              <div className="flex-none w-44">
+                <button className="btn btn-primary btn-outline btn-sm btn-block">
+                  Copy commands
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        <div className="border-2 border-grey rounded-md p-8 flex flex-col">
-          <div className="flex-1">
+        <div className="rounded-md py-8 flex flex-col">
+          <div className="flex-1 mb-8">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -123,13 +135,35 @@ export default function EmptyRepository(props) {
             </svg>
           </div>
           <div className="flex-none py-4">
-            <div className="text-xl mb-4">
-              Create a new repository from command line
+            <div className="flex mb-4">
+              <div className="flex-1 text-xl">
+                Create a new repository from command line
+              </div>
+              <div className="flex-none w-44">
+                <button className="btn btn-primary btn-outline btn-sm btn-block">
+                  Copy commands
+                </button>
+              </div>
             </div>
-            <div className="w-44">
-              <button className="btn btn-primary btn-sm btn-block">
-                Copy commands
-              </button>
+            <div class="mockup-code mb-4">
+              <pre data-prefix="$">
+                <code>echo "# hello world!" >> README.md</code>
+              </pre>
+              <pre data-prefix="$">
+                <code>git init</code>
+              </pre>
+              <pre data-prefix="$">
+                <code>git add README.md</code>
+              </pre>
+              <pre data-prefix="$">
+                <code>git commit -m "initial commit"</code>
+              </pre>
+              <pre data-prefix="$">
+                <code>git remote add origin {remoteUrl}</code>
+              </pre>
+              <pre data-prefix="$">
+                <code>git push -u origin master</code>
+              </pre>
             </div>
           </div>
         </div>
