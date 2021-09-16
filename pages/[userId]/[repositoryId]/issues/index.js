@@ -42,6 +42,7 @@ function RepositoryIssueView(props) {
         repository.owner.id,
         repository.name
       );
+      console.log(issues);
       setAllIssues(issues);
     }
   };

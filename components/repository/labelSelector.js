@@ -1,7 +1,15 @@
 import { useEffect, useState, useRef } from "react";
 import getIssueAllLabels from "../../helpers/getIssueAllLabels";
+import Label from "./label";
+import Link from "next/link";
 
-function LabelSelector({ onChange, labels = [], ...props }) {
+function LabelSelector({
+  onChange,
+  labels = [],
+  repoLabels = [],
+  editLabels = "",
+  ...props
+}) {
   const menuDiv = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
   const [currentLabels, setCurrentLabels] = useState([]);
@@ -18,7 +26,7 @@ function LabelSelector({ onChange, labels = [], ...props }) {
   };
 
   const resetLabels = async () => {
-    const allLabels = await getIssueAllLabels();
+    const allLabels = repoLabels;
     allLabels.map((l) => {
       if (labels.includes(l.id)) {
         l.selected = true;
@@ -26,10 +34,11 @@ function LabelSelector({ onChange, labels = [], ...props }) {
         l.selected = false;
       }
     });
+    console.log("reset labels");
     setCurrentLabels(allLabels);
   };
 
-  useEffect(resetLabels, [labels]);
+  useEffect(resetLabels, [repoLabels]);
 
   return (
     <div className={"dropdown dropdown-end w-full"} tabIndex="0" ref={menuDiv}>
@@ -53,6 +62,11 @@ function LabelSelector({ onChange, labels = [], ...props }) {
         </svg>
       </button>
       <div className="dropdown-content shadow-lg bg-base-300 rounded w-56 p-4 mt-1">
+        <div className="mb-2">
+          <Link href={editLabels}>
+            <a className="btn btn-block btn-ghost btn-sm">Edit Labels</a>
+          </Link>
+        </div>
         {currentLabels.map((l, i) => {
           return (
             <div className="form-control" key={"label" + i}>
@@ -63,15 +77,12 @@ function LabelSelector({ onChange, labels = [], ...props }) {
                   onChange={() => {
                     const newLabels = [...currentLabels];
                     newLabels[i] = { ...l, selected: !l.selected };
+                    console.log(newLabels);
                     setCurrentLabels(newLabels);
                   }}
                   className="checkbox checkbox-sm mr-2"
                 />
-                <span
-                  className="w-4 h-4 rounded-full bordered mr-2"
-                  style={{ backgroundColor: l.color }}
-                ></span>
-                <span className="label-text">{l.name}</span>
+                <Label color={l.color} name={l.name} />
               </label>
             </div>
           );
