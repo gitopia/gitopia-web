@@ -22,7 +22,7 @@ export async function getServerSideProps() {
 function RepositoryTreeView(props) {
   const router = useRouter();
   const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
+    id: null,
     name: router.query.repositoryId,
     owner: { id: router.query.userId },
     forks: [],
@@ -32,23 +32,18 @@ function RepositoryTreeView(props) {
   const [files, setFiles] = useState([]);
   const [fileHidden, setFileHidden] = useState([]);
   const [viewType, setViewType] = useState("unified");
-  const [commit, setCommit] = useState({ author: { name: "" }, timestamp: 0 });
+  const [commit, setCommit] = useState({
+    author: { name: "" },
+    stat: {},
+    timestamp: 0,
+  });
+  const [hasMore, setHasMore] = useState(null);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  const renderFile = (
-    { oldRevision, newRevision, type, hunks, oldPath, newPath },
-    index
-  ) => {
-    let totalInsert = 0,
-      totalDelete = 0;
-    hunks.map((h) => {
-      h.changes.map((c) => {
-        if (c.isInsert) totalInsert++;
-        if (c.isDelete) totalDelete++;
-      });
-    });
-
+  const renderFile = ({ filename, stat, diff }, index) => {
+    const { oldRevision, newRevision, type, hunks, oldPath, newPath } = diff[0];
     return (
-      <div className="mt-8 border border-grey rounded-md">
+      <div className="mt-8 border border-grey rounded-md" key={filename}>
         <div className="bg-base-200 flex rounded-md">
           <div className="flex-1 flex text-sm px-4 py-4 items-center">
             <div className="mr-4">
@@ -78,15 +73,15 @@ function RepositoryTreeView(props) {
               </button>
             </div>
             <div className="mr-4 flex">
-              {totalInsert ? (
-                <div className={"text-green " + (totalDelete ? "mr-2" : "")}>
-                  + {totalInsert}
+              {stat.addition ? (
+                <div className={"text-green " + (stat.deletion ? "mr-2" : "")}>
+                  + {stat.addition}
                 </div>
               ) : (
                 ""
               )}
-              {totalDelete ? (
-                <div className="text-red">- {totalDelete}</div>
+              {stat.deletion ? (
+                <div className="text-red">- {stat.deletion}</div>
               ) : (
                 ""
               )}
@@ -137,6 +132,32 @@ function RepositoryTreeView(props) {
     );
   };
 
+  const loadDiffs = async (oldFiles = [], repoId = repository.id) => {
+    setLoadingMore(true);
+    console.log("repoId", repoId, "hasMore", hasMore);
+    const data = await getDiff(repoId, router.query.commitId, hasMore);
+    let newFiles = [];
+    if (data && data.diff) {
+      data.diff.map(({ file_name, patch, stat }) => {
+        const diff = parseDiff(patch);
+        newFiles.push({
+          filename: file_name,
+          diff,
+          patch,
+          stat,
+        });
+      });
+    }
+    if (data && data.pagination && data.pagination.next_key) {
+      setHasMore(data.pagination.next_key);
+    } else {
+      setHasMore(null);
+    }
+    console.log(newFiles);
+    setFiles([...oldFiles, ...newFiles]);
+    setLoadingMore(false);
+  };
+
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.id, repository.name);
     if (r) {
@@ -148,16 +169,24 @@ function RepositoryTreeView(props) {
         router.query.commitId,
         r.name,
         router.query.userId,
-        1
+        0
       );
-      if (c && c.length === 2) {
-        setCommit(c[0].commit);
-        const diff = await getDiff(r.id, c[1].oid, router.query.commitId);
-        console.log(diff);
-        const files = parseDiff(diff);
-        setFiles(files);
+      if (c) {
+        setFiles([]);
         setFileHidden([]);
-        console.log(files);
+        console.log(r.id, Number(r.id));
+        const data = await getDiff(
+          Number(r.id),
+          router.query.commitId,
+          null,
+          null,
+          true
+        );
+        if (data) {
+          console.log("commit", { ...c[0].commit, ...data });
+          setCommit({ ...c[0].commit, ...data });
+        }
+        loadDiffs([], r.id);
       }
     }
   }, [router.query]);
@@ -184,32 +213,40 @@ function RepositoryTreeView(props) {
             active="code"
             hrefBase={repository.owner.id + "/" + repository.name}
           />
-          <div className="flex mt-8 px-4 py-2 border border-grey rounded-md">
-            <div className="flex-1 flex">
-              <div className="avatar">
-                <div className="rounded-full w-6 h-6 mr-2">
-                  <img
-                    src={
-                      "https://avatar.oxro.io/avatar.svg?length=1&height=40&width=40&fontSize=18&caps=1&name=" +
-                      commit.author.name.slice(0, 1)
-                    }
-                  />
+          <div className="mt-8 px-4 py-4 border border-grey rounded-md">
+            <div className="flex">
+              <div className="flex-1 flex">
+                <div className="avatar">
+                  <div className="rounded-full w-6 h-6 mr-2">
+                    <img
+                      src={
+                        "https://avatar.oxro.io/avatar.svg?length=1&height=40&width=40&fontSize=18&caps=1&name=" +
+                        commit.author.name.slice(0, 1)
+                      }
+                    />
+                  </div>
                 </div>
+                <span className="pr-4">{commit.author.name}</span>
               </div>
-              <span className="pr-4 border-r border-grey">
-                {commit.author.name}
-              </span>
-              <span className="px-4">{commit.message}</span>
+              <div className="pr-4 text-green ">
+                {" + " + commit.stat.addition}
+              </div>
+              <div className="pr-4 text-red">
+                {" - " + commit.stat.deletion}
+              </div>
+              <div className="flex-none">
+                <span className="mr-4">
+                  {dayjs(commit.author.timestamp * 1000).format("DD-MM-YYYY")}
+                </span>
+                <button className="btn btn-xs btn-outline">View Code</button>{" "}
+              </div>
             </div>
-            <div className="flex-none">
-              <span className="mr-4">
-                {dayjs(commit.author.timestamp * 1000).format("DD-MM-YYYY")}
-              </span>
-              <button className="btn btn-xs btn-outline">View Code</button>{" "}
+            <div className="mt-2 text-sm text-type-secondary">
+              {commit.message}
             </div>
           </div>
           <div className="flex mt-8 px-4 py-2">
-            <div className="flex-1">Showing {files.length} Files</div>
+            <div className="flex-1">{commit.files_changed} Files Changed</div>
             <div className="flex-none btn-group">
               <button
                 className={
@@ -236,6 +273,23 @@ function RepositoryTreeView(props) {
             </div>
           </div>
           <div>{files.map(renderFile)}</div>
+          {hasMore ? (
+            <div className="mt-8 text-center">
+              <button
+                className={
+                  "btn btn-sm btn-wide " + (loadingMore ? "loading" : "")
+                }
+                disabled={loadingMore}
+                onClick={() => {
+                  loadDiffs(files);
+                }}
+              >
+                Load More
+              </button>
+            </div>
+          ) : (
+            ""
+          )}
         </main>
       </div>
       <Footer />

@@ -122,7 +122,7 @@ function LabelEditor({
     setIsSaving(true);
     if (validateLabel()) {
       const res = await props.updateRepositoryLabel({
-        repoId,
+        repositoryId: repoId,
         labelId,
         name,
         color,

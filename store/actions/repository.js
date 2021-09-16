@@ -482,7 +482,7 @@ export const createRepositoryLabel = ({
 };
 
 export const updateRepositoryLabel = ({
-  repoId = null,
+  repositoryId = null,
   labelId = null,
   name = "",
   color = "",
@@ -494,7 +494,7 @@ export const updateRepositoryLabel = ({
       return null;
     const label = {
       creator: wallet.selectedAddress,
-      repoId,
+      repositoryId,
       labelId,
       name,
       color,
