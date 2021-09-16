@@ -66,7 +66,7 @@ function CurrentWallet(props) {
       {isUnlocking ? (
         <div className="w-48 relative">
           <button
-            className="btn btn-sm btn-circle btn-ghost absolute right-0 top-0 text-red"
+            className="btn btn-sm btn-circle btn-ghost absolute right-0 top-0 text-pink-900"
             onClick={removeWallet}
           >
             <svg
@@ -91,18 +91,18 @@ function CurrentWallet(props) {
             setValue={setPassword}
             hint={passwordHint}
           />
-          <div className="card-actions w-full">
+          <div className="flex mt-4 w-full btn-group">
             <button
-              className="btn btn-sm btn-block btn-primary"
-              onClick={unlockWallet}
-            >
-              Unlock
-            </button>
-            <button
-              className="btn btn-sm btn-block btn-ghost"
+              className="btn btn-sm btn-block flex-1"
               onClick={resetWallet}
             >
               Cancel
+            </button>
+            <button
+              className="btn btn-sm btn-block btn-primary flex-1"
+              onClick={unlockWallet}
+            >
+              Unlock
             </button>
           </div>
         </div>

@@ -66,6 +66,7 @@ function CollaboratorsList({ repoId, collaborators, ...props }) {
           <td>
             <TextInput
               value={collabAddress}
+              placeholder="User address"
               setValue={(v) => {
                 setCollabAddress(v);
                 setCollabHint({ shown: false });

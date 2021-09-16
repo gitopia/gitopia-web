@@ -119,7 +119,6 @@ function RepositoryView(props) {
                     </div>
                   </div>
                   <div className="flex-none w-52">
-                    {" "}
                     <button className="btn btn-sm btn-block btn-accent btn-outline">
                       Archive Repository
                     </button>
