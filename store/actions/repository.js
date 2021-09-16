@@ -124,6 +124,11 @@ export const createIssue = ({
       const message = await env.txClient.msgCreateIssue(issue);
       const result = await sendTransaction({ message }, env);
       console.log(result);
+      if (result && result.code === 0) {
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
       return result;
     } catch (e) {
       console.error(e);
@@ -344,7 +349,6 @@ export const updateIssueAssignees = ({
   addedAssignees = [],
   removedAssignees = [],
 }) => {
-  console.log(issueId, addedAssignees, removedAssignees);
   return async (dispatch, getState) => {
     const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
@@ -359,8 +363,8 @@ export const updateIssueAssignees = ({
       id: issueId,
       assignees: removedAssignees,
     };
-    console.log("add assignees", issueAddAssignees);
-    console.log("remove assignees", issueRemoveAssignees);
+    // console.log("add assignees", issueAddAssignees);
+    // console.log("remove assignees", issueRemoveAssignees);
 
     try {
       let message1, message2, result1, result2;
@@ -369,7 +373,7 @@ export const updateIssueAssignees = ({
         result1 = await sendTransaction({ message: message1 }, env);
         if (result1 && result1.code !== 0) {
           dispatch(notify(result1.rawLog, "error"));
-          // return null;
+          return null;
         }
       }
       if (removedAssignees.length) {
@@ -379,7 +383,7 @@ export const updateIssueAssignees = ({
         result2 = await sendTransaction({ message: message2 }, env);
         if (result2 && result2.code !== 0) {
           dispatch(notify(result2.rawLog, "error"));
-          // return null;
+          return null;
         }
       }
 
@@ -393,42 +397,39 @@ export const updateIssueAssignees = ({
 
 export const updateIssueLabels = ({
   issueId = null,
-  addedAssignees = [],
-  removedAssignees = [],
+  addedLabels = [],
+  removedLabels = [],
 }) => {
-  console.log(issueId, addedAssignees, removedAssignees);
   return async (dispatch, getState) => {
     const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
       return null;
-    const issueAddAssignees = {
+    const issueAddLabels = {
       creator: wallet.selectedAddress,
       id: issueId,
-      assignees: addedAssignees,
+      labels: addedLabels,
     };
-    const issueRemoveAssignees = {
+    const issueRemoveLabels = {
       creator: wallet.selectedAddress,
       id: issueId,
-      assignees: removedAssignees,
+      labels: removedLabels,
     };
-    console.log("add assignees", issueAddAssignees);
-    console.log("remove assignees", issueRemoveAssignees);
+    console.log("add labels", issueAddLabels);
+    console.log("remove labels", issueRemoveLabels);
 
     try {
       let message1, message2, result1, result2;
-      // if (addedAssignees.length) {
-      //   message1 = await env.txClient.msgAddIssueAssignees(issueAddAssignees);
-      //   result1 = await sendTransaction({ message }, env);
-      //   if (result1 && result1.code !== 0) {
-      //     dispatch(notify(result1.rawLog, "error"));
-      //     return null;
-      //   }
-      // }
-      if (removedAssignees.length) {
-        message2 = await env.txClient.msgRemoveIssueAssignees(
-          issueRemoveAssignees
-        );
-        result2 = await sendTransaction({ message }, env);
+      if (addedLabels.length) {
+        message1 = await env.txClient.msgAddIssueLabels(issueAddLabels);
+        result1 = await sendTransaction({ message: message1 }, env);
+        if (result1 && result1.code !== 0) {
+          dispatch(notify(result1.rawLog, "error"));
+          return null;
+        }
+      }
+      if (removedLabels.length) {
+        message2 = await env.txClient.msgRemoveIssueLabels(issueRemoveLabels);
+        result2 = await sendTransaction({ message: message2 }, env);
         if (result2 && result2.code !== 0) {
           dispatch(notify(result2.rawLog, "error"));
           return null;
@@ -436,6 +437,83 @@ export const updateIssueLabels = ({
       }
 
       return { result1, result2 };
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const createRepositoryLabel = ({
+  repoId = null,
+  name = "",
+  color = "",
+  description = "",
+}) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "label")))
+      return null;
+    const label = {
+      creator: wallet.selectedAddress,
+      id: repoId,
+      name,
+      color,
+      description,
+    };
+    console.log("create", label);
+
+    try {
+      const message = await env.txClient.msgCreateRepositoryLabel(label);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        console.log(result);
+        return null;
+      }
+      return result;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const updateRepositoryLabel = ({
+  repoId = null,
+  labelId = null,
+  name = "",
+  color = "",
+  description = "",
+}) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "label")))
+      return null;
+    const label = {
+      creator: wallet.selectedAddress,
+      repoId,
+      labelId,
+      name,
+      color,
+      description,
+    };
+
+    console.log("update", label);
+
+    try {
+      const message = await env.txClient.msgUpdateRepositoryLabel(label);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        console.log(result);
+        return null;
+      }
+      return result;
     } catch (e) {
       console.error(e);
       dispatch(notify(e.message, "error"));

@@ -20,12 +20,13 @@ import CommentView from "../../../../components/repository/commentView";
 import SystemCommentView from "../../../../components/repository/systemCommentView";
 import {
   deleteComment,
-  updateIssue,
+  updateIssueLabels,
   updateIssueAssignees,
 } from "../../../../store/actions/repository";
 import AssigneeSelector from "../../../../components/repository/assigneeSelector";
 import LabelSelector from "../../../../components/repository/labelSelector";
 import getIssueAllLabels from "../../../../helpers/getIssueAllLabels";
+import Label from "../../../../components/repository/label";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -59,17 +60,15 @@ function RepositoryIssueView(props) {
         router.query.issueIid
       ),
     ]);
-    const al = await getIssueAllLabels(r.id);
     if (r) setRepository(r);
     if (i) setIssue(i);
-    setAllLabels(al);
+    setAllLabels(r.labels);
     console.log(i);
   }, [router.query]);
 
   const getAllComments = async () => {
     const pr = issue.comments.map((c) => getComment(c));
     const comments = await Promise.all(pr);
-    console.log(comments);
     setAllComments(comments);
   };
 
@@ -241,7 +240,9 @@ function RepositoryIssueView(props) {
                         <img
                           src={
                             "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                            (props.activeWallet ? props.activeWallet.name : "")
+                            (props.selectedAddress
+                              ? props.selectedAddress.slice(-1)
+                              : "")
                           }
                         />
                       </div>
@@ -266,7 +267,11 @@ function RepositoryIssueView(props) {
                       (x) => !list.includes(x)
                     );
                     const addedAssignees = list.filter(
-                      (x) => !removedAssignees.includes(x)
+                      (x) =>
+                        !(
+                          removedAssignees.includes(x) ||
+                          issue.assignees.includes(x)
+                        )
                     );
 
                     const res = await props.updateIssueAssignees({
@@ -278,7 +283,7 @@ function RepositoryIssueView(props) {
                     if (res) refreshIssue();
                   }}
                 />
-                <div className="text-xs px-3">
+                <div className="text-xs px-3 mt-2">
                   {issue.assignees.length
                     ? issue.assignees.map((a) => shrinkAddress(a)).join(", ")
                     : "No one"}
@@ -287,29 +292,43 @@ function RepositoryIssueView(props) {
               <div className="py-8">
                 <LabelSelector
                   labels={issue.labels}
+                  repoLabels={repository.labels}
+                  editLabels={
+                    "/" +
+                    repository.owner.id +
+                    "/" +
+                    repository.name +
+                    "/issues/labels"
+                  }
                   onChange={async (list) => {
-                    const res = await props.updateIssue({
+                    console.log("list", list);
+                    const removedLabels = issue.labels.filter(
+                      (x) => !list.includes(x)
+                    );
+                    const addedLabels = list.filter(
+                      (x) =>
+                        !(removedLabels.includes(x) || issue.labels.includes(x))
+                    );
+
+                    const res = await props.updateIssueLabels({
                       issueId: issue.id,
-                      labels: list,
+                      addedLabels,
+                      removedLabels,
                     });
 
                     if (res) refreshIssue();
                   }}
                 />
-                <div className="text-xs px-3">
+                <div className="text-xs px-3 mt-2 flex flex-wrap">
                   {issue.labels.length
                     ? issue.labels.map((l, i) => {
-                        let label = allLabels[l] ?? {
+                        let label = _.find(allLabels, { id: l }) || {
                           name: "",
                           color: "",
                         };
                         return (
-                          <span
-                            className="badge badge-sm p-2 border-0 mr-2 mb-2"
-                            style={{ backgroundColor: label.color }}
-                            key={"issueLabel" + i}
-                          >
-                            {label.name}
+                          <span className="pr-2 pb-2 whitespace-nowrap">
+                            <Label color={label.color} name={label.name} />
                           </span>
                         );
                       })
@@ -317,11 +336,11 @@ function RepositoryIssueView(props) {
                 </div>
               </div>
               <div className="py-8">
-                <div className="flex-1 text-left  px-3 mb-1">
+                <div className="flex-1 text-left px-3 mb-1">
                   Linked Pull Requests
                 </div>
 
-                <div className="text-xs px-3">None yet</div>
+                <div className="text-xs px-3 mt-2">None yet</div>
               </div>
             </div>
           </div>
@@ -341,6 +360,6 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   deleteComment,
-  updateIssue,
   updateIssueAssignees,
+  updateIssueLabels,
 })(RepositoryIssueView);

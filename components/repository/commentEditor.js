@@ -83,7 +83,7 @@ function CommentEditor({
                 setTogglingIssue(false);
               }}
             >
-              {issueState === "OPEN" ? "Close" : "Open"} Issue
+              {issueState === "OPEN" ? "Close" : "Re-Open"} Issue
             </button>
           </div>
         ) : (
@@ -107,7 +107,7 @@ function CommentEditor({
               "btn btn-sm btn-primary btn-block " +
               (postingComment ? "loading" : "")
             }
-            disabled={comment.trim().length === 0}
+            disabled={comment.trim().length === 0 || postingComment}
             onClick={() => (isEdit ? updateComment() : createComment())}
           >
             {isEdit ? "Update" : "Comment"}

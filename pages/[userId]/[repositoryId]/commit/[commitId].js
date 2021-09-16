@@ -153,6 +153,7 @@ function RepositoryTreeView(props) {
       if (c && c.length === 2) {
         setCommit(c[0].commit);
         const diff = await getDiff(r.id, c[1].oid, router.query.commitId);
+        console.log(diff);
         const files = parseDiff(diff);
         setFiles(files);
         setFileHidden([]);
