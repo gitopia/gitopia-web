@@ -100,7 +100,7 @@ function DashboardSelector(props) {
           </div>
           <ul
             tabIndex="0"
-            className="shadow menu dropdown-content bg-base-300 rounded-box w-52"
+            className="shadow-xl menu dropdown-content bg-base-300 rounded w-52"
           >
             {accountsList.map((a, i) => {
               return (

@@ -9,39 +9,61 @@ import Link from "next/link";
 import Footer from "../../components/footer";
 import getUser from "../../helpers/getUser";
 import getRepository from "../../helpers/getRepository";
+import getOrganization from "../../helpers/getOrganization";
 import dayjs from "dayjs";
 
 export async function getServerSideProps() {
   return { props: {} };
 }
 
-function UserView(props) {
+function AccountView(props) {
   const router = useRouter();
   const [user, setUser] = useState({
+    name: "",
+    repositories: [],
+  });
+  const [org, setOrg] = useState({
     name: "",
     repositories: [],
   });
   const [allRepos, setAllRepos] = useState([]);
 
   useEffect(async () => {
-    const u = await getUser(router.query.userId);
-    console.log(u);
+    const [u, o] = await Promise.all([
+      getUser(router.query.userId),
+      getOrganization(router.query.userId),
+    ]);
+    console.log(u, o);
     if (u) {
       setUser(u);
+    } else if (o) {
+      setOrg(o);
     }
   }, [router.query]);
 
   const getAllRepos = async () => {
-    const pr = user.repositories.map((r) => getRepository(r.id));
-    const repos = await Promise.all(pr);
-    setAllRepos(repos);
-    console.log(repos);
+    if (user.id) {
+      const pr = user.repositories.map((r) => getRepository(r.id));
+      const repos = await Promise.all(pr);
+      setAllRepos(repos);
+      console.log(repos);
+    } else if (org.id) {
+      const pr = org.repositories.map((r) => getRepository(r.id));
+      const repos = await Promise.all(pr);
+      setAllRepos(repos);
+      console.log(repos);
+    }
   };
 
-  useEffect(getAllRepos, [user]);
+  useEffect(getAllRepos, [user, org]);
 
   const hrefBase = "/" + router.query.userId;
   const active = "issues";
+  const letter = user.id
+    ? user.creator.slice(-1)
+    : org.id
+    ? org.name.slice(0, 1)
+    : "x";
 
   return (
     <div
@@ -55,9 +77,30 @@ function UserView(props) {
       <Header />
       <div className="flex flex-1">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
-          <div className="flex flex-1">
+          <div className="flex">
+            <div className="avatar flex-none mr-8">
+              <div
+                className={
+                  "w-20 h-20 " + (user.id ? "rounded-full" : "rounded")
+                }
+              >
+                <img
+                  src={
+                    "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+                    letter
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <div className="text-2xl">
+                {user.id ? user.creator : org.name}
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-1 mt-8">
             <div className="tabs">
-              <Link href={"/" + hrefBase}>
+              <Link href={hrefBase}>
                 <a
                   className={
                     "tab tab-lg tab-bordered" +
@@ -78,7 +121,7 @@ function UserView(props) {
                   <span>Overview</span>
                 </a>
               </Link>
-              <Link href={"/" + hrefBase + "/issues"}>
+              <Link href={hrefBase}>
                 <a
                   className={
                     "tab tab-lg tab-bordered" +
@@ -101,7 +144,7 @@ function UserView(props) {
                   <span>Repositories</span>
                 </a>
               </Link>
-              <Link href={"/" + hrefBase + "/pulls"}>
+              <Link href={hrefBase}>
                 <a
                   className={
                     "tab tab-lg tab-bordered" +
@@ -132,7 +175,7 @@ function UserView(props) {
                   <span>Projects</span>
                 </a>
               </Link>
-              <Link href={"/" + hrefBase + "/settings"}>
+              <Link href={hrefBase}>
                 <a
                   className={
                     "tab tab-lg tab-bordered" +
@@ -191,4 +234,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(UserView);
+export default connect(mapStateToProps, {})(AccountView);

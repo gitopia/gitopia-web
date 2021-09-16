@@ -20,7 +20,9 @@ function GreetUser(props) {
     <div>
       <div className="text-xs uppercase">Welcome,</div>
       <div className="text-lg">
-        <Link href={"/" + props.address}>{greetingName}</Link>
+        <Link href={"/" + props.address}>
+          <a className="btn-link">{greetingName}</a>
+        </Link>
       </div>
     </div>
   ) : (

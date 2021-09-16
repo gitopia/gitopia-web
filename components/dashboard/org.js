@@ -6,7 +6,9 @@ function OrgDashboard({ organization = {} }) {
       <div className="flex mb-12">
         <div>
           <div className="text-xs uppercase">Welcome to,</div>
-          <div className="text-lg">{organization.name}</div>
+          <Link href={"/" + organization.address}>
+            <a className="text-lg btn-link">{organization.name}</a>
+          </Link>
         </div>
         <div className="flex-1"></div>
         <div>

@@ -18,7 +18,7 @@ export default function RepositoryHeader({ repository }) {
 
         <div className="mr-2">
           <Link href={"/" + repository.owner.id}>
-            {shrinkAddress(repository.owner.id)}
+            <a className="btn-link">{shrinkAddress(repository.owner.id)}</a>
           </Link>
         </div>
         <div className="mr-2">/</div>

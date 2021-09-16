@@ -28,7 +28,7 @@ function Header(props) {
     setMenuState(1);
   };
 
-  let addressToShow;
+  let addressToShow = "";
   if (props.selectedAddress) {
     addressToShow = shrinkAddress(props.selectedAddress);
   }
@@ -157,7 +157,7 @@ function Header(props) {
                     <img
                       src={
                         "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
-                        props.activeWallet.name
+                        addressToShow.slice(-1)
                       }
                     />
                   ) : (
@@ -181,10 +181,10 @@ function Header(props) {
                   )}
                 </div>
               </button>
-              <div className="shadow dropdown-content bg-base-300 rounded-box mt-1">
+              <div className="shadow-xl dropdown-content bg-base-300 rounded mt-1">
                 {menuState === 2 && <CurrentWallet />}
                 {menuState === 1 && (
-                  <ul className="menu w-48 rounded-box">
+                  <ul className="menu w-48 rounded">
                     {props.activeWallet ? (
                       <>
                         <li>
