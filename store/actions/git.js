@@ -134,6 +134,12 @@ const findEntity = async (repoId, oid, type, projectRoot, path) => {
       if (treeObj && treeObj.tree) {
         let pathObj = null;
         treeObj.tree.every((ent) => {
+          if (path[0] === "README.md") {
+            if (ent.path.toLowerCase() === "README.md".toLowerCase()) {
+              pathObj = ent;
+              return false;
+            }
+          }
           if (ent.path === path[0]) {
             pathObj = ent;
             return false;

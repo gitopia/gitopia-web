@@ -34,7 +34,7 @@ function RepositoryCommitDiffView(props) {
   const [viewType, setViewType] = useState("unified");
   const [commit, setCommit] = useState({
     author: { name: "" },
-    stat: {},
+    stat: { addition: 0, deletion: 0 },
     timestamp: 0,
   });
   const [hasMore, setHasMore] = useState(null);
@@ -45,10 +45,10 @@ function RepositoryCommitDiffView(props) {
     return (
       <div className="mt-8 border border-grey rounded-md" key={filename}>
         <div className="bg-base-200 flex rounded-md">
-          <div className="flex-1 flex text-sm px-4 py-4 items-center">
+          <div className="flex-1 flex text-sm px-4 py-2 items-center">
             <div className="mr-4">
               <button
-                className="btn btn-square btn-xs btn-ghost"
+                className="btn btn-square btn-xs btn-ghost relative top-px"
                 onClick={() => {
                   const arr = [...fileHidden];
                   arr[index] = !fileHidden[index];
@@ -58,7 +58,7 @@ function RepositoryCommitDiffView(props) {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className={
-                    "h-5 w-5 transition-transform " +
+                    "h-5 w-5 transition-transform transform-origin-top " +
                     (fileHidden[index] ? "transform -rotate-90" : "")
                   }
                   viewBox="0 0 20 20"
@@ -228,12 +228,6 @@ function RepositoryCommitDiffView(props) {
                 </div>
                 <span className="pr-4">{commit.author.name}</span>
               </div>
-              <div className="pr-4 text-green ">
-                {" + " + commit.stat.addition}
-              </div>
-              <div className="pr-4 text-red">
-                {" - " + commit.stat.deletion}
-              </div>
               <div className="flex-none">
                 <span className="mr-4">
                   {dayjs(commit.author.timestamp * 1000).format("DD-MM-YYYY")}
@@ -246,7 +240,15 @@ function RepositoryCommitDiffView(props) {
             </div>
           </div>
           <div className="flex mt-8 px-4 py-2">
-            <div className="flex-1">{commit.files_changed} Files Changed</div>
+            <div className="flex-1 flex">
+              <div className="pr-4">{commit.files_changed} Files Changed</div>
+              <div className="pr-4 text-green ">
+                {" + " + commit.stat.addition}
+              </div>
+              <div className="pr-4 text-red">
+                {" - " + commit.stat.deletion}
+              </div>
+            </div>
             <div className="flex-none btn-group">
               <button
                 className={

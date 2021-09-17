@@ -24,8 +24,8 @@ export default function RepositoryHeader({ repository }) {
         <div className="mr-2">/</div>
         <div>{repository.name}</div>
       </div>
-      <div className="flex text-sm">
-        <div className="flex items-center text-xs uppercase text-type-secondary font-bold">
+      <div className="flex text-sm divide-x divide-grey">
+        <div className="flex items-center text-xs uppercase text-type-secondary font-bold pr-8">
           <svg
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -41,8 +41,7 @@ export default function RepositoryHeader({ repository }) {
 
           <span>Watchers - {repository.stargazers.length}</span>
         </div>
-        <div className="divider divider-vertical"></div>
-        <div className="flex items-center text-xs uppercase text-type-secondary font-bold">
+        <div className="flex items-center text-xs uppercase text-type-secondary font-bold px-8">
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -60,8 +59,7 @@ export default function RepositoryHeader({ repository }) {
 
           <span>Score - 0</span>
         </div>
-        <div className="divider divider-vertical"></div>
-        <div className="flex items-center text-xs uppercase text-type-secondary font-bold">
+        <div className="flex items-center text-xs uppercase text-type-secondary font-bold pl-8">
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
