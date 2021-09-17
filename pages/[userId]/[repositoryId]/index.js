@@ -42,15 +42,23 @@ function RepositoryView(props) {
     commit: { author: {}, message: "" },
     oid: "",
   });
+  const [selectedBranch, setSelectedBranch] = useState(
+    repository.defaultBranch
+  );
 
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.id, repository.name);
     console.log("repository", r);
     if (r) setRepository(r);
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && r.branches.length) {
+      let branchSha = getBranchSha(r.defaultBranch, r.branches);
+      if (!branchSha) {
+        setSelectedBranch(r.branches[0].name);
+        branchSha = r.branches[0].sha;
+      }
       const res = await initRepository(
         r.id,
-        getBranchSha(r.defaultBranch, r.branches),
+        branchSha,
         r.name,
         router.query.userId,
         []
@@ -71,7 +79,7 @@ function RepositoryView(props) {
       }
       const readme = await initRepository(
         r.id,
-        getBranchSha(r.defaultBranch, r.branches),
+        branchSha,
         r.name,
         router.query.userId,
         ["README.md"]
@@ -126,7 +134,7 @@ function RepositoryView(props) {
                       repository.name +
                       "/tree"
                     }
-                    branchName={repository.defaultBranch}
+                    branchName={selectedBranch}
                   />
                 </div>
                 <div className="ml-4">
@@ -218,12 +226,12 @@ function RepositoryView(props) {
                       "/" +
                       repository.name +
                       "/commits/" +
-                      repository.defaultBranch
+                      selectedBranch
                     }
                   />
                   <FileBrowser
                     entityList={entityList}
-                    branchName={repository.defaultBranch}
+                    branchName={selectedBranch}
                     baseUrl={"/" + repository.owner.id + "/" + repository.name}
                     repoPath={[]}
                   />

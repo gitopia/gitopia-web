@@ -157,7 +157,7 @@ export default function BranchSelector({
             })}
           </ul>
         ) : (
-          <div className="text-xs p-5">{"No " + tab}</div>
+          <div className="text-xs p-5 text-type-secondary">{"No " + tab}</div>
         )}
       </div>
     </div>
