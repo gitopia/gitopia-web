@@ -113,7 +113,6 @@ export const initRepository = async (
   } catch (e) {
     console.error(e);
   }
-  console.log("parsedCommitObject", parsedCommitObject);
   if (parsedCommitObject) {
     const foundEntity = await findEntity(
       repoId,
@@ -122,7 +121,6 @@ export const initRepository = async (
       projectRoot,
       Array(...path)
     );
-    console.log("Entity", foundEntity);
     return { commit: parsedCommitObject, entity: foundEntity };
   } else {
     return { commit: null, entity: null };

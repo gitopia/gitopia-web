@@ -5,7 +5,6 @@ export default function CommitDetailRow({
   commitDetail,
   commitInBranchLink = "",
 }) {
-  console.log("commitInBranchLink", commitInBranchLink);
   return (
     <div className="flex px-2 py-4 bg-base-200 items-center">
       <svg

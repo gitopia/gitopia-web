@@ -19,7 +19,7 @@ export async function getServerSideProps() {
   return { props: {} };
 }
 
-function RepositoryTreeView(props) {
+function RepositoryCommitDiffView(props) {
   const router = useRouter();
   const [repository, setRepository] = useState({
     id: null,
@@ -303,4 +303,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryTreeView);
+export default connect(mapStateToProps, {})(RepositoryCommitDiffView);
