@@ -12,33 +12,28 @@ function LabelSelector({
 }) {
   const menuDiv = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [currentLabels, setCurrentLabels] = useState([]);
+  const [checkMap, setCheckMap] = useState({});
 
   const updateLabels = async () => {
     setIsSaving(true);
     const list = [];
-    currentLabels.map((l) => {
-      if (l.selected) list.push(l.id);
+    repoLabels.map((l) => {
+      if (checkMap[l.id]) list.push(l.id);
     });
     if (onChange) await onChange(list);
     await resetLabels();
     setIsSaving(false);
   };
 
-  const resetLabels = async () => {
-    const allLabels = repoLabels;
-    allLabels.map((l) => {
-      if (labels.includes(l.id)) {
-        l.selected = true;
-      } else {
-        l.selected = false;
-      }
+  const resetLabels = () => {
+    const newCheckMap = {};
+    repoLabels.map((l) => {
+      newCheckMap[l.id] = labels.includes(l.id);
     });
-    console.log("reset labels");
-    setCurrentLabels(allLabels);
+    setCheckMap(newCheckMap);
   };
 
-  useEffect(resetLabels, [repoLabels]);
+  useEffect(resetLabels, [repoLabels, labels]);
 
   return (
     <div className={"dropdown dropdown-end w-full"} tabIndex="0" ref={menuDiv}>
@@ -67,18 +62,17 @@ function LabelSelector({
             <a className="btn btn-block btn-ghost btn-sm">Edit Labels</a>
           </Link>
         </div>
-        {currentLabels.map((l, i) => {
+        {repoLabels.map((l, i) => {
           return (
             <div className="form-control" key={"label" + i}>
               <label className="cursor-pointer label justify-start">
                 <input
                   type="checkbox"
-                  checked={l.selected}
+                  checked={checkMap[l.id]}
                   onChange={() => {
-                    const newLabels = [...currentLabels];
-                    newLabels[i] = { ...l, selected: !l.selected };
-                    console.log(newLabels);
-                    setCurrentLabels(newLabels);
+                    let newCheckMap = { ...checkMap };
+                    newCheckMap[l.id] = !newCheckMap[l.id];
+                    setCheckMap(newCheckMap);
                   }}
                   className="checkbox checkbox-sm mr-2"
                 />
