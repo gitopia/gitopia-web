@@ -406,13 +406,13 @@ export const updateIssueLabels = ({
       return null;
     const issueAddLabels = {
       creator: wallet.selectedAddress,
-      id: issueId,
-      labels: addedLabels,
+      issueId: issueId,
+      labelIds: addedLabels,
     };
     const issueRemoveLabels = {
       creator: wallet.selectedAddress,
-      id: issueId,
-      labels: removedLabels,
+      issueId: issueId,
+      labelIds: removedLabels,
     };
     console.log("add labels", issueAddLabels);
     console.log("remove labels", issueRemoveLabels);
