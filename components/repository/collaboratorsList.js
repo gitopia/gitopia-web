@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { updateCollaborator } from "../../store/actions/repository";
 import getUser from "../../helpers/getUser";
 
-function CollaboratorsList({ repoId, collaborators, ...props }) {
+function CollaboratorsList({ repoId, collaborators = [], ...props }) {
   const [collabAddress, setCollabAddress] = useState("");
   const [collabHint, setCollabHint] = useState({
     shown: false,
@@ -13,6 +13,7 @@ function CollaboratorsList({ repoId, collaborators, ...props }) {
   });
   const [collabRole, setCollabRole] = useState("READ");
   const [isAdding, setIsAdding] = useState(false);
+  console.log("collabs", collaborators);
 
   const validateCollaborator = async () => {
     const res = await getUser(collabAddress);
@@ -51,10 +52,10 @@ function CollaboratorsList({ repoId, collaborators, ...props }) {
         </tr>
       </thead>
       <tbody>
-        {collaborators.map((c) => (
-          <tr>
-            <td>{c.address}</td>
-            <td>{c.role}</td>
+        {collaborators.map((c, i) => (
+          <tr key={"collaborator" + i}>
+            <td className="text-sm">{c.id}</td>
+            <td className="text-sm">{c.permission}</td>
             <td>
               <button className="btn btn-sm btn-accent btn-outline btn-block">
                 Remove
