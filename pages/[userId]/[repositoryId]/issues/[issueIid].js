@@ -203,17 +203,22 @@ function RepositoryIssueView(props) {
                       </div>
                     </div>
                     <div className="p-4 markdown-body">
-                      <ReactMarkdown>{issue.description}</ReactMarkdown>
+                      <ReactMarkdown linkTarget="_blank">
+                        {issue.description}
+                      </ReactMarkdown>
                     </div>
                   </div>
                 </div>
                 {allComments.map((c, i) => {
                   if (c.system) {
-                    return <SystemCommentView comment={c} />;
+                    return (
+                      <SystemCommentView comment={c} key={"comment" + i} />
+                    );
                   } else {
                     return (
                       <CommentView
                         comment={c}
+                        key={"comment" + i}
                         userAddress={props.selectedAddress}
                         onUpdate={async (id) => {
                           const newComment = await getComment(id);
@@ -285,7 +290,20 @@ function RepositoryIssueView(props) {
                 />
                 <div className="text-xs px-3 mt-2">
                   {issue.assignees.length
-                    ? issue.assignees.map((a) => shrinkAddress(a)).join(", ")
+                    ? issue.assignees.map((a, i) => (
+                        <span
+                          className="pr-2 pb-2 whitespace-nowrap"
+                          key={"assignee" + i}
+                        >
+                          <a
+                            href={"/" + a}
+                            className="btn-link cursor-pointer"
+                            target="_blank"
+                          >
+                            {shrinkAddress(a)}
+                          </a>
+                        </span>
+                      ))
                     : "No one"}
                 </div>
               </div>
@@ -327,7 +345,10 @@ function RepositoryIssueView(props) {
                           color: "",
                         };
                         return (
-                          <span className="pr-2 pb-2 whitespace-nowrap">
+                          <span
+                            className="pr-2 pb-2 whitespace-nowrap"
+                            key={"label" + i}
+                          >
                             <Label color={label.color} name={label.name} />
                           </span>
                         );
