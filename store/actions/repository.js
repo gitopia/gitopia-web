@@ -113,7 +113,7 @@ export const createIssue = ({
       title,
       description,
       repositoryId,
-      labels,
+      labelIds: labels,
       weight,
       assignees,
     };

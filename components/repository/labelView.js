@@ -2,7 +2,7 @@ import { useState } from "react";
 import Label from "./label";
 import LabelEditor from "./labelEditor";
 
-function LabelView({ label, repoId, onDelete, ...props }) {
+function LabelView({ label, repoId, onDelete, refreshLabels, ...props }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -15,8 +15,10 @@ function LabelView({ label, repoId, onDelete, ...props }) {
           initialLabel={label}
           repoId={repoId}
           labelId={label.id}
-          onSuccess={(l) => {
+          onSuccess={async (l) => {
             console.log(l);
+            if (refreshLabels) await refreshLabels();
+            setIsEditing(false);
           }}
           onCancel={() => {
             setIsEditing(false);

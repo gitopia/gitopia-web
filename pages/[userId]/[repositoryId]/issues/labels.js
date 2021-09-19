@@ -35,11 +35,13 @@ function RepositoryIssueLabelsView(props) {
 
   const [isAddingLabel, setIsAddingLabel] = useState(false);
 
-  useEffect(async () => {
+  const refreshLabels = async () => {
     const r = await getUserRepository(repository.owner.id, repository.name);
     console.log(r);
     if (r) setRepository(r);
-  }, [router.query]);
+  };
+
+  useEffect(refreshLabels, [router.query]);
 
   // const getAllLabels = async () => {
   //   if (repository) {
@@ -100,11 +102,7 @@ function RepositoryIssueLabelsView(props) {
                 repoId={repository.id}
                 onSuccess={async (label) => {
                   console.log(label);
-                  const r = await getUserRepository(
-                    repository.owner.id,
-                    repository.name
-                  );
-                  if (r) setRepository(r);
+                  await refreshLabels();
                   setIsAddingLabel(false);
                 }}
                 onCancel={() => {
@@ -117,7 +115,13 @@ function RepositoryIssueLabelsView(props) {
           )}
           <div className="mt-2 divide-y divide-grey">
             {repository.labels.map((l, i) => {
-              return <LabelView label={l} repoId={repository.id} />;
+              return (
+                <LabelView
+                  label={l}
+                  repoId={repository.id}
+                  refreshLabels={refreshLabels}
+                />
+              );
             })}
           </div>
         </main>
