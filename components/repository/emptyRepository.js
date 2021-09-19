@@ -77,7 +77,7 @@ export default function EmptyRepository(props) {
                 </button>
               </div>
             </div>
-            <div class="mockup-code mb-4">
+            <div className="mockup-code mb-4">
               <pre data-prefix="$">
                 <code>git remote add origin {remoteUrl}</code>
               </pre>
@@ -88,7 +88,7 @@ export default function EmptyRepository(props) {
           </div>
         </div>
         <div className="rounded-md py-8 flex flex-col">
-          <div className="flex-1 mb-8">
+          <div className="flex-1 mb-8 text-type-tertiary">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -117,8 +117,8 @@ export default function EmptyRepository(props) {
             </div>
           </div>
         </div>
-        <div className="rounded-md py-8 flex flex-col">
-          <div className="flex-1 mb-8">
+        <div className="rounded-md py-8">
+          <div className="mb-8 text-type-tertiary">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -145,7 +145,7 @@ export default function EmptyRepository(props) {
                 </button>
               </div>
             </div>
-            <div class="mockup-code mb-4">
+            <div className="mockup-code mb-4">
               <pre data-prefix="$">
                 <code>echo "# hello world!" >> README.md</code>
               </pre>

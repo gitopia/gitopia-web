@@ -9,6 +9,7 @@ function CommentView({
   userAddress,
   onUpdate,
   onDelete,
+  key,
   ...props
 }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -16,7 +17,7 @@ function CommentView({
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
-    <div className="flex w-full mt-8" key={comment.id}>
+    <div className="flex w-full mt-8" key={key}>
       <div className="flex-none mr-4">
         <div className="avatar">
           <div className="mb-8 rounded-full w-10 h-10">
@@ -96,7 +97,7 @@ function CommentView({
             </div>
           </div>
           <div className="p-4 markdown-body">
-            <ReactMarkdown>{comment.body}</ReactMarkdown>
+            <ReactMarkdown linkTarget="_blank">{comment.body}</ReactMarkdown>
           </div>
         </div>
       )}

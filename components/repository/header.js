@@ -22,7 +22,9 @@ export default function RepositoryHeader({ repository }) {
           </Link>
         </div>
         <div className="mr-2">/</div>
-        <div>{repository.name}</div>
+        <Link href={"/" + repository.owner.id + "/" + repository.name}>
+          <a className="btn-link">{repository.name}</a>
+        </Link>
       </div>
       <div className="flex text-sm divide-x divide-grey">
         <div className="flex items-center text-xs uppercase text-type-secondary font-bold pr-8">
