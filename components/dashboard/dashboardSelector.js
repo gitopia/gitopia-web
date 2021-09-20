@@ -37,7 +37,7 @@ function DashboardSelector(props) {
   }, [props.dashboards, props.currentDashboard]);
 
   return props.address ? (
-    <div className="pl-2 pr-4 mt-8">
+    <div className="pl-4 pr-4 mt-8">
       <ClickAwayListener
         onClickAway={() => {
           setMenuOpen(false);
@@ -50,7 +50,7 @@ function DashboardSelector(props) {
         >
           <div
             tabIndex="0"
-            className="m-1 btn btn-ghost btn-block"
+            className="btn btn-ghost btn-block"
             onClick={() => {
               setMenuOpen(true);
             }}

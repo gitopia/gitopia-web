@@ -100,7 +100,7 @@ function AccountView(props) {
           </div>
           <div className="flex flex-1 mt-8">
             <div className="tabs">
-              <Link href={hrefBase}>
+              {/* <Link href={hrefBase}>
                 <a
                   className={
                     "tab tab-lg tab-bordered" +
@@ -120,7 +120,7 @@ function AccountView(props) {
 
                   <span>Overview</span>
                 </a>
-              </Link>
+              </Link> */}
               <Link href={hrefBase}>
                 <a
                   className={
@@ -144,7 +144,7 @@ function AccountView(props) {
                   <span>Repositories</span>
                 </a>
               </Link>
-              <Link href={hrefBase}>
+              {/* <Link href={hrefBase}>
                 <a
                   className={
                     "tab tab-lg tab-bordered" +
@@ -196,7 +196,7 @@ function AccountView(props) {
                   </svg>
                   <span>Packages</span>
                 </a>
-              </Link>
+              </Link> */}
             </div>
           </div>
           <div className="mt-8">
