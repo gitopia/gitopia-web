@@ -199,12 +199,12 @@ function RepositoryView(props) {
                     </div>
                   </div>
                   <div className="flex-1 text-right">
-                    <div className="dropdown dropdown-end">
+                    <div className="dropdown dropdown-end w-full max-w-screen-md">
                       <button
-                        className="btn btn-sm btn-primary w-24"
+                        className="btn btn-sm btn-primary w-26"
                         tabIndex="0"
                       >
-                        <div className="flex-1 text-left px-2">Code</div>
+                        <div className="flex-1 text-left px-2">Clone</div>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5"
@@ -218,43 +218,48 @@ function RepositoryView(props) {
                           />
                         </svg>
                       </button>
-                      <div className="shadow-lg dropdown-content bg-base-300 rounded mt-1 overflow-hidden w-64 p-4 text-left">
+                      <div className="shadow-lg dropdown-content bg-base-300 rounded mt-1 overflow-hidden w-full p-4 text-left">
                         <div className="">
-                          <div className="text-xs uppercase text-type-secondary ml-2 mb-2 font-bold">
-                            Remote URL
+                          <div className="text-xs uppercase text-type-secondary ml-2 font-bold">
+                            Clone commands
                           </div>
-                          <div className="form-control w-full">
-                            <div className="relative">
-                              <input
-                                name="repository-url"
-                                type="text"
-                                value={remoteUrl}
-                                readOnly={true}
-                                className="w-full pr-12 input input-ghost input-sm input-bordered"
+                          <button
+                            className="absolute right-4 top-4 btn btn-ghost btn-xs"
+                            onClick={(e) => {
+                              navigator.clipboard.writeText(
+                                "curl https://get.gitopia.com | bash # Install git remote helper\ngit clone gitopia://" +
+                                  remoteUrl
+                              );
+                              props.notify("Copied to clipboard", "info");
+                            }}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
                               />
-                              <button
-                                className="absolute right-0 top-0 rounded btn btn-ghost btn-sm"
-                                onClick={(e) => {
-                                  navigator.clipboard.writeText(remoteUrl);
-                                  props.notify("Copied to clipboard", "info");
-                                }}
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-5 w-5"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                                  />
-                                </svg>
-                              </button>
-                            </div>
+                            </svg>
+                          </button>
+                          <div className="w-full mt-4">
+                            <textarea
+                              rows={2}
+                              cols={120}
+                              name="repository-url"
+                              type="text"
+                              value={
+                                "curl https://get.gitopia.com | bash # Install git remote helper\ngit clone gitopia://{remoteUrl}"
+                              }
+                              readOnly={true}
+                              className="w-full input input-ghost input-xs input-bordered h-14 py-2"
+                            />
                           </div>
                         </div>
                       </div>

@@ -72,12 +72,34 @@ export default function EmptyRepository(props) {
                 Push existing repository from command line
               </div>
               <div className="flex-none w-44">
-                <button className="btn btn-primary btn-outline btn-sm btn-block">
+                <button
+                  className="btn btn-primary btn-outline btn-sm btn-block"
+                  onClick={(e) => {
+                    navigator.clipboard.writeText(
+                      "curl https://get.gitopia.com | bash # Install git remote helper\nexport GITOPIA_WALLET=/path/to/wallet.json # Set path of downloaded wallet\ngit remote add origin " +
+                        remoteUrl +
+                        "\ngit push -u origin master"
+                    );
+                    dispatch(notify("Copied to clipboard", "info"));
+                  }}
+                >
                   Copy commands
                 </button>
               </div>
             </div>
             <div className="mockup-code mb-4">
+              <pre data-prefix="$">
+                <code>
+                  curl https://get.gitopia.com | bash # Install git remote
+                  helper
+                </code>
+              </pre>
+              <pre data-prefix="$">
+                <code>
+                  export GITOPIA_WALLET=/path/to/wallet.json # Set path of
+                  downloaded wallet
+                </code>
+              </pre>
               <pre data-prefix="$">
                 <code>git remote add origin {remoteUrl}</code>
               </pre>
@@ -87,7 +109,7 @@ export default function EmptyRepository(props) {
             </div>
           </div>
         </div>
-        <div className="rounded-md py-8 flex flex-col">
+        {/* <div className="rounded-md py-8 flex flex-col">
           <div className="flex-1 mb-8 text-type-tertiary">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -116,7 +138,7 @@ export default function EmptyRepository(props) {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="rounded-md py-8">
           <div className="mb-8 text-type-tertiary">
             <svg
@@ -140,12 +162,34 @@ export default function EmptyRepository(props) {
                 Create a new repository from command line
               </div>
               <div className="flex-none w-44">
-                <button className="btn btn-primary btn-outline btn-sm btn-block">
+                <button
+                  className="btn btn-primary btn-outline btn-sm btn-block"
+                  onClick={(e) => {
+                    navigator.clipboard.writeText(
+                      'curl https://get.gitopia.com | bash # Install git remote helper\nexport GITOPIA_WALLET=/path/to/wallet.json # Set path of downloaded wallet\necho "# hello world!" >> README.md\ngit init\ngit add README.md\ngit commit -m "initial commit"\ngit remote add origin ' +
+                        remoteUrl +
+                        "\ngit push -u origin master"
+                    );
+                    dispatch(notify("Copied to clipboard", "info"));
+                  }}
+                >
                   Copy commands
                 </button>
               </div>
             </div>
             <div className="mockup-code mb-4">
+              <pre data-prefix="$">
+                <code>
+                  curl https://get.gitopia.com | bash # Install git remote
+                  helper
+                </code>
+              </pre>
+              <pre data-prefix="$">
+                <code>
+                  export GITOPIA_WALLET=/path/to/wallet.json # Set path of
+                  downloaded wallet
+                </code>
+              </pre>
               <pre data-prefix="$">
                 <code>echo "# hello world!" >> README.md</code>
               </pre>
