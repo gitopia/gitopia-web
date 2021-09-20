@@ -1,4 +1,5 @@
 import Link from "next/link";
+import KnowledgeCenter from "./knowledgeCenter";
 
 function OrgDashboard({ organization = {} }) {
   return (
@@ -62,41 +63,7 @@ function OrgDashboard({ organization = {} }) {
 
         <a className="btn btn-primary btn-link btn-xs">Import files</a>
       </div> */}
-      <div className="">
-        <div className="flex mb-6 items-center">
-          <div className="border-2 border-grey rounded-full w-16 h-16 p-3 mr-8">
-            <img src="/logo-g.svg"></img>
-          </div>
-          <div className="flex-1 text-sm font-bold">Learn About Gitopia</div>
-          <div className="text-sm">
-            See our{" "}
-            <a href="#" className="btn-link">
-              Knowledge Center
-            </a>{" "}
-            for more information
-          </div>
-        </div>
-        <div className="flex ml-24 border-b border-grey py-2 mb-4">
-          <div className="flex-1 text-sm">Why is Gitopia Different?</div>
-          <a href="#" className="btn btn-link btn-xs">
-            Read More
-          </a>
-        </div>
-        <div className="flex ml-24 border-b border-grey py-2 mb-4">
-          <div className="flex-1 text-sm">
-            Can I still own my own repositories?
-          </div>
-          <a href="#" className="btn btn-link btn-xs">
-            Read More
-          </a>
-        </div>
-        <div className="flex ml-24 border-b border-grey py-2 mb-4">
-          <div className="flex-1 text-sm">What is an organization?</div>
-          <a href="#" className="btn btn-link btn-xs">
-            Read More
-          </a>
-        </div>
-      </div>
+      <KnowledgeCenter />
     </main>
   );
 }
