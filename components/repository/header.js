@@ -26,7 +26,7 @@ export default function RepositoryHeader({ repository }) {
           <a className="btn-link">{repository.name}</a>
         </Link>
       </div>
-      <div className="flex text-sm divide-x divide-grey">
+      {/* <div className="flex text-sm divide-x divide-grey">
         <div className="flex items-center text-xs uppercase text-type-secondary font-bold pr-8">
           <svg
             viewBox="0 0 24 24"
@@ -81,7 +81,7 @@ export default function RepositoryHeader({ repository }) {
 
           <span>Forks - {repository.forks.length}</span>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

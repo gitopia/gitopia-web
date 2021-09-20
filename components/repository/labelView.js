@@ -25,7 +25,7 @@ function LabelView({ label, repoId, onDelete, refreshLabels, ...props }) {
           }}
         />
       ) : (
-        <div className="flex">
+        <div className="flex items-center">
           <div className="flex-none w-64">
             <Label color={label.color} name={label.name} />
           </div>

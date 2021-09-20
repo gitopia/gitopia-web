@@ -48,7 +48,7 @@ export default function RepositoryMainTabs({ hrefBase, active }) {
             <span>Issues</span>
           </a>
         </Link>
-        <Link href={"/" + hrefBase + "/pulls"}>
+        {/* <Link href={"/" + hrefBase + "/pulls"}>
           <a
             className={
               "tab tab-lg tab-bordered" +
@@ -78,7 +78,7 @@ export default function RepositoryMainTabs({ hrefBase, active }) {
 
             <span>Pull Requests</span>
           </a>
-        </Link>
+        </Link> */}
         <Link href={"/" + hrefBase + "/settings"}>
           <a
             className={
