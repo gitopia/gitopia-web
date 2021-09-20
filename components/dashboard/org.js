@@ -11,7 +11,7 @@ function OrgDashboard({ organization = {} }) {
           </Link>
         </div>
         <div className="flex-1"></div>
-        <div>
+        {/* <div>
           <div className="text-xs uppercase ml-2">Show:</div>
           <select
             className="select select-ghost select-xs w-32"
@@ -21,7 +21,7 @@ function OrgDashboard({ organization = {} }) {
             <option value="2">Issues</option>
             <option value="3">Proposals</option>
           </select>
-        </div>
+        </div> */}
       </div>
       <div className="flex mb-4">
         <div className="flex flex-1 bg-box-grad-tl bg-base-200 p-4 rounded-md">
@@ -39,7 +39,7 @@ function OrgDashboard({ organization = {} }) {
           </div>
         </div>
       </div>
-      <div className="flex mb-12 bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md">
+      {/* <div className="flex mb-12 bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md">
         <div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -61,7 +61,7 @@ function OrgDashboard({ organization = {} }) {
         </div>
 
         <a className="btn btn-primary btn-link btn-xs">Import files</a>
-      </div>
+      </div> */}
       <div className="">
         <div className="flex mb-6 items-center">
           <div className="border-2 border-grey rounded-full w-16 h-16 p-3 mr-8">

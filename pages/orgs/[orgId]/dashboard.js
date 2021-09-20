@@ -32,15 +32,19 @@ function OrgDashboard(props) {
       </Head>
       <Header />
       <div className="flex flex-1">
-        <div className="w-64 border-r border-grey">
-          <DashboardSelector />
-          <TopRepositories
-            repositories={props.repositories.map((r) => {
-              return { owner: props.currentDashboard, ...r };
-            })}
-          />
-          {/* <BackendStatus /> */}
-          <FaucetReceiver />
+        <div className="w-64 border-r border-grey flex flex-col">
+          <div className="flex-1">
+            <DashboardSelector />
+            <TopRepositories
+              repositories={props.repositories.map((r) => {
+                return { owner: props.currentDashboard, ...r };
+              })}
+            />
+          </div>
+          <div>
+            {/* <BackendStatus /> */}
+            <FaucetReceiver />
+          </div>
         </div>
         <div className="flex-1 px-4">
           <Org organization={props.organization} />

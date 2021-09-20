@@ -33,15 +33,19 @@ function Home(props) {
       </Head>
       <Header />
       <div className="flex-1 flex">
-        <div className="w-64 border-r border-grey">
-          <DashboardSelector />
-          <TopRepositories
-            repositories={props.repositories.map((r) => {
-              return { owner: props.selectedAddress, ...r };
-            })}
-          />
-          {/* <BackendStatus /> */}
-          <FaucetReceiver />
+        <div className="w-64 border-r border-grey flex flex-col">
+          <div className="flex-1">
+            <DashboardSelector />
+            <TopRepositories
+              repositories={props.repositories.map((r) => {
+                return { owner: props.selectedAddress, ...r };
+              })}
+            />
+          </div>
+          <div>
+            {/* <BackendStatus /> */}
+            <FaucetReceiver />
+          </div>
         </div>
         <div className="flex-1 px-4">
           <UserDashboard />
