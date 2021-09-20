@@ -86,7 +86,7 @@
 }
 
 .row {
-  max-width: 800px;
+  max-width: 900px;
   text-align: center;
 }
 
@@ -653,7 +653,7 @@
   background: #19072f;
   bottom: 0;
   left: 0;
-  padding: 24px 36px;
+  padding: 24px 48px;
 }
 
 .teamName {
