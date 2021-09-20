@@ -16,6 +16,7 @@ import shrinkAddress from "../../../../helpers/shrinkAddress";
 import LabelSelector from "../../../../components/repository/labelSelector";
 import getIssueAllLabels from "../../../../helpers/getIssueAllLabels";
 import Label from "../../../../components/repository/label";
+import Link from "next/link";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -145,7 +146,20 @@ function RepositoryIssueCreateView(props) {
                 />
                 <div className="text-xs px-3 mt-2">
                   {assignees.length
-                    ? assignees.map((a) => shrinkAddress(a)).join(", ")
+                    ? assignees.map((a, i) => (
+                        <span
+                          className="pr-2 pb-2 whitespace-nowrap"
+                          key={"assignee" + i}
+                        >
+                          <a
+                            href={"/" + a}
+                            className="btn-link cursor-pointer"
+                            target="_blank"
+                          >
+                            {shrinkAddress(a)}
+                          </a>
+                        </span>
+                      ))
                     : "No one"}
                 </div>
               </div>
