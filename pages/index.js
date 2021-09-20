@@ -1227,7 +1227,6 @@ export default function Landing() {
             <img className={styles.teamImage} src="/parth.jpg" loading="lazy" />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Parth Oberoi</div>
-              <div className={styles.teamDesig}>CEO & Founder</div>
             </div>
           </div>
           <div className={"block row-span-1 " + styles.bufferCard}></div>
@@ -1235,7 +1234,6 @@ export default function Landing() {
             <img className={styles.teamImage} src="/faza.jpg" loading="lazy" />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Faza Mahamood</div>
-              <div className={styles.teamDesig}>CTO & Founder</div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
@@ -1246,7 +1244,6 @@ export default function Landing() {
             />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Snehil Buxy</div>
-              <div className={styles.teamDesig}>Senior Developer</div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
@@ -1257,14 +1254,28 @@ export default function Landing() {
             />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Kushagra Singh</div>
-              <div className={styles.teamDesig}>Marketing</div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/stian.jpg" loading="lazy" />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Stian Sandsgaard</div>
-              <div className={styles.teamDesig}>Design</div>
+            </div>
+          </div>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/hariom.jpg"
+              loading="lazy"
+            />
+            <div className={styles.teamLabel}>
+              <div className={styles.teamName}>Hariom Verma</div>
+            </div>
+          </div>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img className={styles.teamImage} src="/ejaaz.jpg" loading="lazy" />
+            <div className={styles.teamLabel}>
+              <div className={styles.teamName}>Ejaaz Mahamood</div>
             </div>
           </div>
         </div>
