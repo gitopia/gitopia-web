@@ -57,7 +57,12 @@ function RepositoryIssueCreateView(props) {
       const res = await props.createIssue(issue);
       if (res && res.code === 0) {
         router.push(
-          "/" + repository.owner.id + "/" + repository.name + "/issues"
+          "/" +
+            repository.owner.id +
+            "/" +
+            repository.name +
+            "/issues/" +
+            (Number(repository.issuesCount) + 1)
         );
       }
     }
