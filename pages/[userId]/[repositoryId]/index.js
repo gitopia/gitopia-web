@@ -227,7 +227,7 @@ function RepositoryView(props) {
                             className="absolute right-4 top-4 btn btn-ghost btn-xs"
                             onClick={(e) => {
                               navigator.clipboard.writeText(
-                                "curl https://get.gitopia.com | bash # Install git remote helper\ngit clone gitopia://" +
+                                "curl https://get.gitopia.com | bash # Install git remote helper\ngit clone " +
                                   remoteUrl
                               );
                               props.notify("Copied to clipboard", "info");
@@ -255,10 +255,11 @@ function RepositoryView(props) {
                               name="repository-url"
                               type="text"
                               value={
-                                "curl https://get.gitopia.com | bash # Install git remote helper\ngit clone gitopia://{remoteUrl}"
+                                "curl https://get.gitopia.com | bash # Install git remote helper\ngit clone " +
+                                remoteUrl
                               }
                               readOnly={true}
-                              className="w-full input input-ghost input-xs input-bordered h-14 py-2"
+                              className="w-full input input-ghost input-xs input-bordered h-20 py-2"
                             />
                           </div>
                         </div>
