@@ -65,6 +65,18 @@ function AccountView(props) {
     ? org.name.slice(0, 1)
     : "x";
 
+  const avatarLink =
+    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === org.address
+      ? "/logo-g.svg"
+      : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+        letter;
+
+  console.log(
+    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS,
+    user.creator,
+    avatarLink
+  );
+
   return (
     <div
       data-theme="dark"
@@ -84,17 +96,15 @@ function AccountView(props) {
                   "w-20 h-20 " + (user.id ? "rounded-full" : "rounded")
                 }
               >
-                <img
-                  src={
-                    "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                    letter
-                  }
-                />
+                <img src={avatarLink} />
               </div>
             </div>
             <div className="flex-1">
               <div className="text-2xl">
                 {user.id ? user.creator : org.name}
+              </div>
+              <div className="text-sm text-type-secondary mt-2">
+                {user.id ? user.email : org.description}
               </div>
             </div>
           </div>
