@@ -10,6 +10,7 @@ export const walletActions = {
   SIGN_OUT: "SIGN_OUT",
   STORE_WALLETS: "STORE_WALLETS",
   UPDATE_BALANCE: "UPDATE_BALANCE",
+  REMOVE_WALLET: "REMOVE_WALLET",
 };
 
 export const userActions = {

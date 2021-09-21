@@ -7,7 +7,6 @@ export default function FileBrowser({
   branchName,
   repoName,
 }) {
-  console.log("filebrowser", baseUrl, branchName, repoPath);
   return (
     <>
       {entityList.map((e, i) => {
@@ -16,11 +15,11 @@ export default function FileBrowser({
             href={[baseUrl, "tree", branchName, ...repoPath, e.path].join("/")}
             key={"entity" + i}
           >
-            <a className="flex px-2 py-2 items-center hover:bg-neutral">
+            <a className="flex px-2 py-2 items-center hover:bg-neutral text-sm">
               {e.type === "blob" ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 mr-2"
+                  className="h-5 w-5 mr-2"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -35,7 +34,7 @@ export default function FileBrowser({
               ) : (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 mr-2"
+                  className="h-5 w-5 mr-2"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

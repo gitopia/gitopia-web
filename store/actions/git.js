@@ -5,7 +5,10 @@ import _, { sortBy } from "lodash";
 
 const fetchGitObject = async (repoId, objectSha) => {
   let obj = null;
-  const baseUrl = process.env.NEXT_PUBLIC_OBJECTS_URL + "/objects";
+  const baseUrl =
+    process.env.NODE_ENV === "development"
+      ? "/api/objects"
+      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/objects";
 
   if (!repoId || !objectSha) return null;
 
@@ -74,7 +77,6 @@ const ensureGitObject = async (repoId, oid, projectRoot) => {
       fileFound = null;
     }
   } catch (e) {}
-  console.log("object file cache", fileFound);
   if (fileFound) {
     return;
   }
@@ -111,7 +113,6 @@ export const initRepository = async (
   } catch (e) {
     console.error(e);
   }
-  console.log("parsedCommitObject", parsedCommitObject);
   if (parsedCommitObject) {
     const foundEntity = await findEntity(
       repoId,
@@ -120,7 +121,6 @@ export const initRepository = async (
       projectRoot,
       Array(...path)
     );
-    console.log("Entity", foundEntity);
     return { commit: parsedCommitObject, entity: foundEntity };
   } else {
     return { commit: null, entity: null };
@@ -134,6 +134,12 @@ const findEntity = async (repoId, oid, type, projectRoot, path) => {
       if (treeObj && treeObj.tree) {
         let pathObj = null;
         treeObj.tree.every((ent) => {
+          if (path[0] === "README.md") {
+            if (ent.path.toLowerCase() === "README.md".toLowerCase()) {
+              pathObj = ent;
+              return false;
+            }
+          }
           if (ent.path === path[0]) {
             pathObj = ent;
             return false;
@@ -201,4 +207,44 @@ const loadFile = async (repoId, oid, projectRoot) => {
     });
   } catch (e) {}
   return parsedBlobObject;
+};
+
+export const getCommits = async (
+  repoId,
+  repoHead,
+  repoName,
+  userId,
+  depth = 10
+) => {
+  const projectRoot = getLocalProjectRoot(repoName, userId);
+  await mkdir(projectRoot);
+  await ensureGitObject(repoId, repoHead, projectRoot);
+  let parsed;
+  try {
+    parsed = await git.readCommit({
+      fs,
+      dir: projectRoot,
+      oid: repoHead,
+    });
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+  if (parsed) {
+    if (parsed.commit && parsed.commit.parent.length === 0)
+      return [{ ...parsed, hasMore: false }];
+    if (depth <= 0) return [{ ...parsed, hasMore: true }];
+    if (parsed.commit && parsed.commit.parent.length) {
+      const subTree = await getCommits(
+        repoId,
+        parsed.commit.parent[0],
+        repoName,
+        userId,
+        depth - 1
+      );
+      return [parsed, ...subTree];
+    }
+  } else {
+    return [];
+  }
 };

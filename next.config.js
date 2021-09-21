@@ -39,7 +39,11 @@ module.exports = withTM({
       },
       {
         source: "/api/objects/:path*",
-        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/:path*",
+        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/objects/:path*",
+      },
+      {
+        source: "/api/diff",
+        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/diff",
       },
     ];
   },

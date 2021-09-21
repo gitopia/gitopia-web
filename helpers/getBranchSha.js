@@ -1,9 +1,16 @@
-export default function getBranchSha(branches = [], branchName) {
+export default function getBranchSha(branchName, branches = [], tags = []) {
   let sha;
   branches.every((b) => {
-    let bName = b.name.replace("refs/heads/", "");
-    if (bName === branchName) {
+    if (b.name === branchName) {
       sha = b.sha;
+      return false;
+    }
+    return true;
+  });
+  tags.every((t) => {
+    if (t.name === branchName) {
+      sha = t.sha;
+      // TODO: handle tag pointer
       return false;
     }
     return true;

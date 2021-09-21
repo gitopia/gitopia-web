@@ -26,15 +26,29 @@ function FaucetReceiver(props) {
   };
 
   return (
-    <div className="my-8">
-      <div className="text-md mx-8 border-b border-grey py-2 mb-4">Faucet</div>
-      <div className="mx-8">
+    <div className="bg-footer-grad py-6">
+      <div className="text-xs text-type-secondary mx-8 mb-4">
+        &copy; Gitopia {new Date().getFullYear()}
+      </div>
+      <div className="mx-6">
         <button
-          className={"btn btn-xs " + (loading === 1 ? "loading" : "")}
+          className={"btn btn-xs btn-link " + (loading === 1 ? "loading" : "")}
           onClick={() => getTokens(1)}
+          disabled={loading}
         >
           Claim free LORE
         </button>
+        {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ? (
+          <a
+            className={"btn btn-xs btn-link mt-2"}
+            href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
+            target="_blank"
+          >
+            View source code
+          </a>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );

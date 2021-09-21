@@ -7,20 +7,21 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
   const [validateAddressError, setValidateAddressError] = useState(null);
   const [checkMap, setCheckMap] = useState({});
   const menuDiv = useRef(null);
+  const inputEl = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [searchAddress, setSearchAddress] = useState("");
   const validAddress = new RegExp("gitopia[a-z0-9]{39}");
+  const collabAddresses = collaborators
+    .filter((x) => x.permission !== "READ")
+    .map((x) => x.id);
 
   const validateUserAddress = async (address) => {
-    if (
-      assignees.includes(address) ||
-      collaborators.includes(address) ||
-      newAssignees.includes(address)
-    ) {
+    if (collabAddresses.includes(address) || newAssignees.includes(address)) {
       setCheckMap({ ...checkMap, [address]: true });
       setValidateAddressError("Address already present");
       return false;
     }
-    if (address !== "" && validAddress.test(address)) {
+    if (address.trim() !== "" && validAddress.test(address)) {
       const res = await getUser(address);
       if (res) {
         setValidateAddressError(null);
@@ -45,16 +46,30 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
     setIsSaving(false);
   };
 
-  useEffect(() => {
+  const resetAssignees = () => {
     const newCheckMap = {};
+    const otherAddresses = [];
     assignees.map((a) => {
       newCheckMap[a] = true;
+      if (!collabAddresses.includes(a)) {
+        otherAddresses.push(a);
+      }
     });
+    setNewAssignees(otherAddresses);
     setCheckMap(newCheckMap);
-  }, [assignees]);
+  };
+
+  useEffect(resetAssignees, [assignees]);
 
   return (
-    <div className={"dropdown dropdown-end w-full"} tabIndex="0" ref={menuDiv}>
+    <div
+      className={"dropdown dropdown-end w-full"}
+      tabIndex="0"
+      ref={menuDiv}
+      onClick={() => {
+        if (inputEl && inputEl.current) inputEl.current.focus();
+      }}
+    >
       <button
         className={
           "btn btn-sm btn-block btn-ghost " + (isSaving ? "loading" : "")
@@ -81,16 +96,18 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
             type="text"
             placeholder="Search By Address"
             autoComplete="off"
+            ref={inputEl}
+            value={searchAddress}
             onKeyUp={async (e) => {
-              // if (e.code === "Enter") {
-              if (await validateUserAddress(e.target.value)) {
-                setNewAssignees([...newAssignees, e.target.value]);
-                setCheckMap({ ...checkMap, [e.target.value]: true });
-                e.target.value = "";
+              const val = e.target.value;
+              if (await validateUserAddress(val)) {
+                setNewAssignees([...newAssignees, val]);
+                setCheckMap({ ...checkMap, [val]: true });
+                setSearchAddress("");
               }
-              // } else {
-              //   setValidateAddressError(null);
-              // }
+            }}
+            onChange={(e) => {
+              setSearchAddress(e.target.value);
             }}
             className="w-full input input-sm input-ghost input-bordered"
           />
@@ -104,6 +121,37 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
             ""
           )}
         </div>
+        {collabAddresses.length ? (
+          <div className="py-2 text-type-secondary font-bold text-xs uppercase">
+            Collaborators
+          </div>
+        ) : (
+          ""
+        )}
+        {collabAddresses.map((c, i) => {
+          return (
+            <div className="form-control" key={"collaborator" + i}>
+              <label className="cursor-pointer label justify-start">
+                <input
+                  type="checkbox"
+                  checked={checkMap[c]}
+                  onChange={() => {
+                    setCheckMap({ ...checkMap, [c]: !checkMap[c] });
+                  }}
+                  className="checkbox checkbox-sm mr-2"
+                />
+                <span className="label-text">{shrinkAddress(c)}</span>
+              </label>
+            </div>
+          );
+        })}
+        {newAssignees.length ? (
+          <div className="py-2 text-type-secondary font-bold text-xs uppercase">
+            Others
+          </div>
+        ) : (
+          ""
+        )}
         {newAssignees.map((a, i) => {
           return (
             <div className="form-control" key={"newassignee" + i}>
@@ -121,54 +169,11 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
             </div>
           );
         })}
-        {assignees.map((a, i) => {
-          return (
-            <div className="form-control" key={"assignee" + i}>
-              <label className="cursor-pointer label justify-start">
-                <input
-                  type="checkbox"
-                  checked={checkMap[a]}
-                  onChange={() => {
-                    setCheckMap({ ...checkMap, [a]: !checkMap[a] });
-                  }}
-                  className="checkbox checkbox-sm mr-2"
-                />
-                <span className="label-text">{shrinkAddress(a)}</span>
-              </label>
-            </div>
-          );
-        })}
-        {collaborators.map((c, i) => {
-          if (!assignees.includes(c))
-            return (
-              <div className="form-control" key={"collaborator" + i}>
-                <label className="cursor-pointer label justify-start">
-                  <input
-                    type="checkbox"
-                    checked={checkMap[c]}
-                    onChange={() => {
-                      setCheckMap({ ...checkMap, [c]: !checkMap[c] });
-                    }}
-                    className="checkbox checkbox-sm mr-2"
-                  />
-                  <span className="label-text">{shrinkAddress(c)}</span>
-                </label>
-              </div>
-            );
-        })}
         <div className="flex w-full mt-2 btn-group">
           <a
             className="btn btn-sm flex-1"
             onClick={() => {
-              setNewAssignees([]);
-              const newCheckMap = {};
-              collaborators.map((c) => {
-                newCheckMap[c] = true;
-              });
-              assignees.map((a) => {
-                newCheckMap[a] = true;
-              });
-              setCheckMap(newCheckMap);
+              resetAssignees();
               if (menuDiv.current) {
                 menuDiv.current.blur();
               }
@@ -180,11 +185,12 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
             className={
               "btn btn-sm btn-primary flex-1 " + (isSaving ? "loading" : "")
             }
-            onClick={() => {
+            onClick={(e) => {
               updateAssignees();
               if (menuDiv.current) {
                 menuDiv.current.blur();
               }
+              e.stopPropagation();
             }}
             disabled={isSaving}
           >

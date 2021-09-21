@@ -217,6 +217,7 @@ function NewRepository(props) {
                   "flex-none btn btn-primary btn-wide " +
                   (repositoryCreating ? "loading " : "")
                 }
+                disabled={repositoryCreating}
                 onClick={createRepository}
               >
                 Create Repository

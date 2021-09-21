@@ -68,11 +68,11 @@ function RepositoryView(props) {
                     Collaborators
                   </a>
                 </li>
-                <li>
+                {/* <li>
                   <a className="rounded" href="#permissions">
                     Permissions
                   </a>
-                </li>
+                </li> */}
               </ul>
             </div>
             <div className="flex-1 px-4">
@@ -80,7 +80,7 @@ function RepositoryView(props) {
                 <div className="text-2xl py-6" id="repository">
                   Repository
                 </div>
-                <div className="py-6">
+                <div className="px-4 py-6">
                   <RenameRepository
                     currentName={repository.name}
                     repoId={repository.id}
@@ -95,23 +95,23 @@ function RepositoryView(props) {
                       router.push(url);
                     }}
                   />
-                </div>
-                <div className="flex py-6 items-center">
-                  <div className="flex-1 mr-8">
-                    <div className="label-text">Transfer Ownership</div>
-                    <div className="label-text-alt text-type-secondary">
-                      Transfer this repository to another use or to an
-                      organization where you have the ability to create
-                      repositories
+                  <div className="flex mt-6 items-center">
+                    <div className="flex-1 mr-8">
+                      <div className="label-text">Transfer Ownership</div>
+                      <div className="label-text-alt text-type-secondary">
+                        Transfer this repository to another use or to an
+                        organization where you have the ability to create
+                        repositories
+                      </div>
+                    </div>
+                    <div className="flex-none w-48">
+                      <button className="btn btn-sm btn-block btn-accent btn-outline">
+                        Transfer Ownership
+                      </button>
                     </div>
                   </div>
-                  <div className="flex-none w-52">
-                    <button className="btn btn-sm btn-block btn-accent btn-outline">
-                      Transfer Ownership
-                    </button>
-                  </div>
                 </div>
-                <div className="flex py-6 items-center">
+                {/* <div className="flex py-6 items-center">
                   <div className="flex-1 mr-8">
                     <div className="label-text">Archive Repository</div>
                     <div className="label-text-alt text-type-secondary">
@@ -119,12 +119,11 @@ function RepositoryView(props) {
                     </div>
                   </div>
                   <div className="flex-none w-52">
-                    {" "}
                     <button className="btn btn-sm btn-block btn-accent btn-outline">
                       Archive Repository
                     </button>
                   </div>
-                </div>
+                </div> */}
               </div>
               <div className="mt-8 divide-y divide-grey">
                 <div className="text-2xl py-6" id="collaborators">
@@ -134,7 +133,7 @@ function RepositoryView(props) {
                   <CollaboratorsList collaborators={repository.collaborators} />
                 </div>
               </div>
-              <div className="mt-8 divide-y divide-grey">
+              {/* <div className="mt-8 divide-y divide-grey">
                 <div className="text-2xl py-6" id="permissions">
                   Permissions
                 </div>
@@ -197,7 +196,7 @@ function RepositoryView(props) {
                     <input type="checkbox" className="toggle toggle-primary" />
                   </label>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </main>

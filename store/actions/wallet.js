@@ -109,6 +109,14 @@ export const unlockWallet = ({ name, password }) => {
   };
 };
 
+export const removeWallet = ({ name }) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: walletActions.REMOVE_WALLET, payload: { name } });
+    dispatch({ type: walletActions.STORE_WALLETS });
+    return true;
+  };
+};
+
 export const switchAccount = (address) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
@@ -165,7 +173,7 @@ export const addAccount = (pathIncrement) => {
 export const createWalletWithMnemonic = ({
   name = null,
   mnemonic,
-  HDpath = "m/44'/118'/0'/0",
+  HDpath = "m/44'/118'/0'/0/",
   prefix = "gitopia",
   password = null,
 }) => {

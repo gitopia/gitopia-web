@@ -1,4 +1,5 @@
 import shrinkAddress from "../../helpers/shrinkAddress";
+import Link from "next/link";
 
 export default function RepositoryHeader({ repository }) {
   return (
@@ -15,12 +16,18 @@ export default function RepositoryHeader({ repository }) {
           <rect x="7" y="18" width="10" height="2" />
         </svg>
 
-        <div className="mr-2">{shrinkAddress(repository.owner.id)}</div>
+        <div className="mr-2">
+          <Link href={"/" + repository.owner.id}>
+            <a className="btn-link">{shrinkAddress(repository.owner.id)}</a>
+          </Link>
+        </div>
         <div className="mr-2">/</div>
-        <div>{repository.name}</div>
+        <Link href={"/" + repository.owner.id + "/" + repository.name}>
+          <a className="btn-link">{repository.name}</a>
+        </Link>
       </div>
-      <div className="flex text-sm">
-        <div className="flex items-center text-xs uppercase text-type-secondary font-bold">
+      {/* <div className="flex text-sm divide-x divide-grey">
+        <div className="flex items-center text-xs uppercase text-type-secondary font-bold pr-8">
           <svg
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -36,8 +43,7 @@ export default function RepositoryHeader({ repository }) {
 
           <span>Watchers - {repository.stargazers.length}</span>
         </div>
-        <div className="divider divider-vertical"></div>
-        <div className="flex items-center text-xs uppercase text-type-secondary font-bold">
+        <div className="flex items-center text-xs uppercase text-type-secondary font-bold px-8">
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -55,8 +61,7 @@ export default function RepositoryHeader({ repository }) {
 
           <span>Score - 0</span>
         </div>
-        <div className="divider divider-vertical"></div>
-        <div className="flex items-center text-xs uppercase text-type-secondary font-bold">
+        <div className="flex items-center text-xs uppercase text-type-secondary font-bold pl-8">
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -76,7 +81,7 @@ export default function RepositoryHeader({ repository }) {
 
           <span>Forks - {repository.forks.length}</span>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

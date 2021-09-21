@@ -71,6 +71,7 @@ function CommentEditor({
                 "btn btn-sm btn-accent btn-outline btn-block " +
                 (togglingIssue ? "loading" : "")
               }
+              disabled={togglingIssue || postingComment}
               onClick={async () => {
                 setTogglingIssue(true);
                 const res = await props.toggleIssueState({ id: issueId });
@@ -83,7 +84,7 @@ function CommentEditor({
                 setTogglingIssue(false);
               }}
             >
-              {issueState === "OPEN" ? "Close" : "Open"} Issue
+              {issueState === "OPEN" ? "Close" : "Re-Open"} Issue
             </button>
           </div>
         ) : (
@@ -107,7 +108,9 @@ function CommentEditor({
               "btn btn-sm btn-primary btn-block " +
               (postingComment ? "loading" : "")
             }
-            disabled={comment.trim().length === 0}
+            disabled={
+              comment.trim().length === 0 || postingComment || togglingIssue
+            }
             onClick={() => (isEdit ? updateComment() : createComment())}
           >
             {isEdit ? "Update" : "Comment"}

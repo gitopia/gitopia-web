@@ -1,35 +1,39 @@
 import { useEffect, useState, useRef } from "react";
 import getIssueAllLabels from "../../helpers/getIssueAllLabels";
+import Label from "./label";
+import Link from "next/link";
 
-function LabelSelector({ onChange, labels = [], ...props }) {
+function LabelSelector({
+  onChange,
+  labels = [],
+  repoLabels = [],
+  editLabels = "",
+  ...props
+}) {
   const menuDiv = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [currentLabels, setCurrentLabels] = useState([]);
+  const [checkMap, setCheckMap] = useState({});
 
   const updateLabels = async () => {
     setIsSaving(true);
     const list = [];
-    currentLabels.map((l) => {
-      if (l.selected) list.push(l.id);
+    repoLabels.map((l) => {
+      if (checkMap[l.id]) list.push(l.id);
     });
     if (onChange) await onChange(list);
     await resetLabels();
     setIsSaving(false);
   };
 
-  const resetLabels = async () => {
-    const allLabels = await getIssueAllLabels();
-    allLabels.map((l) => {
-      if (labels.includes(l.id)) {
-        l.selected = true;
-      } else {
-        l.selected = false;
-      }
+  const resetLabels = () => {
+    const newCheckMap = {};
+    repoLabels.map((l) => {
+      newCheckMap[l.id] = labels.includes(l.id);
     });
-    setCurrentLabels(allLabels);
+    setCheckMap(newCheckMap);
   };
 
-  useEffect(resetLabels, [labels]);
+  useEffect(resetLabels, [repoLabels, labels]);
 
   return (
     <div className={"dropdown dropdown-end w-full"} tabIndex="0" ref={menuDiv}>
@@ -53,25 +57,26 @@ function LabelSelector({ onChange, labels = [], ...props }) {
         </svg>
       </button>
       <div className="dropdown-content shadow-lg bg-base-300 rounded w-56 p-4 mt-1">
-        {currentLabels.map((l, i) => {
+        <div className="mb-2">
+          <Link href={editLabels}>
+            <a className="btn btn-block btn-ghost btn-sm">Edit Labels</a>
+          </Link>
+        </div>
+        {repoLabels.map((l, i) => {
           return (
             <div className="form-control" key={"label" + i}>
               <label className="cursor-pointer label justify-start">
                 <input
                   type="checkbox"
-                  checked={l.selected}
+                  checked={checkMap[l.id]}
                   onChange={() => {
-                    const newLabels = [...currentLabels];
-                    newLabels[i] = { ...l, selected: !l.selected };
-                    setCurrentLabels(newLabels);
+                    let newCheckMap = { ...checkMap };
+                    newCheckMap[l.id] = !newCheckMap[l.id];
+                    setCheckMap(newCheckMap);
                   }}
                   className="checkbox checkbox-sm mr-2"
                 />
-                <span
-                  className="w-4 h-4 rounded-full bordered mr-2"
-                  style={{ backgroundColor: l.color }}
-                ></span>
-                <span className="label-text">{l.name}</span>
+                <Label color={l.color} name={l.name} />
               </label>
             </div>
           );

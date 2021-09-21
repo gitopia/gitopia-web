@@ -1,5 +1,6 @@
 import Link from "next/link";
 import GreetUser from "../greetUser";
+import KnowledgeCenter from "./knowledgeCenter";
 
 function UserDashboard(props) {
   return (
@@ -7,7 +8,7 @@ function UserDashboard(props) {
       <div className="flex mb-12">
         <GreetUser />
         <div className="flex-1"></div>
-        <div>
+        {/* <div>
           <div className="text-xs uppercase ml-2">Show:</div>
           <select
             className="select select-ghost select-xs w-32"
@@ -17,7 +18,7 @@ function UserDashboard(props) {
             <option value="2">Issues</option>
             <option value="3">Proposals</option>
           </select>
-        </div>
+        </div> */}
       </div>
       <div className="flex mb-4">
         <div className="flex flex-1 mr-2 bg-box-grad-tl bg-base-200 p-4 rounded-md">
@@ -51,7 +52,7 @@ function UserDashboard(props) {
           </div>
         </div>
       </div>
-      <div className="flex mb-12 bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md">
+      {/* <div className="flex mb-12 bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md">
         <div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -73,42 +74,8 @@ function UserDashboard(props) {
         </div>
 
         <a className="btn btn-primary btn-link btn-xs">Import files</a>
-      </div>
-      <div className="">
-        <div className="flex mb-6 items-center">
-          <div className="border-2 border-grey rounded-full w-16 h-16 p-3 mr-8">
-            <img src="logo-g.svg"></img>
-          </div>
-          <div className="flex-1 text-sm font-bold">Learn About Gitopia</div>
-          <div className="text-sm">
-            See our{" "}
-            <a href="#" className="btn-link">
-              Knowledge Center
-            </a>{" "}
-            for more information
-          </div>
-        </div>
-        <div className="flex ml-24 border-b border-grey py-2 mb-4">
-          <div className="flex-1 text-sm">Why is Gitopia Different?</div>
-          <a href="#" className="btn btn-link btn-xs">
-            Read More
-          </a>
-        </div>
-        <div className="flex ml-24 border-b border-grey py-2 mb-4">
-          <div className="flex-1 text-sm">
-            Can I still own my own repositories?
-          </div>
-          <a href="#" className="btn btn-link btn-xs">
-            Read More
-          </a>
-        </div>
-        <div className="flex ml-24 border-b border-grey py-2 mb-4">
-          <div className="flex-1 text-sm">What is an organization?</div>
-          <a href="#" className="btn btn-link btn-xs">
-            Read More
-          </a>
-        </div>
-      </div>
+      </div> */}
+      <KnowledgeCenter />
     </main>
   );
 }

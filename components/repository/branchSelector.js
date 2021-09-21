@@ -1,14 +1,45 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState, useRef } from "react";
 
 export default function BranchSelector({
   branches = [],
   branchName = "master",
+  tags = [],
   baseUrl,
   ...props
 }) {
+  const [tab, setTab] = useState("branches");
+  const [searchText, setSearchText] = useState("");
+  const searchInput = useRef();
+  const router = useRouter();
+
+  const [filteredList, setFilteredList] = useState([]);
+
+  useEffect(() => {
+    let list = tab === "tags" ? tags : branches;
+    list = list.filter((l) => l.name.includes(searchText));
+    setFilteredList(list);
+  }, [searchText, tab]);
+
+  useEffect(() => {
+    console.log("tab changed");
+    if (searchInput) searchInput.current.focus();
+  }, [tab]);
+
+  useEffect(() => {
+    let list = tab === "tags" ? tags : branches;
+    setFilteredList(list);
+  }, [tags, branches]);
+
   return (
     <div className={"dropdown"} tabIndex="0">
-      <div className="btn btn-sm btn-outline items-center">
+      <div
+        className="btn btn-sm btn-outline items-center"
+        onClick={() => {
+          if (searchInput) searchInput.current.focus();
+        }}
+      >
         <svg
           viewBox="0 0 24 24"
           fill="currentColor"
@@ -45,19 +76,89 @@ export default function BranchSelector({
           />
         </svg>
       </div>
-      <div className="shadow-lg dropdown-content bg-base-300 rounded mt-2">
-        <ul className="menu rounded">
-          {branches.map((b, i) => {
-            const cleanName = b.name.replace("refs/heads/", "");
-            return (
-              <li key={"branch-selector" + i}>
-                <Link href={baseUrl + "/tree/" + cleanName}>
-                  <a className="text-sm whitespace-nowrap">{cleanName}</a>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+      <div className="shadow-lg dropdown-content bg-base-300 rounded mt-1 overflow-hidden w-64">
+        <div className="tabs px-6 py-4">
+          <a
+            className={
+              "tab tab-sm tab-bordered " +
+              (tab === "branches" ? "tab-active" : "")
+            }
+            onClick={() => {
+              setTab("branches");
+            }}
+          >
+            Branches
+          </a>
+          <a
+            className={
+              "tab tab-sm tab-bordered " + (tab === "tags" ? "tab-active" : "")
+            }
+            onClick={() => {
+              setTab("tags");
+            }}
+          >
+            Tags
+          </a>
+        </div>
+        <div className="mx-4">
+          <div className="form-control">
+            <div className="relative">
+              <input
+                name={tab + "search"}
+                type="text"
+                placeholder={"Search " + tab}
+                className="w-full pr-16 input input-sm input-ghost input-bordered"
+                value={searchText}
+                onChange={(e) => {
+                  setSearchText(e.target.value);
+                }}
+                onKeyUp={(e) => {
+                  if (e.code === "Escape") {
+                    setSearchText("");
+                  }
+                  if (e.code === "Enter") {
+                    if (filteredList.length) {
+                      router.push(baseUrl + "/" + filteredList[0].name);
+                    }
+                  }
+                }}
+                ref={searchInput}
+              />
+              <button className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {filteredList.length ? (
+          <ul className="menu text-xs mt-2">
+            {filteredList.map((b, i) => {
+              return (
+                <li key={"branch-selector" + i}>
+                  <Link href={baseUrl + "/" + b.name}>
+                    <a className="whitespace-nowrap">{b.name}</a>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <div className="text-xs p-5 text-type-secondary">{"No " + tab}</div>
+        )}
       </div>
     </div>
   );

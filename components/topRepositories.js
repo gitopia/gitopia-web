@@ -3,6 +3,7 @@ import Link from "next/link";
 
 function TopRepositories({ repositories = [] }) {
   const [repos, setRepos] = useState([]);
+  const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
     if (repositories.length) {
@@ -14,17 +15,23 @@ function TopRepositories({ repositories = [] }) {
         });
       }
       setRepos(newRepos);
+      if (repositories.length > 4) {
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+      }
     } else {
       setRepos([]);
+      setHasMore(false);
     }
   }, [repositories]);
 
   return (
     <div className="my-8">
-      <div className="text-md mx-8 border-b border-grey py-2 mb-4">
-        Top Repositories
+      <div className="text-sm text-type-secondary mx-8 border-b border-grey py-2 mb-4">
+        Repositories
       </div>
-      <ul className="menu compact mx-4">
+      <ul className="menu compact mx-3">
         {repos.map((r) => {
           return (
             <li className="mb-2" key={r.id}>
@@ -35,6 +42,15 @@ function TopRepositories({ repositories = [] }) {
           );
         })}
       </ul>
+      {hasMore ? (
+        <div className="mx-6 my-2">
+          <Link href={"/" + repos[0].owner}>
+            <a className="btn btn-xs btn-link">All Repositories</a>
+          </Link>
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 }

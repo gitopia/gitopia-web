@@ -1427,9 +1427,9 @@ get-orientation@1.1.2:
   dependencies:
     stream-parser "^0.3.1"
 
-"gitopiajs@git+ssh://git@github.com:gitopia/gitopia.git#gitopiajs-v0.8.0-rc.2-gitpkg":
-  version "0.8.0-rc.2"
-  resolved "git+ssh://git@github.com:gitopia/gitopia.git#90b83ea470d6331763a6ae3fb8e574347c4aa88d"
+"gitopiajs@git+ssh://git@github.com:gitopia/gitopia.git#gitopiajs-v0.10.0-rc.3-gitpkg":
+  version "0.10.0-rc.3"
+  resolved "git+ssh://git@github.com:gitopia/gitopia.git#9b337fb6b80d7ffcebad99bba1c00601ce18910c"
 
 glob-base@^0.3.0:
   version "0.3.0"
@@ -2406,6 +2406,11 @@ printj@~1.1.0:
   resolved "https://registry.yarnpkg.com/printj/-/printj-1.1.2.tgz#d90deb2975a8b9f600fb3a1c94e3f4c53c78a222"
   integrity sha512-zA2SmoLaxZyArQTOPj5LXecR+RagfPSU5Kw1qP+jkWeNlrq+eJZyY2oS68SU1Z/7/myXM4lo9716laOFAVStCQ==
 
+prism-color-variables@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/prism-color-variables/-/prism-color-variables-1.0.1.tgz#ab2f9603e4014ff6b10bc99b9b71369233326004"
+  integrity sha512-ooWpzManQwobU5DNxWyFeffSABAQGWVVcon8E5AGUU4fgKqwdPw14M3gbS0c1YzDtf7Tv3G6PWsvELe16YWUYg==
+
 prismjs@^1.22.0, prismjs@~1.24.0:
   version "1.24.1"
   resolved "https://registry.yarnpkg.com/prismjs/-/prismjs-1.24.1.tgz#c4d7895c4d6500289482fa8936d9cdd192684036"
@@ -2566,6 +2571,11 @@ react-click-away-listener@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/react-click-away-listener/-/react-click-away-listener-2.0.3.tgz#3d032603cff8c1d66a9107f6908695df04db34a8"
   integrity sha512-buvbebDZ10me+ConatrMcv33BNH6D+3HvEjztiNdz6LvDvyEYHxD0QLXw9aaO7bXjz2YPC7zbgIxLX+cEsFjkA==
+
+react-diff-view@^2.4.8:
+  version "2.4.8"
+  resolved "https://registry.yarnpkg.com/react-diff-view/-/react-diff-view-2.4.8.tgz#9aa35d337440b0e18537c3a5907f6b36c2efb313"
+  integrity sha512-K9XCaMKzr3aafsxI8sDaLp2EuUv8hZBnoyxDa5eR7HL4ExmhN+Qho78isfotUzp/7j/Omm1PgpNtr45Vi4BIcA==
 
 react-dom@17.0.2:
   version "17.0.2"

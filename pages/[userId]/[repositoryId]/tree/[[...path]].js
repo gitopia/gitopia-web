@@ -54,10 +54,21 @@ function RepositoryTreeView(props) {
       setRepository({
         ...r,
       });
+      console.log(r);
       const joinedPath = router.query.path.join("/");
       r.branches.every((b) => {
-        console.log(b);
-        let branch = b.name.replace("refs/heads/", "");
+        let branch = b.name;
+        if (joinedPath.includes(branch)) {
+          let path = joinedPath.replace(branch, "").split("/");
+          path = path.filter((p) => p !== "");
+          setBranchName(branch);
+          setRepoPath(path);
+          return false;
+        }
+        return true;
+      });
+      r.tags.every((b) => {
+        let branch = b.name;
         if (joinedPath.includes(branch)) {
           let path = joinedPath.replace(branch, "").split("/");
           path = path.filter((p) => p !== "");
@@ -75,13 +86,13 @@ function RepositoryTreeView(props) {
     if (typeof window !== "undefined") {
       const res = await initRepository(
         repository.id,
-        getBranchSha(repository.branches, branchName),
+        getBranchSha(branchName, repository.branches, repository.tags),
         repository.name,
         router.query.userId,
         repoPath
       );
       if (res) {
-        console.log("RES", res);
+        console.log(res);
         if (res.commit) {
           setCommitDetail(res.commit);
         }
@@ -110,7 +121,6 @@ function RepositoryTreeView(props) {
     }
   }, [repoPath]);
 
-  console.log("[[path]] repoPath", repoPath);
   return (
     <div
       data-theme="dark"
@@ -133,8 +143,11 @@ function RepositoryTreeView(props) {
               <div className="">
                 <BranchSelector
                   branches={repository.branches}
+                  tags={repository.tags}
                   branchName={branchName}
-                  baseUrl={"/" + repository.owner.id + "/" + repository.name}
+                  baseUrl={
+                    "/" + repository.owner.id + "/" + repository.name + "/tree"
+                  }
                 />
               </div>
               <div className="ml-4">
@@ -148,7 +161,17 @@ function RepositoryTreeView(props) {
             </div>
             <div className="flex mt-4">
               <div className="flex-1 border border-gray-700 rounded overflow-hidden">
-                <CommitDetailRow commitDetail={commitDetail} />
+                <CommitDetailRow
+                  commitDetail={commitDetail}
+                  commitInBranchLink={
+                    "/" +
+                    repository.owner.id +
+                    "/" +
+                    repository.name +
+                    "/commits/" +
+                    branchName
+                  }
+                />
                 <FileBrowser
                   entityList={entityList}
                   branchName={branchName}
@@ -161,6 +184,7 @@ function RepositoryTreeView(props) {
                     style={vscdarkplus}
                     language={fileSyntax}
                     showLineNumbers
+                    customStyle={{ margin: 0, background: "transparent" }}
                   >
                     {file}
                   </SyntaxHighlighter>

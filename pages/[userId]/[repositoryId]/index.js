@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
+import { notify } from "reapop";
 
 import { initRepository } from "../../../store/actions/git";
 
@@ -42,15 +43,24 @@ function RepositoryView(props) {
     commit: { author: {}, message: "" },
     oid: "",
   });
+  const [selectedBranch, setSelectedBranch] = useState(
+    repository.defaultBranch
+  );
+  const remoteUrl = "gitopia://" + repository.owner.id + "/" + repository.name;
 
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.id, repository.name);
-    console.log("r", r);
+    console.log("repository", r);
     if (r) setRepository(r);
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && r.branches.length) {
+      let branchSha = getBranchSha(r.defaultBranch, r.branches);
+      if (!branchSha) {
+        setSelectedBranch(r.branches[0].name);
+        branchSha = r.branches[0].sha;
+      }
       const res = await initRepository(
         r.id,
-        getBranchSha(r.branches, r.defaultBranch),
+        branchSha,
         r.name,
         router.query.userId,
         []
@@ -71,7 +81,7 @@ function RepositoryView(props) {
       }
       const readme = await initRepository(
         r.id,
-        getBranchSha(r.branches, r.defaultBranch),
+        branchSha,
         r.name,
         router.query.userId,
         ["README.md"]
@@ -113,34 +123,33 @@ function RepositoryView(props) {
             hrefBase={repository.owner.id + "/" + repository.name}
           />
           {repository.branches.length ? (
-            <div className="">
-              <div className="flex justify-start mt-8">
-                <div className="">
-                  <BranchSelector
-                    branches={repository.branches}
-                    baseUrl={"/" + repository.owner.id + "/" + repository.name}
-                    branchName={repository.defaultBranch}
-                  />
-                </div>
-                <div className="ml-4">
-                  <Link
-                    href={
-                      "/" +
-                      repository.owner.id +
-                      "/" +
-                      repository.name +
-                      "/branches"
-                    }
-                  >
-                    <a className="btn btn-ghost btn-sm">
+            <div className="flex mt-8">
+              <div className="flex-1">
+                <div className="flex justify-start">
+                  <div className="">
+                    <BranchSelector
+                      branches={repository.branches}
+                      tags={repository.tags}
+                      baseUrl={
+                        "/" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name +
+                        "/tree"
+                      }
+                      branchName={selectedBranch}
+                    />
+                  </div>
+                  <div className="ml-4">
+                    <div className="p-2 text-type-secondary text-xs font-bold uppercase flex">
                       <svg
                         viewBox="0 0 24 24"
                         fill="currentColor"
                         stroke="currentColor"
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
+                        className="h-5 w-5 mr-1"
                       >
-                        <g transform="scale(0.9)">
+                        <g transform="scale(0.8)">
                           <path
                             d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
                             stroke="currentColor"
@@ -165,50 +174,144 @@ function RepositoryView(props) {
                           />
                         </g>
                       </svg>
-                      {repository.branches.length || 14} Branches
-                    </a>
-                  </Link>
+                      {repository.branches.length} Branches
+                    </div>
+                  </div>
+                  <div className="ml-4">
+                    <div className="p-2 text-type-secondary text-xs font-bold uppercase flex">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          transform="scale(0.8)
+                          translate(0, 1)"
+                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                        />
+                      </svg>
+                      {repository.tags.length} Tags
+                    </div>
+                  </div>
+                  <div className="flex-1 text-right">
+                    <div className="dropdown dropdown-end w-full max-w-screen-md">
+                      <button
+                        className="btn btn-sm btn-primary w-26"
+                        tabIndex="0"
+                      >
+                        <div className="flex-1 text-left px-2">Clone</div>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                      <div className="shadow-lg dropdown-content bg-base-300 rounded mt-1 overflow-hidden w-full p-4 text-left">
+                        <div className="">
+                          <div className="text-xs uppercase text-type-secondary ml-2 font-bold">
+                            Clone commands
+                          </div>
+                          <button
+                            className="absolute right-4 top-4 btn btn-ghost btn-xs"
+                            onClick={(e) => {
+                              navigator.clipboard.writeText(
+                                "curl https://get.gitopia.com | bash # Install git remote helper\ngit clone gitopia://" +
+                                  remoteUrl
+                              );
+                              props.notify("Copied to clipboard", "info");
+                            }}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </button>
+                          <div className="w-full mt-4">
+                            <textarea
+                              rows={2}
+                              cols={120}
+                              name="repository-url"
+                              type="text"
+                              value={
+                                "curl https://get.gitopia.com | bash # Install git remote helper\ngit clone gitopia://{remoteUrl}"
+                              }
+                              readOnly={true}
+                              className="w-full input input-ghost input-xs input-bordered h-14 py-2"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex mt-8">
-                <div className="flex-1 border border-gray-700 rounded overflow-hidden">
-                  <CommitDetailRow commitDetail={commitDetail} />
+                <div className="mt-4 border border-gray-700 rounded overflow-hidden">
+                  <CommitDetailRow
+                    commitDetail={commitDetail}
+                    commitInBranchLink={
+                      "/" +
+                      repository.owner.id +
+                      "/" +
+                      repository.name +
+                      "/commits/" +
+                      selectedBranch
+                    }
+                  />
                   <FileBrowser
                     entityList={entityList}
-                    branchName={repository.defaultBranch}
+                    branchName={selectedBranch}
                     baseUrl={"/" + repository.owner.id + "/" + repository.name}
                     repoPath={[]}
                   />
                 </div>
-                <div className="flex-none w-64 pl-8 divide-y divide-grey">
-                  <div className="pb-8">
-                    <div className="flex-1 text-left px-3 mb-1">About</div>
 
-                    <div className="text-xs px-3">{repository.description}</div>
-                  </div>
-
-                  <div className="py-8">
-                    <div className="flex-1 text-left px-3 mb-1">Releases</div>
-
-                    <div className="text-xs px-3">None yet</div>
-                  </div>
-
-                  <div className="py-8">
-                    <div className="flex-1 text-left  px-3 mb-1">Packages</div>
-
-                    <div className="text-xs px-3">None yet</div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex mt-8">
                 {readmeFile ? (
-                  <div className="flex-1 border border-gray-700 rounded overflow-hidden p-4 markdown-body">
+                  <div className="border border-gray-700 rounded overflow-hidden p-4 markdown-body mt-8">
                     <ReactMarkdown>{readmeFile}</ReactMarkdown>
                   </div>
                 ) : (
                   <div>No readme file</div>
                 )}
-                <div className="flex-none w-64 pl-8"></div>
+              </div>
+              <div className="flex-none w-64 pl-8 divide-y divide-grey">
+                <div className="pb-8">
+                  <div className="flex-1 text-left px-3 mb-1">About</div>
+
+                  <div className="text-xs px-3">{repository.description}</div>
+                </div>
+
+                <div className="py-8">
+                  <div className="flex-1 text-left px-3 mb-1">Releases</div>
+
+                  <div className="text-xs px-3">None yet</div>
+                </div>
+
+                <div className="py-8">
+                  <div className="flex-1 text-left  px-3 mb-1">Packages</div>
+
+                  <div className="text-xs px-3">None yet</div>
+                </div>
               </div>
             </div>
           ) : (
@@ -227,4 +330,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryView);
+export default connect(mapStateToProps, { notify })(RepositoryView);

@@ -138,6 +138,7 @@ function NewOrganization(props) {
                 "flex-none btn btn-primary btn-wide " +
                 (organizationCreating ? "loading " : "")
               }
+              disabled={organizationCreating}
               onClick={createOrganization}
             >
               Create Organization

@@ -90,7 +90,7 @@ function RenameRepository({
           size="sm"
         />
       </div>
-      <div className="flex-none w-52 pt-2">
+      <div className="flex-none w-48 pt-2">
         <button
           className={
             "btn btn-sm btn-block btn-outline " + (isChanging ? "loading" : "")

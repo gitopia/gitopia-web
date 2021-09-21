@@ -6,7 +6,7 @@ import styles from "../styles/landing.module.css";
 const pCircles = [
   {
     url: "#circle1",
-    x: -70,
+    x: -20,
     y: -420,
     z: 11,
     mx: -350,
@@ -15,7 +15,7 @@ const pCircles = [
   },
   {
     url: "#circle2",
-    x: 430,
+    x: 470,
     y: -200,
     z: 5,
     mx: 440,
@@ -24,7 +24,7 @@ const pCircles = [
   },
   {
     url: "#circle3",
-    x: -480,
+    x: -430,
     y: -100,
     z: 9,
     mx: -600,
@@ -33,7 +33,7 @@ const pCircles = [
   },
   {
     url: "#circle4",
-    x: 80,
+    x: 130,
     y: 70,
     z: 7,
     mx: 800,
@@ -42,7 +42,7 @@ const pCircles = [
   },
   {
     url: "#circle5",
-    x: 130,
+    x: 170,
     y: 180,
     z: 9,
     mx: 450,
@@ -51,7 +51,7 @@ const pCircles = [
   },
   {
     url: "#circle6",
-    x: -500,
+    x: -430,
     y: -150,
     z: 15,
     mx: -500,
@@ -60,7 +60,7 @@ const pCircles = [
   },
   {
     url: "#circle7",
-    x: -700,
+    x: -650,
     y: 100,
     z: 13,
     mx: -700,
@@ -308,7 +308,7 @@ export default function Landing() {
       <section className={classnames([styles.section, styles.heroSection])}>
         <div className={styles.row}>
           <h1 className={classnames([styles.h1, styles.wings])}>
-            The Future of Code Collaboration
+            Code Collaboration for Web3
           </h1>
           <div className={styles.byline}>
             A new age decentralized code collaboration platform for developers
@@ -1227,7 +1227,6 @@ export default function Landing() {
             <img className={styles.teamImage} src="/parth.jpg" loading="lazy" />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Parth Oberoi</div>
-              <div className={styles.teamDesig}>CEO & Founder</div>
             </div>
           </div>
           <div className={"block row-span-1 " + styles.bufferCard}></div>
@@ -1235,7 +1234,6 @@ export default function Landing() {
             <img className={styles.teamImage} src="/faza.jpg" loading="lazy" />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Faza Mahamood</div>
-              <div className={styles.teamDesig}>CTO & Founder</div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
@@ -1246,7 +1244,6 @@ export default function Landing() {
             />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Snehil Buxy</div>
-              <div className={styles.teamDesig}>Senior Developer</div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
@@ -1257,14 +1254,28 @@ export default function Landing() {
             />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Kushagra Singh</div>
-              <div className={styles.teamDesig}>Marketing</div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/stian.jpg" loading="lazy" />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Stian Sandsgaard</div>
-              <div className={styles.teamDesig}>Design</div>
+            </div>
+          </div>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/hariom.jpg"
+              loading="lazy"
+            />
+            <div className={styles.teamLabel}>
+              <div className={styles.teamName}>Hariom Verma</div>
+            </div>
+          </div>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img className={styles.teamImage} src="/ejaaz.jpg" loading="lazy" />
+            <div className={styles.teamLabel}>
+              <div className={styles.teamName}>Ejaaz Mahamood</div>
             </div>
           </div>
         </div>

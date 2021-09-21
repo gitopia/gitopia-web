@@ -15,6 +15,8 @@ import AssigneeSelector from "../../../../components/repository/assigneeSelector
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import LabelSelector from "../../../../components/repository/labelSelector";
 import getIssueAllLabels from "../../../../helpers/getIssueAllLabels";
+import Label from "../../../../components/repository/label";
+import Link from "next/link";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -55,7 +57,12 @@ function RepositoryIssueCreateView(props) {
       const res = await props.createIssue(issue);
       if (res && res.code === 0) {
         router.push(
-          "/" + repository.owner.id + "/" + repository.name + "/issues"
+          "/" +
+            repository.owner.id +
+            "/" +
+            repository.name +
+            "/issues/" +
+            (Number(repository.issuesCount) + 1)
         );
       }
     }
@@ -67,7 +74,7 @@ function RepositoryIssueCreateView(props) {
     console.log(r);
     if (r) {
       setRepository(r);
-      setAllLabels(await getIssueAllLabels(r.id));
+      setAllLabels(r.labels);
     }
   }, []);
 
@@ -118,16 +125,18 @@ function RepositoryIssueCreateView(props) {
                 </div>
                 <MarkdownEditor value={description} setValue={setDescription} />
                 <div className="text-right mt-4">
-                  <button
-                    className={
-                      "btn btn-sm btn-primary " +
-                      (postingIssue ? "loading" : "")
-                    }
-                    disabled={title.trim().length === 0}
-                    onClick={createIssue}
-                  >
-                    Create Issue
-                  </button>
+                  <div className="inline-block w-36">
+                    <button
+                      className={
+                        "btn btn-sm btn-primary btn-block " +
+                        (postingIssue ? "loading" : "")
+                      }
+                      disabled={title.trim().length === 0 || postingIssue}
+                      onClick={createIssue}
+                    >
+                      Create Issue
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -140,31 +149,54 @@ function RepositoryIssueCreateView(props) {
                     setAssignees(list);
                   }}
                 />
-                <div className="text-xs px-3">
+                <div className="text-xs px-3 mt-2">
                   {assignees.length
-                    ? assignees.map((a) => shrinkAddress(a)).join(", ")
+                    ? assignees.map((a, i) => (
+                        <span
+                          className="pr-2 pb-2 whitespace-nowrap"
+                          key={"assignee" + i}
+                        >
+                          <a
+                            href={"/" + a}
+                            className="btn-link cursor-pointer"
+                            target="_blank"
+                          >
+                            {shrinkAddress(a)}
+                          </a>
+                        </span>
+                      ))
                     : "No one"}
                 </div>
               </div>
               <div className="py-8">
                 <LabelSelector
                   labels={labels}
+                  repoLabels={repository.labels}
+                  editLabels={
+                    "/" +
+                    repository.owner.id +
+                    "/" +
+                    repository.name +
+                    "/issues/labels"
+                  }
                   onChange={async (list) => {
                     console.log(list);
                     setLabels(list);
                   }}
                 />
-                <div className="text-xs px-3">
+                <div className="text-xs px-3 mt-2 flex flex-wrap">
                   {labels.length
                     ? labels.map((l, i) => {
-                        let label = allLabels[l] || { name: "", color: "" };
+                        let label = _.find(allLabels, { id: l }) || {
+                          name: "",
+                          color: "",
+                        };
                         return (
                           <span
-                            className="badge badge-sm p-2 border-0 mr-2 mb-2"
-                            style={{ backgroundColor: label.color }}
-                            key={"issueLabel" + i}
+                            className="pr-2 pb-2 whitespace-nowrap"
+                            key={"label" + i}
                           >
-                            {label.name}
+                            <Label color={label.color} name={label.name} />
                           </span>
                         );
                       })
@@ -187,7 +219,7 @@ function RepositoryIssueCreateView(props) {
                     />
                   </svg>
                 </button>
-                <div className="text-xs px-3">None yet</div>
+                <div className="text-xs px-3 mt-2">None yet</div>
               </div>
             </div>
           </div>
