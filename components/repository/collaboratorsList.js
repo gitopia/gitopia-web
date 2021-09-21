@@ -1,10 +1,18 @@
 import TextInput from "../textInput";
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { updateCollaborator } from "../../store/actions/repository";
+import {
+  updateCollaborator,
+  removeCollaborator,
+} from "../../store/actions/repository";
 import getUser from "../../helpers/getUser";
 
-function CollaboratorsList({ repoId, collaborators = [], ...props }) {
+function CollaboratorsList({
+  repoId,
+  collaborators = [],
+  refreshRepository,
+  ...props
+}) {
   const [collabAddress, setCollabAddress] = useState("");
   const [collabHint, setCollabHint] = useState({
     shown: false,
@@ -13,6 +21,7 @@ function CollaboratorsList({ repoId, collaborators = [], ...props }) {
   });
   const [collabRole, setCollabRole] = useState("READ");
   const [isAdding, setIsAdding] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   console.log("collabs", collaborators);
 
   const validateCollaborator = async () => {
@@ -39,7 +48,15 @@ function CollaboratorsList({ repoId, collaborators = [], ...props }) {
       });
       console.log(res);
     }
+    if (refreshRepository) await refreshRepository();
     setIsAdding(false);
+  };
+
+  const removeCollaborator = async (address, index) => {
+    setIsRemoving(index);
+    await props.removeCollaborator({ id: repoId, user: address });
+    if (refreshRepository) await refreshRepository();
+    setIsRemoving(false);
   };
 
   return (
@@ -57,7 +74,14 @@ function CollaboratorsList({ repoId, collaborators = [], ...props }) {
             <td className="text-sm">{c.id}</td>
             <td className="text-sm">{c.permission}</td>
             <td>
-              <button className="btn btn-sm btn-accent btn-outline btn-block">
+              <button
+                className={
+                  "btn btn-sm btn-accent btn-outline btn-block " +
+                  (isRemoving === i ? "loading" : "")
+                }
+                disabled={isRemoving === i}
+                onClick={() => removeCollaborator(c.id, i)}
+              >
                 Remove
               </button>
             </td>
@@ -96,7 +120,7 @@ function CollaboratorsList({ repoId, collaborators = [], ...props }) {
                 (isAdding ? "loading" : "")
               }
               onClick={addCollaborator}
-              disabled={collabAddress.trim() === ""}
+              disabled={collabAddress.trim() === "" || isAdding}
             >
               Add
             </button>
@@ -113,6 +137,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { updateCollaborator })(
-  CollaboratorsList
-);
+export default connect(mapStateToProps, {
+  updateCollaborator,
+  removeCollaborator,
+})(CollaboratorsList);

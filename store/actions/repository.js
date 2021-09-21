@@ -304,6 +304,69 @@ export const updateCollaborator = ({ id = null, user = null, role = null }) => {
   };
 };
 
+export const removeCollaborator = ({ id = null, user = null }) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+      return null;
+    const { env, wallet } = getState();
+    const collaborator = {
+      creator: wallet.selectedAddress,
+      id,
+      user,
+    };
+
+    try {
+      const message = await env.txClient.msgRemoveRepositoryCollaborator(
+        collaborator
+      );
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
+
+export const changeRespositoryOwner = ({
+  repositoryId = null,
+  ownerId = null,
+  ownerType = null,
+}) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+      return null;
+    const { env, wallet } = getState();
+    const req = {
+      creator: wallet.selectedAddress,
+      repositoryId,
+      ownerId,
+      ownerType,
+    };
+
+    try {
+      const message = await env.txClient.msgChangeOwner(req);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
+
 export const updateIssue = ({
   title = null,
   description = null,

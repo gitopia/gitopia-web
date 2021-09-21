@@ -28,7 +28,7 @@ function RepositoryView(props) {
     stargazers: [],
   });
 
-  useEffect(async () => {
+  const refreshRepository = async () => {
     const r = await getUserRepository(
       router.query.userId,
       router.query.repositoryId
@@ -36,7 +36,9 @@ function RepositoryView(props) {
     if (r) {
       setRepository(r);
     }
-  }, [router.query]);
+  };
+
+  useEffect(refreshRepository, [router.query]);
 
   return (
     <div
@@ -130,7 +132,10 @@ function RepositoryView(props) {
                   Collaborators
                 </div>
                 <div className="py-4">
-                  <CollaboratorsList collaborators={repository.collaborators} />
+                  <CollaboratorsList
+                    collaborators={repository.collaborators}
+                    refreshRepository={refreshRepository}
+                  />
                 </div>
               </div>
               {/* <div className="mt-8 divide-y divide-grey">
