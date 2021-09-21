@@ -14,6 +14,7 @@ import { parseDiff, Diff, Hunk } from "react-diff-view";
 import getDiff from "../../../../helpers/getDiff";
 import getDiffStat from "../../../../helpers/getDiffStat";
 import dayjs from "dayjs";
+import ReactMarkdown from "react-markdown";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -235,8 +236,8 @@ function RepositoryCommitDiffView(props) {
                 <button className="btn btn-xs btn-outline">View Code</button>{" "}
               </div>
             </div>
-            <div className="mt-2 text-sm text-type-secondary">
-              {commit.message}
+            <div className="mt-2 text-sm text-type-secondary markdown-body">
+              <ReactMarkdown>{commit.message}</ReactMarkdown>
             </div>
           </div>
           <div className="flex mt-8 px-4 py-2">
