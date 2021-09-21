@@ -120,6 +120,15 @@ function Header(props) {
             Explorer
           </a>
         </div>
+        <div className="items-stretch">
+          <a
+            className="btn btn-ghost btn-sm rounded-btn"
+            href="https://docs.gitopia.com/"
+            target="_blank"
+          >
+            Docs
+          </a>
+        </div>
         <div className="flex-1"></div>
         {props.activeWallet ? (
           <div className="flex-none mr-4">
