@@ -46,11 +46,27 @@ function RepositoryView(props) {
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
   );
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
   const remoteUrl = "gitopia://" + repository.owner.id + "/" + repository.name;
 
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.id, repository.name);
     console.log("repository", r);
+    let userPermission = false;
+    if (props.selectedAddress === router.query.userId) {
+      userPermission = true;
+    } else if (props.user) {
+      props.user.organizations.every((o) => {
+        if (o.id === router.query.userId) {
+          userPermission = true;
+          return false;
+        }
+        return true;
+      });
+    }
+    setCurrentUserEditPermission(userPermission);
     if (r) setRepository(r);
     if (typeof window !== "undefined" && r.branches.length) {
       let branchSha = getBranchSha(r.defaultBranch, r.branches);
@@ -118,10 +134,14 @@ function RepositoryView(props) {
       <div className="flex-1">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
-          <RepositoryMainTabs
-            active="code"
-            hrefBase={repository.owner.id + "/" + repository.name}
-          />
+          {repository.branches.length || currentUserEditPermission ? (
+            <RepositoryMainTabs
+              active="code"
+              hrefBase={repository.owner.id + "/" + repository.name}
+            />
+          ) : (
+            ""
+          )}
           {repository.branches.length ? (
             <div className="flex mt-8">
               <div className="flex-1">
@@ -315,8 +335,10 @@ function RepositoryView(props) {
                 </div>
               </div>
             </div>
-          ) : (
+          ) : currentUserEditPermission ? (
             <EmptyRepository repository={repository} />
+          ) : (
+            <div className="px-8 text-type-secondary">Empty repository</div>
           )}
         </main>
       </div>
@@ -328,6 +350,7 @@ function RepositoryView(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
+    user: state.user,
   };
 };
 
