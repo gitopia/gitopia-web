@@ -28,12 +28,7 @@ export const validatePostingEligibility = async (
       dispatch(notify("Balance low for creating " + msgType, "error"));
       return false;
     } else {
-      dispatch(
-        notify(
-          "No associated user found for this adddress, creating... ",
-          "info"
-        )
-      );
+      console.log("No associated user found for this adddress, creating... ");
       await createUser(wallet.activeWallet.name)(dispatch, getState);
       await reInitClients(dispatch, getState);
     }
@@ -289,6 +284,69 @@ export const updateCollaborator = ({ id = null, user = null, role = null }) => {
       const message = await env.txClient.msgUpdateRepositoryCollaborator(
         collaborator
       );
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
+
+export const removeCollaborator = ({ id = null, user = null }) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+      return null;
+    const { env, wallet } = getState();
+    const collaborator = {
+      creator: wallet.selectedAddress,
+      id,
+      user,
+    };
+
+    try {
+      const message = await env.txClient.msgRemoveRepositoryCollaborator(
+        collaborator
+      );
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
+
+export const changeRespositoryOwner = ({
+  repositoryId = null,
+  ownerId = null,
+  ownerType = null,
+}) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+      return null;
+    const { env, wallet } = getState();
+    const req = {
+      creator: wallet.selectedAddress,
+      repositoryId,
+      ownerId,
+      ownerType,
+    };
+
+    try {
+      const message = await env.txClient.msgChangeOwner(req);
       const result = await sendTransaction({ message }, env);
       if (result && result.code === 0) {
         return result;

@@ -34,6 +34,7 @@ function RepositoryCommitTreeView(props) {
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [branchName, setBranchName] = useState("");
+  const maxMessageLength = 60;
   // let repoPath = router.query.path || [];
   // let branchName = "";
 
@@ -145,7 +146,11 @@ function RepositoryCommitTreeView(props) {
                       <span className="pr-4 border-r border-grey">
                         {c.commit.author.name}
                       </span>
-                      <span className="px-4">{c.commit.message}</span>
+                      <span className="px-4">
+                        {c.commit.message.length > maxMessageLength
+                          ? c.commit.message.slice(0, maxMessageLength) + ".."
+                          : c.commit.message}
+                      </span>
                     </div>
                     <div className="flex-none">
                       <span className="mr-4">

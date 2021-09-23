@@ -12,6 +12,7 @@ import Footer from "../../../components/footer";
 import TextInput from "../../../components/textInput";
 import RenameRepository from "../../../components/repository/renameRepository";
 import CollaboratorsList from "../../../components/repository/collaboratorsList";
+import TransferOwnership from "../../../components/repository/transferOwnership";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -28,7 +29,7 @@ function RepositoryView(props) {
     stargazers: [],
   });
 
-  useEffect(async () => {
+  const refreshRepository = async () => {
     const r = await getUserRepository(
       router.query.userId,
       router.query.repositoryId
@@ -36,7 +37,9 @@ function RepositoryView(props) {
     if (r) {
       setRepository(r);
     }
-  }, [router.query]);
+  };
+
+  useEffect(refreshRepository, [router.query]);
 
   return (
     <div
@@ -84,6 +87,7 @@ function RepositoryView(props) {
                   <RenameRepository
                     currentName={repository.name}
                     repoId={repository.id}
+                    repoOwner={repository.owner.id}
                     onSuccess={async (newRepoName) => {
                       const url = [
                         "",
@@ -95,20 +99,22 @@ function RepositoryView(props) {
                       router.push(url);
                     }}
                   />
-                  <div className="flex mt-6 items-center">
-                    <div className="flex-1 mr-8">
-                      <div className="label-text">Transfer Ownership</div>
-                      <div className="label-text-alt text-type-secondary">
-                        Transfer this repository to another use or to an
-                        organization where you have the ability to create
-                        repositories
-                      </div>
-                    </div>
-                    <div className="flex-none w-48">
-                      <button className="btn btn-sm btn-block btn-accent btn-outline">
-                        Transfer Ownership
-                      </button>
-                    </div>
+                  <div className="mt-6">
+                    <TransferOwnership
+                      currentOwnerId={repository.owner.id}
+                      repoName={repository.name}
+                      repoId={repository.id}
+                      onSuccess={async (newOwnerId) => {
+                        const url = [
+                          "",
+                          newOwnerId,
+                          repository.name,
+                          "settings",
+                        ].join("/");
+                        console.log("goto", url);
+                        router.push(url);
+                      }}
+                    />
                   </div>
                 </div>
                 {/* <div className="flex py-6 items-center">
@@ -130,7 +136,10 @@ function RepositoryView(props) {
                   Collaborators
                 </div>
                 <div className="py-4">
-                  <CollaboratorsList collaborators={repository.collaborators} />
+                  <CollaboratorsList
+                    collaborators={repository.collaborators}
+                    refreshRepository={refreshRepository}
+                  />
                 </div>
               </div>
               {/* <div className="mt-8 divide-y divide-grey">

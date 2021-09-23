@@ -9,11 +9,6 @@ export default async function getOrganizationRepositoryAll(orgId) {
     if (res.ok) {
       return res.data.Organization.repositories;
     }
-    return {
-      id: "",
-      name: "",
-      owner: { id: "" },
-    };
   } catch (e) {
     console.error(e);
   }

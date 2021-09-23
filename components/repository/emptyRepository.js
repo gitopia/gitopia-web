@@ -1,4 +1,5 @@
 import { notify } from "reapop";
+import { downloadWalletForRemoteHelper } from "../../store/actions/wallet";
 import { useDispatch } from "react-redux";
 
 export default function EmptyRepository(props) {
@@ -50,6 +51,67 @@ export default function EmptyRepository(props) {
       </div>
       <div className="mt-8">
         <div className="rounded-md py-8">
+          <div className="mb-8 text-purple-50 ">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <span className="text-md"></span>
+          </div>
+          <div className="py-4">
+            <div className="flex mb-4">
+              <div className="flex-1 text-xl text-purple-50">
+                <span>[Required] Install git remote helper</span>
+              </div>
+              <div className="flex-none w-44 mr-4">
+                <button
+                  className="btn btn-outline btn-secondary btn-sm btn-block"
+                  onClick={() => dispatch(downloadWalletForRemoteHelper())}
+                >
+                  Download wallet
+                </button>
+              </div>
+              <div className="flex-none w-44">
+                <button
+                  className="btn btn-outline btn-secondary btn-sm btn-block"
+                  onClick={(e) => {
+                    navigator.clipboard.writeText(
+                      "curl https://get.gitopia.com | bash # Install git remote helper\nexport GITOPIA_WALLET=/path/to/wallet.json # Set path of downloaded wallet"
+                    );
+                    dispatch(notify("Copied to clipboard", "info"));
+                  }}
+                >
+                  Copy commands
+                </button>
+              </div>
+            </div>
+            <div className="mockup-code mb-4 bg-secondary text-secondary-content">
+              <pre data-prefix="$">
+                <code>
+                  curl https://get.gitopia.com | bash # Install git remote
+                  helper
+                </code>
+              </pre>
+              <pre data-prefix="$">
+                <code>
+                  export GITOPIA_WALLET=/path/to/wallet.json # Set path of
+                  downloaded wallet
+                </code>
+              </pre>
+            </div>
+          </div>
+        </div>
+        <div className="rounded-md py-8">
           <div className="mb-8 text-type-tertiary">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -73,10 +135,10 @@ export default function EmptyRepository(props) {
               </div>
               <div className="flex-none w-44">
                 <button
-                  className="btn btn-primary btn-outline btn-sm btn-block"
+                  className="btn btn-outline btn-sm btn-block"
                   onClick={(e) => {
                     navigator.clipboard.writeText(
-                      "curl https://get.gitopia.com | bash # Install git remote helper\nexport GITOPIA_WALLET=/path/to/wallet.json # Set path of downloaded wallet\ngit remote add origin " +
+                      "git remote add origin " +
                         remoteUrl +
                         "\ngit push -u origin master"
                     );
@@ -88,18 +150,6 @@ export default function EmptyRepository(props) {
               </div>
             </div>
             <div className="mockup-code mb-4">
-              <pre data-prefix="$">
-                <code>
-                  curl https://get.gitopia.com | bash # Install git remote
-                  helper
-                </code>
-              </pre>
-              <pre data-prefix="$">
-                <code>
-                  export GITOPIA_WALLET=/path/to/wallet.json # Set path of
-                  downloaded wallet
-                </code>
-              </pre>
               <pre data-prefix="$">
                 <code>git remote add origin {remoteUrl}</code>
               </pre>
@@ -152,7 +202,7 @@ export default function EmptyRepository(props) {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
               />
             </svg>
           </div>
@@ -163,10 +213,10 @@ export default function EmptyRepository(props) {
               </div>
               <div className="flex-none w-44">
                 <button
-                  className="btn btn-primary btn-outline btn-sm btn-block"
+                  className="btn btn-outline btn-sm btn-block"
                   onClick={(e) => {
                     navigator.clipboard.writeText(
-                      'curl https://get.gitopia.com | bash # Install git remote helper\nexport GITOPIA_WALLET=/path/to/wallet.json # Set path of downloaded wallet\necho "# hello world!" >> README.md\ngit init\ngit add README.md\ngit commit -m "initial commit"\ngit remote add origin ' +
+                      'echo "# hello world!" >> README.md\ngit init\ngit add README.md\ngit commit -m "initial commit"\ngit remote add origin ' +
                         remoteUrl +
                         "\ngit push -u origin master"
                     );
@@ -178,18 +228,6 @@ export default function EmptyRepository(props) {
               </div>
             </div>
             <div className="mockup-code mb-4">
-              <pre data-prefix="$">
-                <code>
-                  curl https://get.gitopia.com | bash # Install git remote
-                  helper
-                </code>
-              </pre>
-              <pre data-prefix="$">
-                <code>
-                  export GITOPIA_WALLET=/path/to/wallet.json # Set path of
-                  downloaded wallet
-                </code>
-              </pre>
               <pre data-prefix="$">
                 <code>echo "# hello world!" >> README.md</code>
               </pre>

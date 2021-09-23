@@ -2,8 +2,8 @@ export default function KnowledgeCenter() {
   return (
     <div className="">
       <div className="flex mb-6 items-center">
-        <div className="border-2 border-grey rounded-full w-16 h-16 p-3 mr-8">
-          <img src="logo-g.svg"></img>
+        <div className="border border-grey rounded-full w-14 h-14 p-3 mr-10">
+          <img src="/logo-g.svg"></img>
         </div>
         <div className="flex-1 text-sm font-bold">Learn About Gitopia</div>
         <div className="text-sm">

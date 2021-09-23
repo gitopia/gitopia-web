@@ -140,15 +140,13 @@ function AccountView(props) {
                 >
                   <svg
                     viewBox="0 0 24 24"
+                    fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-6 w-6 mr-2"
+                    stroke="currentColor"
                   >
-                    <path
-                      transform="translate(0,2)"
-                      d="M5.93782 16.5L12 6L18.0622 16.5H5.93782Z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
+                    <path d="M9.5 7L4.5 12L9.5 17" strokeWidth="2" />
+                    <path d="M14.5 7L19.5 12L14.5 17" strokeWidth="2" />
                   </svg>
 
                   <span>Repositories</span>
