@@ -8,17 +8,17 @@ const isRepositoryNameAvailable = async (name, ownerId, accountsList) => {
   let acc = _.find(accountsList, (a) => a.id === ownerId);
   if (acc && acc.type === "User") {
     const repos = await getUserRepositoryAll(ownerId);
-    console.log(repos);
-    repos.every((r) => {
-      if (r.name === sanitizedName) {
-        alreadyAvailable = true;
-        return false;
-      }
-      return true;
-    });
+    if (repos) {
+      repos.every((r) => {
+        if (r.name === sanitizedName) {
+          alreadyAvailable = true;
+          return false;
+        }
+        return true;
+      });
+    }
   } else if (acc && acc.type === "Organization") {
     const repos = await getOrganizationRepositoryAll(ownerId);
-    console.log(repos);
     if (repos) {
       repos.every((r) => {
         if (r.name === sanitizedName) {

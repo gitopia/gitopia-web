@@ -28,12 +28,7 @@ export const validatePostingEligibility = async (
       dispatch(notify("Balance low for creating " + msgType, "error"));
       return false;
     } else {
-      dispatch(
-        notify(
-          "No associated user found for this adddress, creating... ",
-          "info"
-        )
-      );
+      console.log("No associated user found for this adddress, creating... ");
       await createUser(wallet.activeWallet.name)(dispatch, getState);
       await reInitClients(dispatch, getState);
     }

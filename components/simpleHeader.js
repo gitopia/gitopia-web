@@ -18,7 +18,7 @@ function SimpleHeader(props) {
           <div className="flex-none">
             <Link href={getHomeUrl(props.dashboards, props.currentDashboard)}>
               <img
-                width={120}
+                width={110}
                 height={30}
                 src="/logo-white.svg"
                 className="cursor-pointer"

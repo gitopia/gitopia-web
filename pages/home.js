@@ -44,7 +44,24 @@ function Home(props) {
           </div>
           <div>
             {/* <BackendStatus /> */}
-            <FaucetReceiver />
+            <div className="bg-footer-grad py-6">
+              <div className="text-xs text-type-secondary mx-8 mb-4">
+                &copy; Gitopia {new Date().getFullYear()}
+              </div>
+              <div className="mx-6">
+                {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ? (
+                  <a
+                    className={"btn btn-xs btn-link mt-2"}
+                    href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
+                    target="_blank"
+                  >
+                    View source code
+                  </a>
+                ) : (
+                  ""
+                )}
+              </div>
+            </div>
           </div>
         </div>
         <div className="flex-1 px-4">

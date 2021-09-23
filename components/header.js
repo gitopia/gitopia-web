@@ -76,14 +76,14 @@ function Header(props) {
         <div className="flex-none px-6 w-64">
           <Link href={homeUrl}>
             <img
-              width={120}
+              width={110}
               height={30}
               src="/logo-white.svg"
               className="cursor-pointer"
             ></img>
           </Link>
         </div>
-        <div className="flex-none mr-2">
+        {/* <div className="flex-none mr-2">
           <div className="form-control">
             <div className="relative">
               <input
@@ -110,7 +110,7 @@ function Header(props) {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="items-stretch">
           <a
             className="btn btn-ghost btn-sm rounded-btn"
@@ -132,8 +132,8 @@ function Header(props) {
         <div className="flex-1"></div>
         {props.activeWallet ? (
           <div className="flex-none mr-4">
-            <div className="badge bg-purple-900">
-              {props.loreBalance / 1000000} LORE
+            <div className="badge badge-md badge-secondary mr-2">
+              {props.loreBalance / 1000000} tLORE
             </div>
           </div>
         ) : (

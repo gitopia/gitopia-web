@@ -32,7 +32,7 @@ function OrgDashboard({ organization = {} }) {
           <div className="flex flex-col px-8 py-12">
             <div className="text-lg mb-8">Create a New Repository</div>
             <div className="text-xs mb-8">
-              Begin from scratch or import an excisting repository
+              Begin from scratch or import an existing repository
             </div>
             <Link href="/new">
               <a className="btn btn-outline btn-md">Create a Repository</a>
