@@ -203,7 +203,7 @@ function RepositoryIssueCreateView(props) {
                     : "None yet"}
                 </div>
               </div>
-              <div className="py-8">
+              {/* <div className="py-8">
                 <button className="btn btn-sm btn-block btn-ghost">
                   <div className="flex-1 text-left">Linked Pull Requests</div>
                   <svg
@@ -220,7 +220,7 @@ function RepositoryIssueCreateView(props) {
                   </svg>
                 </button>
                 <div className="text-xs px-3 mt-2">None yet</div>
-              </div>
+              </div> */}
             </div>
           </div>
         </main>

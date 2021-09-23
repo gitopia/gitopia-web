@@ -356,13 +356,13 @@ function RepositoryIssueView(props) {
                     : "None yet"}
                 </div>
               </div>
-              <div className="py-8">
+              {/* <div className="py-8">
                 <div className="flex-1 text-left px-3 mb-1">
                   Linked Pull Requests
                 </div>
 
                 <div className="text-xs px-3 mt-2">None yet</div>
-              </div>
+              </div> */}
             </div>
           </div>
         </main>
