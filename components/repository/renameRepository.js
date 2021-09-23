@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import TextInput from "../textInput";
 import { connect } from "react-redux";
 import { renameRepository } from "../../store/actions/repository";
+import isRepositoryNameAvailable from "../../helpers/isRepositoryNameAvailable";
 
 function RenameRepository({
   repoId = null,
+  repoOwner = null,
   currentName = "",
   onSuccess,
   ...props
@@ -16,6 +18,7 @@ function RenameRepository({
     message: "",
   });
   const [isChanging, setIsChanging] = useState(false);
+  const [startRename, setStartRename] = useState(false);
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
   useEffect(() => {
@@ -23,7 +26,7 @@ function RenameRepository({
     setNameHint({ shown: false });
   }, [currentName]);
 
-  const validateName = () => {
+  const validateName = async () => {
     if (name.length < 3) {
       setNameHint({
         type: "error",
@@ -32,15 +35,11 @@ function RenameRepository({
       });
       return false;
     }
-    let alreadyAvailable = false,
-      sanitizedName = name.replace(sanitizedNameTest, "-");
-    props.repositories.every((r) => {
-      if (r.name === sanitizedName) {
-        alreadyAvailable = true;
-        return false;
-      }
-      return true;
-    });
+    const alreadyAvailable = await isRepositoryNameAvailable(
+      name,
+      repoOwner,
+      props.dashboards
+    );
     if (alreadyAvailable) {
       setNameHint({
         type: "error",
@@ -54,23 +53,26 @@ function RenameRepository({
 
   const changeName = async () => {
     setIsChanging(true);
-    const res = await props.renameRepository({
-      id: repoId,
-      name: name.replace(sanitizedNameTest, "-"),
-    });
-    if (res) {
-      if (onSuccess) await onSuccess(name.replace(sanitizedNameTest, "-"));
+    if (await validateName()) {
+      const res = await props.renameRepository({
+        id: repoId,
+        name: name.replace(sanitizedNameTest, "-"),
+      });
+      if (res) {
+        if (onSuccess) await onSuccess(name.replace(sanitizedNameTest, "-"));
+      }
     }
     setIsChanging(false);
   };
 
-  return (
+  return startRename ? (
     <div className="flex items-top">
-      <div className="flex-1 py-2 mr-8">
+      <div className="flex-1 mr-8">
         <TextInput
           type="text"
           name="repository_name"
           placeholder="Repository Name"
+          label="Rename Repository"
           value={name}
           setValue={(v) => {
             if (sanitizedNameTest.test(v)) {
@@ -90,15 +92,33 @@ function RenameRepository({
           size="sm"
         />
       </div>
-      <div className="flex-none w-48 pt-2">
+      <div className="flex-none w-48 pt-9">
         <button
           className={
             "btn btn-sm btn-block btn-outline " + (isChanging ? "loading" : "")
           }
-          disabled={name === currentName || name.trim() === ""}
+          disabled={name === currentName || name.trim() === "" || isChanging}
           onClick={changeName}
         >
-          Change Name
+          Rename
+        </button>
+      </div>
+    </div>
+  ) : (
+    <div className="flex items-center">
+      <div className="flex-1 mr-8">
+        <div className="label-text">Rename Repository</div>
+        <div className="label-text-alt text-type-secondary">
+          The remote url will also change and anyone using current repository
+          will have to update their settings
+        </div>
+      </div>
+      <div className="flex-none w-48">
+        <button
+          className="btn btn-sm btn-block btn-accent btn-outline"
+          onClick={() => setStartRename(true)}
+        >
+          Rename
         </button>
       </div>
     </div>
@@ -109,6 +129,7 @@ const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
     user: state.user,
+    dashboards: state.user.dashboards,
   };
 };
 
