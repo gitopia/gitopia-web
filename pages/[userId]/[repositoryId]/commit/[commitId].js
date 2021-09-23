@@ -86,29 +86,10 @@ function RepositoryCommitDiffView(props) {
               ) : (
                 ""
               )}
-              {type === "delete" ? (
-                <div>
-                  <span>{oldPath}</span>
-                </div>
-              ) : (
-                ""
-              )}
             </div>
-            {(type === "modify" && oldPath !== newPath) || type === "rename" ? (
-              <div>
-                <span>{oldPath}</span>
-                <span className="px-4">&#8594;</span> <span>{newPath}</span>
-              </div>
-            ) : (
-              ""
-            )}
-            {(type === "modify" && oldPath === newPath) || type === "add" ? (
-              <div>
-                <span>{newPath}</span>
-              </div>
-            ) : (
-              ""
-            )}
+            <div>
+              <span>{filename}</span>
+            </div>
           </div>
         </div>
         <div
