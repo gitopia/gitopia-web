@@ -219,12 +219,12 @@ function Header(props) {
                             Download Wallet
                           </a>
                         </li>
-                        <li>
+                        {/* <li>
                           <a>Assets</a>
                         </li>
                         <li>
                           <a>Transactions</a>
-                        </li>
+                        </li> */}
                         <li className="h-4">
                           <div className="border-b border-grey mt-2"></div>
                         </li>{" "}
