@@ -60,7 +60,7 @@ function FaucetReceiver(props) {
           onClick={() => getTokens(1)}
           disabled={loading}
         >
-          Airdrop free tLORE
+          Get tLORE
         </button>
       </div>
     </div>
