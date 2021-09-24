@@ -137,6 +137,7 @@ function RepositoryView(props) {
           <RepositoryMainTabs
             active="code"
             hrefBase={repository.owner.id + "/" + repository.name}
+            showSettings={currentUserEditPermission}
           />
           {repository.branches.length ? (
             <div className="flex mt-8">

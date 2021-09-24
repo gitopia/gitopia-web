@@ -34,10 +34,28 @@ function RepositoryIssueView(props) {
   });
 
   const [allIssues, setAllIssues] = useState([]);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
 
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.id, repository.name);
-    if (r) setRepository(r);
+    if (r) {
+      setRepository(r);
+      let userPermission = false;
+      if (props.selectedAddress === router.query.userId) {
+        userPermission = true;
+      } else if (props.user) {
+        props.user.organizations.every((o) => {
+          if (o.id === router.query.userId) {
+            userPermission = true;
+            return false;
+          }
+          return true;
+        });
+      }
+      setCurrentUserEditPermission(userPermission);
+    }
   }, []);
 
   const getAllIssues = async () => {
@@ -69,6 +87,7 @@ function RepositoryIssueView(props) {
           <RepositoryMainTabs
             active="issues"
             hrefBase={repository.owner.id + "/" + repository.name}
+            showSettings={currentUserEditPermission}
           />
           <div className="flex mt-8">
             <div className="form-control flex-1 mr-8">

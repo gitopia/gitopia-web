@@ -57,6 +57,7 @@ function RepositoryView(props) {
           <RepositoryMainTabs
             active="settings"
             hrefBase={repository.owner.id + "/" + repository.name}
+            showSettings={true}
           />
           <div className="flex mt-8">
             <div className="flex-none w-64">
