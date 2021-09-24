@@ -201,15 +201,29 @@ export default function Landing() {
   return (
     <div className={styles.wrapper}>
       <Head>
-        <title>Gitopia</title>
+        <title>Gitopia - Code Collaboration for Web3</title>
         <link rel="icon" href="/favicon.png" />
         <meta
           name="description"
-          content="The new age decentralized code collaboration platform"
+          content="A new age decentralized code collaboration platform for developers
+          to collaborate, BUIDL, and get rewarded."
         />
         <meta
           name="keywords"
-          content="code, collaboration, decentralized, git"
+          content="code, collaboration, decentralized, git, web3, crypto"
+        />
+        <meta
+          property="og:title"
+          content="Gitopia - Code Collaboration for Web3"
+        />
+        <meta
+          property="og:description"
+          content="A new age decentralized code collaboration platform for developers
+            to collaborate, BUIDL, and get rewarded."
+        />
+        <meta
+          property="og:image"
+          content="https://testnet.gitopia.com/og-gitopia.jpg"
         />
       </Head>
       <header className={(menuOpen ? "bg-purple " : "") + styles.header}>
