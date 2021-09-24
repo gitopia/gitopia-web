@@ -134,14 +134,10 @@ function RepositoryView(props) {
       <div className="flex-1">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
-          {repository.branches.length || currentUserEditPermission ? (
-            <RepositoryMainTabs
-              active="code"
-              hrefBase={repository.owner.id + "/" + repository.name}
-            />
-          ) : (
-            ""
-          )}
+          <RepositoryMainTabs
+            active="code"
+            hrefBase={repository.owner.id + "/" + repository.name}
+          />
           {repository.branches.length ? (
             <div className="flex mt-8">
               <div className="flex-1">
@@ -338,7 +334,7 @@ function RepositoryView(props) {
           ) : currentUserEditPermission ? (
             <EmptyRepository repository={repository} />
           ) : (
-            <div className="px-8 text-type-secondary">Empty repository</div>
+            <div className="pt-8 text-type-secondary">Empty repository</div>
           )}
         </main>
       </div>
