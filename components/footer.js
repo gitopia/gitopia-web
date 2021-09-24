@@ -2,21 +2,52 @@ export default function Footer(props) {
   return (
     <div className="py-24 bg-footer-grad">
       <div className="mx-auto max-w-screen-lg container">
-        <div className="border-t border-grey p-4 flex justify-between text-xs text-type-secondary">
-          <span className="border-r border-grey pr-8">
+        <div className="border-t border-grey py-4 px-24 flex text-xs  justify-between text-type-secondary">
+          <span className="border-r border-grey pr-16">
             &copy; Gitopia {new Date().getFullYear()}
           </span>
-          <a>Terms</a>
-          <a>Privacy</a>
-          <a>Security</a>
-          <a>Status</a>
-          <a>Docs</a>
-          <a>About</a>
-          <a>Blog</a>
-          <a>Training</a>
-          <a>API</a>
-          <a>Pricing</a>
-          <a>Contact Us</a>
+          <a
+            className="link no-underline hover:underline"
+            href="https://docs.gitopia.com/"
+            target="_blank"
+          >
+            Docs
+          </a>
+          <a
+            className="link no-underline hover:underline"
+            href="https://gitopia.com/whitepaper.pdf"
+            target="_blank"
+          >
+            Whitepaper
+          </a>
+          <a
+            className="link no-underline hover:underline"
+            href="https://discord.gg/mVpQVW3vKE"
+            target="_blank"
+          >
+            Discord
+          </a>
+          <a
+            className="link no-underline hover:underline"
+            href="https://twitter.com/gitopiaOrg"
+            target="_blank"
+          >
+            Twitter
+          </a>
+          <a
+            className="link no-underline hover:underline"
+            href="https://t.me/Gitopia"
+            target="_blank"
+          >
+            Telegram
+          </a>
+          <a
+            className="link no-underline hover:underline"
+            href="https://medium.com/gitopia"
+            target="_blank"
+          >
+            Medium
+          </a>
         </div>
       </div>
     </div>
