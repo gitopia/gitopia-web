@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
@@ -13,6 +14,9 @@ import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import getRepositoryIssueAll from "../../../../helpers/getRepositoryIssueAll";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import Footer from "../../../../components/footer";
+import AssigneeGroup from "../../../../components/repository/assigneeGroup";
+
+dayjs.extend(relativeTime);
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -30,10 +34,28 @@ function RepositoryIssueView(props) {
   });
 
   const [allIssues, setAllIssues] = useState([]);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
 
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.id, repository.name);
-    if (r) setRepository(r);
+    if (r) {
+      setRepository(r);
+      let userPermission = false;
+      if (props.selectedAddress === router.query.userId) {
+        userPermission = true;
+      } else if (props.user) {
+        props.user.organizations.every((o) => {
+          if (o.id === router.query.userId) {
+            userPermission = true;
+            return false;
+          }
+          return true;
+        });
+      }
+      setCurrentUserEditPermission(userPermission);
+    }
   }, []);
 
   const getAllIssues = async () => {
@@ -65,6 +87,7 @@ function RepositoryIssueView(props) {
           <RepositoryMainTabs
             active="issues"
             hrefBase={repository.owner.id + "/" + repository.name}
+            showSettings={currentUserEditPermission}
           />
           <div className="flex mt-8">
             <div className="form-control flex-1 mr-8">
@@ -74,6 +97,22 @@ function RepositoryIssueView(props) {
                   placeholder="Search"
                   className="w-full pr-16 input input-ghost input-sm input-bordered"
                 />
+                <button className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </button>
               </div>
             </div>
             <div className="flex-none w-36">
@@ -97,27 +136,29 @@ function RepositoryIssueView(props) {
               <thead>
                 <tr>
                   <th className="w-7/12 text-left">
-                    <button className="btn btn-xs btn-ghost">
-                      <span
-                        className={
-                          "mr-2 h-2 w-2 rounded-md justify-self-end self-center inline-block bg-green-900"
-                        }
-                      />
-                      <span>Open</span>
-                    </button>
-                    <button className="btn btn-xs btn-ghost">
-                      <span
-                        className={
-                          "mr-2 h-2 w-2 rounded-md justify-self-end self-center inline-block bg-red-900"
-                        }
-                      />
-                      <span>Closed</span>
-                    </button>
+                    <div className="btn-group">
+                      <button className="btn btn-xs btn-ghost">
+                        <span
+                          className={
+                            "mr-2 h-2 w-2 rounded-md justify-self-end self-center inline-block bg-green-900"
+                          }
+                        />
+                        <span>Open</span>
+                      </button>
+                      <button className="btn btn-xs btn-ghost">
+                        <span
+                          className={
+                            "mr-2 h-2 w-2 rounded-md justify-self-end self-center inline-block bg-red-900"
+                          }
+                        />
+                        <span>Closed</span>
+                      </button>
+                    </div>
                   </th>
                   <th>
                     <button className="btn btn-xs btn-ghost">
                       <span>Asignee</span>
-                      <svg
+                      {/* <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-5 w-5 ml-2"
                         viewBox="0 0 20 20"
@@ -128,13 +169,13 @@ function RepositoryIssueView(props) {
                           d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                           clipRule="evenodd"
                         />
-                      </svg>
+                      </svg> */}
                     </button>
                   </th>
                   <th>
                     <button className="btn btn-xs btn-ghost">
                       <span>Replies</span>
-                      <svg
+                      {/* <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-5 w-5 ml-2"
                         viewBox="0 0 20 20"
@@ -145,13 +186,13 @@ function RepositoryIssueView(props) {
                           d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                           clipRule="evenodd"
                         />
-                      </svg>
+                      </svg> */}
                     </button>
                   </th>
                   <th>
                     <button className="btn btn-xs btn-ghost">
                       <span>Creation</span>
-                      <svg
+                      {/* <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-5 w-5 ml-2"
                         viewBox="0 0 20 20"
@@ -162,7 +203,7 @@ function RepositoryIssueView(props) {
                           d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                           clipRule="evenodd"
                         />
-                      </svg>
+                      </svg> */}
                     </button>
                   </th>
                 </tr>
@@ -171,42 +212,60 @@ function RepositoryIssueView(props) {
                 {allIssues.map((i) => {
                   return (
                     <tr key={i.iid}>
-                      <td className="text-left flex">
-                        <span
-                          className={
-                            "mr-4 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
-                            (i.state === "OPEN" ? "bg-green-900" : "bg-red-900")
-                          }
-                        />
-                        <div>
+                      <td>
+                        <div className="text-left flex">
+                          <span
+                            className={
+                              "mr-4 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
+                              (i.state === "OPEN"
+                                ? "bg-green-900"
+                                : "bg-red-900")
+                            }
+                          />
                           <div>
-                            <Link
-                              href={
-                                "/" +
-                                repository.owner.id +
-                                "/" +
-                                repository.name +
-                                "/issues/" +
-                                i.iid
-                              }
-                            >
-                              <a className="btn-neutral">{i.title}</a>
-                            </Link>
-                          </div>
-                          <div className="text-xs">
-                            #{i.iid} opened by {shrinkAddress(i.creator)}
+                            <div>
+                              <Link
+                                href={
+                                  "/" +
+                                  repository.owner.id +
+                                  "/" +
+                                  repository.name +
+                                  "/issues/" +
+                                  i.iid
+                                }
+                              >
+                                <a className="btn-neutral">{i.title}</a>
+                              </Link>
+                            </div>
+                            <div className="text-xs text-type-secondary">
+                              #{i.iid} opened by {shrinkAddress(i.creator)}
+                            </div>
                           </div>
                         </div>
                       </td>
                       <td>
-                        {i.assignees
-                          .map((a) => {
-                            return shrinkAddress(a);
-                          })
-                          .join(", ")}
+                        <div className="flex flex-wrap">
+                          <AssigneeGroup assignees={i.assignees} />
+                          {/* {i.assignees.map((a, i) => (
+                            <span
+                              className="pr-2 pb-2 whitespace-nowrap"
+                              key={"assignee" + i}
+                            >
+                              <a
+                                href={"/" + a}
+                                className="btn-xs btn-link cursor-pointer"
+                                target="_blank"
+                              >
+                                {shrinkAddress(a)}
+                              </a>
+                            </span>
+                          ))} */}
+                        </div>
                       </td>
-                      <td>{i.comments.length}</td>
-                      <td>{dayjs(i.createdAt * 1000).format("DD MMM YYYY")}</td>
+                      <td className="text-xs">{i.comments.length}</td>
+                      <td className="text-xs">
+                        {dayjs(i.createdAt * 1000).fromNow()}
+                      </td>
                     </tr>
                   );
                 })}

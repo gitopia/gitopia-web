@@ -30,6 +30,28 @@ function Home(props) {
       <Head>
         <title>Gitopia</title>
         <link rel="icon" href="/favicon.png" />
+        <meta
+          name="description"
+          content="A new age decentralized code collaboration platform for developers
+          to collaborate, BUIDL, and get rewarded."
+        />
+        <meta
+          name="keywords"
+          content="code, collaboration, decentralized, git, web3, crypto"
+        />
+        <meta
+          property="og:title"
+          content="Gitopia - Code Collaboration for Web3"
+        />
+        <meta
+          property="og:description"
+          content="A new age decentralized code collaboration platform for developers
+            to collaborate, BUIDL, and get rewarded."
+        />
+        <meta
+          property="og:image"
+          content="https://testnet.gitopia.com/og-gitopia.jpg"
+        />
       </Head>
       <Header />
       <div className="flex-1 flex">

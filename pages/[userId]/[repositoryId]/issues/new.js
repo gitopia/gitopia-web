@@ -17,6 +17,7 @@ import LabelSelector from "../../../../components/repository/labelSelector";
 import getIssueAllLabels from "../../../../helpers/getIssueAllLabels";
 import Label from "../../../../components/repository/label";
 import Link from "next/link";
+import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -78,7 +79,7 @@ function RepositoryIssueCreateView(props) {
     }
   }, []);
 
-  const username = props.activeWallet ? props.activeWallet.name : "";
+  const username = props.selectedAddress ? props.selectedAddress.slice(-1) : "";
 
   return (
     <div
@@ -150,22 +151,11 @@ function RepositoryIssueCreateView(props) {
                   }}
                 />
                 <div className="text-xs px-3 mt-2">
-                  {assignees.length
-                    ? assignees.map((a, i) => (
-                        <span
-                          className="pr-2 pb-2 whitespace-nowrap"
-                          key={"assignee" + i}
-                        >
-                          <a
-                            href={"/" + a}
-                            className="btn-link cursor-pointer"
-                            target="_blank"
-                          >
-                            {shrinkAddress(a)}
-                          </a>
-                        </span>
-                      ))
-                    : "No one"}
+                  {assignees.length ? (
+                    <AssigneeGroup assignees={assignees} />
+                  ) : (
+                    "No one"
+                  )}
                 </div>
               </div>
               <div className="py-8">
@@ -203,7 +193,7 @@ function RepositoryIssueCreateView(props) {
                     : "None yet"}
                 </div>
               </div>
-              <div className="py-8">
+              {/* <div className="py-8">
                 <button className="btn btn-sm btn-block btn-ghost">
                   <div className="flex-1 text-left">Linked Pull Requests</div>
                   <svg
@@ -220,7 +210,7 @@ function RepositoryIssueCreateView(props) {
                   </svg>
                 </button>
                 <div className="text-xs px-3 mt-2">None yet</div>
-              </div>
+              </div> */}
             </div>
           </div>
         </main>

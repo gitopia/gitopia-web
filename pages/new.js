@@ -147,11 +147,11 @@ function NewRepository(props) {
               outlive even you once it’s created. You can archive repositories,
               but they will still be visible to the public.
             </div>
-            <div className="w-96 text-sm text-right">
+            {/* <div className="w-96 text-sm text-right">
               Already have a repository? You can{" "}
               <a className="text-primary">import it </a>
               here.
-            </div>
+            </div> */}
           </div>
           <div className="bg-box-grad-v rounded-md mt-4 flex justify-center">
             <img src="new-repository.svg" className="h-58" />
