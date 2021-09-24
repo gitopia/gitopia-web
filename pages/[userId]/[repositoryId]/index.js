@@ -216,7 +216,10 @@ function RepositoryView(props) {
                     </div>
                   </div>
                   <div className="flex-1 text-right">
-                    <div className="dropdown dropdown-end w-full max-w-screen-md">
+                    <div
+                      className="dropdown dropdown-end outline-none"
+                      tabIndex="0"
+                    >
                       <button
                         className="btn btn-sm btn-primary w-26"
                         tabIndex="0"
@@ -235,7 +238,7 @@ function RepositoryView(props) {
                           />
                         </svg>
                       </button>
-                      <div className="shadow-lg dropdown-content bg-base-300 rounded mt-1 overflow-hidden w-full p-4 text-left">
+                      <div className="shadow-lg dropdown-content bg-base-300 rounded mt-1 overflow-hidden w-max p-4 text-left">
                         <div className="flex items-center p-2 rounded text-sm alert-warning">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -260,7 +263,7 @@ function RepositoryView(props) {
                             Learn more
                           </a>
                         </div>
-                        <div className=" mt-4">
+                        <div className="mt-4">
                           <div className="relative w-full mt-4">
                             <input
                               rows={2}
