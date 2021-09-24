@@ -6,6 +6,7 @@ import {
   removeCollaborator,
 } from "../../store/actions/repository";
 import getUser from "../../helpers/getUser";
+import shrinkAddress from "../../helpers/shrinkAddress";
 
 function CollaboratorsList({
   repoId,
@@ -19,7 +20,7 @@ function CollaboratorsList({
     type: "error",
     message: "",
   });
-  const [collabRole, setCollabRole] = useState("READ");
+  const [collabRole, setCollabRole] = useState("TRIAGE");
   const [isAdding, setIsAdding] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   console.log("collabs", collaborators);
@@ -71,7 +72,29 @@ function CollaboratorsList({
       <tbody>
         {collaborators.map((c, i) => (
           <tr key={"collaborator" + i}>
-            <td className="text-sm">{c.id}</td>
+            <td className="text-sm">
+              <div className="flex items-center">
+                <div className="avatar mr-2">
+                  <div className="w-8 h-8 rounded-full">
+                    <img
+                      src={
+                        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+                        c.id.slice(-1)
+                      }
+                    />
+                  </div>
+                </div>
+                <div>
+                  <a
+                    href={"/" + c.id}
+                    target="_blank"
+                    className="link link-primary text-sm no-underline hover:underline"
+                  >
+                    {shrinkAddress(c.id)}
+                  </a>
+                </div>
+              </div>
+            </td>
             <td className="text-sm">{c.permission}</td>
             <td>
               <button
