@@ -27,6 +27,7 @@ import AssigneeSelector from "../../../../components/repository/assigneeSelector
 import LabelSelector from "../../../../components/repository/labelSelector";
 import getIssueAllLabels from "../../../../helpers/getIssueAllLabels";
 import Label from "../../../../components/repository/label";
+import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -289,22 +290,11 @@ function RepositoryIssueView(props) {
                   }}
                 />
                 <div className="text-xs px-3 mt-2">
-                  {issue.assignees.length
-                    ? issue.assignees.map((a, i) => (
-                        <span
-                          className="pr-2 pb-2 whitespace-nowrap"
-                          key={"assignee" + i}
-                        >
-                          <a
-                            href={"/" + a}
-                            className="btn-link cursor-pointer"
-                            target="_blank"
-                          >
-                            {shrinkAddress(a)}
-                          </a>
-                        </span>
-                      ))
-                    : "No one"}
+                  {issue.assignees.length ? (
+                    <AssigneeGroup assignees={issue.assignees} />
+                  ) : (
+                    "No one"
+                  )}
                 </div>
               </div>
               <div className="py-8">

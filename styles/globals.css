@@ -862,3 +862,7 @@ a {
   font-family: var(--diff-font-family);
   padding: 0;
 }
+
+.tooltip:before {
+  font-size: 0.75rem;
+}
