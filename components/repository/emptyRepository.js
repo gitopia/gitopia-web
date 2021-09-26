@@ -216,7 +216,7 @@ export default function EmptyRepository(props) {
                   className="btn btn-outline btn-sm btn-block"
                   onClick={(e) => {
                     navigator.clipboard.writeText(
-                      'echo "# hello world!" >> README.md\ngit init\ngit add README.md\ngit commit -m "initial commit"\ngit remote add origin ' +
+                      'echo "# hello world" >> README.md\ngit init\ngit add README.md\ngit commit -m "initial commit"\ngit remote add origin ' +
                         remoteUrl +
                         "\ngit push -u origin master"
                     );
@@ -229,7 +229,7 @@ export default function EmptyRepository(props) {
             </div>
             <div className="mockup-code mb-4">
               <pre data-prefix="$">
-                <code>echo "# hello world!" >> README.md</code>
+                <code>echo "# hello world" >> README.md</code>
               </pre>
               <pre data-prefix="$">
                 <code>git init</code>
