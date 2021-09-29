@@ -18,9 +18,13 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
   console.log("collabs", members);
 
   const validateMember = async () => {
+    setCollabHint({
+      shown: false,
+      type: "error",
+      message: "",
+    });
     const res = await getUser(collabAddress);
     console.log(res);
-
     if (!res) {
       setCollabHint({
         shown: true,
@@ -42,6 +46,12 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
       console.log(res);
     }
     if (refreshOrganization) await refreshOrganization();
+    setCollabAddress("");
+    setCollabHint({
+      shown: false,
+      type: "error",
+      message: "",
+    });
     setIsAdding(false);
   };
 

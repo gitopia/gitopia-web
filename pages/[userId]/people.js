@@ -77,7 +77,7 @@ function OrganizationPeopleView(props) {
             </div>
           </div>
           <div className="flex flex-1 mt-8">
-            <PublicTabs active="people" hrefBase={hrefBase} />
+            <PublicTabs active="people" hrefBase={hrefBase} showPeople={true} />
           </div>
           <div className="mt-8 max-w-3xl">
             <ul className="divide-y divide-grey">
