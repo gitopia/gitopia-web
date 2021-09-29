@@ -147,8 +147,8 @@ function RepositoryIssueView(props) {
                 </span>
                 <span className="text-xs mr-2 text-type-secondary">
                   {shrinkAddress(issue.creator) +
-                    " opened this issue on " +
-                    dayjs(issue.createdAt * 1000).format("DD MMM")}
+                    " opened this issue " +
+                    dayjs(issue.createdAt * 1000).fromNow()}
                 </span>
                 <span className="text-xl mr-2 text-type-secondary">
                   &middot;
@@ -194,8 +194,8 @@ function RepositoryIssueView(props) {
                     <div className="flex text-xs px-4 py-2 bg-base-200 rounded-t items-center">
                       <div className="flex-1">
                         {shrinkAddress(issue.creator) +
-                          " commented on " +
-                          dayjs(issue.createdAt * 1000).format("DD MMM")}
+                          " commented " +
+                          dayjs(issue.createdAt * 1000).fromNow()}
                       </div>
                     </div>
                     <div className="p-4 markdown-body">

@@ -9,7 +9,6 @@ import Link from "next/link";
 import Footer from "../../components/footer";
 import getUser from "../../helpers/getUser";
 import getOrganization from "../../helpers/getOrganization";
-import dayjs from "dayjs";
 import PublicTabs from "../../components/dashboard/publicTabs";
 
 export async function getServerSideProps() {

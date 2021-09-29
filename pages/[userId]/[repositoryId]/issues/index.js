@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
@@ -16,8 +15,6 @@ import Footer from "../../../../components/footer";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
 import { isCurrentUserEligibleToUpdate } from "../../../../store/actions/repository";
-
-dayjs.extend(relativeTime);
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -71,7 +68,7 @@ function RepositoryIssueView(props) {
           />
           <div className="flex mt-8">
             <div className="form-control flex-1 mr-8">
-              <div className="relative">
+              {/* <div className="relative">
                 <input
                   type="text"
                   placeholder="Search"
@@ -93,7 +90,7 @@ function RepositoryIssueView(props) {
                     />
                   </svg>
                 </button>
-              </div>
+              </div> */}
             </div>
             <div className="flex-none w-36">
               <Link

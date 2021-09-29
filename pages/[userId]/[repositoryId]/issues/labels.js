@@ -4,17 +4,12 @@ import Header from "../../../../components/header";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
-import Link from "next/link";
-import dayjs from "dayjs";
 
 import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
-import getRepositoryIssueAll from "../../../../helpers/getRepositoryIssueAll";
-import shrinkAddress from "../../../../helpers/shrinkAddress";
 import Footer from "../../../../components/footer";
 import LabelEditor from "../../../../components/repository/labelEditor";
-import Label from "../../../../components/repository/label";
 import LabelView from "../../../../components/repository/labelView";
 
 export async function getServerSideProps() {
