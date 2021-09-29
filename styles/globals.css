@@ -866,3 +866,22 @@ a {
 .tooltip:before {
   font-size: 0.75rem;
 }
+
+.tab:first-of-type {
+  padding-left: 0;
+}
+
+.tab.tab-active .icon {
+  color: #33ab34;
+}
+
+.tab.tab-active {
+  border-color: #33ab34;
+}
+
+.tab-md,
+.tab-lg {
+  height: auto;
+  padding-top: calc(var(--tab-padding, 1rem) / 2);
+  padding-bottom: calc(var(--tab-padding, 1rem) / 2);
+}
