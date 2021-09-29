@@ -9,7 +9,7 @@ const initialState = {
   following: [],
   repositories: [],
   teams: [],
-  members: {},
+  members: [],
   location: "",
   email: "",
   website: "",
