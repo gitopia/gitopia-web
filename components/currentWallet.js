@@ -90,6 +90,7 @@ function CurrentWallet(props) {
             value={password}
             setValue={setPassword}
             hint={passwordHint}
+            onEnter={unlockWallet}
           />
           <div className="flex mt-4 w-full btn-group">
             <button
