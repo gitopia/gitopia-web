@@ -11,6 +11,7 @@ export default function TextInput(
     multiline: false,
     className: "",
     size: "md",
+    onEnter: () => {},
   }
 ) {
   return (
@@ -49,6 +50,11 @@ export default function TextInput(
             (props.hint.shown ? "input-" + props.hint.type : "")
           }
           value={props.value}
+          onKeyUp={(e) => {
+            if (e.code === "Enter" && props.onEnter) {
+              props.onEnter();
+            }
+          }}
           onChange={(e) => {
             props.setValue(e.target.value);
           }}
