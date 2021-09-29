@@ -109,7 +109,11 @@ function AccountView(props) {
             </div>
           </div>
           <div className="flex flex-1 mt-8">
-            <PublicTabs active="repositories" hrefBase={hrefBase} />
+            <PublicTabs
+              active="repositories"
+              hrefBase={hrefBase}
+              showPeople={org.address}
+            />
           </div>
           <div className="mt-8">
             <ul className="divide-y divide-grey">
