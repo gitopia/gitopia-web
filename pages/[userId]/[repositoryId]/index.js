@@ -119,7 +119,7 @@ function RepositoryView(props) {
         }
       }
     }
-  }, []);
+  }, [props.user]);
 
   return (
     <div
