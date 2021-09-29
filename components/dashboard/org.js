@@ -1,10 +1,12 @@
 import Link from "next/link";
-import KnowledgeCenter from "./knowledgeCenter";
+import { connect } from "react-redux";
+import MembersList from "./membersList";
+import { getOrganizationDetailsForDashboard } from "../../store/actions/organization";
 
-function OrgDashboard({ organization = {} }) {
+function OrgDashboard({ organization = {}, ...props }) {
   return (
     <main className="container mx-auto max-w-screen-lg py-12">
-      <div className="flex mb-12">
+      <div className="flex">
         <div>
           <div className="text-xs uppercase">Welcome to,</div>
           <Link href={"/" + organization.address}>
@@ -24,18 +26,18 @@ function OrgDashboard({ organization = {} }) {
           </select>
         </div> */}
       </div>
-      <div className="flex mb-4">
+      <div className="flex mt-12">
         <div className="flex flex-1 bg-box-grad-tl bg-base-200 p-4 rounded-md">
           <div className="flex-none bg-box-grad-v w-40 h-full rounded-md flex items-center">
             <img src="/repository.svg" />
           </div>
           <div className="flex flex-col px-8 py-12">
             <div className="text-lg mb-8">Create a New Repository</div>
-            <div className="text-xs mb-8">
+            <div className="text-xs mb-8 text-type-secondary">
               Begin from scratch or import an existing repository
             </div>
             <Link href="/new">
-              <a className="btn btn-outline btn-md">Create a Repository</a>
+              <a className="btn btn-outline btn-sm">Create a Repository</a>
             </Link>
           </div>
         </div>
@@ -63,9 +65,23 @@ function OrgDashboard({ organization = {} }) {
 
         <a className="btn btn-primary btn-link btn-xs">Import files</a>
       </div> */}
-      <KnowledgeCenter />
+      <div className="mt-12">
+        <MembersList
+          members={organization.members}
+          orgId={organization.address}
+          refreshOrganization={props.getOrganizationDetailsForDashboard}
+        />
+      </div>
     </main>
   );
 }
 
-export default OrgDashboard;
+const mapStateToProps = (state) => {
+  return {
+    selectedAddress: state.wallet.selectedAddress,
+  };
+};
+
+export default connect(mapStateToProps, { getOrganizationDetailsForDashboard })(
+  OrgDashboard
+);
