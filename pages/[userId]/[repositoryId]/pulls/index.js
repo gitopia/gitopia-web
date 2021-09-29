@@ -9,6 +9,7 @@ import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
+import { isCurrentUserEligibleToUpdate } from "../../../../store/actions/repository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -25,11 +26,20 @@ function RepositoryView(props) {
     branches: [],
     tags: [],
   });
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
 
   useEffect(async () => {
     const r = await getUserRepository(repository.owner.id, repository.name);
     if (r) setRepository(r);
   }, []);
+
+  useEffect(async () => {
+    setCurrentUserEditPermission(
+      await props.isCurrentUserEligibleToUpdate(repository.owner.id)
+    );
+  }, [repository, props.user]);
 
   return (
     <div
@@ -47,6 +57,7 @@ function RepositoryView(props) {
           <RepositoryMainTabs
             active="pulls"
             hrefBase={repository.owner.id + "/" + repository.name}
+            showSettings={currentUserEditPermission}
           />
         </main>
       </div>
@@ -58,7 +69,10 @@ function RepositoryView(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
+    user: state.user,
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryView);
+export default connect(mapStateToProps, { isCurrentUserEligibleToUpdate })(
+  RepositoryView
+);

@@ -627,7 +627,7 @@ export default function Landing() {
                     />
                   </div>
                 </div>
-                <div className="mt-4 border border-gray-700 rounded overflow-hidden max-w-3xl">
+                <div className="mt-4 border border-gray-700 rounded overflow-hidden">
                   <CommitDetailRow
                     commitDetail={commitDetail}
                     commitInBranchLink={

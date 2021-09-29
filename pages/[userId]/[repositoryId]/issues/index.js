@@ -15,6 +15,7 @@ import shrinkAddress from "../../../../helpers/shrinkAddress";
 import Footer from "../../../../components/footer";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
+import { isCurrentUserEligibleToUpdate } from "../../../../store/actions/repository";
 
 dayjs.extend(relativeTime);
 
@@ -31,27 +32,6 @@ function RepositoryIssueView(props) {
     false
   );
 
-  useEffect(async () => {
-    console.log(repository);
-    if (repository) {
-      let userPermission = false;
-      console.log(props.selectedAddress);
-      console.log(router.query.userId);
-      if (props.selectedAddress === router.query.userId) {
-        userPermission = true;
-      } else if (props.user) {
-        props.user.organizations.every((o) => {
-          if (o.id === router.query.userId) {
-            userPermission = true;
-            return false;
-          }
-          return true;
-        });
-      }
-      setCurrentUserEditPermission(userPermission);
-    }
-  }, [props.user]);
-
   const getAllIssues = async () => {
     if (repository) {
       const issues = await getRepositoryIssueAll(
@@ -64,6 +44,12 @@ function RepositoryIssueView(props) {
   };
 
   useEffect(getAllIssues, [repository]);
+
+  useEffect(async () => {
+    setCurrentUserEditPermission(
+      await props.isCurrentUserEligibleToUpdate(repository.owner.id)
+    );
+  }, [repository, props.user]);
 
   return (
     <div
@@ -280,4 +266,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryIssueView);
+export default connect(mapStateToProps, { isCurrentUserEligibleToUpdate })(
+  RepositoryIssueView
+);

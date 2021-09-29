@@ -447,4 +447,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { notify, getBalance })(RepositoryView);
+export default connect(mapStateToProps, {
+  notify,
+  isCurrentUserEligibleToUpdate,
+})(RepositoryView);
