@@ -5,13 +5,13 @@ import ReactMarkdown from "react-markdown";
 
 export default function CommitDetailRow({
   commitDetail,
-  commitInBranchLink = "",
+  commitLink,
+  maxMessageLength = 55,
 }) {
   let [authorName, setAuthorName] = useState("");
   let [message, setMessage] = useState("");
   let [hasMore, setHasMore] = useState(false);
   let [fullMessageShown, setFullMessageShown] = useState(false);
-  const maxMessageLength = 60;
 
   useEffect(() => {
     if (commitDetail && commitDetail.commit && commitDetail.commit.author) {
@@ -67,19 +67,23 @@ export default function CommitDetailRow({
             ""
           )}
         </div>
-        <div className="mr-2 flex-none flex pt-0.5">
-          <Link href={commitInBranchLink}>
-            <a className="link link-primary text-sm no-underline hover:underline">
-              {commitDetail.oid.slice(0, 6)}
-            </a>
-          </Link>
-        </div>
+        {commitLink ? (
+          <div className="mr-2 flex-none flex pt-0.5">
+            <Link href={commitLink}>
+              <a className="link link-primary text-sm no-underline hover:underline">
+                {commitDetail.oid.slice(0, 6)}
+              </a>
+            </Link>
+          </div>
+        ) : (
+          ""
+        )}
         <div className="flex-none text-type-secondary text-sm pt-0.5">
           {dayjs(
             (commitDetail.commit.author.timestamp +
               commitDetail.commit.author.timezoneOffset) *
               1000
-          ).format("DD MMM YY")}
+          ).fromNow()}
         </div>
       </div>
       {fullMessageShown ? (
