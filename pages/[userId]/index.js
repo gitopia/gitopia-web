@@ -128,8 +128,7 @@ function AccountView(props) {
                       </div>
                       <div className="mt-2">{r.description}</div>
                       <div className="mt-2 text-xs text-type-secondary">
-                        {"Last updated " +
-                          dayjs(r.updatedAt * 1000).format("DD-MM-YYYY")}
+                        {"Last updated " + dayjs(r.updatedAt * 1000).fromNow()}
                       </div>
                     </div>
                   </li>
