@@ -12,10 +12,8 @@ import Footer from "../../../../components/footer";
 import { getCommits } from "../../../../store/actions/git";
 import { parseDiff, Diff, Hunk } from "react-diff-view";
 import getDiff from "../../../../helpers/getDiff";
-import getDiffStat from "../../../../helpers/getDiffStat";
-import dayjs from "dayjs";
-import ReactMarkdown from "react-markdown";
 import useRepository from "../../../../hooks/useRepository";
+import CommitDetailRow from "../../../../components/repository/commitDetailRow";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -29,9 +27,10 @@ function RepositoryCommitDiffView(props) {
   const [fileHidden, setFileHidden] = useState([]);
   const [viewType, setViewType] = useState("unified");
   const [commit, setCommit] = useState({
-    author: { name: "" },
+    commit: { message: "", author: { timestamp: 0, timestampOffset: 0 } },
     stat: { addition: 0, deletion: 0 },
     timestamp: 0,
+    oid: "",
   });
   const [hasMore, setHasMore] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -156,8 +155,8 @@ function RepositoryCommitDiffView(props) {
           true
         );
         if (data) {
-          console.log("commit", { ...c[0].commit, ...data });
-          setCommit({ ...c[0].commit, ...data });
+          console.log("commit", { ...c[0], ...data });
+          setCommit({ ...c[0], ...data });
         }
         loadDiffs([], repository.id);
       }
@@ -186,31 +185,8 @@ function RepositoryCommitDiffView(props) {
             active="code"
             hrefBase={repository.owner.id + "/" + repository.name}
           />
-          <div className="mt-8 px-4 py-4 border border-grey rounded-md">
-            <div className="flex">
-              <div className="flex-1 flex">
-                <div className="avatar">
-                  <div className="rounded-full w-6 h-6 mr-2">
-                    <img
-                      src={
-                        "https://avatar.oxro.io/avatar.svg?length=1&height=40&width=40&fontSize=18&caps=1&name=" +
-                        commit.author.name.slice(0, 1)
-                      }
-                    />
-                  </div>
-                </div>
-                <span className="pr-4">{commit.author.name}</span>
-              </div>
-              <div className="flex-none">
-                <span className="mr-4">
-                  {dayjs(commit.author.timestamp * 1000).format("DD-MM-YYYY")}
-                </span>
-                <button className="btn btn-xs btn-outline">View Code</button>{" "}
-              </div>
-            </div>
-            <div className="mt-2 text-sm text-type-secondary markdown-body">
-              <ReactMarkdown>{commit.message}</ReactMarkdown>
-            </div>
+          <div className="mt-8 border border-grey rounded-md overflow-hidden">
+            <CommitDetailRow commitDetail={commit} maxMessageLength={90} />
           </div>
           <div className="flex mt-8 px-4 py-2">
             <div className="flex-1 flex">
