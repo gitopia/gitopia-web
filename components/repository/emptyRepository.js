@@ -50,65 +50,28 @@ export default function EmptyRepository(props) {
         </div>
       </div>
       <div className="mt-8">
-        <div className="rounded-md py-8">
-          <div className="mb-8 text-purple-50 ">
+        <div className="py-8">
+          <div className="flex items-center justify-center p-2 rounded text-sm alert-warning">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 mr-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+              className="h-5 w-5 mr-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
             >
               <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                fillRule="evenodd"
+                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
               />
             </svg>
-            <span className="text-md"></span>
-          </div>
-          <div className="py-4">
-            <div className="flex mb-4">
-              <div className="flex-1 text-xl text-purple-50">
-                <span>[Required] Install git remote helper</span>
-              </div>
-              <div className="flex-none w-44 mr-4">
-                <button
-                  className="btn btn-outline btn-secondary btn-sm btn-block"
-                  onClick={() => dispatch(downloadWalletForRemoteHelper())}
-                >
-                  Download wallet
-                </button>
-              </div>
-              <div className="flex-none w-44">
-                <button
-                  className="btn btn-outline btn-secondary btn-sm btn-block"
-                  onClick={(e) => {
-                    navigator.clipboard.writeText(
-                      "curl https://get.gitopia.com | bash # Install git remote helper\nexport GITOPIA_WALLET=/path/to/wallet.json # Set path of downloaded wallet"
-                    );
-                    dispatch(notify("Copied to clipboard", "info"));
-                  }}
-                >
-                  Copy commands
-                </button>
-              </div>
-            </div>
-            <div className="mockup-code mb-4 bg-secondary text-secondary-content">
-              <pre data-prefix="$">
-                <code>
-                  curl https://get.gitopia.com | bash # Install git remote
-                  helper
-                </code>
-              </pre>
-              <pre data-prefix="$">
-                <code>
-                  export GITOPIA_WALLET=/path/to/wallet.json # Set path of
-                  downloaded wallet
-                </code>
-              </pre>
-            </div>
+            <span className="mr-2">Install gitopia remote helper first.</span>
+            <a
+              href="https://docs.gitopia.com/git-remote-gitopia"
+              target="_blank"
+              className="link link-primary no-underline hover:underline"
+            >
+              Learn more
+            </a>
           </div>
         </div>
         <div className="rounded-md py-8">
