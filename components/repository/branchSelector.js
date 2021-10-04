@@ -33,7 +33,7 @@ export default function BranchSelector({
   }, [tags, branches]);
 
   return (
-    <div className={"dropdown"} tabIndex="0">
+    <div className={"dropdown outline-none"} tabIndex="0">
       <div
         className="btn btn-sm btn-outline items-center"
         onClick={() => {
