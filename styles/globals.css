@@ -1223,3 +1223,14 @@ ul.mde-suggestions li[aria-selected="true"] {
   padding-top: calc(var(--tab-padding, 1rem) / 2);
   padding-bottom: calc(var(--tab-padding, 1rem) / 2);
 }
+
+.menu li.bordered a,
+.menu li.bordered span {
+  border-left-width: 2px;
+}
+
+.btn-sm,
+.input-sm,
+.select-sm {
+  height: auto;
+}
