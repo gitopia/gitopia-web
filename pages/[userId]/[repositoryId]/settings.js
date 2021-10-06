@@ -18,7 +18,7 @@ export async function getServerSideProps() {
   return { props: {} };
 }
 
-function RepositoryView(props) {
+function RepositorySettingsView(props) {
   const router = useRouter();
   const [repository, setRepository] = useState({
     id: router.query.repositoryId,
@@ -225,4 +225,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryView);
+export default connect(mapStateToProps, {})(RepositorySettingsView);

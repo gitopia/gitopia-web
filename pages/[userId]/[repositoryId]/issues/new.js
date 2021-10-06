@@ -12,11 +12,8 @@ import MarkdownEditor from "../../../../components/markdownEditor";
 
 import { createIssue } from "../../../../store/actions/repository";
 import AssigneeSelector from "../../../../components/repository/assigneeSelector";
-import shrinkAddress from "../../../../helpers/shrinkAddress";
 import LabelSelector from "../../../../components/repository/labelSelector";
-import getIssueAllLabels from "../../../../helpers/getIssueAllLabels";
 import Label from "../../../../components/repository/label";
-import Link from "next/link";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
 
