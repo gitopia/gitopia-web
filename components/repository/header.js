@@ -1,7 +1,15 @@
 import shrinkAddress from "../../helpers/shrinkAddress";
 import Link from "next/link";
+import { useState } from "react";
+import { connect } from "react-redux";
+import { forkRepository } from "../../store/actions/repository";
+import { useRouter } from "next/router";
 
-export default function RepositoryHeader({ repository }) {
+function RepositoryHeader({ repository, ...props }) {
+  const [forkTargetShown, setForkTargetShown] = useState(false);
+  const [isForking, setIsForking] = useState(false);
+  const router = useRouter();
+
   return (
     <div className="flex flex-1 mb-8">
       <div className="avatar flex-none mr-8 items-center">
@@ -29,7 +37,7 @@ export default function RepositoryHeader({ repository }) {
                 <a className="btn-link">{shrinkAddress(repository.owner.id)}</a>
               </Link>
             </div>
-            <div className="mr-2">/</div>
+            <div className="mr-2 text-type-quaternary">/</div>
             <Link href={"/" + repository.owner.id + "/" + repository.name}>
               <a className="btn-link">{repository.name}</a>
             </Link>
@@ -85,8 +93,8 @@ export default function RepositoryHeader({ repository }) {
           </div>
         </div>
       </div>
-
-      {/* <div className="flex text-sm divide-x divide-grey">
+      <div className="flex text-sm divide-x divide-grey">
+        {/*
         <div className="flex items-center text-xs uppercase text-type-secondary font-bold pr-8">
           <svg
             viewBox="0 0 24 24"
@@ -121,7 +129,45 @@ export default function RepositoryHeader({ repository }) {
 
           <span>Score - 0</span>
         </div>
-        <div className="flex items-center text-xs uppercase text-type-secondary font-bold pl-8">
+        */}
+        <div className="btn-group">
+          <button
+            className="btn btn-xs btn-outline border-grey"
+            onClick={() => {
+              setForkTargetShown(true);
+            }}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-3 w-3 mr-2"
+              stroke="currentColor"
+            >
+              <path
+                d="M11.9998 12.5L6.49982 12.5L6.49982 5.5M11.9998 12.5L17.4998 12.5L17.4998 5.5M11.9998 12.5L11.9998 17.5"
+                strokeWidth="2"
+                fill="none"
+              />
+              <path d="M14.4998 19.5C14.4998 20.8807 13.3805 22 11.9998 22C10.6191 22 9.49982 20.8807 9.49982 19.5C9.49982 18.1193 10.6191 17 11.9998 17C13.3805 17 14.4998 18.1193 14.4998 19.5Z" />
+              <circle cx="6.49982" cy="5.5" r="2.5" />
+              <circle cx="17.4998" cy="5.5" r="2.5" />
+            </svg>
+
+            <span>FORKS</span>
+          </button>
+          <button
+            className="btn btn-xs btn-outline border-grey"
+            onClick={() => {
+              router.push(
+                "/" + repository.owner.id + "/" + repository.name + "/insights"
+              );
+            }}
+          >
+            {repository.forks.length}
+          </button>
+        </div>
+        {/* <div className="flex items-center text-xs uppercase text-type-secondary font-bold pl-8">
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -140,8 +186,66 @@ export default function RepositoryHeader({ repository }) {
           </svg>
 
           <span>Forks - {repository.forks.length}</span>
+        </div> */}
+      </div>
+      <input
+        type="checkbox"
+        checked={forkTargetShown}
+        readOnly
+        className="modal-toggle"
+      />
+      <div className="modal">
+        <div className="modal-box max-w-xs">
+          <p>Select forked repository owner</p>
+          <ul className="menu compact mt-8">
+            {props.dashboards.map((d) => {
+              return (
+                <li key={d.name}>
+                  <button
+                    className={
+                      "btn btn-sm btn-primary btn-link my-2 justify-start " +
+                      (isForking === d.id ? "loading" : "")
+                    }
+                    onClick={async () => {
+                      setIsForking(d.id);
+                      const res = await props.forkRepository({
+                        repositoryId: repository.id,
+                        repositoryName: repository.name,
+                        ownerId: d.id,
+                      });
+                      if (res && res.url) {
+                        setForkTargetShown(false);
+                        router.push(res.url);
+                      }
+                      setIsForking(false);
+                    }}
+                  >
+                    {d.name} - {shrinkAddress(d.id)}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="modal-action">
+            <label
+              className="btn btn-sm"
+              onClick={() => {
+                setForkTargetShown(false);
+              }}
+            >
+              Cancel
+            </label>
+          </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    dashboards: state.user.dashboards,
+  };
+};
+
+export default connect(mapStateToProps, { forkRepository })(RepositoryHeader);

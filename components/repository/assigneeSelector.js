@@ -2,7 +2,12 @@ import { useEffect, useState, useRef } from "react";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import getUser from "../../helpers/getUser";
 
-function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
+function AssigneeSelector({
+  collaborators = [],
+  assignees = [],
+  onChange,
+  title = "Assignees",
+}) {
   const [newAssignees, setNewAssignees] = useState([]);
   const [validateAddressError, setValidateAddressError] = useState(null);
   const [checkMap, setCheckMap] = useState({});
@@ -75,7 +80,7 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
           "btn btn-sm btn-block btn-ghost " + (isSaving ? "loading" : "")
         }
       >
-        <div className="flex-1 text-left">Assignees</div>
+        <div className="flex-1 text-left">{title}</div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5"

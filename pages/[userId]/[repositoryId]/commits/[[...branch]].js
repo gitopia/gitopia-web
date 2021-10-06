@@ -35,7 +35,7 @@ function RepositoryCommitTreeView(props) {
     if (repository) {
       const joinedPath = router.query.branch.join("/");
       repository.branches.every((b) => {
-        let branch = b.name.replace("refs/heads/", "");
+        let branch = b.name;
         if (joinedPath.includes(branch)) {
           let path = joinedPath.replace(branch, "").split("/");
           path = path.filter((p) => p !== "");
@@ -47,14 +47,16 @@ function RepositoryCommitTreeView(props) {
         return true;
       });
     }
-  }, [router.query, repository.id]);
+  }, [router.query.branch, repository.id]);
 
   const loadCommits = async (earlierCommits) => {
     if (branchName === "") return;
     setLoadingMore(true);
+    let useHasMore = !!hasMore;
+    if (earlierCommits.length === 0) useHasMore = false;
     const res = await getCommits(
       repository.id,
-      hasMore
+      useHasMore
         ? hasMore
         : getBranchSha(branchName, repository.branches, repository.tags),
       repository.name,
@@ -77,6 +79,7 @@ function RepositoryCommitTreeView(props) {
         "branchName updated, earlier commits will be cleared",
         branchName
       );
+      setHasMore(false);
       await loadCommits([]);
     }
   }, [branchName]);
