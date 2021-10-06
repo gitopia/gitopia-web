@@ -5,8 +5,11 @@ export default async function getDiff(
   prevCommitSha,
   onlyStat
 ) {
-  let obj = "";
-  const baseUrl = "/api/diff";
+  let obj = {};
+  const baseUrl =
+    process.env.NODE_ENV === "development"
+      ? "/api/diff"
+      : proces.env.NEXT_PUBLIC_OBJECTS_URL + "/diff";
   let params = {
     repository_id: Number(repoId),
     commit_sha: commitSha,
