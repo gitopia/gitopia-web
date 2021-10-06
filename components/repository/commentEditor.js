@@ -15,6 +15,7 @@ function CommentEditor({
   onSuccess = null,
   onCancel = null,
   issueState = "OPEN",
+  commentType = "ISSUE",
   ...props
 }) {
   const [comment, setComment] = useState(initialComment);
@@ -31,7 +32,7 @@ function CommentEditor({
       const res = await props.createComment({
         parentId: issueId,
         body: comment,
-        commentType: "ISSUE",
+        commentType: commentType,
       });
       if (res && res.code === 0) {
         setComment("");
@@ -84,7 +85,8 @@ function CommentEditor({
                 setTogglingIssue(false);
               }}
             >
-              {issueState === "OPEN" ? "Close" : "Re-Open"} Issue
+              {issueState === "OPEN" ? "Close" : "Re-Open"}{" "}
+              {commentType === "ISSUE" ? "Issue" : "Pull Request"}
             </button>
           </div>
         ) : (
