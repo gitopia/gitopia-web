@@ -97,12 +97,14 @@ function Header(props) {
         </div>
         <div className="flex-none px-6 w-64">
           <Link href={homeUrl}>
-            <img
-              width={110}
-              height={30}
-              src="/logo-white.svg"
-              className="cursor-pointer"
-            ></img>
+            <a>
+              <img
+                width={110}
+                height={30}
+                src="/logo-white.svg"
+                className="cursor-pointer"
+              ></img>
+            </a>
           </Link>
         </div>
         {/* <div className="flex-none mr-2">
@@ -221,7 +223,7 @@ function Header(props) {
                   />
                 )}
                 {menuState === 1 && (
-                  <ul className="menu w-48 rounded">
+                  <ul className="menu compact w-48 rounded">
                     {props.activeWallet ? (
                       <>
                         <li>
