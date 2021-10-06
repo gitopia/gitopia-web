@@ -50,19 +50,6 @@ function RepositoryView(props) {
 
   useEffect(async () => {
     console.log("repository", repository);
-    let userPermission = false;
-    if (props.selectedAddress === router.query.userId) {
-      userPermission = true;
-    } else if (props.user) {
-      props.user.organizations.every((o) => {
-        if (o.id === router.query.userId) {
-          userPermission = true;
-          return false;
-        }
-        return true;
-      });
-    }
-    setCurrentUserEditPermission(userPermission);
     if (typeof window !== "undefined" && repository.branches.length) {
       let branchSha = getBranchSha(
         repository.defaultBranch,
@@ -118,6 +105,12 @@ function RepositoryView(props) {
       }
     }
   }, [props.user, repository.id]);
+
+  useEffect(async () => {
+    setCurrentUserEditPermission(
+      await props.isCurrentUserEligibleToUpdate(repository.owner.id)
+    );
+  }, [repository, props.user]);
 
   return (
     <div
