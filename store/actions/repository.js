@@ -596,3 +596,185 @@ export const updateRepositoryLabel = ({
     }
   };
 };
+
+export const isCurrentUserEligibleToUpdate = (repoOwnerAddress) => {
+  return async (dispatch, getState) => {
+    let permission = false;
+    const { wallet, user } = getState();
+    if (wallet.selectedAddress === repoOwnerAddress) {
+      permission = true;
+    } else if (user) {
+      user.organizations.every((o) => {
+        if (o.id === repoOwnerAddress) {
+          permission = true;
+          return false;
+        }
+        return true;
+      });
+    }
+    return permission;
+  };
+};
+
+export const forkRepository = ({
+  repositoryId = null,
+  ownerId = null,
+  repositoryName = "",
+}) => {
+  return async (dispatch, getState) => {
+    const { wallet } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+      return null;
+    let ownerType;
+    const { user } = getState();
+    user.dashboards.every((d) => {
+      if (d.id === ownerId) {
+        ownerType = d.type == "User" ? "USER" : "ORGANIZATION";
+        return false;
+      }
+      return true;
+    });
+    const repository = {
+      creator: wallet.selectedAddress,
+      repositoryId,
+      ownerId,
+      ownerType,
+    };
+    console.log("fork", repository);
+    const { env } = getState();
+
+    try {
+      const message = await env.txClient.msgForkRepository(repository);
+      const result = await sendTransaction({ message }, env);
+      console.log(result);
+      if (result && result.code === 0) {
+        getUserDetailsForSelectedAddress()(dispatch, getState);
+        let url = "/" + ownerId + "/" + repositoryName;
+        console.log(url);
+        return { url };
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
+
+export const createPullRequest = ({
+  title,
+  description,
+  headBranch,
+  headRepoId,
+  baseBranch,
+  baseRepoId,
+}) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+      return null;
+    const pull = {
+      creator: wallet.selectedAddress,
+      title,
+      description,
+      headBranch,
+      headRepoId,
+      baseBranch,
+      baseRepoId,
+    };
+
+    console.log("pull request", pull);
+    try {
+      const message = await env.txClient.msgCreatePullRequest(pull);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        console.log(result);
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const createRelease = ({
+  repositoryId = null,
+  tagName = null,
+  target = null,
+  name = null,
+  description = null,
+  attachments = null,
+  draft = null,
+  preRelease = null,
+  isTag = null,
+}) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "release")))
+      return null;
+    const release = {
+      creator: wallet.selectedAddress,
+      tagName,
+      target,
+      name,
+      description,
+      attachments: JSON.stringify(attachments),
+      draft,
+      preRelease,
+      isTag,
+    };
+
+    console.log("release", release);
+    try {
+      const message = await env.txClient.msgCreateRelease(release);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        console.log(result);
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const createTag = ({ repositoryId = null, name = null, sha = null }) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "tag")))
+      return null;
+    const tag = {
+      creator: wallet.selectedAddress,
+      id: repositoryId,
+      name,
+      sha,
+    };
+
+    console.log("tag", tag);
+    try {
+      const message = await env.txClient.msgCreateTag(tag);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        console.log(result);
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
