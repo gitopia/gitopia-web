@@ -56,7 +56,7 @@ function RepositoryIssueView(props) {
       }
       setCurrentUserEditPermission(userPermission);
     }
-  }, []);
+  }, [props.user]);
 
   const getAllIssues = async () => {
     if (repository) {
@@ -282,6 +282,7 @@ function RepositoryIssueView(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
+    user: state.user,
   };
 };
 

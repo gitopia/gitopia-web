@@ -141,7 +141,7 @@ function DashboardSelector(props) {
                       </svg>
                     )}
                     <div className="flex-1 text-left">
-                      <div className="text-md">{a.name}</div>
+                      <div className="text-sm">{a.name}</div>
                     </div>
                   </a>
                 </li>

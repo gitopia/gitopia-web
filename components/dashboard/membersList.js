@@ -1,34 +1,30 @@
 import TextInput from "../textInput";
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import {
-  updateCollaborator,
-  removeCollaborator,
-} from "../../store/actions/repository";
+import { updateMember, removeMember } from "../../store/actions/organization";
 import getUser from "../../helpers/getUser";
 import shrinkAddress from "../../helpers/shrinkAddress";
 
-function CollaboratorsList({
-  repoId,
-  collaborators = [],
-  refreshRepository,
-  ...props
-}) {
+function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
   const [collabAddress, setCollabAddress] = useState("");
   const [collabHint, setCollabHint] = useState({
     shown: false,
     type: "error",
     message: "",
   });
-  const [collabRole, setCollabRole] = useState("TRIAGE");
+  const [collabRole, setCollabRole] = useState("MEMBER");
   const [isAdding, setIsAdding] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
-  console.log("collabs", collaborators);
+  console.log("collabs", members);
 
-  const validateCollaborator = async () => {
+  const validateMember = async () => {
+    setCollabHint({
+      shown: false,
+      type: "error",
+      message: "",
+    });
     const res = await getUser(collabAddress);
     console.log(res);
-
     if (!res) {
       setCollabHint({
         shown: true,
@@ -39,25 +35,30 @@ function CollaboratorsList({
     }
     return true;
   };
-  const addCollaborator = async () => {
+  const addMember = async () => {
     setIsAdding(true);
-    if (await validateCollaborator()) {
-      const res = await props.updateCollaborator({
-        id: repoId,
+    if (await validateMember()) {
+      const res = await props.updateMember({
+        id: orgId,
         user: collabAddress,
         role: collabRole,
       });
       console.log(res);
     }
-    if (refreshRepository) await refreshRepository();
+    if (refreshOrganization) await refreshOrganization();
     setCollabAddress("");
+    setCollabHint({
+      shown: false,
+      type: "error",
+      message: "",
+    });
     setIsAdding(false);
   };
 
-  const removeCollaborator = async (address, index) => {
+  const removeMember = async (address, index) => {
     setIsRemoving(index);
-    await props.removeCollaborator({ id: repoId, user: address });
-    if (refreshRepository) await refreshRepository();
+    await props.removeMember({ id: orgId, user: address });
+    if (refreshOrganization) await refreshOrganization();
     setIsRemoving(false);
   };
 
@@ -65,14 +66,14 @@ function CollaboratorsList({
     <table className="table w-full">
       <thead>
         <tr>
-          <th>Collaborator</th>
+          <th>Member</th>
           <th className="w-36">Role</th>
           <th className="w-56">Actions</th>
         </tr>
       </thead>
       <tbody>
-        {collaborators.map((c, i) => (
-          <tr key={"collaborator" + i}>
+        {members.map((c, i) => (
+          <tr key={"member" + i}>
             <td className="text-sm">
               <div className="flex items-center">
                 <div className="avatar mr-2">
@@ -96,7 +97,7 @@ function CollaboratorsList({
                 </div>
               </div>
             </td>
-            <td className="text-sm">{c.permission}</td>
+            <td className="text-sm">{c.role}</td>
             <td>
               <button
                 className={
@@ -104,7 +105,7 @@ function CollaboratorsList({
                   (isRemoving === i ? "loading" : "")
                 }
                 disabled={isRemoving === i}
-                onClick={() => removeCollaborator(c.id, i)}
+                onClick={() => removeMember(c.id, i)}
               >
                 Remove
               </button>
@@ -130,11 +131,8 @@ function CollaboratorsList({
               value={collabRole}
               onChange={(e) => setCollabRole(e.target.value)}
             >
-              <option value="READ">Read</option>
-              <option value="TRIAGE">Triage</option>
-              <option value="WRITE">Write</option>
-              <option value="MAINTAIN">Maintain</option>
-              <option value="ADMIN">Admin</option>
+              <option value="MEMBER">Member</option>
+              <option value="OWNER">Owner</option>
             </select>
           </td>
           <td style={{ verticalAlign: "top" }}>
@@ -143,7 +141,7 @@ function CollaboratorsList({
                 "btn btn-sm btn-outline btn-block " +
                 (isAdding ? "loading" : "")
               }
-              onClick={addCollaborator}
+              onClick={addMember}
               disabled={collabAddress.trim() === "" || isAdding}
             >
               Add
@@ -162,6 +160,6 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  updateCollaborator,
-  removeCollaborator,
-})(CollaboratorsList);
+  updateMember,
+  removeMember,
+})(MembersList);
