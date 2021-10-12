@@ -50,6 +50,7 @@ function CollaboratorsList({
       console.log(res);
     }
     if (refreshRepository) await refreshRepository();
+    setCollabAddress("");
     setIsAdding(false);
   };
 
