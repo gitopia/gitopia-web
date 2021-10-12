@@ -44,6 +44,7 @@ function RepositoryTreeView(props) {
   });
   const [repoPath, setRepoPath] = useState([]);
   const [branchName, setBranchName] = useState("");
+  const [isTag, setIsTag] = useState(false);
   // let repoPath = router.query.path || [];
   // let branchName = "";
 
@@ -62,6 +63,7 @@ function RepositoryTreeView(props) {
           let path = joinedPath.replace(branch, "").split("/");
           path = path.filter((p) => p !== "");
           setBranchName(branch);
+          setIsTag(false);
           setRepoPath(path);
           return false;
         }
@@ -73,6 +75,7 @@ function RepositoryTreeView(props) {
           let path = joinedPath.replace(branch, "").split("/");
           path = path.filter((p) => p !== "");
           setBranchName(branch);
+          setIsTag(true);
           setRepoPath(path);
           return false;
         }
@@ -80,7 +83,7 @@ function RepositoryTreeView(props) {
       });
       console.log("branchName", branchName, "repoPath", repoPath);
     }
-  }, [router.query]);
+  }, [router.query.path]);
 
   useEffect(async () => {
     if (typeof window !== "undefined") {
@@ -145,6 +148,7 @@ function RepositoryTreeView(props) {
                   branches={repository.branches}
                   tags={repository.tags}
                   branchName={branchName}
+                  isTag={isTag}
                   baseUrl={
                     "/" + repository.owner.id + "/" + repository.name + "/tree"
                   }
