@@ -138,6 +138,7 @@ function RepositoryView(props) {
                 </div>
                 <div className="py-4">
                   <CollaboratorsList
+                    repoId={repository.id}
                     collaborators={repository.collaborators}
                     refreshRepository={refreshRepository}
                   />
