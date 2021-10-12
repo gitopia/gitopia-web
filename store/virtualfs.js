@@ -6,7 +6,7 @@ export let fs = {};
 export let pfs = {};
 
 if (!isServer) {
-  fs = new LightningFS("fs");
+  fs = new LightningFS("fs", { wipe: true });
   pfs = fs.promises;
   window.fs = fs;
   window.pfs = pfs;
