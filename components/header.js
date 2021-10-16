@@ -7,11 +7,14 @@ import CurrentWallet from "./currentWallet";
 import {
   downloadWalletForRemoteHelper,
   signOut,
+  unlockKeplrWallet,
 } from "../store/actions/wallet";
 import shrinkAddress from "../helpers/shrinkAddress";
 import getHomeUrl from "../helpers/getHomeUrl";
 import _ from "lodash";
 import { notify } from "reapop";
+import initKeplr from "../keplr/init";
+
 /*
 Menu States
 1 - Default menu
@@ -45,6 +48,23 @@ function Header(props) {
   );
 
   const headerMessage = process.env.NEXT_PUBLIC_HEADER_MESSAGE;
+
+  const handleKeplrAccountChange = async () => {
+    console.log("handling keplr wallet change");
+    if (props.activeWallet.isKeplr) {
+      await props.unlockKeplrWallet();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keplr_keystorechange", handleKeplrAccountChange);
+    return () => {
+      window.removeEventListener(
+        "keplr_keystorechange",
+        handleKeplrAccountChange
+      );
+    };
+  });
 
   return (
     <>
@@ -139,7 +159,6 @@ function Header(props) {
         ) : (
           ""
         )}
-
         <div className="flex-none mr-4">
           <ClickAwayListener onClickAway={onUserMenuClose}>
             <div
@@ -249,6 +268,18 @@ function Header(props) {
                         <a>Create New Wallet</a>
                       </Link>
                     </li>
+                    <li>
+                      <a
+                        href="#"
+                        onClick={async () => {
+                          await initKeplr();
+                          await props.unlockKeplrWallet();
+                        }}
+                      >
+                        Connect Keplr Wallet
+                      </a>
+                    </li>
+
                     {props.activeWallet ? (
                       <>
                         <li className="h-4">
@@ -287,4 +318,5 @@ export default connect(mapStateToProps, {
   downloadWalletForRemoteHelper,
   signOut,
   notify,
+  unlockKeplrWallet,
 })(Header);

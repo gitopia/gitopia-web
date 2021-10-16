@@ -8,6 +8,7 @@ import {
 } from "./user";
 import { userActions, organizationActions } from "./actionTypes";
 import { validatePostingEligibility } from "./repository";
+import { getBalance } from "./wallet";
 
 export const createOrganization = ({ name = null, description = null }) => {
   return async (dispatch, getState) => {
@@ -39,6 +40,7 @@ export const createOrganization = ({ name = null, description = null }) => {
         dispatch(notify(result.rawLog, "error"));
         return null;
       }
+      getBalance()(dispatch, getState);
     } catch (e) {
       console.error(e);
       dispatch(notify(e.message, "error"));

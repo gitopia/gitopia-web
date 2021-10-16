@@ -9,6 +9,7 @@ import {
 import { reInitClients } from "./wallet";
 import { userActions } from "./actionTypes";
 import { async } from "regenerator-runtime";
+import { getBalance } from "./wallet";
 
 export const validatePostingEligibility = async (
   dispatch,
@@ -29,8 +30,15 @@ export const validatePostingEligibility = async (
       return false;
     } else {
       console.log("No associated user found for this adddress, creating... ");
-      await createUser(wallet.activeWallet.name)(dispatch, getState);
-      await reInitClients(dispatch, getState);
+      const res = await createUser(wallet.activeWallet.name)(
+        dispatch,
+        getState
+      );
+      if (res && res.code === 0) {
+        await reInitClients(dispatch, getState);
+      } else {
+        return false;
+      }
     }
   }
 
@@ -64,7 +72,7 @@ export const createRepository = ({
       creator: wallet.selectedAddress,
       name: name,
       ownerId,
-      ownerType,
+      ownerType: ownerType || "USER",
       description: description,
     };
     console.log("repository", repository);
@@ -73,7 +81,7 @@ export const createRepository = ({
     try {
       const message = await env.txClient.msgCreateRepository(repository);
       const result = await sendTransaction({ message }, env);
-      console.log(result);
+      getBalance()(dispatch, getState);
       if (result && result.code === 0) {
         getUserDetailsForSelectedAddress()(dispatch, getState);
         let url = "/" + ownerId + "/" + name;
@@ -118,7 +126,7 @@ export const createIssue = ({
     try {
       const message = await env.txClient.msgCreateIssue(issue);
       const result = await sendTransaction({ message }, env);
-      console.log(result);
+      getBalance()(dispatch, getState);
       if (result && result.code === 0) {
       } else {
         dispatch(notify(result.rawLog, "error"));
@@ -161,6 +169,7 @@ export const createComment = ({
     try {
       const message = await env.txClient.msgCreateComment(comment);
       const result = await sendTransaction({ message }, env);
+      getBalance()(dispatch, getState);
       return result;
     } catch (e) {
       console.error(e);
@@ -184,6 +193,7 @@ export const updateComment = ({ id = null, body = "", attachments = [] }) => {
     try {
       const message = await env.txClient.msgUpdateComment(comment);
       const result = await sendTransaction({ message }, env);
+      getBalance()(dispatch, getState);
       return result;
     } catch (e) {
       console.error(e);
@@ -205,6 +215,7 @@ export const deleteComment = ({ id = null }) => {
     try {
       const message = await env.txClient.msgDeleteComment(comment);
       const result = await sendTransaction({ message }, env);
+      getBalance()(dispatch, getState);
       return result;
     } catch (e) {
       console.error(e);
@@ -226,6 +237,7 @@ export const toggleIssueState = ({ id = null }) => {
     try {
       const message = await env.txClient.msgToggleIssueState(comment);
       const result = await sendTransaction({ message }, env);
+      getBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -253,6 +265,7 @@ export const renameRepository = ({ id = null, name = "" }) => {
     try {
       const message = await env.txClient.msgRenameRepository(repository);
       const result = await sendTransaction({ message }, env);
+      getBalance()(dispatch, getState);
       if (result && result.code === 0) {
         getUserDetailsForSelectedAddress()(dispatch, getState);
         return result;
@@ -285,6 +298,7 @@ export const updateCollaborator = ({ id = null, user = null, role = null }) => {
         collaborator
       );
       const result = await sendTransaction({ message }, env);
+      getBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -315,6 +329,7 @@ export const removeCollaborator = ({ id = null, user = null }) => {
         collaborator
       );
       const result = await sendTransaction({ message }, env);
+      getBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -348,6 +363,7 @@ export const changeRespositoryOwner = ({
     try {
       const message = await env.txClient.msgChangeOwner(req);
       const result = await sendTransaction({ message }, env);
+      getBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -362,45 +378,45 @@ export const changeRespositoryOwner = ({
   };
 };
 
-export const updateIssue = ({
-  title = null,
-  description = null,
-  issueId = null,
-  labels = null,
-  weight = null,
-  assignees = null,
-}) => {
-  return async (dispatch, getState) => {
-    const { wallet, env } = getState();
-    if (!(await validatePostingEligibility(dispatch, getState, "issue")))
-      return null;
-    const issue = {
-      creator: wallet.selectedAddress,
-      issueId,
-      ...(title && { title }),
-      ...(description && { description }),
-      ...(labels && { labels }),
-      ...(assignees && { assignees }),
-      ...(weight && { weight }),
-    };
-    console.log("issue", issue);
+// export const updateIssue = ({
+//   title = null,
+//   description = null,
+//   issueId = null,
+//   labels = null,
+//   weight = null,
+//   assignees = null,
+// }) => {
+//   return async (dispatch, getState) => {
+//     const { wallet, env } = getState();
+//     if (!(await validatePostingEligibility(dispatch, getState, "issue")))
+//       return null;
+//     const issue = {
+//       creator: wallet.selectedAddress,
+//       issueId,
+//       ...(title && { title }),
+//       ...(description && { description }),
+//       ...(labels && { labels }),
+//       ...(assignees && { assignees }),
+//       ...(weight && { weight }),
+//     };
+//     console.log("issue", issue);
 
-    try {
-      const message = await env.txClient.msgUpdateIssue(issue);
-      const result = await sendTransaction({ message }, env);
-      if (result && result.code === 0) {
-        return result;
-      } else {
-        dispatch(notify(result.rawLog, "error"));
-        return null;
-      }
-      return result;
-    } catch (e) {
-      console.error(e);
-      dispatch(notify(e.message, "error"));
-    }
-  };
-};
+//     try {
+//       const message = await env.txClient.msgUpdateIssue(issue);
+//       const result = await sendTransaction({ message }, env);
+//       if (result && result.code === 0) {
+//         return result;
+//       } else {
+//         dispatch(notify(result.rawLog, "error"));
+//         return null;
+//       }
+//       return result;
+//     } catch (e) {
+//       console.error(e);
+//       dispatch(notify(e.message, "error"));
+//     }
+//   };
+// };
 
 export const updateIssueAssignees = ({
   issueId = null,
@@ -444,7 +460,7 @@ export const updateIssueAssignees = ({
           return null;
         }
       }
-
+      getBalance()(dispatch, getState);
       return { result1, result2 };
     } catch (e) {
       console.error(e);
@@ -493,7 +509,7 @@ export const updateIssueLabels = ({
           return null;
         }
       }
-
+      getBalance()(dispatch, getState);
       return { result1, result2 };
     } catch (e) {
       console.error(e);
@@ -524,6 +540,7 @@ export const createRepositoryLabel = ({
     try {
       const message = await env.txClient.msgCreateRepositoryLabel(label);
       const result = await sendTransaction({ message }, env);
+      getBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -564,6 +581,7 @@ export const updateRepositoryLabel = ({
     try {
       const message = await env.txClient.msgUpdateRepositoryLabel(label);
       const result = await sendTransaction({ message }, env);
+      getBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {

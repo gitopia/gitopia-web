@@ -68,12 +68,39 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
 
 export const reInitClients = async (dispatch, getState) => {
   const { activeWallet } = getState().wallet;
-  const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
-    activeWallet.mnemonic,
-    stringToPath(activeWallet.HDpath + activeWallet.accounts[0].pathIncrement),
-    activeWallet.prefix
-  );
-  await postWalletUnlocked(accountSigner, dispatch, getState);
+  if (activeWallet.isKeplr) {
+    const chainId = "gitopia";
+    const offlineSigner = window.getOfflineSigner(chainId);
+    await postWalletUnlocked(offlineSigner, dispatch, getState);
+  } else {
+    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
+      activeWallet.mnemonic,
+      stringToPath(
+        activeWallet.HDpath + activeWallet.accounts[0].pathIncrement
+      ),
+      activeWallet.prefix || "gitopia"
+    );
+    await postWalletUnlocked(accountSigner, dispatch, getState);
+  }
+};
+
+export const unlockKeplrWallet = () => {
+  return async (dispatch, getState) => {
+    if (window.keplr && window.getOfflineSigner) {
+      const chainId = "gitopia";
+      const offlineSigner = window.getOfflineSigner(chainId);
+      const accounts = await offlineSigner.getAccounts();
+      const key = await window.keplr.getKey(chainId);
+      await dispatch({
+        type: walletActions.SET_ACTIVE_WALLET,
+        payload: { wallet: { name: key.name, accounts, isKeplr: true } },
+      });
+      await postWalletUnlocked(offlineSigner, dispatch, getState);
+      return accounts[0];
+    } else {
+      console.log("Unable to use keplr getOfflineSigner");
+    }
+  };
 };
 
 export const unlockWallet = ({ name, password }) => {
@@ -92,12 +119,18 @@ export const unlockWallet = ({ name, password }) => {
       console.error(e);
       return false;
     }
-    dispatch({ type: walletActions.SET_ACTIVE_WALLET, payload: { wallet } });
+    dispatch({
+      type: walletActions.SET_ACTIVE_WALLET,
+      payload: { wallet },
+    });
     if (wallet.accounts.length > 0) {
       const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
         wallet.mnemonic,
-        stringToPath(wallet.HDpath + wallet.accounts[0].pathIncrement),
-        wallet.prefix
+        {
+          prefix: wallet.prefix,
+        }
+        // stringToPath(wallet.HDpath + wallet.accounts[0].pathIncrement),
+        // wallet.prefix || "gitopia"
       );
       try {
         await postWalletUnlocked(accountSigner, dispatch, getState);
