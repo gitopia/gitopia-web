@@ -130,7 +130,6 @@ export const unlockWallet = ({ name, password }) => {
           prefix: wallet.prefix,
         }
         // stringToPath(wallet.HDpath + wallet.accounts[0].pathIncrement),
-        // wallet.prefix || "gitopia"
       );
       try {
         await postWalletUnlocked(accountSigner, dispatch, getState);
@@ -158,11 +157,13 @@ export const switchAccount = (address) => {
     );
     const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
       state.activeWallet.mnemonic,
-      stringToPath(
-        state.activeWallet.HDpath +
-          state.activeWallet.accounts[accountIndex].pathIncrement
-      ),
-      state.activeWallet.prefix
+      {
+        prefix: state.activeWallet.prefix,
+      }
+      // stringToPath(
+      //   state.activeWallet.HDpath +
+      //     state.activeWallet.accounts[accountIndex].pathIncrement
+      // ),
     );
 
     try {
@@ -182,8 +183,10 @@ export const addAccount = (pathIncrement) => {
     }
     const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
       activeWallet.mnemonic,
-      stringToPath(activeWallet.HDpath + pathIncrement),
-      activeWallet.prefix
+      {
+        prefix: activeWallet.prefix,
+      }
+      // stringToPath(activeWallet.HDpath + pathIncrement),
     );
     const [acc] = await accountSigner.getAccounts();
     const account = {
@@ -222,8 +225,10 @@ export const createWalletWithMnemonic = ({
     };
     const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
       mnemonic,
-      stringToPath(HDpath + "0"),
-      prefix
+      {
+        prefix: prefix,
+      }
+      // stringToPath(HDpath + "0"),
     );
     const [firstAccount] = await accountSigner.getAccounts();
     const account = { address: firstAccount.address, pathIncrement: 0 };
@@ -254,8 +259,10 @@ export const restoreWallet = ({ encrypted, password }) => {
     wallet.name = newName;
     const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
       wallet.mnemonic,
-      stringToPath(wallet.HDpath + "0"),
-      wallet.prefix
+      {
+        prefix: wallet.prefix,
+      }
+      // stringToPath(wallet.HDpath + "0"),
     );
     await dispatch({ type: walletActions.ADD_WALLET, payload: { wallet } });
 
