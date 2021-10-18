@@ -63,6 +63,7 @@ function RenameRepository({
       }
     }
     setIsChanging(false);
+    setStartRename(false);
   };
 
   return startRename ? (
