@@ -191,9 +191,18 @@ export default function BranchSelector({
             {filteredList.map((b, i) => {
               return (
                 <li key={"branch-selector" + i}>
-                  <Link href={baseUrl + "/" + b.name}>
-                    <a className="whitespace-nowrap">{b.name}</a>
-                  </Link>
+                  {baseUrl ? (
+                    <Link href={baseUrl + "/" + b.name}>
+                      <a className="whitespace-nowrap">{b.name}</a>
+                    </Link>
+                  ) : (
+                    <a
+                      className="whitespace-nowrap"
+                      onClick={() => onChange(b)}
+                    >
+                      {b.name}
+                    </a>
+                  )}
                 </li>
               );
             })}

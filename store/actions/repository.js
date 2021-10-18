@@ -745,7 +745,7 @@ export const createTag = ({ repositoryId = null, name = null, sha = null }) => {
 
     console.log("tag", tag);
     try {
-      const message = await env.txClient.msgCreateTag(tag);
+      const message = await env.txClient.msgSetRepositoryTag(tag);
       const result = await sendTransaction({ message }, env);
       if (result && result.code === 0) {
         return result;

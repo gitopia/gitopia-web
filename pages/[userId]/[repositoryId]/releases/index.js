@@ -45,12 +45,12 @@ function RepositoryReleasesView(props) {
     if (r) {
       setRepository(r);
       if (r.releases.length > 1) {
-        const older = r.releases.slice(0, r.releases.length - 2).reverse();
+        const older = r.releases.slice(0, r.releases.length - 1).reverse();
         setOlderReleases(older);
+        console.log(older, r.releases);
       } else {
         setOlderReleases([]);
       }
-
       console.log(r);
     }
   }, [router.query.repositoryId, router.query.userId]);
@@ -134,26 +134,33 @@ function RepositoryReleasesView(props) {
               </Link>
             </div>
           </div>
-          <div className="mt-8 space-y-4">
+          <div className="mt-8">
             <ReleaseView
               repository={repository}
               release={latestRelease}
               latest={true}
             />
+            {olderReleases.length ? (
+              <div className="p-4 mt-8 text-xl text-type-secondary">
+                Older Releases
+              </div>
+            ) : (
+              ""
+            )}
             {olderReleases.map((r) => {
               return (
-                <div>
+                <div className="px-4 py-2">
                   <Link
                     href={
                       "/" +
                       repository.owner.id +
                       "/" +
                       repository.name +
-                      "/releases/" +
+                      "/releases/tag/" +
                       r.tagName
                     }
                   >
-                    <a className="text-3xl link link-primary no-underline hover:underline">
+                    <a className="text-xl link link-primary no-underline hover:underline">
                       {repository.name + " " + r.tagName}
                     </a>
                   </Link>

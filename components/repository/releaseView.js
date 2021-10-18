@@ -19,7 +19,7 @@ export default function ReleaseView({
             repository.owner.id +
             "/" +
             repository.name +
-            "/releases/" +
+            "/releases/tag/" +
             release.tagName
           }
         >
@@ -28,7 +28,9 @@ export default function ReleaseView({
           </a>
         </Link>
         {latest ? (
-          <span className="ml-2 badge badge-primary badge-outline">Latest</span>
+          <span className="ml-4 mt-1 badge badge-primary badge-outline">
+            Latest
+          </span>
         ) : (
           ""
         )}
@@ -50,7 +52,8 @@ export default function ReleaseView({
           </a>
         </Link>
         <div className="ml-1 text-sm text-type-secondary">
-          {"released this " + dayjs(release.publishedAt * 1000).fromNow()}
+          {"released this on " +
+            dayjs(release.publishedAt * 1000).format("DD-MM-YYYY")}
         </div>
       </div>
       <div className="text-xs mt-4 text-type-secondary">{release.name}</div>
@@ -63,37 +66,41 @@ export default function ReleaseView({
           {release.attachments.length}
         </span>
       </div>
-      <ul className="mt-2 menu compact border border-grey rounded">
-        {release.attachments.map((a) => {
-          return (
-            <li key={a.sha}>
-              <a
-                className="flex py-2 items-center"
-                target="_blank"
-                href={
-                  process.env.NEXT_PUBLIC_OBJECTS_URL +
-                  "/releases/" +
-                  repository.owner.id +
-                  "/" +
-                  repository.name +
-                  "/" +
-                  release.tagName +
-                  "/" +
-                  a.name
-                }
-              >
-                <div className="flex-1 text-sm">{a.name}</div>
-                <div className="text-xs mr-2">{formatBytes(a.size)}</div>
-                <div className="">
-                  <div className="text-xs flex items-center">
-                    <div className="mr-2">{"(" + shrinkSha(a.sha) + ")"}</div>
+      {release.attachments.length ? (
+        <ul className="mt-2 menu compact border border-grey rounded">
+          {release.attachments.map((a) => {
+            return (
+              <li key={a.sha}>
+                <a
+                  className="flex py-2 items-center"
+                  target="_blank"
+                  href={
+                    process.env.NEXT_PUBLIC_OBJECTS_URL +
+                    "/releases/" +
+                    repository.owner.id +
+                    "/" +
+                    repository.name +
+                    "/" +
+                    release.tagName +
+                    "/" +
+                    a.name
+                  }
+                >
+                  <div className="flex-1 text-sm">{a.name}</div>
+                  <div className="text-xs mr-2">{formatBytes(a.size)}</div>
+                  <div className="">
+                    <div className="text-xs flex items-center">
+                      <div className="mr-2">{"(" + shrinkSha(a.sha) + ")"}</div>
+                    </div>
                   </div>
-                </div>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        ""
+      )}
     </div>
   );
 }

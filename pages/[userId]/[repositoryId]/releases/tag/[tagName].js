@@ -1,5 +1,5 @@
 import Head from "next/head";
-import Header from "../../../../components/header";
+import Header from "../../../../../components/header";
 
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -7,13 +7,13 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import dayjs from "dayjs";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
-import RepositoryHeader from "../../../../components/repository/header";
-import RepositoryMainTabs from "../../../../components/repository/mainTabs";
-import Footer from "../../../../components/footer";
-import { isCurrentUserEligibleToUpdate } from "../../../../store/actions/repository";
-import getRepositoryRelease from "../../../../helpers/getRepositoryRelease";
-import ReleaseView from "../../../../components/repository/releaseView";
+import getUserRepository from "../../../../../helpers/getUserRepository";
+import RepositoryHeader from "../../../../../components/repository/header";
+import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
+import Footer from "../../../../../components/footer";
+import { isCurrentUserEligibleToUpdate } from "../../../../../store/actions/repository";
+import getRepositoryRelease from "../../../../../helpers/getRepositoryRelease";
+import ReleaseView from "../../../../../components/repository/releaseView";
 
 export async function getServerSideProps() {
   return { props: {} };

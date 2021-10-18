@@ -75,16 +75,16 @@ function RepositoryReleaseNewView(props) {
         }),
       };
       const res = await props.createRelease(issue);
-      // if (res && res.code === 0) {
-      //   router.push(
-      //     "/" +
-      //       repository.owner.id +
-      //       "/" +
-      //       repository.name +
-      //       "/issues/" +
-      //       (Number(repository.issuesCount) + 1)
-      //   );
-      // }
+      if (res && res.code === 0) {
+        router.push(
+          "/" +
+            repository.owner.id +
+            "/" +
+            repository.name +
+            "/releases/tag/" +
+            tagName
+        );
+      }
     }
     setPostingIssue(false);
   };
@@ -203,21 +203,21 @@ function RepositoryReleaseNewView(props) {
                   />
                 </div>
               )}
-              <div className="form-control mr-4">
-                <label className="label">
-                  <span className="label-text">Target Branch</span>
-                </label>
-                <BranchSelector
-                  branchName={target.name}
-                  branches={repository.branches}
-                  showBranchesOnly={true}
-                  onChange={(branch) => {
-                    setTarget(branch);
-                  }}
-                />
-              </div>
               {newTagOptionShown ? (
                 <>
+                  <div className="form-control mr-4">
+                    <label className="label">
+                      <span className="label-text">Target Branch</span>
+                    </label>
+                    <BranchSelector
+                      branchName={target.name}
+                      branches={repository.branches}
+                      showBranchesOnly={true}
+                      onChange={(branch) => {
+                        setTarget(branch);
+                      }}
+                    />
+                  </div>
                   <div className="form-control mr-4">
                     <button
                       className={
