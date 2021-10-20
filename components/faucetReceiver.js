@@ -50,7 +50,7 @@ function FaucetReceiver(props) {
       <div className="flex-1 mr-8">
         <div className="text-lg">Get testnet tokens tLORE</div>
         <div className="text-xs mt-2 text-type-secondary">
-          Use them to test Gitopia. Based on you activity you might get actual
+          Use them to test Gitopia. Based on your activity you might get actual
           tokens on mainnet.
         </div>
       </div>
