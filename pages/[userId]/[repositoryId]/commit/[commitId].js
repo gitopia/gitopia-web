@@ -15,6 +15,7 @@ import getDiff from "../../../../helpers/getDiff";
 import getDiffStat from "../../../../helpers/getDiffStat";
 import dayjs from "dayjs";
 import ReactMarkdown from "react-markdown";
+import useRepository from "../../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -22,13 +23,7 @@ export async function getServerSideProps() {
 
 function RepositoryCommitDiffView(props) {
   const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: null,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    forks: [],
-    stargazers: [],
-  });
+  const repository = useRepository();
 
   const [files, setFiles] = useState([]);
   const [fileHidden, setFileHidden] = useState([]);
@@ -141,24 +136,20 @@ function RepositoryCommitDiffView(props) {
   };
 
   useEffect(async () => {
-    const r = await getUserRepository(repository.owner.id, repository.name);
-    if (r) {
-      setRepository({
-        ...r,
-      });
+    if (repository) {
       const c = await getCommits(
-        r.id,
+        repository.id,
         router.query.commitId,
-        r.name,
+        repository.name,
         router.query.userId,
         0
       );
       if (c) {
         setFiles([]);
         setFileHidden([]);
-        console.log(r.id, Number(r.id));
+        console.log(repository.id, Number(repository.id));
         const data = await getDiff(
-          Number(r.id),
+          Number(repository.id),
           router.query.commitId,
           null,
           null,
@@ -168,10 +159,10 @@ function RepositoryCommitDiffView(props) {
           console.log("commit", { ...c[0].commit, ...data });
           setCommit({ ...c[0].commit, ...data });
         }
-        loadDiffs([], r.id);
+        loadDiffs([], repository.id);
       }
     }
-  }, [router.query]);
+  }, [router.query, repository.id]);
 
   return (
     <div
