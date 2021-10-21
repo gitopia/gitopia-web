@@ -15,6 +15,7 @@ import Footer from "../../../../components/footer";
 import getBranchSha from "../../../../helpers/getBranchSha";
 import dayjs from "dayjs";
 import Link from "next/link";
+import useRepository from "../../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -22,13 +23,7 @@ export async function getServerSideProps() {
 
 function RepositoryCommitTreeView(props) {
   const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    forks: [],
-    stargazers: [],
-  });
+  const repository = useRepository();
 
   const [commits, setCommits] = useState([]);
   const [hasMore, setHasMore] = useState(false);
@@ -39,13 +34,9 @@ function RepositoryCommitTreeView(props) {
   // let branchName = "";
 
   useEffect(async () => {
-    const r = await getUserRepository(repository.owner.id, repository.name);
-    if (r) {
-      setRepository({
-        ...r,
-      });
+    if (repository) {
       const joinedPath = router.query.branch.join("/");
-      r.branches.every((b) => {
+      repository.branches.every((b) => {
         let branch = b.name.replace("refs/heads/", "");
         if (joinedPath.includes(branch)) {
           let path = joinedPath.replace(branch, "").split("/");
@@ -58,7 +49,7 @@ function RepositoryCommitTreeView(props) {
         return true;
       });
     }
-  }, [router.query]);
+  }, [router.query, repository.id]);
 
   const loadCommits = async (earlierCommits) => {
     if (branchName === "") return;
