@@ -15,6 +15,7 @@ import getRepositoryIssueAll from "../../../../helpers/getRepositoryIssueAll";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import Footer from "../../../../components/footer";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
+import useRepository from "../../../../hooks/useRepository"
 
 dayjs.extend(relativeTime);
 
@@ -24,14 +25,7 @@ export async function getServerSideProps() {
 
 function RepositoryIssueView(props) {
   const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    issues: [],
-    forks: [],
-    stargazers: [],
-  });
+  const repository = useRepository();
 
   const [allIssues, setAllIssues] = useState([]);
   const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
@@ -39,10 +33,11 @@ function RepositoryIssueView(props) {
   );
 
   useEffect(async () => {
-    const r = await getUserRepository(repository.owner.id, repository.name);
-    if (r) {
-      setRepository(r);
+    console.log(repository);
+    if (repository) {
       let userPermission = false;
+      console.log(props.selectedAddress);
+      console.log(router.query.userId);
       if (props.selectedAddress === router.query.userId) {
         userPermission = true;
       } else if (props.user) {
