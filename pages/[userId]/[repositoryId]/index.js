@@ -22,6 +22,7 @@ import Footer from "../../../components/footer";
 import getBranchSha from "../../../helpers/getBranchSha";
 import { isCurrentUserEligibleToUpdate } from "../../../store/actions/repository";
 import AssigneeGroup from "../../../components/repository/assigneeGroup";
+import useRepository from "../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -29,16 +30,7 @@ export async function getServerSideProps() {
 
 function RepositoryView(props) {
   const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    defaultBranch: "master",
-    branches: [],
-    tags: [],
-    forks: [],
-    stargazers: [],
-  });
+  const repository = useRepository();
 
   const [entityList, setEntityList] = useState([]);
   const [readmeFile, setReadmeFile] = useState(null);
@@ -55,8 +47,7 @@ function RepositoryView(props) {
   const remoteUrl = "gitopia://" + repository.owner.id + "/" + repository.name;
 
   useEffect(async () => {
-    const r = await getUserRepository(repository.owner.id, repository.name);
-    console.log("repository", r);
+    console.log("repository", repository);
     let userPermission = false;
     if (props.selectedAddress === router.query.userId) {
       userPermission = true;
@@ -70,17 +61,16 @@ function RepositoryView(props) {
       });
     }
     setCurrentUserEditPermission(userPermission);
-    if (r) setRepository(r);
-    if (typeof window !== "undefined" && r.branches.length) {
-      let branchSha = getBranchSha(r.defaultBranch, r.branches);
+    if (typeof window !== "undefined" && repository.branches.length) {
+      let branchSha = getBranchSha(repository.defaultBranch, repository.branches);
       if (!branchSha) {
-        setSelectedBranch(r.branches[0].name);
-        branchSha = r.branches[0].sha;
+        setSelectedBranch(repository.branches[0].name);
+        branchSha = repository.branches[0].sha;
       }
       const res = await initRepository(
-        r.id,
+        repository.id,
         branchSha,
-        r.name,
+        repository.name,
         router.query.userId,
         []
       );
@@ -99,9 +89,9 @@ function RepositoryView(props) {
         console.log("Repo Not found");
       }
       const readme = await initRepository(
-        r.id,
+        repository.id,
         branchSha,
-        r.name,
+        repository.name,
         router.query.userId,
         ["README.md"]
       );
@@ -122,7 +112,7 @@ function RepositoryView(props) {
         }
       }
     }
-  }, [props.user]);
+  }, [props.user, repository.id]);
 
   return (
     <div
