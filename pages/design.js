@@ -93,9 +93,23 @@ function Design(props) {
 		}
 	};
 
+
+		function scrollFunction() {
+			if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+				document.getElementById("header").style.fontSize = "30px";
+				document.getElementById("header").style.paddingTop = "30px";
+				document.getElementById("header").style.paddingBottom = "30px";
+			} else {
+				document.getElementById("header").style.fontSize = "90px";
+				document.getElementById("header").style.paddingTop = "300px";
+				document.getElementById("header").style.paddingBottom = "30px";
+			}
+		}
+
 	const [activeIndex, setActiveIndex] = useState(0);
   useEffect(() => {
     const handleScroll = (e) => {
+			window.onscroll = function() {scrollFunction()};
       var index = nearestIndex(
         window.scrollY,
         navHeader,
@@ -140,9 +154,11 @@ function Design(props) {
 			</div>
 
 			<div class="w-full md:w-3/4 ml-auto">
+				<div id="header" className={styles.header}> 
+						<h1>The Digital BrandBook</h1>	
+				</div>
 				<div class="h-screen flex justify-center items-center flex-col p-10">
-					<h1 className={styles.h1}>The Digital<br />BrandBook</h1>
-				</div>	
+				</div>
 				<div class="h-screen flex justify-center items-center flex-col p-10">
 					<img
             src="/1.jpg"
