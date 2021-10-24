@@ -116,6 +116,11 @@ function Design(props) {
 		<div class="relative"
 		style = {{backgroundColor: '#19072f'}}
 		>
+			<Head>
+        <title>Gitopia - BrandBook</title>
+        <link rel="icon" href="/favicon.png" />
+      </Head>
+
 			<div class="relative md:fixed w-full md:w-1/4 min-h-screen inset-0" id="mainNav">
         <div class="ml-28 mt-60 mr-28 text-lg group">
 					{navHeader.map((header, index) => (
