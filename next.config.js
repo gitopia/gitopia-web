@@ -25,6 +25,7 @@ module.exports = withTM({
     return {
       "/": { page: "/" },
       "/home": { page: "/home" },
+      "/design": { page: "/design"},
     };
   },
   images: {
