@@ -1,0 +1,12 @@
+@import url("https://fonts.googleapis.com/css2?family=Oxygen:wght@400;700&display=swap");
+
+.h1 {
+  font-size: 80px;
+  line-height: 1.142em;
+  font-weight: 700;
+  font-family: "Oxygen";
+}
+
+.a {
+  font-family: "Oxygen";
+}

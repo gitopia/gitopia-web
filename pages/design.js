@@ -5,6 +5,7 @@ import Link from "next/link";
 import PropTypes from "prop-types";
 import { useRouter } from "next/router";
 import classnames from "classnames";
+import styles from "../styles/design.module.css"
 
 function Design(props) {
 	
@@ -125,7 +126,8 @@ function Design(props) {
         <div class="ml-28 mt-60 mr-28 text-lg group">
 					{navHeader.map((header, index) => (
 						<div class="py-3 pl-8">
-							<a
+							<a 
+								className={styles.a}
 								key={index + header.headerID}
 								style={{ color: activeIndex === index ? "white" : "grey" }}
 								href={`#${header.headerID}`}
@@ -139,7 +141,7 @@ function Design(props) {
 
 			<div class="w-full md:w-3/4 ml-auto">
 				<div class="h-screen flex justify-center items-center flex-col p-10">
-					<h1 class="absolute top-50 right-30 p-20 text-white text-8xl">The Digital<br />BrandBook</h1>
+					<h1 className={styles.h1}>The Digital<br />BrandBook</h1>
 				</div>	
 				<div class="h-screen flex justify-center items-center flex-col p-10">
 					<img
