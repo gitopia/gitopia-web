@@ -1,28 +1,135 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect, useRef} from "react";
 import { connect } from "react-redux";
 import Head from "next/head";
 import Link from "next/link";
+import PropTypes from "prop-types";
 import { useRouter } from "next/router";
 import classnames from "classnames";
 
 function Design(props) {
+	
+		/**
+	 * @param {number} currentPosition Current Scroll position
+	 * @param {Array} sectionPositionArray Array of positions of all sections
+	 * @param {number} startIndex Start index of array
+	 * @param {number} endIndex End index of array
+	 * @return {number} Current Active index
+	 */
+
+	const logoRulesRef = useRef();
+	const typographyRef = useRef();
+	const colorRef = useRef();
+	const illustrationsRef = useRef();
+
+	const navHeader = [
+		{
+			headerTitle: "Logo Rules",
+			headerRef: logoRulesRef,
+			headerID: "logo-rules"
+		},
+		{
+			headerTitle: "Typography",
+			headerRef: typographyRef,
+			headerID: "typography"
+		},
+		{
+			headerTitle: "Color",
+			headerRef: colorRef,
+			headerID: "color"
+		},
+		{
+			headerTitle: "Illustrations",
+			headerRef: illustrationsRef,
+			headerID: "illustrations"
+		}
+	];
+	
+	const nearestIndex = (
+		currentPosition,
+		sectionPositionArray,
+		startIndex,
+		endIndex
+	) => {
+		if (startIndex === endIndex) return startIndex;
+		else if (startIndex === endIndex - 1) {
+			if (
+				Math.abs(
+					sectionPositionArray[startIndex].headerRef.current.offsetTop -
+						currentPosition
+				) <
+				Math.abs(
+					sectionPositionArray[endIndex].headerRef.current.offsetTop -
+						currentPosition
+				)
+			)
+				return startIndex;
+			else return endIndex;
+		} else {
+			var nextNearest = ~~((startIndex + endIndex) / 2);
+			var a = Math.abs(
+				sectionPositionArray[nextNearest].headerRef.current.offsetTop -
+					currentPosition
+			);
+			var b = Math.abs(
+				sectionPositionArray[nextNearest + 1].headerRef.current.offsetTop -
+					currentPosition
+			);
+			if (a < b) {
+				return nearestIndex(
+					currentPosition,
+					sectionPositionArray,
+					startIndex,
+					nextNearest
+				);
+			} else {
+				return nearestIndex(
+					currentPosition,
+					sectionPositionArray,
+					nextNearest,
+					endIndex
+				);
+			}
+		}
+	};
+
+	const [activeIndex, setActiveIndex] = useState(0);
+  useEffect(() => {
+    const handleScroll = (e) => {
+      var index = nearestIndex(
+        window.scrollY,
+        navHeader,
+        0,
+        navHeader.length - 1
+      );
+      setActiveIndex(index);
+    };
+    document.addEventListener("scroll", handleScroll);
+    return () => {
+      document.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+	
+
   const router = useRouter();
 	console.log(router.asPath);
   return (
 		<div class="relative"
-		style = {
-          {
-            backgroundColor: '#19072f'   
-          }
-      }
+		style = {{backgroundColor: '#19072f'}}
 		>
 			<div class="relative md:fixed w-full md:w-1/4 min-h-screen inset-0" id="mainNav">
-          <div className="ml-28 mt-60 mr-28 text-lg group">
-              <div class="py-3 pl-8"><a href="#logo-rules" className={router.asPath == "/design#logo-rules" ? "font-bold" : ""} > Logo Rules</a></div>
-              <div class="py-3 pl-8"><a href="#typography" className={router.asPath == "/design#typography" ? "font-bold" : ""} >Typography </a> </div>
-              <div class="py-3 pl-8"><a  href="#color">Color</a> </div>
-              <div class="py-3 pl-8"><a  href="#illustrations"> Illustrations</a></div>
-          </div>
+        <div class="ml-28 mt-60 mr-28 text-lg group">
+					{navHeader.map((header, index) => (
+						<div class="py-3 pl-8">
+							<a
+								key={index + header.headerID}
+								style={{ color: activeIndex === index ? "white" : "grey" }}
+								href={`#${header.headerID}`}
+							>
+								{header.headerTitle}
+							</a>
+						</div>
+					))}
+        </div>
 			</div>
 
 			<div class="w-full md:w-3/4 ml-auto">
@@ -44,7 +151,7 @@ function Design(props) {
             src="/3.jpg"
           />
 				</div>
-				<section id="logo-rules">
+				<section ref={logoRulesRef} id="logo-rules">
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
 							src="/4.jpg"
@@ -71,7 +178,7 @@ function Design(props) {
 						/>
 					</div>
 				</section>
-				<section id="typography">
+				<section ref={typographyRef} id="typography">
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
 							src="/9.jpg"
@@ -93,14 +200,14 @@ function Design(props) {
 						/>
 					</div>
 				</section>
-				<section id="color">
+				<section ref={colorRef} id="color">
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
 							src="/13.jpg"
 						/>
 					</div>
 				</section>
-				<section id="illustrations">
+				<section ref={illustrationsRef} id="illustrations">
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
 							src="/14.jpg"
