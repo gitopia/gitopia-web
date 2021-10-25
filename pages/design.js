@@ -1,10 +1,6 @@
 import { useState, useEffect, useRef} from "react";
-import { connect } from "react-redux";
 import Head from "next/head";
-import Link from "next/link";
-import PropTypes from "prop-types";
 import { useRouter } from "next/router";
-import classnames from "classnames";
 import styles from "../styles/design.module.css"
 
 function Design(props) {
@@ -101,7 +97,7 @@ function Design(props) {
 				document.getElementById("header").style.paddingBottom = "30px";
 			} else {
 				document.getElementById("header").style.fontSize = "90px";
-				document.getElementById("header").style.paddingTop = "300px";
+				document.getElementById("header").style.paddingTop = "20%";
 				document.getElementById("header").style.paddingBottom = "30px";
 			}
 		}
@@ -161,94 +157,94 @@ function Design(props) {
 				</div>
 				<div class="h-screen flex justify-center items-center flex-col p-10">
 					<img
-            src="/1.jpg"
+            src="/design/1.jpg"
           />
 				</div>
 				<div class="h-screen flex justify-center items-center flex-col p-10">
 					<img
-						src="/2.jpg"
+						src="/design/2.jpg"
 					/>
 				</div>
 				<div class="h-screen flex justify-center items-center flex-col p-10">
 					<img
-            src="/3.jpg"
+            src="/design/3.jpg"
           />
 				</div>
 				<section ref={logoRulesRef} id="logo-rules">
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/4.jpg"
+							src="/design/4.jpg"
 						/>
 					</div>
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/5.jpg"
+							src="/design/5.jpg"
 						/>
 					</div>
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/6.jpg"
+							src="/design/6.jpg"
 						/>
 					</div>
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/7.jpg"
+							src="/design/7.jpg"
 						/>
 					</div>
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/8.jpg"
+							src="/design/8.jpg"
 						/>
 					</div>
 				</section>
 				<section ref={typographyRef} id="typography">
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/9.jpg"
+							src="/design/9.jpg"
 						/>
 					</div>
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/10.jpg"
+							src="/design/10.jpg"
 						/>
 					</div>
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/11.jpg"
+							src="/design/11.jpg"
 						/>
 					</div>
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/12.jpg"
+							src="/design/12.jpg"
 						/>
 					</div>
 				</section>
 				<section ref={colorRef} id="color">
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/13.jpg"
+							src="/design/13.jpg"
 						/>
 					</div>
 				</section>
 				<section ref={illustrationsRef} id="illustrations">
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/14.jpg"
+							src="/design/14.jpg"
 						/>
 					</div>
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/15.jpg"
+							src="/design/15.jpg"
 						/>
 					</div>
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/16.jpg"
+							src="/design/16.jpg"
 						/>
 					</div>
 					<div class="h-screen flex justify-center items-center flex-col p-10">
 						<img
-							src="/17.jpg"
+							src="/design/17.jpg"
 						/>
 					</div>
 				</section>
