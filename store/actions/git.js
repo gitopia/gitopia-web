@@ -190,9 +190,11 @@ const loadDirectory = async (repoId, oid, projectRoot, sorted = false) => {
       oid,
     });
   } catch (e) {}
-  parsedTreeObject.tree = _.sortBy(parsedTreeObject.tree, [
-    (i) => (i.type === "tree" ? -1 : 1),
-  ]);
+  if (parsedTreeObject) {
+    parsedTreeObject.tree = _.sortBy(parsedTreeObject.tree, [
+      (i) => (i.type === "tree" ? -1 : 1),
+    ]);
+  }
   return parsedTreeObject;
 };
 

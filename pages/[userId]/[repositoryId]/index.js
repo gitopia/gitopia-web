@@ -20,6 +20,8 @@ import CommitDetailRow from "../../../components/repository/commitDetailRow";
 import FileBrowser from "../../../components/repository/fileBrowser";
 import Footer from "../../../components/footer";
 import getBranchSha from "../../../helpers/getBranchSha";
+import { isCurrentUserEligibleToUpdate } from "../../../store/actions/repository";
+import AssigneeGroup from "../../../components/repository/assigneeGroup";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -33,6 +35,7 @@ function RepositoryView(props) {
     owner: { id: router.query.userId },
     defaultBranch: "master",
     branches: [],
+    tags: [],
     forks: [],
     stargazers: [],
   });
@@ -325,7 +328,10 @@ function RepositoryView(props) {
                 </div>
 
                 {readmeFile ? (
-                  <div className="border border-gray-700 rounded overflow-hidden p-4 markdown-body mt-8">
+                  <div
+                    id="readme"
+                    className="border border-gray-700 rounded overflow-hidden p-4 markdown-body mt-8"
+                  >
                     <ReactMarkdown>{readmeFile}</ReactMarkdown>
                   </div>
                 ) : (
@@ -334,21 +340,132 @@ function RepositoryView(props) {
               </div>
               <div className="flex-none w-64 pl-8 divide-y divide-grey">
                 <div className="pb-8">
-                  <div className="flex-1 text-left px-3 mb-1">About</div>
+                  <div className="flex-1 text-sm font-semibold leading-8 text-left px-3">
+                    About
+                  </div>
 
-                  <div className="text-xs px-3">{repository.description}</div>
+                  <div className="text-xs px-3 mt-3">
+                    {repository.description}
+                  </div>
+                  {readmeFile ? (
+                    <Link
+                      href={
+                        "/" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name +
+                        "#readme"
+                      }
+                    >
+                      <a className="link px-3 mt-3 flex items-center text-xs no-underline hover:text-green">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-3 w-3 mr-1 mt-px"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                        </svg>
+                        <span>Readme</span>
+                      </a>
+                    </Link>
+                  ) : (
+                    ""
+                  )}
                 </div>
 
                 <div className="py-8">
-                  <div className="flex-1 text-left px-3 mb-1">Releases</div>
-
-                  <div className="text-xs px-3">None yet</div>
+                  {/* <div className="flex-1 text-sm font-semibold leading-8 text-left px-3">
+                    Releases
+                  </div> */}
+                  <Link
+                    href={
+                      "/" +
+                      repository.owner.id +
+                      "/" +
+                      repository.name +
+                      "/releases"
+                    }
+                  >
+                    <a className={"btn btn-sm btn-block btn-ghost"}>
+                      <div className="flex-1 text-left">
+                        <span>Releases</span>
+                        <span className="ml-2 badge badge-sm">
+                          {repository.releases.length}
+                        </span>
+                      </div>
+                    </a>
+                  </Link>
+                  <div className="text-xs px-3 mt-3">
+                    {repository.releases.length ? (
+                      <div>
+                        <Link
+                          href={
+                            "/" +
+                            repository.owner.id +
+                            "/" +
+                            repository.name +
+                            "/releases/tag/" +
+                            repository.releases[repository.releases.length - 1]
+                              .tagName
+                          }
+                        >
+                          <a className="link link-accent no-underline hover:underline">
+                            {repository.name +
+                              " " +
+                              repository.releases[
+                                repository.releases.length - 1
+                              ].tagName}
+                          </a>
+                        </Link>
+                      </div>
+                    ) : (
+                      <Link
+                        href={
+                          "/" +
+                          repository.owner.id +
+                          "/" +
+                          repository.name +
+                          "/releases/new"
+                        }
+                      >
+                        <a className="link mt-3 flex items-center text-xs no-underline hover:text-green">
+                          Create a release
+                        </a>
+                      </Link>
+                    )}
+                  </div>
                 </div>
 
                 <div className="py-8">
-                  <div className="flex-1 text-left  px-3 mb-1">Packages</div>
+                  <Link
+                    href={
+                      "/" +
+                      repository.owner.id +
+                      "/" +
+                      repository.name +
+                      "/settings#collaborators"
+                    }
+                  >
+                    <a className={"btn btn-sm btn-block btn-ghost"}>
+                      <div className="flex-1 text-left">
+                        <span>Collaborators</span>
+                        <span className="ml-2 badge badge-sm">
+                          {repository.collaborators.length}
+                        </span>
+                      </div>
+                    </a>
+                  </Link>
 
-                  <div className="text-xs px-3">None yet</div>
+                  <div className="text-xs px-3 mt-3">
+                    {repository.collaborators.length ? (
+                      <AssigneeGroup
+                        assignees={repository.collaborators.map((c) => c.id)}
+                      />
+                    ) : (
+                      "None yet"
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

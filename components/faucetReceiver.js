@@ -2,6 +2,7 @@ import { useState } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
 import { getBalance } from "../store/actions/wallet";
+import { notify } from "reapop";
 
 function FaucetReceiver(props) {
   const [loading, setLoading] = useState(0);
@@ -21,7 +22,10 @@ function FaucetReceiver(props) {
         { timeout: 10000 }
       )
       .then((res) => props.getBalance())
-      .catch((err) => console.error(err))
+      .catch((err) => {
+        console.error(err);
+        props.notify("Unable to react faucet", "error");
+      })
       .finally(() => setLoading(0));
   };
 
@@ -76,4 +80,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   getBalance,
+  notify,
 })(FaucetReceiver);
