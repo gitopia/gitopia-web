@@ -220,11 +220,95 @@ function Design(props) {
 					</div>
 				</section>
 				<section ref={colorRef} id="color">
-					<div class="h-screen flex justify-center items-center flex-col p-10">
-						<img
-							src="/design/13.jpg"
-						/>
+					<div class="h-screen flex justify-center items-center flex-col">
+						<div className={styles.boxed}>
+							<h6 class="text-black ml-20 pt-16 font-medium">DIGITAL COLOR PALETTE</h6>
+							<div className={styles.container}>
+								<div class="ml-16 pt-20">
+										<div className={styles.boxed1}>
+												<h6 class="text-white pt-2.5 pl-2.5 text-xs font-bold">GROWTH</h6>
+												<h6 class="text-white pt-12 pl-2.5 text-xs font-thin">#4268EC</h6>
+										</div>
+										<div className={styles.boxed1a}>
+												<h6></h6>
+										</div>
+								</div>	
+								<div class="ml-11 pt-20">	
+									<div className={styles.boxed2}>
+											<h6 class="text-white pt-2.5 pl-2.5 text-xs font-bold">TENSION</h6>
+											<h6 class="text-white pt-12 pl-2.5 text-xs font-thin">#E4812A</h6>
+									</div>
+									<div className={styles.boxed2a}>
+												<h6></h6>
+										</div>
+								</div>
+								<div class="ml-11 pt-20">
+									<div className={styles.boxed3}>
+											<h6 class="text-white pt-2.5 pl-2.5 text-xs font-bold">SUCCESS</h6>
+											<h6 class="text-white pt-12 pl-2.5 text-xs font-thin">#63D761</h6>
+									</div>
+									<div className={styles.boxed3a}>
+												<h6></h6>
+										</div>
+								</div>
+							</div>
+							<div class="ml-16 pt-10">
+							<div className={styles.container}>	
+								<div className={styles.container}>
+									<div>
+										<div className={styles.boxed4}>
+												<h6 class="text-white pt-2.5 pl-2.5 text-xs font-bold">CARBON DARK</h6>
+												<h6 class="text-white pt-12 pl-2.5 text-xs font-thin">#041B2D</h6>
+										</div>
+										<div className={styles.boxed4a}>
+															<h6></h6>
+										</div>
+									</div>
+									<div>
+										<div className={styles.boxed5}>
+															<h6></h6>
+										</div>
+										<div className={styles.boxed5a}>
+															<h6></h6>
+										</div>
+									</div>
+								</div>
+								<div>
+									<div className={styles.boxed6}>
+															<h6></h6>
+									</div>
+									<div className={styles.container}>
+										<div className={styles.boxed6a}>
+																<h6></h6>
+										</div>
+										<h6 class="text-gray-400 text-xs font-bold ml-2.5">#992E82</h6>
+										<h6 class="text-gray-400 text-xs font-bold">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</h6>
+										<h6 class="text-gray-400 text-xs font-bold">#612ADB</h6>
+										<div className={styles.boxed6b}>
+																<h6></h6>
+										</div>
+									</div>
+									<div className={styles.boxed7}>
+															<h6></h6>
+									</div>
+									<div className={styles.container}>
+										<div class="border border-gray-300 rounded-full ml-11 w-12 h-5">
+											<div className={styles.boxed7a}>
+																	<h6></h6>
+											</div>
+									 </div> 	
+										<h6 class="text-gray-400 text-xs font-bold ml-2.5">#FFFFFF</h6>
+										<h6 class="text-gray-400 text-xs font-bold">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </h6>
+										<h6 class="text-gray-400 text-xs font-bold">#D0D0D0</h6>
+										<div className={styles.boxed7b}>
+																<h6></h6>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>	
 					</div>
+				</div>
 				</section>
 				<section ref={illustrationsRef} id="illustrations">
 					<div class="h-screen flex justify-center items-center flex-col p-10">
