@@ -227,7 +227,7 @@ function Design(props) {
 								<div class="ml-16 pt-20">
 										<div className={styles.boxed1}>
 												<h6 class="text-white pt-2.5 pl-2.5 text-xs font-bold">GROWTH</h6>
-												<h6 class="text-white pt-12 pl-2.5 text-xs font-thin">#4268EC</h6>
+												<h6 class="text-white pt-12 pl-2.5 text-xs font-thin">#883BE6</h6>
 										</div>
 										<div className={styles.boxed1a}>
 												<h6></h6>
@@ -236,7 +236,7 @@ function Design(props) {
 								<div class="ml-11 pt-20">	
 									<div className={styles.boxed2}>
 											<h6 class="text-white pt-2.5 pl-2.5 text-xs font-bold">TENSION</h6>
-											<h6 class="text-white pt-12 pl-2.5 text-xs font-thin">#E4812A</h6>
+											<h6 class="text-white pt-12 pl-2.5 text-xs font-thin">#E83D99</h6>
 									</div>
 									<div className={styles.boxed2a}>
 												<h6></h6>

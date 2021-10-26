@@ -44,7 +44,7 @@
   border-radius: 10px;
   height: 100px;
   width: 260px;
-  background-color: #8c3ae7;
+  background-color: #883be6;
 }
 
 .boxed1a {
@@ -54,14 +54,10 @@
   width: 260px;
   background: linear-gradient(
     to right,
-    #a262eb 0%,
-    #a262eb 25%,
-    #ba89f1 25%,
-    #ba89f1 50%,
-    #d1b1f5 50%,
-    #d1b1f5 75%,
-    #e8d7fb 75%,
-    #e8d7fb 100%,
+    #a262eb 0% 25%,
+    #ba89f1 25% 50%,
+    #d1b1f5 50% 75%,
+    #e8d7fb 75% 100%,
     #e8d7fb 100%
   );
   margin-top: 10px;
@@ -72,7 +68,7 @@
   border-radius: 10px;
   height: 100px;
   width: 260px;
-  background-color: #ec3d99;
+  background-color: #e83d99;
 }
 
 .boxed2a {
@@ -82,14 +78,10 @@
   width: 260px;
   background: linear-gradient(
     to right,
-    #f064ae 0%,
-    #f064ae 25%,
-    #f48ac2 25%,
-    #f48ac2 50%,
-    #f9b1d6 50%,
-    #f9b1d6 75%,
-    #fbd7eb 75%,
-    #fbd7eb 100%,
+    #f064ae 0% 25%,
+    #f48ac2 25% 50%,
+    #f9b1d6 50% 75%,
+    #fbd7eb 75% 100%,
     #fbd7eb 100%
   );
   margin-top: 10px;
@@ -110,14 +102,10 @@
   width: 260px;
   background: linear-gradient(
     to right,
-    #80d885 0%,
-    #80d885 25%,
-    #a1e1a5 25%,
-    #a1e1a5 50%,
-    #c0ebc1 50%,
-    #c0ebc1 75%,
-    #dff5e2 75%,
-    #dff5e2 100%,
+    #80d885 0% 25%,
+    #a1e1a5 25% 50%,
+    #c0ebc1 50% 75%,
+    #dff5e2 75% 100%,
     #dff5e2 100%
   );
   margin-top: 10px;
@@ -138,14 +126,10 @@
   width: 200px;
   background: linear-gradient(
     to right,
-    #041b2d 0%,
-    #041b2d 25%,
-    #393939 25%,
-    #393939 50%,
-    #9c9c9c 50%,
-    #9c9c9c 75%,
-    #cecece 75%,
-    #cecece 100%,
+    #041b2d 0% 25%,
+    #393939 25% 50%,
+    #9c9c9c 50% 75%,
+    #cecece 75% 100%,
     #cecece 100%
   );
   margin-top: 10px;
@@ -156,7 +140,7 @@
   border-radius: 10px;
   height: 60px;
   width: 50px;
-  background-color: #cbd3dd;
+  background-color: #cbd4dd;
   margin-left: 10px;
 }
 
@@ -165,7 +149,7 @@
   border-radius: 10px;
   height: 60px;
   width: 50px;
-  background-color: #91a3b5;
+  background-color: #91a3b4;
   margin-top: 10px;
   margin-left: 10px;
 }
