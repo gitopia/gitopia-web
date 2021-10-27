@@ -18,6 +18,7 @@ import getIssueAllLabels from "../../../../helpers/getIssueAllLabels";
 import Label from "../../../../components/repository/label";
 import Link from "next/link";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
+import useRepository from "../../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -25,14 +26,7 @@ export async function getServerSideProps() {
 
 function RepositoryIssueCreateView(props) {
   const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    collaborators: [],
-    forks: [],
-    stargazers: [],
-  });
+  const repository = useRepository();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -71,13 +65,10 @@ function RepositoryIssueCreateView(props) {
   };
 
   useEffect(async () => {
-    const r = await getUserRepository(repository.owner.id, repository.name);
-    console.log(r);
-    if (r) {
-      setRepository(r);
-      setAllLabels(r.labels);
+    if (repository) {
+      setAllLabels(repository.labels);
     }
-  }, []);
+  }, [repository.id]);
 
   const username = props.selectedAddress ? props.selectedAddress.slice(-1) : "";
 

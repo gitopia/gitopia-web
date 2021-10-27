@@ -19,6 +19,7 @@ import CommitDetailRow from "../../../../components/repository/commitDetailRow";
 import FileBrowser from "../../../../components/repository/fileBrowser";
 import Footer from "../../../../components/footer";
 import getBranchSha from "../../../../helpers/getBranchSha";
+import useRepository from "../../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -26,13 +27,7 @@ export async function getServerSideProps() {
 
 function RepositoryTreeView(props) {
   const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    forks: [],
-    stargazers: [],
-  });
+  const repository = useRepository();
 
   const [entityList, setEntityList] = useState([]);
   const [file, setFile] = useState(null);
@@ -50,14 +45,10 @@ function RepositoryTreeView(props) {
 
   useEffect(async () => {
     console.log("query", router.query);
-    const r = await getUserRepository(repository.owner.id, repository.name);
-    if (r) {
-      setRepository({
-        ...r,
-      });
-      console.log(r);
+    if (repository) {
+      console.log(repository);
       const joinedPath = router.query.path.join("/");
-      r.branches.every((b) => {
+      repository.branches.every((b) => {
         let branch = b.name;
         if (joinedPath.includes(branch)) {
           let path = joinedPath.replace(branch, "").split("/");
@@ -69,7 +60,7 @@ function RepositoryTreeView(props) {
         }
         return true;
       });
-      r.tags.every((b) => {
+      repository.tags.every((b) => {
         let branch = b.name;
         if (joinedPath.includes(branch)) {
           let path = joinedPath.replace(branch, "").split("/");
@@ -83,7 +74,7 @@ function RepositoryTreeView(props) {
       });
       console.log("branchName", branchName, "repoPath", repoPath);
     }
-  }, [router.query.path]);
+  }, [router.query.path, repository.id]);
 
   useEffect(async () => {
     if (typeof window !== "undefined") {
@@ -94,6 +85,7 @@ function RepositoryTreeView(props) {
         router.query.userId,
         repoPath
       );
+       console.log(router.query.userId);
       if (res) {
         console.log(res);
         if (res.commit) {

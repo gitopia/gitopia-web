@@ -28,6 +28,7 @@ import LabelSelector from "../../../../components/repository/labelSelector";
 import getIssueAllLabels from "../../../../helpers/getIssueAllLabels";
 import Label from "../../../../components/repository/label";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
+import useRepository from "../../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -35,13 +36,7 @@ export async function getServerSideProps() {
 
 function RepositoryIssueView(props) {
   const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    forks: [],
-    stargazers: [],
-  });
+  const repository = useRepository(router.query); 
   const [issue, setIssue] = useState({
     iid: router.query.issueIid,
     creator: "",
@@ -53,19 +48,19 @@ function RepositoryIssueView(props) {
   const [allLabels, setAllLabels] = useState([]);
 
   useEffect(async () => {
-    const [r, i] = await Promise.all([
-      getUserRepository(router.query.userId, router.query.repositoryId),
+    console.log(router.query.userId);
+    const [i] = await Promise.all([
       getRepositoryIssue(
         router.query.userId,
         router.query.repositoryId,
         router.query.issueIid
       ),
     ]);
-    if (r) setRepository(r);
     if (i) setIssue(i);
-    setAllLabels(r.labels);
+    console.log(repository);
+    setAllLabels(repository.labels);
     console.log(i);
-  }, [router.query]);
+  }, [router.query.issueIid, repository.id]);
 
   const getAllComments = async () => {
     const pr = issue.comments.map((c) => getComment(c));
