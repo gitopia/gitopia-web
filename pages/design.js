@@ -224,41 +224,45 @@ function Design(props) {
 						<div className={styles.boxed}>
 							<h6 class="text-black ml-20 pt-16 font-medium">DIGITAL COLOR PALETTE</h6>
 							<div className={styles.container}>
-								<div class="ml-16 pt-20">
+								<div className={styles.box}>
 										<div className={styles.boxed1}>
-												<h6 class="text-white pt-2.5 pl-2.5 text-xs font-bold">GROWTH</h6>
-												<h6 class="text-white pt-12 pl-2.5 text-xs font-thin">#883BE6</h6>
+											<div className={styles.textName}>
+												<h6 >GROWTH</h6>
+											</div>
+											<div className={styles.textId}>
+												<h6>#883BE6</h6>
+											</div>
 										</div>
 										<div className={styles.boxed1a}>
 												<h6></h6>
 										</div>
 								</div>	
-								<div class="ml-11 pt-20">	
+								<div className={styles.box}>	
 									<div className={styles.boxed2}>
-											<h6 class="text-white pt-2.5 pl-2.5 text-xs font-bold">TENSION</h6>
-											<h6 class="text-white pt-12 pl-2.5 text-xs font-thin">#E83D99</h6>
+											<h6 className={styles.textName}>TENSION</h6>
+											<h6 className={styles.textId}>#E83D99</h6>
 									</div>
 									<div className={styles.boxed2a}>
 												<h6></h6>
 										</div>
 								</div>
-								<div class="ml-11 pt-20">
+								<div className={styles.box}>
 									<div className={styles.boxed3}>
-											<h6 class="text-white pt-2.5 pl-2.5 text-xs font-bold">SUCCESS</h6>
-											<h6 class="text-white pt-12 pl-2.5 text-xs font-thin">#63D761</h6>
+											<h6 className={styles.textName}>SUCCESS</h6>
+											<h6 className={styles.textId}>#63D761</h6>
 									</div>
 									<div className={styles.boxed3a}>
 												<h6></h6>
 										</div>
 								</div>
 							</div>
-							<div class="ml-16 pt-10">
+							<div className={styles.box1}>
 							<div className={styles.container}>	
 								<div className={styles.container}>
 									<div>
 										<div className={styles.boxed4}>
-												<h6 class="text-white pt-2.5 pl-2.5 text-xs font-bold">CARBON DARK</h6>
-												<h6 class="text-white pt-12 pl-2.5 text-xs font-thin">#041B2D</h6>
+												<h6 className={styles.textName}>CARBON DARK</h6>
+												<h6 className={styles.textId2}>#041B2D</h6>
 										</div>
 										<div className={styles.boxed4a}>
 															<h6></h6>
@@ -273,7 +277,7 @@ function Design(props) {
 										</div>
 									</div>
 								</div>
-								<div>
+								<div className={styles.box2}>
 									<div className={styles.boxed6}>
 															<h6></h6>
 									</div>
@@ -281,9 +285,11 @@ function Design(props) {
 										<div className={styles.boxed6a}>
 																<h6></h6>
 										</div>
-										<h6 class="text-gray-400 text-xs font-bold ml-2.5">#992E82</h6>
-										<h6 class="text-gray-400 text-xs font-bold">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</h6>
-										<h6 class="text-gray-400 text-xs font-bold">#612ADB</h6>
+										<div className={styles.box3}>
+											<h6 className={styles.h6}>#992E82</h6>
+											<div className={styles.dashBorder}></div>
+											<h6 className={styles.h62}>#612ADB</h6>
+										</div>
 										<div className={styles.boxed6b}>
 																<h6></h6>
 										</div>
@@ -292,14 +298,16 @@ function Design(props) {
 															<h6></h6>
 									</div>
 									<div className={styles.container}>
-										<div class="border border-gray-300 rounded-full ml-11 w-12 h-5">
+										<div class="border border-gray-300 rounded-full">
 											<div className={styles.boxed7a}>
 																	<h6></h6>
 											</div>
-									 </div> 	
-										<h6 class="text-gray-400 text-xs font-bold ml-2.5">#FFFFFF</h6>
-										<h6 class="text-gray-400 text-xs font-bold">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </h6>
-										<h6 class="text-gray-400 text-xs font-bold">#D0D0D0</h6>
+									 </div> 
+									 <div className={styles.box3}>	
+											<h6 className={styles.h6}>#FFFFFF</h6>
+											<div className={styles.dashBorder1}></div>
+											<h6 className={styles.h62}>#D0D0D0</h6>
+										</div>
 										<div className={styles.boxed7b}>
 																<h6></h6>
 										</div>
