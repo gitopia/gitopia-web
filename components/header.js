@@ -6,6 +6,7 @@ import ClickAwayListener from "react-click-away-listener";
 import CurrentWallet from "./currentWallet";
 import {
   downloadWalletForRemoteHelper,
+  transferToWallet,
   signOut,
   unlockKeplrWallet,
 } from "../store/actions/wallet";
@@ -15,6 +16,7 @@ import _ from "lodash";
 import { notify } from "reapop";
 import initKeplr from "../keplr/init";
 
+import SendTlore from "./dashboard/sendTlore";
 /*
 Menu States
 1 - Default menu
@@ -211,6 +213,13 @@ function Header(props) {
               </button>
               <div className="shadow-xl dropdown-content bg-base-300 rounded mt-1">
                 {menuState === 2 && <CurrentWallet />}
+                {menuState === 3 && menuOpen && (
+                  <SendTlore
+                    setMenuOpen={setMenuOpen}
+                    transferToWallet={props.transferToWallet}
+                    setMenuState={setMenuState}
+                  />
+                )}
                 {menuState === 1 && (
                   <ul className="menu w-48 rounded">
                     {props.activeWallet ? (
@@ -286,6 +295,17 @@ function Header(props) {
                           <div className="border-b border-grey mt-2"></div>
                         </li>
                         <li>
+                          <a
+                            href="#"
+                            onClick={(e) => {
+                              setMenuState(3);
+                              e.preventDefault();
+                            }}
+                          >
+                            Send tLORE
+                          </a>
+                        </li>
+                        <li>
                           <a onClick={props.signOut}>Log Out</a>
                         </li>
                       </>
@@ -316,6 +336,7 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   downloadWalletForRemoteHelper,
+  transferToWallet,
   signOut,
   notify,
   unlockKeplrWallet,
