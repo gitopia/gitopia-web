@@ -40,19 +40,6 @@ function RepositoryIssueLabelsView(props) {
 
   useEffect(refreshLabels, [router.query]);
 
-  // const getAllLabels = async () => {
-  //   if (repository) {
-  //     const issues = await getRepositoryIssueAll(
-  //       repository.owner.id,
-  //       repository.name
-  //     );
-  //     console.log(issues);
-  //     setAllIssues(issues);
-  //   }
-  // };
-
-  // useEffect(getAllLabels, [repository]);
-
   return (
     <div
       data-theme="dark"

@@ -1228,9 +1228,3 @@ ul.mde-suggestions li[aria-selected="true"] {
 .menu li.bordered span {
   border-left-width: 2px;
 }
-
-.btn-sm,
-.input-sm,
-.select-sm {
-  height: auto;
-}
