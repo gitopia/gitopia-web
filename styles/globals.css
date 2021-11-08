@@ -54,7 +54,10 @@
   font-weight: 700;
 }
 
-html,
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   padding: 0;
   margin: 0;
