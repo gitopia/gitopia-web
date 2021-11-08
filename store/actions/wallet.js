@@ -11,12 +11,20 @@ import { queryClient, txClient } from "gitopiajs";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import _ from "lodash";
 import { getOrganizationDetailsForDashboard } from "./organization";
+import { txClient as cosmosBankTxClient } from "../cosmos.bank.v1beta1/module/index.js";
+import { notify } from "reapop";
 
 export const signOut = () => {
   return {
     type: walletActions.SIGN_OUT,
   };
 };
+
+async function initCosmosBankTxClient(accountSigner) {
+  return await cosmosBankTxClient(accountSigner, {
+    addr: "http://localhost:26657",
+  });
+}
 
 const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
   const [account] = await accountSigner.getAccounts();
@@ -285,6 +293,43 @@ export const downloadWalletForRemoteHelper = () => {
         type: "application/json; charset=utf-8",
       });
       saveAs(blob, state.activeWallet.name + ".json");
+    }
+  };
+};
+
+export const transferToWallet = (fromAddress, toAddress, amount) => {
+  return async (dispatch, getState) => {
+    const state = getState().wallet;
+    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
+      state.activeWallet.mnemonic,
+      stringToPath(state.activeWallet.HDpath + "0"),
+      state.activeWallet.prefix
+    );
+    console.log(accountSigner);
+    if (state.activeWallet) {
+      try {
+        const send = {
+          fromAddress: fromAddress,
+          toAddress: toAddress,
+          amount: [{ amount: amount, denom: "tlore" }],
+        };
+        console.log(send);
+        const cosmosBankTxClient = await initCosmosBankTxClient(accountSigner);
+        const msg = await cosmosBankTxClient.msgSend(send);
+        const fee = {
+          amount: [{ amount: "0", denom: "tlore" }],
+          gas: "200000",
+        };
+        const memo = "";
+        const result = await cosmosBankTxClient.signAndBroadcast([msg], {
+          fee,
+          memo,
+        });
+        return result;
+      } catch (e) {
+        console.error(e);
+        dispatch(notify(e.message, "error"));
+      }
     }
   };
 };
