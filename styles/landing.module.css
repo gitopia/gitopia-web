@@ -51,7 +51,7 @@
 }
 
 .heroSection {
-  min-height: 720px;
+  min-height: 600px;
   position: relative;
   z-index: 2;
 }
@@ -238,7 +238,7 @@
   white-space: nowrap;
 }
 .platformCircles {
-  transition: transform 0.15s linear;
+  transition: transform 0.1s linear;
   will-change: transform;
   display: inline;
 }
@@ -895,4 +895,11 @@
   .footerLinks a {
     margin-bottom: 24px;
   }
+}
+
+.codeSection {
+  height: 700px;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 100px;
 }
