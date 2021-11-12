@@ -62,7 +62,10 @@ function RepositoryView(props) {
     }
     setCurrentUserEditPermission(userPermission);
     if (typeof window !== "undefined" && repository.branches.length) {
-      let branchSha = getBranchSha(repository.defaultBranch, repository.branches);
+      let branchSha = getBranchSha(
+        repository.defaultBranch,
+        repository.branches
+      );
       if (!branchSha) {
         setSelectedBranch(repository.branches[0].name);
         branchSha = repository.branches[0].sha;
@@ -365,9 +368,6 @@ function RepositoryView(props) {
                 </div>
 
                 <div className="py-8">
-                  {/* <div className="flex-1 text-sm font-semibold leading-8 text-left px-3">
-                    Releases
-                  </div> */}
                   <Link
                     href={
                       "/" +
