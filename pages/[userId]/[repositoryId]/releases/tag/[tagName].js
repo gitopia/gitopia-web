@@ -9,6 +9,10 @@ import Link from "next/link";
 import RepositoryHeader from "../../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
 import Footer from "../../../../../components/footer";
+import {
+  isCurrentUserEligibleToUpdate,
+  deleteRelease,
+} from "../../../../../store/actions/repository";
 import getRepositoryRelease from "../../../../../helpers/getRepositoryRelease";
 import ReleaseView from "../../../../../components/repository/releaseView";
 import useRepository from "../../../../../hooks/useRepository";
@@ -90,7 +94,19 @@ function RepositoryReleaseView(props) {
               repository={repository}
               release={release}
               latest={isLatest}
-              showEdit={currentUserEditPermission}
+              showEditControls={currentUserEditPermission}
+              onDelete={async (id) => {
+                const res = await props.deleteRelease({ releaseId: id });
+                if (res && res.code === 0) {
+                  router.push(
+                    "/" +
+                      repository.owner.id +
+                      "/" +
+                      repository.name +
+                      "/releases"
+                  );
+                }
+              }}
             />
           </div>
         </main>
@@ -107,4 +123,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryReleaseView);
+export default connect(mapStateToProps, {
+  isCurrentUserEligibleToUpdate,
+  deleteRelease,
+})(RepositoryReleaseView);

@@ -9,6 +9,11 @@ import Link from "next/link";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
+import {
+  isCurrentUserEligibleToUpdate,
+  deleteRelease,
+} from "../../../../store/actions/repository";
+import getRepositoryReleaseAll from "../../../../helpers/getRepositoryReleaseAll";
 import getRepositoryReleaseLatest from "../../../../helpers/getRepositoryReleaseLatest";
 import ReleaseView from "../../../../components/repository/releaseView";
 import useRepository from "../../../../hooks/useRepository";
@@ -18,10 +23,18 @@ export async function getServerSideProps() {
 }
 
 function RepositoryReleasesView(props) {
-  const { repository } = useRepository();
+  const { repository, refreshRepository } = useRepository();
 
   const [latestRelease, setLatestRelease] = useState(null);
   const [olderReleases, setOlderReleases] = useState([]);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
+
+  useEffect(refreshRepository, [
+    router.query.repositoryId,
+    router.query.userId,
+  ]);
 
   const getReleases = async () => {
     if (repository) {
@@ -44,6 +57,12 @@ function RepositoryReleasesView(props) {
   };
 
   useEffect(getReleases, [repository]);
+
+  useEffect(async () => {
+    setCurrentUserEditPermission(
+      await props.isCurrentUserEligibleToUpdate(repository.owner.id)
+    );
+  }, [repository, props.user]);
 
   return (
     <div
@@ -107,6 +126,12 @@ function RepositoryReleasesView(props) {
                 repository={repository}
                 release={latestRelease}
                 latest={true}
+                showEditControls={currentUserEditPermission}
+                onDelete={async (id) => {
+                  const res = await props.deleteRelease({ releaseId: id });
+                  await refreshRepository();
+                  return res;
+                }}
               />
             ) : (
               ""
@@ -153,4 +178,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryReleasesView);
+export default connect(mapStateToProps, {
+  isCurrentUserEligibleToUpdate,
+  deleteRelease,
+})(RepositoryReleasesView);

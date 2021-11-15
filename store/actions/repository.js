@@ -904,6 +904,34 @@ export const createRelease = (
   };
 };
 
+export const deleteRelease = ({ releaseId }) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "release")))
+      return null;
+    const release = {
+      creator: wallet.selectedAddress,
+      id: releaseId,
+    };
+
+    console.log("release", release);
+    try {
+      const message = await env.txClient.msgDeleteRelease(release);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        console.log(result);
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
 export const createTag = ({ repositoryId = null, name = null, sha = null }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "tag")))

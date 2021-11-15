@@ -3,14 +3,19 @@ import dayjs from "dayjs";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import formatBytes from "../../helpers/formatBytes";
 import shrinkSha from "../../helpers/shrinkSha";
+import { useState } from "react";
 
 export default function ReleaseView({
   release,
   repository,
   latest = false,
-  showEdit = false,
+  showEditControls = false,
+  onDelete = () => {},
   ...props
 }) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
   return (
     <div className="p-4">
       <div className="flex items-center">
@@ -56,19 +61,47 @@ export default function ReleaseView({
           {"released this on " +
             dayjs(release.publishedAt * 1000).format("DD-MM-YYYY")}
         </div>
-        {showEdit ? (
-          <Link
-            href={
-              "/" +
-              repository.owner.id +
-              "/" +
-              repository.name +
-              "/releases/edit/" +
-              release.tagName
-            }
-          >
-            <a className="btn btn-xs btn-outline ml-2">Edit</a>
-          </Link>
+        {showEditControls ? (
+          <div className="dropdown dropdown-end">
+            <div tabIndex="0" className="m-1 btn btn-square btn-xs btn-ghost">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+              </svg>
+            </div>
+            <ul
+              tabIndex="0"
+              className="shadow menu compact dropdown-content bg-base-300 rounded-box w-32"
+            >
+              <li>
+                <Link
+                  href={
+                    "/" +
+                    repository.owner.id +
+                    "/" +
+                    repository.name +
+                    "/releases/edit/" +
+                    release.tagName
+                  }
+                >
+                  <a>Edit</a>
+                </Link>
+              </li>
+              <li>
+                <a
+                  onClick={() => {
+                    setConfirmDelete(true);
+                  }}
+                >
+                  Delete
+                </a>
+              </li>
+            </ul>
+          </div>
         ) : (
           ""
         )}
@@ -118,6 +151,41 @@ export default function ReleaseView({
       ) : (
         ""
       )}
+
+      <input
+        type="checkbox"
+        checked={confirmDelete}
+        readOnly
+        className="modal-toggle"
+      />
+      <div className="modal">
+        <div className="modal-box">
+          <p>Are you sure ?</p>
+          <div className="modal-action">
+            <label
+              className="btn btn-sm"
+              onClick={() => {
+                setConfirmDelete(false);
+              }}
+            >
+              Cancel
+            </label>
+            <label
+              className={
+                "btn btn-sm btn-primary " + (isDeleting ? "loading" : "")
+              }
+              onClick={async () => {
+                setIsDeleting(true);
+                if (onDelete) await onDelete(release.id);
+                setConfirmDelete(false);
+                setIsDeleting(false);
+              }}
+            >
+              Delete
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
