@@ -8,6 +8,7 @@ export default function ReleaseView({
   release,
   repository,
   latest = false,
+  showEdit = false,
   ...props
 }) {
   return (
@@ -55,6 +56,22 @@ export default function ReleaseView({
           {"released this on " +
             dayjs(release.publishedAt * 1000).format("DD-MM-YYYY")}
         </div>
+        {showEdit ? (
+          <Link
+            href={
+              "/" +
+              repository.owner.id +
+              "/" +
+              repository.name +
+              "/releases/edit/" +
+              release.tagName
+            }
+          >
+            <a className="btn btn-xs btn-outline ml-2">Edit</a>
+          </Link>
+        ) : (
+          ""
+        )}
       </div>
       <div className="text-xs mt-4 text-type-secondary">{release.name}</div>
       <div className="text-xs mt-2 text-type-secondary">

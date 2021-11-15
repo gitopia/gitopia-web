@@ -90,6 +90,7 @@ function RepositoryReleaseView(props) {
               repository={repository}
               release={release}
               latest={isLatest}
+              showEdit={currentUserEditPermission}
             />
           </div>
         </main>

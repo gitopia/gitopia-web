@@ -852,17 +852,20 @@ export const createPullRequest = ({
   };
 };
 
-export const createRelease = ({
-  repositoryId = null,
-  tagName = null,
-  target = null,
-  name = null,
-  description = null,
-  attachments = null,
-  draft = null,
-  preRelease = null,
-  isTag = null,
-}) => {
+export const createRelease = (
+  {
+    repositoryId = null,
+    tagName = null,
+    target = null,
+    name = null,
+    description = null,
+    attachments = null,
+    draft = null,
+    preRelease = null,
+    isTag = null,
+  },
+  edit = false
+) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "release")))
       return null;
@@ -881,8 +884,11 @@ export const createRelease = ({
       isTag,
     };
 
+    console.log("release", release, "edit", edit);
     try {
-      const message = await env.txClient.msgCreateRelease(release);
+      const message = edit
+        ? await env.txClient.msgUpdateRelease(release)
+        : await env.txClient.msgCreateRelease(release);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         return result;
