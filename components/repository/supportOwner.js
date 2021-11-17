@@ -10,7 +10,9 @@ function SupportOwner({ ownerAddress, ...props }) {
   const [popup, setPopup] = useState(false);
   useEffect(async () => {
     const balance = await props.getBalance(ownerAddress);
-    setOwnerBalance(balance + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN);
+    setOwnerBalance(
+      balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+    );
   }, [ownerAddress]);
 
   return (
@@ -118,4 +120,6 @@ const mapStateToProps = (state) => {
   return {};
 };
 
-export default connect(mapStateToProps, { getBalance })(SupportOwner);
+export default connect(mapStateToProps, { getBalance, transferToWallet })(
+  SupportOwner
+);

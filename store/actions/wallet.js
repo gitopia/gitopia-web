@@ -263,7 +263,7 @@ export const updateUserBalance = () => {
     const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
     try {
       const res = await api.queryBalance(
-        address ? address : state.selectedAddress,
+        state.selectedAddress,
         process.env.NEXT_PUBLIC_CURRENCY_TOKEN
       );
       dispatch({
