@@ -8,14 +8,13 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import getRepositoryIssueAll from "../../../../helpers/getRepositoryIssueAll";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import Footer from "../../../../components/footer";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
-import useRepository from "../../../../hooks/useRepository"
+import useRepository from "../../../../hooks/useRepository";
 
 dayjs.extend(relativeTime);
 
@@ -60,7 +59,7 @@ function RepositoryIssueView(props) {
         repository.name
       );
       console.log(issues);
-      setAllIssues(issues);
+      if (issues) setAllIssues(issues);
     }
   };
 
@@ -76,7 +75,7 @@ function RepositoryIssueView(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex flex-1">
+      <div className="flex flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs

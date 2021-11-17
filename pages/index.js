@@ -11,6 +11,9 @@ import FileBrowser from "../components/repository/fileBrowser";
 import RepositoryHeader from "../components/repository/header";
 import AssigneeGroup from "../components/repository/assigneeGroup";
 import Link from "next/link";
+import BranchSelector from "../components/repository/branchSelector";
+import CloneRepoInfo from "../components/repository/cloneRepoInfo";
+import SupportOwner from "../components/repository/supportOwner";
 
 const pCircles = [
   {
@@ -450,85 +453,58 @@ export default function Landing() {
       {repository.id ? (
         <section className={classnames([styles.section, styles.codeSection])}>
           <div className="text-2xl mb-8">Try Gitopia Live, click around 👇</div>
-          <div className="text-left bg-base-100 p-4 rounded-md w-3/4">
-            <RepositoryHeader
-              repository={{ owner: { id: demoAddress }, name: demoRepoName }}
-            />
+          <div className="text-left bg-base-100 bg-repo-grad-v p-8 rounded-md w-5/6 border border-grey">
+            <RepositoryHeader repository={repository} />
             <RepositoryMainTabs
-              hrefBase="gitopia10qtgnywd56xrgg5a4f6xtg0jmv3nafa9wjyewz/gitopia"
+              hrefBase={demoAddress + "/" + demoRepoName}
               active="code"
             />
-            <div className="flex">
-              <div className="flex-1 mt-4 border border-gray-700 rounded overflow-hidden max-w-3xl">
-                <CommitDetailRow
-                  commitDetail={commitDetail}
-                  commitInBranchLink={
-                    "/" +
-                    demoAddress +
-                    "/" +
-                    demoRepoName +
-                    "/commits/" +
-                    demoRepoBranch
-                  }
-                />
-                <FileBrowser
-                  entityList={entityList}
-                  branchName={demoRepoBranch}
-                  baseUrl={"/" + demoAddress + "/" + demoRepoName}
-                  repoPath={[]}
-                />
-              </div>
-              <div className="flex-none mt-4 w-64 pl-4 divide-y divide-grey">
+            <div className="flex mt-8">
+              <div className="flex-none mt-4 w-64 pr-8 divide-y divide-grey">
                 <div className="pb-8">
-                  <div className="flex-1 text-sm font-semibold leading-8 text-left px-3">
-                    About
-                  </div>
+                  <div className="flex-1 text-left">About</div>
 
-                  <div className="text-xs px-3 mt-3">
-                    {repository.description}
-                  </div>
+                  <div className="text-xs mt-3">{repository.description}</div>
                 </div>
 
                 <div className="py-8">
                   <Link
                     href={"/" + demoAddress + "/" + demoRepoName + "/releases"}
                   >
-                    <a className={"btn btn-sm btn-block btn-ghost"}>
+                    <a className="flex items-center">
                       <div className="flex-1 text-left">
                         <span>Releases</span>
-                        <span className="ml-2 badge badge-sm">
-                          {repository.releases.length}
-                        </span>
                       </div>
+                      <span className="text-xs text-type-secondary font-semibold">
+                        {repository.releases.length + " TAGS"}
+                      </span>
                     </a>
                   </Link>
-                  <div className="text-xs px-3 mt-3">
-                    {repository.releases.length ? (
-                      <div>
-                        <Link
-                          href={
-                            "/" +
-                            repository.owner.id +
-                            "/" +
-                            repository.name +
-                            "/releases/tag/" +
+
+                  {repository.releases.length ? (
+                    <div className="text-xs mt-3">
+                      <Link
+                        href={
+                          "/" +
+                          repository.owner.id +
+                          "/" +
+                          repository.name +
+                          "/releases/tag/" +
+                          repository.releases[repository.releases.length - 1]
+                            .tagName
+                        }
+                      >
+                        <a className="link link-primary no-underline hover:underline">
+                          {repository.name +
+                            " " +
                             repository.releases[repository.releases.length - 1]
-                              .tagName
-                          }
-                        >
-                          <a className="link link-accent no-underline hover:underline">
-                            {repository.name +
-                              " " +
-                              repository.releases[
-                                repository.releases.length - 1
-                              ].tagName}
-                          </a>
-                        </Link>
-                      </div>
-                    ) : (
-                      "None yet"
-                    )}
-                  </div>
+                              .tagName}
+                        </a>
+                      </Link>
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
 
                 <div className="py-8">
@@ -541,25 +517,134 @@ export default function Landing() {
                       "/settings#collaborators"
                     }
                   >
-                    <a className={"btn btn-sm btn-block btn-ghost"}>
+                    <a className="flex items-center">
                       <div className="flex-1 text-left">
                         <span>Collaborators</span>
-                        <span className="ml-2 badge badge-sm">
-                          {repository.collaborators.length}
-                        </span>
                       </div>
+                      <span className="text-xs text-type-secondary font-semibold">
+                        {repository.collaborators.length + " PEOPLE"}
+                      </span>
                     </a>
                   </Link>
 
-                  <div className="text-xs px-3 mt-3">
-                    {repository.collaborators.length ? (
+                  {repository.collaborators.length ? (
+                    <div className="text-xs mt-3">
                       <AssigneeGroup
                         assignees={repository.collaborators.map((c) => c.id)}
                       />
-                    ) : (
-                      "None yet"
-                    )}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+              <div className="flex-1 mt-4">
+                <SupportOwner ownerAddress={demoAddress} />
+                <div className="mt-8 flex justify-start">
+                  <div className="">
+                    <BranchSelector
+                      branches={repository.branches}
+                      tags={repository.tags}
+                      baseUrl={
+                        "/" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name +
+                        "/tree"
+                      }
+                      branchName={demoRepoBranch}
+                    />
                   </div>
+                  <div className="ml-4">
+                    <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        stroke="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-1"
+                      >
+                        <g transform="scale(0.8)">
+                          <path
+                            d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            fill="none"
+                          />
+                          <circle
+                            cx="8.5"
+                            cy="18.5"
+                            r="2.5"
+                            fill="currentColor"
+                          />
+                          <circle
+                            cx="8.5"
+                            cy="5.5"
+                            r="2.5"
+                            fill="currentColor"
+                          />
+                          <path
+                            d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
+                            fill="currentColor"
+                          />
+                        </g>
+                      </svg>
+                      {repository.branches.length} Branches
+                    </div>
+                  </div>
+                  <div className="ml-4">
+                    <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 mr-2"
+                      >
+                        <path
+                          d="M7.04297 19.0293V9.36084L12.043 4.4333L17.043 9.36084V19.0293H7.04297Z"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        />
+                        <path
+                          d="M12.043 11.5293V9.5293"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        />
+                      </svg>
+                      {repository.tags.length} Tags
+                    </div>
+                  </div>
+                  <div className="flex-1 text-right">
+                    <CloneRepoInfo
+                      remoteUrl={
+                        "gitopia://" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 border border-gray-700 rounded overflow-hidden max-w-3xl">
+                  <CommitDetailRow
+                    commitDetail={commitDetail}
+                    commitInBranchLink={
+                      "/" +
+                      demoAddress +
+                      "/" +
+                      demoRepoName +
+                      "/commits/" +
+                      demoRepoBranch
+                    }
+                  />
+                  <FileBrowser
+                    entityList={entityList}
+                    branchName={demoRepoBranch}
+                    baseUrl={"/" + demoAddress + "/" + demoRepoName}
+                    repoPath={[]}
+                  />
                 </div>
               </div>
             </div>

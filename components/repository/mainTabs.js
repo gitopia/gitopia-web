@@ -2,12 +2,12 @@ import Link from "next/link";
 
 export default function RepositoryMainTabs({ hrefBase, active, showSettings }) {
   return (
-    <div className="flex flex-1">
-      <div className="tabs">
+    <div className="">
+      <div className="tabs relative z-10">
         <Link href={"/" + hrefBase}>
           <a
             className={
-              "tab tab-lg tab-bordered" +
+              "tab tab-md tab-bordered" +
               (active === "code" ? " tab-active" : "")
             }
           >
@@ -29,7 +29,7 @@ export default function RepositoryMainTabs({ hrefBase, active, showSettings }) {
         <Link href={"/" + hrefBase + "/issues"}>
           <a
             className={
-              "tab tab-lg tab-bordered" +
+              "tab tab-md tab-bordered" +
               (active === "issues" ? " tab-active" : "")
             }
           >
@@ -37,13 +37,14 @@ export default function RepositoryMainTabs({ hrefBase, active, showSettings }) {
               <svg
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 mr-2"
+                className="h-6 w-6"
               >
                 <path
                   transform="translate(0,2)"
                   d="M5.93782 16.5L12 6L18.0622 16.5H5.93782Z"
                   stroke="currentColor"
                   strokeWidth="2"
+                  fill="transparent"
                 />
               </svg>
             </span>
@@ -53,7 +54,7 @@ export default function RepositoryMainTabs({ hrefBase, active, showSettings }) {
         {/* <Link href={"/" + hrefBase + "/pulls"}>
           <a
             className={
-              "tab tab-lg tab-bordered" +
+              "tab tab-md tab-bordered" +
               (active === "pulls" ? " tab-active" : "")
             }
           >
@@ -85,14 +86,14 @@ export default function RepositoryMainTabs({ hrefBase, active, showSettings }) {
           <Link href={"/" + hrefBase + "/settings"}>
             <a
               className={
-                "tab tab-lg tab-bordered" +
+                "tab tab-md tab-bordered" +
                 (active === "settings" ? " tab-active" : "")
               }
             >
               <span className="icon mr-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
+                  className="h-5 w-5"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -110,6 +111,7 @@ export default function RepositoryMainTabs({ hrefBase, active, showSettings }) {
           ""
         )}
       </div>
+      <div className="border-b border-grey relative -top-px z-0" />
     </div>
   );
 }

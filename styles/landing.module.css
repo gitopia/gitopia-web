@@ -898,8 +898,9 @@
 }
 
 .codeSection {
-  height: 700px;
+  height: 900px;
   position: relative;
   z-index: 2;
   margin-bottom: 100px;
+  font-family: "SegoeUI";
 }
