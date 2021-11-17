@@ -41,7 +41,7 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
   const [tc, qc, amount] = await Promise.all([
     txClient(accountSigner, { addr: env.rpcNode }),
     queryClient({ addr: env.apiNode }),
-    getBalance()(dispatch, getState),
+    updateUserBalance()(dispatch, getState),
   ]);
 
   dispatch({
@@ -297,13 +297,13 @@ export const signInWithPrivateKey = ({ prefix = "gitopia", privKey }) => {
   };
 };
 
-export const getBalance = () => {
+export const updateUserBalance = () => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
     const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
     try {
       const res = await api.queryBalance(
-        state.selectedAddress,
+        address ? address : state.selectedAddress,
         process.env.NEXT_PUBLIC_CURRENCY_TOKEN
       );
       dispatch({
@@ -320,6 +320,22 @@ export const getBalance = () => {
         },
       });
       console.error("Unable to update lore balance", e);
+    }
+  };
+};
+
+export const getBalance = (address) => {
+  return async (dispatch, getState) => {
+    const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
+    try {
+      const res = await api.queryBalance(
+        address,
+        process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+      );
+      if (res && res.ok) return res.data.balance.amount;
+      else console.error(res.error);
+    } catch (e) {
+      console.error("Unable to get balance", e);
     }
   };
 };

@@ -32,7 +32,7 @@ export default function CommitDetailRow({
   return (
     <>
       <div className="flex px-2 py-2 bg-base-200 items-top">
-        <div className="flex-1 flex">
+        <div className="flex-1 flex items-center">
           <div className="avatar">
             <div className="rounded-full w-6 h-6 mr-2">
               <img
@@ -43,8 +43,10 @@ export default function CommitDetailRow({
               />
             </div>
           </div>
-          <span className="pr-4 border-r border-grey">{authorName}</span>
-          <span className="pl-4">{message}</span>
+          <span className="pr-4 border-r border-grey text-sm">
+            {authorName}
+          </span>
+          <span className="pl-4 text-sm">{message}</span>
           {hasMore ? (
             <button
               className="ml-1 btn btn-xs btn-link"
@@ -81,7 +83,7 @@ export default function CommitDetailRow({
         </div>
       </div>
       {fullMessageShown ? (
-        <div className="markdown-body p-2 bg-base-200">
+        <div className="markdown-body p-2 bg-base-200 text-sm">
           <ReactMarkdown>{commitDetail.commit.message}</ReactMarkdown>
         </div>
       ) : (

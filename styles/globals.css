@@ -870,6 +870,11 @@ a {
   font-size: 0.75rem;
 }
 
+.tab.tab-bordered {
+  border-bottom-width: 2px;
+  border-color: transparent;
+}
+
 .tab:first-of-type {
   padding-left: 0;
 }
@@ -880,6 +885,7 @@ a {
 
 .tab.tab-active {
   border-color: #33ab34;
+  border-bottom-width: 2px;
 }
 
 .tab-md,

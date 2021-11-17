@@ -36,6 +36,7 @@ function RepositoryTreeView(props) {
     commit: { author: {}, message: "" },
     oid: "",
     branches: [],
+    tags: [],
   });
   const [repoPath, setRepoPath] = useState([]);
   const [branchName, setBranchName] = useState("");
@@ -85,7 +86,7 @@ function RepositoryTreeView(props) {
         router.query.userId,
         repoPath
       );
-       console.log(router.query.userId);
+      console.log(router.query.userId);
       if (res) {
         console.log(res);
         if (res.commit) {
@@ -126,7 +127,7 @@ function RepositoryTreeView(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex flex-1">
+      <div className="flex flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs

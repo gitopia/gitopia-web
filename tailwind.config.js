@@ -40,7 +40,8 @@ module.exports = {
           900: "#0883AA",
         },
         grey: {
-          DEFAULT: "#404450",
+          // DEFAULT: "#404450",
+          DEFAULT: "#3E4051",
         },
         pink: {
           50: "#FFB0DB",
@@ -64,6 +65,9 @@ module.exports = {
           "linear-gradient(73.14deg, #3D264C -35.57%, rgba(61, 38, 76, 0) 25.95%);",
         "box-grad-v":
           "linear-gradient(0deg, rgba(216, 185, 255, 0) 0%, rgba(216, 185, 255, 0.1) 100%);",
+        "repo-grad-v":
+          // "linear-gradient(180deg, rgba(153, 45, 129, 0.1) 0%, rgba(136, 59, 230, 0) 30%);",
+          "linear-gradient(180deg, rgba(96,41,219, 0.1) 0em, rgba(96,41,219, 0) 15em);",
         "footer-grad":
           // "linear-gradient(36.49deg, #144763 -23.54%, rgba(61, 38, 76, 0) 29.37%), linear-gradient(36.49deg, #3D264C -23.54%, rgba(61, 38, 76, 0) 29.37%)",
           "linear-gradient(20deg, rgba(20,71,99,0.5) -25%, rgba(19, 24, 30, 0) 30%), linear-gradient(340deg, rgba(61,38,76,0.5) -25%, rgba(19, 24, 30, 0) 30%)",
