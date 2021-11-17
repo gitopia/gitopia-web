@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { getBalance } from "../../store/actions/wallet";
+import SupportProject from "./supportProject";
+import { transferToWallet } from "../../store/actions/wallet";
+import ClickAwayListener from "react-click-away-listener";
 
 function SupportOwner({ ownerAddress, ...props }) {
   const [ownerBalance, setOwnerBalance] = useState(0);
+  const [popup, setPopup] = useState(false);
   useEffect(async () => {
     const balance = await props.getBalance(ownerAddress);
     setOwnerBalance(balance + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN);
@@ -11,6 +15,17 @@ function SupportOwner({ ownerAddress, ...props }) {
 
   return (
     <div className="p-2 border border-gray-700 rounded flex items-center">
+      {popup && (
+        <ClickAwayListener onClickAway={() => setPopup(false)}>
+          <div>
+            <SupportProject
+              setPopup={setPopup}
+              transferToWallet={props.transferToWallet}
+              ownerId={ownerAddress}
+            />
+          </div>
+        </ClickAwayListener>
+      )}
       <div
         className="border rounded-full w-7 h-7 mr-2 flex items-center justify-center"
         style={{ borderColor: "#FCC945" }}
@@ -86,9 +101,14 @@ function SupportOwner({ ownerAddress, ...props }) {
         <div className="text-xs">{ownerBalance}</div>
       </div>
       <div className="flex-1 text-right">
-        <a className="text-xs link link-primary uppercase no-underline">
-          Support Project
-        </a>
+        <button
+          class="text-xs text-green-900 uppercase no-underline"
+          onClick={() => {
+            setPopup(true);
+          }}
+        >
+          SUPPORT PROJECT
+        </button>
       </div>
     </div>
   );
