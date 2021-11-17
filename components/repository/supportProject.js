@@ -35,12 +35,12 @@ function SupportProject(props) {
 
   return (
     <div className={"absolute p-10 w-3/6 z-10 text-left"}>
-      <div className="bg-base-300 rounded p-8">
+      <div className="bg-base-300 rounded p-8 shadow-lg">
         <div className="mb-2 w-full">
           <div className="flex">
-            <div className="w-11/12 font-bold">SUPPORT THIS PROJECT</div>
+            <div className="flex-1 font-bold">SUPPORT THIS PROJECT</div>
             <button
-              className="w-1/12 ml-80"
+              className=""
               onClick={(e) => {
                 props.setPopup(false);
               }}
@@ -79,9 +79,9 @@ function SupportProject(props) {
           </span>
         </label>
         <div class="flex border border-gray-700 rounded-lg p-3">
-          <div className="w-11/12 text-xs">{props.ownerId}</div>
+          <div className="flex-1 text-xs">{props.ownerId}</div>
           <button
-            className="w-1/12"
+            className=""
             onClick={(e) => {
               navigator.clipboard.writeText(props.ownerId);
               props.notify("Copied to clipboard", "info");
