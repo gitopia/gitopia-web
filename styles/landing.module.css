@@ -131,11 +131,13 @@
 }
 
 .byline {
-  margin: 34px auto 104px;
+  margin: 34px auto 54px;
   font-size: 22px;
   line-height: 1.5em;
   font-weight: 700;
-  max-width: 512px;
+  max-width: 612px;
+  position: relative;
+  z-index: 1;
 }
 
 .primaryCTA {
@@ -898,9 +900,9 @@
 }
 
 .codeSection {
-  height: 1000px;
   position: relative;
   z-index: 2;
-  margin-bottom: 100px;
+  margin-top: 10px;
+  margin-bottom: 300px;
   font-family: "SegoeUI";
 }

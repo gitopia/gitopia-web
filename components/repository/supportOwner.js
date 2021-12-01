@@ -121,10 +121,10 @@ function SupportOwner({ ownerAddress, ...props }) {
         </div>
         <div className="text-xs">{ownerBalance}</div>
       </div>
-      <div className="ml-auto self-center pr-5">
+      <div className="ml-auto self-center">
         <label
           for="my-modal-2"
-          class="modal-button text-green-900 text-xs uppercase no-underline"
+          class="link link-primary modal-button text-xs uppercase no-underline"
         >
           SUPPORT PROJECT
         </label>
