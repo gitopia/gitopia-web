@@ -46,10 +46,10 @@ function SupportOwner({ ownerAddress, ...props }) {
   }, [ownerAddress]);
 
   return (
-    <div className="p-2 border border-gray-700 rounded flex items-center">
+    <div className="p-4 border border-gray-700 rounded flex items-center">
       <div
         className="border rounded-full w-7 h-7 mr-2 flex items-center justify-center"
-        style={{ borderColor: "#FCC945" }}
+        style={{ borderColor: "#66CE67" }}
       >
         <svg
           width="12"
@@ -59,14 +59,14 @@ function SupportOwner({ ownerAddress, ...props }) {
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M3.46875 1.05078H8.5248C9.90551 1.05078 11.0248 2.17007 11.0248 3.55078V10.4495C11.0248 11.8302 9.90551 12.9495 8.5248 12.9495H3.46875C2.08804 12.9495 0.96875 11.8302 0.96875 10.4495V3.55078C0.96875 2.17007 2.08804 1.05078 3.46875 1.05078Z"
-            stroke="#FCC945"
+            d="M5.99915 8.99353C8.30597 8.99353 10.176 7.20848 10.176 5.00651C10.176 2.80454 8.30597 1.01949 5.99915 1.01949C3.69232 1.01949 1.82227 2.80454 1.82227 5.00651C1.82227 7.20848 3.69232 8.99353 5.99915 8.99353Z"
+            stroke="#66CE67"
+            stroke-width="1.5"
           />
-          <path d="M3.41797 4.2361H8.57746" stroke="#FCC945" />
-          <path d="M3.41797 6.44722H8.57746" stroke="#FCC945" />
           <path
-            d="M4.52344 13.0809V10.5012C4.52344 9.68703 5.18343 9.02703 5.99758 9.02703V9.02703C6.81172 9.02703 7.47172 9.68703 7.47172 10.5012V13.0809"
-            stroke="#FCC945"
+            d="M10.178 12.9806C10.178 10.7786 8.30791 8.99358 6.00109 8.99358C3.69426 8.99358 1.82422 10.7786 1.82422 12.9806"
+            stroke="#66CE67"
+            stroke-width="1.5"
           />
         </svg>
       </div>
@@ -139,15 +139,16 @@ function SupportOwner({ ownerAddress, ...props }) {
               </div>
             </div>
             <div className="text-xs mt-5">
-              You can support this project by sending tore to its organization
-              or creator.
+              You can support this project by sending{" "}
+              {process.env.NEXT_PUBLIC_CURRENCY_TOKEN} to its organization or
+              creator.
             </div>
             <div className="text-xs">
               To do it you just need to send your funds to the address below.
             </div>
             <div className="mt-2 text-xs">
-              This address only accepts TLORE, any other coin or token will be
-              lost if sent to this address.
+              This address only accepts {process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+              , any other coin or token will be lost if sent to this address.
             </div>
           </div>
           <label className="label">

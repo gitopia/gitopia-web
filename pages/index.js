@@ -453,7 +453,7 @@ export default function Landing() {
       {repository.id ? (
         <section className={classnames([styles.section, styles.codeSection])}>
           <div className="text-2xl mb-8">Try Gitopia Live, click around 👇</div>
-          <div className="text-left bg-base-100 bg-repo-grad-v p-8 rounded-md w-5/6 border border-grey">
+          <div className="text-left bg-base-100 bg-repo-grad-v p-8 rounded-md border border-grey container mx-auto max-w-screen-lg">
             <RepositoryHeader repository={repository} />
             <RepositoryMainTabs
               hrefBase={demoAddress + "/" + demoRepoName}
@@ -538,7 +538,7 @@ export default function Landing() {
                   )}
                 </div>
               </div>
-              <div className="flex-1 mt-4">
+              <div className="flex-1 mt-4 max-w-3xl">
                 <SupportOwner ownerAddress={demoAddress} />
                 <div className="mt-8 flex justify-start">
                   <div className="">
