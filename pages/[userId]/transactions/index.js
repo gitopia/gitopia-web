@@ -1,0 +1,162 @@
+import Head from "next/head";
+import Header from "../../../components/header";
+
+import { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import PublicTabs from "../../../components/dashboard/publicTabs";
+import Footer from "../../../components/footer";
+import useRepository from "../../../hooks/useRepository";
+import getUser from "../../../helpers/getUser";
+import getOrganization from "../../../helpers/getOrganization";
+import {
+  getUserTransaction,
+  txTypes,
+} from "../../../components/user/getUserTransactions";
+import UserHeader from "../../../components/user/header";
+
+function TransactionView(props) {
+  const repository = useRepository();
+  const router = useRouter();
+  const [user, setUser] = useState({
+    name: "",
+    followers: [],
+    following: [],
+  });
+  const [org, setOrg] = useState({
+    name: "",
+    followers: [],
+    following: [],
+  });
+  const [userTransactions, setUserTransactions] = useState([]);
+
+  useEffect(async () => {
+    const data = await getUserTransaction(router.query.userId);
+    setUserTransactions(data.txs);
+    const [u, o] = await Promise.all([
+      getUser(router.query.userId),
+      getOrganization(router.query.userId),
+    ]);
+    console.log(u, o);
+    if (u) {
+      setUser(u);
+    } else if (o) {
+      setOrg(o);
+    }
+  }, [router.query]);
+
+  const hrefBase = "/" + router.query.userId;
+  const letter = user.id
+    ? user.creator.slice(-1)
+    : org.id
+    ? org.name.slice(0, 1)
+    : "x";
+
+  const avatarLink =
+    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === org.address
+      ? "/logo-g.svg"
+      : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+        letter;
+
+  return (
+    <div
+      data-theme="dark"
+      className="flex flex-col bg-base-100 text-base-content min-h-screen"
+    >
+      <Head>
+        <title>{repository.name}</title>
+        <link rel="icon" href="/favicon.png" />
+      </Head>
+      <Header />
+      <div className="flex-1 bg-repo-grad-v">
+        <main className="container mx-auto max-w-screen-lg py-12 px-4">
+          <UserHeader user={user} />
+          <div className="flex flex-1 mt-8">
+            <PublicTabs
+              active="transactions"
+              hrefBase={hrefBase}
+              showPeople={org.address}
+            />
+          </div>
+          <div className="mt-8">
+            {userTransactions.map((txs) => {
+              return (
+                <div>
+                  <div>
+                    <div class="card  bordered mb-5 bg-gray-800 h-27">
+                      <div class="">
+                        <div class="flex">
+                          {txTypes[txs.tx.value.msg[0].type] !== undefined ? (
+                            <div
+                              class={
+                                "h-20 w-2 rounded-full mr-7 ml-2 my-2 bg-" +
+                                txTypes[txs.tx.value.msg[0].type].color
+                              }
+                            ></div>
+                          ) : (
+                            <div
+                              class={
+                                "h-20 w-2 rounded-full mr-7 ml-2 my-2 bg-gray-200"
+                              }
+                            ></div>
+                          )}
+                          <div class="my-4">
+                            <div>
+                              <p className="text-2xl">
+                                {txTypes[txs.tx.value.msg[0].type] !==
+                                undefined ? (
+                                  <div
+                                    className={
+                                      "text-sm text-" +
+                                      txTypes[txs.tx.value.msg[0].type].color
+                                    }
+                                  >
+                                    {txTypes[txs.tx.value.msg[0].type].msg}
+                                  </div>
+                                ) : (
+                                  <h6 class="card-title text-sm">
+                                    {txs.tx.value.msg[0].type}
+                                  </h6>
+                                )}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="mt-2 text-xs text-type-secondary">
+                                {"Tx Hash: " + txs.txhash}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="mt-2 text-xs text-type-secondary">
+                                {"Timestamp: " +
+                                  dayjs(txs.timestamp).format(
+                                    "DD-MM-YYYY HH:mm A"
+                                  )}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </main>
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+const mapStateToProps = (state) => {
+  return {
+    selectedAddress: state.wallet.selectedAddress,
+    user: state.user,
+  };
+};
+
+export default connect(mapStateToProps, {})(TransactionView);
