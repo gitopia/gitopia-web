@@ -6,10 +6,9 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import PublicTabs from "../../../components/dashboard/publicTabs";
 import Footer from "../../../components/footer";
-import useRepository from "../../../hooks/useRepository";
+
 import getUser from "../../../helpers/getUser";
 import getOrganization from "../../../helpers/getOrganization";
 import {
@@ -19,7 +18,6 @@ import {
 import UserHeader from "../../../components/user/header";
 
 function TransactionView(props) {
-  const repository = useRepository();
   const router = useRouter();
   const [user, setUser] = useState({
     name: "",
@@ -32,10 +30,14 @@ function TransactionView(props) {
     following: [],
   });
   const [userTransactions, setUserTransactions] = useState([]);
+  const [pageTotal, setPageTotal] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(async () => {
     const data = await getUserTransaction(router.query.userId);
+    console.log("first fetch" + data.txs);
     setUserTransactions(data.txs);
+    setPageTotal(data.page_total);
     const [u, o] = await Promise.all([
       getUser(router.query.userId),
       getOrganization(router.query.userId),
@@ -47,6 +49,26 @@ function TransactionView(props) {
       setOrg(o);
     }
   }, [router.query]);
+
+  const loadPrevTransactions = async () => {
+    const newData = await getUserTransaction(
+      router.query.userId,
+      10,
+      currentPage - 1
+    );
+    setCurrentPage(currentPage - 1);
+    setUserTransactions(newData.txs);
+  };
+
+  const loadNextTransactions = async () => {
+    const newData = await getUserTransaction(
+      router.query.userId,
+      10,
+      currentPage + 1
+    );
+    setCurrentPage(currentPage + 1);
+    setUserTransactions(newData.txs);
+  };
 
   const hrefBase = "/" + router.query.userId;
   const letter = user.id
@@ -67,7 +89,7 @@ function TransactionView(props) {
       className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
-        <title>{repository.name}</title>
+        <title>{router.query.userId}</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
@@ -86,24 +108,24 @@ function TransactionView(props) {
               return (
                 <div>
                   <div>
-                    <div class="card  bordered mb-5 bg-gray-800 h-27">
-                      <div class="">
-                        <div class="flex">
+                    <div className="card  bordered mb-5 bg-gray-800 h-27">
+                      <div className="">
+                        <div className="flex">
                           {txTypes[txs.tx.value.msg[0].type] !== undefined ? (
                             <div
-                              class={
+                              className={
                                 "h-20 w-2 rounded-full mr-7 ml-2 my-2 bg-" +
                                 txTypes[txs.tx.value.msg[0].type].color
                               }
                             ></div>
                           ) : (
                             <div
-                              class={
+                              className={
                                 "h-20 w-2 rounded-full mr-7 ml-2 my-2 bg-gray-200"
                               }
                             ></div>
                           )}
-                          <div class="my-4">
+                          <div className="my-4">
                             <div>
                               <p className="text-2xl">
                                 {txTypes[txs.tx.value.msg[0].type] !==
@@ -117,7 +139,7 @@ function TransactionView(props) {
                                     {txTypes[txs.tx.value.msg[0].type].msg}
                                   </div>
                                 ) : (
-                                  <h6 class="card-title text-sm">
+                                  <h6 className="card-title text-sm">
                                     {txs.tx.value.msg[0].type}
                                   </h6>
                                 )}
@@ -144,6 +166,30 @@ function TransactionView(props) {
                 </div>
               );
             })}
+          </div>
+          <div className="flex">
+            <div className="">
+              <button
+                className={"btn btn-sm"}
+                disabled={currentPage < 2}
+                onClick={() => {
+                  loadPrevTransactions();
+                }}
+              >
+                PREV
+              </button>
+            </div>
+            <div className="ml-auto self-center">
+              <button
+                className={"btn btn-sm"}
+                disabled={pageTotal == currentPage}
+                onClick={() => {
+                  loadNextTransactions();
+                }}
+              >
+                NEXT
+              </button>
+            </div>
           </div>
         </main>
       </div>
