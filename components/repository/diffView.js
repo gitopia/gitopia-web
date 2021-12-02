@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import getDiff from "../../helpers/getDiff";
 import { parseDiff, Diff, Hunk } from "react-diff-view";
+import getPullDiff from "../../helpers/getPullDiff";
 
 export default function DiffView({
   stats,
   repoId,
+  targetRepoId,
   currentSha,
   previousSha,
   onViewTypeChange = () => {},
@@ -92,7 +94,20 @@ export default function DiffView({
   const loadDiffs = async (oldFiles = [], repoId) => {
     setLoadingMore(true);
     console.log("repoId", repoId, "hasMore", hasMore);
-    const data = await getDiff(repoId, currentSha, hasMore, previousSha);
+    let data;
+    if (targetRepoId === repoId) {
+      data = await getDiff(repoId, currentSha, hasMore, previousSha);
+    } else {
+      data = await getPullDiff(
+        repoId,
+        targetRepoId,
+        currentSha,
+        previousSha,
+        hasMore,
+        false
+      );
+    }
+
     let newFiles = [];
     if (data && data.diff) {
       data.diff.map(({ file_name, patch, stat }) => {

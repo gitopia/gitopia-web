@@ -10,6 +10,7 @@ import { reInitClients } from "./wallet";
 import { userActions } from "./actionTypes";
 import { async } from "regenerator-runtime";
 import { getBalance } from "./wallet";
+import forkRepositoryFiles from "../../helpers/forkRepositoryFiles";
 
 export const validatePostingEligibility = async (
   dispatch,
@@ -648,6 +649,18 @@ export const forkRepository = ({
       const result = await sendTransaction({ message }, env);
       console.log(result);
       if (result && result.code === 0) {
+        const newRepoQuery = await env.queryClient.queryAddressRepository(
+          ownerId,
+          repositoryName
+        );
+        console.log(newRepoQuery);
+        if (newRepoQuery.ok) {
+          const forkFilesQuery = await forkRepositoryFiles(
+            repositoryId,
+            newRepoQuery.data.Repository.id
+          );
+          console.log(forkFilesQuery);
+        }
         getUserDetailsForSelectedAddress()(dispatch, getState);
         let url = "/" + ownerId + "/" + repositoryName;
         console.log(url);

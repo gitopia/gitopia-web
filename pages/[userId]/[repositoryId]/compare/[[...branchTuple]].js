@@ -17,7 +17,7 @@ import BranchSelector from "../../../../components/repository/branchSelector";
 import RepositorySelector from "../../../../components/repository/repositorySelector";
 import getBranchSha from "../../../../helpers/getBranchSha";
 import Link from "next/link";
-import getDiff from "../../../../helpers/getDiff";
+// import getDiff from "../../../../helpers/getDiff";
 import DiffView from "../../../../components/repository/diffView";
 import { createPullRequest } from "../../../../store/actions/repository";
 import MarkdownEditor from "../../../../components/markdownEditor";
@@ -25,6 +25,9 @@ import AssigneeSelector from "../../../../components/repository/assigneeSelector
 import LabelSelector from "../../../../components/repository/labelSelector";
 import Label from "../../../../components/repository/label";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
+import getPullDiff from "../../../../helpers/getPullDiff";
+import getRepository from "../../../../helpers/getRepository";
+import shrinkAddress from "../../../../helpers/shrinkAddress";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -46,8 +49,8 @@ function RepositoryCompareView(props) {
   const [viewType, setViewType] = useState("unified");
   const [stats, setStats] = useState({ stat: {} });
   const [compare, setCompare] = useState({
-    source: { name: "", sha: "" },
-    target: { name: "", sha: "" },
+    source: { repository: {}, name: "", sha: "" },
+    target: { repository: {}, name: "", sha: "" },
   });
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -56,19 +59,28 @@ function RepositoryCompareView(props) {
   const [reviewers, setReviewers] = useState([]);
   const [assignees, setAssignees] = useState([]);
   const [labels, setLabels] = useState([]);
+  const [forkedRepos, setForkedRepos] = useState([]);
 
   const setDefaultBranches = (r) => {
     if (r.branches.length) {
       let defaultSha = getBranchSha(r.defaultBranch, r.branches, r.tags);
       if (defaultSha) {
         setCompare({
-          source: { name: r.defaultBranch, sha: defaultSha },
-          target: { name: r.defaultBranch, sha: defaultSha },
+          source: {
+            repository: r,
+            name: r.defaultBranch,
+            sha: defaultSha,
+          },
+          target: {
+            repository: r,
+            name: r.defaultBranch,
+            sha: defaultSha,
+          },
         });
       } else {
         setCompare({
-          source: r.branches[0],
-          target: r.branches[0],
+          source: { ...r.branches[0], repository: r },
+          target: { ...r.branches[0], repository: r },
         });
       }
     } else {
@@ -83,16 +95,69 @@ function RepositoryCompareView(props) {
     );
     if (r) {
       setRepository(r);
+      if (r.forks.length) {
+        const pr = r.forks.map((r) => getRepository(r));
+        const repos = await Promise.all(pr);
+        setForkedRepos(repos);
+        console.log("forked repos", repos);
+      }
       if (router.query.branchTuple) {
         const slug = router.query.branchTuple.join("/").split("...");
         console.log("branchTuple", slug);
-        const targetSha = getBranchSha(slug[0], r.branches, r.tags);
-        const sourceSha = getBranchSha(slug[1], r.branches, r.tags);
+        let sourceRepo,
+          targetRepo,
+          sourceSha,
+          targetSha,
+          sourceBranch,
+          targetBranch;
+
+        targetRepo = r;
+        targetSha = getBranchSha(slug[0], r.branches, r.tags);
+        targetBranch = slug[0];
+
+        if (slug[1].includes(":")) {
+          // forked repository
+          const reposlug = slug[1].split(":");
+          const repo = await getUserRepository(
+            reposlug[0],
+            router.query.repositoryId
+          );
+          if (repo) {
+            sourceRepo = repo;
+          } else {
+            sourceRepo = r;
+          }
+          sourceBranch = reposlug[1];
+        } else {
+          sourceRepo = r;
+          sourceBranch = slug[1];
+        }
+
+        sourceSha = getBranchSha(
+          sourceBranch,
+          sourceRepo.branches,
+          sourceRepo.tags
+        );
+
         if (sourceSha && targetSha) {
-          console.log("Found the branches");
+          console.log(
+            "Found the branches",
+            sourceRepo,
+            sourceBranch,
+            targetRepo,
+            targetBranch
+          );
           setCompare({
-            source: { name: slug[1], sha: sourceSha },
-            target: { name: slug[0], sha: targetSha },
+            source: {
+              repository: sourceRepo,
+              name: sourceBranch,
+              sha: sourceSha,
+            },
+            target: {
+              repository: targetRepo,
+              name: targetBranch,
+              sha: targetSha,
+            },
           });
         } else {
           setDefaultBranches(r);
@@ -105,11 +170,12 @@ function RepositoryCompareView(props) {
 
   useEffect(refreshRepository, [router.query]);
   useEffect(async () => {
-    const diff = await getDiff(
-      repository.id,
+    const diff = await getPullDiff(
+      compare.source.repository.id,
+      compare.target.repository.id,
       compare.source.sha,
-      null,
       compare.target.sha,
+      null,
       true
     );
     console.log("diffStat", diff);
@@ -129,7 +195,7 @@ function RepositoryCompareView(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex flex-1">
+      <div className="flex flex-1 bg-repo-grad-v">
         <main
           className={
             "py-12 px-4 " +
@@ -159,28 +225,90 @@ function RepositoryCompareView(props) {
               </div>
               <div className="mt-4 flex items-center">
                 <RepositorySelector
-                  repositories={props.user.repositories}
-                  currentRepo={{ name: repository.name, id: repository.id }}
+                  repositories={[repository, ...forkedRepos]}
+                  currentRepo={
+                    forkedRepos.length ? compare.source.repository : repository
+                  }
+                  onClick={(repo) => {
+                    if (repo.id === repository.id)
+                      router.push(
+                        [
+                          "",
+                          router.query.userId,
+                          router.query.repositoryId,
+                          "compare",
+                          compare.target.name + "..." + compare.source.name,
+                        ].join("/")
+                      );
+                    else
+                      router.push(
+                        [
+                          "",
+                          router.query.userId,
+                          router.query.repositoryId,
+                          "compare",
+                          compare.target.name +
+                            "..." +
+                            repo.owner.id +
+                            ":" +
+                            compare.source.name,
+                        ].join("/")
+                      );
+                  }}
                 />
                 <div className="px-2"></div>
                 <BranchSelector
-                  branches={repository.branches}
-                  tags={repository.tags}
+                  branches={compare.source.repository.branches}
+                  tags={compare.source.repository.tags}
                   branchName={compare.source.name}
                   showIcon={false}
                   onChange={(branch) => {
-                    router.push(
-                      [
-                        "",
-                        router.query.userId,
-                        router.query.repositoryId,
-                        "compare",
-                        compare.target.name + "..." + branch.name,
-                      ].join("/")
-                    );
+                    if (
+                      compare.source.repository.id ===
+                      compare.target.repository.id
+                    )
+                      router.push(
+                        [
+                          "",
+                          router.query.userId,
+                          router.query.repositoryId,
+                          "compare",
+                          compare.target.name + "..." + branch.name,
+                        ].join("/")
+                      );
+                    else
+                      router.push(
+                        [
+                          "",
+                          router.query.userId,
+                          router.query.repositoryId,
+                          "compare",
+                          compare.target.name +
+                            "..." +
+                            compare.source.repository.owner.id +
+                            ":" +
+                            branch.name,
+                        ].join("/")
+                      );
                   }}
                 />
               </div>
+            </div>
+            <div className="text-type-quaternary">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                />
+              </svg>
             </div>
             <div className="flex-1 ml-2 border border-grey p-4 rounded-lg">
               <div className="text-xs font-bold uppercase text-type-secondary">
@@ -188,8 +316,9 @@ function RepositoryCompareView(props) {
               </div>
               <div className="mt-4 flex items-center">
                 <RepositorySelector
-                  repositories={props.user.repositories}
-                  currentRepo={{ name: repository.name, id: repository.id }}
+                  repositories={forkedRepos}
+                  currentRepo={repository}
+                  disabled={true}
                 />
                 <div className="px-2"></div>
                 <BranchSelector
@@ -257,9 +386,9 @@ function RepositoryCompareView(props) {
                               const res = await props.createPullRequest({
                                 title,
                                 description,
-                                baseRepoId: repository.id,
+                                baseRepoId: compare.target.repository.id,
                                 baseBranch: compare.target.name,
-                                headRepoId: repository.id,
+                                headRepoId: compare.source.repository.id,
                                 headBranch: compare.source.name,
                               });
                               console.log(res);
@@ -365,7 +494,8 @@ function RepositoryCompareView(props) {
           {stats.files_changed ? (
             <DiffView
               stats={stats}
-              repoId={repository.id}
+              repoId={compare.source.repository.id}
+              targetRepoId={compare.target.repository.id}
               currentSha={compare.source.sha}
               previousSha={compare.target.sha}
               onViewTypeChange={(v) => setViewType(v)}
@@ -388,11 +518,21 @@ function RepositoryCompareView(props) {
                   />
                 </svg>
                 <span>
-                  {"There isn't anything to compare. " +
-                    compare.source.name +
-                    " and " +
-                    compare.target.name +
-                    " are the same."}
+                  {compare.source.repository.id === compare.target.repository.id
+                    ? "There isn't anything to compare. " +
+                      compare.source.name +
+                      " and " +
+                      compare.target.name +
+                      " are the same."
+                    : "There isn't anything to compare. " +
+                      shrinkAddress(compare.source.repository.owner.id) +
+                      "/" +
+                      compare.source.name +
+                      " and " +
+                      shrinkAddress(compare.target.repository.owner.id) +
+                      "/" +
+                      compare.target.name +
+                      " are the same."}
                 </span>
               </div>
             </div>
