@@ -13,9 +13,16 @@ export const txTypes = {
   },
 };
 
-export async function getUserTransaction(address = null) {
+export async function getUserTransaction(address = "", limit = 10, page = 1) {
   let obj = {};
-  const baseUrl = "http://localhost:1317/txs?tx.acc_seq=" + address;
+  const baseUrl =
+    process.env.NEXT_PUBLIC_API_URL +
+    "/txs?tx.acc_seq=" +
+    address +
+    "&limit=" +
+    limit +
+    "&page=" +
+    page;
   let params = {
     pagination: {
       limit: 10,
