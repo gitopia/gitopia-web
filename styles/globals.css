@@ -1217,6 +1217,10 @@ ul.mde-suggestions li[aria-selected="true"] {
   border-bottom-width: 2px;
 }
 
+.tab.tab-active-alt {
+  color: hsla(var(--bc));
+}
+
 .tab-md,
 .tab-lg {
   height: auto;

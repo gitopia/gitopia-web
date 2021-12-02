@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
+import shrinkAddress from "../../helpers/shrinkAddress";
 
 export default function RepositorySelector({
   repositories,
   currentRepo = { name: "", id: null },
+  disabled = false,
+  onClick = () => {},
   ...props
 }) {
   const [filteredList, setFilteredList] = useState([]);
@@ -17,19 +20,29 @@ export default function RepositorySelector({
   }, [repositories]);
 
   useEffect(() => {
+    setSelected(currentRepo);
+  }, [currentRepo]);
+
+  useEffect(() => {
     const list = repositories.filter((l) => l.name.includes(searchText));
     setFilteredList(list);
   }, [searchText]);
 
   return (
-    <div className="dropdown" tabIndex="0">
+    <div className="dropdown" tabIndex={disabled ? false : "0"}>
       <div
-        className="btn btn-sm btn-outline items-center"
+        className={
+          "btn btn-sm items-center" +
+          (disabled ? " btn-disabled" : " btn-outline")
+        }
         onClick={() => {
           if (searchInput) searchInput.current.focus();
         }}
       >
-        <div className="flex-1 text-left px-2">{selected.name}</div>
+        <div className="flex-1 text-left px-2">
+          {selected.owner ? shrinkAddress(selected.owner.id) + "/" : ""}
+          {selected.name}
+        </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5"
@@ -95,8 +108,10 @@ export default function RepositorySelector({
                   className="whitespace-nowrap"
                   onClick={() => {
                     setSelected(b);
+                    onClick(b);
                   }}
                 >
+                  {b.owner ? shrinkAddress(b.owner.id) + "/" : ""}
                   {b.name}
                 </a>
               </li>

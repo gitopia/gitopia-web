@@ -350,7 +350,7 @@ function RepositoryIssueView(props) {
                   <div
                     className={
                       "tab tab-xs " +
-                      (filterText.match(/is:open/) ? "tab-active" : "")
+                      (filterText.match(/is:open/) ? "tab-active-alt" : "")
                     }
                   >
                     <button
@@ -375,7 +375,7 @@ function RepositoryIssueView(props) {
                   <div
                     className={
                       "tab tab-xs " +
-                      (filterText.match(/is:closed/) ? "tab-active" : "")
+                      (filterText.match(/is:closed/) ? "tab-active-alt" : "")
                     }
                   >
                     <button
