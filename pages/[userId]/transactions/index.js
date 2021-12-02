@@ -174,6 +174,7 @@ function TransactionView(props) {
                 disabled={currentPage < 2}
                 onClick={() => {
                   loadPrevTransactions();
+                  window.scrollTo(0, 0);
                 }}
               >
                 PREV
@@ -185,6 +186,7 @@ function TransactionView(props) {
                 disabled={pageTotal == currentPage}
                 onClick={() => {
                   loadNextTransactions();
+                  window.scrollTo(0, 0);
                 }}
               >
                 NEXT
