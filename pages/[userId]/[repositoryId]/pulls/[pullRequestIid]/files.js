@@ -3,15 +3,6 @@ import Header from "../../../../../components/header";
 
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import dayjs from "dayjs";
-
-import getUserRepository from "../../../../../helpers/getUserRepository";
-import getRepositoryPull from "../../../../../helpers/getRepositoryPull";
-import getRepository from "../../../../../helpers/getRepository";
-import getComment from "../../../../../helpers/getComment";
-import shrinkAddress from "../../../../../helpers/shrinkAddress";
 import RepositoryHeader from "../../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
 import Footer from "../../../../../components/footer";
@@ -25,104 +16,41 @@ import PullRequestHeader from "../../../../../components/repository/pullRequestH
 import DiffView from "../../../../../components/repository/diffView";
 import getPullDiff from "../../../../../helpers/getPullDiff";
 import getDiff from "../../../../../helpers/getDiff";
-import getBranchSha from "../../../../../helpers/getBranchSha";
+import useRepository from "../../../../../hooks/useRepository";
+import usePullRequest from "../../../../../hooks/usePullRequest";
 
 export async function getServerSideProps() {
   return { props: {} };
 }
 
-function RepositoryPullView(props) {
-  const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    forks: [],
-    stargazers: [],
-    branches: [],
-    tags: [],
-  });
-  const [pullRequest, setPullRequest] = useState({
-    iid: router.query.pullRequestIid,
-    creator: "",
-    comments: [],
-    reviewers: [],
-    assignees: [],
-    labels: [],
-    head: {},
-    base: {},
-  });
-  const [allComments, setAllComments] = useState([]);
+function RepositoryPullFilesView(props) {
+  const repository = useRepository();
+  const { pullRequest } = usePullRequest(repository);
   const [stats, setStats] = useState({ stat: {} });
-  const [compare, setCompare] = useState({
-    source: { repository: {}, name: "", sha: "" },
-    target: { repository: {}, name: "", sha: "" },
-  });
   const [viewType, setViewType] = useState("unified");
 
   useEffect(async () => {
-    const [r, p] = await Promise.all([
-      getUserRepository(router.query.userId, router.query.repositoryId),
-      getRepositoryPull(
-        router.query.userId,
-        router.query.repositoryId,
-        router.query.pullRequestIid
-      ),
-    ]);
-    if (r) setRepository(r);
-    if (p) {
-      setPullRequest(p);
-      let diff;
-      if (p.base.repositoryId === p.head.repositoryId) {
-        let baseBranchSha = getBranchSha(p.base.branch, r.branches, r.tags),
-          headBranchSha = getBranchSha(p.head.branch, r.branches, r.tags);
-        diff = await getDiff(
-          p.base.repositoryId,
-          baseBranchSha,
-          null,
-          headBranchSha,
-          true
-        );
-        setCompare({
-          source: {
-            repository: r,
-            name: p.head.branch,
-            sha: headBranchSha,
-          },
-          target: {
-            repository: r,
-            name: p.base.branch,
-            sha: baseBranchSha,
-          },
-        });
-      } else {
-        const forkRepo = await getRepository(p.head.repositoryId);
-        if (forkRepo) {
-          diff = await getPullDiff(
-            p.base.repositoryId,
-            p.head.repositoryId,
-            getBranchSha(p.base.branch, r.branches, r.tags),
-            getBranchSha(p.head.branch, forkRepo.branches, forkRepo.tags),
-            null,
-            true
-          );
-        }
-      }
-      console.log("diffStat", diff);
-      setStats(diff);
+    let diff;
+    if (pullRequest.base.repositoryId === pullRequest.head.repositoryId) {
+      diff = await getDiff(
+        pullRequest.base.repositoryId,
+        pullRequest.base.sha,
+        null,
+        pullRequest.head.sha,
+        true
+      );
+    } else {
+      diff = await getPullDiff(
+        pullRequest.base.repositoryId,
+        pullRequest.head.repositoryId,
+        pullRequest.base.sha,
+        pullRequest.head.sha,
+        null,
+        true
+      );
     }
-    console.log(r, p);
-  }, [router.query]);
-
-  const refreshPullRequest = async () => {
-    const i = await getRepositoryPull(
-      repository.owner.id,
-      repository.name,
-      pullRequest.iid
-    );
-    console.log(i);
-    setPullRequest(i);
-  };
+    setStats(diff);
+  }, [pullRequest]);
 
   return (
     <div
@@ -135,7 +63,12 @@ function RepositoryPullView(props) {
       </Head>
       <Header />
       <div className="flex flex-1 bg-repo-grad-v">
-        <main className="container mx-auto max-w-screen-lg py-12 px-4">
+        <main
+          className={
+            "py-12 px-4 " +
+            (viewType === "unified" ? "container mx-auto max-w-screen-lg" : "")
+          }
+        >
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
             active="pulls"
@@ -162,10 +95,10 @@ function RepositoryPullView(props) {
           <div className="mt-8">
             <DiffView
               stats={stats}
-              repoId={compare.source.repository.id}
-              targetRepoId={compare.target.repository.id}
-              currentSha={compare.source.sha}
-              previousSha={compare.target.sha}
+              repoId={pullRequest.base.repositoryId}
+              targetRepoId={pullRequest.head.repositoryId}
+              currentSha={pullRequest.base.sha}
+              previousSha={pullRequest.head.sha}
               onViewTypeChange={(v) => setViewType(v)}
             />
           </div>
@@ -187,4 +120,4 @@ export default connect(mapStateToProps, {
   deleteComment,
   updateIssueAssignees,
   updateIssueLabels,
-})(RepositoryPullView);
+})(RepositoryPullFilesView);
