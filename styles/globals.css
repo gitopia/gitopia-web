@@ -1204,7 +1204,7 @@ ul.mde-suggestions li[aria-selected="true"] {
   border-color: transparent;
 }
 
-.tab:first-of-type {
+.tab.tab-bordered:first-of-type {
   padding-left: 0;
 }
 
@@ -1212,7 +1212,7 @@ ul.mde-suggestions li[aria-selected="true"] {
   color: #33ab34;
 }
 
-.tab.tab-active {
+.tab.tab-bordered.tab-active {
   border-color: #33ab34;
   border-bottom-width: 2px;
 }

@@ -1,5 +1,5 @@
 import Head from "next/head";
-import Header from "../../../../components/header";
+import Header from "../../../../../components/header";
 
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -8,25 +8,29 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import ReactMarkdown from "react-markdown";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
-import getRepositoryPull from "../../../../helpers/getRepositoryPull";
-import getComment from "../../../../helpers/getComment";
-import shrinkAddress from "../../../../helpers/shrinkAddress";
-import RepositoryHeader from "../../../../components/repository/header";
-import RepositoryMainTabs from "../../../../components/repository/mainTabs";
-import Footer from "../../../../components/footer";
-import CommentEditor from "../../../../components/repository/commentEditor";
-import CommentView from "../../../../components/repository/commentView";
-import SystemCommentView from "../../../../components/repository/systemCommentView";
+import getUserRepository from "../../../../../helpers/getUserRepository";
+import getRepositoryPull from "../../../../../helpers/getRepositoryPull";
+import getComment from "../../../../../helpers/getComment";
+import shrinkAddress from "../../../../../helpers/shrinkAddress";
+import RepositoryHeader from "../../../../../components/repository/header";
+import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
+import Footer from "../../../../../components/footer";
+import CommentEditor from "../../../../../components/repository/commentEditor";
+import CommentView from "../../../../../components/repository/commentView";
+import SystemCommentView from "../../../../../components/repository/systemCommentView";
 import {
   deleteComment,
-  updateIssueLabels,
-  updateIssueAssignees,
-} from "../../../../store/actions/repository";
-import AssigneeSelector from "../../../../components/repository/assigneeSelector";
-import LabelSelector from "../../../../components/repository/labelSelector";
-import Label from "../../../../components/repository/label";
-import AssigneeGroup from "../../../../components/repository/assigneeGroup";
+  updatePullRequestLabels,
+  updatePullRequestAssignees,
+  updatePullRequestReviewers,
+} from "../../../../../store/actions/repository";
+import AssigneeSelector from "../../../../../components/repository/assigneeSelector";
+import LabelSelector from "../../../../../components/repository/labelSelector";
+import Label from "../../../../../components/repository/label";
+import AssigneeGroup from "../../../../../components/repository/assigneeGroup";
+import PullRequestTabs from "../../../../../components/repository/pullRequestTabs";
+import PullRequestHeader from "../../../../../components/repository/pullRequestHeader";
+import mergePullRequest from "../../../../../helpers/mergePullRequest";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -50,8 +54,11 @@ function RepositoryPullView(props) {
     reviewers: [],
     assignees: [],
     labels: [],
+    head: {},
+    base: {},
   });
   const [allComments, setAllComments] = useState([]);
+  const [isMerging, setIsMerging] = useState(false);
 
   useEffect(async () => {
     const [r, p] = await Promise.all([
@@ -79,7 +86,25 @@ function RepositoryPullView(props) {
       repository.name,
       pullRequest.iid
     );
+    console.log(i);
     setPullRequest(i);
+  };
+
+  const mergePull = async () => {
+    setIsMerging(true);
+    const res = await mergePullRequest(
+      pullRequest.iid,
+      pullRequest.base.repositoryId,
+      pullRequest.head.repositoryId,
+      pullRequest.base.branch,
+      pullRequest.head.branch,
+      "merge",
+      "asdf",
+      "asdf@gmail.com",
+      "asdfsfd"
+    );
+    console.log(res);
+    setIsMerging(false);
   };
 
   useEffect(getAllComments, [pullRequest]);
@@ -101,76 +126,23 @@ function RepositoryPullView(props) {
             active="pulls"
             hrefBase={repository.owner.id + "/" + repository.name}
           />
-          <div className="flex mt-8">
-            <div className="flex-1">
-              <div>
-                <span className="text-3xl mr-2">{pullRequest.title}</span>
-                <span className="text-3xl text-type-secondary">
-                  #{pullRequest.iid}
-                </span>
-              </div>
-              <div className="mt-4 flex items-center">
-                <span
-                  className={
-                    "flex items-center rounded-full border pl-4 pr-6 py-2 mr-4 " +
-                    (pullRequest.state === "OPEN"
-                      ? "border-green-900"
-                      : "border-red-900")
-                  }
-                >
-                  <span
-                    className={
-                      "mr-4 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
-                      (pullRequest.state === "OPEN"
-                        ? "bg-green-900"
-                        : "bg-red-900")
-                    }
-                  />
-                  <span className="text-type uppercase">
-                    {pullRequest.state}
-                  </span>
-                </span>
-                <span className="text-xs mr-2 text-type-secondary">
-                  {shrinkAddress(pullRequest.creator) + " wants to merge "}
-                  <Link
-                    href={
-                      "/" +
-                      repository.owner.id +
-                      "/" +
-                      repository.name +
-                      "/tree/" +
-                      pullRequest.headBranch
-                    }
-                  >
-                    <a className="text-xs link link-primary no-underline hover:underline">
-                      {pullRequest.headBranch}
-                    </a>
-                  </Link>
-                  {" to "}
-                  <Link
-                    href={
-                      "/" +
-                      repository.owner.id +
-                      "/" +
-                      repository.name +
-                      "/tree/" +
-                      pullRequest.baseBranch
-                    }
-                  >
-                    <a className="text-xs link link-primary no-underline hover:underline">
-                      {pullRequest.baseBranch}
-                    </a>
-                  </Link>
-                </span>
-              </div>
-            </div>
+          <div className="mt-8">
+            <PullRequestHeader
+              pullRequest={pullRequest}
+              repository={repository}
+            />
           </div>
           <div className="mt-8">
-            <div className="tabs">
-              <div className="tab tab-bordered tab-active">Conversation</div>
-              <div className="tab tab-bordered">Commits</div>
-              <div className="tab tab-bordered">Files Changed</div>
-            </div>
+            <PullRequestTabs
+              hrefBase={[
+                "",
+                repository.owner.id,
+                repository.name,
+                "pulls",
+                pullRequest.iid,
+              ].join("/")}
+              active="conversation"
+            />
           </div>
           <div className="flex mt-8">
             <div className="flex flex-1">
@@ -234,6 +206,68 @@ function RepositoryPullView(props) {
                 })}
                 <div className="flex w-full mt-8">
                   <div className="flex-none mr-4">
+                    <div className="flex items-center justify-center w-10 h-10 bg-success rounded">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        stroke="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                      >
+                        <path
+                          d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                        />
+                        <circle
+                          cx="8.5"
+                          cy="18.5"
+                          r="2.5"
+                          fill="currentColor"
+                        />
+                        <circle cx="8.5" cy="5.5" r="2.5" fill="currentColor" />
+                        <path
+                          d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="flex-1 border border-success rounded-md">
+                    <div className="flex alert-success p-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <div className="flex-1">
+                        This branch has no conflicts with base branch
+                      </div>
+                    </div>
+                    <button
+                      className={
+                        "btn btn-sm btn-primary m-4" +
+                        (isMerging ? " loading" : "")
+                      }
+                      onClick={mergePull}
+                      disabled={isMerging}
+                    >
+                      Merge Pull Request
+                    </button>
+                  </div>
+                </div>
+                <div className="flex w-full mt-8">
+                  <div className="flex-none mr-4">
                     <div className="avatar">
                       <div className="mb-8 rounded-full w-10 h-10">
                         <img
@@ -256,8 +290,44 @@ function RepositoryPullView(props) {
                 </div>
               </div>
             </div>
+
             <div className="flex-none w-64 pl-8 divide-y divide-grey">
               <div className="pb-8">
+                <AssigneeSelector
+                  title="Reviewers"
+                  assignees={pullRequest.reviewers}
+                  collaborators={repository.collaborators}
+                  onChange={async (list) => {
+                    console.log("list", list);
+                    const removedReviewers = pullRequest.reviewers.filter(
+                      (x) => !list.includes(x)
+                    );
+                    const addedReviewers = list.filter(
+                      (x) =>
+                        !(
+                          removedReviewers.includes(x) ||
+                          pullRequest.reviewers.includes(x)
+                        )
+                    );
+
+                    const res = await props.updatePullRequestReviewers({
+                      pullId: pullRequest.id,
+                      addedReviewers,
+                      removedReviewers,
+                    });
+
+                    if (res) refreshPullRequest();
+                  }}
+                />
+                <div className="text-xs px-3 mt-2">
+                  {pullRequest.reviewers.length ? (
+                    <AssigneeGroup assignees={pullRequest.reviewers} />
+                  ) : (
+                    "No one"
+                  )}
+                </div>
+              </div>
+              <div className="py-8">
                 <AssigneeSelector
                   assignees={pullRequest.assignees}
                   collaborators={repository.collaborators}
@@ -274,8 +344,8 @@ function RepositoryPullView(props) {
                         )
                     );
 
-                    const res = await props.updateIssueAssignees({
-                      issueId: pullRequest.id,
+                    const res = await props.updatePullRequestAssignees({
+                      pullId: pullRequest.id,
                       addedAssignees,
                       removedAssignees,
                     });
@@ -315,8 +385,8 @@ function RepositoryPullView(props) {
                         )
                     );
 
-                    const res = await props.updateIssueLabels({
-                      issueId: pullRequest.id,
+                    const res = await props.updatePullRequestLabels({
+                      pullId: pullRequest.id,
                       addedLabels,
                       removedLabels,
                     });
@@ -327,7 +397,7 @@ function RepositoryPullView(props) {
                 <div className="text-xs px-3 mt-2 flex flex-wrap">
                   {pullRequest.labels.length
                     ? pullRequest.labels.map((l, i) => {
-                        let label = _.find(allLabels, { id: l }) || {
+                        let label = _.find(repository.labels, { id: l }) || {
                           name: "",
                           color: "",
                         };
@@ -343,13 +413,6 @@ function RepositoryPullView(props) {
                     : "None yet"}
                 </div>
               </div>
-              {/* <div className="py-8">
-                <div className="flex-1 text-left px-3 mb-1">
-                  Linked Pull Requests
-                </div>
-
-                <div className="text-xs px-3 mt-2">None yet</div>
-              </div> */}
             </div>
           </div>
         </main>
@@ -368,6 +431,7 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   deleteComment,
-  updateIssueAssignees,
-  updateIssueLabels,
+  updatePullRequestLabels,
+  updatePullRequestAssignees,
+  updatePullRequestReviewers,
 })(RepositoryPullView);

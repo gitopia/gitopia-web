@@ -33,10 +33,7 @@ function RepositoryReleasesView(props) {
     tags: [],
   });
 
-  const [latestRelease, setLatestRelease] = useState({
-    creator: "",
-    attachments: [],
-  });
+  const [latestRelease, setLatestRelease] = useState(null);
   const [olderReleases, setOlderReleases] = useState([]);
   const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
     false
@@ -137,11 +134,15 @@ function RepositoryReleasesView(props) {
             </div>
           </div>
           <div className="mt-8">
-            <ReleaseView
-              repository={repository}
-              release={latestRelease}
-              latest={true}
-            />
+            {latestRelease ? (
+              <ReleaseView
+                repository={repository}
+                release={latestRelease}
+                latest={true}
+              />
+            ) : (
+              ""
+            )}
             {olderReleases.length ? (
               <div className="p-4 mt-8 text-xl text-type-secondary">
                 Older Releases

@@ -54,6 +54,10 @@ module.exports = withTM({
         source: "/api/fork",
         destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/fork",
       },
+      {
+        source: "/api/pull/merge",
+        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/merge",
+      },
     ];
   },
 });
