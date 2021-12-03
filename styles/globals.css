@@ -1228,6 +1228,10 @@ ul.mde-suggestions li[aria-selected="true"] {
   padding-bottom: calc(var(--tab-padding, 1rem) / 2);
 }
 
+.tab-lifted.tab-active:last-child:after {
+  background-image: var(--tab-corner-bg);
+}
+
 .menu li.bordered a,
 .menu li.bordered span {
   border-left-width: 2px;

@@ -33,7 +33,10 @@ export default function PullRequestTabs({ hrefBase, active }) {
           </a>
         </Link>
       </div>
-      <div className="flex-1 border-b border-grey"></div>
+      <div
+        className="flex-1 border-b"
+        style={{ borderColor: "rgb(40, 49, 60)" }}
+      ></div>
     </div>
   );
 }

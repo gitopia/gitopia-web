@@ -8,8 +8,6 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import ReactMarkdown from "react-markdown";
 
-import getUserRepository from "../../../../../helpers/getUserRepository";
-import getRepositoryPull from "../../../../../helpers/getRepositoryPull";
 import getComment from "../../../../../helpers/getComment";
 import shrinkAddress from "../../../../../helpers/shrinkAddress";
 import RepositoryHeader from "../../../../../components/repository/header";
@@ -31,63 +29,23 @@ import AssigneeGroup from "../../../../../components/repository/assigneeGroup";
 import PullRequestTabs from "../../../../../components/repository/pullRequestTabs";
 import PullRequestHeader from "../../../../../components/repository/pullRequestHeader";
 import mergePullRequest from "../../../../../helpers/mergePullRequest";
+import useRepository from "../../../../../hooks/useRepository";
+import usePullRequest from "../../../../../hooks/usePullRequest";
 
 export async function getServerSideProps() {
   return { props: {} };
 }
 
 function RepositoryPullView(props) {
-  const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    forks: [],
-    stargazers: [],
-    branches: [],
-    tags: [],
-  });
-  const [pullRequest, setPullRequest] = useState({
-    iid: router.query.pullRequestIid,
-    creator: "",
-    comments: [],
-    reviewers: [],
-    assignees: [],
-    labels: [],
-    head: {},
-    base: {},
-  });
+  const repository = useRepository();
+  const { pullRequest, refreshPullRequest } = usePullRequest(repository);
   const [allComments, setAllComments] = useState([]);
   const [isMerging, setIsMerging] = useState(false);
-
-  useEffect(async () => {
-    const [r, p] = await Promise.all([
-      getUserRepository(router.query.userId, router.query.repositoryId),
-      getRepositoryPull(
-        router.query.userId,
-        router.query.repositoryId,
-        router.query.pullRequestIid
-      ),
-    ]);
-    if (r) setRepository(r);
-    if (p) setPullRequest(p);
-    console.log(r, p);
-  }, [router.query]);
 
   const getAllComments = async () => {
     const pr = pullRequest.comments.map((c) => getComment(c));
     const comments = await Promise.all(pr);
     setAllComments(comments);
-  };
-
-  const refreshPullRequest = async () => {
-    const i = await getRepositoryPull(
-      repository.owner.id,
-      repository.name,
-      pullRequest.iid
-    );
-    console.log(i);
-    setPullRequest(i);
   };
 
   const mergePull = async () => {
