@@ -392,6 +392,16 @@ function RepositoryCompareView(props) {
                                 headBranch: compare.source.name,
                               });
                               console.log(res);
+                              if (res & (res.code === 0)) {
+                                router.push(
+                                  "/" +
+                                    repository.owner.id +
+                                    "/" +
+                                    repository.name +
+                                    "/pulls/" +
+                                    (Number(repository.pullsCount) + 1)
+                                );
+                              }
                               setCreatingPull(false);
                             }}
                             disabled={creatingPull || !title.trim().length}
