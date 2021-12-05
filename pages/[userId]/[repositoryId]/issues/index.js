@@ -3,7 +3,6 @@ import Header from "../../../../components/header";
 
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { useRouter } from "next/router";
 import Link from "next/link";
 import dayjs from "dayjs";
 
@@ -16,6 +15,7 @@ import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
 import { isCurrentUserEligibleToUpdate } from "../../../../store/actions/repository";
 import parseFilters from "../../../../helpers/parseFilters";
+import renderPagination from "../../../../helpers/renderPagination";
 import Label from "../../../../components/repository/label";
 
 export async function getServerSideProps() {
@@ -23,7 +23,6 @@ export async function getServerSideProps() {
 }
 
 function RepositoryIssueView(props) {
-  const router = useRouter();
   const repository = useRepository();
 
   const [allIssues, setAllIssues] = useState([]);
@@ -89,176 +88,6 @@ function RepositoryIssueView(props) {
       if (data.Issue) setAllIssues(data.Issue);
       if (data.pagination) setPagination({ ...pagination, ...data.pagination });
     }
-  };
-
-  const renderPagination = () => {
-    const { total, limit } = pagination;
-    const noOfPages = Math.ceil(total / limit);
-    const beforePage =
-      page >= 2 ? (
-        <button
-          className="btn btn-sm"
-          onClick={() => {
-            setPage(page - 1);
-          }}
-        >
-          {page - 1}
-        </button>
-      ) : (
-        ""
-      );
-    const firstPage =
-      page >= 3 && noOfPages >= 3 ? (
-        <button
-          className="btn btn-sm"
-          onClick={() => {
-            setPage(1);
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mt-px"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
-      ) : (
-        ""
-      );
-    const afterPage =
-      noOfPages - page >= 1 ? (
-        <button
-          className="btn btn-sm"
-          onClick={() => {
-            setPage(page + 1);
-          }}
-        >
-          {page + 1}
-        </button>
-      ) : (
-        ""
-      );
-    const lastPage =
-      noOfPages - page >= 2 && noOfPages >= 3 ? (
-        <button
-          className="btn btn-sm"
-          onClick={() => {
-            setPage(noOfPages);
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mt-px"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z"
-              clipRule="evenodd"
-            />
-            <path
-              fillRule="evenodd"
-              d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
-      ) : (
-        ""
-      );
-    const previousPage =
-      page >= 2 ? (
-        <button
-          className="btn btn-sm"
-          onClick={() => {
-            setPage(page - 1);
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mt-px"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
-      ) : (
-        <button className="btn btn-sm btn-disabled">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mt-px"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
-      );
-
-    const nextPage =
-      noOfPages - page >= 1 ? (
-        <button
-          className="btn btn-sm"
-          onClick={() => {
-            setPage(page + 1);
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mt-px"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
-      ) : (
-        <button className="btn btn-sm btn-disabled">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mt-px"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
-      );
-    return (
-      <>
-        {firstPage}
-        {previousPage}
-        {beforePage}
-        <button className="btn btn-sm btn-active">{page}</button>
-        {afterPage}
-        {nextPage}
-        {lastPage}
-      </>
-    );
   };
 
   useEffect(getAllIssues, [repository, filters, page]);
@@ -728,19 +557,8 @@ function RepositoryIssueView(props) {
             </div>
           </div>
           <div className="mt-8 flex btn-group justify-center">
-            {renderPagination()}
+            {renderPagination(pagination, setPage, page)}
           </div>
-          {/* <div className="mt-8 text-center">
-            <button
-              className="btn btn-sm btn-wide"
-              onClick={() => {
-                setPage(pagination.next_key);
-              }}
-              disabled={!pagination.next_key}
-            >
-              Load More
-            </button>
-          </div> */}
         </main>
       </div>
       <Footer />

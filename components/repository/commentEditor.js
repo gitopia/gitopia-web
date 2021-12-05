@@ -5,6 +5,7 @@ import {
   createComment,
   updateComment,
   toggleIssueState,
+  updatePullRequestState,
 } from "../../store/actions/repository";
 
 function CommentEditor({
@@ -66,29 +67,59 @@ function CommentEditor({
       />
       <div className="text-right mt-4">
         {!isEdit ? (
-          <div className="inline-block w-36 mr-4">
-            <button
-              className={
-                "btn btn-sm btn-accent btn-outline btn-block " +
-                (togglingIssue ? "loading" : "")
-              }
-              disabled={togglingIssue || postingComment}
-              onClick={async () => {
-                setTogglingIssue(true);
-                const res = await props.toggleIssueState({ id: issueId });
-                console.log(res);
-                if (res && res.code === 0) {
-                  if (onSuccess) {
-                    await onSuccess();
-                  }
+          commentType === "ISSUE" ? (
+            <div className="inline-block w-36 mr-4">
+              <button
+                className={
+                  "btn btn-sm btn-accent btn-outline btn-block " +
+                  (togglingIssue ? "loading" : "")
                 }
-                setTogglingIssue(false);
-              }}
-            >
-              {issueState === "OPEN" ? "Close" : "Re-Open"}{" "}
-              {commentType === "ISSUE" ? "Issue" : "Pull Request"}
-            </button>
-          </div>
+                disabled={togglingIssue || postingComment}
+                onClick={async () => {
+                  setTogglingIssue(true);
+                  const res = await props.toggleIssueState({ id: issueId });
+                  console.log(res);
+                  if (res && res.code === 0) {
+                    if (onSuccess) {
+                      await onSuccess();
+                    }
+                  }
+                  setTogglingIssue(false);
+                }}
+              >
+                {issueState === "OPEN" ? "Close" : "Re-Open"}
+                {" Issue"}
+              </button>
+            </div>
+          ) : issueState === "OPEN" ? (
+            <div className="inline-block w-36 mr-4">
+              <button
+                className={
+                  "btn btn-sm btn-accent btn-outline btn-block " +
+                  (togglingIssue ? "loading" : "")
+                }
+                disabled={togglingIssue || postingComment}
+                onClick={async () => {
+                  setTogglingIssue(true);
+                  const res = await props.updatePullRequestState({
+                    id: issueId,
+                    state: "CLOSED",
+                  });
+                  console.log(res);
+                  if (res && res.code === 0) {
+                    if (onSuccess) {
+                      await onSuccess();
+                    }
+                  }
+                  setTogglingIssue(false);
+                }}
+              >
+                {"Close Pull Request"}
+              </button>
+            </div>
+          ) : (
+            ""
+          )
         ) : (
           ""
         )}
@@ -131,4 +162,5 @@ export default connect(mapStateToProps, {
   createComment,
   updateComment,
   toggleIssueState,
+  updatePullRequestState,
 })(CommentEditor);

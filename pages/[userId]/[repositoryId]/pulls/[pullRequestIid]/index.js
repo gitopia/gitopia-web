@@ -145,7 +145,10 @@ function RepositoryPullView(props) {
                     );
                   }
                 })}
-                <MergePullRequestView pullRequest={pullRequest} />
+                <MergePullRequestView
+                  pullRequest={pullRequest}
+                  refreshPullRequest={refreshPullRequest}
+                />
                 <div className="flex w-full mt-8">
                   <div className="flex-none mr-4">
                     <div className="avatar">
