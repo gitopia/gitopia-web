@@ -58,6 +58,10 @@ module.exports = withTM({
         source: "/api/pull/merge",
         destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/merge",
       },
+      {
+        source: "/api/pull/commits",
+        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/commits",
+      },
     ];
   },
 });

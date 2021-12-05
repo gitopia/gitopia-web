@@ -95,10 +95,10 @@ function RepositoryPullFilesView(props) {
           <div className="mt-8">
             <DiffView
               stats={stats}
-              repoId={pullRequest.base.repositoryId}
-              targetRepoId={pullRequest.head.repositoryId}
-              currentSha={pullRequest.base.sha}
-              previousSha={pullRequest.head.sha}
+              repoId={pullRequest.head.repositoryId}
+              baseRepoId={pullRequest.base.repositoryId}
+              currentSha={pullRequest.head.sha}
+              previousSha={pullRequest.base.sha}
               onViewTypeChange={(v) => setViewType(v)}
             />
           </div>

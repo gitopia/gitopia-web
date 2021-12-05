@@ -171,10 +171,10 @@ function RepositoryCompareView(props) {
   useEffect(refreshRepository, [router.query]);
   useEffect(async () => {
     const diff = await getPullDiff(
-      compare.source.repository.id,
       compare.target.repository.id,
-      compare.source.sha,
+      compare.source.repository.id,
       compare.target.sha,
+      compare.source.sha,
       null,
       true
     );
@@ -392,7 +392,7 @@ function RepositoryCompareView(props) {
                                 headBranch: compare.source.name,
                               });
                               console.log(res);
-                              if (res & (res.code === 0)) {
+                              if (res && res.code === 0) {
                                 router.push(
                                   "/" +
                                     repository.owner.id +
@@ -505,7 +505,7 @@ function RepositoryCompareView(props) {
             <DiffView
               stats={stats}
               repoId={compare.source.repository.id}
-              targetRepoId={compare.target.repository.id}
+              baseRepoId={compare.target.repository.id}
               currentSha={compare.source.sha}
               previousSha={compare.target.sha}
               onViewTypeChange={(v) => setViewType(v)}

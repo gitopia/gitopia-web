@@ -630,7 +630,7 @@ export default function Landing() {
                 <div className="mt-4 border border-gray-700 rounded overflow-hidden">
                   <CommitDetailRow
                     commitDetail={commitDetail}
-                    commitInBranchLink={
+                    commitLink={
                       "/" +
                       demoAddress +
                       "/" +

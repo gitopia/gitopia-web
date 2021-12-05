@@ -392,7 +392,7 @@ function RepositoryView(props) {
                 <div className="mt-4 border border-gray-700 rounded overflow-hidden max-w-3xl">
                   <CommitDetailRow
                     commitDetail={commitDetail}
-                    commitInBranchLink={
+                    commitLink={
                       "/" +
                       repository.owner.id +
                       "/" +

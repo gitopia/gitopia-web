@@ -1,14 +1,21 @@
-export default async function forkRepositoryFiles(sourceRepoId, targetRepoId) {
-  if (!sourceRepoId || !targetRepoId) return;
+export default async function getPullRequestCommits(
+  baseRepoId = null,
+  headRepoId = null,
+  baseBranch = null,
+  headBranch = null
+) {
+  let obj = {};
   const baseUrl =
     process.env.NODE_ENV === "development"
-      ? "/api/fork"
-      : proces.env.NEXT_PUBLIC_OBJECTS_URL + "/fork";
-  let obj = {};
+      ? "/api/pull/commits"
+      : proces.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/commits";
   let params = {
-    source_repository_id: Number(sourceRepoId),
-    target_repository_id: Number(targetRepoId),
+    base_repository_id: Number(baseRepoId),
+    head_repository_id: Number(headRepoId),
+    base_branch: baseBranch,
+    head_branch: headBranch,
   };
+  console.log("params", params);
   await fetch(baseUrl, {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     mode: "cors", // no-cors, *cors, same-origin
