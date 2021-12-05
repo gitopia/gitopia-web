@@ -653,13 +653,15 @@ export const forkRepository = ({
           ownerId,
           repositoryName
         );
-        console.log(newRepoQuery);
         if (newRepoQuery.ok) {
           const forkFilesQuery = await forkRepositoryFiles(
             repositoryId,
             newRepoQuery.data.Repository.id
           );
-          console.log(forkFilesQuery);
+          console.log("fork files", forkFilesQuery);
+          if (!forkFilesQuery.data.forked) {
+            dispatch(notify(forkFilesQuery.error, "error"));
+          }
         }
         getUserDetailsForSelectedAddress()(dispatch, getState);
         let url = "/" + ownerId + "/" + repositoryName;
@@ -940,6 +942,34 @@ export const updatePullRequestLabels = ({
       }
 
       return { result1, result2 };
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const updatePullRequestState = ({ id, state, mergeCommitSha }) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+      return null;
+    const pullState = {
+      creator: wallet.selectedAddress,
+      id,
+      state,
+      mergeCommitSha,
+    };
+    console.log(pullState);
+    try {
+      const message = await env.txClient.msgSetPullRequestState(pullState);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
     } catch (e) {
       console.error(e);
       dispatch(notify(e.message, "error"));

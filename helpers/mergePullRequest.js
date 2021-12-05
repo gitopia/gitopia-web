@@ -32,8 +32,7 @@ export default async function mergePullRequest(
     body: JSON.stringify(params),
   })
     .then((response) => {
-      obj = {};
-      console.log(response);
+      obj = response.json();
     })
     .catch((err) => console.error(err));
 

@@ -88,6 +88,7 @@ function RepositoryCommitDiffView(props) {
           <DiffView
             stats={commit}
             repoId={repository.id}
+            baseRepoId={repository.id}
             currentSha={router.query.commitId}
             onViewTypeChange={(v) => setViewType(v)}
           />

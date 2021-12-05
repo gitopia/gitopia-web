@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import dayjs from "dayjs";
 import ReactMarkdown from "react-markdown";
+import { notify } from "reapop";
 
 import getComment from "../../../../../helpers/getComment";
 import shrinkAddress from "../../../../../helpers/shrinkAddress";
@@ -28,9 +29,9 @@ import Label from "../../../../../components/repository/label";
 import AssigneeGroup from "../../../../../components/repository/assigneeGroup";
 import PullRequestTabs from "../../../../../components/repository/pullRequestTabs";
 import PullRequestHeader from "../../../../../components/repository/pullRequestHeader";
-import mergePullRequest from "../../../../../helpers/mergePullRequest";
 import useRepository from "../../../../../hooks/useRepository";
 import usePullRequest from "../../../../../hooks/usePullRequest";
+import MergePullRequestView from "../../../../../components/repository/mergePullRequestView";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -40,29 +41,11 @@ function RepositoryPullView(props) {
   const repository = useRepository();
   const { pullRequest, refreshPullRequest } = usePullRequest(repository);
   const [allComments, setAllComments] = useState([]);
-  const [isMerging, setIsMerging] = useState(false);
 
   const getAllComments = async () => {
     const pr = pullRequest.comments.map((c) => getComment(c));
     const comments = await Promise.all(pr);
     setAllComments(comments);
-  };
-
-  const mergePull = async () => {
-    setIsMerging(true);
-    const res = await mergePullRequest(
-      pullRequest.iid,
-      pullRequest.base.repositoryId,
-      pullRequest.head.repositoryId,
-      pullRequest.base.branch,
-      pullRequest.head.branch,
-      "merge",
-      "asdf",
-      "asdf@gmail.com",
-      "asdfsfd"
-    );
-    console.log(res);
-    setIsMerging(false);
   };
 
   useEffect(getAllComments, [pullRequest]);
@@ -162,68 +145,7 @@ function RepositoryPullView(props) {
                     );
                   }
                 })}
-                <div className="flex w-full mt-8">
-                  <div className="flex-none mr-4">
-                    <div className="flex items-center justify-center w-10 h-10 bg-success rounded">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        stroke="currentColor"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                      >
-                        <path
-                          d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          fill="none"
-                        />
-                        <circle
-                          cx="8.5"
-                          cy="18.5"
-                          r="2.5"
-                          fill="currentColor"
-                        />
-                        <circle cx="8.5" cy="5.5" r="2.5" fill="currentColor" />
-                        <path
-                          d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
-                          fill="currentColor"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex-1 border border-success rounded-md">
-                    <div className="flex alert-success p-4">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 mr-2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      <div className="flex-1">
-                        This branch has no conflicts with base branch
-                      </div>
-                    </div>
-                    <button
-                      className={
-                        "btn btn-sm btn-primary m-4" +
-                        (isMerging ? " loading" : "")
-                      }
-                      onClick={mergePull}
-                      disabled={isMerging}
-                    >
-                      Merge Pull Request
-                    </button>
-                  </div>
-                </div>
+                <MergePullRequestView pullRequest={pullRequest} />
                 <div className="flex w-full mt-8">
                   <div className="flex-none mr-4">
                     <div className="avatar">
@@ -388,6 +310,7 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
+  notify,
   deleteComment,
   updatePullRequestLabels,
   updatePullRequestAssignees,

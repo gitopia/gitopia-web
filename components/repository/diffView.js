@@ -6,7 +6,7 @@ import getPullDiff from "../../helpers/getPullDiff";
 export default function DiffView({
   stats,
   repoId,
-  targetRepoId,
+  baseRepoId,
   currentSha,
   previousSha,
   onViewTypeChange = () => {},
@@ -95,14 +95,14 @@ export default function DiffView({
     setLoadingMore(true);
     console.log("repoId", repoId, "hasMore", hasMore);
     let data;
-    if (targetRepoId === repoId) {
+    if (baseRepoId === repoId) {
       data = await getDiff(repoId, currentSha, hasMore, previousSha);
     } else {
       data = await getPullDiff(
+        baseRepoId,
         repoId,
-        targetRepoId,
-        currentSha,
         previousSha,
+        currentSha,
         hasMore,
         false
       );

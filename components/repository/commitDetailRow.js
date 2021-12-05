@@ -49,14 +49,14 @@ export default function CommitDetailRow({
           <span className="pl-4 text-sm">{message}</span>
           {hasMore ? (
             <button
-              className="ml-1 btn btn-xs btn-link"
+              className="ml-1 btn btn-xs btn-ghost"
               onClick={() => {
                 setFullMessageShown(!fullMessageShown);
               }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
+                className="h-4 w-4"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -68,17 +68,41 @@ export default function CommitDetailRow({
           )}
         </div>
         {commitLink ? (
-          <div className="mr-2 flex-none flex pt-0.5">
+          <div className="mr-2 flex-none flex btn-group">
             <Link href={commitLink}>
-              <a className="link link-primary text-sm no-underline hover:underline">
+              {
+                //link link-primary text-sm no-underline hover:underline
+              }
+              <a className="btn btn-xs btn-ghost">
                 {commitDetail.oid.slice(0, 6)}
               </a>
             </Link>
+            <button
+              className="btn btn-xs btn-ghost"
+              onClick={(e) => {
+                navigator.clipboard.writeText(commitDetail.oid);
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+            </button>
           </div>
         ) : (
           ""
         )}
-        <div className="flex-none text-type-secondary text-sm pt-0.5">
+        <div className="flex-none text-type-secondary text-xs pt-0.5">
           {dayjs(
             (commitDetail.commit.author.timestamp +
               commitDetail.commit.author.timezoneOffset) *
