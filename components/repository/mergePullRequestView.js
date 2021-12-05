@@ -5,7 +5,7 @@ import { updatePullRequestState } from "../../store/actions/repository";
 import mergePullRequest from "../../helpers/mergePullRequest";
 import pullRequestStateClass from "../../helpers/pullRequestStateClass";
 
-function MergePullRequestView({ pullRequest, ...props }) {
+function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
   const [isMerging, setIsMerging] = useState(false);
   const [stateClass, setStateClass] = useState("");
   const [message, setMessage] = useState("");
