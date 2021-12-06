@@ -1,13 +1,16 @@
-import Link from "next/link";
 import { connect } from "react-redux";
-import MembersList from "./membersList";
 import { getOrganizationDetailsForDashboard } from "../../store/actions/organization";
+import OrgViewTabs from "./orgViewTabs";
 
 function OrgView({ organization = {}, ...props }) {
+  const hrefBase = "/orgs/" + organization.address;
   return (
     <main className="container mx-auto max-w-screen-lg py-12">
-      <div className="text-base text-type-secondary mx-8 border-b border-grey py-2 mb-4">
-        Gitopia
+      <div className="flex border-b border-grey">
+        <div className="text-base text-type-secondarypy-2">Gitopia</div>
+        <div className="ml-auto">
+          <OrgViewTabs active="repositories" hrefBase={hrefBase} />
+        </div>
       </div>
     </main>
   );
