@@ -2,20 +2,31 @@ import dayjs from "dayjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import shrinkAddress from "../../helpers/shrinkAddress";
 
 export default function CommitDetailRow({
   commitDetail,
   commitLink,
-  maxMessageLength = 55,
+  maxMessageLength = 50,
 }) {
-  let [authorName, setAuthorName] = useState("");
+  let [author, setAuthor] = useState({ name: "", initial: "", link: null });
   let [message, setMessage] = useState("");
   let [hasMore, setHasMore] = useState(false);
   let [fullMessageShown, setFullMessageShown] = useState(false);
+  const validAddress = new RegExp("gitopia[a-z0-9]{39}");
 
   useEffect(() => {
     if (commitDetail && commitDetail.commit && commitDetail.commit.author) {
-      setAuthorName(commitDetail.commit.author.name || "");
+      let name = commitDetail.commit.author.name || "";
+      if (validAddress.test(name)) {
+        setAuthor({
+          name: shrinkAddress(name),
+          initial: name.slice(-1),
+          link: "/" + name,
+        });
+      } else {
+        setAuthor({ name, initial: name.slice(0, 1), link: null });
+      }
       let newMessage = commitDetail.commit.message || "";
       if (commitDetail.commit.message.length > maxMessageLength) {
         newMessage =
@@ -38,13 +49,23 @@ export default function CommitDetailRow({
               <img
                 src={
                   "https://avatar.oxro.io/avatar.svg?length=1&height=40&width=40&fontSize=18&caps=1&name=" +
-                  authorName.slice(0, 1)
+                  author.initial
                 }
               />
             </div>
           </div>
           <span className="pr-4 border-r border-grey text-sm">
-            {authorName}
+            {author.link ? (
+              <a
+                href={author.link}
+                className="link no-underline hover:underline"
+                target="_blank"
+              >
+                {author.name}
+              </a>
+            ) : (
+              author.name
+            )}
           </span>
           <span className="pl-4 text-sm">{message}</span>
           {hasMore ? (
