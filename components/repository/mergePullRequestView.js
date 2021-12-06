@@ -27,13 +27,13 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
     if (!res.data.merged) {
       props.notify(res.error, "error");
     } else {
-      const transaction = props.updatePullRequestState({
+      const transaction = await props.updatePullRequestState({
         id: pullRequest.id,
         state: "MERGED",
         mergeCommitSha: res.data.merge_commit_sha,
       });
       console.log(transaction);
-      if (transaction && transaction.code !== 0) {
+      if (transaction && transaction.code === 0) {
         refreshPullRequest();
       }
     }

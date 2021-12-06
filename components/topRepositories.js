@@ -11,7 +11,7 @@ function TopRepositories({ repositories = [] }) {
         maxLen = Math.min(repositories.length, 5);
       for (let i = 0; i < maxLen; i++) {
         newRepos.push({
-          ...repositories[i],
+          ...repositories[repositories.length - i - 1],
         });
       }
       setRepos(newRepos);
