@@ -121,10 +121,12 @@ function SendTlore(props) {
                   receiverAddress,
                   amount
                 )
-                .then((res) => props.updateUserBalance());
+                .then((res) => {
+                  props.updateUserBalance();
+                  props.notify("Transaction Successful", "info");
+                });
               props.setMenuOpen(false);
               props.setMenuState(1);
-              props.notify("Transaction Successful", "info");
             }}
             disabled={
               validateAmountError !== null || validateAddressError !== null
