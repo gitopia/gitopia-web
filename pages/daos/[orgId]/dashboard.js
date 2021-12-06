@@ -13,7 +13,7 @@ import Link from "next/dist/client/link";
 
 function OrgDashboard(props) {
   const router = useRouter();
-  const [menuState, setMenuState] = useState(2);
+  const [menuState, setMenuState] = useState(1);
   useEffect(() => {
     console.log("org dashboard", router.query.orgId, props.currentDashboard);
     if (router.query.orgId !== props.currentDashboard) {
@@ -42,8 +42,10 @@ function OrgDashboard(props) {
               })}
             />
             <button
-              className="text-sm text-type-secondary mx-8 border-b border-grey py-2 mb-4"
-              //onClick={setMenuState(1)}
+              className="text-sm text-type-secondary text-left mx-8 border-b border-grey py-2 mb-4 w-48"
+              onClick={() => {
+                setMenuState(2);
+              }}
             >
               Gitopia
             </button>
