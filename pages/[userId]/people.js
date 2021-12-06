@@ -60,7 +60,7 @@ function OrganizationPeopleView(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex flex-1">
+      <div className="flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <div className="flex flex-1 mb-8">
             <div className="avatar flex-none mr-8 items-center">
