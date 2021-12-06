@@ -4,28 +4,88 @@ import Link from "next/link";
 export default function RepositoryHeader({ repository }) {
   return (
     <div className="flex flex-1 mb-8">
-      <div className="flex flex-1 text-primary text-xl items-center">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 mr-2 relative top-px"
-          stroke="currentColor"
+      <div className="avatar flex-none mr-8 items-center">
+        <div
+          className={
+            "w-14 h-14 " +
+            (repository.owner.type === "ORGANIZATION"
+              ? "rounded"
+              : "rounded-full")
+          }
         >
-          <rect x="4" y="6" width="16" height="9" strokeWidth="2" />
-          <rect x="7" y="18" width="10" height="2" />
-        </svg>
-
-        <div className="mr-2">
-          <Link href={"/" + repository.owner.id}>
-            <a className="btn-link">{shrinkAddress(repository.owner.id)}</a>
-          </Link>
+          <img
+            src={
+              "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+              repository.owner.id
+            }
+          />
         </div>
-        <div className="mr-2">/</div>
-        <Link href={"/" + repository.owner.id + "/" + repository.name}>
-          <a className="btn-link">{repository.name}</a>
-        </Link>
       </div>
+      <div className="flex flex-1 text-primary text-md items-center">
+        <div>
+          <div className="flex">
+            <div className="mr-2">
+              <Link href={"/" + repository.owner.id}>
+                <a className="btn-link">{shrinkAddress(repository.owner.id)}</a>
+              </Link>
+            </div>
+            <div className="mr-2">/</div>
+            <Link href={"/" + repository.owner.id + "/" + repository.name}>
+              <a className="btn-link">{repository.name}</a>
+            </Link>
+          </div>
+          <div className="flex mt-2">
+            <div className="text-type-secondary text-xs font-semibold uppercase flex">
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                stroke="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-1"
+              >
+                <g transform="scale(0.8)">
+                  <path
+                    d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                  <circle cx="8.5" cy="18.5" r="2.5" fill="currentColor" />
+                  <circle cx="8.5" cy="5.5" r="2.5" fill="currentColor" />
+                  <path
+                    d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
+                    fill="currentColor"
+                  />
+                </g>
+              </svg>
+              {repository.branches.length} Branches
+            </div>
+            <div className="ml-6 text-type-secondary text-xs font-semibold uppercase flex">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 mr-2"
+              >
+                <path
+                  d="M7.04297 19.0293V9.36084L12.043 4.4333L17.043 9.36084V19.0293H7.04297Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M12.043 11.5293V9.5293"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+              </svg>
+              {repository.tags.length} Tags
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* <div className="flex text-sm divide-x divide-grey">
         <div className="flex items-center text-xs uppercase text-type-secondary font-bold pr-8">
           <svg

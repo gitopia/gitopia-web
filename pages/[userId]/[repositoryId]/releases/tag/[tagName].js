@@ -28,6 +28,8 @@ function RepositoryReleaseView(props) {
     forks: [],
     stargazers: [],
     releases: [],
+    branches: [],
+    tags: [],
   });
 
   const [release, setRelease] = useState({

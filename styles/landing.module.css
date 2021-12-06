@@ -51,7 +51,7 @@
 }
 
 .heroSection {
-  min-height: 720px;
+  min-height: 600px;
   position: relative;
   z-index: 2;
 }
@@ -131,11 +131,13 @@
 }
 
 .byline {
-  margin: 34px auto 104px;
+  margin: 34px auto 54px;
   font-size: 22px;
   line-height: 1.5em;
   font-weight: 700;
-  max-width: 512px;
+  max-width: 612px;
+  position: relative;
+  z-index: 1;
 }
 
 .primaryCTA {
@@ -162,7 +164,7 @@
 
 .blob2 {
   position: absolute;
-  top: 200px;
+  top: 400px;
   right: 0;
   pointer-events: none;
   z-index: 1;
@@ -238,7 +240,7 @@
   white-space: nowrap;
 }
 .platformCircles {
-  transition: transform 0.15s linear;
+  transition: transform 0.1s linear;
   will-change: transform;
   display: inline;
 }
@@ -895,4 +897,12 @@
   .footerLinks a {
     margin-bottom: 24px;
   }
+}
+
+.codeSection {
+  position: relative;
+  z-index: 2;
+  margin-top: 10px;
+  margin-bottom: 300px;
+  font-family: "SegoeUI";
 }

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import getUser from "../../helpers/getUser";
-import { getBalance } from "../../store/actions/wallet";
 import { notify } from "reapop";
 import { connect } from "react-redux";
+import { updateUserBalance } from "../../store/actions/wallet";
 
 function SendTlore(props) {
   const [validateAddressError, setValidateAddressError] = useState("");
@@ -121,10 +121,10 @@ function SendTlore(props) {
                   receiverAddress,
                   amount
                 )
-                .then((res) => props.getBalance());
+                .then((res) => props.updateUserBalance());
               props.setMenuOpen(false);
               props.setMenuState(1);
-              props.notify("Transaction Succesful", "info");
+              props.notify("Transaction Successful", "info");
             }}
             disabled={
               validateAmountError !== null || validateAddressError !== null
@@ -146,6 +146,6 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  getBalance,
+  updateUserBalance,
   notify,
 })(SendTlore);

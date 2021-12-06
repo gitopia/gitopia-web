@@ -2,6 +2,18 @@ import Head from "next/head";
 import { useState, useEffect } from "react";
 import classnames from "classnames";
 import styles from "../styles/landing.module.css";
+import RepositoryMainTabs from "../components/repository/mainTabs";
+import { initRepository } from "../store/actions/git";
+import getBranchSha from "../helpers/getBranchSha";
+import getUserRepository from "../helpers/getUserRepository";
+import CommitDetailRow from "../components/repository/commitDetailRow";
+import FileBrowser from "../components/repository/fileBrowser";
+import RepositoryHeader from "../components/repository/header";
+import AssigneeGroup from "../components/repository/assigneeGroup";
+import Link from "next/link";
+import BranchSelector from "../components/repository/branchSelector";
+import CloneRepoInfo from "../components/repository/cloneRepoInfo";
+import SupportOwner from "../components/repository/supportOwner";
 
 const pCircles = [
   {
@@ -142,6 +154,50 @@ function addOrUpdateGlobs() {
 
 export default function Landing() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [repository, setRepository] = useState({
+    collaborators: [],
+    releases: [],
+  });
+  const [commitDetail, setCommitDetail] = useState({
+    commit: { author: {}, message: "" },
+    oid: "",
+  });
+  const [entityList, setEntityList] = useState([]);
+
+  const demoAddress = process.env.NEXT_PUBLIC_GITOPIA_ADDRESS,
+    demoRepoName = "gitopia",
+    demoRepoBranch = "master";
+
+  const initDemoRepo = async () => {
+    const repo = await getUserRepository(demoAddress, demoRepoName);
+    if (repo) {
+      setRepository(repo);
+      let branchSha = getBranchSha(repo.defaultBranch, repo.branches);
+      const res = await initRepository(
+        repo.id,
+        branchSha,
+        repo.name,
+        demoAddress,
+        []
+      );
+      if (res) {
+        if (res.commit) {
+          setCommitDetail(res.commit);
+        }
+        if (res.entity) {
+          if (res.entity.tree) {
+            setEntityList(res.entity.tree);
+          }
+        } else {
+          console.log("Entity Not found");
+        }
+      } else {
+        console.log("Repo Not found");
+      }
+    } else {
+      console.log("Unable to query demo repo");
+    }
+  };
 
   useEffect(() => {
     if (window) {
@@ -189,6 +245,8 @@ export default function Landing() {
         }
       });
     }
+
+    initDemoRepo();
 
     return () => {
       if (window) {
@@ -392,6 +450,210 @@ export default function Landing() {
         </div>
       </section>
 
+      {repository.id ? (
+        <section className={classnames([styles.section, styles.codeSection])}>
+          <div className="text-2xl mb-8">Try Gitopia Live, click around 👇</div>
+          <div className="text-left bg-base-100 bg-repo-grad-v p-8 rounded-md border border-grey container mx-auto max-w-screen-lg">
+            <RepositoryHeader repository={repository} />
+            <RepositoryMainTabs
+              hrefBase={demoAddress + "/" + demoRepoName}
+              active="code"
+            />
+            <div className="flex mt-8">
+              <div className="flex-none mt-4 w-64 pr-8 divide-y divide-grey">
+                <div className="pb-8">
+                  <div className="flex-1 text-left">About</div>
+
+                  <div className="text-xs mt-3">{repository.description}</div>
+                </div>
+
+                <div className="py-8">
+                  <Link
+                    href={"/" + demoAddress + "/" + demoRepoName + "/releases"}
+                  >
+                    <a className="flex items-center">
+                      <div className="flex-1 text-left">
+                        <span>Releases</span>
+                      </div>
+                      <span className="text-xs text-type-secondary font-semibold">
+                        {repository.releases.length + " TAGS"}
+                      </span>
+                    </a>
+                  </Link>
+
+                  {repository.releases.length ? (
+                    <div className="text-xs mt-3">
+                      <Link
+                        href={
+                          "/" +
+                          repository.owner.id +
+                          "/" +
+                          repository.name +
+                          "/releases/tag/" +
+                          repository.releases[repository.releases.length - 1]
+                            .tagName
+                        }
+                      >
+                        <a className="link link-primary no-underline hover:underline">
+                          {repository.name +
+                            " " +
+                            repository.releases[repository.releases.length - 1]
+                              .tagName}
+                        </a>
+                      </Link>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+
+                <div className="py-8">
+                  <Link
+                    href={
+                      "/" +
+                      demoAddress +
+                      "/" +
+                      demoRepoName +
+                      "/settings#collaborators"
+                    }
+                  >
+                    <a className="flex items-center">
+                      <div className="flex-1 text-left">
+                        <span>Collaborators</span>
+                      </div>
+                      <span className="text-xs text-type-secondary font-semibold">
+                        {repository.collaborators.length + " PEOPLE"}
+                      </span>
+                    </a>
+                  </Link>
+
+                  {repository.collaborators.length ? (
+                    <div className="text-xs mt-3">
+                      <AssigneeGroup
+                        assignees={repository.collaborators.map((c) => c.id)}
+                      />
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+              <div className="flex-1 mt-4 max-w-3xl">
+                <SupportOwner ownerAddress={demoAddress} />
+                <div className="mt-8 flex justify-start">
+                  <div className="">
+                    <BranchSelector
+                      branches={repository.branches}
+                      tags={repository.tags}
+                      baseUrl={
+                        "/" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name +
+                        "/tree"
+                      }
+                      branchName={demoRepoBranch}
+                    />
+                  </div>
+                  <div className="ml-4">
+                    <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        stroke="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-1"
+                      >
+                        <g transform="scale(0.8)">
+                          <path
+                            d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            fill="none"
+                          />
+                          <circle
+                            cx="8.5"
+                            cy="18.5"
+                            r="2.5"
+                            fill="currentColor"
+                          />
+                          <circle
+                            cx="8.5"
+                            cy="5.5"
+                            r="2.5"
+                            fill="currentColor"
+                          />
+                          <path
+                            d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
+                            fill="currentColor"
+                          />
+                        </g>
+                      </svg>
+                      {repository.branches.length} Branches
+                    </div>
+                  </div>
+                  <div className="ml-4">
+                    <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 mr-2"
+                      >
+                        <path
+                          d="M7.04297 19.0293V9.36084L12.043 4.4333L17.043 9.36084V19.0293H7.04297Z"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        />
+                        <path
+                          d="M12.043 11.5293V9.5293"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        />
+                      </svg>
+                      {repository.tags.length} Tags
+                    </div>
+                  </div>
+                  <div className="flex-1 text-right">
+                    <CloneRepoInfo
+                      remoteUrl={
+                        "gitopia://" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 border border-gray-700 rounded overflow-hidden max-w-3xl">
+                  <CommitDetailRow
+                    commitDetail={commitDetail}
+                    commitInBranchLink={
+                      "/" +
+                      demoAddress +
+                      "/" +
+                      demoRepoName +
+                      "/commits/" +
+                      demoRepoBranch
+                    }
+                  />
+                  <FileBrowser
+                    entityList={entityList}
+                    branchName={demoRepoBranch}
+                    baseUrl={"/" + demoAddress + "/" + demoRepoName}
+                    repoPath={[]}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        ""
+      )}
+
       <section className={classnames([styles.section, styles.circleSection])}>
         <svg width="0" height="0">
           <symbol
@@ -457,7 +719,7 @@ export default function Landing() {
             <g filter="url(#filter1_ii)">
               <circle cx="110" cy="110" r="110" fill="#5957AA"></circle>
             </g>
-            <g opacity=".5" fill-rule="evenodd" clip-rule="evenodd" fill="#fff">
+            <g opacity=".5" fillRule="evenodd" clipRule="evenodd" fill="#fff">
               <path d="M111.301 41.329c-.658-.606-.998-.617-1.055-.617-.057 0-.396.011-1.054.617-.676.621-1.483 1.694-2.353 3.349-1.737 3.303-3.399 8.296-4.832 14.739C99.154 72.25 97.361 90.135 97.361 110s1.793 37.75 4.646 50.583c1.433 6.443 3.095 11.436 4.832 14.739.87 1.655 1.677 2.728 2.353 3.349.658.606.997.617 1.054.617.057 0 .397-.011 1.055-.617.676-.621 1.483-1.694 2.353-3.349 1.737-3.303 3.399-8.296 4.831-14.739 2.854-12.833 4.647-30.718 4.647-50.583s-1.793-37.75-4.647-50.583c-1.432-6.443-3.094-11.436-4.831-14.739-.87-1.655-1.677-2.728-2.353-3.35zM126.374 110c0-40.058-7.221-72.53-16.128-72.53S94.119 69.941 94.119 110c0 40.057 7.22 72.53 16.127 72.53s16.128-32.473 16.128-72.53z"></path>
               <path d="M170.282 76.575c.196-.872.036-1.17.008-1.218-.028-.048-.207-.337-1.061-.603-.877-.275-2.211-.437-4.08-.363-3.732.149-8.89 1.207-15.19 3.188-12.547 3.947-28.943 11.339-46.157 21.27-17.215 9.933-31.817 20.428-41.511 29.314-4.867 4.461-8.363 8.396-10.357 11.551-1 1.581-1.525 2.816-1.726 3.711-.195.871-.035 1.17-.008 1.218.028.048.207.336 1.062.603.877.274 2.21.437 4.08.363 3.732-.149 8.89-1.207 15.19-3.189 12.547-3.947 28.943-11.338 46.157-21.27 17.214-9.932 31.817-20.427 41.511-29.313 4.867-4.461 8.362-8.397 10.357-11.551.999-1.58 1.524-2.816 1.725-3.71zm-122.889 69.69c4.454 7.709 36.204-2.278 70.916-22.307 34.712-20.028 59.242-42.514 54.789-50.223-4.454-7.709-36.204 2.278-70.917 22.307-34.712 20.028-59.241 42.514-54.788 50.223z"></path>
               <path d="M173.098 146.265c4.453-7.709-20.077-30.195-54.789-50.223-34.712-20.029-66.462-30.016-70.916-22.307-4.453 7.71 20.076 30.195 54.788 50.223 34.713 20.029 66.463 30.016 70.917 22.307zM50.2 75.357c.028-.049.208-.337 1.062-.603.877-.275 2.21-.437 4.08-.363 3.732.149 8.89 1.207 15.19 3.188 12.547 3.947 28.943 11.339 46.157 21.27 17.214 9.933 31.817 20.428 41.511 29.314 4.867 4.461 8.362 8.396 10.357 11.551.999 1.581 1.524 2.816 1.725 3.711.196.872.036 1.17.008 1.218-.028.048-.207.336-1.061.603-.877.274-2.211.437-4.08.363-3.732-.149-8.89-1.207-15.19-3.189-12.547-3.947-28.943-11.338-46.157-21.27-17.215-9.932-31.817-20.427-41.511-29.313-4.867-4.461-8.363-8.397-10.357-11.551-1-1.58-1.525-2.816-1.726-3.71-.195-.873-.035-1.171-.008-1.219z"></path>
@@ -931,8 +1193,8 @@ export default function Landing() {
               y2="180.118"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stop-color="#C4C4C4" />
-              <stop offset="1" stop-color="#C4C4C4" stop-opacity="0" />
+              <stop stopColor="#C4C4C4" />
+              <stop offset="1" stopColor="#C4C4C4" stopOpacity="0" />
             </linearGradient>
           </defs>
           <mask
