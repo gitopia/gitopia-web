@@ -38,7 +38,7 @@ export async function getServerSideProps() {
 }
 
 function RepositoryPullView(props) {
-  const repository = useRepository();
+  const { repository } = useRepository();
   const { pullRequest, refreshPullRequest } = usePullRequest(repository);
   const [allComments, setAllComments] = useState([]);
 
@@ -64,6 +64,7 @@ function RepositoryPullView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="pulls"
             hrefBase={repository.owner.id + "/" + repository.name}
           />

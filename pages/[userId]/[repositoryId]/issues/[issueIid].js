@@ -28,7 +28,7 @@ import LabelSelector from "../../../../components/repository/labelSelector";
 import getIssueAllLabels from "../../../../helpers/getIssueAllLabels";
 import Label from "../../../../components/repository/label";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
-import useRepository from "../../../../hooks/useRepository";
+import { useRepository } from "../../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -36,7 +36,7 @@ export async function getServerSideProps() {
 
 function RepositoryIssueView(props) {
   const router = useRouter();
-  const repository = useRepository(router.query); 
+  const repository = useRepository(router.query);
   const [issue, setIssue] = useState({
     iid: router.query.issueIid,
     creator: "",
@@ -119,6 +119,7 @@ function RepositoryIssueView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="issues"
             hrefBase={repository.owner.id + "/" + repository.name}
           />

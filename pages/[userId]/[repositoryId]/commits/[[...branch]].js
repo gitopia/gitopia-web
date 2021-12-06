@@ -21,7 +21,7 @@ export async function getServerSideProps() {
 
 function RepositoryCommitTreeView(props) {
   const router = useRouter();
-  const repository = useRepository();
+  const { repository } = useRepository();
 
   const [commits, setCommits] = useState([]);
   const [hasMore, setHasMore] = useState(false);
@@ -98,6 +98,7 @@ function RepositoryCommitTreeView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="code"
             hrefBase={repository.owner.id + "/" + repository.name}
           />

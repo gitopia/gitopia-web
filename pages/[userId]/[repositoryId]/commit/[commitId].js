@@ -21,7 +21,7 @@ export async function getServerSideProps() {
 
 function RepositoryCommitDiffView(props) {
   const router = useRouter();
-  const repository = useRepository();
+  const { repository } = useRepository();
 
   const [viewType, setViewType] = useState("unified");
 
@@ -79,6 +79,7 @@ function RepositoryCommitDiffView(props) {
         >
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="code"
             hrefBase={repository.owner.id + "/" + repository.name}
           />

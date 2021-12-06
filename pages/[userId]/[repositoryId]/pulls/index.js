@@ -9,7 +9,6 @@ import dayjs from "dayjs";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
-import { isCurrentUserEligibleToUpdate } from "../../../../store/actions/repository";
 import getRepositoryPullAll from "../../../../helpers/getRepositoryPullAll";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
@@ -24,11 +23,8 @@ export async function getServerSideProps() {
 }
 
 function RepositoryPullsView(props) {
-  const repository = useRepository();
+  const { repository } = useRepository();
   const [allPulls, setAllPulls] = useState([]);
-  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
-    false
-  );
   const [filterText, setFilterText] = useState("is:open");
   const [filters, setFilters] = useState([{ key: "is", value: "open" }]);
   const [page, setPage] = useState(1);
@@ -92,12 +88,6 @@ function RepositoryPullsView(props) {
 
   useEffect(getAllPulls, [repository, filters, page]);
 
-  useEffect(async () => {
-    setCurrentUserEditPermission(
-      await props.isCurrentUserEligibleToUpdate(repository.owner.id)
-    );
-  }, [repository, props.user]);
-
   return (
     <div
       data-theme="dark"
@@ -112,9 +102,9 @@ function RepositoryPullsView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="pulls"
             hrefBase={repository.owner.id + "/" + repository.name}
-            showSettings={currentUserEditPermission}
           />
           <div className="flex mt-8">
             <div className="form-control flex-1 mr-8">
@@ -626,6 +616,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { isCurrentUserEligibleToUpdate })(
-  RepositoryPullsView
-);
+export default connect(mapStateToProps, {})(RepositoryPullsView);

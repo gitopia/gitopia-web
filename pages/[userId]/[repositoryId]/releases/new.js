@@ -158,6 +158,7 @@ function RepositoryReleaseNewView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="code"
             hrefBase={repository.owner.id + "/" + repository.name}
           />

@@ -10,18 +10,15 @@ import { notify } from "reapop";
 
 import { initRepository } from "../../../store/actions/git";
 
-import getUserRepository from "../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
 import EmptyRepository from "../../../components/repository/emptyRepository";
 import BranchSelector from "../../../components/repository/branchSelector";
-import Breadcrumbs from "../../../components/repository/breadcrumbs";
 import CommitDetailRow from "../../../components/repository/commitDetailRow";
 import FileBrowser from "../../../components/repository/fileBrowser";
 import Footer from "../../../components/footer";
 import getBranchSha from "../../../helpers/getBranchSha";
 import { isCurrentUserEligibleToUpdate } from "../../../store/actions/repository";
-import { getBalance } from "../../../store/actions/wallet";
 import AssigneeGroup from "../../../components/repository/assigneeGroup";
 import useRepository from "../../../hooks/useRepository";
 import CloneRepoInfo from "../../../components/repository/cloneRepoInfo";
@@ -33,7 +30,7 @@ export async function getServerSideProps() {
 
 function RepositoryView(props) {
   const router = useRouter();
-  const repository = useRepository();
+  const { repository } = useRepository();
 
   const [entityList, setEntityList] = useState([]);
   const [readmeFile, setReadmeFile] = useState(null);
@@ -104,13 +101,11 @@ function RepositoryView(props) {
         }
       }
     }
-  }, [props.user, repository.id]);
 
-  useEffect(async () => {
     setCurrentUserEditPermission(
       await props.isCurrentUserEligibleToUpdate(repository.owner.id)
     );
-  }, [repository, props.user]);
+  }, [props.user, repository.id]);
 
   return (
     <div
@@ -126,9 +121,9 @@ function RepositoryView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="code"
             hrefBase={repository.owner.id + "/" + repository.name}
-            showSettings={currentUserEditPermission}
           />
           {repository.branches.length ? (
             <div className="flex mt-8">

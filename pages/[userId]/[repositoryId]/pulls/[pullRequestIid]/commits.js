@@ -25,7 +25,7 @@ export async function getServerSideProps() {
 }
 
 function RepositoryPullCommitsView(props) {
-  const repository = useRepository();
+  const { repository } = useRepository();
   const { pullRequest } = usePullRequest(repository);
   const router = useRouter();
   const [viewType, setViewType] = useState("unified");
@@ -98,6 +98,7 @@ function RepositoryPullCommitsView(props) {
         >
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="pulls"
             hrefBase={repository.owner.id + "/" + repository.name}
           />

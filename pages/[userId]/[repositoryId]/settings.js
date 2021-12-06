@@ -1,18 +1,16 @@
 import Head from "next/head";
 import Header from "../../../components/header";
 
-import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 
-import getUserRepository from "../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
 import Footer from "../../../components/footer";
-import TextInput from "../../../components/textInput";
 import RenameRepository from "../../../components/repository/renameRepository";
 import CollaboratorsList from "../../../components/repository/collaboratorsList";
 import TransferOwnership from "../../../components/repository/transferOwnership";
+import useRepository from "../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -20,28 +18,7 @@ export async function getServerSideProps() {
 
 function RepositorySettingsView(props) {
   const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    collaborators: [],
-    forks: [],
-    stargazers: [],
-    branches: [],
-    tags: [],
-  });
-
-  const refreshRepository = async () => {
-    const r = await getUserRepository(
-      router.query.userId,
-      router.query.repositoryId
-    );
-    if (r) {
-      setRepository(r);
-    }
-  };
-
-  useEffect(refreshRepository, [router.query]);
+  const { repository, refreshRepository } = useRepository();
 
   return (
     <div
@@ -57,9 +34,9 @@ function RepositorySettingsView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="settings"
             hrefBase={repository.owner.id + "/" + repository.name}
-            showSettings={true}
           />
           <div className="flex mt-8">
             <div className="flex-none w-64">
