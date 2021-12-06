@@ -5,15 +5,13 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import dayjs from "dayjs";
 
-import getUserRepository from "../../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
 import Footer from "../../../../../components/footer";
-import { isCurrentUserEligibleToUpdate } from "../../../../../store/actions/repository";
 import getRepositoryRelease from "../../../../../helpers/getRepositoryRelease";
 import ReleaseView from "../../../../../components/repository/releaseView";
+import useRepository from "../../../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -21,41 +19,25 @@ export async function getServerSideProps() {
 
 function RepositoryReleaseView(props) {
   const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    forks: [],
-    stargazers: [],
-    releases: [],
-    branches: [],
-    tags: [],
-  });
+  const { repository } = useRepository();
 
   const [release, setRelease] = useState({
     creator: "",
     attachments: [],
   });
   const [isLatest, setIsLatest] = useState(false);
-  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
-    false
-  );
 
   useEffect(async () => {
-    const r = await getUserRepository(repository.owner.id, repository.name);
-    if (r) {
-      setRepository(r);
-      if (r.releases.length) {
-        const latest = r.releases.slice(-1);
-        console.log("latest", latest);
-        if (latest[0].tagName == router.query.tagName) {
-          setIsLatest(true);
-        } else {
-          setIsLatest(false);
-        }
+    if (repository.releases.length) {
+      const latest = repository.releases.slice(-1);
+      console.log("latest", latest);
+      if (latest[0].tagName == router.query.tagName) {
+        setIsLatest(true);
+      } else {
+        setIsLatest(false);
       }
     }
-  }, [router.query.repositoryId, router.query.userId]);
+  }, [repository, router.query.tagName]);
 
   const getRelease = async () => {
     if (repository) {
@@ -71,12 +53,6 @@ function RepositoryReleaseView(props) {
 
   useEffect(getRelease, [repository]);
 
-  useEffect(async () => {
-    setCurrentUserEditPermission(
-      await props.isCurrentUserEligibleToUpdate(repository.owner.id)
-    );
-  }, [repository, props.user]);
-
   return (
     <div
       data-theme="dark"
@@ -91,36 +67,12 @@ function RepositoryReleaseView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="code"
             hrefBase={repository.owner.id + "/" + repository.name}
-            showSettings={currentUserEditPermission}
           />
           <div className="flex mt-8">
-            <div className="form-control flex-1 mr-8">
-              {/* <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="w-full pr-16 input input-ghost input-sm input-bordered"
-                />
-                <button className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </button>
-              </div> */}
-            </div>
+            <div className="form-control flex-1 mr-8"></div>
             <div className="flex-none w-36">
               <Link
                 href={
@@ -158,6 +110,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { isCurrentUserEligibleToUpdate })(
-  RepositoryReleaseView
-);
+export default connect(mapStateToProps, {})(RepositoryReleaseView);

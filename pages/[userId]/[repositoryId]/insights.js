@@ -13,34 +13,20 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import getRepository from "../../../helpers/getRepository";
 import shrinkAddress from "../../../helpers/shrinkAddress";
+import useRepository from "../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
 }
 
 function RepositoryInsightsView(props) {
-  const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    collaborators: [],
-    forks: [],
-    stargazers: [],
-    branches: [],
-    tags: [],
-  });
+  const { repository } = useRepository();
   const [allRepos, setAllRepos] = useState([]);
 
-  const refreshRepository = async () => {
-    const r = await getUserRepository(
-      router.query.userId,
-      router.query.repositoryId
-    );
-    if (r) {
-      setRepository(r);
-      if (r.forks.length) {
-        const pr = r.forks.map((r) => getRepository(r));
+  const refreshRepositoryForks = async () => {
+    if (repository.id) {
+      if (repository.forks.length) {
+        const pr = repository.forks.map((r) => getRepository(r));
         const repos = await Promise.all(pr);
         setAllRepos(repos);
         console.log("repos", repos);
@@ -48,7 +34,7 @@ function RepositoryInsightsView(props) {
     }
   };
 
-  useEffect(refreshRepository, [router.query]);
+  useEffect(refreshRepositoryForks, [repository]);
 
   const ownerRepoLinkItem = (r, current = false) => {
     return (
@@ -94,9 +80,9 @@ function RepositoryInsightsView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="insights"
             hrefBase={repository.owner.id + "/" + repository.name}
-            showSettings={true}
           />
           <div className="flex mt-8">
             <div className="flex-none w-64 py-4">

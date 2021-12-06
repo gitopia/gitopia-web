@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import getUserRepository from "../helpers/getUserRepository";
 import { useRouter } from "next/router";
 
@@ -17,13 +17,19 @@ export default function useRepository() {
     forks: [],
     stargazers: [],
   });
+  const [refreshIndex, setRefreshIndex] = useState(1);
 
- 	useEffect(async () => {
-    const r = await getUserRepository(router.query.userId, router.query.repositoryId);
+  const refreshRepository = () => setRefreshIndex((prevIndex) => prevIndex + 1);
+
+  useEffect(async () => {
+    const r = await getUserRepository(
+      router.query.userId,
+      router.query.repositoryId
+    );
     if (r) {
       setRepository(r);
     }
-  }, [router.query]);
-  
-	return repository;
+  }, [router.query, refreshIndex]);
+
+  return { repository, refreshRepository };
 }

@@ -13,7 +13,6 @@ import shrinkAddress from "../../../../helpers/shrinkAddress";
 import Footer from "../../../../components/footer";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
-import { isCurrentUserEligibleToUpdate } from "../../../../store/actions/repository";
 import parseFilters from "../../../../helpers/parseFilters";
 import renderPagination from "../../../../helpers/renderPagination";
 import Label from "../../../../components/repository/label";
@@ -23,12 +22,9 @@ export async function getServerSideProps() {
 }
 
 function RepositoryIssueView(props) {
-  const repository = useRepository();
+  const { repository } = useRepository();
 
   const [allIssues, setAllIssues] = useState([]);
-  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
-    false
-  );
   const [filterText, setFilterText] = useState("is:open");
   const [filters, setFilters] = useState([{ key: "is", value: "open" }]);
   const [page, setPage] = useState(1);
@@ -92,12 +88,6 @@ function RepositoryIssueView(props) {
 
   useEffect(getAllIssues, [repository, filters, page]);
 
-  useEffect(async () => {
-    setCurrentUserEditPermission(
-      await props.isCurrentUserEligibleToUpdate(repository.owner.id)
-    );
-  }, [repository, props.user]);
-
   return (
     <div
       data-theme="dark"
@@ -112,9 +102,9 @@ function RepositoryIssueView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="issues"
             hrefBase={repository.owner.id + "/" + repository.name}
-            showSettings={currentUserEditPermission}
           />
           <div className="flex mt-8">
             <div className="form-control flex-1 mr-8">
@@ -573,6 +563,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { isCurrentUserEligibleToUpdate })(
-  RepositoryIssueView
-);
+export default connect(mapStateToProps, {})(RepositoryIssueView);

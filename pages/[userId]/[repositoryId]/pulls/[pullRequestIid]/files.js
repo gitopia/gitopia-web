@@ -24,7 +24,7 @@ export async function getServerSideProps() {
 }
 
 function RepositoryPullFilesView(props) {
-  const repository = useRepository();
+  const { repository } = useRepository();
   const { pullRequest } = usePullRequest(repository);
   const [stats, setStats] = useState({ stat: {} });
   const [viewType, setViewType] = useState("unified");
@@ -71,6 +71,7 @@ function RepositoryPullFilesView(props) {
         >
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="pulls"
             hrefBase={repository.owner.id + "/" + repository.name}
           />

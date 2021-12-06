@@ -1,6 +1,25 @@
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { isCurrentUserEligibleToUpdate } from "../../store/actions/repository";
 
-export default function RepositoryMainTabs({ hrefBase, active, showSettings }) {
+function RepositoryMainTabs({
+  repoOwner,
+  hrefBase,
+  active,
+  showSettings,
+  ...props
+}) {
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
+
+  useEffect(async () => {
+    const perm = await props.isCurrentUserEligibleToUpdate(repoOwner);
+    console.log("perm", perm, repoOwner);
+    setCurrentUserEditPermission(perm);
+  }, [repoOwner, props.user]);
+
   return (
     <div className="">
       <div className="tabs relative z-10">
@@ -111,7 +130,7 @@ export default function RepositoryMainTabs({ hrefBase, active, showSettings }) {
             <span>Insights</span>
           </a>
         </Link>
-        {showSettings ? (
+        {currentUserEditPermission ? (
           <Link href={"/" + hrefBase + "/settings"}>
             <a
               className={
@@ -144,3 +163,13 @@ export default function RepositoryMainTabs({ hrefBase, active, showSettings }) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+  };
+};
+
+export default connect(mapStateToProps, {
+  isCurrentUserEligibleToUpdate,
+})(RepositoryMainTabs);

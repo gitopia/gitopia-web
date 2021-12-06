@@ -23,7 +23,7 @@ export async function getServerSideProps() {
 
 function RepositoryIssueCreateView(props) {
   const router = useRouter();
-  const repository = useRepository();
+  const { repository } = useRepository();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -83,6 +83,7 @@ function RepositoryIssueCreateView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="issues"
             hrefBase={repository.owner.id + "/" + repository.name}
           />

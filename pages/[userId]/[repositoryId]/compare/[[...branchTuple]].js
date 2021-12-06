@@ -28,6 +28,7 @@ import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import getPullDiff from "../../../../helpers/getPullDiff";
 import getRepository from "../../../../helpers/getRepository";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
+import useRepository from "../../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -35,17 +36,7 @@ export async function getServerSideProps() {
 
 function RepositoryCompareView(props) {
   const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    collaborators: [],
-    forks: [],
-    stargazers: [],
-    branches: [],
-    labels: [],
-    tags: [],
-  });
+  const { repository } = useRepository();
   const [viewType, setViewType] = useState("unified");
   const [stats, setStats] = useState({ stat: {} });
   const [compare, setCompare] = useState({
@@ -88,13 +79,9 @@ function RepositoryCompareView(props) {
     }
   };
 
-  const refreshRepository = async () => {
-    const r = await getUserRepository(
-      router.query.userId,
-      router.query.repositoryId
-    );
-    if (r) {
-      setRepository(r);
+  const refreshRepositoryForks = async () => {
+    const r = repository;
+    if (r.id) {
       if (r.forks.length) {
         const pr = r.forks.map((r) => getRepository(r));
         const repos = await Promise.all(pr);
@@ -168,7 +155,8 @@ function RepositoryCompareView(props) {
     }
   };
 
-  useEffect(refreshRepository, [router.query]);
+  useEffect(refreshRepositoryForks, [repository, router.query.branchTuple]);
+
   useEffect(async () => {
     const diff = await getPullDiff(
       compare.target.repository.id,
@@ -204,6 +192,7 @@ function RepositoryCompareView(props) {
         >
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="pulls"
             hrefBase={repository.owner.id + "/" + repository.name}
           />

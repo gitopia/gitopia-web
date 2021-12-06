@@ -456,6 +456,7 @@ export default function Landing() {
           <div className="text-left bg-base-100 bg-repo-grad-v p-8 rounded-md border border-grey container mx-auto max-w-screen-lg">
             <RepositoryHeader repository={repository} />
             <RepositoryMainTabs
+              repoOwner={repository.owner.id}
               hrefBase={demoAddress + "/" + demoRepoName}
               active="code"
             />
