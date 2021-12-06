@@ -8,9 +8,12 @@ import getHomeUrl from "../../../helpers/getHomeUrl";
 import { useRouter } from "next/router";
 import { getOrganizationDetailsForDashboard } from "../../../store/actions/organization";
 import Org from "../../../components/dashboard/org";
+import OrgView from "../../../components/dashboard/orgView";
+import Link from "next/dist/client/link";
 
 function OrgDashboard(props) {
   const router = useRouter();
+  const [menuState, setMenuState] = useState(2);
   useEffect(() => {
     console.log("org dashboard", router.query.orgId, props.currentDashboard);
     if (router.query.orgId !== props.currentDashboard) {
@@ -38,6 +41,12 @@ function OrgDashboard(props) {
                 return { owner: props.currentDashboard, ...r };
               })}
             />
+            <button
+              className="text-sm text-type-secondary mx-8 border-b border-grey py-2 mb-4"
+              //onClick={setMenuState(1)}
+            >
+              Gitopia
+            </button>
           </div>
           <div>
             <div className="bg-footer-grad py-6">
@@ -61,7 +70,8 @@ function OrgDashboard(props) {
           </div>
         </div>
         <div className="flex-1 px-4">
-          <Org organization={props.organization} />
+          {menuState === 1 && <Org organization={props.organization} />}
+          {menuState === 2 && <OrgView organization={props.organization} />}
         </div>
       </div>
     </div>
