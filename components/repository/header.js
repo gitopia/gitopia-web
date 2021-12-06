@@ -9,6 +9,11 @@ function RepositoryHeader({ repository, ...props }) {
   const [forkTargetShown, setForkTargetShown] = useState(false);
   const [isForking, setIsForking] = useState(false);
   const router = useRouter();
+  const avatarLink =
+    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === repository.owner.id
+      ? "/logo-g.svg"
+      : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+        repository.owner.id;
 
   return (
     <div className="flex flex-1 mb-8">
@@ -21,12 +26,7 @@ function RepositoryHeader({ repository, ...props }) {
               : "rounded-full")
           }
         >
-          <img
-            src={
-              "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-              repository.owner.id
-            }
-          />
+          <img src={avatarLink} />
         </div>
       </div>
       <div className="flex flex-1 text-primary text-md items-center">
