@@ -90,7 +90,23 @@ function AccountView(props) {
       <Header />
       <div className="flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
-          <UserHeader user={user} />
+          {org.address ? (
+            <div className="flex flex-1 mb-8">
+              <div className="avatar flex-none mr-8 items-center">
+                <div className={"w-14 h-14 rounded-full"}>
+                  <img src={avatarLink} />
+                </div>
+              </div>
+              <div className="flex-1">
+                <div className="text-md">{org.name}</div>
+                <div className="text-sm text-type-secondary mt-2">
+                  {org.description}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <UserHeader user={user} />
+          )}
           <div className="flex flex-1 mt-8">
             <PublicTabs
               active="repositories"
