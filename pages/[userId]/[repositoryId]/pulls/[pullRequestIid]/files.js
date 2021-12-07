@@ -34,9 +34,9 @@ function RepositoryPullFilesView(props) {
     if (pullRequest.base.repositoryId === pullRequest.head.repositoryId) {
       diff = await getDiff(
         pullRequest.base.repositoryId,
-        pullRequest.base.sha,
-        null,
         pullRequest.head.sha,
+        null,
+        pullRequest.base.sha,
         true
       );
     } else {

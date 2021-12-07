@@ -352,7 +352,9 @@ function RepositoryReleaseNewView(props) {
                 </div>
                 <div>
                   <Uploady
-                    destination={{ url: "http://localhost:5000/upload" }}
+                    destination={{
+                      url: process.env.NEXT_PUBLIC_OBJECTS_URL + "/upload",
+                    }}
                   >
                     <UploadDropZone
                       className="flex items-center justify-center p-8 border border-grey border-dashed text-type-secondary"
