@@ -16,6 +16,7 @@ export default function useRepository() {
     labels: [],
     forks: [],
     stargazers: [],
+    releases: [],
   });
   const [refreshIndex, setRefreshIndex] = useState(1);
 

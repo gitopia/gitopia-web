@@ -80,9 +80,12 @@ function RepositoryPullsView(props) {
           offset: (page - 1) * pagination.limit,
         }
       );
-      if (data.PullRequest) setAllPulls(data.PullRequest);
       console.log(data);
-      if (data.pagination) setPagination({ ...pagination, ...data.pagination });
+      if (data) {
+        if (data.PullRequest) setAllPulls(data.PullRequest);
+        if (data.pagination)
+          setPagination({ ...pagination, ...data.pagination });
+      }
     }
   };
 
