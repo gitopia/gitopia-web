@@ -80,12 +80,12 @@ function RepositoryHeader({ repository, ...props }) {
                 <path
                   d="M7.04297 19.0293V9.36084L12.043 4.4333L17.043 9.36084V19.0293H7.04297Z"
                   stroke="currentColor"
-                  stroke-width="2"
+                  strokeWidth="2"
                 />
                 <path
                   d="M12.043 11.5293V9.5293"
                   stroke="currentColor"
-                  stroke-width="2"
+                  strokeWidth="2"
                 />
               </svg>
               {repository.tags.length} Tags

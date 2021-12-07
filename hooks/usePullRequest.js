@@ -30,31 +30,41 @@ export default function usePullRequest(repository) {
     if (p) {
       if (p.base.repositoryId === p.head.repositoryId) {
         p.head.repository = p.base.repository = repository;
-        p.head.sha = getBranchSha(
-          p.head.branch,
-          repository.branches,
-          repository.tags
-        );
-        p.base.sha = getBranchSha(
-          p.base.branch,
-          repository.branches,
-          repository.tags
-        );
-      } else {
-        const forkRepo = await getRepository(p.head.repositoryId);
-        if (forkRepo) {
-          p.head.repository = forkRepo;
-          p.base.repository = repository;
+        if (p.state === "OPEN") {
           p.head.sha = getBranchSha(
             p.head.branch,
-            forkRepo.branches,
-            forkRepo.tags
+            repository.branches,
+            repository.tags
           );
           p.base.sha = getBranchSha(
             p.base.branch,
             repository.branches,
             repository.tags
           );
+        } else {
+          p.base.sha = p.base.commitSha;
+          p.head.sha = p.head.commitSha;
+        }
+      } else {
+        const forkRepo = await getRepository(p.head.repositoryId);
+        if (forkRepo) {
+          p.head.repository = forkRepo;
+          p.base.repository = repository;
+          if (p.state === "OPEN") {
+            p.head.sha = getBranchSha(
+              p.head.branch,
+              forkRepo.branches,
+              forkRepo.tags
+            );
+            p.base.sha = getBranchSha(
+              p.base.branch,
+              repository.branches,
+              repository.tags
+            );
+          } else {
+            p.base.sha = p.base.commitSha;
+            p.head.sha = p.head.commitSha;
+          }
         }
       }
       setPullRequest(p);

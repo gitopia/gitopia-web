@@ -1,3 +1,5 @@
+const validSha = new RegExp(/^[a-f0-9]{40}$/);
+
 export default async function getPullDiff(
   baseRepoId = null,
   headRepoId = null,
@@ -7,6 +9,9 @@ export default async function getPullDiff(
   onlyStat
 ) {
   let obj = {};
+  if (!validSha.test(baseCommitSha) || !validSha.test(headCommitSha)) {
+    return obj;
+  }
   const baseUrl =
     process.env.NODE_ENV === "development"
       ? "/api/pull/diff"
