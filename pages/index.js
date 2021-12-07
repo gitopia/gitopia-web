@@ -1512,14 +1512,14 @@ export default function Landing() {
           className={"grid grid-rows-9 grid-cols-2 gap-2 " + styles.teamWrapper}
         >
           <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/parth.jpg" loading="lazy" />
+            <img className={styles.teamImage} src="/parth.png" loading="lazy" />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Parth Oberoi</div>
             </div>
           </div>
           <div className={"block row-span-1 " + styles.bufferCard}></div>
           <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/faza.jpg" loading="lazy" />
+            <img className={styles.teamImage} src="/faza.png" loading="lazy" />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Faza Mahamood</div>
             </div>
@@ -1527,7 +1527,7 @@ export default function Landing() {
           <div className={"row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
-              src="/snehil.jpg"
+              src="/snehil.png"
               loading="lazy"
             />
             <div className={styles.teamLabel}>
@@ -1537,7 +1537,7 @@ export default function Landing() {
           <div className={"row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
-              src="/kushagra.jpg"
+              src="/kushagra.png"
               loading="lazy"
             />
             <div className={styles.teamLabel}>
@@ -1545,7 +1545,7 @@ export default function Landing() {
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/stian.jpg" loading="lazy" />
+            <img className={styles.teamImage} src="/stian.png" loading="lazy" />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Stian Sandsgaard</div>
             </div>
@@ -1553,7 +1553,7 @@ export default function Landing() {
           <div className={"row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
-              src="/hariom.jpg"
+              src="/hariom.png"
               loading="lazy"
             />
             <div className={styles.teamLabel}>
@@ -1561,7 +1561,7 @@ export default function Landing() {
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/ejaaz.jpg" loading="lazy" />
+            <img className={styles.teamImage} src="/ejaaz.png" loading="lazy" />
             <div className={styles.teamLabel}>
               <div className={styles.teamName}>Ejaaz Mahamood</div>
             </div>
