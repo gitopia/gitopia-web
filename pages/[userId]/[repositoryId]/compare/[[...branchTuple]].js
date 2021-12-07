@@ -88,74 +88,79 @@ function RepositoryCompareView(props) {
         setForkedRepos(repos);
         console.log("forked repos", repos);
       }
-      if (router.query.branchTuple) {
-        const slug = router.query.branchTuple.join("/").split("...");
-        console.log("branchTuple", slug);
-        let sourceRepo,
-          targetRepo,
-          sourceSha,
-          targetSha,
-          sourceBranch,
-          targetBranch;
-
-        targetRepo = r;
-        targetSha = getBranchSha(slug[0], r.branches, r.tags);
-        targetBranch = slug[0];
-
-        if (slug[1].includes(":")) {
-          // forked repository
-          const reposlug = slug[1].split(":");
-          const repo = await getUserRepository(
-            reposlug[0],
-            router.query.repositoryId
-          );
-          if (repo) {
-            sourceRepo = repo;
-          } else {
-            sourceRepo = r;
-          }
-          sourceBranch = reposlug[1];
-        } else {
-          sourceRepo = r;
-          sourceBranch = slug[1];
-        }
-
-        sourceSha = getBranchSha(
-          sourceBranch,
-          sourceRepo.branches,
-          sourceRepo.tags
-        );
-
-        if (sourceSha && targetSha) {
-          console.log(
-            "Found the branches",
-            sourceRepo,
-            sourceBranch,
-            targetRepo,
-            targetBranch
-          );
-          setCompare({
-            source: {
-              repository: sourceRepo,
-              name: sourceBranch,
-              sha: sourceSha,
-            },
-            target: {
-              repository: targetRepo,
-              name: targetBranch,
-              sha: targetSha,
-            },
-          });
-        } else {
-          setDefaultBranches(r);
-        }
-      } else {
-        setDefaultBranches(r);
-      }
     }
   };
 
-  useEffect(refreshRepositoryForks, [repository, router.query.branchTuple]);
+  const updateBranches = async () => {
+    let r = repository;
+    if (router.query.branchTuple) {
+      const slug = router.query.branchTuple.join("/").split("...");
+      console.log("branchTuple", slug);
+      let sourceRepo,
+        targetRepo,
+        sourceSha,
+        targetSha,
+        sourceBranch,
+        targetBranch;
+
+      targetRepo = r;
+      targetSha = getBranchSha(slug[0], r.branches, r.tags);
+      targetBranch = slug[0];
+
+      if (slug[1].includes(":")) {
+        // forked repository
+        const reposlug = slug[1].split(":");
+        const repo = await getUserRepository(
+          reposlug[0],
+          router.query.repositoryId
+        );
+        if (repo) {
+          sourceRepo = repo;
+        } else {
+          sourceRepo = r;
+        }
+        sourceBranch = reposlug[1];
+      } else {
+        sourceRepo = r;
+        sourceBranch = slug[1];
+      }
+
+      sourceSha = getBranchSha(
+        sourceBranch,
+        sourceRepo.branches,
+        sourceRepo.tags
+      );
+
+      if (sourceSha && targetSha) {
+        console.log(
+          "Found the branches",
+          sourceRepo,
+          sourceBranch,
+          targetRepo,
+          targetBranch
+        );
+        setCompare({
+          source: {
+            repository: sourceRepo,
+            name: sourceBranch,
+            sha: sourceSha,
+          },
+          target: {
+            repository: targetRepo,
+            name: targetBranch,
+            sha: targetSha,
+          },
+        });
+      } else {
+        setDefaultBranches(r);
+      }
+    } else {
+      setDefaultBranches(r);
+    }
+  };
+
+  useEffect(refreshRepositoryForks, [repository]);
+  useEffect(updateBranches, [repository, router.query.branchTuple]);
 
   useEffect(async () => {
     const diff = await getPullDiff(

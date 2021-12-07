@@ -29,7 +29,7 @@ export default function RepositorySelector({
   }, [searchText]);
 
   return (
-    <div className="dropdown" tabIndex={disabled ? false : "0"}>
+    <div className="dropdown" tabIndex={disabled ? null : "0"}>
       <div
         className={
           "btn btn-sm items-center" +

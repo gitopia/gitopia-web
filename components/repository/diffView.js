@@ -145,8 +145,12 @@ export default function DiffView({
       <div className="flex px-4 py-2">
         <div className="flex-1 flex">
           <div className="pr-4">{stats.files_changed} Files Changed</div>
-          <div className="pr-4 text-green ">{" + " + stats.stat.addition}</div>
-          <div className="pr-4 text-red">{" - " + stats.stat.deletion}</div>
+          <div className="pr-4 text-green ">
+            {" + " + (stats.stat ? stats.stat.addition : 0)}
+          </div>
+          <div className="pr-4 text-red">
+            {" - " + (stats.stat ? stats.stat.deletion : 0)}
+          </div>
         </div>
         <div className="flex-none btn-group">
           <button

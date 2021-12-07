@@ -1,3 +1,5 @@
+const validSha = new RegExp(/^[a-f0-9]{40}$/);
+
 export default async function getDiff(
   repoId = null,
   commitSha = null,
@@ -6,6 +8,9 @@ export default async function getDiff(
   onlyStat
 ) {
   let obj = {};
+  if (!validSha.test(commitSha)) {
+    return obj;
+  }
   const baseUrl =
     process.env.NODE_ENV === "development"
       ? "/api/diff"
@@ -18,6 +23,9 @@ export default async function getDiff(
     },
   };
   if (prevCommitSha) {
+    if (!validSha.test(prevCommitSha)) {
+      return obj;
+    }
     params.previous_commit_sha = prevCommitSha;
   }
   if (onlyStat) {
