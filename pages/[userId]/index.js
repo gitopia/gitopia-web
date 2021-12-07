@@ -107,7 +107,7 @@ function AccountView(props) {
           ) : (
             <UserHeader user={user} />
           )}
-          <div className="flex flex-1 mt-8">
+          <div className="flex flex-1 mt-8 border-b border-grey">
             <PublicTabs
               active="repositories"
               hrefBase={hrefBase}
@@ -115,7 +115,7 @@ function AccountView(props) {
             />
           </div>
           <div className="mt-8">
-            <ul className="divide-y divide-grey">
+            <ul className="">
               {allRepos.map((r) => {
                 return (
                   <li className="p-4" key={r.id}>
