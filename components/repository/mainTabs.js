@@ -15,9 +15,9 @@ function RepositoryMainTabs({
   );
 
   useEffect(async () => {
-    const perm = await props.isCurrentUserEligibleToUpdate(repoOwner);
-    console.log("perm", perm, repoOwner);
-    setCurrentUserEditPermission(perm);
+    setCurrentUserEditPermission(
+      await props.isCurrentUserEligibleToUpdate(repoOwner)
+    );
   }, [repoOwner, props.user]);
 
   return (

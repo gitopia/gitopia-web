@@ -4,11 +4,41 @@ import { notify } from "reapop";
 import { updatePullRequestState } from "../../store/actions/repository";
 import mergePullRequest from "../../helpers/mergePullRequest";
 import pullRequestStateClass from "../../helpers/pullRequestStateClass";
+import mergePullRequestCheck from "../../helpers/mergePullRequestCheck";
 
 function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
   const [isMerging, setIsMerging] = useState(false);
   const [stateClass, setStateClass] = useState("");
+  const [iconType, setIconType] = useState("check");
   const [message, setMessage] = useState("");
+
+  const checkMerge = async () => {
+    setIsMerging(true);
+    const res = await mergePullRequestCheck(
+      pullRequest.iid,
+      pullRequest.base.repositoryId,
+      pullRequest.head.repositoryId,
+      pullRequest.base.branch,
+      pullRequest.head.branch,
+      "merge",
+      props.selectedAddress,
+      "<>",
+      props.selectedAddress
+    );
+    console.log("mergeCheck", res);
+    if (res && res.data.is_mergeable) {
+      setMessage("This branch has no conflicts with base branch");
+      setStateClass(pullRequestStateClass(pullRequest.state));
+      setIconType("check");
+    } else {
+      setMessage(
+        "There are conflicts in merging the branch, please resolve and push again"
+      );
+      setStateClass("warning");
+      setIconType("warning");
+    }
+    setIsMerging(false);
+  };
 
   const mergePull = async () => {
     setIsMerging(true);
@@ -44,13 +74,14 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
     setStateClass(pullRequestStateClass(pullRequest.state));
     switch (pullRequest.state) {
       case "OPEN":
-        setMessage("This branch has no conflicts with base branch");
+        checkMerge();
         break;
       case "MERGED":
         setMessage("This pull request is merged");
         break;
       case "CLOSED":
         setMessage("This pull request is closed");
+        setIconType("warning");
     }
   }, [pullRequest]);
 
@@ -90,20 +121,37 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
           "flex flex-1 items-center border p-4 rounded-md border-" + stateClass
         }
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 mr-2"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
+        {iconType === "check" ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 mr-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 mr-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        )}
         <div className="flex-1">{message}</div>
         {pullRequest.state === "OPEN" ? (
           <button
@@ -111,7 +159,7 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
               "btn btn-sm btn-primary ml-4" + (isMerging ? " loading" : "")
             }
             onClick={mergePull}
-            disabled={isMerging}
+            disabled={isMerging || stateClass === "warning"}
           >
             Merge Pull Request
           </button>
