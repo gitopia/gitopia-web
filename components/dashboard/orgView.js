@@ -12,6 +12,9 @@ function OrgView({ organization = {}, ...props }) {
           <OrgViewTabs active="repositories" hrefBase={hrefBase} />
         </div>
       </div>
+      <div className="text-left px-5 pt-10 font-style: italic text-base">
+        <h2>Not Yet Implemented</h2>
+      </div>
     </main>
   );
 }
