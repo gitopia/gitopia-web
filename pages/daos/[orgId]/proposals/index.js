@@ -30,10 +30,7 @@ function GitopiaProposalsView(props) {
                 return { owner: props.currentDashboard, ...r };
               })}
             />
-            <button
-              className="text-sm text-type-secondary text-left mx-8 border-b border-grey py-2 mb-4 w-48"
-              //onClick={setMenuState(1)}
-            >
+            <button className="text-sm text-type-secondary text-left mx-8 border-b border-grey py-2 mb-4 w-48">
               Gitopia
             </button>
           </div>
@@ -70,12 +67,24 @@ function GitopiaProposalsView(props) {
           </div>
           <main className="container mx-auto max-w-screen-lg">
             <div className="flex">
-              <div className="form-control flex-1 mr-8">
+              <div className="text-type-primary text-left items-center">
+                Proposal List
+              </div>
+              <div className="flex-none w-42 ml-auto">
+                <Link href={hrefBase + "/proposals/new"}>
+                  <button className="btn btn-primary btn-sm btn-block text-xs">
+                    CREATE NEW PROPOSAL
+                  </button>
+                </Link>
+              </div>
+            </div>
+            <div className="border-b border-grey w-1/2">
+              <div className="form-control flex-1 mt-5">
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="Search"
-                    className="w-full pr-16 input input-ghost input-sm input-bordered"
+                    placeholder="Search for Proposal"
+                    className="w-full input input-ghost input-sm"
                   />
                   <button className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost">
                     <svg
@@ -95,16 +104,9 @@ function GitopiaProposalsView(props) {
                   </button>
                 </div>
               </div>
-              <div className="flex-none w-36">
-                <Link href={hrefBase + "/proposals/new"}>
-                  <button className="btn btn-primary btn-sm btn-block">
-                    New Proposals
-                  </button>
-                </Link>
-              </div>
             </div>
-            <div class="text-left px-5 pt-10">
-              <h2>No Proposals</h2>
+            <div className="text-left px-5 pt-10 font-style: italic text-base">
+              <h2>No Proposals to Show</h2>
             </div>
           </main>
         </div>

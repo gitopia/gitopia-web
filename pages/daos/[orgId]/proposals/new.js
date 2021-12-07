@@ -14,9 +14,7 @@ import { communityPoolSpendProposal } from "../../../../store/actions/proposals"
 function RepositoryProposalCreateView(props) {
   const router = useRouter();
   const hrefBase = "/orgs/" + props.currentDashboard;
-  const [repositoryName, setRepositoryName] = useState(
-    props.repositories[0].name
-  );
+  const [repositoryName, setRepositoryName] = useState("");
   const [description, setDescription] = useState("");
   const [proposalType, setProposalType] = useState("1");
   const [amount, setAmount] = useState("");
@@ -58,338 +56,142 @@ function RepositoryProposalCreateView(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex">
-        <main className="container mx-auto max-w-screen-lg py-12 px-4">
+      <div
+        data-theme="dark"
+        className="flex flex-col bg-base-100 text-base-content min-h-screen"
+      >
+        <main className="container mx-auto max-w-screen-lg">
           <div className="flex mt-8 px-4">
-            <div className="flex flex-1">
-              <div>
-                <Link href={hrefBase + "/proposals"}>
-                  <button className="btn btn-ghost btn-circle absolute left-40 top-30">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                      />
-                    </svg>
-                  </button>
-                </Link>
-              </div>
-
-              <div className="flex-1 p-4 pt-36">
-                <h1 className="mb-4 text-2xl"> Write your proposal</h1>
-                <h1 className="mb-12">
-                  Proposals play a vital role in the functioning of
-                  decentralised applications. Any changes or upgrades are done
-                  only after proposals are voted in consensus. But there is no
-                  standard category to distinguish different types of proposals.
-                  Having a clear category will help communities to easily manage
-                  different types of proposals.
-                </h1>
-                <div className="flex">
-                  <div className="form-control mb-4 w-1/2">
-                    <label className="label">
-                      <span className="label-text">CHOOSE REPOSITORY</span>
-                    </label>
-                    <select
-                      className="select select-bordered select-md"
-                      value={repositoryName}
-                      onChange={(e) => {
-                        setRepositoryName(e.target.value);
-                      }}
-                    >
-                      {props.repositories.map((i) => {
-                        return (
-                          <option value={i.name} key={i.id}>
-                            {i.name}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-                  <div className="form-control mb-4 ml-4 w-1/2">
-                    <label className="label">
-                      <span className="label-text">PROPOSAL TYPE</span>
-                    </label>
-                    <select
-                      className="select select-bordered select-md"
-                      value={proposalType}
-                      onChange={(e) => {
-                        setProposalType(e.target.value);
-                        setMenuState(e.target.value);
-                        setAmount("");
-                        setAddress("");
-                        setHeight("");
-                        setReleaseVersionTag("");
-                        setParameterName({});
-                        setParameterValue({});
-                        setCounter(1);
-                      }}
-                    >
-                      <option value="1">
-                        Other Governance Proposal/Governance
-                      </option>
-                      <option value="2">Development Proposal</option>
-                      <option value="3">Chain Upgrade Proposal </option>
-                      <option value="4">Chain parameters Change</option>
-                      <option value="5">
-                        Token Distribution/Budget Allocation
-                      </option>
-                    </select>
-                  </div>
-                </div>
-                <label className="label">
-                  <span className="label-text">YOUR PROPOSAL</span>
+            <div className="">
+              <Link href={hrefBase + "/proposals"}>
+                <label className="flex link text-sm uppercase no-underline items-center hover:text-green pt-16">
+                  <svg
+                    width="8"
+                    height="11"
+                    viewBox="0 0 8 11"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    stroke="currentColor"
+                  >
+                    <path d="M7 1L2 5.5L7 10" stroke-width="2" />
+                  </svg>
+                  <span className="ml-2">BACK</span>
                 </label>
-                <div className="border border-grey rounded flex-1 p-4">
-                  <MarkdownEditor
-                    placeholder="Enter Proposal Description"
-                    value={description}
-                    setValue={setDescription}
-                  />
-                </div>
-                {(menuState == 2 || menuState == 5) && (
-                  <div className="container mx-auto max-w-screen-lg">
-                    <div className="form-control mt-4 mb-4 w-1/2">
-                      <label className="label">
-                        <span className="label-text">TOKEN AMOUNT</span>
-                      </label>
-                      <div className="form-control mb-4">
-                        <input
-                          name="amount"
-                          type="text"
-                          placeholder="Enter amount"
-                          className="input input-md input-bordered"
-                          value={amount}
-                          onChange={(e) => {
-                            setAmount(e.target.value);
-                          }}
-                        />
-                      </div>
-                    </div>
+              </Link>
+            </div>
 
-                    <div className="form-control mb-4">
-                      <label className="label">
-                        <span className="label-text">WALLET ADDRESS</span>
-                      </label>
-                      <div className="form-control mb-4">
-                        <input
-                          name="Wallet Address"
-                          type="text"
-                          placeholder="Enter wallet address"
-                          className="input input-md input-bordered"
-                          value={address}
-                          onChange={(e) => {
-                            setAddress(e.target.value);
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="mt-10 text-right">
-                      <div className="inline-block w-36">
-                        <button
-                          className={
-                            "btn btn-sm btn-primary btn-block " +
-                            (false ? "loading" : "")
-                          }
-                          disabled={
-                            description === "" ||
-                            amount === "" ||
-                            address === ""
-                          }
-                          onClick={(e) => {
-                            props
-                              .communityPoolSpendProposal(
-                                repositoryName,
-                                description,
-                                proposalType,
-                                address,
-                                amount
-                              )
-                              .then((res) => {
-                                // props.notify("Proposal Submitted", "info");
-                              });
-                          }}
-                        >
-                          Submit Proposal
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {menuState == 3 && (
-                  <div className="container mx-auto max-w-screen-lg">
-                    <div className="form-control w-1/2 mt-4">
-                      <label className="label">
-                        <span className="label-text">RELEASE VERSION TAG:</span>
-                      </label>
-                      <div className="form-control">
-                        <input
-                          name="release version tag"
-                          type="text"
-                          placeholder="Write here the target release:e.g v1.4.2"
-                          className="input input-md input-bordered mb-4"
-                          value={releaseVersionTag}
-                          onChange={(e) => {
-                            setReleaseVersionTag(e.target.value);
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="form-control mb-4">
-                      <label className="label">
-                        <span className="label-text">
-                          CHAIN UPGRADE HEIGHT:
-                        </span>
-                      </label>
-                      <div className="form-control">
-                        <input
-                          name="chain upgrade height"
-                          type="text"
-                          placeholder="Write here the block halt height or chain upgrade height: e.g 104032"
-                          className="input input-md input-bordered mb-4"
-                          value={height}
-                          onChange={(e) => {
-                            setHeight(e.target.value);
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="mt-10 text-right">
-                      <div className="inline-block w-36">
-                        <button
-                          className={
-                            "btn btn-sm btn-primary btn-block " +
-                            (false ? "loading" : "")
-                          }
-                          disabled={
-                            description === "" ||
-                            releaseVersionTag === "" ||
-                            height === ""
-                          }
-                          onClick={(e) => {
-                            props
-                              .chainUpgradeProposal(
-                                repositoryName,
-                                description,
-                                proposalType,
-                                releaseVersionTag,
-                                height
-                              )
-                              .then((res) => {
-                                // props.updateUserBalance();
-                                props.notify("Proposal Submitted", "info");
-                              });
-                          }}
-                        >
-                          Submit Proposal
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {menuState == 4 && (
-                  <div>
-                    <div>
-                      <label className="label mt-4 ">
-                        <span className="label-text">PARAMETER NAME</span>
-                      </label>
-                    </div>
-                    {Array.from(Array(counter)).map((c, index) => {
+            <div className="flex-1 p-4 pt-24 px-36">
+              <h1 className="mb-4 text-lg"> Write your proposal</h1>
+              <h1 className="mb-6 text-sm">
+                Proposals play a vital role in the functioning of decentralised
+                applications. Any changes or upgrades are done only after
+                proposals are voted in consensus. But there is no standard
+                category to distinguish different types of proposals. Having a
+                clear category will help communities to easily manage different
+                types of proposals.
+              </h1>
+              <div className="flex">
+                <div className="form-control mb-4 w-1/2">
+                  <label className="label">
+                    <span className="label-text text-sm">
+                      CHOOSE REPOSITORY
+                    </span>
+                  </label>
+                  <select
+                    className="select select-bordered select-sm text-xs h-8"
+                    value={repositoryName}
+                    onChange={(e) => {
+                      setRepositoryName(e.target.value);
+                    }}
+                  >
+                    {props.repositories.map((i) => {
                       return (
-                        <div className="flex" id="param">
-                          <div className="form-control w-1/2">
-                            <select
-                              className={
-                                "select select-bordered select-md" + index
-                              }
-                              value={
-                                parameterName[
-                                  "input input-md input-bordered mb-4 " + index
-                                ]
-                              }
-                              key={c}
-                              onChange={handleNameOnChange}
-                            >
-                              {paramNames.map((i) => {
-                                return (
-                                  <option value={i} key={i}>
-                                    {i}
-                                  </option>
-                                );
-                              })}
-                            </select>
-                          </div>
-                          <div className="form-control ml-4 w-1/2">
-                            <input
-                              name="parameter value"
-                              key={c}
-                              className={
-                                "input input-md input-bordered mb-4 " + index
-                              }
-                              value={
-                                parameterValue[
-                                  "input input-md input-bordered mb-4 " + index
-                                ]
-                              }
-                              type="text"
-                              placeholder="value"
-                              // class="input input-md input-bordered mb-4"
-                              onChange={handleValueOnChange}
-                            />
-                          </div>
-                        </div>
+                        <option value={i.name} key={i.id}>
+                          {i.name}
+                        </option>
                       );
                     })}
-                    <div className="mt-10 text-right">
-                      <div className="inline-block w-36">
-                        <button
-                          className={
-                            "btn btn-sm btn-primary btn-block " +
-                            (false ? "loading" : "")
-                          }
-                          disabled={description === ""}
-                          onClick={handleClick}
-                        >
-                          ADD PARAMETER
-                        </button>
-                      </div>
-                    </div>
-                    <div className="mt-10 text-right">
-                      <div className="inline-block w-36">
-                        <button
-                          className={
-                            "btn btn-sm btn-primary btn-block " +
-                            (false ? "loading" : "")
-                          }
-                          disabled={
-                            description === "" ||
-                            parameterName === {} ||
-                            parameterValue === {}
-                          }
-                          onClick={(e) => {
-                            props.submitGovernanceProposal(
-                              repositoryName,
-                              description,
-                              proposalType
-                            );
-                          }}
-                        >
-                          Submit Proposal
-                        </button>
-                      </div>
+                  </select>
+                </div>
+                <div className="form-control mb-4 ml-4 w-1/2">
+                  <label className="label">
+                    <span className="label-text text-sm">PROPOSAL TYPE</span>
+                  </label>
+                  <select
+                    className="select select-bordered select-sm text-xs h-8"
+                    value={proposalType}
+                    onChange={(e) => {
+                      setProposalType(e.target.value);
+                      setMenuState(e.target.value);
+                      setAmount("");
+                      setAddress("");
+                      setHeight("");
+                      setReleaseVersionTag("");
+                      setParameterName({});
+                      setParameterValue({});
+                      setCounter(1);
+                    }}
+                  >
+                    <option value="1">
+                      Other Governance Proposal/Governance
+                    </option>
+                    <option value="2">Development Proposal</option>
+                    <option value="3">Chain Upgrade Proposal </option>
+                    <option value="4">Chain parameters Change</option>
+                    <option value="5">
+                      Token Distribution/Budget Allocation
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <label className="label">
+                <span className="label-text text-sm">YOUR PROPOSAL</span>
+              </label>
+              <div className="border border-grey rounded flex-1 p-4">
+                <MarkdownEditor
+                  property="text-xs"
+                  placeholder="Enter Proposal Description"
+                  value={description}
+                  setValue={setDescription}
+                />
+              </div>
+              {(menuState == 2 || menuState == 5) && (
+                <div className="container mx-auto max-w-screen-lg">
+                  <div className="form-control mt-4 mb-4 w-1/2">
+                    <label className="label">
+                      <span className="label-text text-sm">TOKEN AMOUNT</span>
+                    </label>
+                    <div className="form-control mb-4">
+                      <input
+                        name="amount"
+                        type="text"
+                        placeholder="Enter amount"
+                        className="input input-md input-bordered text-xs h-8"
+                        value={amount}
+                        onChange={(e) => {
+                          setAmount(e.target.value);
+                        }}
+                      />
                     </div>
                   </div>
-                )}
-                {menuState == 1 && (
+
+                  <div className="form-control mb-4">
+                    <label className="label">
+                      <span className="label-text text-sm">WALLET ADDRESS</span>
+                    </label>
+                    <div className="form-control mb-4">
+                      <input
+                        name="Wallet Address"
+                        type="text"
+                        placeholder="Enter wallet address"
+                        className="input input-md input-bordered text-xs h-8"
+                        value={address}
+                        onChange={(e) => {
+                          setAddress(e.target.value);
+                        }}
+                      />
+                    </div>
+                  </div>
                   <div className="mt-10 text-right">
                     <div className="inline-block w-36">
                       <button
@@ -397,13 +199,20 @@ function RepositoryProposalCreateView(props) {
                           "btn btn-sm btn-primary btn-block " +
                           (false ? "loading" : "")
                         }
-                        disabled={description === ""}
+                        disabled={
+                          description === "" ||
+                          amount === "" ||
+                          address === "" ||
+                          repositoryName === ""
+                        }
                         onClick={(e) => {
                           props
-                            .submitGovernanceProposal(
+                            .communityPoolSpendProposal(
                               repositoryName,
                               description,
-                              proposalType
+                              proposalType,
+                              address,
+                              amount
                             )
                             .then((res) => {
                               props.notify("Proposal Submitted", "info");
@@ -414,8 +223,206 @@ function RepositoryProposalCreateView(props) {
                       </button>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
+              {menuState == 3 && (
+                <div className="container mx-auto max-w-screen-lg">
+                  <div className="form-control w-1/2 mt-4">
+                    <label className="label">
+                      <span className="label-text text-sm">
+                        RELEASE VERSION TAG:
+                      </span>
+                    </label>
+                    <div className="form-control">
+                      <input
+                        name="release version tag"
+                        type="text"
+                        placeholder="Write here the target release:e.g v1.4.2"
+                        className="input input-md input-bordered mb-4 text-xs h-8"
+                        value={releaseVersionTag}
+                        onChange={(e) => {
+                          setReleaseVersionTag(e.target.value);
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-control mb-4">
+                    <label className="label">
+                      <span className="label-text text-sm">
+                        CHAIN UPGRADE HEIGHT:
+                      </span>
+                    </label>
+                    <div className="form-control">
+                      <input
+                        name="chain upgrade height"
+                        type="text"
+                        placeholder="Write here the block halt height or chain upgrade height: e.g 104032"
+                        className="input input-md input-bordered mb-4 text-xs h-8"
+                        value={height}
+                        onChange={(e) => {
+                          setHeight(e.target.value);
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-10 text-right">
+                    <div className="inline-block w-36">
+                      <button
+                        className={
+                          "btn btn-sm btn-primary btn-block h-8 " +
+                          (false ? "loading" : "")
+                        }
+                        disabled={
+                          description === "" ||
+                          releaseVersionTag === "" ||
+                          height === "" ||
+                          repositoryName === ""
+                        }
+                        onClick={(e) => {
+                          props
+                            .chainUpgradeProposal(
+                              repositoryName,
+                              description,
+                              proposalType,
+                              releaseVersionTag,
+                              height
+                            )
+                            .then((res) => {
+                              props.notify("Proposal Submitted", "info");
+                            });
+                        }}
+                      >
+                        Submit Proposal
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {menuState == 4 && (
+                <div>
+                  <div>
+                    <label className="label mt-4 ">
+                      <span className="label-text text-sm">PARAMETER NAME</span>
+                    </label>
+                  </div>
+                  {Array.from(Array(counter)).map((c, index) => {
+                    return (
+                      <div className="flex" id="param">
+                        <div className="form-control w-1/2">
+                          <select
+                            className={
+                              "select select-bordered select-md text-xs" + index
+                            }
+                            value={
+                              parameterName[
+                                "input input-md input-bordered mb-4 text-xs" +
+                                  index
+                              ]
+                            }
+                            key={c}
+                            onChange={handleNameOnChange}
+                          >
+                            {paramNames.map((i) => {
+                              return (
+                                <option value={i} key={i}>
+                                  {i}
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </div>
+                        <div className="form-control ml-4 w-1/2">
+                          <input
+                            name="parameter value"
+                            key={c}
+                            className={
+                              "input input-md input-bordered mb-4 text-xs" +
+                              index
+                            }
+                            value={
+                              parameterValue[
+                                "input input-md input-bordered mb-4 text-xs" +
+                                  index
+                              ]
+                            }
+                            type="text"
+                            placeholder="value"
+                            // class="input input-md input-bordered mb-4"
+                            onChange={handleValueOnChange}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <div className="mt-6 text-right">
+                    <div className="inline-block w-36">
+                      <button
+                        className={
+                          "btn btn-sm btn-primary btn-block h-8 " +
+                          (false ? "loading" : "")
+                        }
+                        disabled={description === ""}
+                        onClick={handleClick}
+                      >
+                        ADD PARAMETER
+                      </button>
+                    </div>
+                  </div>
+                  <div className="mt-10 text-right">
+                    <div className="inline-block w-36">
+                      <button
+                        className={
+                          "btn btn-sm btn-primary btn-block " +
+                          (false ? "loading" : "")
+                        }
+                        disabled={
+                          true
+                          /* description === "" ||
+                          parameterName === {} ||
+                          parameterValue === {} ||
+                          repositoryName === "" */
+                        }
+                        onClick={(e) => {
+                          props.submitGovernanceProposal(
+                            repositoryName,
+                            description,
+                            proposalType
+                          );
+                        }}
+                      >
+                        Submit Proposal
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {menuState == 1 && (
+                <div className="mt-6 text-right">
+                  <div className="inline-block w-36">
+                    <button
+                      className={
+                        "btn btn-sm btn-primary btn-block h-8 " +
+                        (false ? "loading" : "")
+                      }
+                      disabled={description === "" || repositoryName === ""}
+                      onClick={(e) => {
+                        props
+                          .submitGovernanceProposal(
+                            repositoryName,
+                            description,
+                            proposalType
+                          )
+                          .then((res) => {
+                            props.notify("Proposal Submitted", "info");
+                          });
+                      }}
+                    >
+                      Submit Proposal
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </main>
