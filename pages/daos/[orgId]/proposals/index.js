@@ -9,14 +9,15 @@ import { connect } from "react-redux";
 import Link from "next/link";
 
 function GitopiaProposalsView(props) {
-  const hrefBase = "/orgs/" + props.organization;
+  const hrefBase = "/orgs/" + props.currentDashboard;
+
   return (
     <div
       data-theme="dark"
       className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
-        <title>Gitopia</title>
+        <title>Gitopia Proposals</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
