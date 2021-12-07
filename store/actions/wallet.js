@@ -20,9 +20,10 @@ export const signOut = () => {
   };
 };
 
-async function initCosmosBankTxClient(accountSigner) {
+async function initCosmosBankTxClient(accountSigner, getState) {
+  const { env } = getState();
   return await cosmosBankTxClient(accountSigner, {
-    addr: "http://localhost:26657",
+    addr: env.rpcNode,
   });
 }
 
@@ -330,7 +331,10 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
           amount: [{ amount: amount, denom: "tlore" }],
         };
         console.log(send);
-        const cosmosBankTxClient = await initCosmosBankTxClient(accountSigner);
+        const cosmosBankTxClient = await initCosmosBankTxClient(
+          accountSigner,
+          getState
+        );
         const msg = await cosmosBankTxClient.msgSend(send);
         const fee = {
           amount: [{ amount: "0", denom: "tlore" }],
