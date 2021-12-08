@@ -21,7 +21,6 @@ function OrgDashboard(props) {
     }
     props.getOrganizationDetailsForDashboard();
   }, [props.currentDashboard]);
-
   return (
     <div
       data-theme="dark"
@@ -41,14 +40,19 @@ function OrgDashboard(props) {
                 return { owner: props.currentDashboard, ...r };
               })}
             />
-            <button
-              className="text-sm text-type-secondary text-left mx-8 border-b border-grey py-2 mb-4 w-48"
-              onClick={() => {
-                setMenuState(2);
-              }}
-            >
-              Gitopia
-            </button>
+            {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ===
+            props.currentDashboard ? (
+              <button
+                className="text-sm text-type-secondary text-left mx-8 border-b border-grey py-2 mb-4 w-48"
+                onClick={() => {
+                  setMenuState(2);
+                }}
+              >
+                Gitopia
+              </button>
+            ) : (
+              ""
+            )}
           </div>
           <div>
             <div className="bg-footer-grad py-6">
