@@ -40,7 +40,9 @@ function RepositoryPullCommitsView(props) {
       pullRequest.base.repositoryId,
       pullRequest.head.repositoryId,
       pullRequest.base.branch,
-      pullRequest.head.branch
+      pullRequest.head.branch,
+      pullRequest.base.commitSha,
+      pullRequest.head.commitSha
     );
     console.log(shas);
     setCommitShas(shas);

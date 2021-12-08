@@ -46,12 +46,12 @@ function AccountView(props) {
     if (user.id) {
       const pr = user.repositories.map((r) => getRepository(r.id));
       const repos = await Promise.all(pr);
-      setAllRepos(repos);
+      setAllRepos(repos.reverse());
       console.log(repos);
     } else if (org.id) {
       const pr = org.repositories.map((r) => getRepository(r.id));
       const repos = await Promise.all(pr);
-      setAllRepos(repos);
+      setAllRepos(repos.reverse());
       console.log(repos);
     }
   };
