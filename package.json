@@ -27,7 +27,7 @@
     "dayjs": "^1.10.6",
     "file-saver": "^2.0.5",
     "framer-motion": "^4",
-    "gitopiajs": "git+ssh://git@github.com:gitopia/gitopia.git#gitopiajs-v0.10.0-gitpkg",
+    "gitopiajs": "git+ssh://git@github.com:gitopia/gitopia.git#gitopiajs-v0.11.0-rc-gitpkg",
     "isomorphic-git": "^1.9.2",
     "lodash": "^4.17.21",
     "next": "10.0.9",
