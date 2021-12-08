@@ -168,32 +168,36 @@ function TransactionView(props) {
                 })
               : ""}
           </div>
-          <div className="flex">
-            <div className="">
-              <button
-                className={"btn btn-sm"}
-                disabled={currentPage < 2}
-                onClick={() => {
-                  loadPrevTransactions();
-                  window.scrollTo(0, 0);
-                }}
-              >
-                PREV
-              </button>
+          {pageTotal > 0 ? (
+            <div className="flex">
+              <div className="">
+                <button
+                  className={"btn btn-sm"}
+                  disabled={currentPage < 2}
+                  onClick={() => {
+                    loadPrevTransactions();
+                    window.scrollTo(0, 0);
+                  }}
+                >
+                  PREV
+                </button>
+              </div>
+              <div className="ml-auto self-center">
+                <button
+                  className={"btn btn-sm"}
+                  disabled={pageTotal == currentPage}
+                  onClick={() => {
+                    loadNextTransactions();
+                    window.scrollTo(0, 0);
+                  }}
+                >
+                  NEXT
+                </button>
+              </div>
             </div>
-            <div className="ml-auto self-center">
-              <button
-                className={"btn btn-sm"}
-                disabled={pageTotal == currentPage}
-                onClick={() => {
-                  loadNextTransactions();
-                  window.scrollTo(0, 0);
-                }}
-              >
-                NEXT
-              </button>
-            </div>
-          </div>
+          ) : (
+            ""
+          )}
         </main>
       </div>
       <Footer />
