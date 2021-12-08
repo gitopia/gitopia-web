@@ -35,7 +35,6 @@ function TransactionView(props) {
 
   useEffect(async () => {
     const data = await getUserTransaction(router.query.userId);
-    console.log("first fetch" + data.txs);
     setUserTransactions(data.txs);
     setPageTotal(data.page_total);
     const [u, o] = await Promise.all([
@@ -57,7 +56,7 @@ function TransactionView(props) {
       currentPage - 1
     );
     setCurrentPage(currentPage - 1);
-    setUserTransactions(newData.txs);
+    typeof newData.txs != undefined ? setUserTransactions(newData.txs) : "";
   };
 
   const loadNextTransactions = async () => {
@@ -67,7 +66,7 @@ function TransactionView(props) {
       currentPage + 1
     );
     setCurrentPage(currentPage + 1);
-    setUserTransactions(newData.txs);
+    typeof newData.txs != undefined ? setUserTransactions(newData.txs) : "";
   };
 
   const hrefBase = "/" + router.query.userId;
@@ -104,30 +103,33 @@ function TransactionView(props) {
             />
           </div>
           <div className="mt-8">
-            {userTransactions.map((txs) => {
-              return (
-                <div>
-                  <div>
-                    <div className="card  bordered mb-5 bg-gray-800 h-27">
-                      <div className="">
+            {typeof userTransactions !== "undefined"
+              ? userTransactions.map((txs) => {
+                  return (
+                    <div key={txs.txhash}>
+                      <div className="card  bordered mb-5 bg-gray-800 h-27">
                         <div className="flex">
-                          {txTypes[txs.tx.value.msg[0].type] !== undefined ? (
-                            <div
-                              className={
-                                "h-20 w-2 rounded-full mr-7 ml-2 my-2 bg-" +
-                                txTypes[txs.tx.value.msg[0].type].color
-                              }
-                            ></div>
+                          {txs.tx.value !== "undefined" ? (
+                            txTypes[txs.tx.value.msg[0].type] !== undefined ? (
+                              <div
+                                className={
+                                  "h-20 w-2 rounded-full mr-7 ml-2 my-2 bg-" +
+                                  txTypes[txs.tx.value.msg[0].type].color
+                                }
+                              ></div>
+                            ) : (
+                              <div
+                                className={
+                                  "h-20 w-2 rounded-full mr-7 ml-2 my-2 bg-gray-200"
+                                }
+                              ></div>
+                            )
                           ) : (
-                            <div
-                              className={
-                                "h-20 w-2 rounded-full mr-7 ml-2 my-2 bg-gray-200"
-                              }
-                            ></div>
+                            ""
                           )}
                           <div className="my-4">
                             <div>
-                              <p className="text-2xl">
+                              <div className="text-2xl">
                                 {txTypes[txs.tx.value.msg[0].type] !==
                                 undefined ? (
                                   <div
@@ -143,7 +145,7 @@ function TransactionView(props) {
                                     {txs.tx.value.msg[0].type}
                                   </h6>
                                 )}
-                              </p>
+                              </div>
                             </div>
                             <div>
                               <p className="mt-2 text-xs text-type-secondary">
@@ -162,10 +164,9 @@ function TransactionView(props) {
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              );
-            })}
+                  );
+                })
+              : ""}
           </div>
           <div className="flex">
             <div className="">
