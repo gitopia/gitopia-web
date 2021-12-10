@@ -148,9 +148,18 @@ function TransactionView(props) {
                               </div>
                             </div>
                             <div>
-                              <p className="mt-2 text-xs text-type-secondary">
-                                {"Tx Hash: " + txs.txhash}
-                              </p>
+                              <a className="mt-2 text-xs text-type-secondary">
+                                Tx Hash :
+                              </a>
+                              <a
+                                className="mt-2 text-xs text-type-secondary"
+                                href={
+                                  "https://explorer.gitopia.com/transactions/" +
+                                  txs.txhash
+                                }
+                              >
+                                {" " + txs.txhash}
+                              </a>
                             </div>
                             <div>
                               <p className="mt-2 text-xs text-type-secondary">
