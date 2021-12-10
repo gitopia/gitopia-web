@@ -1509,19 +1509,22 @@ export default function Landing() {
       <section className={styles.section}>
         <h3 className={styles.h3}>Meet the Team</h3>
         <div
-          className={"grid grid-rows-9 grid-cols-2 gap-2 " + styles.teamWrapper}
+          className={"grid grid-rows-3 grid-cols-3 gap-2 " + styles.teamWrapper}
         >
           <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/parth.png" loading="lazy" />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Parth Oberoi</div>
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Parth Oberoi</div>
+              </div>
             </div>
           </div>
-          <div className={"block row-span-1 " + styles.bufferCard}></div>
           <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/faza.png" loading="lazy" />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Faza Mahamood</div>
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Faza Mahamood</div>
+              </div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
@@ -1530,8 +1533,10 @@ export default function Landing() {
               src="/snehil.png"
               loading="lazy"
             />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Snehil Buxy</div>
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Snehil Buxy</div>
+              </div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
@@ -1540,14 +1545,18 @@ export default function Landing() {
               src="/kushagra.png"
               loading="lazy"
             />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Kushagra Singh</div>
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Kushagra Singh</div>
+              </div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/stian.png" loading="lazy" />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Stian Sandsgaard</div>
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Stian Sandsgaard</div>
+              </div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
@@ -1556,19 +1565,47 @@ export default function Landing() {
               src="/hariom.png"
               loading="lazy"
             />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Hariom Verma</div>
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Hariom Verma</div>
+              </div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/ejaaz.png" loading="lazy" />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Ejaaz Mahamood</div>
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Ejaaz Mahamood</div>
+              </div>
+            </div>
+          </div>
+          <div className={styles.joinTeamContainer}>
+            <div
+              className={
+                "absolute card lg:card-side h-80 w-2/6 bg-gradient-to-r from-type-dark to-purple-900"
+              }
+            >
+              <div className={styles.joinTeamLogo}>
+                <figure>
+                  <img src="/logo-g.svg" />
+                </figure>
+              </div>
+              <div className="card-body mt-9">
+                <h2 className="card-title">Want to join our team?</h2>
+                <p>
+                  Passionate about blockchain and a desire to change the world?
+                  We’re always looking for hard working talent!
+                </p>
+                <div className="card-actions">
+                  <button className="btn btn-primary btn-sm h-10 w-56">
+                    Message us
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
-
       <svg
         className={styles.blob1}
         width="874"
