@@ -1507,11 +1507,7 @@ export default function Landing() {
 
       <section className={styles.section}>
         <h3 className={styles.h3}>Meet the Team</h3>
-        <div
-          className={
-            "grid grid-rows-1 grid-cols-4 gap-2 " + styles.teamWrapper1
-          }
-        >
+        <div className={styles.teamWrapper1}>
           <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/parth.png" loading="lazy" />
             <div className={styles.teamLabelContainer}>
@@ -1553,11 +1549,7 @@ export default function Landing() {
             </div>
           </div>
         </div>
-        <div
-          className={
-            "grid grid-rows-1 grid-cols-3 gap-2 " + styles.teamWrapper2
-          }
-        >
+        <div className={styles.teamWrapper2}>
           <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/stian.png" loading="lazy" />
             <div className={styles.teamLabelContainer}>
@@ -1610,6 +1602,11 @@ export default function Landing() {
               <div className="card-actions">
                 <button
                   className={"btn btn-primary btn-sm " + styles.joinTeamButton}
+                  onClick={() => {
+                    if (window) {
+                      window.open("https://angel.co/company/gitopia");
+                    }
+                  }}
                 >
                   Apply Here
                 </button>
