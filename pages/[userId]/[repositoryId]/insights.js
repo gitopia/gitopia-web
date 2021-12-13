@@ -21,15 +21,22 @@ export async function getServerSideProps() {
 
 function RepositoryInsightsView(props) {
   const { repository } = useRepository();
-  const [allRepos, setAllRepos] = useState([]);
+  const [childRepos, setChildRepos] = useState([]);
+  const [parentRepo, setParentRepo] = useState(null);
 
   const refreshRepositoryForks = async () => {
     if (repository.id) {
       if (repository.forks.length) {
         const pr = repository.forks.map((r) => getRepository(r));
         const repos = await Promise.all(pr);
-        setAllRepos(repos);
+        setChildRepos(repos);
         console.log("repos", repos);
+      }
+      if (repository.parent) {
+        const repo = await getRepository(repository.parent);
+        if (repo) {
+          setParentRepo(repo);
+        }
       }
     }
   };
@@ -62,7 +69,46 @@ function RepositoryInsightsView(props) {
             </a>
           </Link>
         </div>
+        {current ? (
+          <div className="ml-2 badge badge-sm bg-purple-900 text-purple-50 border-purple-900">
+            Current Repository
+          </div>
+        ) : (
+          ""
+        )}
       </div>
+    );
+  };
+
+  const renderDescendents = (hasParent = false) => {
+    return (
+      <>
+        <li className={hasParent ? "flex border-l border-grey mx-1" : ""}>
+          {hasParent ? <span className="text-grey mr-1">&mdash;</span> : ""}
+          {ownerRepoLinkItem(repository, true)}
+        </li>
+        {childRepos.length ? (
+          <li className={hasParent ? "flex mx-1" : ""}>
+            {hasParent ? (
+              <span className="text-transparent mr-1">&mdash;</span>
+            ) : (
+              ""
+            )}
+            <ul className="my-1">
+              {childRepos.map((r) => {
+                return (
+                  <li className="flex border-l border-grey mx-1" key={r.id}>
+                    <span className="text-grey mr-1">&mdash;</span>
+                    {ownerRepoLinkItem(r)}
+                  </li>
+                );
+              })}
+            </ul>
+          </li>
+        ) : (
+          ""
+        )}
+      </>
     );
   };
 
@@ -93,24 +139,14 @@ function RepositoryInsightsView(props) {
               </ul>
             </div>
             <div className="flex-1 p-4">
-              <ul className="">
-                <li>{ownerRepoLinkItem(repository, true)}</li>
-                <li>
-                  <ul className="my-1">
-                    {allRepos.map((r) => {
-                      return (
-                        <li
-                          className="flex border-l border-grey mx-1"
-                          key={r.id}
-                        >
-                          <span className="text-grey mr-1">&mdash;</span>
-                          {ownerRepoLinkItem(r)}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </li>
-              </ul>
+              {parentRepo ? (
+                <ul>
+                  <li>{ownerRepoLinkItem(parentRepo)}</li>
+                  <ul className="my-1">{renderDescendents(true)}</ul>
+                </ul>
+              ) : (
+                <ul>{renderDescendents()}</ul>
+              )}
             </div>
           </div>
         </main>
