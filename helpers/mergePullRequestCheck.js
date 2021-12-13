@@ -12,7 +12,7 @@ export default async function mergePullRequestCheck(
   const baseUrl =
     process.env.NODE_ENV === "development"
       ? "/api/pull/check"
-      : proces.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/check";
+      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/check";
   let obj = {};
   let params = {
     base_repository_id: Number(baseRepoId),

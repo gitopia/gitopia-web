@@ -3,7 +3,7 @@ export default async function forkRepositoryFiles(sourceRepoId, targetRepoId) {
   const baseUrl =
     process.env.NODE_ENV === "development"
       ? "/api/fork"
-      : proces.env.NEXT_PUBLIC_OBJECTS_URL + "/fork";
+      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/fork";
   let obj = {};
   let params = {
     source_repository_id: Number(sourceRepoId),

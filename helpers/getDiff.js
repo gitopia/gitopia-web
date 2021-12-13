@@ -14,7 +14,7 @@ export default async function getDiff(
   const baseUrl =
     process.env.NODE_ENV === "development"
       ? "/api/diff"
-      : proces.env.NEXT_PUBLIC_OBJECTS_URL + "/diff";
+      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/diff";
   let params = {
     repository_id: Number(repoId),
     commit_sha: commitSha,
