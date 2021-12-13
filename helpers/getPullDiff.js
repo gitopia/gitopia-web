@@ -15,7 +15,7 @@ export default async function getPullDiff(
   const baseUrl =
     process.env.NODE_ENV === "development"
       ? "/api/pull/diff"
-      : proces.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/diff";
+      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/diff";
   let params = {
     base_repository_id: Number(baseRepoId),
     head_repository_id: Number(headRepoId),
