@@ -293,7 +293,10 @@ function RepositoryReleaseNewView(props) {
                 <div className="my-4 divide-y divide-grey">
                   {attachments.map((a, i) => {
                     return (
-                      <div className={"flex py-2 items-center"}>
+                      <div
+                        className={"flex py-2 items-center"}
+                        key={"attachment-" + i}
+                      >
                         <div className="flex-1 text-sm">{a.file.name}</div>
                         <div className="text-xs mr-2">
                           {formatBytes(a.file.size)}

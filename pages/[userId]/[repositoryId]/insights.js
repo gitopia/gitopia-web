@@ -32,7 +32,7 @@ function RepositoryInsightsView(props) {
         setChildRepos(repos);
         console.log("repos", repos);
       }
-      if (repository.parent) {
+      if (repository.parent !== "0") {
         const repo = await getRepository(repository.parent);
         if (repo) {
           setParentRepo(repo);

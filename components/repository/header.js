@@ -199,15 +199,17 @@ function RepositoryHeader({ repository, ...props }) {
           <p>Select forked repository owner</p>
           <ul className="menu compact mt-8">
             {props.dashboards.map((d) => {
-              if (repository.owner.id === d.id) return "";
+              const isOwner = repository.owner.id === d.id;
               return (
                 <li key={d.name}>
                   <button
                     className={
-                      "btn btn-sm btn-primary btn-link my-2 justify-start " +
+                      "btn btn-sm btn-primary btn-outline my-2 justify-start " +
                       (isForking === d.id ? "loading" : "")
                     }
+                    disabled={isOwner || isForking}
                     onClick={async () => {
+                      if (isOwner) return;
                       setIsForking(d.id);
                       const res = await props.forkRepository({
                         repositoryId: repository.id,
@@ -249,6 +251,13 @@ function RepositoryHeader({ repository, ...props }) {
                       </svg>
                     )}
                     {d.name} - {shrinkAddress(d.id)}
+                    {isOwner ? (
+                      <div className="ml-2 badge badge-secondary badge-sm">
+                        Owner
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </button>
                 </li>
               );
