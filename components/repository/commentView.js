@@ -9,7 +9,7 @@ function CommentView({
   userAddress,
   onUpdate,
   onDelete,
-  key,
+  keyProp,
   ...props
 }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -17,7 +17,7 @@ function CommentView({
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
-    <div className="flex w-full mt-8" key={key}>
+    <div className="flex w-full mt-8" key={keyProp}>
       <div className="flex-none mr-4">
         <div className="avatar">
           <div className="mb-8 rounded-full w-10 h-10">
@@ -54,10 +54,7 @@ function CommentView({
             <div className="flex-none">
               {comment.creator === userAddress ? (
                 <div className="dropdown dropdown-end">
-                  <div
-                    tabIndex="0"
-                    className="m-1 btn btn-square btn-xs btn-ghost"
-                  >
+                  <div tabIndex="0" className="btn btn-square btn-xs btn-ghost">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"

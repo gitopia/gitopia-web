@@ -72,6 +72,7 @@ function RepositoryPullView(props) {
             <PullRequestHeader
               pullRequest={pullRequest}
               repository={repository}
+              onUpdate={refreshPullRequest}
             />
           </div>
           <div className="mt-8">
