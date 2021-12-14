@@ -631,7 +631,7 @@
 }
 
 .teamCard {
-  width: 300px;
+  width: 350px;
   height: 420px;
   display: inline-block;
   position: relative;
@@ -676,41 +676,45 @@
 }
 
 .teamWrapper1 {
+  align-items: center;
+  justify-content: center;
   display: flex;
   flex-direction: row;
   margin-top: 100px;
   gap: 10px;
-  width: 1200px;
+  width: 1000px;
 }
 
 .teamWrapper2 {
+  align-items: center;
+  justify-content: center;
   display: flex;
   flex-direction: row;
   gap: 10px;
-  width: 900px;
+  width: 1000px;
 }
-
 .joinTeamContainer {
-  margin-top: 160px;
-  width: 800px;
+  margin-bottom: 35px;
+  width: 700px;
   height: 300px;
 }
 .joinTeamCard {
   display: flex;
   justify-content: center;
   flex-direction: row;
+  margin-left: 35px;
   padding: 5px;
   height: 300px;
-  width: 800px;
+  width: 600px;
 }
 
 .joinTeamBody {
-  margin-top: 30px;
+  margin-top: 20px;
   width: 800px;
 }
 
 .joinTeamLogo {
-  margin: 20px 20px;
+  margin: 50px 20px;
   height: 380px;
   width: 440px;
 }
@@ -860,36 +864,37 @@
     font-size: 64px;
     opacity: 0.1;
   }
-  .teamCard {
-    width: 150px;
-    height: 300px;
-    overflow: hidden;
-  }
+
   .bufferCard {
     height: 95px;
   }
   .teamWrapper1 {
     display: flex;
-    flex-direction: row;
-    margin-top: 100px;
-    gap: 10px;
+    flex-direction: column;
+    margin-top: 70px;
     width: auto;
-    /* flex-direction: column; */
   }
   .teamWrapper2 {
     display: flex;
-    flex-direction: row;
-    gap: 10px;
+    flex-direction: column;
     width: auto;
-    /* flex-direction: column; */
   }
+  .teamCard {
+    width: 400px;
+    height: 490px;
+    overflow: hidden;
+  }
+
   .teamLabel {
-    right: 0;
-    height: 80px;
+    background: #19072f;
+    height: 40px;
+    width: 300px;
   }
+
   .teamName {
-    font-size: 18px;
-    height: 10px;
+    text-align: center;
+    font-size: 30px;
+    line-height: 1.5em;
   }
   .teamDesig {
     font-size: 12px;
@@ -912,39 +917,42 @@
   }
 
   .joinTeamContainer {
-    margin-top: 60px;
-    width: 700px;
-    height: 300px;
     display: flex;
-    justify-content: center;
-    flex-direction: row;
+    margin-top: 30px;
+    width: 370px;
+    height: 350px;
   }
   .joinTeamCard {
-    padding: 30px;
-    width: 600px;
-    height: 300px;
-
+    padding: 5px;
+    height: 400px;
+    width: 100%;
     overflow: hidden;
   }
+
   .joinTeamLogo {
-    margin: 30px 10px;
-    height: 100px;
-    width: 180px;
+    position: absolute;
+    margin-top: 10px;
+    height: 200px;
+    width: 150px;
   }
   .joinTeamBody {
-    margin-top: 3px;
-    width: 100px;
+    margin-top: 150px;
+    width: 30px;
+    justify-content: center;
+    align-items: center;
   }
   .joinTeamTitle {
-    font-size: 18px;
+    font-size: 21px;
+    font-weight: bold;
   }
   .joinTeamContent {
-    font-size: 15px;
+    font-size: 17px;
+    text-align: center;
   }
   .joinTeamButton {
+    font-size: 16px;
     height: 40px;
-    width: 130px;
-    font-size: 14px;
+    width: 150px;
   }
 }
 
@@ -955,7 +963,6 @@
     margin-top: 100px;
     width: auto;
   }
-
   .teamWrapper2 {
     display: flex;
     flex-direction: column;
@@ -1020,7 +1027,7 @@
     align-items: flex-end;
     margin-top: 30px;
     width: 300px;
-    height: 400px;
+    height: 300px;
   }
   .joinTeamCard {
     padding: 5px;
