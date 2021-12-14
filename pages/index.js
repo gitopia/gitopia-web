@@ -1510,6 +1510,18 @@ export default function Landing() {
         <h3 className={styles.h3}>Meet the Team</h3>
         <div className={styles.teamWrapper1}>
           <div className={"row-span-4 " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/kushagra.png"
+              loading="lazy"
+            />
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Kushagra Singh</div>
+              </div>
+            </div>
+          </div>
+          <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/parth.png" loading="lazy" />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
@@ -1525,6 +1537,8 @@ export default function Landing() {
               </div>
             </div>
           </div>
+        </div>
+        <div className={styles.teamWrapper2}>
           <div className={"row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
@@ -1534,28 +1548,6 @@ export default function Landing() {
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
                 <div className={styles.teamName}>Snehil Buxy</div>
-              </div>
-            </div>
-          </div>
-          <div className={"row-span-4 " + styles.teamCard}>
-            <img
-              className={styles.teamImage}
-              src="/kushagra.png"
-              loading="lazy"
-            />
-            <div className={styles.teamLabelContainer}>
-              <div className={styles.teamLabel}>
-                <div className={styles.teamName}>Kushagra Singh</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className={styles.teamWrapper2}>
-          <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/stian.png" loading="lazy" />
-            <div className={styles.teamLabelContainer}>
-              <div className={styles.teamLabel}>
-                <div className={styles.teamName}>Stian Sandsgaard</div>
               </div>
             </div>
           </div>
@@ -1572,6 +1564,16 @@ export default function Landing() {
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
+            <img className={styles.teamImage} src="/stian.png" loading="lazy" />
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Stian Sandsgaard</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={styles.teamWrapper2}>
+          <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/ejaaz.png" loading="lazy" />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
@@ -1579,38 +1581,41 @@ export default function Landing() {
               </div>
             </div>
           </div>
-        </div>
-        <div className={styles.joinTeamContainer}>
-          <div
-            className={
-              "card lg:card-side bg-gradient-to-r from-type-dark to-purple-900 " +
-              styles.joinTeamCard
-            }
-          >
-            <div className={"ml-48 " + styles.joinTeamLogo}>
-              <figure>
-                <img src="/logo-g.svg" />
-              </figure>
-            </div>
-            <div className={"card-body " + styles.joinTeamBody}>
-              <div className={"card-title " + styles.joinTeamTitle}>
-                Want to join our team?
+
+          <div className={styles.joinTeamContainer}>
+            <div
+              className={
+                "card lg:card-side bg-gradient-to-r from-type-dark to-purple-900 " +
+                styles.joinTeamCard
+              }
+            >
+              <div className={"ml-48 " + styles.joinTeamLogo}>
+                <figure>
+                  <img src="/logo-g.svg" />
+                </figure>
               </div>
-              <div className={styles.joinTeamContent}>
-                Passionate about blockchain and a desire to change the world?
-                We’re always looking for hard working talent!
-              </div>
-              <div className="card-actions">
-                <button
-                  className={"btn btn-primary btn-sm " + styles.joinTeamButton}
-                  onClick={() => {
-                    if (window) {
-                      window.open("https://angel.co/company/gitopia");
+              <div className={"card-body " + styles.joinTeamBody}>
+                <div className={"card-title " + styles.joinTeamTitle}>
+                  Want to join our team?
+                </div>
+                <div className={styles.joinTeamContent}>
+                  Passionate about blockchain and a desire to change the world?
+                  We’re always looking for hard working talent!
+                </div>
+                <div className="card-actions">
+                  <button
+                    className={
+                      "btn btn-primary btn-sm " + styles.joinTeamButton
                     }
-                  }}
-                >
-                  Apply Here
-                </button>
+                    onClick={() => {
+                      if (window) {
+                        window.open("https://angel.co/company/gitopia");
+                      }
+                    }}
+                  >
+                    Apply Here
+                  </button>
+                </div>
               </div>
             </div>
           </div>
