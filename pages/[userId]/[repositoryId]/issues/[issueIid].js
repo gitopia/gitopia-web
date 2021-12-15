@@ -30,6 +30,7 @@ import Label from "../../../../components/repository/label";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
 import IssuePullTitle from "../../../../components/repository/issuePullTitle";
+import IssuePullDescription from "../../../../components/repository/issuePullDescription";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -133,34 +134,11 @@ function RepositoryIssueView(props) {
           <div className="flex mt-8">
             <div className="flex flex-1">
               <div className="flex flex-col w-full">
-                <div className="flex w-full">
-                  <div className="flex-none mr-4">
-                    <div className="avatar">
-                      <div className="mb-8 rounded-full w-10 h-10">
-                        <img
-                          src={
-                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                            issue.creator.slice(-1)
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="border border-grey rounded flex-1">
-                    <div className="flex text-xs px-4 py-2 bg-base-200 rounded-t items-center">
-                      <div className="flex-1">
-                        {shrinkAddress(issue.creator) +
-                          " commented " +
-                          dayjs(issue.createdAt * 1000).fromNow()}
-                      </div>
-                    </div>
-                    <div className="p-4 markdown-body">
-                      <ReactMarkdown linkTarget="_blank">
-                        {issue.description}
-                      </ReactMarkdown>
-                    </div>
-                  </div>
-                </div>
+                <IssuePullDescription
+                  issuePullObj={issue}
+                  repository={repository}
+                  onUpdate={refreshIssue}
+                />
                 {allComments.map((c, i) => {
                   if (c.system) {
                     return (

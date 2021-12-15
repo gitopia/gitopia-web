@@ -477,6 +477,67 @@ export const updatePullRequestTitle = ({ title = null, id = null }) => {
   };
 };
 
+export const updateIssueDescription = ({ description = null, id = null }) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "issue")))
+      return null;
+    const issue = {
+      creator: wallet.selectedAddress,
+      id,
+      description,
+    };
+    console.log("issue", issue);
+
+    try {
+      const message = await env.txClient.msgUpdateIssueDescription(issue);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+      return result;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const updatePullRequestDescription = ({
+  description = null,
+  id = null,
+}) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+      return null;
+    const pull = {
+      creator: wallet.selectedAddress,
+      id,
+      description,
+    };
+    console.log("pull", pull);
+
+    try {
+      const message = await env.txClient.msgUpdatePullRequestDescription(pull);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+      return result;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
 export const updateIssueAssignees = ({
   issueId = null,
   addedAssignees = [],
