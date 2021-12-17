@@ -141,22 +141,27 @@ function TransactionView(props) {
                                     {txTypes[txs.tx.value.msg[0].type].msg}
                                   </div>
                                 ) : (
-                                  <h6 className="card-title text-sm">
+                                  <div className="text-sm">
                                     {txs.tx.value.msg[0].type}
-                                  </h6>
+                                  </div>
                                 )}
                               </div>
                             </div>
                             <div>
-                              <a className="mt-2 text-xs text-type-secondary">
+                              <a className="text-xs text-type-secondary">
                                 Tx Hash :
                               </a>
                               <a
-                                className="mt-2 text-xs text-type-secondary"
-                                href={
-                                  "https://explorer.gitopia.com/transactions/" +
-                                  txs.txhash
-                                }
+                                className="text-xs text-type-secondary link link-primary no-underline hover:text-gray-100"
+                                onClick={() => {
+                                  if (window) {
+                                    window.open(
+                                      process.env.NEXT_PUBLIC_EXPLORER_URL +
+                                        "/" +
+                                        txs.txhash
+                                    );
+                                  }
+                                }}
                               >
                                 {" " + txs.txhash}
                               </a>
