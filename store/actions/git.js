@@ -3,6 +3,8 @@ import git from "isomorphic-git";
 import http from "isomorphic-git/http/web";
 import _, { sortBy } from "lodash";
 
+const validSha = new RegExp(/^[a-f0-9]{40}$/);
+
 const fetchGitObject = async (repoId, objectSha) => {
   let obj = null;
   const baseUrl =
@@ -69,6 +71,7 @@ const writeGitObject = async (projectRoot, oid, object) => {
 };
 
 const ensureGitObject = async (repoId, oid, projectRoot) => {
+  if (!validSha.test(oid)) return;
   const { filepath } = getLocalGitObjectPath(projectRoot, oid);
   let fileFound = null;
   try {
@@ -100,6 +103,7 @@ export const initRepository = async (
   userId,
   path = []
 ) => {
+  if (!validSha.test(repoHead)) return null;
   const projectRoot = getLocalProjectRoot(repoName, userId);
   await mkdir(projectRoot);
   await ensureGitObject(repoId, repoHead, projectRoot);
