@@ -9,7 +9,6 @@ function CommentView({
   userAddress,
   onUpdate,
   onDelete,
-  keyProp,
   ...props
 }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -17,7 +16,7 @@ function CommentView({
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
-    <div className="flex w-full mt-8" key={keyProp}>
+    <div className="flex w-full mt-8" key={"comment" + comment.id}>
       <div className="flex-none mr-4">
         <div className="avatar">
           <div className="mb-8 rounded-full w-10 h-10">
