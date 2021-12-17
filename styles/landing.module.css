@@ -631,12 +631,11 @@
 }
 
 .teamCard {
-  width: 460px;
-  height: 600px;
+  width: 350px;
+  height: 420px;
   display: inline-block;
   position: relative;
   z-index: 1;
-  margin-bottom: 4px;
 }
 
 .bufferCard {
@@ -651,16 +650,23 @@
   bottom: 0;
 }
 
+.teamLabelContainer {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
 .teamLabel {
-  position: absolute;
   background: #19072f;
-  bottom: 0;
-  left: 0;
-  padding: 24px 48px;
+  position: absolute;
+  padding-left: 20px;
+  bottom: 48px;
+  padding-right: 20px;
 }
 
 .teamName {
-  font-size: 32px;
+  text-align: center;
+  font-size: 26px;
   line-height: 1.5em;
 }
 
@@ -669,13 +675,57 @@
   font-size: 18px;
 }
 
-.teamWrapper {
+.teamWrapper1 {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
   margin-top: 100px;
-  width: 940px;
+  gap: 10px;
+  width: 1000px;
+}
+
+.teamWrapper2 {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 1000px;
+}
+.joinTeamContainer {
+  margin-bottom: 35px;
+  width: 700px;
+  height: 300px;
+}
+.joinTeamCard {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  margin-left: 35px;
+  padding: 5px;
+  height: 300px;
+  width: 600px;
+}
+
+.joinTeamBody {
+  margin-top: 20px;
+  width: 800px;
+}
+
+.joinTeamLogo {
+  margin: 50px 20px;
+  height: 380px;
+  width: 440px;
+}
+
+.joinTeamButton {
+  height: 50px;
+  width: 200px;
 }
 
 .footer {
-  margin-top: 200px;
+  margin-top: 150px;
   padding-bottom: 200px;
   display: flex;
   justify-content: center;
@@ -814,25 +864,37 @@
     font-size: 64px;
     opacity: 0.1;
   }
-  .teamCard {
-    width: 300px;
-    height: 392px;
-    overflow: hidden;
-  }
+
   .bufferCard {
     height: 95px;
   }
-  .teamWrapper {
+  .teamWrapper1 {
+    display: flex;
+    flex-direction: column;
+    margin-top: 70px;
     width: auto;
-    /* flex-direction: column; */
+  }
+  .teamWrapper2 {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+  }
+  .teamCard {
+    width: 400px;
+    height: 490px;
+    overflow: hidden;
   }
 
   .teamLabel {
-    right: 0;
-    height: 80px;
+    background: #19072f;
+    height: 40px;
+    width: 300px;
   }
+
   .teamName {
-    font-size: 18px;
+    text-align: center;
+    font-size: 30px;
+    line-height: 1.5em;
   }
   .teamDesig {
     font-size: 12px;
@@ -853,14 +915,77 @@
   .decentralizedDesc {
     width: 320px;
   }
+
+  .joinTeamContainer {
+    display: flex;
+    margin-top: 30px;
+    width: 370px;
+    height: 350px;
+  }
+  .joinTeamCard {
+    padding: 5px;
+    height: 400px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .joinTeamLogo {
+    position: absolute;
+    margin-top: 10px;
+    height: 200px;
+    width: 150px;
+  }
+  .joinTeamBody {
+    margin-top: 150px;
+    width: 30px;
+    justify-content: center;
+    align-items: center;
+  }
+  .joinTeamTitle {
+    font-size: 21px;
+    font-weight: bold;
+  }
+  .joinTeamContent {
+    font-size: 17px;
+    text-align: center;
+  }
+  .joinTeamButton {
+    font-size: 16px;
+    height: 40px;
+    width: 150px;
+  }
 }
 
 @media (max-width: 640px) {
+  .teamWrapper1 {
+    display: flex;
+    flex-direction: column;
+    margin-top: 100px;
+    width: auto;
+  }
+  .teamWrapper2 {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+  }
   .teamCard {
-    width: 180px;
-    height: 260px;
+    width: 300px;
+    height: 400px;
     overflow: hidden;
   }
+
+  .teamLabel {
+    background: #19072f;
+    height: 40px;
+    width: 300px;
+  }
+
+  .teamName {
+    text-align: center;
+    font-size: 20px;
+    line-height: 1.5em;
+  }
+
   .bufferCard {
     height: 60px;
   }
@@ -896,6 +1021,45 @@
 
   .footerLinks a {
     margin-bottom: 24px;
+  }
+  .joinTeamContainer {
+    display: flex;
+    align-items: flex-end;
+    margin-top: 30px;
+    width: 300px;
+    height: 300px;
+  }
+  .joinTeamCard {
+    padding: 5px;
+    height: 400px;
+    width: 400px;
+    overflow: hidden;
+  }
+
+  .joinTeamLogo {
+    position: absolute;
+    margin-top: 10px;
+    height: 200px;
+    width: 150px;
+  }
+  .joinTeamBody {
+    margin-top: 130px;
+    width: 30px;
+    justify-content: center;
+    align-items: center;
+  }
+  .joinTeamTitle {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .joinTeamContent {
+    font-size: 15px;
+    text-align: center;
+  }
+  .joinTeamButton {
+    font-size: 12px;
+    height: 30px;
+    width: 120px;
   }
 }
 
