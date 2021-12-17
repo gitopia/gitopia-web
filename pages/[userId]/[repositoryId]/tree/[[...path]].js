@@ -55,7 +55,8 @@ function RepositoryTreeView(props) {
       let found = false;
       repository.branches.every((b) => {
         let branch = b.name;
-        if (joinedPath.includes(branch)) {
+        let branchTest = new RegExp("^" + branch);
+        if (branchTest.test(joinedPath)) {
           let path = joinedPath.replace(branch, "").split("/");
           path = path.filter((p) => p !== "");
           setBranchName(branch);
@@ -70,7 +71,8 @@ function RepositoryTreeView(props) {
       if (!found) {
         repository.tags.every((b) => {
           let branch = b.name;
-          if (joinedPath.includes(branch)) {
+          let branchTest = new RegExp("^" + branch);
+          if (branchTest.test(joinedPath)) {
             let path = joinedPath.replace(branch, "").split("/");
             path = path.filter((p) => p !== "");
             setBranchName(branch);
