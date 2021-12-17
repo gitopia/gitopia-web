@@ -12,6 +12,7 @@ import getRepository from "../../helpers/getRepository";
 import getOrganization from "../../helpers/getOrganization";
 import dayjs from "dayjs";
 import PublicTabs from "../../components/dashboard/publicTabs";
+import UserHeader from "../../components/user/header";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -87,28 +88,26 @@ function AccountView(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex flex-1">
+      <div className="flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
-          <div className="flex">
-            <div className="avatar flex-none mr-8">
-              <div
-                className={
-                  "w-20 h-20 " + (user.id ? "rounded-full" : "rounded")
-                }
-              >
-                <img src={avatarLink} />
+          {org.address ? (
+            <div className="flex flex-1 mb-8">
+              <div className="avatar flex-none mr-8 items-center">
+                <div className={"w-14 h-14 rounded-full"}>
+                  <img src={avatarLink} />
+                </div>
+              </div>
+              <div className="flex-1">
+                <div className="text-md">{org.name}</div>
+                <div className="text-sm text-type-secondary mt-2">
+                  {org.description}
+                </div>
               </div>
             </div>
-            <div className="flex-1">
-              <div className="text-2xl">
-                {user.id ? user.creator : org.name}
-              </div>
-              <div className="text-sm text-type-secondary mt-2">
-                {user.id ? user.email : org.description}
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-1 mt-8">
+          ) : (
+            <UserHeader user={user} />
+          )}
+          <div className="flex flex-1 mt-8 border-b border-grey">
             <PublicTabs
               active="repositories"
               hrefBase={hrefBase}
@@ -116,17 +115,17 @@ function AccountView(props) {
             />
           </div>
           <div className="mt-8">
-            <ul className="divide-y divide-grey">
+            <ul className="">
               {allRepos.map((r) => {
                 return (
                   <li className="p-4" key={r.id}>
                     <div>
                       <div>
                         <Link href={hrefBase + "/" + r.name}>
-                          <a className="text-2xl btn-link">{r.name}</a>
+                          <a className="text-base btn-link">{r.name}</a>
                         </Link>
                       </div>
-                      <div className="mt-2">{r.description}</div>
+                      <div className="mt-2 text-sm">{r.description}</div>
                       <div className="mt-2 text-xs text-type-secondary">
                         {"Last updated " + dayjs(r.updatedAt * 1000).fromNow()}
                       </div>

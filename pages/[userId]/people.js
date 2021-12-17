@@ -60,22 +60,22 @@ function OrganizationPeopleView(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex flex-1">
+      <div className="flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
-          <div className="flex">
-            <div className="avatar flex-none mr-8">
-              <div className={"w-20 h-20 rounded"}>
+          <div className="flex flex-1 mb-8">
+            <div className="avatar flex-none mr-8 items-center">
+              <div className={"w-14 h-14 rounded-full"}>
                 <img src={avatarLink} />
               </div>
             </div>
             <div className="flex-1">
-              <div className="text-2xl">{org.name}</div>
+              <div className="text-md">{org.name}</div>
               <div className="text-sm text-type-secondary mt-2">
                 {org.description}
               </div>
             </div>
           </div>
-          <div className="flex flex-1 mt-8">
+          <div className="flex flex-1 mt-8 border-b border-grey">
             <PublicTabs active="people" hrefBase={hrefBase} showPeople={true} />
           </div>
           <div className="mt-8 max-w-3xl">
@@ -96,10 +96,10 @@ function OrganizationPeopleView(props) {
                       </div>
                       <div className="mr-8">
                         <Link href={"/" + m.creator}>
-                          <a className="text-md btn-link">{m.creator}</a>
+                          <a className="text-sm btn-link">{m.creator}</a>
                         </Link>
                       </div>
-                      <div className="flex-1 text-right">
+                      <div className="flex-1 text-right text-sm">
                         {org.members[i].role}
                       </div>
                     </div>

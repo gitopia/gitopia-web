@@ -6,41 +6,43 @@ export default function PublicTabs({
   ...props
 }) {
   return (
-    <div className="tabs">
+    <div className="tabs relative">
       <Link href={hrefBase}>
         <a
           className={
-            "tab tab-lg tab-bordered" +
+            "tab tab-md tab-bordered" +
             (active === "repositories" ? " tab-active" : "")
           }
         >
-          <span className="icon mr-2">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              stroke="currentColor"
-            >
-              <path d="M9.5 7L4.5 12L9.5 17" strokeWidth="2" />
-              <path d="M14.5 7L19.5 12L14.5 17" strokeWidth="2" />
-            </svg>
-          </span>
-          <span>Repositories</span>
+          <span>Owned Repositories</span>
         </a>
       </Link>
+      {!showPeople ? (
+        <Link href={hrefBase + "/transactions"}>
+          <a
+            className={
+              "tab tab-md tab-bordered" +
+              (active === "transactions" ? " tab-active" : "")
+            }
+          >
+            <span>Transactions</span>
+          </a>
+        </Link>
+      ) : (
+        ""
+      )}
       {showPeople ? (
         <Link href={hrefBase + "/people"}>
           <a
             className={
-              "tab tab-lg tab-bordered" +
+              "tab  tab-md tab-bordered" +
               (active === "people" ? " tab-active" : "")
             }
           >
             <span className="icon mr-2">
               <svg
-                width="24"
-                height="24"
+                width="20"
+                height="20"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
