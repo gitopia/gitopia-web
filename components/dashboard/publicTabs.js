@@ -50,14 +50,14 @@ export default function PublicTabs({
                 <path
                   d="M19 20V18C19 16.3431 17.6569 15 16 15H8C6.34315 15 5 16.3431 5 18V20"
                   stroke="currentColor"
-                  stroke-width="2"
+                  strokeWidth="2"
                 />
                 <circle
                   cx="12"
                   cy="8"
                   r="3"
                   stroke="currentColor"
-                  stroke-width="2"
+                  strokeWidth="2"
                 />
               </svg>
             </span>
