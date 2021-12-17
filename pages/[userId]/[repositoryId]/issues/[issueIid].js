@@ -141,14 +141,11 @@ function RepositoryIssueView(props) {
                 />
                 {allComments.map((c, i) => {
                   if (c.system) {
-                    return (
-                      <SystemCommentView comment={c} key={"comment" + i} />
-                    );
+                    return <SystemCommentView comment={c} />;
                   } else {
                     return (
                       <CommentView
                         comment={c}
-                        keyProp={"comment" + i}
                         userAddress={props.selectedAddress}
                         onUpdate={async (id) => {
                           const newComment = await getComment(id);
