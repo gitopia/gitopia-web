@@ -12,11 +12,8 @@ import MarkdownEditor from "../../../../components/markdownEditor";
 
 import { createIssue } from "../../../../store/actions/repository";
 import AssigneeSelector from "../../../../components/repository/assigneeSelector";
-import shrinkAddress from "../../../../helpers/shrinkAddress";
 import LabelSelector from "../../../../components/repository/labelSelector";
-import getIssueAllLabels from "../../../../helpers/getIssueAllLabels";
 import Label from "../../../../components/repository/label";
-import Link from "next/link";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
 
@@ -26,7 +23,7 @@ export async function getServerSideProps() {
 
 function RepositoryIssueCreateView(props) {
   const router = useRouter();
-  const repository = useRepository();
+  const { repository } = useRepository();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -86,6 +83,7 @@ function RepositoryIssueCreateView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="issues"
             hrefBase={repository.owner.id + "/" + repository.name}
           />

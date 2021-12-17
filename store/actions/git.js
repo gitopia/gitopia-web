@@ -250,3 +250,21 @@ export const getCommits = async (
     return [];
   }
 };
+
+export const getCommit = async (repoId, commitSha, repoName, userId) => {
+  const projectRoot = getLocalProjectRoot(repoName, userId);
+  await mkdir(projectRoot);
+  await ensureGitObject(repoId, commitSha, projectRoot);
+  let parsed;
+  try {
+    parsed = await git.readCommit({
+      fs,
+      dir: projectRoot,
+      oid: commitSha,
+    });
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+  return parsed;
+};

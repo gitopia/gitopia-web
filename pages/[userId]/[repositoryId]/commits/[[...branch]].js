@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 
@@ -13,9 +12,8 @@ import { getCommits } from "../../../../store/actions/git";
 import BranchSelector from "../../../../components/repository/branchSelector";
 import Footer from "../../../../components/footer";
 import getBranchSha from "../../../../helpers/getBranchSha";
-import dayjs from "dayjs";
-import Link from "next/link";
 import useRepository from "../../../../hooks/useRepository";
+import CommitDetailRow from "../../../../components/repository/commitDetailRow";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -23,7 +21,7 @@ export async function getServerSideProps() {
 
 function RepositoryCommitTreeView(props) {
   const router = useRouter();
-  const repository = useRepository();
+  const { repository } = useRepository();
 
   const [commits, setCommits] = useState([]);
   const [hasMore, setHasMore] = useState(false);
@@ -37,7 +35,7 @@ function RepositoryCommitTreeView(props) {
     if (repository) {
       const joinedPath = router.query.branch.join("/");
       repository.branches.every((b) => {
-        let branch = b.name.replace("refs/heads/", "");
+        let branch = b.name;
         if (joinedPath.includes(branch)) {
           let path = joinedPath.replace(branch, "").split("/");
           path = path.filter((p) => p !== "");
@@ -49,14 +47,16 @@ function RepositoryCommitTreeView(props) {
         return true;
       });
     }
-  }, [router.query, repository.id]);
+  }, [router.query.branch, repository.id]);
 
   const loadCommits = async (earlierCommits) => {
     if (branchName === "") return;
     setLoadingMore(true);
+    let useHasMore = !!hasMore;
+    if (earlierCommits.length === 0) useHasMore = false;
     const res = await getCommits(
       repository.id,
-      hasMore
+      useHasMore
         ? hasMore
         : getBranchSha(branchName, repository.branches, repository.tags),
       repository.name,
@@ -79,6 +79,7 @@ function RepositoryCommitTreeView(props) {
         "branchName updated, earlier commits will be cleared",
         branchName
       );
+      setHasMore(false);
       await loadCommits([]);
     }
   }, [branchName]);
@@ -97,6 +98,7 @@ function RepositoryCommitTreeView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="code"
             hrefBase={repository.owner.id + "/" + repository.name}
           />
@@ -121,49 +123,20 @@ function RepositoryCommitTreeView(props) {
                 return (
                   <div
                     key={"commit" + i}
-                    className="flex border border-grey rounded overflow-hidden mt-4 px-4 py-2"
+                    className="border border-grey rounded overflow-hidden mt-4"
                   >
-                    <div className="flex-1 flex">
-                      <div className="avatar">
-                        <div className="rounded-full w-6 h-6 mr-2">
-                          <img
-                            src={
-                              "https://avatar.oxro.io/avatar.svg?length=1&height=40&width=40&fontSize=18&caps=1&name=" +
-                              c.commit.author.name.slice(0, 1)
-                            }
-                          />
-                        </div>
-                      </div>
-                      <span className="pr-4 border-r border-grey">
-                        {c.commit.author.name}
-                      </span>
-                      <span className="px-4">
-                        {c.commit.message.length > maxMessageLength
-                          ? c.commit.message.slice(0, maxMessageLength) + ".."
-                          : c.commit.message}
-                      </span>
-                    </div>
-                    <div className="flex-none">
-                      <span className="mr-4">
-                        {dayjs(c.commit.author.timestamp * 1000).format(
-                          "DD MMM YY"
-                        )}
-                      </span>
-                      <Link
-                        href={
-                          "/" +
-                          repository.owner.id +
-                          "/" +
-                          repository.name +
-                          "/commit/" +
-                          c.oid
-                        }
-                      >
-                        <a className="mr-4 btn btn-xs btn-outline btn-primary w-24">
-                          {c.oid.slice(0, 6)}
-                        </a>
-                      </Link>
-                    </div>
+                    <CommitDetailRow
+                      commitDetail={c}
+                      commitLink={
+                        "/" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name +
+                        "/commit/" +
+                        c.oid
+                      }
+                      maxMessageLength={90}
+                    />
                   </div>
                 );
               })}

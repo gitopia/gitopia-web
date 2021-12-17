@@ -9,6 +9,7 @@ import {
 import { reInitClients } from "./wallet";
 import { userActions } from "./actionTypes";
 import { async } from "regenerator-runtime";
+import forkRepositoryFiles from "../../helpers/forkRepositoryFiles";
 
 export const validatePostingEligibility = async (
   dispatch,
@@ -630,6 +631,20 @@ export const forkRepository = ({
       const result = await sendTransaction({ message }, env);
       console.log(result);
       if (result && result.code === 0) {
+        const newRepoQuery = await env.queryClient.queryAddressRepository(
+          ownerId,
+          repositoryName
+        );
+        if (newRepoQuery.ok) {
+          const forkFilesQuery = await forkRepositoryFiles(
+            repositoryId,
+            newRepoQuery.data.Repository.id
+          );
+          console.log("fork files", forkFilesQuery);
+          if (!forkFilesQuery.data.forked) {
+            dispatch(notify(forkFilesQuery.error, "error"));
+          }
+        }
         getUserDetailsForSelectedAddress()(dispatch, getState);
         let url = "/" + ownerId + "/" + repositoryName;
         console.log(url);
@@ -752,6 +767,189 @@ export const createTag = ({ repositoryId = null, name = null, sha = null }) => {
       } else {
         dispatch(notify(result.rawLog, "error"));
         console.log(result);
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const updatePullRequestAssignees = ({
+  pullId = null,
+  addedAssignees = [],
+  removedAssignees = [],
+}) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (
+      !(await validatePostingEligibility(dispatch, getState, "pull request", 2))
+    )
+      return null;
+    const pullAddAssignees = {
+      creator: wallet.selectedAddress,
+      id: pullId,
+      assignees: addedAssignees,
+    };
+    const pullRemoveAssignees = {
+      creator: wallet.selectedAddress,
+      id: pullId,
+      assignees: removedAssignees,
+    };
+
+    try {
+      let message1, message2, result1, result2;
+      if (addedAssignees.length) {
+        message1 = await env.txClient.msgAddPullRequestAssignees(
+          pullAddAssignees
+        );
+        result1 = await sendTransaction({ message: message1 }, env);
+        if (result1 && result1.code !== 0) {
+          dispatch(notify(result1.rawLog, "error"));
+          return null;
+        }
+      }
+      if (removedAssignees.length) {
+        message2 = await env.txClient.msgRemovePullRequestAssignees(
+          pullRemoveAssignees
+        );
+        result2 = await sendTransaction({ message: message2 }, env);
+        if (result2 && result2.code !== 0) {
+          dispatch(notify(result2.rawLog, "error"));
+          return null;
+        }
+      }
+
+      return { result1, result2 };
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const updatePullRequestReviewers = ({
+  pullId = null,
+  addedReviewers = [],
+  removedReviewers = [],
+}) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (
+      !(await validatePostingEligibility(dispatch, getState, "pull request", 2))
+    )
+      return null;
+    const pullAddReviewers = {
+      creator: wallet.selectedAddress,
+      id: pullId,
+      reviewers: addedReviewers,
+    };
+    const pullRemoveReviewers = {
+      creator: wallet.selectedAddress,
+      id: pullId,
+      reviewers: removedReviewers,
+    };
+
+    try {
+      let message1, message2, result1, result2;
+      if (addedReviewers.length) {
+        message1 = await env.txClient.msgAddPullRequestReviewers(
+          pullAddReviewers
+        );
+        result1 = await sendTransaction({ message: message1 }, env);
+        if (result1 && result1.code !== 0) {
+          dispatch(notify(result1.rawLog, "error"));
+          return null;
+        }
+      }
+      if (removedReviewers.length) {
+        message2 = await env.txClient.msgRemovePullRequestReviewers(
+          pullRemoveReviewers
+        );
+        result2 = await sendTransaction({ message: message2 }, env);
+        if (result2 && result2.code !== 0) {
+          dispatch(notify(result2.rawLog, "error"));
+          return null;
+        }
+      }
+
+      return { result1, result2 };
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const updatePullRequestLabels = ({
+  pullId = null,
+  addedLabels = [],
+  removedLabels = [],
+}) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
+      return null;
+    const issueAddLabels = {
+      creator: wallet.selectedAddress,
+      pullRequestId: pullId,
+      labelIds: addedLabels,
+    };
+    const issueRemoveLabels = {
+      creator: wallet.selectedAddress,
+      pullRequestId: pullId,
+      labelIds: removedLabels,
+    };
+
+    try {
+      let message1, message2, result1, result2;
+      if (addedLabels.length) {
+        message1 = await env.txClient.msgAddPullRequestLabels(issueAddLabels);
+        result1 = await sendTransaction({ message: message1 }, env);
+        if (result1 && result1.code !== 0) {
+          dispatch(notify(result1.rawLog, "error"));
+          return null;
+        }
+      }
+      if (removedLabels.length) {
+        message2 = await env.txClient.msgRemovePullRequestLabels(
+          issueRemoveLabels
+        );
+        result2 = await sendTransaction({ message: message2 }, env);
+        if (result2 && result2.code !== 0) {
+          dispatch(notify(result2.rawLog, "error"));
+          return null;
+        }
+      }
+
+      return { result1, result2 };
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const updatePullRequestState = ({ id, state, mergeCommitSha }) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+      return null;
+    const pullState = {
+      creator: wallet.selectedAddress,
+      id,
+      state,
+      mergeCommitSha,
+    };
+    console.log(pullState);
+    try {
+      const message = await env.txClient.msgSetPullRequestState(pullState);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
         return null;
       }
     } catch (e) {

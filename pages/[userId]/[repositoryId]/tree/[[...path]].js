@@ -27,7 +27,7 @@ export async function getServerSideProps() {
 
 function RepositoryTreeView(props) {
   const router = useRouter();
-  const repository = useRepository();
+  const { repository } = useRepository();
 
   const [entityList, setEntityList] = useState([]);
   const [file, setFile] = useState(null);
@@ -48,7 +48,11 @@ function RepositoryTreeView(props) {
     console.log("query", router.query);
     if (repository) {
       console.log(repository);
+      if (!router.query.path) {
+        // TODO: show 404 page
+      }
       const joinedPath = router.query.path.join("/");
+      let found = false;
       repository.branches.every((b) => {
         let branch = b.name;
         if (joinedPath.includes(branch)) {
@@ -57,25 +61,33 @@ function RepositoryTreeView(props) {
           setBranchName(branch);
           setIsTag(false);
           setRepoPath(path);
+          console.log("branchName", branch, "repoPath", path, "isTag", false);
+          found = true;
           return false;
         }
         return true;
       });
-      repository.tags.every((b) => {
-        let branch = b.name;
-        if (joinedPath.includes(branch)) {
-          let path = joinedPath.replace(branch, "").split("/");
-          path = path.filter((p) => p !== "");
-          setBranchName(branch);
-          setIsTag(true);
-          setRepoPath(path);
-          return false;
-        }
-        return true;
-      });
-      console.log("branchName", branchName, "repoPath", repoPath);
+      if (!found) {
+        repository.tags.every((b) => {
+          let branch = b.name;
+          if (joinedPath.includes(branch)) {
+            let path = joinedPath.replace(branch, "").split("/");
+            path = path.filter((p) => p !== "");
+            setBranchName(branch);
+            setIsTag(true);
+            setRepoPath(path);
+            console.log("branchName", branch, "repoPath", path, "isTag", true);
+            found = true;
+            return false;
+          }
+          return true;
+        });
+      }
+      if (!found) {
+        // TODO: show 404 page
+      }
     }
-  }, [router.query.path, repository.id]);
+  }, [router.query.path, repository]);
 
   useEffect(async () => {
     if (typeof window !== "undefined") {
@@ -131,6 +143,7 @@ function RepositoryTreeView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="code"
             hrefBase={repository.owner.id + "/" + repository.name}
           />
@@ -160,14 +173,15 @@ function RepositoryTreeView(props) {
               <div className="flex-1 border border-gray-700 rounded overflow-hidden">
                 <CommitDetailRow
                   commitDetail={commitDetail}
-                  commitInBranchLink={
+                  commitLink={
                     "/" +
                     repository.owner.id +
                     "/" +
                     repository.name +
-                    "/commits/" +
-                    branchName
+                    "/commit/" +
+                    commitDetail.oid
                   }
+                  maxMessageLength={90}
                 />
                 <FileBrowser
                   entityList={entityList}

@@ -11,7 +11,7 @@ function TopRepositories({ repositories = [] }) {
         maxLen = Math.min(repositories.length, 5);
       for (let i = 0; i < maxLen; i++) {
         newRepos.push({
-          ...repositories[i],
+          ...repositories[repositories.length - i - 1],
         });
       }
       setRepos(newRepos);
@@ -34,7 +34,7 @@ function TopRepositories({ repositories = [] }) {
       <ul className="menu compact mx-3">
         {repos.map((r) => {
           return (
-            <li className="mb-2" key={r.id}>
+            <li className="" key={r.id}>
               <Link href={"/" + r.owner + "/" + r.name}>
                 <a className="rounded">{r.name}</a>
               </Link>

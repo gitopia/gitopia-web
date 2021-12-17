@@ -158,6 +158,7 @@ function RepositoryReleaseNewView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="code"
             hrefBase={repository.owner.id + "/" + repository.name}
           />
@@ -292,7 +293,10 @@ function RepositoryReleaseNewView(props) {
                 <div className="my-4 divide-y divide-grey">
                   {attachments.map((a, i) => {
                     return (
-                      <div className={"flex py-2 items-center"}>
+                      <div
+                        className={"flex py-2 items-center"}
+                        key={"attachment-" + i}
+                      >
                         <div className="flex-1 text-sm">{a.file.name}</div>
                         <div className="text-xs mr-2">
                           {formatBytes(a.file.size)}
@@ -351,7 +355,9 @@ function RepositoryReleaseNewView(props) {
                 </div>
                 <div>
                   <Uploady
-                    destination={{ url: "http://localhost:5000/upload" }}
+                    destination={{
+                      url: process.env.NEXT_PUBLIC_OBJECTS_URL + "/upload",
+                    }}
                   >
                     <UploadDropZone
                       className="flex items-center justify-center p-8 border border-grey border-dashed text-type-secondary"

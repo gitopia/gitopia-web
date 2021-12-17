@@ -15,7 +15,9 @@ function MarkdownEditor(props) {
         onTabChange={setSelectedTab}
         generateMarkdownPreview={(markdown) => {
           return Promise.resolve(
-            <ReactMarkdown linkTarget="_blank">{markdown}</ReactMarkdown>
+            <div className="markdown-body px-2 py-4">
+              <ReactMarkdown linkTarget="_blank">{markdown}</ReactMarkdown>
+            </div>
           );
         }}
         childProps={{

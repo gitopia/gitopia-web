@@ -28,12 +28,10 @@ export default function BranchSelector({
   }, [searchText, tab]);
 
   useEffect(() => {
-    console.log("tab changed");
     if (searchInput) searchInput.current.focus();
   }, [tab]);
 
   useEffect(() => {
-    console.log("tags changed");
     if (tab === "tags") {
       setFilteredList(tags);
       setSearchText("");
@@ -41,7 +39,6 @@ export default function BranchSelector({
   }, [tags]);
 
   useEffect(() => {
-    console.log("branches changed");
     if (tab === "branches") {
       setFilteredList(branches);
       setSearchText("");

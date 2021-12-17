@@ -4,18 +4,14 @@ import Header from "../../../../components/header";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
-import Link from "next/link";
-import dayjs from "dayjs";
 
 import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
-import getRepositoryIssueAll from "../../../../helpers/getRepositoryIssueAll";
-import shrinkAddress from "../../../../helpers/shrinkAddress";
 import Footer from "../../../../components/footer";
 import LabelEditor from "../../../../components/repository/labelEditor";
-import Label from "../../../../components/repository/label";
 import LabelView from "../../../../components/repository/labelView";
+import useRepository from "../../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -23,40 +19,9 @@ export async function getServerSideProps() {
 
 function RepositoryIssueLabelsView(props) {
   const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    issues: [],
-    labels: [],
-    forks: [],
-    stargazers: [],
-    branches: [],
-    tags: [],
-  });
+  const { repository, refreshRepository } = useRepository();
 
   const [isAddingLabel, setIsAddingLabel] = useState(false);
-
-  const refreshLabels = async () => {
-    const r = await getUserRepository(repository.owner.id, repository.name);
-    console.log(r);
-    if (r) setRepository(r);
-  };
-
-  useEffect(refreshLabels, [router.query]);
-
-  // const getAllLabels = async () => {
-  //   if (repository) {
-  //     const issues = await getRepositoryIssueAll(
-  //       repository.owner.id,
-  //       repository.name
-  //     );
-  //     console.log(issues);
-  //     setAllIssues(issues);
-  //   }
-  // };
-
-  // useEffect(getAllLabels, [repository]);
 
   return (
     <div
@@ -72,6 +37,7 @@ function RepositoryIssueLabelsView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="issues"
             hrefBase={repository.owner.id + "/" + repository.name}
           />
@@ -104,7 +70,7 @@ function RepositoryIssueLabelsView(props) {
                 repoId={repository.id}
                 onSuccess={async (label) => {
                   console.log(label);
-                  await refreshLabels();
+                  refreshRepository();
                   setIsAddingLabel(false);
                 }}
                 onCancel={() => {
@@ -121,7 +87,7 @@ function RepositoryIssueLabelsView(props) {
                 <LabelView
                   label={l}
                   repoId={repository.id}
-                  refreshLabels={refreshLabels}
+                  refreshLabels={refreshRepository}
                 />
               );
             })}

@@ -5,59 +5,25 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import dayjs from "dayjs";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
-import { isCurrentUserEligibleToUpdate } from "../../../../store/actions/repository";
-import getRepositoryReleaseAll from "../../../../helpers/getRepositoryReleaseAll";
 import getRepositoryReleaseLatest from "../../../../helpers/getRepositoryReleaseLatest";
 import ReleaseView from "../../../../components/repository/releaseView";
+import useRepository from "../../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
 }
 
 function RepositoryReleasesView(props) {
-  const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    forks: [],
-    stargazers: [],
-    releases: [],
-    branches: [],
-    tags: [],
-  });
+  const { repository } = useRepository();
 
-  const [latestRelease, setLatestRelease] = useState({
-    creator: "",
-    attachments: [],
-  });
+  const [latestRelease, setLatestRelease] = useState(null);
   const [olderReleases, setOlderReleases] = useState([]);
-  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
-    false
-  );
 
-  useEffect(async () => {
-    const r = await getUserRepository(repository.owner.id, repository.name);
-    if (r) {
-      setRepository(r);
-      if (r.releases.length > 1) {
-        const older = r.releases.slice(0, r.releases.length - 1).reverse();
-        setOlderReleases(older);
-        console.log(older, r.releases);
-      } else {
-        setOlderReleases([]);
-      }
-      console.log(r);
-    }
-  }, [router.query.repositoryId, router.query.userId]);
-
-  const getLatestRelease = async () => {
+  const getReleases = async () => {
     if (repository) {
       const release = await getRepositoryReleaseLatest(
         repository.owner.id,
@@ -65,16 +31,19 @@ function RepositoryReleasesView(props) {
       );
       console.log(release);
       if (release) setLatestRelease(release);
+      if (repository.releases.length > 1) {
+        const older = repository.releases
+          .slice(0, repository.releases.length - 1)
+          .reverse();
+        setOlderReleases(older);
+        console.log(older, repository.releases);
+      } else {
+        setOlderReleases([]);
+      }
     }
   };
 
-  useEffect(getLatestRelease, [repository]);
-
-  useEffect(async () => {
-    setCurrentUserEditPermission(
-      await props.isCurrentUserEligibleToUpdate(repository.owner.id)
-    );
-  }, [repository, props.user]);
+  useEffect(getReleases, [repository]);
 
   return (
     <div
@@ -90,9 +59,9 @@ function RepositoryReleasesView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs
+            repoOwner={repository.owner.id}
             active="code"
             hrefBase={repository.owner.id + "/" + repository.name}
-            showSettings={currentUserEditPermission}
           />
           <div className="flex mt-8">
             <div className="form-control flex-1 mr-8">
@@ -137,11 +106,15 @@ function RepositoryReleasesView(props) {
             </div>
           </div>
           <div className="mt-8">
-            <ReleaseView
-              repository={repository}
-              release={latestRelease}
-              latest={true}
-            />
+            {latestRelease ? (
+              <ReleaseView
+                repository={repository}
+                release={latestRelease}
+                latest={true}
+              />
+            ) : (
+              ""
+            )}
             {olderReleases.length ? (
               <div className="p-4 mt-8 text-xl text-type-secondary">
                 Older Releases
@@ -184,6 +157,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { isCurrentUserEligibleToUpdate })(
-  RepositoryReleasesView
-);
+export default connect(mapStateToProps, {})(RepositoryReleasesView);

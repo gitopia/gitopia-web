@@ -2,20 +2,31 @@ import dayjs from "dayjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import shrinkAddress from "../../helpers/shrinkAddress";
 
 export default function CommitDetailRow({
   commitDetail,
-  commitInBranchLink = "",
+  commitLink,
+  maxMessageLength = 50,
 }) {
-  let [authorName, setAuthorName] = useState("");
+  let [author, setAuthor] = useState({ name: "", initial: "", link: null });
   let [message, setMessage] = useState("");
   let [hasMore, setHasMore] = useState(false);
   let [fullMessageShown, setFullMessageShown] = useState(false);
-  const maxMessageLength = 60;
+  const validAddress = new RegExp("gitopia[a-z0-9]{39}");
 
   useEffect(() => {
     if (commitDetail && commitDetail.commit && commitDetail.commit.author) {
-      setAuthorName(commitDetail.commit.author.name || "");
+      let name = commitDetail.commit.author.name || "";
+      if (validAddress.test(name)) {
+        setAuthor({
+          name: shrinkAddress(name),
+          initial: name.slice(-1),
+          link: "/" + name,
+        });
+      } else {
+        setAuthor({ name, initial: name.slice(0, 1), link: null });
+      }
       let newMessage = commitDetail.commit.message || "";
       if (commitDetail.commit.message.length > maxMessageLength) {
         newMessage =
@@ -38,25 +49,35 @@ export default function CommitDetailRow({
               <img
                 src={
                   "https://avatar.oxro.io/avatar.svg?length=1&height=40&width=40&fontSize=18&caps=1&name=" +
-                  authorName.slice(0, 1)
+                  author.initial
                 }
               />
             </div>
           </div>
           <span className="pr-4 border-r border-grey text-sm">
-            {authorName}
+            {author.link ? (
+              <a
+                href={author.link}
+                className="link no-underline hover:underline"
+                target="_blank"
+              >
+                {author.name}
+              </a>
+            ) : (
+              author.name
+            )}
           </span>
           <span className="pl-4 text-sm">{message}</span>
           {hasMore ? (
             <button
-              className="ml-1 btn btn-xs btn-link"
+              className="ml-1 btn btn-xs btn-ghost"
               onClick={() => {
                 setFullMessageShown(!fullMessageShown);
               }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
+                className="h-4 w-4"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -67,19 +88,47 @@ export default function CommitDetailRow({
             ""
           )}
         </div>
-        <div className="mr-2 flex-none flex pt-0.5">
-          <Link href={commitInBranchLink}>
-            <a className="link link-primary text-sm no-underline hover:underline">
-              {commitDetail.oid.slice(0, 6)}
-            </a>
-          </Link>
-        </div>
-        <div className="flex-none text-type-secondary text-sm pt-0.5">
+        {commitLink ? (
+          <div className="mr-2 flex-none flex btn-group">
+            <Link href={commitLink}>
+              {
+                //link link-primary text-sm no-underline hover:underline
+              }
+              <a className="btn btn-xs btn-ghost">
+                {commitDetail.oid.slice(0, 6)}
+              </a>
+            </Link>
+            <button
+              className="btn btn-xs btn-ghost"
+              onClick={(e) => {
+                navigator.clipboard.writeText(commitDetail.oid);
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+            </button>
+          </div>
+        ) : (
+          ""
+        )}
+        <div className="flex-none text-type-secondary text-xs pt-0.5">
           {dayjs(
             (commitDetail.commit.author.timestamp +
               commitDetail.commit.author.timezoneOffset) *
               1000
-          ).format("DD MMM YY")}
+          ).fromNow()}
         </div>
       </div>
       {fullMessageShown ? (

@@ -1,7 +1,20 @@
 import shrinkAddress from "../../helpers/shrinkAddress";
 import Link from "next/link";
+import { useState } from "react";
+import { connect } from "react-redux";
+import { forkRepository } from "../../store/actions/repository";
+import { useRouter } from "next/router";
 
-export default function RepositoryHeader({ repository }) {
+function RepositoryHeader({ repository, ...props }) {
+  const [forkTargetShown, setForkTargetShown] = useState(false);
+  const [isForking, setIsForking] = useState(false);
+  const router = useRouter();
+  const avatarLink =
+    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === repository.owner.id
+      ? "/logo-g.svg"
+      : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+        repository.owner.id;
+
   return (
     <div className="flex flex-1 mb-8">
       <div className="avatar flex-none mr-8 items-center">
@@ -13,12 +26,7 @@ export default function RepositoryHeader({ repository }) {
               : "rounded-full")
           }
         >
-          <img
-            src={
-              "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-              repository.owner.id
-            }
-          />
+          <img src={avatarLink} />
         </div>
       </div>
       <div className="flex flex-1 text-primary text-md items-center">
@@ -29,7 +37,7 @@ export default function RepositoryHeader({ repository }) {
                 <a className="btn-link">{shrinkAddress(repository.owner.id)}</a>
               </Link>
             </div>
-            <div className="mr-2">/</div>
+            <div className="mr-2 text-type-quaternary">/</div>
             <Link href={"/" + repository.owner.id + "/" + repository.name}>
               <a className="btn-link">{repository.name}</a>
             </Link>
@@ -72,12 +80,12 @@ export default function RepositoryHeader({ repository }) {
                 <path
                   d="M7.04297 19.0293V9.36084L12.043 4.4333L17.043 9.36084V19.0293H7.04297Z"
                   stroke="currentColor"
-                  stroke-width="2"
+                  strokeWidth="2"
                 />
                 <path
                   d="M12.043 11.5293V9.5293"
                   stroke="currentColor"
-                  stroke-width="2"
+                  strokeWidth="2"
                 />
               </svg>
               {repository.tags.length} Tags
@@ -85,8 +93,8 @@ export default function RepositoryHeader({ repository }) {
           </div>
         </div>
       </div>
-
-      {/* <div className="flex text-sm divide-x divide-grey">
+      <div className="flex text-sm divide-x divide-grey">
+        {/*
         <div className="flex items-center text-xs uppercase text-type-secondary font-bold pr-8">
           <svg
             viewBox="0 0 24 24"
@@ -121,7 +129,45 @@ export default function RepositoryHeader({ repository }) {
 
           <span>Score - 0</span>
         </div>
-        <div className="flex items-center text-xs uppercase text-type-secondary font-bold pl-8">
+        */}
+        <div className="btn-group">
+          <button
+            className="btn btn-xs btn-outline border-grey"
+            onClick={() => {
+              setForkTargetShown(true);
+            }}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-3 w-3 mr-2"
+              stroke="currentColor"
+            >
+              <path
+                d="M11.9998 12.5L6.49982 12.5L6.49982 5.5M11.9998 12.5L17.4998 12.5L17.4998 5.5M11.9998 12.5L11.9998 17.5"
+                strokeWidth="2"
+                fill="none"
+              />
+              <path d="M14.4998 19.5C14.4998 20.8807 13.3805 22 11.9998 22C10.6191 22 9.49982 20.8807 9.49982 19.5C9.49982 18.1193 10.6191 17 11.9998 17C13.3805 17 14.4998 18.1193 14.4998 19.5Z" />
+              <circle cx="6.49982" cy="5.5" r="2.5" />
+              <circle cx="17.4998" cy="5.5" r="2.5" />
+            </svg>
+
+            <span>FORKS</span>
+          </button>
+          <button
+            className="btn btn-xs btn-outline border-grey"
+            onClick={() => {
+              router.push(
+                "/" + repository.owner.id + "/" + repository.name + "/insights"
+              );
+            }}
+          >
+            {repository.forks.length}
+          </button>
+        </div>
+        {/* <div className="flex items-center text-xs uppercase text-type-secondary font-bold pl-8">
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -140,8 +186,103 @@ export default function RepositoryHeader({ repository }) {
           </svg>
 
           <span>Forks - {repository.forks.length}</span>
+        </div> */}
+      </div>
+      <input
+        type="checkbox"
+        checked={forkTargetShown}
+        readOnly
+        className="modal-toggle"
+      />
+      <div className="modal">
+        <div className="modal-box max-w-xs">
+          <p>Select forked repository owner</p>
+          <ul className="menu compact mt-8">
+            {props.dashboards.map((d) => {
+              const isOwner = repository.owner.id === d.id;
+              return (
+                <li key={d.name}>
+                  <button
+                    className={
+                      "btn btn-sm btn-primary btn-outline my-2 justify-start " +
+                      (isForking === d.id ? "loading" : "")
+                    }
+                    disabled={isOwner || isForking}
+                    onClick={async () => {
+                      if (isOwner) return;
+                      setIsForking(d.id);
+                      const res = await props.forkRepository({
+                        repositoryId: repository.id,
+                        repositoryName: repository.name,
+                        ownerId: d.id,
+                      });
+                      if (res && res.url) {
+                        setForkTargetShown(false);
+                        router.push(res.url);
+                      }
+                      setIsForking(false);
+                    }}
+                  >
+                    {d.type === "User" ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-2"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-2"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                    {d.name} - {shrinkAddress(d.id)}
+                    {isOwner ? (
+                      <div className="ml-2 badge badge-secondary badge-sm">
+                        Owner
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="modal-action">
+            <label
+              className="btn btn-sm"
+              onClick={() => {
+                setForkTargetShown(false);
+              }}
+            >
+              Cancel
+            </label>
+          </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    dashboards: state.user.dashboards,
+  };
+};
+
+export default connect(mapStateToProps, { forkRepository })(RepositoryHeader);

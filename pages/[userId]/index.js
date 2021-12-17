@@ -46,12 +46,12 @@ function AccountView(props) {
     if (user.id) {
       const pr = user.repositories.map((r) => getRepository(r.id));
       const repos = await Promise.all(pr);
-      setAllRepos(repos);
+      setAllRepos(repos.reverse());
       console.log(repos);
     } else if (org.id) {
       const pr = org.repositories.map((r) => getRepository(r.id));
       const repos = await Promise.all(pr);
-      setAllRepos(repos);
+      setAllRepos(repos.reverse());
       console.log(repos);
     }
   };
@@ -128,8 +128,7 @@ function AccountView(props) {
                       </div>
                       <div className="mt-2">{r.description}</div>
                       <div className="mt-2 text-xs text-type-secondary">
-                        {"Last updated " +
-                          dayjs(r.updatedAt * 1000).format("DD-MM-YYYY")}
+                        {"Last updated " + dayjs(r.updatedAt * 1000).fromNow()}
                       </div>
                     </div>
                   </li>

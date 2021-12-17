@@ -1,6 +1,6 @@
 import { queryClient } from "gitopiajs";
 
-export default async function getRepositoryIssueAll(
+export default async function getRepositoryPullAll(
   id,
   repoName,
   option,
@@ -16,7 +16,7 @@ export default async function getRepositoryIssueAll(
       query[`pagination.${p}`] = pagination[p];
     }
     console.log(query);
-    const res = await qc.queryRepositoryIssueAll(id, repoName, query);
+    const res = await qc.queryRepositoryPullRequestAll(id, repoName, query);
     if (res.ok) {
       return res.data;
     }

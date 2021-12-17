@@ -1,6 +1,25 @@
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { isCurrentUserEligibleToUpdate } from "../../store/actions/repository";
 
-export default function RepositoryMainTabs({ hrefBase, active, showSettings }) {
+function RepositoryMainTabs({
+  repoOwner,
+  hrefBase,
+  active,
+  showSettings,
+  ...props
+}) {
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
+
+  useEffect(async () => {
+    setCurrentUserEditPermission(
+      await props.isCurrentUserEligibleToUpdate(repoOwner)
+    );
+  }, [repoOwner, props.user]);
+
   return (
     <div className="">
       <div className="tabs relative z-10">
@@ -51,7 +70,7 @@ export default function RepositoryMainTabs({ hrefBase, active, showSettings }) {
             <span>Issues</span>
           </a>
         </Link>
-        {/* <Link href={"/" + hrefBase + "/pulls"}>
+        <Link href={"/" + hrefBase + "/pulls"}>
           <a
             className={
               "tab tab-md tab-bordered" +
@@ -81,8 +100,37 @@ export default function RepositoryMainTabs({ hrefBase, active, showSettings }) {
 
             <span>Pull Requests</span>
           </a>
-        </Link> */}
-        {showSettings ? (
+        </Link>
+        <Link href={"/" + hrefBase + "/insights"}>
+          <a
+            className={
+              "tab tab-md tab-bordered" +
+              (active === "insights" ? " tab-active" : "")
+            }
+          >
+            <span className="icon mr-2">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5"
+              >
+                <path
+                  d="M5 7V20H10V7H5Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+                <path
+                  d="M14 4V20H19V4H14Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+              </svg>
+            </span>
+            <span>Insights</span>
+          </a>
+        </Link>
+        {currentUserEditPermission ? (
           <Link href={"/" + hrefBase + "/settings"}>
             <a
               className={
@@ -115,3 +163,13 @@ export default function RepositoryMainTabs({ hrefBase, active, showSettings }) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+  };
+};
+
+export default connect(mapStateToProps, {
+  isCurrentUserEligibleToUpdate,
+})(RepositoryMainTabs);

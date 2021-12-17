@@ -25,7 +25,7 @@ module.exports = withTM({
     return {
       "/": { page: "/" },
       "/home": { page: "/home" },
-      "/design": { page: "/design"},
+      "/design": { page: "/design" },
     };
   },
   images: {
@@ -45,6 +45,26 @@ module.exports = withTM({
       {
         source: "/api/diff",
         destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/diff",
+      },
+      {
+        source: "/api/pull/diff",
+        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/diff",
+      },
+      {
+        source: "/api/fork",
+        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/fork",
+      },
+      {
+        source: "/api/pull/merge",
+        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/merge",
+      },
+      {
+        source: "/api/pull/commits",
+        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/commits",
+      },
+      {
+        source: "/api/pull/check",
+        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/check",
       },
     ];
   },
