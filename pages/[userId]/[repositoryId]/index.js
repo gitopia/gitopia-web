@@ -157,7 +157,7 @@ function RepositoryView(props) {
                             width="8"
                             height="14"
                             stroke="currentColor"
-                            stroke-width="2"
+                            strokeWidth="2"
                           />
                           <rect
                             x="12"
@@ -165,7 +165,7 @@ function RepositoryView(props) {
                             width="8"
                             height="14"
                             stroke="currentColor"
-                            stroke-width="2"
+                            strokeWidth="2"
                           />
                         </svg>
 
@@ -241,19 +241,19 @@ function RepositoryView(props) {
                             <path
                               d="M12 7V17"
                               stroke="currentColor"
-                              stroke-width="2"
+                              strokeWidth="2"
                             />
                             <path
                               d="M17 12H7"
                               stroke="currentColor"
-                              stroke-width="2"
+                              strokeWidth="2"
                             />
                             <circle
                               cx="12"
                               cy="12"
                               r="11"
                               stroke="currentColor"
-                              stroke-width="2"
+                              strokeWidth="2"
                             />
                           </svg>
 
@@ -294,7 +294,10 @@ function RepositoryView(props) {
                   )}
                 </div>
               </div>
-              <div className="flex-1">
+              <div
+                className="flex-1"
+                style={{ maxWidth: "calc(1024px - 18rem)" }}
+              >
                 <SupportOwner ownerAddress={repository.owner.id} />
                 <div className="mt-8 flex justify-start">
                   <div className="">
@@ -361,12 +364,12 @@ function RepositoryView(props) {
                         <path
                           d="M7.04297 19.0293V9.36084L12.043 4.4333L17.043 9.36084V19.0293H7.04297Z"
                           stroke="currentColor"
-                          stroke-width="2"
+                          strokeWidth="2"
                         />
                         <path
                           d="M12.043 11.5293V9.5293"
                           stroke="currentColor"
-                          stroke-width="2"
+                          strokeWidth="2"
                         />
                       </svg>
                       {repository.tags.length} Tags
