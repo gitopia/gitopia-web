@@ -346,7 +346,7 @@ export default function Landing() {
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="https://testnet.gitopia.com/home"
+                  href="/home"
                   target="_blank"
                 >
                   Try Testnet
@@ -389,7 +389,7 @@ export default function Landing() {
           <div className="flex flex-col justify-center items-center">
             <div className={classnames("mb-8", styles.primaryCTA)}>
               <a
-                href="https://testnet.gitopia.com/home"
+                href="/home"
                 target="_blank"
                 className="h-14 px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               >
