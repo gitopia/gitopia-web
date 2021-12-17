@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import getUserRepository from "../helpers/getUserRepository";
 import { useRouter } from "next/router";
+import { useErrorStatus } from "../pages/errorHandler";
 
-export default function useRepository(setPageState) {
+export default function useRepository() {
+  const { setErrorStatusCode } = useErrorStatus();
   const router = useRouter();
   const [repository, setRepository] = useState({
     id: router.query.repositoryId,
@@ -29,9 +31,8 @@ export default function useRepository(setPageState) {
     ).then((r) => {
       if (r) {
         setRepository(r);
-        setPageState("VALID");
       } else {
-        setPageState("404");
+        setErrorStatusCode(404);
       }
     });
   }, [router.query, refreshIndex]);

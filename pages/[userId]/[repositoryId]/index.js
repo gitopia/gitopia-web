@@ -45,9 +45,8 @@ function RepositoryView(props) {
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
   );
-  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
-    false
-  );
+  const [currentUserEditPermission, setCurrentUserEditPermission] =
+    useState(false);
 
   const loadEntities = async (currentEntities = [], firstTime = false) => {
     setLoadingEntities(true);
@@ -107,7 +106,6 @@ function RepositoryView(props) {
   };
 
   useEffect(async () => {
-    console.log("repository", repository);
     if (typeof window !== "undefined" && repository.branches.length) {
       loadEntities([], true);
       let branchSha = getBranchSha(

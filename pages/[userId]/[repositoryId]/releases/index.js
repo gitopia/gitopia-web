@@ -19,7 +19,6 @@ export async function getServerSideProps() {
 
 function RepositoryReleasesView(props) {
   const { repository } = useRepository();
-
   const [latestRelease, setLatestRelease] = useState(null);
   const [olderReleases, setOlderReleases] = useState([]);
 
