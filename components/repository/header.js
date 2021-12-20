@@ -199,7 +199,11 @@ function RepositoryHeader({ repository, ...props }) {
       />
       <div className="modal">
         <div className="modal-box max-w-xs">
-          <p>Select forked repository owner</p>
+          {props.selectedAddress ? (
+            <p>Select forked repository owner</p>
+          ) : (
+            <p>Please login to fork repository</p>
+          )}
           <ul className="menu compact mt-8">
             {props.dashboards.map((d) => {
               const isOwner = repository.owner.id === d.id;
@@ -273,7 +277,7 @@ function RepositoryHeader({ repository, ...props }) {
                 setForkTargetShown(false);
               }}
             >
-              Cancel
+              {props.selectedAddress ? "Cancel" : "Ok"}
             </label>
           </div>
         </div>
@@ -315,6 +319,7 @@ function RepositoryHeader({ repository, ...props }) {
 const mapStateToProps = (state) => {
   return {
     dashboards: state.user.dashboards,
+    selectedAddress: state.wallet.selectedAddress,
   };
 };
 
