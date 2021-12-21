@@ -137,7 +137,8 @@ function Header(props) {
         {props.activeWallet ? (
           <div className="flex-none mr-4">
             <div className="badge badge-md badge-secondary mr-2">
-              {props.loreBalance / 1000000} tLORE
+              {props.loreBalance / 1000000}{" "}
+              {process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
             </div>
           </div>
         ) : (
@@ -273,7 +274,8 @@ function Header(props) {
                               e.preventDefault();
                             }}
                           >
-                            Send tLORE
+                            Send{" "}
+                            {process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                           </a>
                         </li>
                         <li>

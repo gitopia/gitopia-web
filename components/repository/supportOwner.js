@@ -266,7 +266,8 @@ function SupportOwner({ ownerAddress, ...props }) {
                 </svg>
                 <div className="pl-3">
                   <div className="text-xs h-3/4">
-                    {props.loreBalance / 1000000} TLORES
+                    {props.loreBalance / 1000000}{" "}
+                    {process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                   </div>
                 </div>
               </div>
