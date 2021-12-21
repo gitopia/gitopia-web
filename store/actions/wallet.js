@@ -328,7 +328,12 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
         const send = {
           fromAddress: fromAddress,
           toAddress: toAddress,
-          amount: [{ amount: amount, denom: "tlore" }],
+          amount: [
+            {
+              amount: amount,
+              denom: process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toString(),
+            },
+          ],
         };
         console.log(send);
         const cosmosBankTxClient = await initCosmosBankTxClient(
@@ -337,7 +342,12 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
         );
         const msg = await cosmosBankTxClient.msgSend(send);
         const fee = {
-          amount: [{ amount: "0", denom: "tlore" }],
+          amount: [
+            {
+              amount: "0",
+              denom: process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toString(),
+            },
+          ],
           gas: "200000",
         };
         const memo = "";
