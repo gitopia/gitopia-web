@@ -42,14 +42,12 @@ function UserDashboard(props) {
             <img src="organization.svg" />
           </div>
           <div className="flex flex-col px-8 py-12">
-            <div className="text-lg mb-8">Create a new organisation</div>
+            <div className="text-lg mb-8">Create a new DAO</div>
             <div className="text-xs mb-8 text-type-secondary">
-              Organization is the team in which your repositories live under
+              DAO is the team in which your repositories live under
             </div>
             <Link href="/account/organizations/new">
-              <button className="btn btn-outline btn-sm">
-                Create an Organisation
-              </button>
+              <button className="btn btn-outline btn-sm">Create a DAO</button>
             </Link>
           </div>
         </div>
