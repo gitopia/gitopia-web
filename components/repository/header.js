@@ -137,7 +137,7 @@ function RepositoryHeader({ repository, ...props }) {
             onClick={() => {
               setForkTargetShown(true);
             }}
-            disabled={!repository.branches.length}
+            disabled={!repository.branches.length || !repository.allowForking}
           >
             <svg
               viewBox="0 0 24 24"

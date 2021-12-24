@@ -1095,3 +1095,29 @@ export const updatePullRequestState = ({ id, state, mergeCommitSha }) => {
     }
   };
 };
+
+export const toggleRepositoryForking = ({ id }) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+      return null;
+    const repo = {
+      creator: wallet.selectedAddress,
+      id,
+    };
+    console.log(repo);
+    try {
+      const message = await env.txClient.msgToggleRepositoryForking(repo);
+      const result = await sendTransaction({ message }, env);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};

@@ -11,6 +11,7 @@ import RenameRepository from "../../../components/repository/renameRepository";
 import CollaboratorsList from "../../../components/repository/collaboratorsList";
 import TransferOwnership from "../../../components/repository/transferOwnership";
 import useRepository from "../../../hooks/useRepository";
+import ToggleForking from "../../../components/repository/toggleForking";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -51,11 +52,11 @@ function RepositorySettingsView(props) {
                     Collaborators
                   </a>
                 </li>
-                {/* <li>
+                <li>
                   <a className="rounded" href="#permissions">
                     Permissions
                   </a>
-                </li> */}
+                </li>
               </ul>
             </div>
             <div className="flex-1 px-4">
@@ -123,11 +124,11 @@ function RepositorySettingsView(props) {
                   />
                 </div>
               </div>
-              {/* <div className="mt-8 divide-y divide-grey">
+              <div className="mt-8 divide-y divide-grey">
                 <div className="text-2xl py-6" id="permissions">
                   Permissions
                 </div>
-                <div className="form-control py-4">
+                {/* <div className="form-control py-4">
                   <label className="cursor-pointer label">
                     <div>
                       <div className="label-text">Allow merge commits</div>
@@ -162,20 +163,15 @@ function RepositorySettingsView(props) {
                     </div>
                     <input type="checkbox" className="toggle toggle-primary" />
                   </label>
+                </div> */}
+                <div className="form-control py-6 px-4">
+                  <ToggleForking
+                    repoId={repository.id}
+                    allowForking={repository.allowForking}
+                    onSuccess={refreshRepository}
+                  />
                 </div>
-                <div className="form-control py-4">
-                  <label className="cursor-pointer label">
-                    <div>
-                      <div className="label-text">Allow Forking</div>
-                      <div className="label-text-alt text-type-secondary">
-                        Add all commits from the head branch onto the base
-                        branch individually
-                      </div>
-                    </div>
-                    <input type="checkbox" className="toggle toggle-primary" />
-                  </label>
-                </div>
-                <div className="form-control py-4">
+                {/* <div className="form-control py-4">
                   <label className="cursor-pointer label">
                     <div>
                       <div className="label-text">Enable Issues</div>
@@ -185,8 +181,8 @@ function RepositorySettingsView(props) {
                     </div>
                     <input type="checkbox" className="toggle toggle-primary" />
                   </label>
-                </div>
-              </div> */}
+                </div> */}
+              </div>
             </div>
           </div>
         </main>
