@@ -11,12 +11,6 @@ function SupportOwner({ ownerAddress, ...props }) {
   const [ownerBalance, setOwnerBalance] = useState(0);
   const [validateAmountError, setValidateAmountError] = useState("");
   const [amount, setAmount] = useState(0);
-  function isNaturalNumber(n) {
-    n = n.toString();
-    var n1 = Math.abs(n),
-      n2 = parseInt(n, 10);
-    return !isNaN(n1) && n2 === n1 && n1.toString() === n;
-  }
 
   const validateAmount = async (amount) => {
     setValidateAmountError(null);
@@ -25,16 +19,16 @@ function SupportOwner({ ownerAddress, ...props }) {
       setValidateAmountError("Enter Valid Amount");
     }
 
-    if (isNaturalNumber(amount) === true) {
+    if (Vamount > 0) {
       if (Vamount < 10 || Vamount > 0) {
-        if (Vamount > props.loreBalance) {
+        if (Vamount > props.loreBalance / 1000000) {
           setValidateAmountError("Insufficient Balance");
         }
       } else {
         setValidateAmountError("Amount should be in range 1-10");
       }
     } else {
-      setValidateAmountError("Amount should be positive integer");
+      setValidateAmountError("Amount should be positive number");
     }
   };
 

@@ -265,7 +265,7 @@ export const updateUserBalance = () => {
     try {
       const res = await api.queryBalance(
         state.selectedAddress,
-        process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+        process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
       );
       dispatch({
         type: walletActions.UPDATE_BALANCE,
@@ -291,7 +291,7 @@ export const getBalance = (address) => {
     try {
       const res = await api.queryBalance(
         address,
-        process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+        process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
       );
       if (res && res.ok) return res.data.balance.amount;
       else console.error(res.error);
@@ -330,8 +330,8 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
           toAddress: toAddress,
           amount: [
             {
-              amount: amount,
-              denom: process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toString(),
+              amount: (amount * 1000000).toString(),
+              denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
             },
           ],
         };
@@ -345,7 +345,7 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
           amount: [
             {
               amount: "0",
-              denom: process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toString(),
+              denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
             },
           ],
           gas: "200000",

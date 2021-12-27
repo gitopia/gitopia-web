@@ -93,7 +93,7 @@ export const config = (
 };
 
 export const sendTransaction = async (
-  { message, memo, denom = process.env.NEXT_PUBLIC_CURRENCY_TOKEN },
+  { message, memo, denom = process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN },
   env
 ) => {
   const fee = {

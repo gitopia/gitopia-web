@@ -19,13 +19,6 @@ function SendTlore(props) {
     }
   };
 
-  function isNaturalNumber(n) {
-    n = n.toString();
-    var n1 = Math.abs(n),
-      n2 = parseInt(n, 10);
-    return !isNaN(n1) && n2 === n1 && n1.toString() === n;
-  }
-
   const validateAmount = async (amount) => {
     setValidateAmountError(null);
     const Vamount = Number(amount);
@@ -33,16 +26,16 @@ function SendTlore(props) {
       setValidateAmountError("Enter Valid Amount");
     }
 
-    if (isNaturalNumber(amount) === true) {
+    if (Vamount > 0) {
       if (Vamount < 10 || Vamount > 0) {
-        if (Vamount > props.loreBalance) {
+        if (Vamount > props.loreBalance / 1000000) {
           setValidateAmountError("Insufficient Balance");
         }
       } else {
         setValidateAmountError("Amount should be in range 1-10");
       }
     } else {
-      setValidateAmountError("Amount should be positive integer");
+      setValidateAmountError("Amount should be positive number");
     }
   };
 
@@ -79,8 +72,6 @@ function SendTlore(props) {
             type="number"
             placeholder="Amount"
             autoComplete="off"
-            min="1"
-            max="10"
             onKeyUp={async (e) => {
               await validateAmount(e.target.value);
             }}
