@@ -28,18 +28,27 @@ function IssuePullDescription({
 
   useEffect(() => {
     setNewDescription(issuePullObj.description);
+    setNewDescriptionHint({ shown: false });
   }, [issuePullObj]);
 
-  const validateDescription = (title) => {
+  const validateDescription = (desc) => {
     setNewDescriptionHint({
       ...newDescriptionHint,
       shown: false,
     });
-    if (title.trim() === "") {
+    if (desc.trim() === "") {
       setNewDescriptionHint({
         shown: true,
         type: "error",
         message: "Description cannot be empty",
+      });
+      return false;
+    }
+    if (desc === issuePullObj.description) {
+      setNewDescriptionHint({
+        shown: true,
+        type: "error",
+        message: "Description is same as earlier",
       });
       return false;
     }
@@ -90,6 +99,15 @@ function IssuePullDescription({
               setValue={setNewDescription}
               classes={{ preview: ["markdown-body"] }}
             />
+            {newDescriptionHint.shown && (
+              <label className="label">
+                <span
+                  className={"label-text-alt text-" + newDescriptionHint.type}
+                >
+                  {newDescriptionHint.message}
+                </span>
+              </label>
+            )}
             <div className="text-right mt-4">
               <div className="inline-block w-36 mr-4">
                 <button
@@ -97,6 +115,7 @@ function IssuePullDescription({
                   onClick={() => {
                     setIsEditing(false);
                     setNewDescription(issuePullObj.description);
+                    setNewDescriptionHint({ shown: false });
                   }}
                 >
                   Cancel

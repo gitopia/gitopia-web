@@ -22,13 +22,14 @@ function IssuePullTitle({
     type: "info",
     message: "",
   });
-  const [savingLabel, setSavingLabel] = useState(false);
+  const [savingTitle, setSavingTitle] = useState(false);
 
   useEffect(() => {
     setNewTitle(issuePullObj.title);
+    setNewTitleHint({ shown: false });
   }, [issuePullObj]);
 
-  const validateLabel = (title) => {
+  const validateTitle = (title) => {
     setNewTitleHint({
       ...newTitleHint,
       shown: false,
@@ -41,12 +42,20 @@ function IssuePullTitle({
       });
       return false;
     }
+    if (title === issuePullObj.title) {
+      setNewTitleHint({
+        shown: true,
+        type: "error",
+        message: "Title is same as earlier",
+      });
+      return false;
+    }
     return true;
   };
 
   const updateTitle = async () => {
-    setSavingLabel(true);
-    if (validateLabel(newTitle)) {
+    setSavingTitle(true);
+    if (validateTitle(newTitle)) {
       const res = isPull
         ? await props.updatePullRequestTitle({
             title: newTitle,
@@ -63,7 +72,7 @@ function IssuePullTitle({
         if (onError) onError();
       }
     }
-    setSavingLabel(false);
+    setSavingTitle(false);
   };
 
   return (
@@ -93,16 +102,17 @@ function IssuePullTitle({
             onClick={() => {
               setIsEditing(false);
               setNewTitle(issuePullObj.title);
+              setNewTitleHint({ shown: false });
             }}
           >
             Cancel
           </button>
           <button
             className={
-              "flex-1 btn btn-sm btn-primary " + (savingLabel ? "loading" : "")
+              "flex-1 btn btn-sm btn-primary " + (savingTitle ? "loading" : "")
             }
             onClick={updateTitle}
-            disabled={savingLabel}
+            disabled={savingTitle}
           >
             Save
           </button>
