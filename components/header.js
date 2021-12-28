@@ -137,8 +137,12 @@ function Header(props) {
         {props.activeWallet ? (
           <div className="flex-none mr-4">
             <div className="badge badge-md badge-secondary mr-2">
-              {props.loreBalance / 1000000}{" "}
-              {process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
+              {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+                ? props.loreBalance
+                : props.loreBalance / 1000000}{" "}
+              {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+                ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
+                : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
             </div>
           </div>
         ) : (
@@ -275,7 +279,10 @@ function Header(props) {
                             }}
                           >
                             Send{" "}
-                            {process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
+                            {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() ===
+                            "TRUE"
+                              ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
+                              : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                           </a>
                         </li>
                         <li>
