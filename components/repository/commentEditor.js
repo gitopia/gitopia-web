@@ -22,8 +22,26 @@ function CommentEditor({
   const [comment, setComment] = useState(initialComment);
   const [postingComment, setPostingComment] = useState(false);
   const [togglingIssue, setTogglingIssue] = useState(false);
+  const [commentHint, setCommentHint] = useState({ shown: false });
 
   const validateComment = () => {
+    setCommentHint({ shown: false });
+    if (comment.trim().length === 0) {
+      setCommentHint({
+        shown: true,
+        type: "error",
+        message: "Comment cannot be empty",
+      });
+      return false;
+    }
+    if (comment === initialComment) {
+      setCommentHint({
+        shown: true,
+        type: "error",
+        message: "Comment is same as earlier",
+      });
+      return false;
+    }
     return true;
   };
 
@@ -65,6 +83,13 @@ function CommentEditor({
         setValue={setComment}
         classes={{ preview: ["markdown-body"] }}
       />
+      {commentHint.shown && (
+        <label className="label">
+          <span className={"label-text-alt text-" + commentHint.type}>
+            {commentHint.message}
+          </span>
+        </label>
+      )}
       <div className="text-right mt-4">
         {!isEdit ? (
           commentType === "ISSUE" ? (
@@ -141,9 +166,7 @@ function CommentEditor({
               "btn btn-sm btn-primary btn-block " +
               (postingComment ? "loading" : "")
             }
-            disabled={
-              comment.trim().length === 0 || postingComment || togglingIssue
-            }
+            disabled={postingComment || togglingIssue}
             onClick={() => (isEdit ? updateComment() : createComment())}
           >
             {isEdit ? "Update" : "Comment"}
