@@ -1,8 +1,8 @@
 import ReactMarkdown from "react-markdown";
 
-function SystemCommentView({ comment = { creator: "" }, key, ...props }) {
+function SystemCommentView({ comment = { creator: "" }, ...props }) {
   return (
-    <div className="flex w-full" key={key}>
+    <div className="flex w-full" key={"comment" + comment.id}>
       <div className="flex-none mr-4 w-10"></div>
       <div className="flex-none w-12 relative pt-5 flex items-center justify-center">
         <div className="border border-grey rounded-full w-6 h-6 bg-base-100 z-10 relative top-px"></div>

@@ -18,6 +18,7 @@ export default function BranchSelector({
   const [tab, setTab] = useState(showTagsOnly ? "tags" : "branches");
   const [searchText, setSearchText] = useState("");
   const searchInput = useRef();
+  const mainEl = useRef();
 
   const [filteredList, setFilteredList] = useState([]);
 
@@ -46,7 +47,7 @@ export default function BranchSelector({
   }, [branches]);
 
   return (
-    <div className={"dropdown outline-none"} tabIndex="0">
+    <div className={"dropdown outline-none"} tabIndex="0" ref={mainEl}>
       <div
         className="btn btn-sm btn-outline items-center"
         onClick={() => {
@@ -158,6 +159,7 @@ export default function BranchSelector({
                   if (e.code === "Enter") {
                     if (filteredList.length) {
                       onChange(filteredList[0]);
+                      if (mainEl.current) mainEl.current.blur();
                     }
                   }
                 }}
@@ -195,7 +197,10 @@ export default function BranchSelector({
                   ) : (
                     <a
                       className="whitespace-nowrap"
-                      onClick={() => onChange(b)}
+                      onClick={() => {
+                        onChange(b);
+                        if (mainEl.current) mainEl.current.blur();
+                      }}
                     >
                       {b.name}
                     </a>

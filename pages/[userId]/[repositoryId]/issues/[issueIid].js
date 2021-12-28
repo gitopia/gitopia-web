@@ -29,6 +29,8 @@ import getIssueAllLabels from "../../../../helpers/getIssueAllLabels";
 import Label from "../../../../components/repository/label";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
+import IssuePullTitle from "../../../../components/repository/issuePullTitle";
+import IssuePullDescription from "../../../../components/repository/issuePullDescription";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -79,32 +81,6 @@ function RepositoryIssueView(props) {
 
   useEffect(getAllComments, [issue]);
 
-  const editMenu = (
-    <div class="dropdown dropdown-end">
-      <div tabindex="0" class="m-1 btn btn-square btn-xs btn-ghost">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-        </svg>
-      </div>
-      <ul
-        tabindex="0"
-        class="shadow menu dropdown-content bg-base-300 rounded-box w-32"
-      >
-        <li>
-          <a>Edit</a>
-        </li>
-        <li>
-          <a>Delete</a>
-        </li>
-      </ul>
-    </div>
-  );
-
   return (
     <div
       data-theme="dark"
@@ -123,99 +99,53 @@ function RepositoryIssueView(props) {
             active="issues"
             hrefBase={repository.owner.id + "/" + repository.name}
           />
-          <div className="flex mt-8">
-            <div className="flex-1">
-              <div>
-                <span className="text-3xl mr-2">{issue.title}</span>
-                <span className="text-3xl text-neutral">#{issue.iid}</span>
-              </div>
-              <div className="mt-4 flex items-center">
-                <span
-                  className={
-                    "flex items-center rounded-full border pl-4 pr-6 py-2 mr-4 " +
-                    (issue.state === "OPEN"
-                      ? "border-green-900"
-                      : "border-red-900")
-                  }
-                >
-                  <span
-                    className={
-                      "mr-4 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
-                      (issue.state === "OPEN" ? "bg-green-900" : "bg-red-900")
-                    }
-                  />
-                  <span className="text-type uppercase">{issue.state}</span>
-                </span>
-                <span className="text-xs mr-2 text-type-secondary">
-                  {shrinkAddress(issue.creator) +
-                    " opened this issue " +
-                    dayjs(issue.createdAt * 1000).fromNow()}
-                </span>
-                <span className="text-xl mr-2 text-type-secondary">
-                  &middot;
-                </span>
-                <span className="text-xs text-type-secondary">
-                  {issue.comments.length + " comments"}
-                </span>
-              </div>
-            </div>
-            <div className="flex-none w-36">
-              <Link
-                href={
-                  "/" +
-                  repository.owner.id +
-                  "/" +
-                  repository.name +
-                  "/issues/new"
+          <div className="mt-8">
+            <IssuePullTitle
+              issuePullObj={issue}
+              repository={repository}
+              onUpdate={refreshIssue}
+            />
+          </div>
+          <div className="mt-4 flex items-center">
+            <span
+              className={
+                "flex items-center rounded-full border pl-4 pr-6 py-2 mr-4 " +
+                (issue.state === "OPEN" ? "border-green-900" : "border-red-900")
+              }
+            >
+              <span
+                className={
+                  "mr-4 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
+                  (issue.state === "OPEN" ? "bg-green-900" : "bg-red-900")
                 }
-              >
-                <button className="btn btn-primary btn-sm btn-block">
-                  New Issue
-                </button>
-              </Link>
-            </div>
+              />
+              <span className="text-type uppercase">{issue.state}</span>
+            </span>
+            <span className="text-xs mr-2 text-type-secondary">
+              {shrinkAddress(issue.creator) +
+                " opened this issue " +
+                dayjs(issue.createdAt * 1000).fromNow()}
+            </span>
+            <span className="text-xl mr-2 text-type-secondary">&middot;</span>
+            <span className="text-xs text-type-secondary">
+              {issue.comments.length + " comments"}
+            </span>
           </div>
           <div className="flex mt-8">
             <div className="flex flex-1">
               <div className="flex flex-col w-full">
-                <div className="flex w-full">
-                  <div className="flex-none mr-4">
-                    <div className="avatar">
-                      <div className="mb-8 rounded-full w-10 h-10">
-                        <img
-                          src={
-                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                            issue.creator.slice(-1)
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="border border-grey rounded flex-1">
-                    <div className="flex text-xs px-4 py-2 bg-base-200 rounded-t items-center">
-                      <div className="flex-1">
-                        {shrinkAddress(issue.creator) +
-                          " commented " +
-                          dayjs(issue.createdAt * 1000).fromNow()}
-                      </div>
-                    </div>
-                    <div className="p-4 markdown-body">
-                      <ReactMarkdown linkTarget="_blank">
-                        {issue.description}
-                      </ReactMarkdown>
-                    </div>
-                  </div>
-                </div>
+                <IssuePullDescription
+                  issuePullObj={issue}
+                  repository={repository}
+                  onUpdate={refreshIssue}
+                />
                 {allComments.map((c, i) => {
                   if (c.system) {
-                    return (
-                      <SystemCommentView comment={c} key={"comment" + i} />
-                    );
+                    return <SystemCommentView comment={c} />;
                   } else {
                     return (
                       <CommentView
                         comment={c}
-                        key={"comment" + i}
                         userAddress={props.selectedAddress}
                         onUpdate={async (id) => {
                           const newComment = await getComment(id);

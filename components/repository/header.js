@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 function RepositoryHeader({ repository, ...props }) {
   const [forkTargetShown, setForkTargetShown] = useState(false);
   const [isForking, setIsForking] = useState(false);
+  const [forkingSuccess, setForkingSuccess] = useState(false);
   const router = useRouter();
   const avatarLink =
     process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === repository.owner.id
@@ -136,6 +137,7 @@ function RepositoryHeader({ repository, ...props }) {
             onClick={() => {
               setForkTargetShown(true);
             }}
+            disabled={!repository.branches.length}
           >
             <svg
               viewBox="0 0 24 24"
@@ -163,6 +165,7 @@ function RepositoryHeader({ repository, ...props }) {
                 "/" + repository.owner.id + "/" + repository.name + "/insights"
               );
             }}
+            disabled={!repository.branches.length}
           >
             {repository.forks.length}
           </button>
@@ -196,7 +199,11 @@ function RepositoryHeader({ repository, ...props }) {
       />
       <div className="modal">
         <div className="modal-box max-w-xs">
-          <p>Select forked repository owner</p>
+          {props.selectedAddress ? (
+            <p>Select forked repository owner</p>
+          ) : (
+            <p>Please login to fork repository</p>
+          )}
           <ul className="menu compact mt-8">
             {props.dashboards.map((d) => {
               const isOwner = repository.owner.id === d.id;
@@ -218,7 +225,7 @@ function RepositoryHeader({ repository, ...props }) {
                       });
                       if (res && res.url) {
                         setForkTargetShown(false);
-                        router.push(res.url);
+                        setForkingSuccess(res.url);
                       }
                       setIsForking(false);
                     }}
@@ -270,7 +277,37 @@ function RepositoryHeader({ repository, ...props }) {
                 setForkTargetShown(false);
               }}
             >
-              Cancel
+              {props.selectedAddress ? "Cancel" : "Ok"}
+            </label>
+          </div>
+        </div>
+      </div>
+      <input
+        type="checkbox"
+        checked={forkingSuccess}
+        readOnly
+        className="modal-toggle"
+      />
+      <div className="modal">
+        <div className="modal-box max-w-xs">
+          <p>Successfully forked repository</p>
+          <div className="modal-action mt-8">
+            <button
+              className="btn btn-sm"
+              onClick={() => {
+                setForkingSuccess(false);
+              }}
+            >
+              Stay here
+            </button>
+            <label
+              className="btn btn-sm btn-primary"
+              onClick={() => {
+                router.push(forkingSuccess);
+                setForkingSuccess(false);
+              }}
+            >
+              Go to new repo
             </label>
           </div>
         </div>
@@ -282,6 +319,7 @@ function RepositoryHeader({ repository, ...props }) {
 const mapStateToProps = (state) => {
   return {
     dashboards: state.user.dashboards,
+    selectedAddress: state.wallet.selectedAddress,
   };
 };
 

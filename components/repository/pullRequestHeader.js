@@ -1,10 +1,12 @@
 import Link from "next/link";
 import pullRequestStateClass from "../../helpers/pullRequestStateClass";
 import shrinkAddress from "../../helpers/shrinkAddress";
+import IssuePullTitle from "./issuePullTitle";
 
 export default function PullRequestHeader({
   repository,
   pullRequest,
+  onUpdate,
   ...props
 }) {
   let headLink = "",
@@ -28,8 +30,12 @@ export default function PullRequestHeader({
   return (
     <div className="">
       <div>
-        <span className="text-3xl mr-2">{pullRequest.title}</span>
-        <span className="text-3xl text-type-secondary">#{pullRequest.iid}</span>
+        <IssuePullTitle
+          issuePullObj={pullRequest}
+          repository={repository}
+          isPull={true}
+          onUpdate={onUpdate}
+        />
       </div>
       <div className="mt-4 flex items-center">
         <span
