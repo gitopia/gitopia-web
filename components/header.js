@@ -137,10 +137,10 @@ function Header(props) {
         {props.activeWallet ? (
           <div className="flex-none mr-4">
             <div className="badge badge-md badge-secondary mr-2">
-              {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+              {props.advanceUser === "TRUE"
                 ? props.loreBalance
                 : props.loreBalance / 1000000}{" "}
-              {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+              {props.advanceUser === "TRUE"
                 ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
                 : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
             </div>
@@ -279,8 +279,7 @@ function Header(props) {
                             }}
                           >
                             Send{" "}
-                            {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() ===
-                            "TRUE"
+                            {props.advanceUser === "TRUE"
                               ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
                               : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                           </a>
@@ -311,6 +310,7 @@ const mapStateToProps = (state) => {
     loreBalance: state.wallet.loreBalance,
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
+    advanceUser: state.user.advanceUser,
   };
 };
 

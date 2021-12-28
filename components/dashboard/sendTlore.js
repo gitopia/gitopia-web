@@ -34,7 +34,7 @@ function SendTlore(props) {
     }
 
     let balance = props.loreBalance;
-    if (process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "FALSE") {
+    if (props.advanceUser === "FALSE") {
       Vamount = Vamount * 1000000;
     }
     if (Vamount > 0 && isNaturalNumber(Vamount)) {
@@ -121,7 +121,9 @@ function SendTlore(props) {
                 .transferToWallet(
                   props.selectedAddress,
                   receiverAddress,
-                  amount
+                  props.advanceUser === "TRUE"
+                    ? amount.toString()
+                    : (amount * 1000000).toString()
                 )
                 .then((res) => {
                   props.updateUserBalance();
@@ -146,6 +148,7 @@ const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
     loreBalance: state.wallet.loreBalance,
+    advanceUser: state.user.advanceUser,
   };
 };
 
