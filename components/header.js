@@ -95,7 +95,12 @@ function Header(props) {
             </svg>
           </label>
         </div>
-        <div className="flex-none px-6 w-64">
+        <div
+          className={
+            "flex-none px-6 transition-all ease-out delay-150" +
+            (router.pathname === "/home" ? " w-64" : " w-42")
+          }
+        >
           <Link href={homeUrl}>
             <a>
               <img
@@ -177,10 +182,6 @@ function Header(props) {
                   (props.activeWallet ? "btn-outline" : "")
                 }
                 onClick={(e) => {
-                  if (!props.activeWallet && !props.wallets.length) {
-                    router.push("/login");
-                    return;
-                  }
                   setMenuOpen(true);
                 }}
               >
@@ -263,17 +264,21 @@ function Header(props) {
                       ""
                     )}
 
-                    <li>
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          setMenuState(2);
-                          e.preventDefault();
-                        }}
-                      >
-                        {props.activeWallet ? "Switch" : "Saved"} Wallet
-                      </a>
-                    </li>
+                    {props.wallets.length ? (
+                      <li>
+                        <a
+                          href="#"
+                          onClick={(e) => {
+                            setMenuState(2);
+                            e.preventDefault();
+                          }}
+                        >
+                          {props.activeWallet ? "Switch" : "Saved"} Wallet
+                        </a>
+                      </li>
+                    ) : (
+                      ""
+                    )}
                     <li>
                       <Link href="/login">
                         <a>Create New Wallet</a>
