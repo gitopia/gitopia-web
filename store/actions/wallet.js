@@ -330,10 +330,7 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
           toAddress: toAddress,
           amount: [
             {
-              amount:
-                process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
-                  ? amount.toString()
-                  : (amount * 1000000).toString(),
+              amount: amount,
               denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
             },
           ],

@@ -50,7 +50,7 @@ function FaucetReceiver(props) {
       <div className="flex-1 mr-8">
         <div className="text-lg">
           Get testnet tokens{" "}
-          {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+          {props.advanceUser === "TRUE"
             ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
             : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
         </div>
@@ -70,7 +70,7 @@ function FaucetReceiver(props) {
           disabled={loading}
         >
           Get{" "}
-          {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+          {props.advanceUser === "TRUE"
             ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
             : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
         </button>
@@ -83,6 +83,7 @@ const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
     loreBalance: state.wallet.loreBalance,
+    advanceUser: state.user.advanceUser,
   };
 };
 

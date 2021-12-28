@@ -27,7 +27,7 @@ function SupportOwner({ ownerAddress, ...props }) {
     }
 
     let balance = props.loreBalance;
-    if (process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "FALSE") {
+    if (props.advanceUser === "FALSE") {
       Vamount = Vamount * 1000000;
     }
     if (Vamount > 0 && isNaturalNumber(Vamount)) {
@@ -46,7 +46,7 @@ function SupportOwner({ ownerAddress, ...props }) {
   useEffect(async () => {
     const balance = await props.getBalance(ownerAddress);
     setOwnerBalance(
-      process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+      props.advanceUser === "TRUE"
         ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
         : balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
     );
@@ -124,7 +124,7 @@ function SupportOwner({ ownerAddress, ...props }) {
           className="text-type-tertiary font-semibold uppercase"
           style={{ fontSize: "0.5rem" }}
         >
-          {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+          {props.advanceUser === "TRUE"
             ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
             : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}{" "}
           Available
@@ -150,7 +150,7 @@ function SupportOwner({ ownerAddress, ...props }) {
             </div>
             <div className="text-xs mt-5">
               You can support this project by sending{" "}
-              {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+              {props.advanceUser === "TRUE"
                 ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
                 : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}{" "}
               to its organization or creator.
@@ -160,7 +160,7 @@ function SupportOwner({ ownerAddress, ...props }) {
             </div>
             <div className="mt-2 text-xs">
               This address only accepts{" "}
-              {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+              {props.advanceUser === "TRUE"
                 ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
                 : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
               , any other coin or token will be lost if sent to this address.
@@ -282,10 +282,10 @@ function SupportOwner({ ownerAddress, ...props }) {
                 </svg>
                 <div className="pl-3">
                   <div className="text-xs h-3/4">
-                    {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+                    {props.advanceUser === "TRUE"
                       ? props.loreBalance
                       : props.loreBalance / 1000000}{" "}
-                    {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+                    {props.advanceUser === "TRUE"
                       ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
                       : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                   </div>
@@ -302,15 +302,16 @@ function SupportOwner({ ownerAddress, ...props }) {
                       .transferToWallet(
                         props.selectedAddress,
                         ownerAddress,
-                        amount
+                        props.advanceUser === "TRUE"
+                          ? amount.toString()
+                          : (amount * 1000000).toString()
                       )
                       .then(async (res) => {
                         props.updateUserBalance();
                         props.notify("Transaction Successful", "info");
                         const balance = await props.getBalance(ownerAddress);
                         setOwnerBalance(
-                          process.env.NEXT_PUBLIC_ADVANCE_USER.toString() ===
-                            "TRUE"
+                          props.advanceUser === "TRUE"
                             ? balance +
                                 " " +
                                 process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
@@ -340,6 +341,7 @@ const mapStateToProps = (state) => {
   return {
     loreBalance: state.wallet.loreBalance,
     selectedAddress: state.wallet.selectedAddress,
+    advanceUser: state.user.advanceUser,
   };
 };
 
