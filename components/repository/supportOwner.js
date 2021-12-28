@@ -12,30 +12,43 @@ function SupportOwner({ ownerAddress, ...props }) {
   const [validateAmountError, setValidateAmountError] = useState("");
   const [amount, setAmount] = useState(0);
 
+  function isNaturalNumber(n) {
+    n = n.toString();
+    var n1 = Math.abs(n),
+      n2 = parseInt(n, 10);
+    return !isNaN(n1) && n2 === n1 && n1.toString() === n;
+  }
+
   const validateAmount = async (amount) => {
     setValidateAmountError(null);
-    const Vamount = Number(amount);
+    let Vamount = Number(amount);
     if (amount == "" || amount == 0) {
       setValidateAmountError("Enter Valid Amount");
     }
 
-    if (Vamount > 0) {
+    let balance = props.loreBalance;
+    if (process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "FALSE") {
+      Vamount = Vamount * 1000000;
+    }
+    if (Vamount > 0 && isNaturalNumber(Vamount)) {
       if (Vamount < 10 || Vamount > 0) {
-        if (Vamount > props.loreBalance / 1000000) {
+        if (Vamount > balance) {
           setValidateAmountError("Insufficient Balance");
         }
       } else {
         setValidateAmountError("Amount should be in range 1-10");
       }
     } else {
-      setValidateAmountError("Amount should be positive number");
+      setValidateAmountError("Enter a Valid Amount");
     }
   };
 
   useEffect(async () => {
     const balance = await props.getBalance(ownerAddress);
     setOwnerBalance(
-      balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+      process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+        ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+        : balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
     );
   }, [ownerAddress]);
 
@@ -111,7 +124,10 @@ function SupportOwner({ ownerAddress, ...props }) {
           className="text-type-tertiary font-semibold uppercase"
           style={{ fontSize: "0.5rem" }}
         >
-          Lore Available
+          {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+            ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+            : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}{" "}
+          Available
         </div>
         <div className="text-xs">{ownerBalance}</div>
       </div>
@@ -134,13 +150,19 @@ function SupportOwner({ ownerAddress, ...props }) {
             </div>
             <div className="text-xs mt-5">
               You can support this project by sending{" "}
-              {process.env.NEXT_PUBLIC_CURRENCY_TOKEN} to its DAO or creator.
+              {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+                ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}{" "}
+              to its organization or creator.
             </div>
             <div className="text-xs">
               To do it you just need to send your funds to the address below.
             </div>
             <div className="mt-2 text-xs">
-              This address only accepts {process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+              This address only accepts{" "}
+              {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+                ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
               , any other coin or token will be lost if sent to this address.
             </div>
           </div>
@@ -260,8 +282,12 @@ function SupportOwner({ ownerAddress, ...props }) {
                 </svg>
                 <div className="pl-3">
                   <div className="text-xs h-3/4">
-                    {props.loreBalance / 1000000}{" "}
-                    {process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
+                    {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+                      ? props.loreBalance
+                      : props.loreBalance / 1000000}{" "}
+                    {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+                      ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
+                      : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                   </div>
                 </div>
               </div>
@@ -283,9 +309,14 @@ function SupportOwner({ ownerAddress, ...props }) {
                         props.notify("Transaction Successful", "info");
                         const balance = await props.getBalance(ownerAddress);
                         setOwnerBalance(
-                          balance / 1000000 +
-                            " " +
-                            process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+                          process.env.NEXT_PUBLIC_ADVANCE_USER.toString() ===
+                            "TRUE"
+                            ? balance +
+                                " " +
+                                process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                            : balance / 1000000 +
+                                " " +
+                                process.env.NEXT_PUBLIC_CURRENCY_TOKEN
                         );
                       });
                   }}

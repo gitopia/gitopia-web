@@ -50,7 +50,9 @@ function FaucetReceiver(props) {
       <div className="flex-1 mr-8">
         <div className="text-lg">
           Get testnet tokens{" "}
-          {process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
+          {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+            ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
+            : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
         </div>
         <div className="text-xs mt-2 text-type-secondary">
           Use them to test Gitopia. Based on your activity you might get actual
@@ -67,7 +69,10 @@ function FaucetReceiver(props) {
           onClick={() => getTokens(1)}
           disabled={loading}
         >
-          Get {process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
+          Get{" "}
+          {process.env.NEXT_PUBLIC_ADVANCE_USER.toString() === "TRUE"
+            ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
+            : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
         </button>
       </div>
     </div>
