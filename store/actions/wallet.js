@@ -84,10 +84,9 @@ export const reInitClients = async (dispatch, getState) => {
   } else {
     const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
       activeWallet.mnemonic,
-      stringToPath(
-        activeWallet.HDpath + activeWallet.accounts[0].pathIncrement
-      ),
-      activeWallet.prefix || "gitopia"
+      {
+        prefix: activeWallet.prefix || "gitopia",
+      }
     );
     await postWalletUnlocked(accountSigner, dispatch, getState);
   }
@@ -108,6 +107,7 @@ export const unlockKeplrWallet = () => {
       return accounts[0];
     } else {
       console.log("Unable to use keplr getOfflineSigner");
+      dispatch(notify("Please ensure keplr extension is installed", "error"));
     }
   };
 };
@@ -357,13 +357,19 @@ export const downloadWalletForRemoteHelper = () => {
 export const transferToWallet = (fromAddress, toAddress, amount) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
-    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
-      state.activeWallet.mnemonic,
-      stringToPath(state.activeWallet.HDpath + "0"),
-      state.activeWallet.prefix
-    );
-    console.log(accountSigner);
     if (state.activeWallet) {
+      let accountSigner;
+      if (state.activeWallet.isKeplr) {
+        const chainId = "gitopia";
+        accountSigner = window.getOfflineSigner(chainId);
+      } else {
+        accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
+          state.activeWallet.mnemonic,
+          {
+            prefix: state.activeWallet.prefix || "gitopia",
+          }
+        );
+      }
       try {
         const send = {
           fromAddress: fromAddress,
