@@ -192,7 +192,10 @@ function RepositoryIssueView(props) {
               <div className="pb-8">
                 <AssigneeSelector
                   assignees={issue.assignees}
-                  collaborators={repository.collaborators}
+                  collaborators={[
+                    { id: repository.owner.id, permission: "CREATOR" },
+                    ...repository.collaborators,
+                  ]}
                   onChange={async (list) => {
                     console.log("list", list);
                     const removedAssignees = issue.assignees.filter(

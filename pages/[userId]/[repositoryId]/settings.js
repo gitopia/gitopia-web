@@ -118,7 +118,10 @@ function RepositorySettingsView(props) {
                 <div className="py-4">
                   <CollaboratorsList
                     repoId={repository.id}
-                    collaborators={repository.collaborators}
+                    collaborators={[
+                      { id: repository.owner.id, permission: "CREATOR" },
+                      ...repository.collaborators,
+                    ]}
                     refreshRepository={refreshRepository}
                   />
                 </div>
