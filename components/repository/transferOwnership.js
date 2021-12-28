@@ -142,8 +142,7 @@ function TransferOwnership({
       <div className="flex-1 mr-8">
         <div className="label-text">Transfer Ownership</div>
         <div className="label-text-alt text-type-secondary">
-          Transfer this repository to another user or to a DAO where you have
-          the ability to create repositories
+          Transfer this repository to another user or to a DAO
         </div>
       </div>
       <div className="flex-none w-48">

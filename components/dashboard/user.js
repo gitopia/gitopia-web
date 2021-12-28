@@ -44,7 +44,8 @@ function UserDashboard(props) {
           <div className="flex flex-col px-8 py-12">
             <div className="text-lg mb-8">Create a new DAO</div>
             <div className="text-xs mb-8 text-type-secondary">
-              DAO is the team in which your repositories live under
+              A DAO is a self-organizing online community that uses Gitopia to
+              manage its development securely
             </div>
             <Link href="/account/organizations/new">
               <button className="btn btn-outline btn-sm">Create a DAO</button>
