@@ -140,8 +140,7 @@ function SupportOwner({ ownerAddress, ...props }) {
             </div>
             <div className="text-xs mt-5">
               You can support this project by sending{" "}
-              {process.env.NEXT_PUBLIC_CURRENCY_TOKEN} to its organization or
-              creator.
+              {process.env.NEXT_PUBLIC_CURRENCY_TOKEN} to its DAO or creator.
             </div>
             <div className="text-xs">
               To do it you just need to send your funds to the address below.

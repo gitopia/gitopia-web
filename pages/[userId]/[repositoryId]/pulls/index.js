@@ -299,7 +299,10 @@ function RepositoryPullsView(props) {
                     </button>
                     <div className="dropdown-content shadow-lg bg-base-300 rounded mt-1">
                       <ul className="menu compact rounded">
-                        {repository.collaborators.map((c) => {
+                        {[
+                          { id: repository.owner.id, permission: "CREATOR" },
+                          ...repository.collaborators,
+                        ].map((c) => {
                           return (
                             <li
                               className="normal-case font-normal"
@@ -412,7 +415,10 @@ function RepositoryPullsView(props) {
                     </button>
                     <div className="dropdown-content shadow-lg bg-base-300 rounded mt-1">
                       <ul className="menu compact rounded">
-                        {repository.collaborators.map((c) => {
+                        {[
+                          { id: repository.owner.id, permission: "CREATOR" },
+                          ...repository.collaborators,
+                        ].map((c) => {
                           return (
                             <li
                               className="normal-case font-normal"

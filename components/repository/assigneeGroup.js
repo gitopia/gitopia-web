@@ -1,4 +1,5 @@
 export default function AssigneeGroup({ assignees, ...props }) {
+  console.log("assignees", assignees);
   return (
     <div className="space-x-2">
       {assignees.map((a, i) => (
