@@ -25,7 +25,7 @@ export default async function initKeplr() {
             // Coin denomination to be displayed to the user.
             coinDenom: "tlore",
             // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-            coinMinimalDenom: "tlore",
+            coinMinimalDenom: "utlore",
             // # of decimal points to convert minimal denomination to user-facing denomination.
             coinDecimals: 6,
             // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -65,7 +65,7 @@ export default async function initKeplr() {
               // Coin denomination to be displayed to the user.
               coinDenom: "tlore",
               // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-              coinMinimalDenom: "tlore",
+              coinMinimalDenom: "utlore",
               // # of decimal points to convert minimal denomination to user-facing denomination.
               coinDecimals: 6,
               // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -79,7 +79,7 @@ export default async function initKeplr() {
               // Coin denomination to be displayed to the user.
               coinDenom: "tlore",
               // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-              coinMinimalDenom: "tlore",
+              coinMinimalDenom: "utlore",
               // # of decimal points to convert minimal denomination to user-facing denomination.
               coinDecimals: 6,
               // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.

@@ -209,6 +209,7 @@ function Header(props) {
                     <>
                       <div className="text-xs text-left">
                         {props.activeWallet.name}
+                        {props.activeWallet.isKeplr ? " [Keplr]" : ""}
                       </div>
                       <div className="text-xs text-base-content">
                         {addressToShow}
