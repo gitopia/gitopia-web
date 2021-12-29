@@ -9,7 +9,6 @@ const initialState = {
   gasPrice: "0.0000025" + process.env.NEXT_PUBLIC_CURRENCY_TOKEN,
   backupState: false,
   loreBalance: 0,
-  accountSigner: null,
 };
 
 const reducer = (state = initialState, action) => {
@@ -24,15 +23,15 @@ const reducer = (state = initialState, action) => {
     }
 
     case walletActions.ADD_WALLET: {
-      let { wallet } = action.payload;
+      let { wallet, password } = action.payload;
       let wallets = state.wallets;
       set("lastWallet", wallet);
-      if (wallet.name && wallet.password) {
+      if (wallet.name && password) {
         wallets.push({
           name: wallet.name,
           wallet: CryptoJS.AES.encrypt(
             JSON.stringify(wallet),
-            wallet.password
+            password
           ).toString(),
         });
       }
@@ -114,14 +113,6 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         loreBalance: balance,
-      };
-    }
-
-    case walletActions.SET_ACCOUNT_SIGNER: {
-      let { accountSigner } = action.payload;
-      return {
-        ...state,
-        accountSigner,
       };
     }
 

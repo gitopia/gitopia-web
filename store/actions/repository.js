@@ -1,4 +1,3 @@
-import { assertIsBroadcastTxSuccess } from "@cosmjs/stargate";
 import { notify } from "reapop";
 import { sendTransaction } from "./env";
 import {
@@ -6,9 +5,6 @@ import {
   getUserDetailsForSelectedAddress,
   setCurrentDashboard,
 } from "./user";
-import { reInitClients } from "./wallet";
-import { userActions } from "./actionTypes";
-import { async } from "regenerator-runtime";
 import { updateUserBalance } from "./wallet";
 import forkRepositoryFiles from "../../helpers/forkRepositoryFiles";
 
@@ -36,7 +32,7 @@ export const validatePostingEligibility = async (
         getState
       );
       if (res && res.code === 0) {
-        await reInitClients(dispatch, getState);
+        await getUserDetailsForSelectedAddress()(dispatch, getState);
       } else {
         return false;
       }

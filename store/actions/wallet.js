@@ -34,10 +34,6 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
     type: walletActions.SET_SELECTED_ADDRESS,
     payload: { address: account.address },
   });
-  dispatch({
-    type: walletActions.SET_ACCOUNT_SIGNER,
-    payload: { accountSigner },
-  });
 
   const [tc, qc, amount] = await Promise.all([
     txClient(accountSigner, { addr: env.rpcNode }),
@@ -130,15 +126,14 @@ export const unlockWallet = ({ name, password }) => {
     }
     dispatch({
       type: walletActions.SET_ACTIVE_WALLET,
-      payload: { wallet },
+      payload: { wallet: { name: wallet.name, accounts: wallet.accounts } },
     });
     if (wallet.accounts.length > 0) {
       const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
         wallet.mnemonic,
         {
-          prefix: wallet.prefix,
+          prefix: "gitopia",
         }
-        // stringToPath(wallet.HDpath + wallet.accounts[0].pathIncrement),
       );
       try {
         await postWalletUnlocked(accountSigner, dispatch, getState);
@@ -155,63 +150,6 @@ export const removeWallet = ({ name }) => {
     dispatch({ type: walletActions.REMOVE_WALLET, payload: { name } });
     dispatch({ type: walletActions.STORE_WALLETS });
     return true;
-  };
-};
-
-export const switchAccount = (address) => {
-  return async (dispatch, getState) => {
-    const state = getState().wallet;
-    const accountIndex = state.activeWallet.accounts.findIndex(
-      (acc) => acc.address == address
-    );
-    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
-      state.activeWallet.mnemonic,
-      {
-        prefix: state.activeWallet.prefix,
-      }
-      // stringToPath(
-      //   state.activeWallet.HDpath +
-      //     state.activeWallet.accounts[accountIndex].pathIncrement
-      // ),
-    );
-
-    try {
-      await postWalletUnlocked(accountSigner, dispatch, getState);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-};
-
-export const addAccount = (pathIncrement) => {
-  return async (dispatch, getState) => {
-    const { activeWallet } = getState();
-    if (!pathIncrement) {
-      pathIncrement = activeWallet.pathIncrement + 1;
-      dispatch({ type: walletActions.PATH_INCREMENT });
-    }
-    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
-      activeWallet.mnemonic,
-      {
-        prefix: activeWallet.prefix,
-      }
-      // stringToPath(activeWallet.HDpath + pathIncrement),
-    );
-    const [acc] = await accountSigner.getAccounts();
-    const account = {
-      address: acc.address,
-      pathIncrement: parseInt(pathIncrement),
-    };
-    if (
-      activeWallet.accounts.findIndex(
-        (acc) => acc.address == account.address
-      ) == -1
-    ) {
-      dipatch({ type: walletActions.ADD_ACCOUNT, payload: { account } });
-      dispatch({ type: walletActions.STORE_WALLETS });
-    } else {
-      throw "Account already in store.";
-    }
   };
 };
 
@@ -232,17 +170,16 @@ export const createWalletWithMnemonic = ({
       pathIncrement: 0,
       accounts: [],
     };
-    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
-      mnemonic,
-      {
-        prefix: prefix,
-      }
-      // stringToPath(HDpath + "0"),
-    );
+    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
+      prefix: prefix,
+    });
     const [firstAccount] = await accountSigner.getAccounts();
     const account = { address: firstAccount.address, pathIncrement: 0 };
     wallet.accounts.push(account);
-    await dispatch({ type: walletActions.ADD_WALLET, payload: { wallet } });
+    await dispatch({
+      type: walletActions.ADD_WALLET,
+      payload: { wallet, password },
+    });
 
     try {
       await postWalletUnlocked(accountSigner, dispatch, getState);
@@ -271,9 +208,11 @@ export const restoreWallet = ({ encrypted, password }) => {
       {
         prefix: wallet.prefix,
       }
-      // stringToPath(wallet.HDpath + "0"),
     );
-    await dispatch({ type: walletActions.ADD_WALLET, payload: { wallet } });
+    await dispatch({
+      type: walletActions.ADD_WALLET,
+      payload: { wallet, password },
+    });
 
     try {
       await postWalletUnlocked(accountSigner, dispatch, getState);
@@ -406,6 +345,18 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
         console.error(e);
         dispatch(notify(e.message, "error"));
       }
+    }
+  };
+};
+
+export const continueWithPassowrd = (password) => {
+  return async (dispatch, getState) => {
+    const { wallet } = getState();
+    if (wallet.askPasswordCb) {
+      const res = await wallet.askPasswordCb(password);
+    } else {
+      console.log("No callback found");
+      return null;
     }
   };
 };

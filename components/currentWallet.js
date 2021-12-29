@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { unlockWallet, removeWallet } from "../store/actions/wallet";
 import TextInput from "./textInput";
@@ -12,6 +12,7 @@ function CurrentWallet(props) {
     type: "error",
     message: "",
   });
+  const inputEl = useRef();
 
   const unlockWallet = async () => {
     if (password === "") {
@@ -47,6 +48,9 @@ function CurrentWallet(props) {
     setPasswordHint({ ...passwordHint, shown: false });
     setSelectedWallet(walletName);
     setIsUnlocking(true);
+    setTimeout(() => {
+      if (inputEl.current) inputEl.current.focus();
+    }, 0);
   };
 
   const resetWallet = (changeSelectedWallet = true) => {
@@ -92,6 +96,7 @@ function CurrentWallet(props) {
             hint={passwordHint}
             onEnter={unlockWallet}
             size="sm"
+            ref={inputEl}
           />
           <div className="flex mt-4 w-full btn-group">
             <button
