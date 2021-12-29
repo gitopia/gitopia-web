@@ -98,16 +98,20 @@ function CollaboratorsList({
             </td>
             <td className="text-sm">{c.permission}</td>
             <td>
-              <button
-                className={
-                  "btn btn-sm btn-accent btn-outline btn-block " +
-                  (isRemoving === i ? "loading" : "")
-                }
-                disabled={isRemoving === i}
-                onClick={() => removeCollaborator(c.id, i)}
-              >
-                Remove
-              </button>
+              {c.permission !== "CREATOR" ? (
+                <button
+                  className={
+                    "btn btn-sm btn-accent btn-outline btn-block " +
+                    (isRemoving === i ? "loading" : "")
+                  }
+                  disabled={isRemoving === i}
+                  onClick={() => removeCollaborator(c.id, i)}
+                >
+                  Remove
+                </button>
+              ) : (
+                ""
+              )}
             </td>
           </tr>
         ))}

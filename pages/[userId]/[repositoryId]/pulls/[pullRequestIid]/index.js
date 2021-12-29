@@ -160,7 +160,10 @@ function RepositoryPullView(props) {
                 <AssigneeSelector
                   title="Reviewers"
                   assignees={pullRequest.reviewers}
-                  collaborators={repository.collaborators}
+                  collaborators={[
+                    { id: repository.owner.id, permission: "CREATOR" },
+                    ...repository.collaborators,
+                  ]}
                   onChange={async (list) => {
                     console.log("list", list);
                     const removedReviewers = pullRequest.reviewers.filter(
@@ -194,7 +197,10 @@ function RepositoryPullView(props) {
               <div className="py-8">
                 <AssigneeSelector
                   assignees={pullRequest.assignees}
-                  collaborators={repository.collaborators}
+                  collaborators={[
+                    { id: repository.owner.id, permission: "CREATOR" },
+                    ...repository.collaborators,
+                  ]}
                   onChange={async (list) => {
                     console.log("list", list);
                     const removedAssignees = pullRequest.assignees.filter(

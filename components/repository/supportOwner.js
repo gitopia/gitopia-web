@@ -20,28 +20,34 @@ function SupportOwner({ ownerAddress, ...props }) {
 
   const validateAmount = async (amount) => {
     setValidateAmountError(null);
-    const Vamount = Number(amount);
+    let Vamount = Number(amount);
     if (amount == "" || amount == 0) {
       setValidateAmountError("Enter Valid Amount");
     }
 
-    if (isNaturalNumber(amount) === true) {
+    let balance = props.loreBalance;
+    if (props.advanceUser === "FALSE") {
+      Vamount = Vamount * 1000000;
+    }
+    if (Vamount > 0 && isNaturalNumber(Vamount)) {
       if (Vamount < 10 || Vamount > 0) {
-        if (Vamount > props.loreBalance) {
+        if (Vamount > balance) {
           setValidateAmountError("Insufficient Balance");
         }
       } else {
         setValidateAmountError("Amount should be in range 1-10");
       }
     } else {
-      setValidateAmountError("Amount should be positive integer");
+      setValidateAmountError("Enter a Valid Amount");
     }
   };
 
   useEffect(async () => {
     const balance = await props.getBalance(ownerAddress);
     setOwnerBalance(
-      balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+      props.advanceUser === "TRUE"
+        ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+        : balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
     );
   }, [ownerAddress]);
 
@@ -117,7 +123,10 @@ function SupportOwner({ ownerAddress, ...props }) {
           className="text-type-tertiary font-semibold uppercase"
           style={{ fontSize: "0.5rem" }}
         >
-          Lore Available
+          {props.advanceUser === "TRUE"
+            ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+            : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}{" "}
+          Available
         </div>
         <div className="text-xs">{ownerBalance}</div>
       </div>
@@ -140,14 +149,19 @@ function SupportOwner({ ownerAddress, ...props }) {
             </div>
             <div className="text-xs mt-5">
               You can support this project by sending{" "}
-              {process.env.NEXT_PUBLIC_CURRENCY_TOKEN} to its organization or
-              creator.
+              {props.advanceUser === "TRUE"
+                ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}{" "}
+              to its organization or creator.
             </div>
             <div className="text-xs">
               To do it you just need to send your funds to the address below.
             </div>
             <div className="mt-2 text-xs">
-              This address only accepts {process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+              This address only accepts{" "}
+              {props.advanceUser === "TRUE"
+                ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
               , any other coin or token will be lost if sent to this address.
             </div>
           </div>
@@ -267,7 +281,12 @@ function SupportOwner({ ownerAddress, ...props }) {
                 </svg>
                 <div className="pl-3">
                   <div className="text-xs h-3/4">
-                    {props.loreBalance / 1000000} TLORES
+                    {props.advanceUser === "TRUE"
+                      ? props.loreBalance
+                      : props.loreBalance / 1000000}{" "}
+                    {props.advanceUser === "TRUE"
+                      ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
+                      : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                   </div>
                 </div>
               </div>
@@ -282,16 +301,22 @@ function SupportOwner({ ownerAddress, ...props }) {
                       .transferToWallet(
                         props.selectedAddress,
                         ownerAddress,
-                        amount
+                        props.advanceUser === "TRUE"
+                          ? amount.toString()
+                          : (amount * 1000000).toString()
                       )
                       .then(async (res) => {
                         props.updateUserBalance();
                         props.notify("Transaction Successful", "info");
                         const balance = await props.getBalance(ownerAddress);
                         setOwnerBalance(
-                          balance / 1000000 +
-                            " " +
-                            process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+                          props.advanceUser === "TRUE"
+                            ? balance +
+                                " " +
+                                process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                            : balance / 1000000 +
+                                " " +
+                                process.env.NEXT_PUBLIC_CURRENCY_TOKEN
                         );
                       });
                   }}
@@ -315,6 +340,7 @@ const mapStateToProps = (state) => {
   return {
     loreBalance: state.wallet.loreBalance,
     selectedAddress: state.wallet.selectedAddress,
+    advanceUser: state.user.advanceUser,
   };
 };
 

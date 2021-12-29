@@ -9,7 +9,7 @@ import {
 import { reInitClients } from "./wallet";
 import { userActions } from "./actionTypes";
 import { async } from "regenerator-runtime";
-import { getBalance } from "./wallet";
+import { updateUserBalance } from "./wallet";
 import forkRepositoryFiles from "../../helpers/forkRepositoryFiles";
 
 export const validatePostingEligibility = async (
@@ -82,7 +82,7 @@ export const createRepository = ({
     try {
       const message = await env.txClient.msgCreateRepository(repository);
       const result = await sendTransaction({ message }, env);
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         getUserDetailsForSelectedAddress()(dispatch, getState);
         let url = "/" + ownerId + "/" + name;
@@ -127,7 +127,7 @@ export const createIssue = ({
     try {
       const message = await env.txClient.msgCreateIssue(issue);
       const result = await sendTransaction({ message }, env);
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
       } else {
         dispatch(notify(result.rawLog, "error"));
@@ -170,7 +170,7 @@ export const createComment = ({
     try {
       const message = await env.txClient.msgCreateComment(comment);
       const result = await sendTransaction({ message }, env);
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       return result;
     } catch (e) {
       console.error(e);
@@ -194,7 +194,7 @@ export const updateComment = ({ id = null, body = "", attachments = [] }) => {
     try {
       const message = await env.txClient.msgUpdateComment(comment);
       const result = await sendTransaction({ message }, env);
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       return result;
     } catch (e) {
       console.error(e);
@@ -216,7 +216,7 @@ export const deleteComment = ({ id = null }) => {
     try {
       const message = await env.txClient.msgDeleteComment(comment);
       const result = await sendTransaction({ message }, env);
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       return result;
     } catch (e) {
       console.error(e);
@@ -238,7 +238,7 @@ export const toggleIssueState = ({ id = null }) => {
     try {
       const message = await env.txClient.msgToggleIssueState(comment);
       const result = await sendTransaction({ message }, env);
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -266,7 +266,7 @@ export const renameRepository = ({ id = null, name = "" }) => {
     try {
       const message = await env.txClient.msgRenameRepository(repository);
       const result = await sendTransaction({ message }, env);
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         getUserDetailsForSelectedAddress()(dispatch, getState);
         return result;
@@ -299,7 +299,7 @@ export const updateCollaborator = ({ id = null, user = null, role = null }) => {
         collaborator
       );
       const result = await sendTransaction({ message }, env);
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -330,7 +330,7 @@ export const removeCollaborator = ({ id = null, user = null }) => {
         collaborator
       );
       const result = await sendTransaction({ message }, env);
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -364,7 +364,7 @@ export const changeRespositoryOwner = ({
     try {
       const message = await env.txClient.msgChangeOwner(req);
       const result = await sendTransaction({ message }, env);
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -378,46 +378,6 @@ export const changeRespositoryOwner = ({
     }
   };
 };
-
-// export const updateIssue = ({
-//   title = null,
-//   description = null,
-//   issueId = null,
-//   labels = null,
-//   weight = null,
-//   assignees = null,
-// }) => {
-//   return async (dispatch, getState) => {
-//     const { wallet, env } = getState();
-//     if (!(await validatePostingEligibility(dispatch, getState, "issue")))
-//       return null;
-//     const issue = {
-//       creator: wallet.selectedAddress,
-//       issueId,
-//       ...(title && { title }),
-//       ...(description && { description }),
-//       ...(labels && { labels }),
-//       ...(assignees && { assignees }),
-//       ...(weight && { weight }),
-//     };
-//     console.log("issue", issue);
-
-//     try {
-//       const message = await env.txClient.msgUpdateIssue(issue);
-//       const result = await sendTransaction({ message }, env);
-//       if (result && result.code === 0) {
-//         return result;
-//       } else {
-//         dispatch(notify(result.rawLog, "error"));
-//         return null;
-//       }
-//       return result;
-//     } catch (e) {
-//       console.error(e);
-//       dispatch(notify(e.message, "error"));
-//     }
-//   };
-// };
 
 export const updateIssueTitle = ({ title = null, id = null }) => {
   return async (dispatch, getState) => {
@@ -434,6 +394,7 @@ export const updateIssueTitle = ({ title = null, id = null }) => {
     try {
       const message = await env.txClient.msgUpdateIssueTitle(issue);
       const result = await sendTransaction({ message }, env);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -463,6 +424,7 @@ export const updatePullRequestTitle = ({ title = null, id = null }) => {
     try {
       const message = await env.txClient.msgUpdatePullRequestTitle(pull);
       const result = await sendTransaction({ message }, env);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -492,6 +454,7 @@ export const updateIssueDescription = ({ description = null, id = null }) => {
     try {
       const message = await env.txClient.msgUpdateIssueDescription(issue);
       const result = await sendTransaction({ message }, env);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -524,6 +487,7 @@ export const updatePullRequestDescription = ({
     try {
       const message = await env.txClient.msgUpdatePullRequestDescription(pull);
       const result = await sendTransaction({ message }, env);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -580,7 +544,7 @@ export const updateIssueAssignees = ({
           return null;
         }
       }
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       return { result1, result2 };
     } catch (e) {
       console.error(e);
@@ -629,7 +593,7 @@ export const updateIssueLabels = ({
           return null;
         }
       }
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       return { result1, result2 };
     } catch (e) {
       console.error(e);
@@ -660,7 +624,7 @@ export const createRepositoryLabel = ({
     try {
       const message = await env.txClient.msgCreateRepositoryLabel(label);
       const result = await sendTransaction({ message }, env);
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -701,7 +665,7 @@ export const updateRepositoryLabel = ({
     try {
       const message = await env.txClient.msgUpdateRepositoryLabel(label);
       const result = await sendTransaction({ message }, env);
-      getBalance()(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {

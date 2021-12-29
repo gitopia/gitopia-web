@@ -23,7 +23,7 @@ function ToggleForking({ repoId, allowForking, onSuccess, ...props }) {
       <div>
         <div className="label-text">Allow Forking</div>
         <div className="label-text-alt text-type-secondary">
-          Add all commits from the head branch onto the base branch individually
+          Allow others to fork repository and send pull requests
         </div>
       </div>
       <div

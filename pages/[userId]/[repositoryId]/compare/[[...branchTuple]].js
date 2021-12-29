@@ -415,7 +415,10 @@ function RepositoryCompareView(props) {
                     <div className="w-full pb-8">
                       <AssigneeSelector
                         assignees={reviewers}
-                        collaborators={repository.collaborators}
+                        collaborators={[
+                          { id: repository.owner.id, permission: "CREATOR" },
+                          ...repository.collaborators,
+                        ]}
                         onChange={async (list) => {
                           setReviewers(list);
                         }}
@@ -432,7 +435,10 @@ function RepositoryCompareView(props) {
                     <div className="w-full py-8">
                       <AssigneeSelector
                         assignees={assignees}
-                        collaborators={repository.collaborators}
+                        collaborators={[
+                          { id: repository.owner.id, permission: "CREATOR" },
+                          ...repository.collaborators,
+                        ]}
                         onChange={async (list) => {
                           setAssignees(list);
                         }}

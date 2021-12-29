@@ -28,21 +28,25 @@ function SendTlore(props) {
 
   const validateAmount = async (amount) => {
     setValidateAmountError(null);
-    const Vamount = Number(amount);
+    let Vamount = Number(amount);
     if (amount == "" || amount == 0) {
       setValidateAmountError("Enter Valid Amount");
     }
 
-    if (isNaturalNumber(amount) === true) {
+    let balance = props.loreBalance;
+    if (props.advanceUser === "FALSE") {
+      Vamount = Vamount * 1000000;
+    }
+    if (Vamount > 0 && isNaturalNumber(Vamount)) {
       if (Vamount < 10 || Vamount > 0) {
-        if (Vamount > props.loreBalance) {
+        if (Vamount > balance) {
           setValidateAmountError("Insufficient Balance");
         }
       } else {
         setValidateAmountError("Amount should be in range 1-10");
       }
     } else {
-      setValidateAmountError("Amount should be positive integer");
+      setValidateAmountError("Enter a Valid Amount");
     }
   };
 
@@ -79,8 +83,6 @@ function SendTlore(props) {
             type="number"
             placeholder="Amount"
             autoComplete="off"
-            min="1"
-            max="10"
             onKeyUp={async (e) => {
               await validateAmount(e.target.value);
             }}
@@ -119,7 +121,9 @@ function SendTlore(props) {
                 .transferToWallet(
                   props.selectedAddress,
                   receiverAddress,
-                  amount
+                  props.advanceUser === "TRUE"
+                    ? amount.toString()
+                    : (amount * 1000000).toString()
                 )
                 .then((res) => {
                   props.updateUserBalance();
@@ -144,6 +148,7 @@ const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
     loreBalance: state.wallet.loreBalance,
+    advanceUser: state.user.advanceUser,
   };
 };
 

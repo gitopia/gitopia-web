@@ -19,6 +19,7 @@ const initialState = {
   extensions: "",
   currentDashboard: get("currentDashboard"),
   dashboards: [],
+  advanceUser: "FALSE",
 };
 
 const reducer = (state = initialState, action) => {
@@ -52,7 +53,7 @@ const reducer = (state = initialState, action) => {
           return {
             type: "Organization",
             ...o,
-            url: "/orgs/" + o.id + "/dashboard",
+            url: "/daos/" + o.id + "/dashboard",
           };
         }),
       ];
