@@ -20,13 +20,6 @@ export const signOut = () => {
   };
 };
 
-async function initCosmosBankTxClient(accountSigner, getState) {
-  const { env } = getState();
-  return await cosmosBankTxClient(accountSigner, {
-    addr: env.rpcNode,
-  });
-}
-
 const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
   const [account] = await accountSigner.getAccounts();
   const { env } = getState();
@@ -35,24 +28,22 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
     payload: { address: account.address },
   });
 
-  const [tc, qc, amount] = await Promise.all([
+  const [tc, qc, bankc, amount] = await Promise.all([
     txClient(accountSigner, { addr: env.rpcNode }),
     queryClient({ addr: env.apiNode }),
+    cosmosBankTxClient(accountSigner, { addr: env.rpcNode }),
     updateUserBalance()(dispatch, getState),
   ]);
 
   dispatch({
-    type: envActions.SET_TX_CLIENT,
+    type: envActions.SET_CLIENTS,
     payload: {
-      client: tc,
+      txClient: tc,
+      queryClient: qc,
+      bankTxClient: bankc,
     },
   });
-  dispatch({
-    type: envActions.SET_QUERY_CLIENT,
-    payload: {
-      client: qc,
-    },
-  });
+
   await getUserDetailsForSelectedAddress()(dispatch, getState);
   await dispatch({
     type: userActions.INIT_DASHBOARDS,
@@ -295,20 +286,8 @@ export const downloadWalletForRemoteHelper = () => {
 
 export const transferToWallet = (fromAddress, toAddress, amount) => {
   return async (dispatch, getState) => {
-    const state = getState().wallet;
-    if (state.activeWallet) {
-      let accountSigner;
-      if (state.activeWallet.isKeplr) {
-        const chainId = "gitopia";
-        accountSigner = window.getOfflineSigner(chainId);
-      } else {
-        accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
-          state.activeWallet.mnemonic,
-          {
-            prefix: state.activeWallet.prefix || "gitopia",
-          }
-        );
-      }
+    const { wallet, env } = getState();
+    if (wallet.activeWallet) {
       try {
         const send = {
           fromAddress: fromAddress,
@@ -321,11 +300,7 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
           ],
         };
         console.log(send);
-        const cosmosBankTxClient = await initCosmosBankTxClient(
-          accountSigner,
-          getState
-        );
-        const msg = await cosmosBankTxClient.msgSend(send);
+        const msg = await env.bankTxClient.msgSend(send);
         const fee = {
           amount: [
             {
@@ -336,7 +311,7 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
           gas: "200000",
         };
         const memo = "";
-        const result = await cosmosBankTxClient.signAndBroadcast([msg], {
+        const result = await env.bankTxClient.signAndBroadcast([msg], {
           fee,
           memo,
         });

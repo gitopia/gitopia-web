@@ -37,9 +37,7 @@ export const envActions = {
   SET_API_STATUS: "SET_API_STATUS",
   SET_RPC_STATUS: "SET_RPC_STATUS",
   SET_TX_API: "SET_TX_API",
-  SET_TX_CLIENT: "SET_TX_CLIENT",
-  SET_QUERY_CLIENT: "SET_QUERY_CLIENT",
-  // ADD_MESSAGE_TYPE: "ADD_MESSAGE_TYPE",
+  SET_CLIENTS: "SET_CLIENTS",
 };
 
 export const starportActions = {
