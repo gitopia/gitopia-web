@@ -1504,7 +1504,9 @@ export default function Landing() {
 
       <section className={styles.section}>
         <h3 className={styles.h3}>Meet the Team</h3>
-        <div className={styles.teamWrapper1}>
+        <div
+          className={"grid grid-rows-3 grid-cols-3 gap-2 " + styles.teamWrapper}
+        >
           <div className={"row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
@@ -1533,8 +1535,7 @@ export default function Landing() {
               </div>
             </div>
           </div>
-        </div>
-        <div className={styles.teamWrapper2}>
+
           <div className={"row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
@@ -1567,8 +1568,7 @@ export default function Landing() {
               </div>
             </div>
           </div>
-        </div>
-        <div className={styles.teamWrapper2}>
+
           <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/ejaaz.png" loading="lazy" />
             <div className={styles.teamLabelContainer}>
@@ -1577,41 +1577,50 @@ export default function Landing() {
               </div>
             </div>
           </div>
-
-          <div className={styles.joinTeamContainer}>
-            <div
-              className={
-                "card lg:card-side bg-gradient-to-r from-type-dark to-purple-900 " +
-                styles.joinTeamCard
-              }
-            >
-              <div className={"ml-48 " + styles.joinTeamLogo}>
-                <figure>
-                  <img src="/logo-g.svg" />
-                </figure>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/abhiti.png"
+              loading="lazy"
+            />
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Abhiti Darbar</div>
               </div>
-              <div className={"card-body " + styles.joinTeamBody}>
-                <div className={"card-title " + styles.joinTeamTitle}>
-                  Want to join our team?
-                </div>
-                <div className={styles.joinTeamContent}>
-                  Passionate about blockchain and a desire to change the world?
-                  We’re always looking for hard working talent!
-                </div>
-                <div className="card-actions">
-                  <button
-                    className={
-                      "btn btn-primary btn-sm " + styles.joinTeamButton
+            </div>
+          </div>
+        </div>
+        <div className={styles.joinTeamContainer}>
+          <div
+            className={
+              "card lg:card-side bg-gradient-to-r from-type-dark to-purple-900 " +
+              styles.joinTeamCard
+            }
+          >
+            <div className={"ml-48 " + styles.joinTeamLogo}>
+              <figure>
+                <img src="/logo-g.svg" />
+              </figure>
+            </div>
+            <div className={"card-body " + styles.joinTeamBody}>
+              <div className={"card-title " + styles.joinTeamTitle}>
+                Want to join our team?
+              </div>
+              <div className={styles.joinTeamContent}>
+                Passionate about blockchain and a desire to change the world?
+                We’re always looking for hard working talent!
+              </div>
+              <div className="card-actions">
+                <button
+                  className={"btn btn-primary btn-sm " + styles.joinTeamButton}
+                  onClick={() => {
+                    if (window) {
+                      window.open("https://angel.co/company/gitopia");
                     }
-                    onClick={() => {
-                      if (window) {
-                        window.open("https://angel.co/company/gitopia");
-                      }
-                    }}
-                  >
-                    Apply Here
-                  </button>
-                </div>
+                  }}
+                >
+                  Apply Here
+                </button>
               </div>
             </div>
           </div>
