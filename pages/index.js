@@ -344,13 +344,11 @@ export default function Landing() {
           <div className={styles.row}>
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto w-full">
               <li className={menuOpen ? "" : "mr-4"}>
-                <a
-                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="/home"
-                  target="_blank"
-                >
-                  Try Testnet
-                </a>
+                <Link href="/home">
+                  <a className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70">
+                    Try Testnet
+                  </a>
+                </Link>
               </li>
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
@@ -388,13 +386,11 @@ export default function Landing() {
           </div>
           <div className="flex flex-col justify-center items-center">
             <div className={classnames("mb-8", styles.primaryCTA)}>
-              <a
-                href="/home"
-                target="_blank"
-                className="h-14 px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-              >
-                Try Our Testnet
-              </a>
+              <Link href="/home">
+                <a className="h-14 px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
+                  Try Our Testnet
+                </a>
+              </Link>
             </div>
             <div className={styles.primaryCTA}>
               <button
@@ -606,12 +602,12 @@ export default function Landing() {
                         <path
                           d="M7.04297 19.0293V9.36084L12.043 4.4333L17.043 9.36084V19.0293H7.04297Z"
                           stroke="currentColor"
-                          stroke-width="2"
+                          strokeWidth="2"
                         />
                         <path
                           d="M12.043 11.5293V9.5293"
                           stroke="currentColor"
-                          stroke-width="2"
+                          strokeWidth="2"
                         />
                       </svg>
                       {repository.tags.length} Tags
@@ -1508,7 +1504,9 @@ export default function Landing() {
 
       <section className={styles.section}>
         <h3 className={styles.h3}>Meet the Team</h3>
-        <div className={styles.teamWrapper1}>
+        <div
+          className={"grid grid-rows-3 grid-cols-3 gap-2 " + styles.teamWrapper}
+        >
           <div className={"row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
@@ -1537,8 +1535,7 @@ export default function Landing() {
               </div>
             </div>
           </div>
-        </div>
-        <div className={styles.teamWrapper2}>
+
           <div className={"row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
@@ -1571,8 +1568,7 @@ export default function Landing() {
               </div>
             </div>
           </div>
-        </div>
-        <div className={styles.teamWrapper2}>
+
           <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/ejaaz.png" loading="lazy" />
             <div className={styles.teamLabelContainer}>
@@ -1581,41 +1577,50 @@ export default function Landing() {
               </div>
             </div>
           </div>
-
-          <div className={styles.joinTeamContainer}>
-            <div
-              className={
-                "card lg:card-side bg-gradient-to-r from-type-dark to-purple-900 " +
-                styles.joinTeamCard
-              }
-            >
-              <div className={"ml-48 " + styles.joinTeamLogo}>
-                <figure>
-                  <img src="/logo-g.svg" />
-                </figure>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/abhiti.png"
+              loading="lazy"
+            />
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Abhiti Darbar</div>
               </div>
-              <div className={"card-body " + styles.joinTeamBody}>
-                <div className={"card-title " + styles.joinTeamTitle}>
-                  Want to join our team?
-                </div>
-                <div className={styles.joinTeamContent}>
-                  Passionate about blockchain and a desire to change the world?
-                  We’re always looking for hard working talent!
-                </div>
-                <div className="card-actions">
-                  <button
-                    className={
-                      "btn btn-primary btn-sm " + styles.joinTeamButton
+            </div>
+          </div>
+        </div>
+        <div className={styles.joinTeamContainer}>
+          <div
+            className={
+              "card lg:card-side bg-gradient-to-r from-type-dark to-purple-900 " +
+              styles.joinTeamCard
+            }
+          >
+            <div className={"ml-48 " + styles.joinTeamLogo}>
+              <figure>
+                <img src="/logo-g.svg" />
+              </figure>
+            </div>
+            <div className={"card-body " + styles.joinTeamBody}>
+              <div className={"card-title " + styles.joinTeamTitle}>
+                Want to join our team?
+              </div>
+              <div className={styles.joinTeamContent}>
+                Passionate about blockchain and a desire to change the world?
+                We’re always looking for hard working talent!
+              </div>
+              <div className="card-actions">
+                <button
+                  className={"btn btn-primary btn-sm " + styles.joinTeamButton}
+                  onClick={() => {
+                    if (window) {
+                      window.open("https://angel.co/company/gitopia");
                     }
-                    onClick={() => {
-                      if (window) {
-                        window.open("https://angel.co/company/gitopia");
-                      }
-                    }}
-                  >
-                    Apply Here
-                  </button>
-                </div>
+                  }}
+                >
+                  Apply Here
+                </button>
               </div>
             </div>
           </div>

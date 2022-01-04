@@ -1204,10 +1204,6 @@ ul.mde-suggestions li[aria-selected="true"] {
   border-color: transparent;
 }
 
-.tab.tab-bordered:first-of-type {
-  padding-left: 0;
-}
-
 .tab.tab-active .icon {
   color: #33ab34;
 }

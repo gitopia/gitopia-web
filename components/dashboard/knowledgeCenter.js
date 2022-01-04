@@ -29,7 +29,7 @@ export default function KnowledgeCenter() {
         </a>
       </div>
       <div className="flex ml-24 border-b border-grey py-2 mb-4">
-        <div className="flex-1 text-sm">Create a new organization</div>
+        <div className="flex-1 text-sm">Create a new DAO</div>
         <a
           href="https://docs.gitopia.com/organizations"
           className="btn btn-link btn-xs"

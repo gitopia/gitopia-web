@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 function RepositoryHeader({ repository, ...props }) {
   const [forkTargetShown, setForkTargetShown] = useState(false);
   const [isForking, setIsForking] = useState(false);
+  const [forkingSuccess, setForkingSuccess] = useState(false);
   const router = useRouter();
   const avatarLink =
     process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === repository.owner.id
@@ -136,6 +137,7 @@ function RepositoryHeader({ repository, ...props }) {
             onClick={() => {
               setForkTargetShown(true);
             }}
+            disabled={!repository.branches.length}
           >
             <svg
               viewBox="0 0 24 24"
@@ -163,6 +165,7 @@ function RepositoryHeader({ repository, ...props }) {
                 "/" + repository.owner.id + "/" + repository.name + "/insights"
               );
             }}
+            disabled={!repository.branches.length}
           >
             {repository.forks.length}
           </button>
@@ -196,81 +199,136 @@ function RepositoryHeader({ repository, ...props }) {
       />
       <div className="modal">
         <div className="modal-box max-w-xs">
-          <p>Select forked repository owner</p>
-          <ul className="menu compact mt-8">
-            {props.dashboards.map((d) => {
-              const isOwner = repository.owner.id === d.id;
-              return (
-                <li key={d.name}>
-                  <button
-                    className={
-                      "btn btn-sm btn-primary btn-outline my-2 justify-start " +
-                      (isForking === d.id ? "loading" : "")
-                    }
-                    disabled={isOwner || isForking}
-                    onClick={async () => {
-                      if (isOwner) return;
-                      setIsForking(d.id);
-                      const res = await props.forkRepository({
-                        repositoryId: repository.id,
-                        repositoryName: repository.name,
-                        ownerId: d.id,
-                      });
-                      if (res && res.url) {
-                        setForkTargetShown(false);
-                        router.push(res.url);
-                      }
-                      setIsForking(false);
-                    }}
-                  >
-                    {d.type === "User" ? (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-2"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
+          {repository.allowForking ? (
+            <>
+              {props.selectedAddress ? (
+                <p>Select forked repository owner</p>
+              ) : (
+                <p>Please login to fork repository</p>
+              )}
+              <ul className="menu compact mt-8">
+                {props.dashboards.map((d) => {
+                  const isOwner = repository.owner.id === d.id;
+                  return (
+                    <li key={d.name}>
+                      <button
+                        className={
+                          "btn btn-sm btn-primary btn-outline my-2 justify-start " +
+                          (isForking === d.id ? "loading" : "")
+                        }
+                        disabled={isOwner || isForking}
+                        onClick={async () => {
+                          if (isOwner) return;
+                          setIsForking(d.id);
+                          const res = await props.forkRepository({
+                            repositoryId: repository.id,
+                            repositoryName: repository.name,
+                            ownerId: d.id,
+                          });
+                          if (res && res.url) {
+                            setForkTargetShown(false);
+                            setForkingSuccess(res.url);
+                          }
+                          setIsForking(false);
+                        }}
                       >
-                        <path
-                          fillRule="evenodd"
-                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-2"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                    {d.name} - {shrinkAddress(d.id)}
-                    {isOwner ? (
-                      <div className="ml-2 badge badge-secondary badge-sm">
-                        Owner
-                      </div>
-                    ) : (
-                      ""
-                    )}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-          <div className="modal-action">
-            <label
+                        {d.type === "User" ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-2"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-2"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        )}
+                        {d.name} - {shrinkAddress(d.id)}
+                        {isOwner ? (
+                          <div className="ml-2 badge badge-secondary badge-sm">
+                            Owner
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+              <div className="modal-action">
+                <label
+                  className="btn btn-sm"
+                  onClick={() => {
+                    setForkTargetShown(false);
+                  }}
+                >
+                  {props.selectedAddress ? "Cancel" : "Ok"}
+                </label>
+              </div>
+            </>
+          ) : (
+            <>
+              <p>
+                Forking is disabled on this repository, please contact the owner
+                to allow forking.
+              </p>
+              <div className="modal-action mt-8">
+                <label
+                  className="btn btn-sm"
+                  onClick={() => {
+                    setForkTargetShown(false);
+                  }}
+                >
+                  Ok
+                </label>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+      <input
+        type="checkbox"
+        checked={forkingSuccess}
+        readOnly
+        className="modal-toggle"
+      />
+      <div className="modal">
+        <div className="modal-box max-w-xs">
+          <p>Successfully forked repository</p>
+          <div className="modal-action mt-8">
+            <button
               className="btn btn-sm"
               onClick={() => {
-                setForkTargetShown(false);
+                setForkingSuccess(false);
               }}
             >
-              Cancel
+              Stay here
+            </button>
+            <label
+              className="btn btn-sm btn-primary"
+              onClick={() => {
+                router.push(forkingSuccess);
+                setForkingSuccess(false);
+              }}
+            >
+              Go to new repo
             </label>
           </div>
         </div>
@@ -282,6 +340,7 @@ function RepositoryHeader({ repository, ...props }) {
 const mapStateToProps = (state) => {
   return {
     dashboards: state.user.dashboards,
+    selectedAddress: state.wallet.selectedAddress,
   };
 };
 

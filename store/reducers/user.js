@@ -53,7 +53,7 @@ const reducer = (state = initialState, action) => {
           return {
             type: "Organization",
             ...o,
-            url: "/orgs/" + o.id + "/dashboard",
+            url: "/daos/" + o.id + "/dashboard",
           };
         }),
       ];

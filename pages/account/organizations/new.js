@@ -54,7 +54,7 @@ function NewOrganization(props) {
       setNameHint({
         type: "error",
         shown: true,
-        message: "Organization name already taken",
+        message: "DAO name already taken",
       });
       return false;
     }
@@ -89,19 +89,19 @@ function NewOrganization(props) {
       className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
-        <title>New Organization - Gitopia</title>
+        <title>New DAO - Gitopia</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
       <div className="flex flex-1">
         <main className="container mx-auto max-w-md py-12">
-          <div className="text-2xl">Create a new organization</div>
+          <div className="text-2xl">Create a new DAO</div>
           <div className="mt-4">
             <TextInput
               type="text"
-              label="Organization Name"
-              name="organization_name"
-              placeholder="Organization Name"
+              label="DAO Name"
+              name="dao_name"
+              placeholder="DAO Name"
               value={name}
               setValue={(v) => {
                 if (sanitizedNameTest.test(v)) {
@@ -109,7 +109,7 @@ function NewOrganization(props) {
                     type: "info",
                     shown: true,
                     message:
-                      "Your organization would be named as " +
+                      "Your DAO would be named as " +
                       v.replace(sanitizedNameTest, "-"),
                   });
                 } else {
@@ -123,8 +123,8 @@ function NewOrganization(props) {
           <div className="mt-4">
             <TextInput
               type="text"
-              label="Organization Description"
-              name="organization_description"
+              label="DAO Description"
+              name="dao_description"
               placeholder="Description"
               multiline={true}
               value={description}
@@ -141,7 +141,7 @@ function NewOrganization(props) {
               disabled={organizationCreating}
               onClick={createOrganization}
             >
-              Create Organization
+              Create DAO
             </button>
           </div>
         </main>

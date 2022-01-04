@@ -51,8 +51,8 @@ export default function TextInput(
           }
           value={props.value}
           onKeyUp={(e) => {
-            if (e.code === "Enter" && props.onEnter) {
-              props.onEnter();
+            if (e.code === "Enter" || e.code === "NumpadEnter") {
+              if (props.onEnter) props.onEnter();
             }
           }}
           onChange={(e) => {

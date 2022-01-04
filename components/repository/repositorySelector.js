@@ -13,6 +13,7 @@ export default function RepositorySelector({
   const [selected, setSelected] = useState(currentRepo);
   const [searchText, setSearchText] = useState("");
   const searchInput = useRef();
+  const mainEl = useRef();
 
   useEffect(() => {
     setFilteredList(repositories);
@@ -29,7 +30,7 @@ export default function RepositorySelector({
   }, [searchText]);
 
   return (
-    <div className="dropdown" tabIndex={disabled ? null : "0"}>
+    <div className="dropdown" tabIndex={disabled ? null : "0"} ref={mainEl}>
       <div
         className={
           "btn btn-sm items-center" +
@@ -109,6 +110,9 @@ export default function RepositorySelector({
                   onClick={() => {
                     setSelected(b);
                     onClick(b);
+                    if (mainEl.current) {
+                      mainEl.current.blur();
+                    }
                   }}
                 >
                   {b.owner ? shrinkAddress(b.owner.id) + "/" : ""}
