@@ -34,7 +34,7 @@ function SendTlore(props) {
     }
 
     let balance = props.loreBalance;
-    if (props.advanceUser === "FALSE") {
+    if (props.advanceUser === false) {
       Vamount = Vamount * 1000000;
     }
     if (Vamount > 0 && isNaturalNumber(Vamount)) {
@@ -121,7 +121,7 @@ function SendTlore(props) {
                 .transferToWallet(
                   props.selectedAddress,
                   receiverAddress,
-                  props.advanceUser === "TRUE"
+                  props.advanceUser === true
                     ? amount.toString()
                     : (amount * 1000000).toString()
                 )

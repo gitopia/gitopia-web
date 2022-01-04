@@ -322,7 +322,6 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
       stringToPath(state.activeWallet.HDpath + "0"),
       state.activeWallet.prefix
     );
-    console.log(accountSigner);
     if (state.activeWallet) {
       try {
         const send = {
@@ -335,7 +334,6 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
             },
           ],
         };
-        console.log(send);
         const cosmosBankTxClient = await initCosmosBankTxClient(
           accountSigner,
           getState
