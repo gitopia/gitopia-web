@@ -1,18 +1,14 @@
 import { walletActions, envActions, userActions } from "./actionTypes";
-import {
-  DirectSecp256k1HdWallet,
-  DirectSecp256k1Wallet,
-} from "@cosmjs/proto-signing";
-import { stringToPath } from "@cosmjs/crypto";
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import CryptoJS from "crypto-js";
 import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import saveAs from "file-saver";
 import { queryClient, txClient } from "gitopiajs";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
-import _ from "lodash";
-import { getOrganizationDetailsForDashboard } from "./organization";
+import _, { reject } from "lodash";
 import { txClient as cosmosBankTxClient } from "../cosmos.bank.v1beta1/module/index.js";
 import { notify } from "reapop";
+import { setupTxClients } from "./env";
 
 export const signOut = () => {
   return {
@@ -21,35 +17,54 @@ export const signOut = () => {
 };
 
 const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
-  const [account] = await accountSigner.getAccounts();
-  const { env } = getState();
+  const { env, wallet } = getState();
+
   dispatch({
     type: walletActions.SET_SELECTED_ADDRESS,
-    payload: { address: account.address },
+    payload: { address: wallet.activeWallet.accounts[0].address },
   });
 
-  const [tc, qc, bankc, amount] = await Promise.all([
-    txClient(accountSigner, { addr: env.rpcNode }),
-    queryClient({ addr: env.apiNode }),
-    cosmosBankTxClient(accountSigner, { addr: env.rpcNode }),
-    updateUserBalance()(dispatch, getState),
-  ]);
+  if (accountSigner) {
+    const [tc, qc, bankc, amount] = await Promise.all([
+      txClient(accountSigner, { addr: env.rpcNode }),
+      queryClient({ addr: env.apiNode }),
+      cosmosBankTxClient(accountSigner, { addr: env.rpcNode }),
+      updateUserBalance()(dispatch, getState),
+    ]);
 
-  dispatch({
-    type: envActions.SET_CLIENTS,
-    payload: {
-      txClient: tc,
-      queryClient: qc,
-      bankTxClient: bankc,
-    },
-  });
+    dispatch({
+      type: envActions.SET_CLIENTS,
+      payload: {
+        txClient: tc,
+        queryClient: qc,
+        bankTxClient: bankc,
+      },
+    });
+    if (wallet.getPasswordPromise.resolve) {
+      wallet.getPasswordPromise.resolve("Unlock success");
+    }
+  } else {
+    const [qc, amount] = await Promise.all([
+      queryClient({ addr: env.apiNode }),
+      updateUserBalance()(dispatch, getState),
+    ]);
+
+    dispatch({
+      type: envActions.SET_CLIENTS,
+      payload: {
+        txClient: null,
+        queryClient: qc,
+        bankTxClient: null,
+      },
+    });
+  }
 
   await getUserDetailsForSelectedAddress()(dispatch, getState);
   await dispatch({
     type: userActions.INIT_DASHBOARDS,
     payload: {
-      name: getState().wallet.activeWallet.name,
-      id: account.address,
+      name: wallet.activeWallet.name,
+      id: wallet.activeWallet.accounts[0].address,
     },
   });
   const { user } = getState();
@@ -58,7 +73,10 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
     (d) => d.id === user.currentDashboard
   );
   if (!dashboard) {
-    await setCurrentDashboard(account.address)(dispatch, getState);
+    await setCurrentDashboard(wallet.activeWallet.accounts[0].address)(
+      dispatch,
+      getState
+    );
   }
 };
 
@@ -82,19 +100,40 @@ export const reInitClients = async (dispatch, getState) => {
 export const unlockKeplrWallet = () => {
   return async (dispatch, getState) => {
     if (window.keplr && window.getOfflineSigner) {
-      const chainId = "gitopia";
-      const offlineSigner = window.getOfflineSigner(chainId);
-      const accounts = await offlineSigner.getAccounts();
-      const key = await window.keplr.getKey(chainId);
-      await dispatch({
-        type: walletActions.SET_ACTIVE_WALLET,
-        payload: { wallet: { name: key.name, accounts, isKeplr: true } },
-      });
-      await postWalletUnlocked(offlineSigner, dispatch, getState);
-      return accounts[0];
+      try {
+        const chainId = "gitopia";
+        const offlineSigner = window.getOfflineSigner(chainId);
+        const accounts = await offlineSigner.getAccounts();
+        const key = await window.keplr.getKey(chainId);
+        await dispatch({
+          type: walletActions.SET_ACTIVE_WALLET,
+          payload: { wallet: { name: key.name, accounts, isKeplr: true } },
+        });
+        await postWalletUnlocked(offlineSigner, dispatch, getState);
+        return accounts[0];
+      } catch (e) {
+        console.log(e);
+        return null;
+      }
     } else {
       console.log("Unable to use keplr getOfflineSigner");
       dispatch(notify("Please ensure keplr extension is installed", "error"));
+    }
+  };
+};
+
+export const setWallet = ({ wallet }) => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: walletActions.SET_ACTIVE_WALLET,
+      payload: { wallet: { name: wallet.name, accounts: wallet.accounts } },
+    });
+    if (wallet.accounts.length > 0) {
+      try {
+        await postWalletUnlocked(null, dispatch, getState);
+      } catch (e) {
+        console.error(e);
+      }
     }
   };
 };
@@ -215,19 +254,6 @@ export const restoreWallet = ({ encrypted, password }) => {
   };
 };
 
-export const signInWithPrivateKey = ({ prefix = "gitopia", privKey }) => {
-  return async (dispatch, getState) => {
-    const pKey = keyFromWif(privKey.trim());
-    const accountSigner = await DirectSecp256k1Wallet.fromKey(pKey, prefix);
-
-    try {
-      await postWalletUnlocked(accountSigner, dispatch);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-};
-
 export const updateUserBalance = () => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
@@ -274,21 +300,74 @@ export const getBalance = (address) => {
 export const downloadWalletForRemoteHelper = () => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
+
     if (state.activeWallet) {
-      const backup = JSON.stringify(state.activeWallet);
-      const blob = new Blob([backup.toString()], {
-        type: "application/json; charset=utf-8",
+      dispatch({
+        type: walletActions.GET_PASSWORD_FOR_UNLOCK_WALLET,
+        payload: {
+          usedFor: "Download",
+          resolve: (action) => {
+            dispatch({
+              type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
+            });
+            dispatch(notify(action, "info"));
+          },
+          reject: (reason) => {
+            dispatch({
+              type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
+            });
+            dispatch(notify(reason, "error"));
+          },
+        },
       });
-      saveAs(blob, state.activeWallet.name + ".json");
     }
+  };
+};
+
+export const downloadWallet = (password) => {
+  return async (dispatch, getState) => {
+    const state = getState().wallet;
+
+    if (state.activeWallet) {
+      const encryptedWallet =
+        state.wallets[
+          state.wallets.findIndex((x) => x.name === state.activeWallet.name)
+        ].wallet;
+      let wallet;
+      try {
+        wallet = JSON.parse(
+          CryptoJS.AES.decrypt(encryptedWallet, password).toString(
+            CryptoJS.enc.Utf8
+          )
+        );
+      } catch (e) {
+        console.error(e);
+        return false;
+      }
+      if (wallet) {
+        const backup = JSON.stringify(wallet);
+        const blob = new Blob([backup.toString()], {
+          type: "application/json; charset=utf-8",
+        });
+        saveAs(blob, wallet.name + ".json");
+        if (state.getPasswordPromise.resolve) {
+          state.getPasswordPromise.resolve("Download success");
+        }
+        return true;
+      }
+      return false;
+    }
+    return false;
   };
 };
 
 export const transferToWallet = (fromAddress, toAddress, amount) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
+    const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
+        await setupTxClients(dispatch, getState);
+        const { env } = getState();
         const send = {
           fromAddress: fromAddress,
           toAddress: toAddress,
@@ -315,23 +394,15 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
           fee,
           memo,
         });
+        if (result && result.code === 0) {
+          updateUserBalance()(dispatch, getState);
+          dispatch(notify("Transaction Successful", "info"));
+        }
         return result;
       } catch (e) {
         console.error(e);
         dispatch(notify(e.message, "error"));
       }
-    }
-  };
-};
-
-export const continueWithPassowrd = (password) => {
-  return async (dispatch, getState) => {
-    const { wallet } = getState();
-    if (wallet.askPasswordCb) {
-      const res = await wallet.askPasswordCb(password);
-    } else {
-      console.log("No callback found");
-      return null;
     }
   };
 };

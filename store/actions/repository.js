@@ -1,10 +1,6 @@
 import { notify } from "reapop";
-import { sendTransaction } from "./env";
-import {
-  createUser,
-  getUserDetailsForSelectedAddress,
-  setCurrentDashboard,
-} from "./user";
+import { sendTransaction, setupTxClients } from "./env";
+import { createUser, getUserDetailsForSelectedAddress } from "./user";
 import { updateUserBalance } from "./wallet";
 import forkRepositoryFiles from "../../helpers/forkRepositoryFiles";
 
@@ -15,6 +11,13 @@ export const validatePostingEligibility = async (
   numberOfTransactions = 1
 ) => {
   const { wallet, env, user } = getState();
+
+  try {
+    await setupTxClients(dispatch, getState);
+  } catch (e) {
+    console.log(e.message);
+    return false;
+  }
 
   if (!wallet.selectedAddress) {
     dispatch(notify("Please sign in to create " + msgType, "error"));
@@ -105,9 +108,10 @@ export const createIssue = ({
   assignees = [],
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "issue")))
       return null;
+
+    const { wallet, env } = getState();
     const issue = {
       creator: wallet.selectedAddress,
       title,
@@ -117,8 +121,6 @@ export const createIssue = ({
       weight,
       assignees,
     };
-
-    console.log("issue", issue);
 
     try {
       const message = await env.txClient.msgCreateIssue(issue);
@@ -148,9 +150,10 @@ export const createComment = ({
   commentType = "",
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "comment")))
       return null;
+
+    const { wallet, env } = getState();
     const comment = {
       creator: wallet.selectedAddress,
       parentId,
@@ -177,9 +180,10 @@ export const createComment = ({
 
 export const updateComment = ({ id = null, body = "", attachments = [] }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "comment")))
       return null;
+
+    const { wallet, env } = getState();
     const comment = {
       creator: wallet.selectedAddress,
       id,
@@ -201,14 +205,14 @@ export const updateComment = ({ id = null, body = "", attachments = [] }) => {
 
 export const deleteComment = ({ id = null }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "comment")))
       return null;
+
+    const { wallet, env } = getState();
     const comment = {
       creator: wallet.selectedAddress,
       id,
     };
-    console.log(comment);
     try {
       const message = await env.txClient.msgDeleteComment(comment);
       const result = await sendTransaction({ message }, env);
@@ -223,14 +227,14 @@ export const deleteComment = ({ id = null }) => {
 
 export const toggleIssueState = ({ id = null }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "comment")))
       return null;
+
+    const { wallet, env } = getState();
     const comment = {
       creator: wallet.selectedAddress,
       id,
     };
-    console.log(comment);
     try {
       const message = await env.txClient.msgToggleIssueState(comment);
       const result = await sendTransaction({ message }, env);
@@ -377,15 +381,15 @@ export const changeRespositoryOwner = ({
 
 export const updateIssueTitle = ({ title = null, id = null }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "issue")))
       return null;
+
+    const { wallet, env } = getState();
     const issue = {
       creator: wallet.selectedAddress,
       id,
       title,
     };
-    console.log("issue", issue);
 
     try {
       const message = await env.txClient.msgUpdateIssueTitle(issue);
@@ -407,15 +411,15 @@ export const updateIssueTitle = ({ title = null, id = null }) => {
 
 export const updatePullRequestTitle = ({ title = null, id = null }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
       return null;
+
+    const { wallet, env } = getState();
     const pull = {
       creator: wallet.selectedAddress,
       id,
       title,
     };
-    console.log("pull", pull);
 
     try {
       const message = await env.txClient.msgUpdatePullRequestTitle(pull);
@@ -437,15 +441,15 @@ export const updatePullRequestTitle = ({ title = null, id = null }) => {
 
 export const updateIssueDescription = ({ description = null, id = null }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "issue")))
       return null;
+
+    const { wallet, env } = getState();
     const issue = {
       creator: wallet.selectedAddress,
       id,
       description,
     };
-    console.log("issue", issue);
 
     try {
       const message = await env.txClient.msgUpdateIssueDescription(issue);
@@ -470,15 +474,15 @@ export const updatePullRequestDescription = ({
   id = null,
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
       return null;
+
+    const { wallet, env } = getState();
     const pull = {
       creator: wallet.selectedAddress,
       id,
       description,
     };
-    console.log("pull", pull);
 
     try {
       const message = await env.txClient.msgUpdatePullRequestDescription(pull);
@@ -504,9 +508,10 @@ export const updateIssueAssignees = ({
   removedAssignees = [],
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
       return null;
+
+    const { wallet, env } = getState();
     const issueAddAssignees = {
       creator: wallet.selectedAddress,
       id: issueId,
@@ -517,8 +522,6 @@ export const updateIssueAssignees = ({
       id: issueId,
       assignees: removedAssignees,
     };
-    // console.log("add assignees", issueAddAssignees);
-    // console.log("remove assignees", issueRemoveAssignees);
 
     try {
       let message1, message2, result1, result2;
@@ -555,9 +558,10 @@ export const updateIssueLabels = ({
   removedLabels = [],
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
       return null;
+
+    const { wallet, env } = getState();
     const issueAddLabels = {
       creator: wallet.selectedAddress,
       issueId: issueId,
@@ -568,8 +572,6 @@ export const updateIssueLabels = ({
       issueId: issueId,
       labelIds: removedLabels,
     };
-    console.log("add labels", issueAddLabels);
-    console.log("remove labels", issueRemoveLabels);
 
     try {
       let message1, message2, result1, result2;
@@ -605,9 +607,10 @@ export const createRepositoryLabel = ({
   description = "",
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "label")))
       return null;
+
+    const { wallet, env } = getState();
     const label = {
       creator: wallet.selectedAddress,
       id: repoId,
@@ -615,7 +618,6 @@ export const createRepositoryLabel = ({
       color,
       description,
     };
-    console.log("create", label);
 
     try {
       const message = await env.txClient.msgCreateRepositoryLabel(label);
@@ -644,9 +646,10 @@ export const updateRepositoryLabel = ({
   description = "",
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "label")))
       return null;
+
+    const { wallet, env } = getState();
     const label = {
       creator: wallet.selectedAddress,
       repositoryId,
@@ -655,8 +658,6 @@ export const updateRepositoryLabel = ({
       color,
       description,
     };
-
-    console.log("update", label);
 
     try {
       const message = await env.txClient.msgUpdateRepositoryLabel(label);
@@ -767,9 +768,10 @@ export const createPullRequest = ({
   baseRepoId,
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
       return null;
+
+    const { wallet, env } = getState();
     const pull = {
       creator: wallet.selectedAddress,
       title,
@@ -780,7 +782,6 @@ export const createPullRequest = ({
       baseRepoId,
     };
 
-    console.log("pull request", pull);
     try {
       const message = await env.txClient.msgCreatePullRequest(pull);
       const result = await sendTransaction({ message }, env);
@@ -810,9 +811,10 @@ export const createRelease = ({
   isTag = null,
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "release")))
       return null;
+
+    const { wallet, env } = getState();
     const release = {
       creator: wallet.selectedAddress,
       tagName,
@@ -825,7 +827,6 @@ export const createRelease = ({
       isTag,
     };
 
-    console.log("release", release);
     try {
       const message = await env.txClient.msgCreateRelease(release);
       const result = await sendTransaction({ message }, env);
@@ -845,9 +846,10 @@ export const createRelease = ({
 
 export const createTag = ({ repositoryId = null, name = null, sha = null }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "tag")))
       return null;
+
+    const { wallet, env } = getState();
     const tag = {
       creator: wallet.selectedAddress,
       id: repositoryId,
@@ -855,7 +857,6 @@ export const createTag = ({ repositoryId = null, name = null, sha = null }) => {
       sha,
     };
 
-    console.log("tag", tag);
     try {
       const message = await env.txClient.msgSetRepositoryTag(tag);
       const result = await sendTransaction({ message }, env);
@@ -879,11 +880,12 @@ export const updatePullRequestAssignees = ({
   removedAssignees = [],
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (
       !(await validatePostingEligibility(dispatch, getState, "pull request", 2))
     )
       return null;
+
+    const { wallet, env } = getState();
     const pullAddAssignees = {
       creator: wallet.selectedAddress,
       id: pullId,
@@ -932,11 +934,12 @@ export const updatePullRequestReviewers = ({
   removedReviewers = [],
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (
       !(await validatePostingEligibility(dispatch, getState, "pull request", 2))
     )
       return null;
+
+    const { wallet, env } = getState();
     const pullAddReviewers = {
       creator: wallet.selectedAddress,
       id: pullId,
@@ -985,9 +988,10 @@ export const updatePullRequestLabels = ({
   removedLabels = [],
 }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
       return null;
+
+    const { wallet, env } = getState();
     const issueAddLabels = {
       creator: wallet.selectedAddress,
       pullRequestId: pullId,
@@ -1030,16 +1034,17 @@ export const updatePullRequestLabels = ({
 
 export const updatePullRequestState = ({ id, state, mergeCommitSha }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
       return null;
+
+    const { wallet, env } = getState();
     const pullState = {
       creator: wallet.selectedAddress,
       id,
       state,
       mergeCommitSha,
     };
-    console.log(pullState);
+
     try {
       const message = await env.txClient.msgSetPullRequestState(pullState);
       const result = await sendTransaction({ message }, env);
@@ -1058,14 +1063,15 @@ export const updatePullRequestState = ({ id, state, mergeCommitSha }) => {
 
 export const toggleRepositoryForking = ({ id }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
+
+    const { wallet, env } = getState();
     const repo = {
       creator: wallet.selectedAddress,
       id,
     };
-    console.log(repo);
+
     try {
       const message = await env.txClient.msgToggleRepositoryForking(repo);
       const result = await sendTransaction({ message }, env);

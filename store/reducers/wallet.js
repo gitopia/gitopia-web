@@ -9,6 +9,8 @@ const initialState = {
   gasPrice: "0.0000025" + process.env.NEXT_PUBLIC_CURRENCY_TOKEN,
   backupState: false,
   loreBalance: 0,
+  getPassword: false,
+  getPasswordPromise: {},
 };
 
 const reducer = (state = initialState, action) => {
@@ -113,6 +115,23 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         loreBalance: balance,
+      };
+    }
+
+    case walletActions.GET_PASSWORD_FOR_UNLOCK_WALLET: {
+      const { resolve, reject, usedFor } = action.payload;
+      return {
+        ...state,
+        getPassword: usedFor,
+        getPasswordPromise: { resolve, reject },
+      };
+    }
+
+    case walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET: {
+      return {
+        ...state,
+        getPassword: false,
+        getPasswordPromise: {},
       };
     }
 

@@ -1,5 +1,5 @@
 import Client from "@starport/client-js";
-import { envActions } from "./actionTypes";
+import { envActions, walletActions } from "./actionTypes";
 import { assertIsBroadcastTxSuccess } from "@cosmjs/stargate";
 import { notify } from "reapop";
 
@@ -105,4 +105,30 @@ export const sendTransaction = async (
     memo,
   });
   return result;
+};
+
+export const setupTxClients = async (dispatch, getState) => {
+  const { env } = getState();
+  if (!env.txClient && !env.bankTxClient) {
+    return new Promise((resolve, reject) => {
+      dispatch({
+        type: walletActions.GET_PASSWORD_FOR_UNLOCK_WALLET,
+        payload: {
+          usedFor: "Unlock",
+          resolve: (action) => {
+            dispatch({
+              type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
+            });
+            resolve({ message: action });
+          },
+          reject: (reason) => {
+            dispatch({
+              type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
+            });
+            reject({ message: reason });
+          },
+        },
+      });
+    });
+  }
 };

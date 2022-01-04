@@ -1,6 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { connect } from "react-redux";
-import { unlockWallet, unlockKeplrWallet } from "../store/actions/wallet";
+import {
+  setWallet,
+  unlockWallet,
+  downloadWallet,
+  unlockKeplrWallet,
+} from "../store/actions/wallet";
 import initKeplr from "../keplr/init";
 import TextInput from "./textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
@@ -41,9 +46,11 @@ function AutoLogin(props) {
             console.log("Keplr sign in success");
           }
         } else {
-          setShowDialog(true);
           setWalletName(lastWallet.name);
           setAddress(lastWallet.accounts[0].address);
+          let res = await props.setWallet({
+            wallet: lastWallet,
+          });
         }
       } else {
         console.log("Wallet active");
@@ -54,25 +61,43 @@ function AutoLogin(props) {
   }, []);
 
   useEffect(() => {
+    if (props.getPassword) {
+      setShowDialog(true);
+    }
+  }, [props.getPassword]);
+
+  useEffect(() => {
     if (showDialog)
       setTimeout(() => {
         if (inputEl.current) inputEl.current.focus();
       }, 0);
   }, [showDialog]);
 
+  useEffect(() => {
+    if (props.activeWallet) {
+      setWalletName(props.activeWallet.name);
+      setAddress(props.activeWallet.accounts[0].address);
+    }
+  }, [props.activeWallet]);
+
   const unlockLocalWallet = async () => {
-    let res = await props.unlockWallet({
-      name: walletName,
-      password: password,
-    });
+    let res;
+    if (props.getPassword === "Unlock")
+      res = await props.unlockWallet({
+        name: walletName,
+        password: password,
+      });
+    else res = await props.downloadWallet(password);
     if (res) {
       console.log("Local sign in success");
       setShowDialog(false);
       setPassword("");
+      setPasswordHint({ shown: false });
     } else {
       setPasswordHint({
         ...passwordHint,
         shown: true,
+        type: "error",
         message: "Wrong password",
       });
     }
@@ -113,6 +138,11 @@ function AutoLogin(props) {
                 className="btn btn-sm btn-block flex-1"
                 onClick={() => {
                   setShowDialog(false);
+                  setPassword("");
+                  setPasswordHint({ shown: false });
+                  if (props.getPasswordPromise.reject) {
+                    props.getPasswordPromise.reject("Unlock rejected");
+                  }
                 }}
               >
                 Cancel
@@ -121,7 +151,7 @@ function AutoLogin(props) {
                 className="btn btn-sm btn-block btn-primary flex-1"
                 onClick={unlockLocalWallet}
               >
-                Unlock
+                {props.getPassword}
               </button>
             </div>
           </div>
@@ -136,11 +166,14 @@ function AutoLogin(props) {
 const mapStateToProps = (state) => {
   return {
     activeWallet: state.wallet.activeWallet,
-    askPasswordCb: state.wallet.askPasswordCb,
+    getPassword: state.wallet.getPassword,
+    getPasswordPromise: state.wallet.getPasswordPromise,
   };
 };
 
 export default connect(mapStateToProps, {
+  setWallet,
   unlockWallet,
+  downloadWallet,
   unlockKeplrWallet,
 })(AutoLogin);
