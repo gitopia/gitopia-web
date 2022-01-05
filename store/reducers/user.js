@@ -19,7 +19,7 @@ const initialState = {
   extensions: "",
   currentDashboard: get("currentDashboard"),
   dashboards: [],
-  advanceUser: "FALSE",
+  advanceUser: false,
 };
 
 const reducer = (state = initialState, action) => {

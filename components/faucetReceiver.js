@@ -61,7 +61,7 @@ function FaucetReceiver(props) {
       <div className="flex-1 mr-8">
         <div className="text-lg">
           Get testnet tokens{" "}
-          {props.advanceUser === "TRUE"
+          {props.advanceUser === true
             ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
             : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
         </div>
@@ -81,7 +81,7 @@ function FaucetReceiver(props) {
           disabled={loading}
         >
           Get{" "}
-          {props.advanceUser === "TRUE"
+          {props.advanceUser === true
             ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
             : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
         </button>

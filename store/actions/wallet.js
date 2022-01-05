@@ -5,7 +5,7 @@ import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import saveAs from "file-saver";
 import { queryClient, txClient } from "gitopiajs";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
-import _, { reject } from "lodash";
+import _ from "lodash";
 import { txClient as cosmosBankTxClient } from "../cosmos.bank.v1beta1/module/index.js";
 import { notify } from "reapop";
 import { setupTxClients } from "./env";
@@ -327,7 +327,6 @@ export const downloadWalletForRemoteHelper = () => {
 export const downloadWallet = (password) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
-
     if (state.activeWallet) {
       const encryptedWallet =
         state.wallets[
