@@ -114,6 +114,15 @@ function AutoLogin(props) {
       {showDialog ? (
         <div className="modal">
           <div className="modal-box max-w-xs">
+            <div className="hidden">
+              <input
+                type="text"
+                name="wallet_name"
+                placeholder="Wallet Name"
+                value={walletName}
+                readOnly
+              />
+            </div>
             <div className="">
               <TextInput
                 type="password"
@@ -124,6 +133,7 @@ function AutoLogin(props) {
                   shrinkAddress(address) +
                   ")"
                 }
+                name="wallet_password"
                 placeholder="Password"
                 value={password}
                 setValue={setPassword}
