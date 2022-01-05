@@ -14,7 +14,9 @@ import { communityPoolSpendProposal } from "../../../../store/actions/proposals"
 function RepositoryProposalCreateView(props) {
   const router = useRouter();
   const hrefBase = "/orgs/" + props.currentDashboard;
-  const [repositoryName, setRepositoryName] = useState("");
+  const [repositoryName, setRepositoryName] = useState(
+    props.repositories[0].name
+  );
   const [description, setDescription] = useState("");
   const [proposalType, setProposalType] = useState("1");
   const [amount, setAmount] = useState("");
