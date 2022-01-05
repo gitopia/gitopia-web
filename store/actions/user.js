@@ -1,6 +1,5 @@
 import { userActions } from "./actionTypes";
 import { sendTransaction } from "./env";
-import { getOrganizationDetailsForDashboard } from "./organization";
 import { updateUserBalance } from "./wallet";
 
 export const createUser = (username) => {

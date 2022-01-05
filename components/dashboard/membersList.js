@@ -15,7 +15,6 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
   const [collabRole, setCollabRole] = useState("MEMBER");
   const [isAdding, setIsAdding] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
-  console.log("collabs", members);
 
   const validateMember = async () => {
     setCollabHint({
@@ -44,14 +43,14 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
         role: collabRole,
       });
       console.log(res);
+      if (refreshOrganization) await refreshOrganization();
+      setCollabAddress("");
+      setCollabHint({
+        shown: false,
+        type: "error",
+        message: "",
+      });
     }
-    if (refreshOrganization) await refreshOrganization();
-    setCollabAddress("");
-    setCollabHint({
-      shown: false,
-      type: "error",
-      message: "",
-    });
     setIsAdding(false);
   };
 
