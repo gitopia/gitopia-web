@@ -48,7 +48,12 @@ function FaucetReceiver(props) {
         </svg>
       </div>
       <div className="flex-1 mr-8">
-        <div className="text-lg">Get testnet tokens tLORE</div>
+        <div className="text-lg">
+          Get testnet tokens{" "}
+          {props.advanceUser === true
+            ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
+            : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
+        </div>
         <div className="text-xs mt-2 text-type-secondary">
           Use them to test Gitopia. Based on your activity you might get actual
           tokens on mainnet.
@@ -64,7 +69,10 @@ function FaucetReceiver(props) {
           onClick={() => getTokens(1)}
           disabled={loading}
         >
-          Get tLORE
+          Get{" "}
+          {props.advanceUser === true
+            ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
+            : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
         </button>
       </div>
     </div>
@@ -75,6 +83,7 @@ const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
     loreBalance: state.wallet.loreBalance,
+    advanceUser: state.user.advanceUser,
   };
 };
 

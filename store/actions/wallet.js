@@ -265,7 +265,7 @@ export const updateUserBalance = () => {
     try {
       const res = await api.queryBalance(
         state.selectedAddress,
-        process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+        process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
       );
       dispatch({
         type: walletActions.UPDATE_BALANCE,
@@ -291,7 +291,7 @@ export const getBalance = (address) => {
     try {
       const res = await api.queryBalance(
         address,
-        process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+        process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
       );
       if (res && res.ok) return res.data.balance.amount;
       else console.error(res.error);
@@ -322,22 +322,30 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
       stringToPath(state.activeWallet.HDpath + "0"),
       state.activeWallet.prefix
     );
-    console.log(accountSigner);
     if (state.activeWallet) {
       try {
         const send = {
           fromAddress: fromAddress,
           toAddress: toAddress,
-          amount: [{ amount: amount, denom: "tlore" }],
+          amount: [
+            {
+              amount: amount,
+              denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+            },
+          ],
         };
-        console.log(send);
         const cosmosBankTxClient = await initCosmosBankTxClient(
           accountSigner,
           getState
         );
         const msg = await cosmosBankTxClient.msgSend(send);
         const fee = {
-          amount: [{ amount: "0", denom: "tlore" }],
+          amount: [
+            {
+              amount: "0",
+              denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+            },
+          ],
           gas: "200000",
         };
         const memo = "";
