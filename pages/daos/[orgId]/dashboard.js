@@ -40,7 +40,7 @@ function OrgDashboard(props) {
                 return { owner: props.currentDashboard, ...r };
               })}
             />
-            {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ===
+            {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
             props.currentDashboard ? (
               <button
                 className="text-sm text-type-secondary text-left mx-8 border-b border-grey py-2 mb-4 w-48"

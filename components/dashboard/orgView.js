@@ -3,7 +3,7 @@ import { getOrganizationDetailsForDashboard } from "../../store/actions/organiza
 import OrgViewTabs from "./orgViewTabs";
 
 function OrgView({ organization = {}, ...props }) {
-  const hrefBase = "/orgs/" + organization.address;
+  const hrefBase = "/daos/" + organization.address;
   return (
     <main className="container mx-auto max-w-screen-lg py-12">
       <div className="flex border-b border-grey">

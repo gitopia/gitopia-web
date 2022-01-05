@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 import Link from "next/link";
 
 function GitopiaProposalsView(props) {
-  const hrefBase = "/orgs/" + props.currentDashboard;
+  const hrefBase = "/daos/" + props.currentDashboard;
 
   return (
     <div
