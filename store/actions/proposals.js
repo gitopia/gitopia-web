@@ -138,7 +138,7 @@ export const communityPoolSpendProposal = (
       state.activeWallet.prefix
     );
     try {
-      const amountToSend = [{ amount: amount, denom: "tlore" }];
+      const amountToSend = [{ amount: amount, denom: "utlore" }];
       const communityPoolSpendProposal = CommunityPoolSpendProposal.fromPartial(
         {
           title: repositoryName,
