@@ -13,6 +13,9 @@ module.exports = withBundleAnalyzer(
       // ${previousConfig...}
 
       if (!dev && !isServer) {
+        config.plugins.push(
+          new webpack.IgnorePlugin(/^\.\/wordlists\/(?!english)/, /bip39\/src$/)
+        );
       }
 
       return config;
