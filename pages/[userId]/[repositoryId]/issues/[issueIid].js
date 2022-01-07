@@ -4,11 +4,9 @@ import Header from "../../../../components/header";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import dayjs from "dayjs";
-import ReactMarkdown from "react-markdown";
+import find from "lodash/find";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
 import getRepositoryIssue from "../../../../helpers/getRepositoryIssue";
 import getComment from "../../../../helpers/getComment";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
@@ -25,7 +23,6 @@ import {
 } from "../../../../store/actions/repository";
 import AssigneeSelector from "../../../../components/repository/assigneeSelector";
 import LabelSelector from "../../../../components/repository/labelSelector";
-import getIssueAllLabels from "../../../../helpers/getIssueAllLabels";
 import Label from "../../../../components/repository/label";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
@@ -259,7 +256,7 @@ function RepositoryIssueView(props) {
                 <div className="text-xs px-3 mt-2 flex flex-wrap">
                   {issue.labels.length
                     ? issue.labels.map((l, i) => {
-                        let label = _.find(allLabels, { id: l }) || {
+                        let label = find(allLabels, { id: l }) || {
                           name: "",
                           color: "",
                         };

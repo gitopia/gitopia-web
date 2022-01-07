@@ -1,14 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { connect } from "react-redux";
 import Head from "next/head";
 import Header from "../components/header";
-import BackendStatus from "../components/backendStatus";
-import FaucetReceiver from "../components/faucetReceiver";
 import TopRepositories from "../components/topRepositories";
 import UserDashboard from "../components/dashboard/user";
-import Link from "next/link";
 import { useRouter } from "next/router";
-
 import DashboardSelector from "../components/dashboard/dashboardSelector";
 import getHomeUrl from "../helpers/getHomeUrl";
 

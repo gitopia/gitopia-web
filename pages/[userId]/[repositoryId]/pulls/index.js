@@ -1,11 +1,11 @@
-import Head from "next/head";
-import Header from "../../../../components/header";
-
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Link from "next/link";
 import dayjs from "dayjs";
+import find from "lodash/find";
+import Head from "next/head";
 
+import Header from "../../../../components/header";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
@@ -50,7 +50,7 @@ function RepositoryPullsView(props) {
               }
               break;
             case "label":
-              let l = _.find(repository.labels, { name: value });
+              let l = find(repository.labels, { name: value });
               if (l) {
                 option["labelIds"] = l.id;
                 delete option["labels"];

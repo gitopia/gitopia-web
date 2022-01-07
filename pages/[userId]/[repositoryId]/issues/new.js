@@ -1,15 +1,13 @@
-import Head from "next/head";
-import Header from "../../../../components/header";
-
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
+import find from "lodash/find";
+import Head from "next/head";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
+import Header from "../../../../components/header";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import MarkdownEditor from "../../../../components/markdownEditor";
-
 import { createIssue } from "../../../../store/actions/repository";
 import AssigneeSelector from "../../../../components/repository/assigneeSelector";
 import LabelSelector from "../../../../components/repository/labelSelector";
@@ -169,7 +167,7 @@ function RepositoryIssueCreateView(props) {
                 <div className="text-xs px-3 mt-2 flex flex-wrap">
                   {labels.length
                     ? labels.map((l, i) => {
-                        let label = _.find(allLabels, { id: l }) || {
+                        let label = find(allLabels, { id: l }) || {
                           name: "",
                           color: "",
                         };

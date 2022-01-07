@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import ClickAwayListener from "react-click-away-listener";
-import CurrentWallet from "./currentWallet";
 import {
   downloadWalletForRemoteHelper,
   transferToWallet,
@@ -15,7 +14,9 @@ import getHomeUrl from "../helpers/getHomeUrl";
 import { notify } from "reapop";
 import initKeplr from "../keplr/init";
 
-import SendTlore from "./dashboard/sendTlore";
+import dynamic from "next/dynamic";
+const SendTlore = dynamic(() => import("./dashboard/sendTlore"));
+const CurrentWallet = dynamic(() => import("./currentWallet"));
 /*
 Menu States
 1 - Default menu

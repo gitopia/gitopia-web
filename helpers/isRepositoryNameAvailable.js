@@ -1,11 +1,12 @@
 import getOrganizationRepositoryAll from "./getOrganizationRepositoryAll";
 import getUserRepositoryAll from "./getUserRepositoryAll";
 const sanitizedNameTest = new RegExp(/[^\w.-]/g);
+import find from "lodash/find";
 
 const isRepositoryNameAvailable = async (name, ownerId, accountsList) => {
   let alreadyAvailable = false,
     sanitizedName = name.replace(sanitizedNameTest, "-");
-  let acc = _.find(accountsList, (a) => a.id === ownerId);
+  let acc = find(accountsList, (a) => a.id === ownerId);
   if (acc && acc.type === "User") {
     const repos = await getUserRepositoryAll(ownerId);
     if (repos) {

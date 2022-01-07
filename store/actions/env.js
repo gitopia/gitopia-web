@@ -1,7 +1,5 @@
 import Client from "@starport/client-js";
 import { envActions, walletActions } from "./actionTypes";
-import { assertIsBroadcastTxSuccess } from "@cosmjs/stargate";
-import { notify } from "reapop";
 
 export const init = (initConfig) => {
   return async (dispatch, getState) => {
