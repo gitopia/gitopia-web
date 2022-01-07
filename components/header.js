@@ -12,7 +12,6 @@ import {
 } from "../store/actions/wallet";
 import shrinkAddress from "../helpers/shrinkAddress";
 import getHomeUrl from "../helpers/getHomeUrl";
-import _ from "lodash";
 import { notify } from "reapop";
 import initKeplr from "../keplr/init";
 

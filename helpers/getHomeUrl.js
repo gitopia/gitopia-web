@@ -1,5 +1,5 @@
-import _ from "lodash";
+import find from "lodash/find";
 export default function getHomeUrl(dashboards, currentDashboard) {
-  const home = _.find(dashboards, (d) => d.id === currentDashboard);
+  const home = find(dashboards, (d) => d.id === currentDashboard);
   return home ? home.url : "/home";
 }

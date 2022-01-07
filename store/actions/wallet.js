@@ -5,7 +5,7 @@ import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import saveAs from "file-saver";
 import { queryClient, txClient } from "gitopiajs";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
-import _ from "lodash";
+import find from "lodash/find";
 import { txClient as cosmosBankTxClient } from "../cosmos.bank.v1beta1/module/index.js";
 import { notify } from "reapop";
 import { setupTxClients } from "./env";
@@ -68,7 +68,7 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
     },
   });
   const { user } = getState();
-  const dashboard = _.find(
+  const dashboard = find(
     user.dashboards,
     (d) => d.id === user.currentDashboard
   );
