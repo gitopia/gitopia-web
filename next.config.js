@@ -21,6 +21,7 @@ module.exports = withBundleAnalyzer(
       return config;
     },
     poweredByHeader: false,
+    productionBrowserSourceMaps: process.env.ANALYZE === "true",
     exportPathMap: async function (
       defaultPathMap,
       { dev, dir, outDir, distDir, buildId }

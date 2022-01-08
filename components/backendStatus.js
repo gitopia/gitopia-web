@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import {
-  startStarportPolling,
-  stopStarportPolling,
-} from "../store/actions/starport";
 import { init, config } from "../store/actions/env";
 
 function BackendStatus(props) {
   useEffect(() => {
+    console.error("ASDASDS");
     props.init();
     // props.startStarportPolling();
     // return props.stopStarportPolling;
