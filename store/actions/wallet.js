@@ -44,17 +44,14 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
       wallet.getPasswordPromise.resolve("Unlock success");
     }
   } else {
-    const { queryClient } = await import("gitopiajs");
-    const [qc, amount] = await Promise.all([
-      queryClient({ addr: env.apiNode }),
-      updateUserBalance()(dispatch, getState),
-    ]);
+    const { Api } = await import("gitopiajs/rest");
 
+    updateUserBalance()(dispatch, getState);
     dispatch({
       type: envActions.SET_CLIENTS,
       payload: {
         txClient: null,
-        queryClient: qc,
+        queryClient: new Api({ baseUrl: env.apiNode }),
         bankTxClient: null,
       },
     });

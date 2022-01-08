@@ -1,4 +1,4 @@
-import { queryClient } from "gitopiajs";
+import api from "./getApi";
 
 export default async function getRepositoryPullAll(
   id,
@@ -7,7 +7,6 @@ export default async function getRepositoryPullAll(
   pagination
 ) {
   try {
-    const qc = await queryClient({ addr: process.env.NEXT_PUBLIC_API_URL });
     const query = {};
     for (let o in option) {
       query[`option.${o}`] = option[o];
@@ -16,7 +15,7 @@ export default async function getRepositoryPullAll(
       query[`pagination.${p}`] = pagination[p];
     }
     console.log(query);
-    const res = await qc.queryRepositoryPullRequestAll(id, repoName, query);
+    const res = await api.queryRepositoryPullRequestAll(id, repoName, query);
     if (res.ok) {
       return res.data;
     }

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import shrinkAddress from "../../helpers/shrinkAddress";
 import { setCurrentDashboard } from "../../store/actions/user";
 import ClickAwayListener from "react-click-away-listener";
 import { useRouter } from "next/router";

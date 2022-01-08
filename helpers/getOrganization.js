@@ -1,9 +1,8 @@
-import { queryClient } from "gitopiajs";
+import api from "./getApi";
 
 export default async function getOrganization(orgId) {
   try {
-    const qc = await queryClient({ addr: process.env.NEXT_PUBLIC_API_URL });
-    const res = await qc.queryOrganization(orgId);
+    const res = await api.queryOrganization(orgId);
     if (res.ok) {
       let u = res.data.Organization;
       return u;

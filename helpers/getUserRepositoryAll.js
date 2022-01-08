@@ -1,10 +1,9 @@
-import { txClient, queryClient } from "gitopiajs";
+import api from "./getApi";
 
 export default async function getUserRepositoryAll(userId) {
   if (!userId) return null;
   try {
-    const qc = await queryClient({ addr: process.env.NEXT_PUBLIC_API_URL });
-    const res = await qc.queryUser(userId);
+    const res = await api.queryUser(userId);
     if (res.ok) {
       return res.data.User.repositories;
     }
