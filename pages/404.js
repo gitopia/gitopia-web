@@ -14,9 +14,9 @@ export default function Error404() {
           back to have a look at this.
         </div>
         <div className="flex justify-center mt-10">
-          <button className="flex-none btn btn-primary btn-wide w-52">
+          <a className="flex-none btn btn-primary btn-wide w-52" href={"/home"}>
             GO TO HOME
-          </button>
+          </a>
         </div>
       </div>
     </div>
