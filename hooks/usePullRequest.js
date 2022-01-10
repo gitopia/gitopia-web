@@ -3,9 +3,11 @@ import getRepository from "../helpers/getRepository";
 import getRepositoryPull from "../helpers/getRepositoryPull";
 import getBranchSha from "../helpers/getBranchSha";
 import { useRouter } from "next/router";
+import { useErrorStatus } from "../pages/errorHandler";
 
 export default function usePullRequest(repository) {
   const router = useRouter();
+  const { setErrorStatusCode } = useErrorStatus();
   const [pullRequest, setPullRequest] = useState({
     iid: router.query.pullRequestIid,
     creator: "",
@@ -69,6 +71,8 @@ export default function usePullRequest(repository) {
         }
       }
       setPullRequest(p);
+    } else {
+      setErrorStatusCode(404);
     }
   }, [router.query, repository.id, refreshIndex]);
 
