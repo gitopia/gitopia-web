@@ -14,6 +14,7 @@ import getBranchSha from "../../../../helpers/getBranchSha";
 import useRepository from "../../../../hooks/useRepository";
 import CommitDetailRow from "../../../../components/repository/commitDetailRow";
 import getCommitHistory from "../../../../helpers/getCommitHistory";
+import { useErrorStatus } from "../../../errorHandler";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -23,6 +24,7 @@ function RepositoryCommitTreeView(props) {
   const router = useRouter();
   const { repository } = useRepository();
 
+  const { setErrorStatusCode } = useErrorStatus();
   const [commits, setCommits] = useState([]);
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -32,6 +34,7 @@ function RepositoryCommitTreeView(props) {
   useEffect(async () => {
     if (repository) {
       const joinedPath = router.query.branch.join("/");
+      let branchLen = repository.branches.length;
       repository.branches.every((b) => {
         let branch = b.name;
         let branchTest = new RegExp("^" + branch);
@@ -42,6 +45,10 @@ function RepositoryCommitTreeView(props) {
           if (branchName !== branch) setCommits([]);
           console.log("branch", branch);
           return false;
+        }
+        branchLen--;
+        if (branchLen < 1) {
+          setErrorStatusCode(404);
         }
         return true;
       });
