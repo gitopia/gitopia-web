@@ -46,11 +46,11 @@ function RepositoryPullCommitsView(props) {
     );
     console.log(shas);
     setCommitShas(shas);
-  }, [pullRequest]);
+  }, [pullRequest.id]);
 
   const paginationLimit = 10;
 
-  const loadCommits = async () => {
+  const loadCommits = async (clearEarlier = false) => {
     setLoadingMore(true);
     let creq = [];
     for (let i = 0; i < paginationLimit; i++) {
@@ -75,11 +75,18 @@ function RepositoryPullCommitsView(props) {
     }
     const res = await Promise.all(creq);
     console.log("getCommit", res);
-    setCommits([...commits, ...res]);
+    if (clearEarlier) {
+      setCommits(res);
+    } else {
+      setCommits([...commits, ...res]);
+    }
     setLoadingMore(false);
   };
 
-  useEffect(loadCommits, [commitShas, loadedTill]);
+  useEffect(loadCommits, [loadedTill]);
+  useEffect(() => {
+    loadCommits(true);
+  }, [commitShas]);
 
   return (
     <div
