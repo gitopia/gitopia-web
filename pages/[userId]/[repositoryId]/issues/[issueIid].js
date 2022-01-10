@@ -28,6 +28,7 @@ import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
 import IssuePullTitle from "../../../../components/repository/issuePullTitle";
 import IssuePullDescription from "../../../../components/repository/issuePullDescription";
+import { useErrorStatus } from "../../../errorHandler";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -35,6 +36,7 @@ export async function getServerSideProps() {
 
 function RepositoryIssueView(props) {
   const router = useRouter();
+  const { setErrorStatusCode } = useErrorStatus();
   const { repository } = useRepository();
   const [issue, setIssue] = useState({
     iid: router.query.issueIid,
@@ -56,7 +58,11 @@ function RepositoryIssueView(props) {
         router.query.issueIid
       ),
     ]);
-    if (i) setIssue(i);
+    if (i) {
+      setIssue(i);
+    } else {
+      setErrorStatusCode(404);
+    }
     console.log(repository);
     setAllLabels(repository.labels);
     console.log(i);

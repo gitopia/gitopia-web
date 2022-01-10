@@ -66,6 +66,7 @@ function RepositoryIssueCreateView(props) {
   }, [repository.id]);
 
   const username = props.selectedAddress ? props.selectedAddress.slice(-1) : "";
+
   return (
     <div
       data-theme="dark"

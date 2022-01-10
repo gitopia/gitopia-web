@@ -3,7 +3,6 @@ import Header from "../../../components/header";
 
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
 import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
