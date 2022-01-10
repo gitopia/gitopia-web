@@ -14,8 +14,9 @@ import { communityPoolSpendProposal } from "../../../../store/actions/proposals"
 function RepositoryProposalCreateView(props) {
   const router = useRouter();
   const hrefBase = "/daos/" + props.currentDashboard;
+  const [loading, setLoading] = useState(false);
   const [repositoryName, setRepositoryName] = useState(
-    props.repositories[0].name
+    props.repositories[0] !== undefined ? props.repositories[0].name : ""
   );
   const [description, setDescription] = useState("");
   const [proposalType, setProposalType] = useState("1");
@@ -198,8 +199,8 @@ function RepositoryProposalCreateView(props) {
                     <div className="inline-block w-36">
                       <button
                         className={
-                          "btn btn-sm btn-primary btn-block " +
-                          (false ? "loading" : "")
+                          "btn btn-sm btn-primary btn-block h-8 text-xs " +
+                          (loading ? "loading" : "")
                         }
                         disabled={
                           description === "" ||
@@ -208,6 +209,7 @@ function RepositoryProposalCreateView(props) {
                           repositoryName === ""
                         }
                         onClick={(e) => {
+                          setLoading(true);
                           props
                             .communityPoolSpendProposal(
                               repositoryName,
@@ -217,7 +219,11 @@ function RepositoryProposalCreateView(props) {
                               amount
                             )
                             .then((res) => {
+                              setLoading(false);
                               props.notify("Proposal Submitted", "info");
+                              setDescription("");
+                              setAddress("");
+                              setAmount("");
                             });
                         }}
                       >
@@ -272,8 +278,8 @@ function RepositoryProposalCreateView(props) {
                     <div className="inline-block w-36">
                       <button
                         className={
-                          "btn btn-sm btn-primary btn-block h-8 " +
-                          (false ? "loading" : "")
+                          "btn btn-sm btn-primary btn-block h-8 text-xs " +
+                          (loading ? "loading" : "")
                         }
                         disabled={
                           description === "" ||
@@ -282,6 +288,7 @@ function RepositoryProposalCreateView(props) {
                           repositoryName === ""
                         }
                         onClick={(e) => {
+                          setLoading(true);
                           props
                             .chainUpgradeProposal(
                               repositoryName,
@@ -291,7 +298,11 @@ function RepositoryProposalCreateView(props) {
                               height
                             )
                             .then((res) => {
+                              setLoading(false);
                               props.notify("Proposal Submitted", "info");
+                              setDescription("");
+                              setReleaseVersionTag("");
+                              setHeight("");
                             });
                         }}
                       >
@@ -375,8 +386,8 @@ function RepositoryProposalCreateView(props) {
                     <div className="inline-block w-36">
                       <button
                         className={
-                          "btn btn-sm btn-primary btn-block " +
-                          (false ? "loading" : "")
+                          "btn btn-sm btn-primary btn-block h-8 text-xs " +
+                          (loading ? "loading" : "")
                         }
                         disabled={
                           true
@@ -386,11 +397,18 @@ function RepositoryProposalCreateView(props) {
                           repositoryName === "" */
                         }
                         onClick={(e) => {
-                          props.submitGovernanceProposal(
-                            repositoryName,
-                            description,
-                            proposalType
-                          );
+                          setLoading(true);
+                          props
+                            .submitGovernanceProposal(
+                              repositoryName,
+                              description,
+                              proposalType
+                            )
+                            .then((res) => {
+                              props.notify("Proposal Submitted", "info");
+                              setLoading(false);
+                              setDescription("");
+                            });
                         }}
                       >
                         Submit Proposal
@@ -404,11 +422,12 @@ function RepositoryProposalCreateView(props) {
                   <div className="inline-block w-36">
                     <button
                       className={
-                        "btn btn-sm btn-primary btn-block h-8 " +
-                        (false ? "loading" : "")
+                        "btn btn-sm btn-primary btn-block h-8 text-xs " +
+                        (loading ? "loading" : "")
                       }
                       disabled={description === "" || repositoryName === ""}
                       onClick={(e) => {
+                        setLoading(true);
                         props
                           .submitGovernanceProposal(
                             repositoryName,
@@ -417,6 +436,8 @@ function RepositoryProposalCreateView(props) {
                           )
                           .then((res) => {
                             props.notify("Proposal Submitted", "info");
+                            setLoading(false);
+                            setDescription("");
                           });
                       }}
                     >
