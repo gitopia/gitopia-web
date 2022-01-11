@@ -39,8 +39,16 @@ function CreateWallet(props) {
 
   const validateWallet = () => {
     hideHints();
-    if (name === "") {
+    if (name.trim() === "") {
       setNameHint({ ...nameHint, shown: true, message: "Please enter a name" });
+      return false;
+    }
+    if (name.trim().length > 39) {
+      setNameHint({
+        ...nameHint,
+        shown: true,
+        message: "Name can be maximum 39 characters",
+      });
       return false;
     }
     let alreadyAvailable = false;
