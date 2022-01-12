@@ -4,7 +4,7 @@ export default function OrgViewTabs({ hrefBase, active }) {
   return (
     <div className="">
       <div className="tabs">
-        <Link href={hrefBase + "/dashboard"}>
+        <Link href={hrefBase + "/repositories"}>
           <a
             className={"tab" + (active === "repositories" ? " tab-active" : "")}
           >
