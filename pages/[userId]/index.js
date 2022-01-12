@@ -112,6 +112,10 @@ function AccountView(props) {
               active="repositories"
               hrefBase={hrefBase}
               showPeople={org.address}
+              showProposal={
+                process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
+                  props.currentDashboard && org.address
+              }
             />
           </div>
           <div className="mt-8">
@@ -145,6 +149,7 @@ function AccountView(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
+    currentDashboard: state.user.currentDashboard,
   };
 };
 
