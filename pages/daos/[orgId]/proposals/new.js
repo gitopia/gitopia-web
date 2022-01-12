@@ -9,15 +9,31 @@ import { chainUpgradeProposal } from "../../../../store/actions/proposals";
 import MarkdownEditor from "../../../../components/markdownEditor";
 import { notify } from "reapop";
 import { communityPoolSpendProposal } from "../../../../store/actions/proposals";
+import getOrganization from "../../../../helpers/getOrganization";
+import getRepository from "../../../../helpers/getRepository";
 //import {updateUserBalance} from "../../../../store/actions/wallet"
 
 function RepositoryProposalCreateView(props) {
+  const handleClick = () => {
+    setCounter(counter + 1);
+  };
+
+  const handleValueOnChange = (e) => {
+    const temp = {};
+    temp[e.target.className] = e.target.value;
+    setParameterValue({ ...parameterValue, ...temp });
+  };
+
+  const handleNameOnChange = (e) => {
+    const temp = {};
+    temp[e.target.className] = e.target.value;
+    setParameterName({ ...parameterName, ...temp });
+  };
+
   const router = useRouter();
-  const hrefBase = "/daos/" + props.currentDashboard;
+  const hrefBase = "/" + router.query.orgId;
   const [loading, setLoading] = useState(false);
-  const [repositoryName, setRepositoryName] = useState(
-    props.repositories[0] !== undefined ? props.repositories[0].name : ""
-  );
+  const [repositoryName, setRepositoryName] = useState("");
   const [description, setDescription] = useState("");
   const [proposalType, setProposalType] = useState("1");
   const [amount, setAmount] = useState("");
@@ -34,21 +50,33 @@ function RepositoryProposalCreateView(props) {
     "pub_key",
   ]);
 
-  const handleClick = () => {
-    setCounter(counter + 1);
+  const [org, setOrg] = useState({
+    name: "",
+    repositories: [],
+  });
+  const [allRepos, setAllRepos] = useState([""]);
+
+  useEffect(async () => {
+    const o = await getOrganization(router.query.orgId);
+    if (o) {
+      setOrg(o);
+    }
+  }, [router.query]);
+
+  const getAllRepos = async () => {
+    if (org.id) {
+      const pr = org.repositories.map((r) => getRepository(r.id));
+      const repos = await Promise.all(pr);
+      setAllRepos(repos.reverse());
+    }
   };
 
-  const handleValueOnChange = (e) => {
-    const temp = {};
-    temp[e.target.className] = e.target.value;
-    setParameterValue({ ...parameterValue, ...temp });
-  };
+  useEffect(getAllRepos, [org]);
 
-  const handleNameOnChange = (e) => {
-    const temp = {};
-    temp[e.target.className] = e.target.value;
-    setParameterName({ ...parameterName, ...temp });
-  };
+  if (repositoryName === "" && allRepos !== []) {
+    setRepositoryName(allRepos[0].name);
+  }
+
   return (
     <div
       data-theme="dark"
@@ -107,7 +135,10 @@ function RepositoryProposalCreateView(props) {
                       setRepositoryName(e.target.value);
                     }}
                   >
-                    {props.repositories.map((i) => {
+                    <option value="none" selected disabled hidden>
+                      Select an Repository
+                    </option>
+                    {allRepos.map((i) => {
                       return (
                         <option value={i.name} key={i.id}>
                           {i.name}
@@ -427,6 +458,7 @@ function RepositoryProposalCreateView(props) {
                       }
                       disabled={description === "" || repositoryName === ""}
                       onClick={(e) => {
+                        console.log(repositoryName, description, proposalType);
                         setLoading(true);
                         props
                           .submitGovernanceProposal(

@@ -6,14 +6,34 @@ import TopRepositories from "../../../../components/topRepositories";
 import OrgViewTabs from "../../../../components/dashboard/orgViewTabs";
 import { connect } from "react-redux";
 import { useState, useEffect } from "react";
-import { getOrganizationDetailsForDashboard } from "../../../../store/actions/organization";
 import { useRouter } from "next/router";
 import getHomeUrl from "../../../../helpers/getHomeUrl";
 import Link from "next/link";
+import getOrganization from "../../../../helpers/getOrganization";
 
 function GitopiaProposalsView(props) {
   const hrefBase = "/daos/" + props.currentDashboard;
   const router = useRouter();
+  const [org, setOrg] = useState({
+    name: "",
+    repositories: [],
+  });
+  const [allRepos, setAllRepos] = useState([""]);
+
+  useEffect(async () => {
+    const o = await getOrganization(router.query.orgId);
+    if (o) {
+      setOrg(o);
+    }
+  }, [router.query]);
+
+  const getAllRepos = async () => {
+    if (org.id) {
+      setAllRepos(org.repositories);
+    }
+  };
+
+  useEffect(getAllRepos, [org, props.currentDashboard]);
 
   useEffect(() => {
     if (
@@ -22,7 +42,6 @@ function GitopiaProposalsView(props) {
     ) {
       router.push(getHomeUrl(props.dashboards, props.currentDashboard));
     }
-    props.getOrganizationDetailsForDashboard();
   }, [props.currentDashboard]);
 
   return (
@@ -40,7 +59,7 @@ function GitopiaProposalsView(props) {
           <div className="flex-1">
             <DashboardSelector />
             <TopRepositories
-              repositories={props.repositories.map((r) => {
+              repositories={allRepos.map((r) => {
                 return { owner: props.currentDashboard, ...r };
               })}
             />
@@ -138,6 +157,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { getOrganizationDetailsForDashboard })(
-  GitopiaProposalsView
-);
+export default connect(mapStateToProps, {})(GitopiaProposalsView);
