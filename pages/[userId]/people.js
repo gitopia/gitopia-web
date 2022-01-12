@@ -76,7 +76,15 @@ function OrganizationPeopleView(props) {
             </div>
           </div>
           <div className="flex flex-1 mt-8 border-b border-grey">
-            <PublicTabs active="people" hrefBase={hrefBase} showPeople={true} />
+            <PublicTabs
+              active="people"
+              hrefBase={hrefBase}
+              showPeople={true}
+              showProposal={
+                process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
+                  props.currentDashboard && org.address
+              }
+            />
           </div>
           <div className="mt-8 max-w-3xl">
             <ul className="divide-y divide-grey">
@@ -118,6 +126,7 @@ function OrganizationPeopleView(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
+    currentDashboard: state.user.currentDashboard,
   };
 };
 

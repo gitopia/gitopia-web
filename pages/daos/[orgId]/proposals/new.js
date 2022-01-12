@@ -458,7 +458,6 @@ function RepositoryProposalCreateView(props) {
                       }
                       disabled={description === "" || repositoryName === ""}
                       onClick={(e) => {
-                        console.log(repositoryName, description, proposalType);
                         setLoading(true);
                         props
                           .submitGovernanceProposal(
