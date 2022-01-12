@@ -5,11 +5,25 @@ import DashboardSelector from "../../../../components/dashboard/dashboardSelecto
 import TopRepositories from "../../../../components/topRepositories";
 import OrgViewTabs from "../../../../components/dashboard/orgViewTabs";
 import { connect } from "react-redux";
-
+import { useState, useEffect } from "react";
+import { getOrganizationDetailsForDashboard } from "../../../../store/actions/organization";
+import { useRouter } from "next/router";
+import getHomeUrl from "../../../../helpers/getHomeUrl";
 import Link from "next/link";
 
 function GitopiaProposalsView(props) {
   const hrefBase = "/daos/" + props.currentDashboard;
+  const router = useRouter();
+
+  useEffect(() => {
+    if (
+      router.query.orgId !== props.currentDashboard &&
+      router.query.orgId !== undefined
+    ) {
+      router.push(getHomeUrl(props.dashboards, props.currentDashboard));
+    }
+    props.getOrganizationDetailsForDashboard();
+  }, [props.currentDashboard]);
 
   return (
     <div
@@ -124,4 +138,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(GitopiaProposalsView);
+export default connect(mapStateToProps, { getOrganizationDetailsForDashboard })(
+  GitopiaProposalsView
+);
