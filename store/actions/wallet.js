@@ -24,7 +24,7 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
 
   if (accountSigner) {
     console.log("accountSigner", accountSigner);
-    const { queryClient, txClient } = await import("gitopiajs");
+    const { queryClient, txClient } = await import("@gitopia/gitopia-js");
     const cosmosBankTxClient = (
       await import("../cosmos.bank.v1beta1/module/index.js")
     ).txClient;
