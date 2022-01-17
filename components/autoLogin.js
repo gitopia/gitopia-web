@@ -5,6 +5,7 @@ import {
   unlockWallet,
   downloadWallet,
   unlockKeplrWallet,
+  unlockLedgerWallet,
 } from "../store/actions/wallet";
 import initKeplr from "../keplr/init";
 import TextInput from "./textInput";
@@ -44,6 +45,12 @@ function AutoLogin(props) {
           console.log(acc);
           if (acc) {
             console.log("Keplr sign in success");
+          }
+        } else if (lastWallet.isLedger) {
+          const acc = await props.unlockLedgerWallet();
+          console.log(acc);
+          if (acc) {
+            console.log("Ledger sign in success");
           }
         } else {
           setWalletName(lastWallet.name);
@@ -186,4 +193,5 @@ export default connect(mapStateToProps, {
   unlockWallet,
   downloadWallet,
   unlockKeplrWallet,
+  unlockLedgerWallet,
 })(AutoLogin);

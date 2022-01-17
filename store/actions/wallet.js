@@ -4,6 +4,9 @@ import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import find from "lodash/find";
 import { notify } from "reapop";
 import { setupTxClients } from "./env";
+import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
+import { LedgerSigner } from "@cosmjs/ledger-amino";
+import { stringToPath } from "@cosmjs/crypto";
 
 export const signOut = () => {
   return {
@@ -20,15 +23,16 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
   });
 
   if (accountSigner) {
-    const { queryClient, txClient } = await import("@gitopia/gitopia-js");
+    console.log("accountSigner", accountSigner);
+    const { queryClient, txClient } = await import("gitopiajs");
     const cosmosBankTxClient = (
       await import("../cosmos.bank.v1beta1/module/index.js")
     ).txClient;
 
-    const [tc, qc, bankc, amount] = await Promise.all([
+    const [tc, qc, amount] = await Promise.all([
       txClient(accountSigner, { addr: env.rpcNode }),
       queryClient({ addr: env.apiNode }),
-      cosmosBankTxClient(accountSigner, { addr: env.rpcNode }),
+      // cosmosBankTxClient(accountSigner, { addr: env.rpcNode }),
       updateUserBalance()(dispatch, getState),
     ]);
 
@@ -37,7 +41,7 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
       payload: {
         txClient: tc,
         queryClient: qc,
-        bankTxClient: bankc,
+        bankTxClient: null,
       },
     });
     if (wallet.getPasswordPromise.resolve) {
@@ -416,5 +420,117 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
         dispatch(notify(e.message, "error"));
       }
     }
+  };
+};
+
+function unharden(hdPath) {
+  //   return hdPath;
+  //   return hdPath.map((n) =>
+  //     n.isHardened() ? n.toNumber() - 2 ** 31 : n.toNumber()
+  //   );
+  return hdPath.map((n) => (n >= 0x80000000 ? n - 0x80000000 : n));
+}
+
+export const unlockLedgerWallet = () => {
+  return async (dispatch, getState) => {
+    // const TransportWebUSB = (await import("@ledgerhq/hw-transport-webusb"))
+    //   .default;
+    // const TransportWebHID = (await import("@ledgerhq/hw-transport-webhid"))
+    //   .default;
+    // import TransportU2F from "@ledgerhq/hw-transport-u2f";
+    // const CosmosApp = (await import("ledger-cosmos-js")).default;
+    // const LedgerSigner = (await import("@cosmjs/ledger-amino")).LedgerSigner;
+    let accountSigner;
+
+    try {
+      const transport = await TransportWebUSB.create();
+      // const app = new CosmosApp(transport);
+      // const path = [0x80000000 + 44, 0x80000000 + 118, 0x80000000 + 0, 0, 0];
+      const path = stringToPath("m/44'/118'/0'/0/0");
+      console.log("path", path);
+      // const res = await app.appInfo();
+      // if (res.return_code === 28161) {
+      //   // App not open
+      //   dispatch(notify("Please open cosmos app on ledger", "error"));
+      //   return null;
+      // }
+      // console.log(res);
+      // const addr = await app.getAddressAndPubKey(path, "gitopia");
+      // console.log(addr);
+      // if (addr.return_code === 27404) {
+      //   dispatch(notify("Please unlock ledger", "error"));
+      //   return null;
+      // }
+
+      accountSigner = new LedgerSigner(transport, {
+        hdPaths: [path],
+        prefix: "gitopia",
+        ledgerAppName: "Cosmos",
+      });
+      // const addr = await accountSigner.ledger.app.getAddressAndPubKey(
+      //   unharden(path),
+      //   "gitopia"
+      // );
+      const pubkey = await accountSigner.ledger.getPubkey();
+      console.log("pubkey", pubkey);
+      const addr = await accountSigner.ledger.getCosmosAddress();
+      console.log("addr", addr);
+      // if (addr.return_code === 27404) {
+      //   dispatch(notify("Please unlock ledger", "error"));
+      //   return null;
+      // }
+
+      await dispatch({
+        type: walletActions.SET_ACTIVE_WALLET,
+        payload: {
+          wallet: {
+            name: "Ledger",
+            accounts: [
+              {
+                address: addr,
+                pubkey: pubkey,
+                algo: "secp256k1",
+              },
+            ],
+            isLedger: true,
+          },
+        },
+      });
+
+      // const OfflineDirectSigner = (await import("@cosmjs/proto-signing"))
+      // .OfflineDirectSigner;
+      // const accountSigner = {
+      //   getAccounts: () => {
+      //     return [
+      //       {
+      //         address: addr.bech32_address,
+      //         pubkey: addr.compressed_pk,
+      //         algo: "secp256k1",
+      //       },
+      //     ];
+      //   },
+      //   signAmino: async (signerAddress, signDoc) => {
+      //     try {
+      //       // const ledgerRes = await app.sign(
+      //       //   path,
+      //       //   '{"typeUrl":"/gitopia.gitopia.gitopia.MsgCreateUser","value":{"creator":"gitopia106ddgv6hl3me0yuf6rc8few5yn764pm9cgnzwd","username":"Ledger"}}'
+      //       // );
+      //       console.log(signerAddress, signDoc);
+      //       // console.log(ledgerRes);
+      //     } catch (e) {
+      //       console.error(e);
+      //       dispatch(notify(e.message, "error"));
+      //     }
+      //     // return { signature, signed };
+      //   },
+      // };
+      dispatch({ type: walletActions.STORE_WALLETS });
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+
+    await postWalletUnlocked(accountSigner, dispatch, getState);
   };
 };
