@@ -8,6 +8,7 @@ import {
   transferToWallet,
   signOut,
   unlockKeplrWallet,
+  unlockLedgerWallet,
 } from "../store/actions/wallet";
 import shrinkAddress from "../helpers/shrinkAddress";
 import getHomeUrl from "../helpers/getHomeUrl";
@@ -334,6 +335,16 @@ function Header(props) {
                         Connect Keplr Wallet
                       </a>
                     </li> */}
+                    <li>
+                      <a
+                        href="#"
+                        onClick={async () => {
+                          await props.unlockLedgerWallet();
+                        }}
+                      >
+                        Connect Ledger Wallet
+                      </a>
+                    </li>
 
                     {props.activeWallet ? (
                       <>
@@ -390,4 +401,5 @@ export default connect(mapStateToProps, {
   signOut,
   notify,
   unlockKeplrWallet,
+  unlockLedgerWallet,
 })(Header);

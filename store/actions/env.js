@@ -8,6 +8,7 @@ export const sendTransaction = async (
     amount: [{ amount: "0", denom }],
     gas: "200000",
   };
+  console.log("message", message);
   const result = await env.txClient.signAndBroadcast([message], {
     fee,
     memo,
