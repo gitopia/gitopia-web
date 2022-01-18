@@ -1,24 +1,75 @@
 import Head from "next/head";
 import styles from "../styles/season-of-blockchains.module.css";
 import Link from "next/link";
-import style from "react-syntax-highlighter/dist/esm/styles/hljs/a11y-dark";
+import { useState } from "react";
 export default function SeasonOfBlockchains() {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <div className={styles.wrapper}>
       <Head>
         <title>Gitopia - Season of Blockchains</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
-      <header className={styles.header}>
+      <header className={(menuOpen ? "bg-purple " : "") + styles.header}>
         <div className={styles.headerLogo}></div>
+        <div className={styles.headerMenuIcon}>
+          <button
+            className={
+              "text-white cursor-pointer text-xl leading-none px-2 py-2 border-transparent rounded block outline-none focus:outline-none " +
+              (menuOpen ? "hidden" : "")
+            }
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <svg
+              fill="white"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 92 92"
+              width={24}
+              height={24}
+            >
+              <path
+                d="M78,23.5H14c-3.6,0-6.5-2.9-6.5-6.5s2.9-6.5,6.5-6.5h64c3.6,0,6.5,2.9,6.5,6.5S81.6,23.5,78,23.5z M84.5,46
+	c0-3.6-2.9-6.5-6.5-6.5H14c-3.6,0-6.5,2.9-6.5,6.5s2.9,6.5,6.5,6.5h64C81.6,52.5,84.5,49.6,84.5,46z M84.5,75c0-3.6-2.9-6.5-6.5-6.5
+	H14c-3.6,0-6.5,2.9-6.5,6.5s2.9,6.5,6.5,6.5h64C81.6,81.5,84.5,78.6,84.5,75z"
+              />
+            </svg>
+          </button>
+          <button
+            className={
+              "text-white cursor-pointer text-xl leading-none px-2 py-2 border-transparent rounded block outline-none focus:outline-none " +
+              (menuOpen ? "" : "hidden")
+            }
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <svg
+              fill="white"
+              xmlns="http://www.w3.org/2000/svg"
+              width={26}
+              height={26}
+              viewBox="0 0 92 92"
+            >
+              <path
+                d="M70.7,64.3c1.8,1.8,1.8,4.6,0,6.4c-0.9,0.9-2,1.3-3.2,1.3c-1.2,0-2.3-0.4-3.2-1.3L46,52.4L27.7,70.7
+         c-0.9,0.9-2,1.3-3.2,1.3s-2.3-0.4-3.2-1.3c-1.8-1.8-1.8-4.6,0-6.4L39.6,46L21.3,27.7c-1.8-1.8-1.8-4.6,0-6.4c1.8-1.8,4.6-1.8,6.4,0
+         L46,39.6l18.3-18.3c1.8-1.8,4.6-1.8,6.4,0c1.8,1.8,1.8,4.6,0,6.4L52.4,46L70.7,64.3z"
+              />
+            </svg>
+          </button>
+        </div>
         <div
           className={
-            "lg:flex flex-grow items-center justify-end " + styles.headerMenu
+            "lg:flex flex-grow items-center justify-end " +
+            (menuOpen
+              ? " flex justify-center absolute left-0 right-0 bg-purple pt-4 pb-4 z-10 shadow-2xl "
+              : " hidden ") +
+            styles.headerMenu
           }
         >
           <div className={styles.row}>
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto w-full">
-              <li>
+              <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href="https://gitopia.com/whitepaper.pdf"
@@ -36,27 +87,30 @@ export default function SeasonOfBlockchains() {
                   Blog
                 </a>
               </li>
-              <li>
-                <Link href="/home">
-                  <a className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70">
-                    Try Testnet
-                  </a>
-                </Link>
+              <div className={menuOpen ? "" : "mr-4 ml-4 " + styles.vl}></div>
+              <li className={menuOpen ? "" : "mr-4"}>
+                <a
+                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
+                  href="/home"
+                  target="_blank"
+                >
+                  Try Testnet
+                </a>
               </li>
+              {/* <li className="border-b-2 lg:border-r-2 lg:border-b-0 border-white border-opacity-10 w-full h-2 mb-4 lg:h-6 lg:w-1 lg:mr-4 lg:mb-0 mt-2"></li> */}
             </ul>
           </div>
         </div>
+        <div className={styles.headerLine}></div>
       </header>
       <div className="flex flex-col h-screen">
         <div className="justify-center items-center">
-          <div className="font-bold text-5xl text-center mx-96">Season of</div>
-          <div className="font-bold text-5xl text-center mx-96">
-            Blockchains is here!
-          </div>
-          <div className="mt-5 text-center mx-96">
+          <div className={" " + styles.title}>Season of</div>
+          <div className={" " + styles.title2}>Blockchains is here!</div>
+          <div className={"mt-5 " + styles.content}>
             A 3-month long program for developers to work closely
           </div>
-          <div className="text-center mx-96">
+          <div className={" " + styles.content}>
             with experienced mentors from the project you like.
           </div>
           <div className="relative flex items-center justify-center mt-5">
@@ -75,140 +129,178 @@ export default function SeasonOfBlockchains() {
               Join Gitopia
             </button>
           </div>
-          <div className="font-bold text-5xl text-left mx-96 mt-24 text-left">
-            Benefits for the
-          </div>
-          <div className="font-bold text-5xl text-left mx-96 text-left">
-            participants
-          </div>
+          <div className={" " + styles.title3}>Benefits for the</div>
+          <div className={" " + styles.title4}>participants</div>
           <div className="">
-            <div className="mt-16 mx-96 card lg:card-side h-20 mb-5">
-              <div className="mt-1 ml-1">
-                <figure className="h-5 w-5">
+            <div className={"card lg:card-side mt-16 " + styles.card}>
+              <div className="mt-1 ml-1 w-9 h-9">
+                <figure className="">
                   <img src="/season-of-blockchains/exposure.svg" />
                 </figure>
               </div>
               <div className="card-body py-0">
-                <div className="card-title font-normal text-lg">Exposure:</div>
-                <div className="text-xs">
+                <div
+                  className={
+                    "card-title font-normal text-lg  " + styles.cardTitle
+                  }
+                >
+                  Exposure:
+                </div>
+                <div className={"text-xs  " + styles.cardBody}>
                   Get a chance to work with the top developers in the industry
                   and get to learn the hottest thing in blockchain technology
                   firsthand
                 </div>
               </div>
             </div>
-
-            <div className="mx-96 card lg:card-side h-24 mb-5">
-              <div className="mt-1 ml-1">
-                <figure className="h-5 w-5">
+            <hr className={styles.hr} />
+            <div className={"card lg:card-side " + styles.card}>
+              <div className="mt-1 ml-1 w-12 h-12">
+                <figure className="">
                   <img src="/season-of-blockchains/cool-stipend.svg" />
                 </figure>
               </div>
               <div className="card-body py-0">
-                <div className="card-title font-normal text-lg">
+                <div
+                  className={
+                    "card-title font-normal text-lg  " + styles.cardTitle
+                  }
+                >
                   Cool stipend:
                 </div>
-                <div className="text-xs">
+                <div className={"text-xs  " + styles.cardBody}>
                   With Gitopia Season of blockchain, your contributions to the
                   technology would never be free. You will also receive a fixed
                   stipend of $5000 for completing the entire program
                 </div>
               </div>
             </div>
-            <div className="mx-96 card lg:card-side h-20 mb-5">
-              <div className="mt-1 ml-1">
-                <figure className="h-5 w-5">
+            <hr className={styles.hr} />
+            <div className={"card lg:card-side " + styles.card}>
+              <div className="mt-1 ml-1 w-8 h-8">
+                <figure className="">
                   <img src="/season-of-blockchains/bragging-rights.svg" />
                 </figure>
               </div>
               <div className="card-body py-0">
-                <div className="card-title font-normal text-lg">
+                <div
+                  className={
+                    "card-title font-normal text-lg  " + styles.cardTitle
+                  }
+                >
                   Bragging rights:
                 </div>
-                <div className="text-xs">
+                <div className={"text-xs  " + styles.cardBody}>
                   Work with top blockchain projects people follow and brag about
                   it on your social profiles to build a reputation
                 </div>
               </div>
             </div>
-            <div className="mx-96 card lg:card-side h-16">
-              <div className="mt-1 ml-1">
-                <figure className="h-5 w-5">
+            <hr className={styles.hr} />
+            <div className={"card lg:card-side " + styles.card}>
+              <div className="mt-1 ml-1 w-7 h-7">
+                <figure className="">
                   <img src="/season-of-blockchains/community.svg" />
                 </figure>
               </div>
               <div className="card-body py-0">
-                <div className="card-title font-normal text-lg">Community:</div>
-                <div className="text-xs">
+                <div
+                  className={
+                    "card-title font-normal text-lg  " + styles.cardTitle
+                  }
+                >
+                  Community:
+                </div>
+                <div className={"text-xs  " + styles.cardBody}>
                   Helps you in networking and gaining contacts in the industry
                 </div>
               </div>
             </div>
           </div>
-          <div className="relative flex items-center justify-center mt-10">
+          <div className={" " + styles.image2}>
             <img width={700} src="/season-of-blockchains/home-2.svg"></img>
           </div>
           <div className="">
-            <div className="mt-5 mx-96 card lg:card-side h-20 mb-5">
-              <div className="mt-1 ml-1">
-                <figure className="h-5 w-5">
+            <div className={"card lg:card-side mt-3 " + styles.card}>
+              <div className="mt-1 ml-1 w-11 h-11">
+                <figure className="">
                   <img src="/season-of-blockchains/hiring-pool.svg" />
                 </figure>
               </div>
               <div className="card-body py-0">
-                <div className="card-title font-normal text-lg">
+                <div
+                  className={
+                    "card-title font-normal text-lg  " + styles.cardTitle
+                  }
+                >
                   Access to open hiring pool:
                 </div>
-                <div className="text-xs">
+                <div className={"text-xs  " + styles.cardBody}>
                   We will also share the entire batch who are interested in
                   getting interviewed by other projects present in the program
                   if no other offer was already offered to the participant.
                 </div>
               </div>
             </div>
-
-            <div className="mx-96 card lg:card-side h-24 mb-5">
+            <hr className={styles.hr} />
+            <div className={"card lg:card-side " + styles.card}>
               <div className="mt-1 ml-1">
                 <figure className="h-5 w-5">
                   <img src="/season-of-blockchains/entrepreneurship.svg" />
                 </figure>
               </div>
               <div className="card-body py-0">
-                <div className="card-title font-normal text-lg">
+                <div
+                  className={
+                    "card-title font-normal text-lg  " + styles.cardTitle
+                  }
+                >
                   Entrepreneurship:
                 </div>
-                <div className="text-xs">
+                <div className={"text-xs  " + styles.cardBody}>
                   Get to know a lot more about blockchain and projects. This
                   would help you in starting one of your own. Maybe funded by
                   the project you worked for.
                 </div>
               </div>
             </div>
-            <div className="mx-96 card lg:card-side h-20 mb-5">
-              <div className="mt-1 ml-1">
-                <figure className="h-5 w-5">
+            <hr className={styles.hr} />
+            <div className={"card lg:card-side " + styles.card}>
+              <div className="mt-1 ml-1 w-9 h-9">
+                <figure className="">
                   <img src="/season-of-blockchains/grants.svg" />
                 </figure>
               </div>
               <div className="card-body py-0">
-                <div className="card-title font-normal text-lg">Grants:</div>
-                <div className="text-xs">
+                <div
+                  className={
+                    "card-title font-normal text-lg  " + styles.cardTitle
+                  }
+                >
+                  Grants:
+                </div>
+                <div className={"text-xs  " + styles.cardBody}>
                   You can get a grant to continue working on the project you
                   submitted and also hire individuals to work alongside you.
                 </div>
               </div>
             </div>
-            <div className="mx-96 card lg:card-side h-20">
-              <div className="mt-1 ml-1">
-                <figure className="h-5 w-5">
+            <hr className={styles.hr} />
+            <div className={"card lg:card-side " + styles.card}>
+              <div className="mt-1 ml-1 w-10 h-10">
+                <figure className="">
                   <img src="/season-of-blockchains/learning-experience.svg" />
                 </figure>
               </div>
-              <div className="card-body py-0">
-                <div className="card-title font-normal text-lg">
+              <div className={"card-body py-0"}>
+                <div
+                  className={
+                    "card-title font-normal text-lg  " + styles.cardTitle
+                  }
+                >
                   Provide immersive learning experience:
                 </div>
-                <div className="text-xs">
+                <div className={"text-xs  " + styles.cardBody}>
                   Long term mentorship such as 3 months can help in immersive
                   learning experience and would help in providing long term
                   benefits to the contributor
@@ -216,67 +308,69 @@ export default function SeasonOfBlockchains() {
               </div>
             </div>
           </div>
-          <div className="font-bold text-5xl text-center mx-96 mt-24">
-            How does it work?
-          </div>
-          <div className="flex items-center justify-center">
-            <div className="ml-48 mt-10 w-1/3">
+          <div className={" " + styles.title}>How does it work?</div>
+          <div
+            className={"flex items-center justify-center " + styles.section3}
+          >
+            <div className={" " + styles.image3}>
               <img src="/season-of-blockchains/home-3.png"></img>
             </div>
             <div className="w-1/2 mt-5 ml-12">
               <div>
                 <div className="text-xs">
                   <div className="flex">
-                    <div class="border border-white rounded-full w-6 h-6 pl-2 pt-0.5 mr-4">
+                    <div class={"mr-4 " + styles.circle}>
                       <div class="">1</div>
                     </div>
-                    <div className="text-base">
+                    <div className={"text-base " + styles.working}>
                       Go to the organization page on Gitopia
                     </div>
                   </div>
                   <div className="flex mt-6">
-                    <div class="border border-white rounded-full w-6 h-6 pl-2 pt-0.5 mr-4">
+                    <div class={"mr-4 " + styles.circle}>
                       <div class="">2</div>
                     </div>
-                    <div className="text-base">
+                    <div className={"text-base " + styles.working}>
                       See the list of ideas you can contribute
                     </div>
                   </div>
                   <div className="flex mt-6">
-                    <div class="border border-white rounded-full w-6 h-6 pl-2 pt-0.5 mr-4">
+                    <div class={"mr-4 " + styles.circle}>
                       <div class="">3</div>
                     </div>
-                    <div className="text-base">
+                    <div className={"text-base " + styles.working}>
                       Your proposal would be evaluated by the mentors
                     </div>
                   </div>
                   <div className="flex mt-6">
-                    <div class="border border-white rounded-full w-6 h-6 pl-2 pt-0.5 mr-4">
+                    <div class={"mr-4 " + styles.circle}>
                       <div class="">4</div>
                     </div>
-                    <div className="text-base">
+                    <div className={"text-base " + styles.working}>
                       Mentor will be assigned to you to begin the project
                     </div>
                   </div>
                   <div className="flex mt-6">
-                    <div class="border border-white rounded-full w-6 h-6 pl-2 pt-0.5 mr-4">
+                    <div class={"mr-4 " + styles.circle}>
                       <div class="">5</div>
                     </div>
-                    <div className="text-base">
+                    <div className={"text-base " + styles.working}>
                       Participate and submit a timely evaluation
                     </div>
                   </div>
                   <div className="flex mt-6">
-                    <div class="border border-white rounded-full w-6 h-6 pl-2 pt-0.5 mr-4">
+                    <div class={"mr-4 " + styles.circle}>
                       <div class="">6</div>
                     </div>
-                    <div className="text-base">Get stipend</div>
+                    <div className={"text-base " + styles.working}>
+                      Get stipend
+                    </div>
                   </div>
                   <div className="flex mt-6">
-                    <div class="border border-white rounded-full w-6 h-6 pl-2 pt-0.5 mr-4">
+                    <div class={"mr-4 " + styles.circle}>
                       <div class="">7</div>
                     </div>
-                    <div className="text-base">
+                    <div className={"text-base " + styles.working}>
                       Get open access to the hiring pool from the partners
                     </div>
                   </div>
@@ -284,9 +378,11 @@ export default function SeasonOfBlockchains() {
               </div>
             </div>
           </div>
-          <div className={"flex items-center justify-center mt-24"}>
-            <div className={"card lg:card-side"}>
-              <div className={"mt-1 h-24 w-24"}>
+          <div
+            className={"flex items-center justify-center mt-24 " + styles.cards}
+          >
+            <div className={"card lg:card-side " + styles.joinGitopia}>
+              <div className={"mt-1 " + styles.cardLogo}>
                 <figure>
                   <img src="/logo-g.svg" />
                 </figure>
@@ -312,7 +408,10 @@ export default function SeasonOfBlockchains() {
                       }
                     }}
                     type="button"
-                    className="px-16 lg:px-20 lg:py-3 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                    className={
+                      "px-16 lg:px-20 lg:py-3 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 " +
+                      styles.cardButton
+                    }
                   >
                     Contact Us
                   </button>
@@ -324,7 +423,7 @@ export default function SeasonOfBlockchains() {
             className={styles.blob1}
             width="916"
             height="1040"
-            viewBox="0 0 2034.73 1693.61"
+            viewBox="0 0 916 1040"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -369,18 +468,17 @@ export default function SeasonOfBlockchains() {
               </radialGradient>
             </defs>
           </svg>
-
           <svg
             className={styles.blob2}
-            width="1663.45"
-            height="1170"
-            viewBox="600 -300 1663.45 1997.7"
+            width="585"
+            height="1210"
+            viewBox="0 0 585 1210"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
             <g filter="url(#filter0_f_1056_1216)">
               <path
-                d="M122.309 1405.35C-38.3874 948.188 279.198 837.929 155.758 624.126C32.3186 410.322 -241.071 337.068 -454.874 460.507C-668.678 583.947 -741.932 857.336 -618.493 1071.14C-495.053 1284.94 355.811 1911.88 122.309 1405.35Z"
+                d="M122.309 1405.35C-38.3875 948.188 279.198 837.929 155.758 624.126C32.3186 410.322 -241.071 337.068 -454.874 460.507C-668.678 583.947 -741.932 857.336 -618.493 1071.14C-495.053 1284.94 355.811 1911.88 122.309 1405.35Z"
                 fill="url(#paint0_radial_1056_1216)"
               />
             </g>
@@ -421,8 +519,8 @@ export default function SeasonOfBlockchains() {
           </svg>
           <svg
             className={styles.blob3}
-            width="500"
-            height="500"
+            width="746"
+            height="746"
             viewBox="0 0 746 746"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -472,8 +570,8 @@ export default function SeasonOfBlockchains() {
           </svg>
           <svg
             className={styles.blob4}
-            width="400"
-            height="400"
+            width="746"
+            height="746"
             viewBox="0 0 746 746"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -523,9 +621,9 @@ export default function SeasonOfBlockchains() {
           </svg>
           <svg
             className={styles.blob5}
-            width="1000"
-            height="1500"
-            viewBox="-1200 0 1663.45 1997.7"
+            width="530"
+            height="1998"
+            viewBox="0 0 530 1998"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -572,9 +670,9 @@ export default function SeasonOfBlockchains() {
           </svg>
           <svg
             className={styles.blob6}
-            width="1663.45"
-            height="1620"
-            viewBox="-1400 -400 1663.45 1997.7"
+            width="530"
+            height="1574"
+            viewBox="0 0 530 1574"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
