@@ -1,0 +1,107 @@
+.wrapper {
+  background: #13181e;
+  position: relative;
+  z-index: 1;
+}
+
+.blob1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.blob2 {
+  position: absolute;
+  top: 2400px;
+  left: 0px;
+  bottom: 0px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.blob3 {
+  position: absolute;
+  top: 250px;
+  left: 450px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.blob4 {
+  position: absolute;
+  top: 2300px;
+  left: 250px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.blob5 {
+  position: absolute;
+  top: 400px;
+  right: 0px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.blob6 {
+  position: absolute;
+  top: 1950px;
+  right: 0px;
+  bottom: 0px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.header {
+  display: flex;
+  padding: 40px 64px;
+}
+
+.headerLogo {
+  background: url("/logo-white.svg") no-repeat;
+  background-position: 50%;
+  background-size: 160px;
+  width: 160px;
+  height: 60px;
+  margin-right: 20px;
+}
+
+.headerMenu {
+  border-bottom: 2px solid rgb(255 255 255 / 10%);
+  height: 40px;
+}
+
+.row {
+  max-width: 900px;
+  text-align: center;
+}
+
+.footer {
+  margin-top: 150px;
+  padding-bottom: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footerLogo {
+  background: url("/logo-white.svg") no-repeat;
+  background-position: 50%;
+  background-size: 160px;
+  height: 160px;
+  width: 240px;
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: space-around;
+}
+
+.footerLinks a {
+  border-left: 2px solid #91a3b4;
+  color: white;
+  padding: 0 16px;
+  margin-right: 16px;
+}
