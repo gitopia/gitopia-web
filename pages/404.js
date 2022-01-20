@@ -1,6 +1,11 @@
+import Head from "next/head";
 export default function Error404() {
   return (
     <div className="flex flex-col justify-center items-center h-screen">
+      <Head>
+        <title>Error - 404</title>
+        <link rel="icon" href="/favicon.png" />
+      </Head>
       <div className="justify-center items-center">
         <div className="font-bold text-5xl text-center">Oops!</div>
         <div className="mt-5 text-center">
@@ -9,9 +14,11 @@ export default function Error404() {
         <div className="relative flex items-center justify-center">
           <img width={500} src="/404.svg"></img>
         </div>
-        <div className="text-center mx-96 px-32">
-          Once our team is done watching the latest episode of Arcane, we’ll be
-          back to have a look at this.
+        <div className="text-center">
+          Once our team is done watching the latest episode of
+        </div>
+        <div className="text-center">
+          Arcane, we’ll be back to have a look at this.
         </div>
         <div className="flex justify-center mt-10">
           <a className="flex-none btn btn-primary btn-wide w-52" href={"/home"}>
