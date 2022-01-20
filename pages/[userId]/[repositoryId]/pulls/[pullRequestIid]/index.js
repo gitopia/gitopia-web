@@ -1,16 +1,11 @@
-import Head from "next/head";
-import Header from "../../../../../components/header";
-
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import dayjs from "dayjs";
-import ReactMarkdown from "react-markdown";
 import { notify } from "reapop";
+import find from "lodash/find";
+import Head from "next/head";
 
+import Header from "../../../../../components/header";
 import getComment from "../../../../../helpers/getComment";
-import shrinkAddress from "../../../../../helpers/shrinkAddress";
 import RepositoryHeader from "../../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
 import Footer from "../../../../../components/footer";
@@ -267,7 +262,7 @@ function RepositoryPullView(props) {
                 <div className="text-xs px-3 mt-2 flex flex-wrap">
                   {pullRequest.labels.length
                     ? pullRequest.labels.map((l, i) => {
-                        let label = _.find(repository.labels, { id: l }) || {
+                        let label = find(repository.labels, { id: l }) || {
                           name: "",
                           color: "",
                         };

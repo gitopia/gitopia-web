@@ -1,12 +1,7 @@
 import { walletActions, envActions, userActions } from "./actionTypes";
-import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
-import CryptoJS from "crypto-js";
 import { Api } from "../cosmos.bank.v1beta1/module/rest";
-import saveAs from "file-saver";
-import { queryClient, txClient } from "gitopiajs";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
-import _ from "lodash";
-import { txClient as cosmosBankTxClient } from "../cosmos.bank.v1beta1/module/index.js";
+import find from "lodash/find";
 import { notify } from "reapop";
 import { setupTxClients } from "./env";
 
@@ -25,6 +20,11 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
   });
 
   if (accountSigner) {
+    const { queryClient, txClient } = await import("gitopiajs");
+    const cosmosBankTxClient = (
+      await import("../cosmos.bank.v1beta1/module/index.js")
+    ).txClient;
+
     const [tc, qc, bankc, amount] = await Promise.all([
       txClient(accountSigner, { addr: env.rpcNode }),
       queryClient({ addr: env.apiNode }),
@@ -44,16 +44,14 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
       wallet.getPasswordPromise.resolve("Unlock success");
     }
   } else {
-    const [qc, amount] = await Promise.all([
-      queryClient({ addr: env.apiNode }),
-      updateUserBalance()(dispatch, getState),
-    ]);
+    const { Api } = await import("gitopiajs/rest");
 
+    updateUserBalance()(dispatch, getState);
     dispatch({
       type: envActions.SET_CLIENTS,
       payload: {
         txClient: null,
-        queryClient: qc,
+        queryClient: new Api({ baseUrl: env.apiNode }),
         bankTxClient: null,
       },
     });
@@ -68,7 +66,7 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
     },
   });
   const { user } = getState();
-  const dashboard = _.find(
+  const dashboard = find(
     user.dashboards,
     (d) => d.id === user.currentDashboard
   );
@@ -87,6 +85,8 @@ export const reInitClients = async (dispatch, getState) => {
     const offlineSigner = window.getOfflineSigner(chainId);
     await postWalletUnlocked(offlineSigner, dispatch, getState);
   } else {
+    const DirectSecp256k1HdWallet = (await import("@cosmjs/proto-signing"))
+      .DirectSecp256k1HdWallet;
     const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
       activeWallet.mnemonic,
       {
@@ -145,6 +145,7 @@ export const unlockWallet = ({ name, password }) => {
       state.wallets[state.wallets.findIndex((x) => x.name === name)].wallet;
     let wallet;
     try {
+      const CryptoJS = (await import("crypto-js")).default;
       wallet = JSON.parse(
         CryptoJS.AES.decrypt(encryptedWallet, password).toString(
           CryptoJS.enc.Utf8
@@ -159,6 +160,8 @@ export const unlockWallet = ({ name, password }) => {
       payload: { wallet: { name: wallet.name, accounts: wallet.accounts } },
     });
     if (wallet.accounts.length > 0) {
+      const DirectSecp256k1HdWallet = (await import("@cosmjs/proto-signing"))
+        .DirectSecp256k1HdWallet;
       const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
         wallet.mnemonic,
         {
@@ -200,6 +203,8 @@ export const createWalletWithMnemonic = ({
       pathIncrement: 0,
       accounts: [],
     };
+    const DirectSecp256k1HdWallet = (await import("@cosmjs/proto-signing"))
+      .DirectSecp256k1HdWallet;
     const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
       prefix: prefix,
     });
@@ -223,6 +228,7 @@ export const createWalletWithMnemonic = ({
 export const restoreWallet = ({ encrypted, password }) => {
   return async (dispatch, getState) => {
     const state = getState();
+    const CryptoJS = (await import("crypto-js")).default;
     const wallet = JSON.parse(
       CryptoJS.AES.decrypt(encrypted, password).toString(CryptoJS.enc.Utf8)
     );
@@ -233,6 +239,8 @@ export const restoreWallet = ({ encrypted, password }) => {
       incr++;
     }
     wallet.name = newName;
+    const DirectSecp256k1HdWallet = (await import("@cosmjs/proto-signing"))
+      .DirectSecp256k1HdWallet;
     const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
       wallet.mnemonic,
       {
@@ -334,6 +342,7 @@ export const downloadWallet = (password) => {
         ].wallet;
       let wallet;
       try {
+        const CryptoJS = (await import("crypto-js")).default;
         wallet = JSON.parse(
           CryptoJS.AES.decrypt(encryptedWallet, password).toString(
             CryptoJS.enc.Utf8
@@ -348,6 +357,7 @@ export const downloadWallet = (password) => {
         const blob = new Blob([backup.toString()], {
           type: "application/json; charset=utf-8",
         });
+        const saveAs = (await import("file-saver")).default.saveAs;
         saveAs(blob, wallet.name + ".json");
         if (state.getPasswordPromise.resolve) {
           state.getPasswordPromise.resolve("Download success");

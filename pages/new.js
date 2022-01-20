@@ -7,8 +7,6 @@ import Header from "../components/header";
 import TextInput from "../components/textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
 import Footer from "../components/footer";
-import _ from "lodash";
-import getOrganizationRepositoryAll from "../helpers/getOrganizationRepositoryAll";
 import isRepositoryNameAvailable from "../helpers/isRepositoryNameAvailable";
 
 function NewRepository(props) {
@@ -66,28 +64,6 @@ function NewRepository(props) {
       ownerId,
       props.dashboards
     );
-    //   sanitizedName = name.replace(sanitizedNameTest, "-");
-    // let acc = _.find(accountsList, (a) => a.id === ownerId);
-    // if (acc && acc.type === "User") {
-    //   props.repositories.every((r) => {
-    //     if (r.name === sanitizedName) {
-    //       alreadyAvailable = true;
-    //       return false;
-    //     }
-    //     return true;
-    //   });
-    // } else if (acc && acc.type === "Organization") {
-    //   const repos = await getOrganizationRepositoryAll(ownerId);
-    //   if (repos) {
-    //     repos.every((r) => {
-    //       if (r.name === sanitizedName) {
-    //         alreadyAvailable = true;
-    //         return false;
-    //       }
-    //       return true;
-    //     });
-    //   }
-    // }
 
     if (alreadyAvailable) {
       setNameHint({

@@ -1,7 +1,6 @@
 import { fs, pfs, mkdir } from "../virtualfs";
 import git from "isomorphic-git";
-import http from "isomorphic-git/http/web";
-import _, { sortBy } from "lodash";
+import sortBy from "lodash/sortBy";
 
 const validSha = new RegExp(/^[a-f0-9]{40}$/);
 
@@ -195,7 +194,7 @@ const loadDirectory = async (repoId, oid, projectRoot, sorted = false) => {
     });
   } catch (e) {}
   if (parsedTreeObject) {
-    parsedTreeObject.tree = _.sortBy(parsedTreeObject.tree, [
+    parsedTreeObject.tree = sortBy(parsedTreeObject.tree, [
       (i) => (i.type === "tree" ? -1 : 1),
     ]);
   }

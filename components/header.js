@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import ClickAwayListener from "react-click-away-listener";
-import CurrentWallet from "./currentWallet";
 import {
   downloadWalletForRemoteHelper,
   transferToWallet,
@@ -12,11 +11,12 @@ import {
 } from "../store/actions/wallet";
 import shrinkAddress from "../helpers/shrinkAddress";
 import getHomeUrl from "../helpers/getHomeUrl";
-import _ from "lodash";
 import { notify } from "reapop";
 import initKeplr from "../keplr/init";
 
-import SendTlore from "./dashboard/sendTlore";
+import dynamic from "next/dynamic";
+const SendTlore = dynamic(() => import("./dashboard/sendTlore"));
+const CurrentWallet = dynamic(() => import("./currentWallet"));
 /*
 Menu States
 1 - Default menu
@@ -290,7 +290,7 @@ function Header(props) {
                         <a>Create New Wallet</a>
                       </Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <a
                         href="#"
                         onClick={async () => {
@@ -300,7 +300,7 @@ function Header(props) {
                       >
                         Connect Keplr Wallet
                       </a>
-                    </li>
+                    </li> */}
 
                     {props.activeWallet ? (
                       <>

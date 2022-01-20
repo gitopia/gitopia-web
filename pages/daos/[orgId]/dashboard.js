@@ -1,9 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { connect } from "react-redux";
 import Head from "next/head";
 import Header from "../../../components/header";
-import BackendStatus from "../../../components/backendStatus";
-import FaucetReceiver from "../../../components/faucetReceiver";
 import DashboardSelector from "../../../components/dashboard/dashboardSelector";
 import TopRepositories from "../../../components/topRepositories";
 import getHomeUrl from "../../../helpers/getHomeUrl";
@@ -42,7 +40,6 @@ function OrgDashboard(props) {
             />
           </div>
           <div>
-            {/* <BackendStatus /> */}
             <div className="bg-footer-grad py-6">
               <div className="text-xs text-type-secondary mx-8 mb-4">
                 &copy; Gitopia {new Date().getFullYear()}

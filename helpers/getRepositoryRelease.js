@@ -1,9 +1,8 @@
-import { queryClient } from "gitopiajs";
+import api from "./getApi";
 
 export default async function getRepositoryRelease(id, repoName, tagName) {
   try {
-    const qc = await queryClient({ addr: process.env.NEXT_PUBLIC_API_URL });
-    const res = await qc.queryRepositoryRelease(id, repoName, tagName);
+    const res = await api.queryRepositoryRelease(id, repoName, tagName);
     if (res.ok) {
       return res.data.Release;
     }

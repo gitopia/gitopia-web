@@ -1,9 +1,8 @@
-import { queryClient } from "gitopiajs";
+import api from "./getApi";
 
 export default async function getIssue(issueId) {
   try {
-    const qc = await queryClient({ addr: process.env.NEXT_PUBLIC_API_URL });
-    const res = await qc.queryIssue(issueId);
+    const res = await api.queryIssue(issueId);
     if (res.ok) {
       let i = res.data.Issue;
       // try {

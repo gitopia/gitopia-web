@@ -1,9 +1,8 @@
-import { queryClient } from "gitopiajs";
+import api from "./getApi";
 
 export default async function getUser(userId) {
   try {
-    const qc = await queryClient({ addr: process.env.NEXT_PUBLIC_API_URL });
-    const res = await qc.queryUser(userId);
+    const res = await api.queryUser(userId);
     if (res.ok) {
       let u = res.data.User;
       return u;

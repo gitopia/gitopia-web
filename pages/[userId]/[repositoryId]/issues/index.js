@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Link from "next/link";
 import dayjs from "dayjs";
+import find from "lodash/find";
 
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
@@ -50,7 +51,7 @@ function RepositoryIssueView(props) {
               }
               break;
             case "label":
-              let l = _.find(repository.labels, { name: value });
+              let l = find(repository.labels, { name: value });
               if (l) {
                 option["labelIds"] = l.id;
                 delete option["labels"];

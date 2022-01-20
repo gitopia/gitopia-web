@@ -817,6 +817,7 @@ export const createRelease = ({
     const { wallet, env } = getState();
     const release = {
       creator: wallet.selectedAddress,
+      repositoryId,
       tagName,
       target,
       name,

@@ -4,20 +4,15 @@ import Header from "../../../../components/header";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
+import find from "lodash/find";
 
 import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
-import TextInput from "../../../../components/textInput";
-import RenameRepository from "../../../../components/repository/renameRepository";
-import CollaboratorsList from "../../../../components/repository/collaboratorsList";
-import TransferOwnership from "../../../../components/repository/transferOwnership";
 import BranchSelector from "../../../../components/repository/branchSelector";
 import RepositorySelector from "../../../../components/repository/repositorySelector";
 import getBranchSha from "../../../../helpers/getBranchSha";
-import Link from "next/link";
-// import getDiff from "../../../../helpers/getDiff";
 import DiffView from "../../../../components/repository/diffView";
 import { createPullRequest } from "../../../../store/actions/repository";
 import MarkdownEditor from "../../../../components/markdownEditor";
@@ -470,7 +465,7 @@ function RepositoryCompareView(props) {
                       <div className="text-xs px-3 mt-2 flex flex-wrap">
                         {labels.length
                           ? labels.map((l, i) => {
-                              let label = _.find(repository.labels, {
+                              let label = find(repository.labels, {
                                 id: l,
                               }) || {
                                 name: "",

@@ -1,17 +1,14 @@
-import Head from "next/head";
-import Header from "../../../../components/header";
-
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
+import Header from "../../../../components/header";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 
 import { initRepository } from "../../../../store/actions/git";
 
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import vscdarkplus from "react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus";
 import BranchSelector from "../../../../components/repository/branchSelector";
 import Breadcrumbs from "../../../../components/repository/breadcrumbs";
@@ -20,6 +17,11 @@ import FileBrowser from "../../../../components/repository/fileBrowser";
 import Footer from "../../../../components/footer";
 import getBranchSha from "../../../../helpers/getBranchSha";
 import useRepository from "../../../../hooks/useRepository";
+import dynamic from "next/dynamic";
+
+const SyntaxHighlighter = dynamic(
+  async () => (await import("react-syntax-highlighter")).Prism
+);
 
 export async function getServerSideProps() {
   return { props: {} };
