@@ -30,7 +30,7 @@ module.exports = withBundleAnalyzer(
         "/": { page: "/" },
         "/home": { page: "/home" },
         "/design": { page: "/design" },
-        "/season-of-blockchains": { page: "/seasonOfBlockchains" },
+        "/season-of-blockchains": { page: "/season-of-blockchains" },
       };
     },
     images: {
