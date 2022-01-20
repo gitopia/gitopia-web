@@ -134,14 +134,6 @@
   margin-top: 1vw;
 }
 
-.image3 {
-  margin-top: 20px;
-  display: flex;
-  margin-left: 400px;
-  height: 600px;
-  width: 700px;
-}
-
 .title {
   margin-top: 80px;
   align-items: center;
@@ -210,6 +202,18 @@
   margin-bottom: 0.7vw;
 }
 
+.image3 {
+  margin-top: 20px;
+  display: flex;
+  margin-left: 400px;
+  height: 550px;
+  width: 700px;
+}
+
+.cards {
+  margin-top: 6vw;
+}
+
 .joinGitopia {
   font: 32px;
   font-weight: 700;
@@ -219,6 +223,9 @@
 .endCard {
   font-size: 18px;
   font-weight: 400;
+}
+.endCardmargin {
+  margin-top: 2.7vw;
 }
 .cardButton {
   font-weight: 700;
@@ -283,7 +290,7 @@
   .blob2 {
     position: absolute;
     left: 0;
-    top: 200vw;
+    top: 200.4vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
@@ -310,7 +317,7 @@
   .blob6 {
     position: absolute;
     right: 0;
-    top: 174.8vw;
+    top: 175.2vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
@@ -337,7 +344,7 @@
   .blob2 {
     position: absolute;
     left: 0;
-    top: 287.3vw;
+    top: 271.8vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
@@ -364,7 +371,7 @@
   .blob6 {
     position: absolute;
     right: 0;
-    top: 248.9vw;
+    top: 235.8vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
@@ -383,12 +390,7 @@
     font-size: 64px;
     font-weight: 700;
   }
-  .image3 {
-    display: flex;
-    margin-left: 3vw;
-    height: 45vw;
-    width: 47vw;
-  }
+
   .section3a {
     margin-top: 1.7vw;
   }
@@ -437,6 +439,17 @@
     margin-right: 15vw;
     margin-bottom: 0.7vw;
   }
+  .image3 {
+    display: flex;
+    margin-left: 3vw;
+    height: 43vw;
+    width: 50vw;
+  }
+
+  .cards {
+    margin-top: 3vw;
+    width: 100vw;
+  }
 
   .joinGitopia {
     font: 32px;
@@ -448,6 +461,9 @@
     font-size: 18px;
     font-weight: 400;
   }
+  .endCardmargin {
+    margin-top: 5.3vw;
+  }
   .cardButton {
     font-weight: 700;
     font-size: 14px;
@@ -455,12 +471,8 @@
     height: 6vw;
   }
 
-  .cards {
-    width: 100vw;
-  }
-
   .footer {
-    margin-top: 50px;
+    margin-top: 40px;
     padding: 50px;
     flex-direction: column;
   }
@@ -550,8 +562,9 @@
   }
 
   .image3 {
-    height: 500px;
-    width: 500px;
+    height: 400px;
+    width: 450px;
+    margin-bottom: 6vw;
   }
 
   .section3a {
@@ -593,6 +606,9 @@
     font-size: 18px;
     font-weight: 400;
   }
+  .endCardmargin {
+    margin-top: 2vw;
+  }
   .cardButton {
     margin-left: 70px;
     height: 10vw;
@@ -600,6 +616,7 @@
   }
 
   .cards {
+    margin-top: 10vw;
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -613,6 +630,7 @@
     display: none;
   }
   .footer {
+    margin-top: 0px;
     margin-bottom: 0px;
     flex-direction: column;
   }

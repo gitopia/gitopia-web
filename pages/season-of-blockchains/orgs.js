@@ -109,14 +109,130 @@ export default function SeasonOfBlockchains() {
         <img src="/season-of-blockchains/org-1.png"></img>
       </div>
       <div className={" " + styles.title}>52°North GmbH</div>
-      <div className={"mt-5 " + styles.content}>https://52north.org/</div>
-      <div className={"mt-5 " + styles.content1}>
+      <div className={"hover:text-purple-400 " + styles.content}>
+        <a href="https://52north.org/" target="_blank">
+          https://52north.org/
+        </a>
+      </div>
+
+      <div className={styles.cardContainer}>
+        <div className={" " + styles.card1}>
+          <div className={styles.card1a}>
+            <div className={" " + styles.card1a1}>
+              <div className={styles.cardTitle}>Topics</div>
+              <div className={"" + styles.cardBody}>
+                Science and Medicine, Spatial Information Structure, Science,
+                Some other titles, and longer titles.
+              </div>
+            </div>
+            <div className={" " + styles.card1a2}>
+              <div className={styles.cardTitle}>Technologies</div>
+              <div className="flex">
+                <div className={""}>
+                  <div className={styles.cardTech}>JAVA SCRIPT</div>
+                  <div className={styles.cardTech}>VUE.JS</div>
+                </div>
+                <div className={""}>
+                  <div className={styles.cardTech}>PYTHON</div>
+                  <div className={styles.cardTech}>WEB GL</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={styles.hr}></div>
+          <div className={styles.card1b}>
+            <div className={"flex " + styles.card1b1}>
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 28 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="14" height="14" fill="#D6FFF5" />
+                <rect x="14" y="14" width="14" height="14" fill="#D6FFF5" />
+                <rect
+                  opacity="0.2"
+                  width="14"
+                  height="14"
+                  transform="matrix(1 0 0 -1 0 28)"
+                  fill="#D6FFF5"
+                />
+                <rect
+                  opacity="0.2"
+                  width="14"
+                  height="14"
+                  transform="matrix(1 0 0 -1 14 14)"
+                  fill="#D6FFF5"
+                />
+              </svg>
+              <div className={styles.card1b2}>IRC CHANNEL</div>
+            </div>
+            <div className={"flex " + styles.card1b1}>
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 28 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="14" height="14" fill="#D6FFF5" />
+                <rect x="14" y="14" width="14" height="14" fill="#D6FFF5" />
+                <rect
+                  opacity="0.2"
+                  width="14"
+                  height="14"
+                  transform="matrix(1 0 0 -1 0 28)"
+                  fill="#D6FFF5"
+                />
+                <rect
+                  opacity="0.2"
+                  width="14"
+                  height="14"
+                  transform="matrix(1 0 0 -1 14 14)"
+                  fill="#D6FFF5"
+                />
+              </svg>
+              <div className={styles.card1b2}>MAILING LIST</div>
+            </div>
+            <div className={"flex " + styles.card1b1}>
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 28 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="14" height="14" fill="#D6FFF5" />
+                <rect x="14" y="14" width="14" height="14" fill="#D6FFF5" />
+                <rect
+                  opacity="0.2"
+                  width="14"
+                  height="14"
+                  transform="matrix(1 0 0 -1 0 28)"
+                  fill="#D6FFF5"
+                />
+                <rect
+                  opacity="0.2"
+                  width="14"
+                  height="14"
+                  transform="matrix(1 0 0 -1 14 14)"
+                  fill="#D6FFF5"
+                />
+              </svg>
+              <div className={styles.card1b2}>CONTACT EMAIL</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className={" " + styles.content1}>
         52°North works on innovative ideas and
       </div>
-      <div className={"mt-5 " + styles.content1}>
+      <div className={" " + styles.content1}>
         technologies in geoinformatics
       </div>
-      <div className={"mt-5 " + styles.content2}>
+      <div className={" " + styles.content2}>
         52°North is an international research and development non-profit company
         with partners from academia, the public sector and industry. Our goal is
         to foster innovation in the field of geoinformatics through a
@@ -127,7 +243,7 @@ export default function SeasonOfBlockchains() {
         are enviroCar, 52°North SOS, 52°North JavaScript Sensor Web Client,
         ILWIS, and 52°North WPS.
       </div>
-      <div className={"mt-5 " + styles.content2}>
+      <div className={" " + styles.content3}>
         Check out our GitHub organization and our Open Hub page to learn more
         about the wide range of software we work on: from mobile apps to
         standardized web services, from cutting edge research to established
@@ -142,22 +258,25 @@ export default function SeasonOfBlockchains() {
         profits earned by 52°North are completely re-invested into the
         innovation, research and software development process.
       </div>
-      <div className={"flex items-center justify-center mt-24 " + styles.cards}>
-        <div className={"card lg:card-side " + styles.joinGitopia}>
-          <div className={"mt-1 " + styles.cardLogo}>
-            <figure>
-              <img src="/logo-g.svg" />
-            </figure>
+      <div className={" " + styles.content4}>Projects</div>
+      <div className={"flex items-center justify-center mt-20 " + styles.cards}>
+        <div className={"flex"}>
+          <div className={"mt-3 " + styles.cardLogo}>
+            <img src="/logo-g.svg" />
           </div>
-          <div className={"card-body mt-2 px-0 py-0"}>
-            <div className="card-title text-3xl">Join the gitopia</div>
-            <div className="card-title text-3xl">community</div>
+          <div className={"card lg:card-side " + styles.joinGitopia}>
+            <div className={"mt-2 px-0 py-0"}>
+              <div className="card-title">Join the gitopia</div>
+              <div className="card-title">community</div>
+            </div>
           </div>
         </div>
-        <div className={"card lg:card-side ml-5 mt-5"}>
+        <div className={"card lg:card-side ml-5 " + styles.endCardmargin}>
           <div className={"card-body py-0"}>
-            <div className="">Check out ideas that you can get started on</div>
-            <div className="text-base">
+            <div className={styles.endCard}>
+              Check out ideas that you can get started on
+            </div>
+            <div className={styles.endCard}>
               right now through our organization page.
             </div>
             <div className="card-actions">
@@ -169,11 +288,11 @@ export default function SeasonOfBlockchains() {
                 }}
                 type="button"
                 className={
-                  "px-16 lg:px-20 lg:py-3 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 " +
+                  "px-16 lg:px-20 lg:py-1 py-4 rounded text-white bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 " +
                   styles.cardButton
                 }
               >
-                Contact Us
+                Contact us
               </button>
             </div>
           </div>

@@ -342,21 +342,21 @@ export default function SeasonOfBlockchains() {
               </div>
             </div>
           </div>
-          <div
-            className={"flex items-center justify-center mt-20 " + styles.cards}
-          >
+          <div className={"flex items-center justify-center " + styles.cards}>
             <div className={"flex"}>
               <div className={"mt-3 " + styles.cardLogo}>
                 <img src="/logo-g.svg" />
               </div>
               <div className={"card lg:card-side " + styles.joinGitopia}>
-                <div className={"card-body mt-2 px-0 py-0"}>
+                <div className={"mt-2 px-0 py-0"}>
                   <div className="card-title">Join the gitopia</div>
                   <div className="card-title">community</div>
                 </div>
               </div>
             </div>
-            <div className={"card lg:card-side ml-5 mt-14"}>
+            <div
+              className={"card lg:card-side ml-5 ml-5 " + styles.endCardmargin}
+            >
               <div className={"card-body py-0"}>
                 <div className={styles.endCard}>
                   Check out ideas that you can get started on
