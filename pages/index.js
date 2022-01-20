@@ -669,10 +669,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -739,10 +736,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -812,10 +806,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -882,10 +873,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -950,10 +938,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -1018,10 +1003,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -1086,10 +1068,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -1155,7 +1134,7 @@ export default function Landing() {
               filterUnits="userSpaceOnUse"
               colorInterpolationFilters="sRGB"
             >
-              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feFlood floodOpacity="0" result="BackgroundImageFix" />
               <feBlend
                 mode="normal"
                 in="SourceGraphic"

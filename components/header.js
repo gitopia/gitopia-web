@@ -290,7 +290,7 @@ function Header(props) {
                         <a>Create New Wallet</a>
                       </Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <a
                         href="#"
                         onClick={async () => {
@@ -300,7 +300,7 @@ function Header(props) {
                       >
                         Connect Keplr Wallet
                       </a>
-                    </li>
+                    </li> */}
 
                     {props.activeWallet ? (
                       <>
