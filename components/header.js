@@ -8,11 +8,14 @@ import {
   downloadWalletForRemoteHelper,
   transferToWallet,
   signOut,
+  unlockKeplrWallet,
 } from "../store/actions/wallet";
 import shrinkAddress from "../helpers/shrinkAddress";
 import getHomeUrl from "../helpers/getHomeUrl";
 import _ from "lodash";
 import { notify } from "reapop";
+import initKeplr from "../keplr/init";
+
 import SendTlore from "./dashboard/sendTlore";
 /*
 Menu States
@@ -48,6 +51,23 @@ function Header(props) {
 
   const headerMessage = process.env.NEXT_PUBLIC_HEADER_MESSAGE;
 
+  const handleKeplrAccountChange = async () => {
+    console.log("handling keplr wallet change");
+    if (props.activeWallet.isKeplr) {
+      await props.unlockKeplrWallet();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keplr_keystorechange", handleKeplrAccountChange);
+    return () => {
+      window.removeEventListener(
+        "keplr_keystorechange",
+        handleKeplrAccountChange
+      );
+    };
+  });
+
   return (
     <>
       {headerMessage && headerMessage !== "" ? (
@@ -75,7 +95,12 @@ function Header(props) {
             </svg>
           </label>
         </div>
-        <div className="flex-none px-6 w-64">
+        <div
+          className={
+            "flex-none px-6 transition-all ease-out delay-150" +
+            (router.pathname === "/home" ? " w-64" : " w-42")
+          }
+        >
           <Link href={homeUrl}>
             <a>
               <img
@@ -148,7 +173,6 @@ function Header(props) {
         ) : (
           ""
         )}
-
         <div className="flex-none mr-4">
           <ClickAwayListener onClickAway={onUserMenuClose}>
             <div
@@ -163,10 +187,6 @@ function Header(props) {
                   (props.activeWallet ? "btn-outline" : "")
                 }
                 onClick={(e) => {
-                  if (!props.activeWallet && !props.wallets.length) {
-                    router.push("/login");
-                    return;
-                  }
                   setMenuOpen(true);
                 }}
               >
@@ -189,6 +209,7 @@ function Header(props) {
                     <>
                       <div className="text-xs text-left">
                         {props.activeWallet.name}
+                        {props.activeWallet.isKeplr ? " [Keplr]" : ""}
                       </div>
                       <div className="text-xs text-base-content">
                         {addressToShow}
@@ -249,22 +270,38 @@ function Header(props) {
                       ""
                     )}
 
-                    <li>
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          setMenuState(2);
-                          e.preventDefault();
-                        }}
-                      >
-                        {props.activeWallet ? "Switch" : "Saved"} Wallet
-                      </a>
-                    </li>
+                    {props.wallets.length ? (
+                      <li>
+                        <a
+                          href="#"
+                          onClick={(e) => {
+                            setMenuState(2);
+                            e.preventDefault();
+                          }}
+                        >
+                          {props.activeWallet ? "Switch" : "Saved"} Wallet
+                        </a>
+                      </li>
+                    ) : (
+                      ""
+                    )}
                     <li>
                       <Link href="/login">
                         <a>Create New Wallet</a>
                       </Link>
                     </li>
+                    <li>
+                      <a
+                        href="#"
+                        onClick={async () => {
+                          await initKeplr();
+                          await props.unlockKeplrWallet();
+                        }}
+                      >
+                        Connect Keplr Wallet
+                      </a>
+                    </li>
+
                     {props.activeWallet ? (
                       <>
                         <li className="h-4">
@@ -319,4 +356,5 @@ export default connect(mapStateToProps, {
   transferToWallet,
   signOut,
   notify,
+  unlockKeplrWallet,
 })(Header);

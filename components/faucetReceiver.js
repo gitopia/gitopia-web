@@ -9,6 +9,10 @@ function FaucetReceiver(props) {
 
   const getTokens = (amount) => {
     if (loading !== 0) return;
+    if (!props.selectedAddress) {
+      props.notify("Please login before claiming tokens", "error");
+      return;
+    }
     setLoading(amount);
 
     axios
@@ -21,7 +25,14 @@ function FaucetReceiver(props) {
         },
         { timeout: 10000 }
       )
-      .then((res) => props.updateUserBalance())
+      .then((res) => {
+        console.log(res);
+        if (res.data.transfers[0].status === "error") {
+          props.notify(res.data.transfers[0].error, "error");
+        } else {
+          props.updateUserBalance();
+        }
+      })
       .catch((err) => {
         console.error(err);
         props.notify("Unable to react faucet", "error");

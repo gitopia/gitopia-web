@@ -214,7 +214,6 @@ function RepositoryIssueCreateView(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
-    activeWallet: state.wallet.activeWallet,
   };
 };
 

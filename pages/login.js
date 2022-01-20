@@ -1,5 +1,5 @@
 import Head from "next/head";
-import SimpleHeader from "../components/simpleHeader";
+import Header from "../components/header";
 import { useState } from "react";
 import CreateWallet from "../components/createWallet";
 import RecoverWallet from "../components/recoverWallet";
@@ -23,8 +23,8 @@ export default function Login(props) {
         <title>Gitopia - Login</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
-      <SimpleHeader />
-      <div className="flex-1 container mx-auto flex flex-col justify-center items-center min-h-full relative">
+      <Header />
+      <div className="mt-12 container mx-auto flex flex-col justify-center items-center min-h-full relative">
         {step === 1 ? (
           <>
             <div className="text-xs uppercase text-green mt-12 mb-2">

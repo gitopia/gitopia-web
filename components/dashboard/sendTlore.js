@@ -117,18 +117,13 @@ function SendTlore(props) {
           <button
             className={"btn btn-sm btn-primary flex-1 "}
             onClick={(e) => {
-              props
-                .transferToWallet(
-                  props.selectedAddress,
-                  receiverAddress,
-                  props.advanceUser === true
-                    ? amount.toString()
-                    : (amount * 1000000).toString()
-                )
-                .then((res) => {
-                  props.updateUserBalance();
-                  props.notify("Transaction Successful", "info");
-                });
+              props.transferToWallet(
+                props.selectedAddress,
+                receiverAddress,
+                props.advanceUser === true
+                  ? amount.toString()
+                  : (amount * 1000000).toString()
+              );
               props.setMenuOpen(false);
               props.setMenuState(1);
             }}

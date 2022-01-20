@@ -1,19 +1,16 @@
-import { assertIsBroadcastTxSuccess } from "@cosmjs/stargate";
 import { notify } from "reapop";
 import { sendTransaction } from "./env";
-import {
-  createUser,
-  getUserDetailsForSelectedAddress,
-  setCurrentDashboard,
-} from "./user";
+import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import { userActions, organizationActions } from "./actionTypes";
 import { validatePostingEligibility } from "./repository";
+import { updateUserBalance } from "./wallet";
 
 export const createOrganization = ({ name = null, description = null }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "organization")))
       return null;
+
+    const { wallet, env } = getState();
     const organization = {
       creator: wallet.selectedAddress,
       name: name,
@@ -33,6 +30,7 @@ export const createOrganization = ({ name = null, description = null }) => {
             id: wallet.selectedAddress,
           },
         });
+        updateUserBalance()(dispatch, getState);
         setCurrentDashboard(wallet.selectedAddress)(dispatch, getState);
         return { url: "/home" };
       } else {
@@ -84,6 +82,7 @@ export const updateMember = ({ id = null, user = null, role = null }) => {
         collaborator
       );
       const result = await sendTransaction({ message }, env);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -114,6 +113,7 @@ export const removeMember = ({ id = null, user = null }) => {
         collaborator
       );
       const result = await sendTransaction({ message }, env);
+      updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
