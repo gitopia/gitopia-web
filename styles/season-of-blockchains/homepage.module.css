@@ -62,7 +62,7 @@
 .blob2 {
   position: absolute;
   left: 0;
-  top: 156vw;
+  top: 154.8vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
@@ -97,7 +97,7 @@
 .blob6 {
   position: absolute;
   right: 0;
-  top: 137vw;
+  top: 135.9vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
@@ -210,28 +210,36 @@
   width: 700px;
 }
 
-.cards {
-  margin-top: 6vw;
+.cardLogo {
+  margin-top: 35px;
+  height: 55px;
+  width: 100px;
+}
+
+.cardDetails {
+  margin-top: 30px;
+  font-size: 32px;
 }
 
 .joinGitopia {
-  font: 32px;
+  margin-left: 10px;
   font-weight: 700;
   display: flex;
   flex-direction: row;
+}
+.endCardmargin {
+  margin-left: 25px;
+  margin-top: 80px;
 }
 .endCard {
   font-size: 18px;
   font-weight: 400;
 }
-.endCardmargin {
-  margin-top: 2.7vw;
-}
 .cardButton {
   font-weight: 700;
   font-size: 14px;
-  width: 12.1vw;
-  height: 2vw;
+  width: 230px;
+  height: 50px;
 }
 
 .footer {
@@ -290,7 +298,7 @@
   .blob2 {
     position: absolute;
     left: 0;
-    top: 200.4vw;
+    top: 202.2vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
@@ -317,10 +325,16 @@
   .blob6 {
     position: absolute;
     right: 0;
-    top: 175.2vw;
+    top: 176.9vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
+  }
+  .cardButton {
+    font-weight: 700;
+    font-size: 14px;
+    width: 250px;
+    height: 50px;
   }
 }
 @media (max-width: 1024px) {
@@ -344,7 +358,7 @@
   .blob2 {
     position: absolute;
     left: 0;
-    top: 271.8vw;
+    top: 261.2vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
@@ -371,7 +385,7 @@
   .blob6 {
     position: absolute;
     right: 0;
-    top: 235.8vw;
+    top: 225.5vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
@@ -451,24 +465,32 @@
     width: 100vw;
   }
 
-  .joinGitopia {
-    font: 32px;
-    font-weight: 700;
-    display: flex;
-    flex-direction: row;
+  .cardLogo {
+    margin-top: 5px;
+    margin-left: 2vw;
+    height: 40px;
+    width: 70px;
+  }
+  .cardDetails {
+    margin-top: 0.1vw;
+  }
+  .cardDetails {
+    font-size: 25px;
   }
   .endCard {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 400;
   }
   .endCardmargin {
+    margin-left: 1px;
     margin-top: 5.3vw;
+    margin-right: 2vw;
   }
   .cardButton {
     font-weight: 700;
     font-size: 14px;
-    width: 28vw;
-    height: 6vw;
+    width: 250px;
+    height: 49px;
   }
 
   .footer {
@@ -597,8 +619,15 @@
     align-items: center;
     text-align: left;
   }
-
+  .cardDetails {
+    font-size: 23px;
+  }
+  .joinGitopia {
+    margin-left: 0px;
+  }
   .cardLogo {
+    width: 70px;
+    margin-left: 0px;
     margin-right: 10px;
   }
   .endCard {
@@ -610,7 +639,7 @@
     margin-top: 2vw;
   }
   .cardButton {
-    margin-left: 70px;
+    margin-left: 80px;
     height: 10vw;
     width: 40vw;
   }
