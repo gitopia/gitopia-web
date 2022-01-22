@@ -244,6 +244,11 @@
   resolved "https://registry.yarnpkg.com/@cosmjs/utils/-/utils-0.26.5.tgz#54d73c85c6127e3c439d25bee6983fca8fa700c1"
   integrity sha512-VB4Z7lEIXA36q0RON15KexzEosToUtdDyMv7UXSBHSl4mLG/fIZgBIpBEYsaPZ1kh43xyINeKQJiGCp2z5rI+g==
 
+"@gitopia/gitopia-js@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@gitopia/gitopia-js/-/gitopia-js-0.11.0.tgz#0c55a9531e6520ede63ea4d0634cc3978e41f602"
+  integrity sha512-XPQKanZMMkpiGhwEjW5ybZxY7AW8itPaUmle5VA6mQn601tA4V0U2aZQI5/7sXPsBAcdKe78fQla3HBnaNJOCA==
+
 "@hapi/accept@5.0.1":
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/@hapi/accept/-/accept-5.0.1.tgz#068553e867f0f63225a506ed74e899441af53e10"
@@ -1581,10 +1586,6 @@ get-orientation@1.1.2:
   integrity sha512-/pViTfifW+gBbh/RnlFYHINvELT9Znt+SYyDKAUL6uV6By019AK/s+i9XP4jSwq7lwP38Fd8HVeTxym3+hkwmQ==
   dependencies:
     stream-parser "^0.3.1"
-
-"gitopiajs@git+ssh://git@github.com:gitopia/gitopia.git#gitopiajs-v0.11.0-gitpkg":
-  version "0.11.0"
-  resolved "git+ssh://git@github.com:gitopia/gitopia.git#a8dedd961a1f2d7cf4085de02f8994c4567d42c3"
 
 glob-parent@^5.1.2, glob-parent@~5.1.0, glob-parent@~5.1.2:
   version "5.1.2"

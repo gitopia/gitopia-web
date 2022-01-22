@@ -20,7 +20,7 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
   });
 
   if (accountSigner) {
-    const { queryClient, txClient } = await import("gitopiajs");
+    const { queryClient, txClient } = await import("@gitopia/gitopia-js");
     const cosmosBankTxClient = (
       await import("../cosmos.bank.v1beta1/module/index.js")
     ).txClient;
@@ -44,7 +44,7 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
       wallet.getPasswordPromise.resolve("Unlock success");
     }
   } else {
-    const { Api } = await import("gitopiajs/rest");
+    const { Api } = await import("@gitopia/gitopia-js/rest");
 
     updateUserBalance()(dispatch, getState);
     dispatch({

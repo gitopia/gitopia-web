@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { claimUsername } from "../store/actions/wallet";
 import TextInput from "./textInput";
-import { queryClient } from "gitopiajs";
+import { queryClient } from "@gitopia/gitopia-js";
 
 function CreateUser(props) {
   const [name, setName] = useState("");
