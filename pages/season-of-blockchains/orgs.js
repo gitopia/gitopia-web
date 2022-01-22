@@ -259,15 +259,187 @@ export default function SeasonOfBlockchains() {
         innovation, research and software development process.
       </div>
       <div className={" " + styles.content4}>Projects</div>
+      <div className={styles.cardContainer2}>
+        <div className={" " + styles.card2}>
+          <div className="flex">
+            <div className="avatar flex-none items-center">
+              <div className={"rounded-full " + styles.projectLogo}>
+                <img src={"/season-of-blockchains/projectlogo.png"} />
+              </div>
+            </div>
+            <div className={styles.projectTitle}>StianSandsgaard</div>
+            <div className={styles.projectTime}>3 DAYS AGO</div>
+          </div>
+          <div className={styles.content5}>
+            Adjusting the Composition to Fit the Frame.
+          </div>
+          <div className={styles.content6}>
+            I want to apply a framework to the framework and enable it to
+            perform better with just an additional functional feature...
+          </div>
+          <div className={"flex " + styles.card2a}>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                x="4"
+                y="6"
+                width="16"
+                height="9"
+                stroke="#ADBECB"
+                stroke-width="2"
+              />
+              <rect x="7" y="18" width="10" height="2" fill="#ADBECB" />
+            </svg>
+            <div className={styles.content7}>
+              Flutter-Responsive-Admin-Panel-Or-Dashboard
+            </div>
+            <div className={"ml-auto " + styles.arrow1}>
+              <svg
+                width="20"
+                height="12"
+                viewBox="0 0 20 12"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0 6H18.5M18.5 6L13.5 1M18.5 6L13.5 11"
+                  stroke="#66CE67"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+          <div className={styles.hr1}></div>
+          <div className={"flex " + styles.card2b}>
+            <div className={styles.votes}>205 votes</div>
+            <div className={styles.Arrow}>
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 8.5L8.5 1M8.5 1H3.5M8.5 1V6.5"
+                  stroke="#29B7E4"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <div
+              className={
+                "link link-primary modal-button no-underline " + styles.content8
+              }
+            >
+              read proposal
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className={styles.cardContainer2}>
+        <div className={" " + styles.card2}>
+          <div className="flex">
+            <div className="avatar flex-none items-center">
+              <div className={"rounded-full " + styles.projectLogo}>
+                <img src={"/season-of-blockchains/projectlogo.png"} />
+              </div>
+            </div>
+            <div className={styles.projectTitle}>StianSandsgaard</div>
+            <div className={styles.projectTime}>3 DAYS AGO</div>
+          </div>
+          <div className={styles.content5}>
+            Adjusting the Composition to Fit the Frame.
+          </div>
+          <div className={styles.content6}>
+            I want to apply a framework to the framework and enable it to
+            perform better with just an additional functional feature...
+          </div>
+          <div className={"flex " + styles.card2a}>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                x="4"
+                y="6"
+                width="16"
+                height="9"
+                stroke="#ADBECB"
+                stroke-width="2"
+              />
+              <rect x="7" y="18" width="10" height="2" fill="#ADBECB" />
+            </svg>
+            <div className={styles.content7}>
+              Flutter-Responsive-Admin-Panel-Or-Dashboard
+            </div>
+            <div className={"ml-auto " + styles.arrow1}>
+              <svg
+                width="20"
+                height="12"
+                viewBox="0 0 20 12"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0 6H18.5M18.5 6L13.5 1M18.5 6L13.5 11"
+                  stroke="#66CE67"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+          <div className={styles.hr1}></div>
+          <div className={"flex " + styles.card2b}>
+            <div className={styles.votes}>205 votes</div>
+            <div className={styles.Arrow}>
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 8.5L8.5 1M8.5 1H3.5M8.5 1V6.5"
+                  stroke="#29B7E4"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <div
+              className={
+                "link link-primary modal-button no-underline " + styles.content8
+              }
+            >
+              read proposal
+            </div>
+          </div>
+        </div>
+      </div>
       <div className={"flex items-center justify-center mt-20 " + styles.cards}>
         <div className={"flex"}>
-          <div className={"mt-3 " + styles.cardLogo}>
-            <img src="/logo-g.svg" />
-          </div>
           <div className={"card lg:card-side " + styles.joinGitopia}>
-            <div className={"mt-2 px-0 py-0"}>
-              <div className="card-title">Join the gitopia</div>
-              <div className="card-title">community</div>
+            <div className={"mt-3 " + styles.cardLogo}>
+              <figure>
+                <img src="/logo-g.svg" />
+              </figure>
+            </div>
+            <div className={"px-0 py-0 " + styles.cardDetails}>
+              <div className=" ">Join the gitopia</div>
+              <div className=" ">community</div>
             </div>
           </div>
         </div>
@@ -298,6 +470,104 @@ export default function SeasonOfBlockchains() {
           </div>
         </div>
       </div>
+      <svg
+        className={styles.blob1}
+        width="585"
+        height="1210"
+        viewBox="0 0 585 1210"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g filter="url(#filter0_f_1056_1216)">
+          <path
+            d="M122.309 1405.35C-38.3875 948.188 279.198 837.929 155.758 624.126C32.3186 410.322 -241.071 337.068 -454.874 460.507C-668.678 583.947 -741.932 857.336 -618.493 1071.14C-495.053 1284.94 355.811 1911.88 122.309 1405.35Z"
+            fill="url(#paint0_radial_1056_1216)"
+          />
+        </g>
+        <defs>
+          <filter
+            id="filter0_f_1056_1216"
+            x="-1078.46"
+            y="0.543945"
+            width="1663.45"
+            height="1997.7"
+            filterUnits="userSpaceOnUse"
+            color-interpolation-filters="sRGB"
+          >
+            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feBlend
+              mode="normal"
+              in="SourceGraphic"
+              in2="BackgroundImageFix"
+              result="shape"
+            />
+            <feGaussianBlur
+              stdDeviation="200"
+              result="effect1_foregroundBlur_1056_1216"
+            />
+          </filter>
+          <radialGradient
+            id="paint0_radial_1056_1216"
+            cx="0"
+            cy="0"
+            r="1"
+            gradientUnits="userSpaceOnUse"
+            gradientTransform="translate(-231.367 847.633) rotate(-30) scale(447.014)"
+          >
+            <stop offset="0.442708" stop-color="#992D81" />
+            <stop offset="1" stop-color="#6029DB" />
+          </radialGradient>
+        </defs>
+      </svg>
+      <svg
+        className={styles.blob2}
+        width="530"
+        height="1574"
+        viewBox="0 0 530 1574"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g filter="url(#filter0_f_1056_1214)">
+          <path
+            d="M462.995 593.807C623.691 1050.97 306.106 1161.22 429.546 1375.03C552.985 1588.83 826.375 1662.09 1040.18 1538.65C1253.98 1415.21 1327.24 1141.82 1203.8 928.014C1080.36 714.21 229.492 87.2769 462.995 593.807Z"
+            fill="url(#paint0_radial_1056_1214)"
+          />
+        </g>
+        <defs>
+          <filter
+            id="filter0_f_1056_1214"
+            x="0.311768"
+            y="0.909912"
+            width="1663.45"
+            height="1997.7"
+            filterUnits="userSpaceOnUse"
+            color-interpolation-filters="sRGB"
+          >
+            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feBlend
+              mode="normal"
+              in="SourceGraphic"
+              in2="BackgroundImageFix"
+              result="shape"
+            />
+            <feGaussianBlur
+              stdDeviation="200"
+              result="effect1_foregroundBlur_1056_1214"
+            />
+          </filter>
+          <radialGradient
+            id="paint0_radial_1056_1214"
+            cx="0"
+            cy="0"
+            r="1"
+            gradientUnits="userSpaceOnUse"
+            gradientTransform="translate(816.671 1151.52) rotate(150) scale(447.014)"
+          >
+            <stop offset="0.442708" stop-color="#992D81" />
+            <stop offset="1" stop-color="#6029DB" />
+          </radialGradient>
+        </defs>
+      </svg>
       <footer className={styles.footer}>
         <div className={styles.footerLogo}></div>
         <div className={styles.footerLinks}>
@@ -331,7 +601,7 @@ export default function SeasonOfBlockchains() {
             type="button"
             className="px-16 lg:px-28 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
           >
-            Contact Us
+            Contact us
           </button>
         </div>
       </footer>
