@@ -29,15 +29,19 @@ function FaucetReceiver(props) {
         console.log(res);
         if (res.data.transfers[0].status === "error") {
           props.notify(res.data.transfers[0].error, "error");
+          setLoading(0);
         } else {
-          props.updateUserBalance();
+          setTimeout(() => {
+            props.updateUserBalance();
+            setLoading(0);
+          }, 5000);
         }
       })
       .catch((err) => {
         console.error(err);
         props.notify("Unable to react faucet", "error");
-      })
-      .finally(() => setLoading(0));
+        setLoading(0);
+      });
   };
 
   return (
