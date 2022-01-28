@@ -161,13 +161,34 @@ function Header(props) {
         <div className="flex-1"></div>
         {props.activeWallet ? (
           <div className="flex-none mr-4">
-            <div className="badge badge-md badge-secondary mr-2">
+            <div className="badge badge-md badge-secondary uppercase">
               {props.advanceUser === true
                 ? props.loreBalance
                 : props.loreBalance / 1000000}{" "}
               {props.advanceUser === true
-                ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
-                : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
+                ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
+        {process.env.NEXT_PUBLIC_NETWORK_NAME ? (
+          <div className="flex-col mr-4 items-end">
+            <div
+              className="uppercase text-type-secondary"
+              style={{ fontSize: "0.6rem", lineHeight: "1rem" }}
+            >
+              {process.env.NEXT_PUBLIC_NETWORK_NAME}
+            </div>
+            <div style={{ fontSize: "0.6rem", lineHeight: "1rem" }}>
+              <a
+                className="link link-primary no-underline"
+                target="_blank"
+                href={process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES}
+              >
+                SEE WHATS NEW
+              </a>
             </div>
           </div>
         ) : (
