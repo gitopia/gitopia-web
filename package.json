@@ -47,7 +47,8 @@
     "reapop": "^4.0.0",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "regenerator-runtime": "^0.13.7"
+    "regenerator-runtime": "^0.13.7",
+    "websocket": "^1.0.34"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.5",
