@@ -530,7 +530,6 @@ function RepositoryProposalCreateView(props) {
                       }
                       onClick={(e) => {
                         setLoading(true);
-                        console.log(repositoryName, description, proposalType);
                         props
                           .submitGovernanceProposal(
                             repositoryName,
