@@ -68,7 +68,6 @@ function GitopiaRepositoryView(props) {
             </button>
           </div>
           <div>
-            {/* <BackendStatus /> */}
             <div className="bg-footer-grad py-6">
               <div className="text-xs text-type-secondary mx-8 mb-4">
                 &copy; Gitopia {new Date().getFullYear()}

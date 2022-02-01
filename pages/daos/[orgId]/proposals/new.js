@@ -7,13 +7,52 @@ import Link from "next/dist/client/link";
 import { submitGovernanceProposal } from "../../../../store/actions/proposals";
 import { chainUpgradeProposal } from "../../../../store/actions/proposals";
 import MarkdownEditor from "../../../../components/markdownEditor";
-import { notify } from "reapop";
 import { communityPoolSpendProposal } from "../../../../store/actions/proposals";
 import getOrganization from "../../../../helpers/getOrganization";
 import getRepository from "../../../../helpers/getRepository";
-//import {updateUserBalance} from "../../../../store/actions/wallet"
+import getUser from "../../../../helpers/getUser";
 
 function RepositoryProposalCreateView(props) {
+  const [validateAddressError, setValidateAddressError] = useState("");
+  const validAddress = new RegExp("gitopia[a-z0-9]{39}");
+  const [validateAmountError, setValidateAmountError] = useState("");
+
+  const validateUserAddress = async (address) => {
+    if (address.trim() !== "" && validAddress.test(address)) {
+      const res = await getUser(address);
+      setValidateAddressError(null);
+    } else {
+      setValidateAddressError("Enter a valid address");
+    }
+  };
+
+  function isNaturalNumber(n) {
+    n = n.toString();
+    var n1 = Math.abs(n),
+      n2 = parseInt(n, 10);
+    return !isNaN(n1) && n2 === n1 && n1.toString() === n;
+  }
+
+  const validateAmount = async (amount) => {
+    setValidateAmountError(null);
+    let Vamount = Number(amount);
+    if (amount == "" || amount == 0) {
+      setValidateAmountError("Enter Valid Amount");
+    }
+
+    let balance = props.loreBalance;
+    if (props.advanceUser === false) {
+      Vamount = Vamount * 1000000;
+    }
+    if (Vamount > 0 && isNaturalNumber(Vamount)) {
+      if (Vamount > balance) {
+        setValidateAmountError("Insufficient Balance");
+      }
+    } else {
+      setValidateAmountError("Enter a Valid Amount");
+    }
+  };
+
   const handleClick = () => {
     setCounter(counter + 1);
   };
@@ -130,13 +169,14 @@ function RepositoryProposalCreateView(props) {
                   </label>
                   <select
                     className="select select-bordered select-sm text-xs h-8"
+                    defaultValue={"DEFAULT"}
                     value={repositoryName}
                     onChange={(e) => {
                       setRepositoryName(e.target.value);
                     }}
                   >
-                    <option value="none" selected disabled hidden>
-                      Select an Repository
+                    <option value="DEFAULT" disabled>
+                      Select a Repository
                     </option>
                     {allRepos.map((i) => {
                       return (
@@ -198,14 +238,29 @@ function RepositoryProposalCreateView(props) {
                     <div className="form-control mb-4">
                       <input
                         name="amount"
-                        type="text"
+                        type="number"
                         placeholder="Enter amount"
+                        onKeyUp={async (e) => {
+                          await validateAmount(e.target.value);
+                        }}
+                        onMouseUp={async (e) => {
+                          await validateAmount(e.target.value);
+                        }}
                         className="input input-md input-bordered text-xs h-8"
                         value={amount}
                         onChange={(e) => {
                           setAmount(e.target.value);
                         }}
                       />
+                      {validateAmountError ? (
+                        <label className="label">
+                          <span className="label-text-alt text-error">
+                            {validateAmountError}
+                          </span>
+                        </label>
+                      ) : (
+                        ""
+                      )}
                     </div>
                   </div>
 
@@ -218,12 +273,24 @@ function RepositoryProposalCreateView(props) {
                         name="Wallet Address"
                         type="text"
                         placeholder="Enter wallet address"
+                        onKeyUp={async (e) => {
+                          await validateUserAddress(e.target.value);
+                        }}
                         className="input input-md input-bordered text-xs h-8"
                         value={address}
                         onChange={(e) => {
                           setAddress(e.target.value);
                         }}
                       />
+                      {validateAddressError ? (
+                        <label className="label">
+                          <span className="label-text-alt text-error">
+                            {validateAddressError}
+                          </span>
+                        </label>
+                      ) : (
+                        ""
+                      )}
                     </div>
                   </div>
                   <div className="mt-10 text-right">
@@ -237,7 +304,8 @@ function RepositoryProposalCreateView(props) {
                           description === "" ||
                           amount === "" ||
                           address === "" ||
-                          repositoryName === ""
+                          repositoryName === "" ||
+                          repositoryName === undefined
                         }
                         onClick={(e) => {
                           setLoading(true);
@@ -247,11 +315,12 @@ function RepositoryProposalCreateView(props) {
                               description,
                               proposalType,
                               address,
-                              amount
+                              props.advanceUser === true
+                                ? amount.toString()
+                                : (amount * 1000000).toString()
                             )
                             .then((res) => {
                               setLoading(false);
-                              props.notify("Proposal Submitted", "info");
                               setDescription("");
                               setAddress("");
                               setAmount("");
@@ -316,7 +385,8 @@ function RepositoryProposalCreateView(props) {
                           description === "" ||
                           releaseVersionTag === "" ||
                           height === "" ||
-                          repositoryName === ""
+                          repositoryName === "" ||
+                          repositoryName === undefined
                         }
                         onClick={(e) => {
                           setLoading(true);
@@ -330,7 +400,6 @@ function RepositoryProposalCreateView(props) {
                             )
                             .then((res) => {
                               setLoading(false);
-                              props.notify("Proposal Submitted", "info");
                               setDescription("");
                               setReleaseVersionTag("");
                               setHeight("");
@@ -392,7 +461,6 @@ function RepositoryProposalCreateView(props) {
                             }
                             type="text"
                             placeholder="value"
-                            // class="input input-md input-bordered mb-4"
                             onChange={handleValueOnChange}
                           />
                         </div>
@@ -406,7 +474,7 @@ function RepositoryProposalCreateView(props) {
                           "btn btn-sm btn-primary btn-block h-8 " +
                           (false ? "loading" : "")
                         }
-                        disabled={description === ""}
+                        disabled={true}
                         onClick={handleClick}
                       >
                         ADD PARAMETER
@@ -436,7 +504,6 @@ function RepositoryProposalCreateView(props) {
                               proposalType
                             )
                             .then((res) => {
-                              props.notify("Proposal Submitted", "info");
                               setLoading(false);
                               setDescription("");
                             });
@@ -456,9 +523,14 @@ function RepositoryProposalCreateView(props) {
                         "btn btn-sm btn-primary btn-block h-8 text-xs " +
                         (loading ? "loading" : "")
                       }
-                      disabled={description === "" || repositoryName === ""}
+                      disabled={
+                        description === "" ||
+                        repositoryName === "" ||
+                        repositoryName === undefined
+                      }
                       onClick={(e) => {
                         setLoading(true);
+                        console.log(repositoryName, description, proposalType);
                         props
                           .submitGovernanceProposal(
                             repositoryName,
@@ -466,7 +538,6 @@ function RepositoryProposalCreateView(props) {
                             proposalType
                           )
                           .then((res) => {
-                            props.notify("Proposal Submitted", "info");
                             setLoading(false);
                             setDescription("");
                           });
@@ -488,6 +559,8 @@ function RepositoryProposalCreateView(props) {
 const mapStateToProps = (state) => {
   return {
     currentDashboard: state.user.currentDashboard,
+    advanceUser: state.user.advanceUser,
+    loreBalance: state.wallet.loreBalance,
     dashboards: state.user.dashboards,
     repositories: state.organization.repositories,
     organization: state.organization,
@@ -496,7 +569,6 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   submitGovernanceProposal,
-  notify,
   chainUpgradeProposal,
   communityPoolSpendProposal,
 })(RepositoryProposalCreateView);

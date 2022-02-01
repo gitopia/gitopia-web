@@ -48,6 +48,9 @@ export const submitGovernanceProposal = (
           fee,
           memo,
         });
+        if (result && result.code === 0) {
+          dispatch(notify("Proposal Submitted", "info"));
+        }
         return result;
       } catch (e) {
         console.error(e);
@@ -104,6 +107,9 @@ export const chainUpgradeProposal = (
           fee,
           memo,
         });
+        if (result && result.code === 0) {
+          dispatch(notify("Proposal Submitted", "info"));
+        }
         return result;
       } catch (e) {
         console.error(e);
@@ -164,7 +170,9 @@ export const communityPoolSpendProposal = (
           fee,
           memo,
         });
-        console.log(send);
+        if (result && result.code === 0) {
+          dispatch(notify("Proposal Submitted", "info"));
+        }
         return result;
       } catch (e) {
         console.error(e);
