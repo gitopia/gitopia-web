@@ -451,11 +451,7 @@ export default function Landing() {
           <div className="text-2xl mb-8">Try Gitopia Live, click around 👇</div>
           <div className="text-left bg-base-100 bg-repo-grad-v p-8 rounded-md border border-grey container mx-auto max-w-screen-lg">
             <RepositoryHeader repository={repository} />
-            <RepositoryMainTabs
-              repoOwner={repository.owner.id}
-              hrefBase={demoAddress + "/" + demoRepoName}
-              active="code"
-            />
+            <RepositoryMainTabs repository={repository} active="code" />
             <div className="flex mt-8">
               <div className="flex-none mt-4 w-64 pr-8 divide-y divide-grey">
                 <div className="pb-8">

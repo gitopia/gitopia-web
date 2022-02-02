@@ -97,11 +97,7 @@ function RepositoryCommitTreeView(props) {
       <div className="flex flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
-          <RepositoryMainTabs
-            repoOwner={repository.owner.id}
-            active="code"
-            hrefBase={repository.owner.id + "/" + repository.name}
-          />
+          <RepositoryMainTabs repository={repository} active="code" />
           <div className="">
             <div className="flex justify-start mt-8">
               <div className="">

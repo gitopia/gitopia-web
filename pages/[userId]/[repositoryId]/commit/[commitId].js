@@ -78,11 +78,7 @@ function RepositoryCommitDiffView(props) {
           }
         >
           <RepositoryHeader repository={repository} />
-          <RepositoryMainTabs
-            repoOwner={repository.owner.id}
-            active="code"
-            hrefBase={repository.owner.id + "/" + repository.name}
-          />
+          <RepositoryMainTabs repository={repository} active="code" />
           <div className="my-8 border border-grey rounded-md overflow-hidden">
             <CommitDetailRow commitDetail={commit} maxMessageLength={90} />
           </div>

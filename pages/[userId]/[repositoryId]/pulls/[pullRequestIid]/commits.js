@@ -106,11 +106,7 @@ function RepositoryPullCommitsView(props) {
           }
         >
           <RepositoryHeader repository={repository} />
-          <RepositoryMainTabs
-            repoOwner={repository.owner.id}
-            active="pulls"
-            hrefBase={repository.owner.id + "/" + repository.name}
-          />
+          <RepositoryMainTabs repository={repository} active="pulls" />
           <div className="mt-8">
             <PullRequestHeader
               pullRequest={pullRequest}

@@ -103,7 +103,7 @@ function RepositoryView(props) {
     }
 
     setCurrentUserEditPermission(
-      await props.isCurrentUserEligibleToUpdate(repository.owner.id)
+      await props.isCurrentUserEligibleToUpdate(repository)
     );
   }, [props.user, repository.id]);
 
@@ -120,11 +120,7 @@ function RepositoryView(props) {
       <div className="flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
-          <RepositoryMainTabs
-            repoOwner={repository.owner.id}
-            active="code"
-            hrefBase={repository.owner.id + "/" + repository.name}
-          />
+          <RepositoryMainTabs repository={repository} active="code" />
           {repository.branches.length ? (
             <div className="flex mt-8">
               <div className="flex-none w-64 pr-8 divide-y divide-grey">
