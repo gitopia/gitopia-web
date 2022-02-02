@@ -1707,7 +1707,7 @@ export default function Landing() {
 
           <a href="https://gitopia.com/whitepaper.pdf">Whitepaper</a>
 
-          <a href="https://twitter.com/gitopiaOrg" target="_blank">
+          <a href="https://twitter.com/gitopiadao" target="_blank">
             Twitter
           </a>
 
