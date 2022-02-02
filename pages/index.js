@@ -515,20 +515,19 @@ export default function Landing() {
                         <span>Collaborators</span>
                       </div>
                       <span className="text-xs text-type-secondary font-semibold">
-                        {repository.collaborators.length + " PEOPLE"}
+                        {repository.collaborators.length + 1 + " PEOPLE"}
                       </span>
                     </a>
                   </Link>
 
-                  {repository.collaborators.length ? (
-                    <div className="text-xs mt-3">
-                      <AssigneeGroup
-                        assignees={repository.collaborators.map((c) => c.id)}
-                      />
-                    </div>
-                  ) : (
-                    ""
-                  )}
+                  <div className="text-xs mt-3">
+                    <AssigneeGroup
+                      assignees={[
+                        repository.owner.id,
+                        ...repository.collaborators.map((c) => c.id),
+                      ]}
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flex-1 mt-4 max-w-3xl">
