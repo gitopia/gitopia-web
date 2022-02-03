@@ -10,6 +10,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import ErrorHandler from "../pages/errorHandler";
 import { useState, useEffect } from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
+import { decodeTx } from "../helpers/blockParser";
 
 const progress = new ProgressBar({
   size: 2,
@@ -39,16 +40,17 @@ function MyApp({ Component, pageProps }) {
         })
       );
     };
-    ws.onmessage = (message) => {
+    ws.onmessage = async (message) => {
       let evalData = JSON.parse(message.data);
       let jsonData = evalData.result.data;
       if (jsonData !== undefined) {
-        if (jsonData.value.block.data.txs.length !== 0) {
-          console.log("txs", jsonData.value.block.data.txs);
-          var base64string = String(jsonData.value.block.data.txs[0]);
-          let bufferObj = Buffer.from(base64string, "base64");
-          let decodedString = bufferObj.toString("utf8");
-          console.log("............", decodedString);
+        for (let i = 0; i < jsonData.value.block.data.txs.length; i++) {
+          let tx = await decodeTx(
+            "http://localhost:1317/",
+            "http://localhost:26657/",
+            jsonData.value.block.data.txs[i]
+          );
+          console.log(tx);
         }
       }
     };
