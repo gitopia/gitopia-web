@@ -43,11 +43,13 @@ function MyApp({ Component, pageProps }) {
       let evalData = JSON.parse(message.data);
       let jsonData = evalData.result.data;
       if (jsonData !== undefined) {
-        console.log("txs", jsonData.value.block.data.txs);
-        var base64string = String(jsonData.value.block.data.txs[0]);
-        let bufferObj = Buffer.from(base64string, "base64");
-        let decodedString = bufferObj.toString("utf8");
-        console.log("............", decodedString);
+        if (jsonData.value.block.data.txs.length !== 0) {
+          console.log("txs", jsonData.value.block.data.txs);
+          var base64string = String(jsonData.value.block.data.txs[0]);
+          let bufferObj = Buffer.from(base64string, "base64");
+          let decodedString = bufferObj.toString("utf8");
+          console.log("............", decodedString);
+        }
       }
     };
 
