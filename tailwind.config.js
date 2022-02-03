@@ -42,12 +42,16 @@ module.exports = {
         grey: {
           // DEFAULT: "#404450",
           DEFAULT: "#3E4051",
+          300: "#6F7A8F",
         },
         pink: {
           50: "#FFB0DB",
           DEFAULT: "#E83D99",
           400: "#F364B2",
           900: "#C52A7D",
+        },
+        blue: {
+          DEFAULT: "#BFD6F8",
         },
         type: {
           DEFAULT: "#E2EBF2",
