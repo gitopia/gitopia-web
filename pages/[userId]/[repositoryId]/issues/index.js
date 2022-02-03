@@ -102,11 +102,7 @@ function RepositoryIssueView(props) {
       <div className="flex flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
-          <RepositoryMainTabs
-            repoOwner={repository.owner.id}
-            active="issues"
-            hrefBase={repository.owner.id + "/" + repository.name}
-          />
+          <RepositoryMainTabs repository={repository} active="issues" />
           <div className="flex mt-8">
             <div className="form-control flex-1 mr-8">
               <div className="relative">

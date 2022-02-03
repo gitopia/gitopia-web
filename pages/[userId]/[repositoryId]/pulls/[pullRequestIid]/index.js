@@ -59,11 +59,7 @@ function RepositoryPullView(props) {
       <div className="flex flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
-          <RepositoryMainTabs
-            repoOwner={repository.owner.id}
-            active="pulls"
-            hrefBase={repository.owner.id + "/" + repository.name}
-          />
+          <RepositoryMainTabs repository={repository} active="pulls" />
           <div className="mt-8">
             <PullRequestHeader
               pullRequest={pullRequest}

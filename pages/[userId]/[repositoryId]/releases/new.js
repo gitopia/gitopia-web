@@ -157,11 +157,7 @@ function RepositoryReleaseNewView(props) {
       <div className="flex bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
-          <RepositoryMainTabs
-            repoOwner={repository.owner.id}
-            active="code"
-            hrefBase={repository.owner.id + "/" + repository.name}
-          />
+          <RepositoryMainTabs repository={repository} active="code" />
           <div className="mt-8">
             {/* <div className="btn-group">
               <button className="btn btn-sm btn-active">Releases</button>

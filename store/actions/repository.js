@@ -678,15 +678,25 @@ export const updateRepositoryLabel = ({
   };
 };
 
-export const isCurrentUserEligibleToUpdate = (repoOwnerAddress) => {
+export const isCurrentUserEligibleToUpdate = (repository) => {
   return async (dispatch, getState) => {
-    let permission = false;
+    let permission = false,
+      repoOwnerAddress = repository.owner.id;
     const { wallet, user } = getState();
     if (wallet.selectedAddress === repoOwnerAddress) {
       permission = true;
     } else if (user) {
       user.organizations.every((o) => {
         if (o.id === repoOwnerAddress) {
+          permission = true;
+          return false;
+        }
+        return true;
+      });
+    }
+    if (repository.collaborators.length) {
+      repository.collaborators.every((c) => {
+        if (wallet.selectedAddress === c.id && c.permission !== "READ") {
           permission = true;
           return false;
         }

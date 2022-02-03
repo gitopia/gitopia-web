@@ -125,11 +125,7 @@ function RepositoryInsightsView(props) {
       <div className="flex flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
-          <RepositoryMainTabs
-            repoOwner={repository.owner.id}
-            active="insights"
-            hrefBase={repository.owner.id + "/" + repository.name}
-          />
+          <RepositoryMainTabs repository={repository} active="insights" />
           <div className="flex mt-8">
             <div className="flex-none w-64 py-4">
               <ul className="menu compact rounded bg-base-200">

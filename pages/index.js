@@ -451,11 +451,7 @@ export default function Landing() {
           <div className="text-2xl mb-8">Try Gitopia Live, click around 👇</div>
           <div className="text-left bg-base-100 bg-repo-grad-v p-8 rounded-md border border-grey container mx-auto max-w-screen-lg">
             <RepositoryHeader repository={repository} />
-            <RepositoryMainTabs
-              repoOwner={repository.owner.id}
-              hrefBase={demoAddress + "/" + demoRepoName}
-              active="code"
-            />
+            <RepositoryMainTabs repository={repository} active="code" />
             <div className="flex mt-8">
               <div className="flex-none mt-4 w-64 pr-8 divide-y divide-grey">
                 <div className="pb-8">
@@ -519,20 +515,19 @@ export default function Landing() {
                         <span>Collaborators</span>
                       </div>
                       <span className="text-xs text-type-secondary font-semibold">
-                        {repository.collaborators.length + " PEOPLE"}
+                        {repository.collaborators.length + 1 + " PEOPLE"}
                       </span>
                     </a>
                   </Link>
 
-                  {repository.collaborators.length ? (
-                    <div className="text-xs mt-3">
-                      <AssigneeGroup
-                        assignees={repository.collaborators.map((c) => c.id)}
-                      />
-                    </div>
-                  ) : (
-                    ""
-                  )}
+                  <div className="text-xs mt-3">
+                    <AssigneeGroup
+                      assignees={[
+                        repository.owner.id,
+                        ...repository.collaborators.map((c) => c.id),
+                      ]}
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flex-1 mt-4 max-w-3xl">
@@ -1711,7 +1706,7 @@ export default function Landing() {
 
           <a href="https://gitopia.com/whitepaper.pdf">Whitepaper</a>
 
-          <a href="https://twitter.com/gitopiaOrg" target="_blank">
+          <a href="https://twitter.com/gitopiadao" target="_blank">
             Twitter
           </a>
 

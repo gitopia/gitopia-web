@@ -36,11 +36,7 @@ function RepositoryIssueLabelsView(props) {
       <div className="flex flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
-          <RepositoryMainTabs
-            repoOwner={repository.owner.id}
-            active="issues"
-            hrefBase={repository.owner.id + "/" + repository.name}
-          />
+          <RepositoryMainTabs repository={repository} active="issues" />
           <div className="px-4 py-2 mt-8 rounded flex">
             <div className="flex-1">
               {repository.labels.length

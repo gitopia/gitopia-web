@@ -220,11 +220,7 @@ function RepositoryCompareView(props) {
           }
         >
           <RepositoryHeader repository={repository} />
-          <RepositoryMainTabs
-            repoOwner={repository.owner.id}
-            active="pulls"
-            hrefBase={repository.owner.id + "/" + repository.name}
-          />
+          <RepositoryMainTabs repository={repository} active="pulls" />
           <div className="mt-8">
             <div className="text-lg">Compare revisions</div>
             <div className="mt-2 text-sm text-type-secondary">

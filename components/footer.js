@@ -29,7 +29,7 @@ export default function Footer(props) {
           </a>
           <a
             className="link no-underline hover:underline"
-            href="https://twitter.com/gitopiaOrg"
+            href="https://twitter.com/gitopiadao"
             target="_blank"
           >
             Twitter

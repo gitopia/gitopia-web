@@ -3,27 +3,25 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { isCurrentUserEligibleToUpdate } from "../../store/actions/repository";
 
-function RepositoryMainTabs({
-  repoOwner,
-  hrefBase,
-  active,
-  showSettings,
-  ...props
-}) {
+function RepositoryMainTabs({ repository, active, ...props }) {
   const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
     false
+  );
+  const [hrefBase, setHrefBase] = useState(
+    "/" + repository.owner.id + "/" + repository.name
   );
 
   useEffect(async () => {
     setCurrentUserEditPermission(
-      await props.isCurrentUserEligibleToUpdate(repoOwner)
+      await props.isCurrentUserEligibleToUpdate(repository)
     );
-  }, [repoOwner, props.user]);
+    setHrefBase("/" + repository.owner.id + "/" + repository.name);
+  }, [repository, props.user]);
 
   return (
     <div className="">
       <div className="tabs relative z-10">
-        <Link href={"/" + hrefBase}>
+        <Link href={hrefBase}>
           <a
             className={
               "tab tab-md tab-bordered" +
@@ -45,7 +43,7 @@ function RepositoryMainTabs({
             <span>Code</span>
           </a>
         </Link>
-        <Link href={"/" + hrefBase + "/issues"}>
+        <Link href={hrefBase + "/issues"}>
           <a
             className={
               "tab tab-md tab-bordered" +
@@ -70,7 +68,7 @@ function RepositoryMainTabs({
             <span>Issues</span>
           </a>
         </Link>
-        <Link href={"/" + hrefBase + "/pulls"}>
+        <Link href={hrefBase + "/pulls"}>
           <a
             className={
               "tab tab-md tab-bordered" +
@@ -101,7 +99,7 @@ function RepositoryMainTabs({
             <span>Pull Requests</span>
           </a>
         </Link>
-        <Link href={"/" + hrefBase + "/insights"}>
+        <Link href={hrefBase + "/insights"}>
           <a
             className={
               "tab tab-md tab-bordered" +
@@ -131,7 +129,7 @@ function RepositoryMainTabs({
           </a>
         </Link>
         {currentUserEditPermission ? (
-          <Link href={"/" + hrefBase + "/settings"}>
+          <Link href={hrefBase + "/settings"}>
             <a
               className={
                 "tab tab-md tab-bordered" +
