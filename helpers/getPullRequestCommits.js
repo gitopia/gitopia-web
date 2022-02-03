@@ -9,10 +9,7 @@ export default async function getPullRequestCommits(
   headCommitSha = null
 ) {
   let obj = {};
-  const baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "/api/pull/commits"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/commits";
+  const baseUrl = process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/commits";
   let params = {
     base_repository_id: Number(baseRepoId),
     head_repository_id: Number(headRepoId),

@@ -2,16 +2,11 @@ FROM node:12-alpine
 
 RUN apk add --no-cache git
 
+VOLUME /app
 WORKDIR /app
-
-COPY package.json ./
-# COPY  yarn.lock ./
+COPY . .
 
 RUN yarn install
 
-COPY . .
-
-RUN yarn build
-
 # Start the app
-ENTRYPOINT ["yarn", "start"]
+ENTRYPOINT ["yarn", "dev"]

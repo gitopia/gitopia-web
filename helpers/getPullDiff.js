@@ -12,10 +12,7 @@ export default async function getPullDiff(
   if (!validSha.test(baseCommitSha) || !validSha.test(headCommitSha)) {
     return obj;
   }
-  const baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "/api/pull/diff"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/diff";
+  const baseUrl = process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/diff";
   let params = {
     base_repository_id: Number(baseRepoId),
     head_repository_id: Number(headRepoId),

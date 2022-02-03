@@ -9,10 +9,7 @@ export default async function mergePullRequestCheck(
   userEmail,
   sender
 ) {
-  const baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "/api/pull/check"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/check";
+  const baseUrl = process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/check";
   let obj = {};
   let params = {
     base_repository_id: Number(baseRepoId),

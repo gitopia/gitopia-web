@@ -1,9 +1,6 @@
 export default async function getDiffStat(repoId, commitSha1, commitSha2) {
   let obj = "";
-  const baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "/api/diff-stat"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/diff-stat";
+  const baseUrl = process.env.NEXT_PUBLIC_OBJECTS_URL + "/diff-stat";
 
   await fetch(baseUrl + "/" + repoId + "/" + commitSha1 + "/" + commitSha2, {
     method: "GET", // *GET, POST, PUT, DELETE, etc.

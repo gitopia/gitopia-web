@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  web:
+    container_name: web
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      .env.development
+    volumes:
+      - .:/app
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.3
+
+  gitserver:
+    container_name: gitserver
+    image: "gitopiadev/git-server:0.4.0"
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./.localnet/repos:/var/repos
+      - ./.localnet/attachments:/var/attachments
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.2
+
+  localnet:
+    container_name: localnet
+    image: "gitopiadev/localnet:0.12.0"
+    ports:
+      - "26657:26657"
+      - "1317:1317"
+      - "9090:9090"
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.4
+
+  faucet:
+    container_name: faucet
+    image: "gitopiadev/localnet-faucet:0.0.0"
+    ports:
+      - "4500:4500"
+    entrypoint: ./build/faucet --port 4500 --account-name  "faucet" --cli-name "/gitopia/build/gitopiad" --denoms "utlore" --credit-amount 1000000 --max-credit 1000000 --node "tcp://192.168.10.4:26657" --keyring-backend test
+    depends_on:
+      - "localnet"
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.5
+
+networks:
+  localnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.10.0/25

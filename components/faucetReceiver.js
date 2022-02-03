@@ -17,9 +17,7 @@ function FaucetReceiver(props) {
 
     axios
       .post(
-        process.env.NODE_ENV === "development"
-          ? "/api/faucet"
-          : process.env.NEXT_PUBLIC_FAUCET_URL,
+        process.env.NEXT_PUBLIC_FAUCET_URL,
         {
           address: props.selectedAddress,
         },

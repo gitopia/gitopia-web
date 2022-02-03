@@ -11,10 +11,7 @@ export default async function getDiff(
   if (!validSha.test(commitSha)) {
     return obj;
   }
-  const baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "/api/diff"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/diff";
+  const baseUrl = process.env.NEXT_PUBLIC_OBJECTS_URL + "/diff";
   let params = {
     repository_id: Number(repoId),
     commit_sha: commitSha,

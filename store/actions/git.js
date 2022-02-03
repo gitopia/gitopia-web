@@ -6,10 +6,7 @@ const validSha = new RegExp(/^[a-f0-9]{40}$/);
 
 const fetchGitObject = async (repoId, objectSha) => {
   let obj = null;
-  const baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "/api/objects"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/objects";
+  const baseUrl = process.env.NEXT_PUBLIC_OBJECTS_URL + "/objects";
 
   if (!repoId || !objectSha) return null;
 
