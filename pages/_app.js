@@ -8,9 +8,7 @@ import NotificationManager from "../components/notificationManager";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import ErrorHandler from "../pages/errorHandler";
-import { useState, useEffect } from "react";
-import { w3cwebsocket as W3CWebSocket } from "websocket";
-import { decodeTx } from "../helpers/blockParser";
+import Notifications from "../components/notifications";
 
 const progress = new ProgressBar({
   size: 2,
@@ -26,32 +24,9 @@ Router.events.on("routeChangeError", progress.finish);
 dayjs.extend(relativeTime);
 
 function MyApp({ Component, pageProps }) {
-  const ws = new W3CWebSocket("ws://localhost:26657/websocket");
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    ws.onopen = () => {
-      ws.send(
-        JSON.stringify({
-          jsonrpc: "2.0",
-          method: "subscribe",
-          params: ["tm.event='Tx'"],
-          id: 1,
-        })
-      );
-    };
-    ws.onmessage = async (message) => {
-      let evalData = JSON.parse(message.data);
-      let jsonData = evalData.result.data;
-      if (jsonData) console.log(decodeTx(jsonData.value.TxResult.tx));
-    };
-
-    ws.onerror = (error) => {
-      console.log(`WebSocket error: ${error}`);
-    };
-  });
   return (
     <>
+      <Notifications />
       <ErrorHandler>
         <Component {...pageProps} />
       </ErrorHandler>
