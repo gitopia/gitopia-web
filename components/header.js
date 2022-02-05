@@ -17,7 +17,9 @@ import dynamic from "next/dynamic";
 import getNodeInfo from "../helpers/getNodeInfo";
 const SendTlore = dynamic(() => import("./dashboard/sendTlore"));
 const CurrentWallet = dynamic(() => import("./currentWallet"));
-const Notifications = dynamic(() => import("./dashboard/notifications"));
+const NotificationsCard = dynamic(() =>
+  import("./dashboard/notificationsButton")
+);
 /*
 Menu States
 1 - Logged in menu
@@ -338,7 +340,7 @@ function Header(props) {
                 </button>
                 <div className="shadow-xl dropdown-content bg-base-300 rounded mt-1">
                   {menuState === 5 && (
-                    <Notifications
+                    <NotificationsCard
                       setMenuOpen={setMenuOpen}
                       setMenuState={setMenuState}
                     />

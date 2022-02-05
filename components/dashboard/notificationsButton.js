@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Notifications(props) {
+export default function NotificationsCard(props) {
   const [notifications, setNotifications] = useState({
     issues: 0,
     pulls: 5,
@@ -12,7 +12,6 @@ export default function Notifications(props) {
     <div className="card w-96 px-5 py-5 bg-base-300 rounded-xl">
       <div className="flex">
         <div className="h-9 w-9 bg-blue bg-opacity-10 rounded-lg flex items-center mr-3">
-          {console.log("boooo")}
           <div className="mx-1.5">
             <svg
               width="24"
