@@ -35,7 +35,7 @@ function MyApp({ Component, pageProps }) {
         JSON.stringify({
           jsonrpc: "2.0",
           method: "subscribe",
-          params: ["tm.event='NewBlock'"],
+          params: ["tm.event='Tx'"],
           id: 1,
         })
       );
@@ -43,16 +43,7 @@ function MyApp({ Component, pageProps }) {
     ws.onmessage = async (message) => {
       let evalData = JSON.parse(message.data);
       let jsonData = evalData.result.data;
-      if (jsonData !== undefined) {
-        for (let i = 0; i < jsonData.value.block.data.txs.length; i++) {
-          let tx = await decodeTx(
-            "http://localhost:1317/",
-            "http://localhost:26657/",
-            jsonData.value.block.data.txs[i]
-          );
-          console.log(tx);
-        }
-      }
+      if (jsonData) console.log(decodeTx(jsonData.value.TxResult.tx));
     };
 
     ws.onerror = (error) => {
