@@ -6,6 +6,7 @@ import getRepository from "../helpers/getRepository";
 import getIssue from "../helpers/getIssue";
 import { notify } from "reapop";
 import shrinkAddress from "../helpers/shrinkAddress";
+import { isSourceFile } from "typescript";
 
 function Notifications(props) {
   const ws = new W3CWebSocket("ws://localhost:26657/websocket");
@@ -17,7 +18,10 @@ function Notifications(props) {
         if (msg["@type"] === "/gitopia.gitopia.gitopia.MsgCreateIssue") {
           let repo = await getRepository(tx.body.messages[i].repositoryId);
           console.log(tx);
-          if (props.selectedAddress === repo.owner.id) {
+          if (
+            props.selectedAddress === repo.owner.id &&
+            tx.body.messages[i].creator !== props.selectedAddress
+          ) {
             let msg =
               shrinkAddress(tx.body.messages[i].creator) +
               ' created issue "' +
@@ -31,14 +35,19 @@ function Notifications(props) {
         if (msg["@type"] === "/gitopia.gitopia.gitopia.MsgCreateComment") {
           let issue = await getIssue(tx.body.messages[i].parentId);
           let repo = await getRepository(issue.repositoryId);
-          if (props.selectedAddress === repo.owner.id) {
+          if (
+            (props.selectedAddress === repo.owner.id &&
+              tx.body.messages[i].creator !== props.selectedAddress) ||
+            (props.selectedAddress === issue.creator &&
+              tx.body.messages[i].creator !== props.selectedAddress)
+          ) {
             let msg =
               shrinkAddress(tx.body.messages[i].creator) +
               ' commented "' +
               tx.body.messages[i].body +
               '" on issue "' +
               issue.title +
-              '" of your repository "' +
+              '" in repository "' +
               repo.name +
               '"';
             props.notify(msg, "info");
@@ -47,12 +56,17 @@ function Notifications(props) {
         if (msg["@type"] === "/gitopia.gitopia.gitopia.MsgAddIssueLabels") {
           let issue = await getIssue(tx.body.messages[i].issueId);
           let repo = await getRepository(issue.repositoryId);
-          if (props.selectedAddress === repo.owner.id) {
+          if (
+            (props.selectedAddress === repo.owner.id &&
+              tx.body.messages[i].creator !== props.selectedAddress) ||
+            (props.selectedAddress === issue.creator &&
+              tx.body.messages[i].creator !== props.selectedAddress)
+          ) {
             let msg =
               shrinkAddress(tx.body.messages[i].creator) +
               ' added label on issue "' +
               issue.title +
-              '" of your repository "' +
+              '" in repository "' +
               repo.name +
               '"';
             props.notify(msg, "info");
