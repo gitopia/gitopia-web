@@ -134,53 +134,10 @@ function RepositoryView(props) {
         setCommitsLength(commitHistory.pagination.total);
       }
 
-      if (commit) {
-        setCommitDetail(commit);
+      if (commitHistory && commitHistory.commits.length) {
+        setCommitDetail(commitHistory.commits[0]);
+        setCommitsLength(commitHistory.pagination.total);
       }
-      // const res = await initRepository(
-      //   repository.id,
-      //   branchSha,
-      //   repository.name,
-      //   router.query.userId,
-      //   []
-      // );
-      // if (res) {
-      //   if (res.commit) {
-      //     setCommitDetail(res.commit);
-      //   }
-      //   if (res.entity) {
-      //     if (res.entity.tree) {
-      //       setEntityList(res.entity.tree);
-      //     }
-      //   } else {
-      //     console.log("Entity Not found");
-      //   }
-      // } else {
-      //   console.log("Repo Not found");
-      // }
-      // const readme = await initRepository(
-      //   repository.id,
-      //   branchSha,
-      //   repository.name,
-      //   router.query.userId,
-      //   ["README.md"]
-      // );
-
-      // if (readme) {
-      //   if (readme.entity) {
-      //     if (readme.entity.blob) {
-      //       try {
-      //         let decodedFile = new TextDecoder().decode(readme.entity.blob);
-      //         setReadmeFile(decodedFile);
-      //       } catch (e) {
-      //         console.error(e);
-      //         setReadmeFile(null);
-      //       }
-      //     }
-      //   } else {
-      //     console.log("Entity Not found");
-      //   }
-      // }
     }
   }, [repository.id]);
 
