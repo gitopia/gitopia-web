@@ -7,7 +7,7 @@ function RepositoryMainTabs({
   repoOwner,
   hrefBase,
   active,
-  showSettings,
+  collaborators,
   ...props
 }) {
   const [currentUserEditPermission, setCurrentUserEditPermission] = useState(

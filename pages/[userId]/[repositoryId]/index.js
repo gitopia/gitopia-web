@@ -8,8 +8,6 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import { notify } from "reapop";
 
-import { initRepository } from "../../../store/actions/git";
-
 import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
 import EmptyRepository from "../../../components/repository/emptyRepository";
@@ -23,6 +21,8 @@ import AssigneeGroup from "../../../components/repository/assigneeGroup";
 import useRepository from "../../../hooks/useRepository";
 import CloneRepoInfo from "../../../components/repository/cloneRepoInfo";
 import SupportOwner from "../../../components/repository/supportOwner";
+import getContent from "../../../helpers/getContent";
+import getCommit from "../../../helpers/getCommit";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -35,8 +35,9 @@ function RepositoryView(props) {
   const [entityList, setEntityList] = useState([]);
   const [readmeFile, setReadmeFile] = useState(null);
   const [commitDetail, setCommitDetail] = useState({
-    commit: { author: {}, message: "" },
-    oid: "",
+    author: {},
+    message: "",
+    id: "",
   });
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
@@ -56,50 +57,95 @@ function RepositoryView(props) {
         setSelectedBranch(repository.branches[0].name);
         branchSha = repository.branches[0].sha;
       }
-      const res = await initRepository(
-        repository.id,
-        branchSha,
-        repository.name,
-        router.query.userId,
-        []
-      );
+      const [commit, res] = await Promise.all([
+        getCommit(repository.id, branchSha),
+        getContent(repository.id, branchSha, null),
+      ]);
       if (res) {
-        if (res.commit) {
-          setCommitDetail(res.commit);
-        }
-        if (res.entity) {
-          if (res.entity.tree) {
-            setEntityList(res.entity.tree);
-          }
-        } else {
-          console.log("Entity Not found");
-        }
-      } else {
-        console.log("Repo Not found");
-      }
-      const readme = await initRepository(
-        repository.id,
-        branchSha,
-        repository.name,
-        router.query.userId,
-        ["README.md"]
-      );
+        if (res.content) {
+          setEntityList(res.content);
+          const readmeRegex = new RegExp(/^README/gi);
+          for (let i = 0; i < res.content.length; i++) {
+            if (readmeRegex.test(res.content[i].name)) {
+              console.log("Found readme file", res.content[i]);
+              const readme = await getContent(
+                repository.id,
+                branchSha,
+                res.content[i].name
+              );
 
-      if (readme) {
-        if (readme.entity) {
-          if (readme.entity.blob) {
-            try {
-              let decodedFile = new TextDecoder().decode(readme.entity.blob);
-              setReadmeFile(decodedFile);
-            } catch (e) {
-              console.error(e);
-              setReadmeFile(null);
+              if (readme) {
+                console.log(readme);
+                if (readme.content && readme.content[0]) {
+                  try {
+                    // let decodedFile = new TextDecoder().decode(
+                    //   readme.content[0].content
+                    // );
+                    let file = window.atob(readme.content[0].content);
+                    setReadmeFile(file);
+                  } catch (e) {
+                    console.error(e);
+                    setReadmeFile(null);
+                  }
+                } else {
+                  console.log("Entity Not found");
+                }
+              }
             }
           }
-        } else {
-          console.log("Entity Not found");
+        }
+        if (res.pagination.nextKey) {
+          // TODO: handle pagination
         }
       }
+
+      if (commit) {
+        setCommitDetail(commit);
+      }
+      // const res = await initRepository(
+      //   repository.id,
+      //   branchSha,
+      //   repository.name,
+      //   router.query.userId,
+      //   []
+      // );
+      // if (res) {
+      //   if (res.commit) {
+      //     setCommitDetail(res.commit);
+      //   }
+      //   if (res.entity) {
+      //     if (res.entity.tree) {
+      //       setEntityList(res.entity.tree);
+      //     }
+      //   } else {
+      //     console.log("Entity Not found");
+      //   }
+      // } else {
+      //   console.log("Repo Not found");
+      // }
+      // const readme = await initRepository(
+      //   repository.id,
+      //   branchSha,
+      //   repository.name,
+      //   router.query.userId,
+      //   ["README.md"]
+      // );
+
+      // if (readme) {
+      //   if (readme.entity) {
+      //     if (readme.entity.blob) {
+      //       try {
+      //         let decodedFile = new TextDecoder().decode(readme.entity.blob);
+      //         setReadmeFile(decodedFile);
+      //       } catch (e) {
+      //         console.error(e);
+      //         setReadmeFile(null);
+      //       }
+      //     }
+      //   } else {
+      //     console.log("Entity Not found");
+      //   }
+      // }
     }
 
     setCurrentUserEditPermission(
