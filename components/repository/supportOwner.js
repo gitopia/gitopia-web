@@ -124,12 +124,9 @@ function SupportOwner({ ownerAddress, ...props }) {
           className="text-type-tertiary font-semibold uppercase"
           style={{ fontSize: "0.5rem" }}
         >
-          {props.advanceUser === true
-            ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-            : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}{" "}
-          Available
+          Balance Available
         </div>
-        <div className="text-xs">{ownerBalance}</div>
+        <div className="text-xs uppercase">{ownerBalance}</div>
       </div>
       <div className="ml-auto self-center">
         <label
