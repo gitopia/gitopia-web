@@ -45,8 +45,9 @@ function RepositoryView(props) {
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
   );
-  const [currentUserEditPermission, setCurrentUserEditPermission] =
-    useState(false);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
 
   const loadEntities = async (currentEntities = [], firstTime = false) => {
     setLoadingEntities(true);
@@ -117,6 +118,7 @@ function RepositoryView(props) {
         setSelectedBranch(repository.branches[0].name);
         branchSha = repository.branches[0].sha;
       }
+      loadEntities([], true);
       const commitHistory = await getCommitHistory(
         repository.id,
         branchSha,
