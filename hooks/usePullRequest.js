@@ -9,6 +9,7 @@ export default function usePullRequest(repository) {
   const [pullRequest, setPullRequest] = useState({
     iid: router.query.pullRequestIid,
     creator: "",
+    description: "",
     comments: [],
     reviewers: [],
     assignees: [],

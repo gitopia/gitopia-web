@@ -262,7 +262,7 @@ export const restoreWallet = ({ encrypted, password }) => {
   };
 };
 
-export const updateUserBalance = () => {
+export const updateUserBalance = (showNotification = false) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
     const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
@@ -277,6 +277,9 @@ export const updateUserBalance = () => {
           balance: res.data.balance.amount,
         },
       });
+      if (showNotification) {
+        dispatch(notify("Balance updated", "info"));
+      }
     } catch (e) {
       dispatch({
         type: walletActions.UPDATE_BALANCE,
