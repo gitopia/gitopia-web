@@ -70,6 +70,14 @@ module.exports = withBundleAnalyzer(
           source: "/api/pull/check",
           destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/check",
         },
+        {
+          source: "/api/content",
+          destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/content",
+        },
+        {
+          source: "/api/commits/:path*",
+          destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/commits/:path*",
+        },
       ];
     },
   })
