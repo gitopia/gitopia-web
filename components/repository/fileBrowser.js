@@ -5,7 +5,6 @@ export default function FileBrowser({
   baseUrl,
   repoPath = [],
   branchName,
-  repoName,
 }) {
   return (
     <>
