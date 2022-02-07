@@ -32,7 +32,7 @@ function FaucetReceiver(props) {
           setLoading(0);
         } else {
           setTimeout(() => {
-            props.updateUserBalance();
+            props.updateUserBalance(true);
             setLoading(0);
           }, 5000);
         }

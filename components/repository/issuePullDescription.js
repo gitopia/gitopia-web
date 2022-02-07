@@ -180,9 +180,13 @@ function IssuePullDescription({
               </div>
             </div>
             <div className="p-4 markdown-body">
-              <ReactMarkdown linkTarget="_blank">
-                {issuePullObj.description}
-              </ReactMarkdown>
+              {issuePullObj.description.length ? (
+                <ReactMarkdown linkTarget="_blank">
+                  {issuePullObj.description}
+                </ReactMarkdown>
+              ) : (
+                <ReactMarkdown>{"*No description given*"}</ReactMarkdown>
+              )}
             </div>
           </>
         )}

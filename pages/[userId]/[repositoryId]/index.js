@@ -94,7 +94,7 @@ function RepositoryView(props) {
           }
         }
       }
-      if (res.pagination.next_key) {
+      if (res.pagination && res.pagination.next_key) {
         setHasMoreEntities(res.pagination.next_key);
       } else {
         setHasMoreEntities(null);
