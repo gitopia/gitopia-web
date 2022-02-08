@@ -9,7 +9,13 @@ export function decodeTx(tx) {
       let msgType = registry.lookupType(decodedTx.body.messages[i].typeUrl);
       if (msgType) {
         let msg = msgType.decode(decodedTx.body.messages[i].value);
-        return msg;
+
+        let data = {
+          message: msg,
+          typeurl: decodedTx.body.messages[i].typeUrl,
+        };
+        console.log(data);
+        return data;
       } else {
         console.error("typeUrl not found", decodedTx.body.messages[i].typeUrl);
       }

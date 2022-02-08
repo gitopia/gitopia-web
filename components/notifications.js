@@ -12,94 +12,105 @@ function Notifications(props) {
   const ws = new W3CWebSocket("ws://localhost:26657/websocket");
 
   const parser = async (tx) => {
-    if (tx.body != undefined) {
-      for (let i = 0; i < tx.body.messages.length; i++) {
-        let msg = tx.body.messages[i];
-        if (msg["@type"] === "/gitopia.gitopia.gitopia.MsgCreateIssue") {
-          let repo = await getRepository(tx.body.messages[i].repositoryId);
+    switch (tx.typeurl) {
+      case "/gitopia.gitopia.gitopia.MsgCreateIssue":
+        {
+          let repo = await getRepository(tx.message.repositoryId);
           console.log(tx);
           if (
             props.selectedAddress === repo.owner.id &&
-            tx.body.messages[i].creator !== props.selectedAddress
+            tx.message.creator !== props.selectedAddress
           ) {
             let msg =
-              shrinkAddress(tx.body.messages[i].creator) +
+              shrinkAddress(tx.message.creator) +
               ' created issue "' +
-              tx.body.messages[i].title +
+              tx.message.title +
               '" in your repository "' +
               repo.name +
               '"';
-            props.createNotification(tx.body.messages[i], "issue");
+            props.createNotification(tx.message, "issue");
             props.notify(msg, "info");
           }
         }
-        if (msg["@type"] === "/gitopia.gitopia.gitopia.MsgCreateComment") {
-          let issue = await getIssue(tx.body.messages[i].parentId);
+        break;
+
+      case "/gitopia.gitopia.gitopia.MsgCreateComment":
+        {
+          let issue = await getIssue(tx.message.parentId);
           let repo = await getRepository(issue.repositoryId);
           if (
             (props.selectedAddress === repo.owner.id &&
-              tx.body.messages[i].creator !== props.selectedAddress) ||
+              tx.message.creator !== props.selectedAddress) ||
             (props.selectedAddress === issue.creator &&
-              tx.body.messages[i].creator !== props.selectedAddress)
+              tx.message.creator !== props.selectedAddress)
           ) {
             let msg =
-              shrinkAddress(tx.body.messages[i].creator) +
+              shrinkAddress(tx.message.creator) +
               ' commented "' +
-              tx.body.messages[i].body +
+              tx.message.body +
               '" on issue "' +
               issue.title +
               '" in repository "' +
               repo.name +
               '"';
-            props.createNotification(tx.body.messages[i], "issue");
+            props.createNotification(tx.message, "issue");
             props.notify(msg, "info");
           }
         }
-        if (msg["@type"] === "/gitopia.gitopia.gitopia.MsgAddIssueLabels") {
-          let issue = await getIssue(tx.body.messages[i].issueId);
+        break;
+
+      case "/gitopia.gitopia.gitopia.MsgAddIssueLabels":
+        {
+          let issue = await getIssue(tx.message.issueId);
           let repo = await getRepository(issue.repositoryId);
           if (
             (props.selectedAddress === repo.owner.id &&
-              tx.body.messages[i].creator !== props.selectedAddress) ||
+              tx.message.creator !== props.selectedAddress) ||
             (props.selectedAddress === issue.creator &&
-              tx.body.messages[i].creator !== props.selectedAddress)
+              tx.message.creator !== props.selectedAddress)
           ) {
             let msg =
-              shrinkAddress(tx.body.messages[i].creator) +
+              shrinkAddress(tx.message.creator) +
               ' added label on issue "' +
               issue.title +
               '" in repository "' +
               repo.name +
               '"';
-            props.createNotification(tx.body.messages[i], "issue");
+            props.createNotification(tx.message, "issue");
             props.notify(msg, "info");
           }
         }
-        if (msg["@type"] === "/gitopia.gitopia.gitopia.MsgAddIssueAssignees") {
-          let issue = await getIssue(tx.body.messages[i].id);
+        break;
+
+      case "/gitopia.gitopia.gitopia.MsgAddIssueAssignees":
+        {
+          let issue = await getIssue(tx.message.id);
           let repo = await getRepository(issue.repositoryId);
           console.log(tx);
-          for (let j = 0; j < tx.body.messages[i].assignees.length; j++) {
+          for (let j = 0; j < tx.message.assignees.length; j++) {
             if (
               (repo.owner.id === props.selectedAddress &&
-                props.selectedAddress !== tx.body.messages[i].creator) ||
-              (props.selectedAddress !== tx.body.messages[i].creator &&
-                props.selectedAddress === tx.body.messages[i].assignees[j] &&
+                props.selectedAddress !== tx.message.creator) ||
+              (props.selectedAddress !== tx.message.creator &&
+                props.selectedAddress === tx.message.assignees[j] &&
                 repo.owner.id !== props.selectedAddress)
             ) {
               let msg =
-                shrinkAddress(tx.body.messages[i].creator) +
+                shrinkAddress(tx.message.creator) +
                 " added assignees in issue " +
                 issue.title +
                 '" in repository "' +
                 repo.name +
                 '"';
-              props.createNotification(tx.body.messages[i], "issue");
+              props.createNotification(tx.message, "issue");
               props.notify(msg, "info");
             }
           }
         }
-      }
+        break;
+
+      default:
+        break;
     }
   };
 
