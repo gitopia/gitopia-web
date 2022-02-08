@@ -1,16 +1,5 @@
 import { userNotificationActions } from "../actions/actionTypes";
 
-/*
-const user = {
-  address: null,
-  notifications: [],
-};
-
-const notification = {
-  msg: "",
-  unread: true,
-};
-*/
 const initialState = [];
 
 let notificationId = 0;
@@ -29,11 +18,15 @@ const reducer = (state = initialState, action) => {
       ];
 
     case userNotificationActions.MARK_AS_READ:
-      return state.map((notification) => {
-        if (notification.type === action.payload.type) {
-          Object.assign(notification, { unread: false });
+      state = action.payload.userNotification;
+      const notifications = state.map((i) => {
+        if (i.type !== action.payload.type) {
+          return i;
         }
+        return { ...i, unread: false };
       });
+
+      return [...notifications];
 
     default:
       return [...state];

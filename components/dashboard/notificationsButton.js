@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { readNotification } from "../../store/actions/userNotification";
 import { connect } from "react-redux";
+import { STATUSES } from "reapop";
 
 function NotificationsCard(props) {
   const [notifications, setNotifications] = useState({
-    issues: 0,
+    issues: 1,
     pulls: 5,
     gov: 1,
     toDos: 8,
@@ -50,6 +51,7 @@ function NotificationsCard(props) {
             onClick={() => {
               props.setMenuOpen(false);
               props.setMenuState(1);
+              props.readNotification("issue");
             }}
           >
             {notifications.issues + " NEW"}
@@ -218,6 +220,7 @@ function NotificationsCard(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
+    userNotification: state.userNotification,
   };
 };
 

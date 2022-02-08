@@ -14,10 +14,12 @@ export const createNotification = (msg, type) => {
 };
 
 export const readNotification = (type) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const { userNotification } = getState();
     dispatch({
       type: userNotificationActions.MARK_AS_READ,
       payload: {
+        userNotification,
         type: type,
       },
     });
