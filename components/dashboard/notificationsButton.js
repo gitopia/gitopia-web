@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { readNotification } from "../../store/actions/userNotification";
+import { connect } from "react-redux";
 
-export default function NotificationsCard(props) {
+function NotificationsCard(props) {
   const [notifications, setNotifications] = useState({
     issues: 0,
     pulls: 5,
@@ -212,3 +214,13 @@ export default function NotificationsCard(props) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    selectedAddress: state.wallet.selectedAddress,
+  };
+};
+
+export default connect(mapStateToProps, { readNotification })(
+  NotificationsCard
+);

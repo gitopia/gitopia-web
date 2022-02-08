@@ -6,7 +6,7 @@ import getRepository from "../helpers/getRepository";
 import getIssue from "../helpers/getIssue";
 import { notify } from "reapop";
 import shrinkAddress from "../helpers/shrinkAddress";
-import { isSourceFile } from "typescript";
+import { createNotification } from "../store/actions/userNotification";
 
 function Notifications(props) {
   const ws = new W3CWebSocket("ws://localhost:26657/websocket");
@@ -29,6 +29,7 @@ function Notifications(props) {
               '" in your repository "' +
               repo.name +
               '"';
+            props.createNotification(tx.body.messages[i], "issue");
             props.notify(msg, "info");
           }
         }
@@ -50,6 +51,7 @@ function Notifications(props) {
               '" in repository "' +
               repo.name +
               '"';
+            props.createNotification(tx.body.messages[i], "issue");
             props.notify(msg, "info");
           }
         }
@@ -69,6 +71,7 @@ function Notifications(props) {
               '" in repository "' +
               repo.name +
               '"';
+            props.createNotification(tx.body.messages[i], "issue");
             props.notify(msg, "info");
           }
         }
@@ -91,6 +94,7 @@ function Notifications(props) {
                 '" in repository "' +
                 repo.name +
                 '"';
+              props.createNotification(tx.body.messages[i], "issue");
               props.notify(msg, "info");
             }
           }
@@ -127,7 +131,11 @@ function Notifications(props) {
 }
 
 const mapStateToProps = (state) => {
-  return { selectedAddress: state.wallet.selectedAddress };
+  return {
+    selectedAddress: state.wallet.selectedAddress,
+  };
 };
 
-export default connect(mapStateToProps, { notify })(Notifications);
+export default connect(mapStateToProps, { notify, createNotification })(
+  Notifications
+);
