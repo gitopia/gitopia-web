@@ -11,7 +11,6 @@ export default function CommitDetailRow({
 }) {
   let [author, setAuthor] = useState({ name: "", initial: "", link: null });
   let [title, setTitle] = useState("");
-  let [message, setMessage] = useState("");
   let [hasMore, setHasMore] = useState(false);
   let [fullMessageShown, setFullMessageShown] = useState(false);
   const validAddress = new RegExp("gitopia[a-z0-9]{39}");
@@ -28,16 +27,11 @@ export default function CommitDetailRow({
       } else {
         setAuthor({ name, initial: name.slice(0, 1), link: null });
       }
-      // let newMessage = commitDetail.message || "";
-      // if (commitDetail.message.length > maxMessageLength) {
-      //   newMessage = commitDetail.message.slice(0, maxMessageLength) + "..";
-      //   setHasMore(true);
-      // } else {
-      //   setHasMore(false);
-      // }
-      // setMessage(newMessage);
       let newTitle = commitDetail.title || "";
-      if (commitDetail.title.length > maxMessageLength) {
+      if (
+        commitDetail.title.length > maxMessageLength ||
+        commitDetail.message
+      ) {
         newTitle = commitDetail.title.slice(0, maxMessageLength) + "..";
         setHasMore(true);
       } else {
@@ -136,7 +130,8 @@ export default function CommitDetailRow({
         </div>
       </div>
       {fullMessageShown ? (
-        <div className="markdown-body p-2 bg-base-200 text-sm">
+        <div className="markdown-body p-2 bg-base-200">
+          <div className="mb-4">{commitDetail.title}</div>
           <ReactMarkdown>{commitDetail.message}</ReactMarkdown>
         </div>
       ) : (
