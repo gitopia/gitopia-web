@@ -22,7 +22,6 @@ import useRepository from "../../../hooks/useRepository";
 import CloneRepoInfo from "../../../components/repository/cloneRepoInfo";
 import SupportOwner from "../../../components/repository/supportOwner";
 import getContent from "../../../helpers/getContent";
-import getCommit from "../../../helpers/getCommit";
 import getCommitHistory from "../../../helpers/getCommitHistory";
 
 export async function getServerSideProps() {
@@ -30,7 +29,6 @@ export async function getServerSideProps() {
 }
 
 function RepositoryView(props) {
-  const router = useRouter();
   const { repository } = useRepository();
 
   const [entityList, setEntityList] = useState([]);
@@ -40,6 +38,7 @@ function RepositoryView(props) {
   const [commitDetail, setCommitDetail] = useState({
     author: {},
     message: "",
+    title: "",
     id: "",
   });
   const [commitsLength, setCommitsLength] = useState(0);
@@ -57,6 +56,10 @@ function RepositoryView(props) {
       repository.branches,
       repository.tags
     );
+    if (!branchSha) {
+      // TODO: can lead to different commit and file browser state
+      branchSha = repository.branches[0].sha;
+    }
     const res = await getContent(
       repository.id,
       branchSha,
@@ -106,15 +109,16 @@ function RepositoryView(props) {
   useEffect(async () => {
     console.log("repository", repository);
     if (typeof window !== "undefined" && repository.branches.length) {
+      loadEntities([], true);
       let branchSha = getBranchSha(
         repository.defaultBranch,
-        repository.branches
+        repository.branches,
+        repository.tags
       );
       if (!branchSha) {
         setSelectedBranch(repository.branches[0].name);
         branchSha = repository.branches[0].sha;
       }
-      loadEntities([], true);
       const commitHistory = await getCommitHistory(
         repository.id,
         branchSha,
@@ -122,7 +126,11 @@ function RepositoryView(props) {
         1
       );
 
-      if (commitHistory && commitHistory.commits.length) {
+      if (
+        commitHistory &&
+        commitHistory.commits &&
+        commitHistory.commits.length
+      ) {
         setCommitDetail(commitHistory.commits[0]);
         setCommitsLength(commitHistory.pagination.total);
       }

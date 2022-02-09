@@ -10,6 +10,7 @@ export default function CommitDetailRow({
   maxMessageLength = 50,
 }) {
   let [author, setAuthor] = useState({ name: "", initial: "", link: null });
+  let [title, setTitle] = useState("");
   let [message, setMessage] = useState("");
   let [hasMore, setHasMore] = useState(false);
   let [fullMessageShown, setFullMessageShown] = useState(false);
@@ -27,14 +28,22 @@ export default function CommitDetailRow({
       } else {
         setAuthor({ name, initial: name.slice(0, 1), link: null });
       }
-      let newMessage = commitDetail.message || "";
-      if (commitDetail.message.length > maxMessageLength) {
-        newMessage = commitDetail.message.slice(0, maxMessageLength) + "..";
+      // let newMessage = commitDetail.message || "";
+      // if (commitDetail.message.length > maxMessageLength) {
+      //   newMessage = commitDetail.message.slice(0, maxMessageLength) + "..";
+      //   setHasMore(true);
+      // } else {
+      //   setHasMore(false);
+      // }
+      // setMessage(newMessage);
+      let newTitle = commitDetail.title || "";
+      if (commitDetail.title.length > maxMessageLength) {
+        newTitle = commitDetail.title.slice(0, maxMessageLength) + "..";
         setHasMore(true);
       } else {
         setHasMore(false);
       }
-      setMessage(newMessage);
+      setTitle(newTitle);
       setFullMessageShown(false);
     }
   }, [commitDetail]);
@@ -66,7 +75,7 @@ export default function CommitDetailRow({
               author.name
             )}
           </span>
-          <span className="pl-4 text-sm">{message}</span>
+          <span className="pl-4 text-sm">{title}</span>
           {hasMore ? (
             <button
               className="ml-1 btn btn-xs btn-ghost"
