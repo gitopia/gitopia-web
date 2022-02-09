@@ -118,7 +118,6 @@ function RepositoryView(props) {
         setSelectedBranch(repository.branches[0].name);
         branchSha = repository.branches[0].sha;
       }
-      loadEntities([], true);
       const commitHistory = await getCommitHistory(
         repository.id,
         branchSha,
