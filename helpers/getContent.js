@@ -4,7 +4,8 @@ export default async function getContent(
   repoId = null,
   commitSha = null,
   path = null,
-  nextKey = null
+  nextKey = null,
+  limit = 100
 ) {
   let obj = {};
   if (!validSha.test(commitSha)) {
@@ -19,7 +20,7 @@ export default async function getContent(
     ref_id: commitSha,
     include_last_commit: true,
     pagination: {
-      limit: 100,
+      limit: limit,
     },
   };
   if (nextKey) {
