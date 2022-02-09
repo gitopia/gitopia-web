@@ -2,6 +2,9 @@ const validSha = new RegExp(/^[a-f0-9]{40}$/);
 
 export default async function getCommit(repoId = null, commitSha = null) {
   let obj = {};
+  if (repoId === null) {
+    return obj;
+  }
   if (!validSha.test(commitSha)) {
     return obj;
   }

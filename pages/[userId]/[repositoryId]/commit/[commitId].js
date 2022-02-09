@@ -5,15 +5,14 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
-import { getCommits } from "../../../../store/actions/git";
 import getDiff from "../../../../helpers/getDiff";
 import useRepository from "../../../../hooks/useRepository";
 import CommitDetailRow from "../../../../components/repository/commitDetailRow";
 import DiffView from "../../../../components/repository/diffView";
+import getCommit from "../../../../helpers/getCommit";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -26,24 +25,18 @@ function RepositoryCommitDiffView(props) {
   const [viewType, setViewType] = useState("unified");
 
   const [commit, setCommit] = useState({
-    commit: { message: "", author: { timestamp: 0, timestampOffset: 0 } },
+    message: "",
+    title: "",
+    author: {},
     stat: { addition: 0, deletion: 0 },
-    timestamp: 0,
-    oid: "",
+    id: "",
   });
 
   useEffect(async () => {
     if (repository) {
-      const c = await getCommits(
-        repository.id,
-        router.query.commitId,
-        repository.name,
-        router.query.userId,
-        0
-      );
+      console.log(repository);
+      const c = await getCommit(repository.id, router.query.commitId);
       if (c) {
-        // setFiles([]);
-        // setFileHidden([]);
         const data = await getDiff(
           Number(repository.id),
           router.query.commitId,
@@ -52,10 +45,8 @@ function RepositoryCommitDiffView(props) {
           true
         );
         if (data) {
-          console.log("commit", { ...c[0], ...data });
-          setCommit({ ...c[0], ...data });
+          setCommit({ ...c, ...data });
         }
-        // loadDiffs([], r.id);
       }
     }
   }, [router.query, repository.id]);
