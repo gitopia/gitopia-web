@@ -35,7 +35,8 @@ function RepositoryCommitTreeView(props) {
       const joinedPath = router.query.branch.join("/");
       repository.branches.every((b) => {
         let branch = b.name;
-        if (joinedPath.includes(branch)) {
+        let branchTest = new RegExp("^" + branch);
+        if (branchTest.test(joinedPath)) {
           let path = joinedPath.replace(branch, "").split("/");
           path = path.filter((p) => p !== "");
           setBranchName(branch);
