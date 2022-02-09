@@ -17,6 +17,7 @@ export default async function getContent(
   let params = {
     repository_id: Number(repoId),
     ref_id: commitSha,
+    include_last_commit: true,
     pagination: {
       limit: 100,
     },

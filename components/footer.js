@@ -1,7 +1,7 @@
 export default function Footer(props) {
   return (
     <div className="py-24 bg-footer-grad">
-      <div className="mx-auto max-w-screen-lg container">
+      <div className="mx-auto max-w-screen-lg container px-4">
         <div className="border-t border-grey py-4 px-24 flex text-xs  justify-between text-type-secondary">
           <span className="border-r border-grey pr-16">
             &copy; Gitopia {new Date().getFullYear()}
