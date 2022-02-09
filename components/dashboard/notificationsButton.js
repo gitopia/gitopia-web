@@ -1,15 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { readNotification } from "../../store/actions/userNotification";
 import { connect } from "react-redux";
-import { STATUSES } from "reapop";
 
 function NotificationsCard(props) {
   const [notifications, setNotifications] = useState({
-    issues: 1,
-    pulls: 5,
-    gov: 1,
-    toDos: 8,
+    issues: 0,
+    pulls: 0,
+    gov: 0,
+    toDos: 0,
   });
+
+  function countNotification(type) {
+    let state = props.userNotification;
+    let count = 0;
+    state.map((i) => {
+      if (i.type === type && i.unread === true) {
+        count++;
+      }
+    });
+    return count;
+  }
+
+  useEffect(async () => {
+    let issues = countNotification("issue");
+    let pulls = countNotification("pulls");
+    let gov = countNotification("gov");
+    let toDos = countNotification("toDos");
+
+    setNotifications({
+      issues: issues,
+      pulls: pulls,
+      gov: gov,
+      toDos: toDos,
+    });
+  }, [props.userNotification]);
 
   return (
     <div className="card w-96 px-5 py-5 bg-base-300 rounded-xl">
@@ -224,6 +248,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { readNotification })(
-  NotificationsCard
-);
+export default connect(mapStateToProps, {
+  readNotification,
+})(NotificationsCard);
