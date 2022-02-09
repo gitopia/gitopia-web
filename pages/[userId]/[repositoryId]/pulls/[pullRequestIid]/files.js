@@ -30,25 +30,25 @@ function RepositoryPullFilesView(props) {
   const [viewType, setViewType] = useState("unified");
 
   useEffect(async () => {
-    let diff;
-    if (pullRequest.base.repositoryId === pullRequest.head.repositoryId) {
-      diff = await getDiff(
-        pullRequest.base.repositoryId,
-        pullRequest.head.sha,
-        null,
-        pullRequest.base.sha,
-        true
-      );
-    } else {
-      diff = await getPullDiff(
-        pullRequest.base.repositoryId,
-        pullRequest.head.repositoryId,
-        pullRequest.base.sha,
-        pullRequest.head.sha,
-        null,
-        true
-      );
-    }
+    // let diff;
+    // if (pullRequest.base.repositoryId === pullRequest.head.repositoryId) {
+    //   diff = await getDiff(
+    //     pullRequest.base.repositoryId,
+    //     pullRequest.head.sha,
+    //     null,
+    //     pullRequest.base.sha,
+    //     true
+    //   );
+    // } else {
+    const diff = await getPullDiff(
+      pullRequest.base.repositoryId,
+      pullRequest.head.repositoryId,
+      pullRequest.base.sha,
+      pullRequest.head.sha,
+      null,
+      true
+    );
+    // }
     setStats(diff);
   }, [pullRequest]);
 
