@@ -133,11 +133,6 @@ function RepositoryView(props) {
         setCommitDetail(commitHistory.commits[0]);
         setCommitsLength(commitHistory.pagination.total);
       }
-
-      if (commitHistory && commitHistory.commits.length) {
-        setCommitDetail(commitHistory.commits[0]);
-        setCommitsLength(commitHistory.pagination.total);
-      }
     }
   }, [repository.id]);
 
