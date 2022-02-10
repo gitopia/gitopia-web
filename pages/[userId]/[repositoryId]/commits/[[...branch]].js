@@ -8,7 +8,6 @@ import { useRouter } from "next/router";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 
-import { getCommits } from "../../../../store/actions/git";
 import BranchSelector from "../../../../components/repository/branchSelector";
 import Footer from "../../../../components/footer";
 import getBranchSha from "../../../../helpers/getBranchSha";

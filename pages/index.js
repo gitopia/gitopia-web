@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import classnames from "classnames";
 import styles from "../styles/landing.module.css";
 import RepositoryMainTabs from "../components/repository/mainTabs";
-import { initRepository } from "../store/actions/git";
 import getBranchSha from "../helpers/getBranchSha";
 import getUserRepository from "../helpers/getUserRepository";
 import CommitDetailRow from "../components/repository/commitDetailRow";
@@ -177,12 +176,7 @@ export default function Landing() {
     if (repo) {
       setRepository(repo);
       let branchSha = getBranchSha(repo.defaultBranch, repo.branches);
-      const commitHistory = await getCommitHistory(
-        repository.id,
-        branchSha,
-        null,
-        1
-      );
+      const commitHistory = await getCommitHistory(repo.id, branchSha, null, 1);
 
       if (
         commitHistory &&
@@ -191,7 +185,7 @@ export default function Landing() {
       ) {
         setCommitDetail(commitHistory.commits[0]);
       }
-      const res = await getContent(repository.id, branchSha, null, null, 1000);
+      const res = await getContent(repo.id, branchSha, null, null, 1000);
       if (res) {
         if (res.content) {
           setEntityList(res.content);
