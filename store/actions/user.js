@@ -1,6 +1,7 @@
 import { userActions } from "./actionTypes";
 import { sendTransaction } from "./env";
 import { updateUserBalance } from "./wallet";
+import { notify } from "reapop";
 
 export const createUser = (username) => {
   return async (dispatch, getState) => {
@@ -14,6 +15,7 @@ export const createUser = (username) => {
       updateUserBalance()(dispatch, getState);
       return result;
     } catch (e) {
+      dispatch(notify(e.message, "error"));
       console.error(e);
     }
   };
