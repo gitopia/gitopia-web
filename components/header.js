@@ -143,7 +143,7 @@ function Header(props) {
         </div>
         <div className="flex-1"></div>
         {props.activeWallet ? (
-          <div className="flex-none mr-4">
+          <div className="flex-none mr-8">
             <svg
               width="10"
               height="17"
@@ -186,7 +186,7 @@ function Header(props) {
           ""
         )}
         {process.env.NEXT_PUBLIC_NETWORK_NAME ? (
-          <div className="flex-col mr-4 items-end">
+          <div className="flex-col mr-8 items-end">
             <div
               className="uppercase text-type-secondary"
               style={{ fontSize: "0.6rem", lineHeight: "1rem" }}
@@ -216,7 +216,7 @@ function Header(props) {
               <button
                 tabIndex="0"
                 className={
-                  "btn btn-primary rounded-full px-4 avatar relative " +
+                  "btn rounded-full px-4 avatar relative " +
                   (props.activeWallet ? "btn-outline" : "")
                 }
                 onClick={(e) => {
@@ -244,7 +244,7 @@ function Header(props) {
                         {props.activeWallet.name}
                         {props.activeWallet.isKeplr ? " [Keplr]" : ""}
                       </div>
-                      <div className="text-xs text-base-content">
+                      <div className="text-xs text-type-tertiary">
                         {addressToShow}
                       </div>
                     </>
