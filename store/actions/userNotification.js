@@ -1,7 +1,6 @@
 import { userNotificationActions } from "./actionTypes";
 
 export const createNotification = (msg, type) => {
-  console.log("create Notification");
   return async (dispatch, getState) => {
     dispatch({
       type: userNotificationActions.ADD_USER_NOTIFICATIONS,
