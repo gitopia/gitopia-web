@@ -124,6 +124,7 @@ function NotificationsCard(props) {
           <button
             class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
             onClick={() => {
+              props.readNotification("pulls");
               props.setMenuOpen(false);
               props.setMenuState(1);
             }}

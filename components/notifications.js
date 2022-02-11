@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import getRepository from "../helpers/getRepository";
 import getIssue from "../helpers/getIssue";
+import getPullRequest from "../helpers/getPullRequest";
 import { notify } from "reapop";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { createNotification } from "../store/actions/userNotification";
@@ -16,7 +17,6 @@ function Notifications(props) {
       case "/gitopia.gitopia.gitopia.MsgCreateIssue":
         {
           let repo = await getRepository(tx.message.repositoryId);
-          console.log(tx);
           if (
             props.selectedAddress === repo.owner.id &&
             tx.message.creator !== props.selectedAddress
@@ -36,30 +36,95 @@ function Notifications(props) {
 
       case "/gitopia.gitopia.gitopia.MsgCreateComment":
         {
-          let issue = await getIssue(tx.message.parentId);
-          let repo = await getRepository(issue.repositoryId);
-          if (
-            (props.selectedAddress === repo.owner.id &&
-              tx.message.creator !== props.selectedAddress) ||
-            (props.selectedAddress === issue.creator &&
-              tx.message.creator !== props.selectedAddress)
-          ) {
-            let msg =
-              shrinkAddress(tx.message.creator) +
-              ' commented "' +
-              tx.message.body +
-              '" on issue "' +
-              issue.title +
-              '" in repository "' +
-              repo.name +
-              '"';
-            props.createNotification(tx.message, "issue");
-            props.notify(msg, "info");
+          if (tx.message.commentType === "ISSUE") {
+            let issue = await getIssue(tx.message.parentId);
+            let repo = await getRepository(issue.repositoryId);
+            if (
+              (props.selectedAddress === repo.owner.id &&
+                tx.message.creator !== props.selectedAddress) ||
+              (props.selectedAddress === issue.creator &&
+                tx.message.creator !== props.selectedAddress)
+            ) {
+              let msg =
+                shrinkAddress(tx.message.creator) +
+                ' commented "' +
+                tx.message.body +
+                '" on issue "' +
+                issue.title +
+                '" in repository "' +
+                repo.name +
+                '"';
+              props.createNotification(tx.message, "issue");
+              props.notify(msg, "info");
+            }
+          } else if (tx.message.commentType === "PULLREQUEST") {
+            let pull = await getPullRequest(tx.message.parentId);
+            let repo = await getRepository(pull.head.repositoryId);
+            for (let j = 0; j < pull.reviewers.length; j++) {
+              if (
+                props.selectedAddress !== tx.message.creator &&
+                props.selectedAddress !== repo.owner.id &&
+                props.selectedAddress === pull.reviewers[j] &&
+                pull.assignees.includes(pull.reviewers[j]) === false &&
+                props.selectedAddress !== pull.creator
+              ) {
+                let msg =
+                  shrinkAddress(tx.message.creator) +
+                  ' commented "' +
+                  tx.message.body +
+                  '" on pull request "' +
+                  pull.title +
+                  '" in repository "' +
+                  repo.name +
+                  '"';
+                props.createNotification(tx.message, "pulls");
+                props.notify(msg, "info");
+              }
+            }
+
+            for (let j = 0; j < pull.assignees.length; j++) {
+              if (
+                props.selectedAddress !== tx.message.creator &&
+                props.selectedAddress !== repo.owner.id &&
+                props.selectedAddress === pull.assignees[j] &&
+                props.selectedAddress !== pull.creator
+              ) {
+                let msg =
+                  shrinkAddress(tx.message.creator) +
+                  ' commented "' +
+                  tx.message.body +
+                  '" on pull request "' +
+                  pull.title +
+                  '" in repository "' +
+                  repo.name +
+                  '"';
+                props.createNotification(tx.message, "pulls");
+                props.notify(msg, "info");
+              }
+            }
+
+            if (
+              props.selectedAddress === pull.creator &&
+              tx.message.creator !== props.selectedAddress
+            ) {
+              let msg =
+                shrinkAddress(tx.message.creator) +
+                ' commented "' +
+                tx.message.body +
+                '" on pull request "' +
+                pull.title +
+                '" in repository "' +
+                repo.name +
+                '"';
+              props.createNotification(tx.message, "pulls");
+              props.notify(msg, "info");
+            }
           }
         }
         break;
 
       case "/gitopia.gitopia.gitopia.MsgAddIssueLabels":
+      case "/gitopia.gitopia.gitopia.MsgRemoveIssueLabels":
         {
           let issue = await getIssue(tx.message.issueId);
           let repo = await getRepository(issue.repositoryId);
@@ -71,7 +136,7 @@ function Notifications(props) {
           ) {
             let msg =
               shrinkAddress(tx.message.creator) +
-              ' added label on issue "' +
+              ' changed label on issue "' +
               issue.title +
               '" in repository "' +
               repo.name +
@@ -82,11 +147,12 @@ function Notifications(props) {
         }
         break;
 
+      case "/gitopia.gitopia.gitopia.MsgRemoveIssueAssignees":
       case "/gitopia.gitopia.gitopia.MsgAddIssueAssignees":
         {
           let issue = await getIssue(tx.message.id);
           let repo = await getRepository(issue.repositoryId);
-          console.log(tx);
+
           for (let j = 0; j < tx.message.assignees.length; j++) {
             if (
               (repo.owner.id === props.selectedAddress &&
@@ -97,7 +163,7 @@ function Notifications(props) {
             ) {
               let msg =
                 shrinkAddress(tx.message.creator) +
-                " added assignees in issue " +
+                " changed assignees in issue " +
                 issue.title +
                 '" in repository "' +
                 repo.name +
@@ -105,6 +171,156 @@ function Notifications(props) {
               props.createNotification(tx.message, "issue");
               props.notify(msg, "info");
             }
+          }
+        }
+        break;
+
+      case "/gitopia.gitopia.gitopia.MsgCreatePullRequest":
+        {
+          let repo = await getRepository(tx.message.baseRepoId);
+          for (let j = 0; j < tx.message.reviewers.length; j++) {
+            if (
+              props.selectedAddress !== tx.message.creator &&
+              props.selectedAddress !== repo.owner.id &&
+              props.selectedAddress === tx.message.reviewers[j] &&
+              tx.message.assignees.includes(tx.message.reviewers[j]) === false
+            ) {
+              let msg =
+                shrinkAddress(tx.message.creator) +
+                ' created a pr "' +
+                tx.message.title +
+                '" in repository "' +
+                repo.name +
+                '"';
+              props.createNotification(tx.message, "pulls");
+              props.notify(msg, "info");
+            }
+          }
+
+          for (let j = 0; j < tx.message.assignees.length; j++) {
+            if (
+              props.selectedAddress !== tx.message.creator &&
+              props.selectedAddress !== repo.owner.id &&
+              props.selectedAddress === tx.message.assignees[j]
+            ) {
+              let msg =
+                shrinkAddress(tx.message.creator) +
+                ' created a pr "' +
+                tx.message.title +
+                '" in repository "' +
+                repo.name +
+                '"';
+              props.createNotification(tx.message, "pulls");
+              props.notify(msg, "info");
+            }
+          }
+          if (
+            props.selectedAddress === repo.owner.id &&
+            tx.message.creator !== props.selectedAddress
+          ) {
+            let msg =
+              shrinkAddress(tx.message.creator) +
+              ' created a pr "' +
+              tx.message.title +
+              '" in repository "' +
+              repo.name +
+              '"';
+            props.createNotification(tx.message, "pulls");
+            props.notify(msg, "info");
+          }
+        }
+        break;
+
+      case "/gitopia.gitopia.gitopia.MsgRemovePullRequestReviewers":
+      case "/gitopia.gitopia.gitopia.MsgAddPullRequestReviewers":
+        {
+          for (let j = 0; j < tx.message.reviewers.length; j++) {
+            if (
+              props.selectedAddress !== tx.message.creator &&
+              props.selectedAddress === tx.message.reviewers[j]
+            ) {
+              let msg =
+                shrinkAddress(tx.message.creator) +
+                " changed pull request reviewer";
+              props.createNotification(tx.message, "pulls");
+              props.notify(msg, "info");
+            }
+          }
+        }
+        break;
+
+      case "/gitopia.gitopia.gitopia.MsgRemovePullRequestAssignees":
+      case "/gitopia.gitopia.gitopia.MsgAddPullRequestAssignees":
+        {
+          for (let j = 0; j < tx.message.assignees.length; j++) {
+            if (
+              props.selectedAddress !== tx.message.creator &&
+              props.selectedAddress === tx.message.assignees[j]
+            ) {
+              let msg =
+                shrinkAddress(tx.message.creator) +
+                " changed pull request assignees";
+              props.createNotification(tx.message, "pulls");
+              props.notify(msg, "info");
+            }
+          }
+        }
+        break;
+
+      case "/gitopia.gitopia.gitopia.MsgSetPullRequestState":
+        {
+          let pull = await getPullRequest(tx.message.id);
+          let repo = await getRepository(pull.head.repositoryId);
+          for (let j = 0; j < pull.reviewers.length; j++) {
+            if (
+              props.selectedAddress !== tx.message.creator &&
+              props.selectedAddress !== repo.owner.id &&
+              props.selectedAddress === pull.reviewers[j] &&
+              pull.assignees.includes(pull.reviewers[j]) === false
+            ) {
+              let msg =
+                shrinkAddress(tx.message.creator) +
+                ' closed a pr "' +
+                pull.title +
+                '" in repository "' +
+                repo.name +
+                '"';
+              props.createNotification(tx.message, "pulls");
+              props.notify(msg, "info");
+            }
+          }
+
+          for (let j = 0; j < pull.assignees.length; j++) {
+            if (
+              props.selectedAddress !== tx.message.creator &&
+              props.selectedAddress !== repo.owner.id &&
+              props.selectedAddress === pull.assignees[j]
+            ) {
+              let msg =
+                shrinkAddress(tx.message.creator) +
+                ' closed a pr "' +
+                pull.title +
+                '" in repository "' +
+                repo.name +
+                '"';
+              props.createNotification(tx.message, "pulls");
+              props.notify(msg, "info");
+            }
+          }
+
+          if (
+            props.selectedAddress === repo.owner.id &&
+            tx.message.creator !== props.selectedAddress
+          ) {
+            let msg =
+              shrinkAddress(tx.message.creator) +
+              ' closed a pr "' +
+              pull.title +
+              '" in repository "' +
+              repo.name +
+              '"';
+            props.createNotification(tx.message, "pulls");
+            props.notify(msg, "info");
           }
         }
         break;
