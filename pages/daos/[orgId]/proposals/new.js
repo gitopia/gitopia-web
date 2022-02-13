@@ -72,7 +72,7 @@ function RepositoryProposalCreateView(props) {
   const router = useRouter();
   const hrefBase = "/" + router.query.orgId;
   const [loading, setLoading] = useState(false);
-  const [repositoryName, setRepositoryName] = useState("");
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [proposalType, setProposalType] = useState("1");
   const [amount, setAmount] = useState("");
@@ -93,7 +93,6 @@ function RepositoryProposalCreateView(props) {
     name: "",
     repositories: [],
   });
-  const [allRepos, setAllRepos] = useState([""]);
 
   useEffect(async () => {
     const o = await getOrganization(router.query.orgId);
@@ -101,20 +100,6 @@ function RepositoryProposalCreateView(props) {
       setOrg(o);
     }
   }, [router.query]);
-
-  const getAllRepos = async () => {
-    if (org.id) {
-      const pr = org.repositories.map((r) => getRepository(r.id));
-      const repos = await Promise.all(pr);
-      setAllRepos(repos.reverse());
-    }
-  };
-
-  useEffect(getAllRepos, [org]);
-
-  if (repositoryName === "" && allRepos !== []) {
-    setRepositoryName(allRepos[0].name);
-  }
 
   return (
     <div
@@ -161,31 +146,22 @@ function RepositoryProposalCreateView(props) {
                 types of proposals.
               </h1>
               <div className="flex">
-                <div className="form-control mb-4 w-1/2">
+                <div className="form-control w-1/2">
                   <label className="label">
-                    <span className="label-text text-sm">
-                      CHOOSE REPOSITORY
-                    </span>
+                    <span className="label-text text-sm">TITLE</span>
                   </label>
-                  <select
-                    className="select select-bordered select-sm text-xs h-8"
-                    defaultValue={"DEFAULT"}
-                    value={repositoryName}
-                    onChange={(e) => {
-                      setRepositoryName(e.target.value);
-                    }}
-                  >
-                    <option value="DEFAULT" disabled>
-                      Select a Repository
-                    </option>
-                    {allRepos.map((i) => {
-                      return (
-                        <option value={i.name} key={i.id}>
-                          {i.name}
-                        </option>
-                      );
-                    })}
-                  </select>
+                  <div className="form-control">
+                    <input
+                      name="title"
+                      type="text"
+                      placeholder="Write title here"
+                      className="input input-md input-bordered mb-4 text-xs h-8"
+                      value={title}
+                      onChange={(e) => {
+                        setTitle(e.target.value);
+                      }}
+                    />
+                  </div>
                 </div>
                 <div className="form-control mb-4 ml-4 w-1/2">
                   <label className="label">
@@ -304,14 +280,13 @@ function RepositoryProposalCreateView(props) {
                           description === "" ||
                           amount === "" ||
                           address === "" ||
-                          repositoryName === "" ||
-                          repositoryName === undefined
+                          title === ""
                         }
                         onClick={(e) => {
                           setLoading(true);
                           props
                             .communityPoolSpendProposal(
-                              repositoryName,
+                              title,
                               description,
                               proposalType,
                               address,
@@ -324,6 +299,7 @@ function RepositoryProposalCreateView(props) {
                               setDescription("");
                               setAddress("");
                               setAmount("");
+                              setTitle("");
                             });
                         }}
                       >
@@ -385,14 +361,13 @@ function RepositoryProposalCreateView(props) {
                           description === "" ||
                           releaseVersionTag === "" ||
                           height === "" ||
-                          repositoryName === "" ||
-                          repositoryName === undefined
+                          title === ""
                         }
                         onClick={(e) => {
                           setLoading(true);
                           props
                             .chainUpgradeProposal(
-                              repositoryName,
+                              title,
                               description,
                               proposalType,
                               releaseVersionTag,
@@ -400,6 +375,7 @@ function RepositoryProposalCreateView(props) {
                             )
                             .then((res) => {
                               setLoading(false);
+                              setTitle("");
                               setDescription("");
                               setReleaseVersionTag("");
                               setHeight("");
@@ -493,18 +469,19 @@ function RepositoryProposalCreateView(props) {
                           /* description === "" ||
                           parameterName === {} ||
                           parameterValue === {} ||
-                          repositoryName === "" */
+                          title === "" */
                         }
                         onClick={(e) => {
                           setLoading(true);
                           props
                             .submitGovernanceProposal(
-                              repositoryName,
+                              title,
                               description,
                               proposalType
                             )
                             .then((res) => {
                               setLoading(false);
+                              setTitle("");
                               setDescription("");
                             });
                         }}
@@ -523,21 +500,18 @@ function RepositoryProposalCreateView(props) {
                         "btn btn-sm btn-primary btn-block h-8 text-xs " +
                         (loading ? "loading" : "")
                       }
-                      disabled={
-                        description === "" ||
-                        repositoryName === "" ||
-                        repositoryName === undefined
-                      }
+                      disabled={description === "" || title === ""}
                       onClick={(e) => {
                         setLoading(true);
                         props
                           .submitGovernanceProposal(
-                            repositoryName,
+                            title,
                             description,
                             proposalType
                           )
                           .then((res) => {
                             setLoading(false);
+                            setTitle("");
                             setDescription("");
                           });
                       }}

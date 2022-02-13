@@ -10,11 +10,7 @@ import {
 import { CommunityPoolSpendProposal } from "../cosmos.distribution.v1beta1/module/types/cosmos/distribution/v1beta1/distribution";
 import { setupTxClients } from "./env";
 
-export const submitGovernanceProposal = (
-  repositoryName,
-  description,
-  proposalType
-) => {
+export const submitGovernanceProposal = (title, description, proposalType) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
@@ -22,7 +18,7 @@ export const submitGovernanceProposal = (
         await setupTxClients(dispatch, getState);
         const { env } = getState();
         const textProposal = TextProposal.fromPartial({
-          title: repositoryName,
+          title: title,
           description: description,
         });
         const msgAny = Any.fromPartial({
@@ -61,7 +57,7 @@ export const submitGovernanceProposal = (
 };
 
 export const chainUpgradeProposal = (
-  repositoryName,
+  title,
   description,
   proposalType,
   releaseVersionTag,
@@ -79,7 +75,7 @@ export const chainUpgradeProposal = (
           info: "",
         });
         const softwareUpgradeProposal = SoftwareUpgradeProposal.fromPartial({
-          title: repositoryName,
+          title: title,
           description: description,
           plan: msgPlan,
         });
@@ -120,7 +116,7 @@ export const chainUpgradeProposal = (
 };
 
 export const communityPoolSpendProposal = (
-  repositoryName,
+  title,
   description,
   proposalType,
   address,
@@ -140,7 +136,7 @@ export const communityPoolSpendProposal = (
         ];
         const communityPoolSpendProposal =
           CommunityPoolSpendProposal.fromPartial({
-            title: repositoryName,
+            title: title,
             description: description,
             recipient: address,
             amount: amountToSend,
