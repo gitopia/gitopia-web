@@ -1,17 +1,17 @@
 import { userActions } from "./actionTypes";
-import { sendTransaction } from "./env";
+import { sendTransaction, setupTxClients } from "./env";
 import { updateUserBalance } from "./wallet";
 import { notify } from "reapop";
 
 export const createUser = (username) => {
   return async (dispatch, getState) => {
-    const { env, wallet } = getState();
     try {
+      await setupTxClients(dispatch, getState);
+      const { env, wallet } = getState();
       const message = await env.txClient.msgCreateUser({
-        username: username,
         creator: wallet.selectedAddress,
       });
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       return result;
     } catch (e) {

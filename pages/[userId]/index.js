@@ -21,7 +21,7 @@ export async function getServerSideProps() {
 function AccountView(props) {
   const router = useRouter();
   const [user, setUser] = useState({
-    name: "",
+    creator: "",
     repositories: [],
   });
   const [org, setOrg] = useState({
@@ -29,6 +29,7 @@ function AccountView(props) {
     repositories: [],
   });
   const [allRepos, setAllRepos] = useState([]);
+  const [avatarLink, setAvatarLink] = useState("");
 
   useEffect(async () => {
     const [u, o] = await Promise.all([
@@ -38,12 +39,15 @@ function AccountView(props) {
     console.log(u, o);
     if (u) {
       setUser(u);
+      setOrg({ name: "", repositories: [] });
     } else if (o) {
       setOrg(o);
+      setUser({ creator: "", repositories: [] });
     }
   }, [router.query]);
 
   const getAllRepos = async () => {
+    let letter = "x";
     if (user.id) {
       const pr = user.repositories.map((r) => getRepository(r.id));
       const repos = await Promise.all(pr);
@@ -54,29 +58,19 @@ function AccountView(props) {
       const repos = await Promise.all(pr);
       setAllRepos(repos.reverse());
       console.log(repos);
+      letter = org.name.slice(0, 1);
     }
+    const link =
+      process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === org.address
+        ? "/logo-g.svg"
+        : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+          letter;
+    setAvatarLink(link);
   };
 
   useEffect(getAllRepos, [user, org]);
 
   const hrefBase = "/" + router.query.userId;
-  const letter = user.id
-    ? user.creator.slice(-1)
-    : org.id
-    ? org.name.slice(0, 1)
-    : "x";
-
-  const avatarLink =
-    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === org.address
-      ? "/logo-g.svg"
-      : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-        letter;
-
-  console.log(
-    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS,
-    user.creator,
-    avatarLink
-  );
 
   return (
     <div

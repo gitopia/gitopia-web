@@ -14,7 +14,7 @@ function RepositoryHeader({ repository, ...props }) {
     process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === repository.owner.id
       ? "/logo-g.svg"
       : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-        repository.owner.id;
+        repository.owner.id.slice(-1);
 
   return (
     <div className="flex flex-1 mb-8">

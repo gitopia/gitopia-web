@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -13,7 +13,7 @@ import {
 import shrinkAddress from "../helpers/shrinkAddress";
 import getHomeUrl from "../helpers/getHomeUrl";
 import { notify } from "reapop";
-import initKeplr from "../keplr/init";
+import initKeplr from "../helpers/keplr";
 
 import dynamic from "next/dynamic";
 const SendTlore = dynamic(() => import("./dashboard/sendTlore"));
@@ -28,10 +28,14 @@ function Header(props) {
   const [menuState, setMenuState] = useState(1);
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
+  const menuRef = useRef();
 
   const onUserMenuClose = () => {
     setMenuOpen(false);
     setMenuState(1);
+    if (menuRef.current) {
+      menuRef.current.blur();
+    }
   };
 
   let addressToShow = "";
@@ -218,14 +222,16 @@ function Header(props) {
                 tabIndex="0"
                 className={
                   "btn rounded-full px-4 avatar relative " +
-                  (props.activeWallet ? "btn-outline" : "")
+                  (props.activeWallet ? "btn-outline" : "") +
+                  (props.unlockingWallet ? " loading" : "")
                 }
                 onClick={(e) => {
                   setMenuOpen(true);
                 }}
+                ref={menuRef}
               >
                 <div className="rounded-full w-10 h-10 absolute left-1">
-                  {props.activeWallet ? (
+                  {props.activeWallet && !props.unlockingWallet ? (
                     <img
                       src={
                         "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
@@ -237,7 +243,12 @@ function Header(props) {
                   )}
                 </div>
                 <div
-                  className={"mr-2 " + (props.activeWallet ? "ml-10" : "ml-2")}
+                  className={
+                    "mr-2 " +
+                    (props.activeWallet && !props.unlockingWallet
+                      ? "ml-10"
+                      : "ml-2")
+                  }
                 >
                   {props.activeWallet ? (
                     <>
@@ -274,6 +285,9 @@ function Header(props) {
                                 props.selectedAddress
                               );
                               setMenuOpen(false);
+                              if (menuRef.current) {
+                                menuRef.current.blur();
+                              }
                               props.notify("Copied to clipboard", "info");
                             }}
                           >
@@ -285,20 +299,17 @@ function Header(props) {
                             onClick={(e) => {
                               props.downloadWalletForRemoteHelper();
                               setMenuOpen(false);
+                              if (menuRef.current) {
+                                menuRef.current.blur();
+                              }
                             }}
                           >
                             Download Wallet
                           </a>
                         </li>
-                        {/* <li>
-                          <a>Assets</a>
-                        </li>
-                        <li>
-                          <a>Transactions</a>
-                        </li> */}
                         <li className="h-4">
                           <div className="border-b border-grey mt-2"></div>
-                        </li>{" "}
+                        </li>
                       </>
                     ) : (
                       ""
@@ -320,7 +331,15 @@ function Header(props) {
                       ""
                     )}
                     <li>
-                      <Link href="/login">
+                      <Link
+                        href="/login"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          if (menuRef.current) {
+                            menuRef.current.blur();
+                          }
+                        }}
+                      >
                         <a>Create New Wallet</a>
                       </Link>
                     </li>
@@ -339,6 +358,11 @@ function Header(props) {
                       <a
                         href="#"
                         onClick={async () => {
+                          setMenuOpen(false);
+                          console.log(menuRef);
+                          if (menuRef.current) {
+                            menuRef.current.blur();
+                          }
                           await props.unlockLedgerWallet();
                         }}
                       >
@@ -366,7 +390,14 @@ function Header(props) {
                           </a>
                         </li>
                         <li>
-                          <a onClick={props.signOut}>Log Out</a>
+                          <a
+                            onClick={() => {
+                              setMenuOpen(false);
+                              props.signOut();
+                            }}
+                          >
+                            Log Out
+                          </a>
                         </li>
                       </>
                     ) : (
@@ -392,6 +423,7 @@ const mapStateToProps = (state) => {
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
     advanceUser: state.user.advanceUser,
+    unlockingWallet: state.wallet.unlockingWallet,
   };
 };
 
