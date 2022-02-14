@@ -80,7 +80,7 @@ export const createRepository = ({
 
     try {
       const message = await env.txClient.msgCreateRepository(repository);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         getUserDetailsForSelectedAddress()(dispatch, getState);
@@ -124,7 +124,7 @@ export const createIssue = ({
 
     try {
       const message = await env.txClient.msgCreateIssue(issue);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
       } else {
@@ -168,7 +168,7 @@ export const createComment = ({
 
     try {
       const message = await env.txClient.msgCreateComment(comment);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       return result;
     } catch (e) {
@@ -193,7 +193,7 @@ export const updateComment = ({ id = null, body = "", attachments = [] }) => {
 
     try {
       const message = await env.txClient.msgUpdateComment(comment);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       return result;
     } catch (e) {
@@ -215,7 +215,7 @@ export const deleteComment = ({ id = null }) => {
     };
     try {
       const message = await env.txClient.msgDeleteComment(comment);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       return result;
     } catch (e) {
@@ -237,7 +237,7 @@ export const toggleIssueState = ({ id = null }) => {
     };
     try {
       const message = await env.txClient.msgToggleIssueState(comment);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
@@ -265,7 +265,7 @@ export const renameRepository = ({ id = null, name = "" }) => {
 
     try {
       const message = await env.txClient.msgRenameRepository(repository);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         getUserDetailsForSelectedAddress()(dispatch, getState);
@@ -298,7 +298,7 @@ export const updateCollaborator = ({ id = null, user = null, role = null }) => {
       const message = await env.txClient.msgUpdateRepositoryCollaborator(
         collaborator
       );
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
@@ -329,7 +329,7 @@ export const removeCollaborator = ({ id = null, user = null }) => {
       const message = await env.txClient.msgRemoveRepositoryCollaborator(
         collaborator
       );
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
@@ -363,7 +363,7 @@ export const changeRespositoryOwner = ({
 
     try {
       const message = await env.txClient.msgChangeOwner(req);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
@@ -393,7 +393,7 @@ export const updateIssueTitle = ({ title = null, id = null }) => {
 
     try {
       const message = await env.txClient.msgUpdateIssueTitle(issue);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
@@ -423,7 +423,7 @@ export const updatePullRequestTitle = ({ title = null, id = null }) => {
 
     try {
       const message = await env.txClient.msgUpdatePullRequestTitle(pull);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
@@ -453,7 +453,7 @@ export const updateIssueDescription = ({ description = null, id = null }) => {
 
     try {
       const message = await env.txClient.msgUpdateIssueDescription(issue);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
@@ -486,7 +486,7 @@ export const updatePullRequestDescription = ({
 
     try {
       const message = await env.txClient.msgUpdatePullRequestDescription(pull);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
@@ -527,7 +527,10 @@ export const updateIssueAssignees = ({
       let message1, message2, result1, result2;
       if (addedAssignees.length) {
         message1 = await env.txClient.msgAddIssueAssignees(issueAddAssignees);
-        result1 = await sendTransaction({ message: message1 }, env);
+        result1 = await sendTransaction({ message: message1 })(
+          dispatch,
+          getState
+        );
         if (result1 && result1.code !== 0) {
           dispatch(notify(result1.rawLog, "error"));
           return null;
@@ -537,7 +540,10 @@ export const updateIssueAssignees = ({
         message2 = await env.txClient.msgRemoveIssueAssignees(
           issueRemoveAssignees
         );
-        result2 = await sendTransaction({ message: message2 }, env);
+        result2 = await sendTransaction({ message: message2 })(
+          dispatch,
+          getState
+        );
         if (result2 && result2.code !== 0) {
           dispatch(notify(result2.rawLog, "error"));
           return null;
@@ -577,7 +583,10 @@ export const updateIssueLabels = ({
       let message1, message2, result1, result2;
       if (addedLabels.length) {
         message1 = await env.txClient.msgAddIssueLabels(issueAddLabels);
-        result1 = await sendTransaction({ message: message1 }, env);
+        result1 = await sendTransaction({ message: message1 })(
+          dispatch,
+          getState
+        );
         if (result1 && result1.code !== 0) {
           dispatch(notify(result1.rawLog, "error"));
           return null;
@@ -585,7 +594,10 @@ export const updateIssueLabels = ({
       }
       if (removedLabels.length) {
         message2 = await env.txClient.msgRemoveIssueLabels(issueRemoveLabels);
-        result2 = await sendTransaction({ message: message2 }, env);
+        result2 = await sendTransaction({ message: message2 })(
+          dispatch,
+          getState
+        );
         if (result2 && result2.code !== 0) {
           dispatch(notify(result2.rawLog, "error"));
           return null;
@@ -621,7 +633,7 @@ export const createRepositoryLabel = ({
 
     try {
       const message = await env.txClient.msgCreateRepositoryLabel(label);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
@@ -661,7 +673,7 @@ export const updateRepositoryLabel = ({
 
     try {
       const message = await env.txClient.msgUpdateRepositoryLabel(label);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
@@ -736,7 +748,7 @@ export const forkRepository = ({
 
     try {
       const message = await env.txClient.msgForkRepository(repository);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       console.log(result);
       if (result && result.code === 0) {
         const newRepoQuery = await env.queryClient.queryAddressRepository(
@@ -794,7 +806,7 @@ export const createPullRequest = ({
 
     try {
       const message = await env.txClient.msgCreatePullRequest(pull);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -840,7 +852,7 @@ export const createRelease = ({
 
     try {
       const message = await env.txClient.msgCreateRelease(release);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -870,7 +882,7 @@ export const createTag = ({ repositoryId = null, name = null, sha = null }) => {
 
     try {
       const message = await env.txClient.msgSetRepositoryTag(tag);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -914,7 +926,10 @@ export const updatePullRequestAssignees = ({
         message1 = await env.txClient.msgAddPullRequestAssignees(
           pullAddAssignees
         );
-        result1 = await sendTransaction({ message: message1 }, env);
+        result1 = await sendTransaction({ message: message1 })(
+          dispatch,
+          getState
+        );
         if (result1 && result1.code !== 0) {
           dispatch(notify(result1.rawLog, "error"));
           return null;
@@ -924,7 +939,10 @@ export const updatePullRequestAssignees = ({
         message2 = await env.txClient.msgRemovePullRequestAssignees(
           pullRemoveAssignees
         );
-        result2 = await sendTransaction({ message: message2 }, env);
+        result2 = await sendTransaction({ message: message2 })(
+          dispatch,
+          getState
+        );
         if (result2 && result2.code !== 0) {
           dispatch(notify(result2.rawLog, "error"));
           return null;
@@ -968,7 +986,10 @@ export const updatePullRequestReviewers = ({
         message1 = await env.txClient.msgAddPullRequestReviewers(
           pullAddReviewers
         );
-        result1 = await sendTransaction({ message: message1 }, env);
+        result1 = await sendTransaction({ message: message1 })(
+          dispatch,
+          getState
+        );
         if (result1 && result1.code !== 0) {
           dispatch(notify(result1.rawLog, "error"));
           return null;
@@ -978,7 +999,10 @@ export const updatePullRequestReviewers = ({
         message2 = await env.txClient.msgRemovePullRequestReviewers(
           pullRemoveReviewers
         );
-        result2 = await sendTransaction({ message: message2 }, env);
+        result2 = await sendTransaction({ message: message2 })(
+          dispatch,
+          getState
+        );
         if (result2 && result2.code !== 0) {
           dispatch(notify(result2.rawLog, "error"));
           return null;
@@ -1018,7 +1042,10 @@ export const updatePullRequestLabels = ({
       let message1, message2, result1, result2;
       if (addedLabels.length) {
         message1 = await env.txClient.msgAddPullRequestLabels(issueAddLabels);
-        result1 = await sendTransaction({ message: message1 }, env);
+        result1 = await sendTransaction({ message: message1 })(
+          dispatch,
+          getState
+        );
         if (result1 && result1.code !== 0) {
           dispatch(notify(result1.rawLog, "error"));
           return null;
@@ -1028,7 +1055,10 @@ export const updatePullRequestLabels = ({
         message2 = await env.txClient.msgRemovePullRequestLabels(
           issueRemoveLabels
         );
-        result2 = await sendTransaction({ message: message2 }, env);
+        result2 = await sendTransaction({ message: message2 })(
+          dispatch,
+          getState
+        );
         if (result2 && result2.code !== 0) {
           dispatch(notify(result2.rawLog, "error"));
           return null;
@@ -1058,7 +1088,7 @@ export const updatePullRequestState = ({ id, state, mergeCommitSha }) => {
 
     try {
       const message = await env.txClient.msgSetPullRequestState(pullState);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -1085,7 +1115,7 @@ export const toggleRepositoryForking = ({ id }) => {
 
     try {
       const message = await env.txClient.msgToggleRepositoryForking(repo);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {

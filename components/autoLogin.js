@@ -7,7 +7,7 @@ import {
   unlockKeplrWallet,
   unlockLedgerWallet,
 } from "../store/actions/wallet";
-import initKeplr from "../keplr/init";
+import initKeplr from "../helpers/keplr";
 import TextInput from "./textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
 

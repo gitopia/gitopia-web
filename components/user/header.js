@@ -1,6 +1,3 @@
-import shrinkAddress from "../../helpers/shrinkAddress";
-import Link from "next/link";
-
 export default function UserHeader({ user }) {
   return (
     <div className="flex flex-1 mb-8">
@@ -9,7 +6,7 @@ export default function UserHeader({ user }) {
           <img
             src={
               "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-              user.creator
+              user.creator.slice(-1)
             }
           />
         </div>

@@ -11,6 +11,7 @@ const initialState = {
   loreBalance: 0,
   getPassword: false,
   getPasswordPromise: {},
+  unlockingWallet: false,
 };
 
 const reducer = (state = initialState, action) => {
@@ -21,6 +22,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         activeWallet: wallet,
+        unlockingWallet: false,
       };
     }
 
@@ -104,6 +106,7 @@ const reducer = (state = initialState, action) => {
     case walletActions.SIGN_OUT: {
       state.selectedAddress = null;
       state.activeWallet = null;
+      state.unlockingWallet = false;
       del("lastWallet");
       return {
         ...state,
@@ -132,6 +135,13 @@ const reducer = (state = initialState, action) => {
         ...state,
         getPassword: false,
         getPasswordPromise: {},
+      };
+    }
+
+    case walletActions.START_UNLOCKING_WALLET: {
+      return {
+        ...state,
+        unlockingWallet: true,
       };
     }
 

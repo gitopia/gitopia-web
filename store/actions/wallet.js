@@ -31,8 +31,8 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
 
     const [tc, qc, amount] = await Promise.all([
       txClient(accountSigner, { addr: env.rpcNode }),
-      queryClient({ addr: env.apiNode }),
       // cosmosBankTxClient(accountSigner, { addr: env.rpcNode }),
+      queryClient({ addr: env.apiNode }),
       updateUserBalance()(dispatch, getState),
     ]);
 
@@ -41,7 +41,7 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
       payload: {
         txClient: tc,
         queryClient: qc,
-        bankTxClient: null,
+        // bankTxClient: tc,
       },
     });
     if (wallet.getPasswordPromise.resolve) {
@@ -395,7 +395,7 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
           ],
         };
         console.log(send);
-        const msg = await env.bankTxClient.msgSend(send);
+        const msg = await env.txClient.msgSend(send);
         const fee = {
           amount: [
             {
@@ -406,7 +406,7 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
           gas: "200000",
         };
         const memo = "";
-        const result = await env.bankTxClient.signAndBroadcast([msg], {
+        const result = await env.txClient.signAndBroadcast([msg], {
           fee,
           memo,
         });
@@ -442,6 +442,7 @@ export const unlockLedgerWallet = () => {
     // const LedgerSigner = (await import("@cosmjs/ledger-amino")).LedgerSigner;
     let accountSigner;
 
+    dispatch({ type: walletActions.START_UNLOCKING_WALLET });
     try {
       const transport = await TransportWebUSB.create();
       // const app = new CosmosApp(transport);
@@ -528,6 +529,7 @@ export const unlockLedgerWallet = () => {
     } catch (e) {
       console.error(e);
       dispatch(notify(e.message, "error"));
+      dispatch({ type: walletActions.SIGN_OUT });
       return null;
     }
 

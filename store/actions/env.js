@@ -1,19 +1,29 @@
 import { walletActions } from "./actionTypes";
+import { notify } from "reapop";
 
-export const sendTransaction = async (
-  { message, memo, denom = process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN },
-  env
-) => {
-  const fee = {
-    amount: [{ amount: "0", denom }],
-    gas: "200000",
+export const sendTransaction = ({
+  message,
+  memo,
+  denom = process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN,
+}) => {
+  return async (dispatch, getState) => {
+    const { env, wallet } = getState();
+    const fee = {
+      amount: [{ amount: "0", denom }],
+      gas: "200000",
+    };
+    console.log("wallet isLedger", wallet.activeWallet.isLedger);
+    if (wallet.activeWallet && wallet.activeWallet.isLedger) {
+      console.log("ledger device");
+      dispatch(notify("Please sign the transaction on your ledger", "info"));
+    }
+    console.log("message", message);
+    const result = await env.txClient.signAndBroadcast([message], {
+      fee,
+      memo,
+    });
+    return result;
   };
-  console.log("message", message);
-  const result = await env.txClient.signAndBroadcast([message], {
-    fee,
-    memo,
-  });
-  return result;
 };
 
 export const setupTxClients = async (dispatch, getState) => {
