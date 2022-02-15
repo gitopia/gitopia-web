@@ -206,7 +206,7 @@ function RepositoryHeader({ repository, ...props }) {
               ) : (
                 <p>Please login to fork repository</p>
               )}
-              <ul className="menu compact mt-8">
+              <ul className="menu compact mt-8 max-h-80 overflow-auto">
                 {props.dashboards.map((d) => {
                   const isOwner = repository.owner.id === d.id;
                   return (

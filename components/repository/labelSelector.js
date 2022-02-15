@@ -62,25 +62,27 @@ function LabelSelector({
             <a className="btn btn-block btn-ghost btn-sm">Edit Labels</a>
           </Link>
         </div>
-        {repoLabels.map((l, i) => {
-          return (
-            <div className="form-control" key={"label" + i}>
-              <label className="cursor-pointer label justify-start">
-                <input
-                  type="checkbox"
-                  checked={checkMap[l.id]}
-                  onChange={() => {
-                    let newCheckMap = { ...checkMap };
-                    newCheckMap[l.id] = !newCheckMap[l.id];
-                    setCheckMap(newCheckMap);
-                  }}
-                  className="checkbox checkbox-sm mr-2"
-                />
-                <Label color={l.color} name={l.name} />
-              </label>
-            </div>
-          );
-        })}
+        <div className="max-h-60 overflow-auto">
+          {repoLabels.map((l, i) => {
+            return (
+              <div className="form-control" key={"label" + i}>
+                <label className="cursor-pointer label justify-start">
+                  <input
+                    type="checkbox"
+                    checked={checkMap[l.id]}
+                    onChange={() => {
+                      let newCheckMap = { ...checkMap };
+                      newCheckMap[l.id] = !newCheckMap[l.id];
+                      setCheckMap(newCheckMap);
+                    }}
+                    className="checkbox checkbox-sm mr-2"
+                  />
+                  <Label color={l.color} name={l.name} />
+                </label>
+              </div>
+            );
+          })}
+        </div>
         <div className="flex w-full mt-2 btn-group">
           <a
             className="btn btn-sm flex-1"

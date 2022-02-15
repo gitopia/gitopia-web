@@ -186,7 +186,7 @@ export default function BranchSelector({
         </div>
 
         {filteredList.length ? (
-          <ul className="menu text-xs mt-2">
+          <ul className="menu text-xs mt-2 max-h-80 overflow-auto">
             {filteredList.map((b, i) => {
               return (
                 <li key={"branch-selector" + i}>
