@@ -12,6 +12,7 @@ import Footer from "../../../../../components/footer";
 import getRepositoryRelease from "../../../../../helpers/getRepositoryRelease";
 import ReleaseView from "../../../../../components/repository/releaseView";
 import useRepository from "../../../../../hooks/useRepository";
+import { useErrorStatus } from "../../../../errorHandler";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -20,6 +21,7 @@ export async function getServerSideProps() {
 function RepositoryReleaseView(props) {
   const router = useRouter();
   const { repository } = useRepository();
+  const { setErrorStatusCode } = useErrorStatus();
 
   const [release, setRelease] = useState({
     creator: "",
@@ -48,6 +50,9 @@ function RepositoryReleaseView(props) {
       );
       console.log(rel);
       if (rel) setRelease(rel);
+      else {
+        setErrorStatusCode(404);
+      }
     }
   };
 
@@ -90,6 +95,7 @@ function RepositoryReleaseView(props) {
               repository={repository}
               release={release}
               latest={isLatest}
+              noLink={true}
             />
           </div>
         </main>

@@ -13,6 +13,7 @@ import useRepository from "../../../../hooks/useRepository";
 import CommitDetailRow from "../../../../components/repository/commitDetailRow";
 import DiffView from "../../../../components/repository/diffView";
 import getCommit from "../../../../helpers/getCommit";
+import { useErrorStatus } from "../../../errorHandler";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -21,6 +22,7 @@ export async function getServerSideProps() {
 function RepositoryCommitDiffView(props) {
   const router = useRouter();
   const { repository } = useRepository();
+  const { setErrorStatusCode } = useErrorStatus();
 
   const [viewType, setViewType] = useState("unified");
 
@@ -36,7 +38,7 @@ function RepositoryCommitDiffView(props) {
     if (repository) {
       console.log(repository);
       const c = await getCommit(repository.id, router.query.commitId);
-      if (c) {
+      if (c.id) {
         const data = await getDiff(
           Number(repository.id),
           router.query.commitId,
@@ -47,6 +49,8 @@ function RepositoryCommitDiffView(props) {
         if (data) {
           setCommit({ ...c, ...data });
         }
+      } else {
+        setErrorStatusCode(404);
       }
     }
   }, [router.query, repository.id]);
