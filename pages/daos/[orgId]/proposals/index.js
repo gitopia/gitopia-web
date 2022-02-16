@@ -56,7 +56,6 @@ function GitopiaProposalsView(props) {
 
   useEffect(async () => {
     const p = await getProposals();
-    console.log(p);
     setProposals(p);
   });
 
@@ -195,22 +194,39 @@ function GitopiaProposalsView(props) {
                         <div className="mt-8 w-fit border-t-2 border-grey ml-3 mr-3"></div>
                         <div className="flex mt-2">
                           <div className="mr-5 secondary uppercase font-bold text-xs ml-3 text-type-secondary">
-                            {"yes " + parseInt(p.final_tally_result.yes)}
+                            {p.final_tally_result !== undefined
+                              ? "yes " + parseInt(p.final_tally_result.yes)
+                              : ""}
                           </div>
                           <div className="mr-5 secondary uppercase font-bold text-xs ml-3 text-type-secondary">
-                            {"abstain " +
-                              parseInt(p.final_tally_result.abstain)}
+                            {p.final_tally_result !== undefined
+                              ? "abstain " +
+                                parseInt(p.final_tally_result.abstain)
+                              : ""}
                           </div>
                           <div className="mr-5 secondary uppercase font-bold text-xs ml-3 text-type-secondary">
-                            {"no " + parseInt(p.final_tally_result.no)}
+                            {p.final_tally_result !== undefined
+                              ? "no " + parseInt(p.final_tally_result.no)
+                              : ""}
                           </div>
                           <div className="mr-5 secondary uppercase font-bold text-xs ml-3 text-type-secondary">
-                            {"no with veto " +
-                              parseInt(p.final_tally_result.no_with_veto)}
+                            {p.final_tally_result !== undefined
+                              ? "no with veto " +
+                                parseInt(p.final_tally_result.no_with_veto)
+                              : ""}
                           </div>
-                          <div className="link link-primary modal-button no-underline ml-auto font-bold text-xs uppercase text-green mr-3">
+                          <a
+                            className="link link-primary modal-button no-underline ml-auto font-bold text-xs uppercase text-green mr-3"
+                            href={
+                              "/daos/" +
+                              router.query.orgId +
+                              "/proposals/" +
+                              p.proposal_id
+                            }
+                            target="_blank"
+                          >
                             read proposal
-                          </div>
+                          </a>
                         </div>
                       </div>
                     </div>
