@@ -102,7 +102,7 @@ export const createRepository = ({
 export const createIssue = ({
   title = "",
   description = "",
-  repositoryId = 0,
+  repositoryId = null,
   labels = [],
   weight = 0,
   assignees = [],
@@ -116,11 +116,18 @@ export const createIssue = ({
       creator: wallet.selectedAddress,
       title,
       description,
-      repositoryId,
-      labelIds: labels,
-      weight,
-      assignees,
+      repositoryId: repositoryId.toString(),
     };
+
+    if (assignees.length) {
+      issue.assignees = assignees;
+    }
+    if (labels.length) {
+      issue.labelIds = labels;
+    }
+    if (weight) {
+      issue.weight = weight;
+    }
 
     try {
       const message = await env.txClient.msgCreateIssue(issue);
@@ -158,13 +165,23 @@ export const createComment = ({
       creator: wallet.selectedAddress,
       parentId,
       body,
-      attachments,
-      diffHunk,
-      path,
-      system,
-      authorAssociation,
       commentType,
     };
+    if (attachments.length) {
+      comment.attachments = attachments;
+    }
+    if (diffHunk.trim() !== "") {
+      comment.diffHunk = diffHunk;
+    }
+    if (path.trim() !== "") {
+      comment.path = path;
+    }
+    if (authorAssociation.trim() !== "") {
+      comment.authorAssociation = authorAssociation;
+    }
+    if (system) {
+      comment.system = true;
+    }
 
     try {
       const message = await env.txClient.msgCreateComment(comment);
@@ -788,6 +805,9 @@ export const createPullRequest = ({
   headRepoId,
   baseBranch,
   baseRepoId,
+  reviewers = [],
+  assignees = [],
+  labelIds = [],
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
@@ -803,6 +823,16 @@ export const createPullRequest = ({
       baseBranch,
       baseRepoId,
     };
+
+    if (reviewers.length) {
+      pull.reviewers = reviewers;
+    }
+    if (assignees.length) {
+      pull.assignees = assignees;
+    }
+    if (labelIds.length) {
+      pull.labelIds = labelIds;
+    }
 
     try {
       const message = await env.txClient.msgCreatePullRequest(pull);
