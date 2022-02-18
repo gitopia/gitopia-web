@@ -17,7 +17,7 @@ function FaucetReceiver(props) {
   const getTokens = (amount) => {
     if (loading !== 0) return;
     if (!props.selectedAddress) {
-      props.notify("Please login before claiming tokens", "error");
+      props.notify("Please sign in before claiming tokens", "error");
       return;
     }
     setLoading(amount);
@@ -46,7 +46,7 @@ function FaucetReceiver(props) {
       })
       .catch((err) => {
         console.error(err);
-        props.notify("Unable to react faucet", "error");
+        props.notify("Unable to reach faucet", "error");
         setLoading(0);
       });
   };

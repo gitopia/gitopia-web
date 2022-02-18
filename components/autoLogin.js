@@ -21,6 +21,7 @@ function AutoLogin(props) {
   const [walletName, setWalletName] = useState("");
   const [address, setAddress] = useState("");
   const [showDialog, setShowDialog] = useState(false);
+  const [externalWalletMsg, setExternalWalletMsg] = useState(null);
   const inputEl = useRef();
 
   useEffect(async () => {
@@ -33,24 +34,13 @@ function AutoLogin(props) {
     }
     if (lastWallet) {
       if (!props.activeWallet) {
-        console.log(
-          "Last Wallet found, unlocking.. ",
-          lastWallet.name,
-          "isKeplr",
-          lastWallet.isKeplr
-        );
+        console.log("Last wallet found.. ", lastWallet.name);
         if (lastWallet.isKeplr) {
           await initKeplr();
           const acc = await props.unlockKeplrWallet();
           console.log(acc);
           if (acc) {
             console.log("Keplr sign in success");
-          }
-        } else if (lastWallet.isLedger) {
-          const acc = await props.unlockLedgerWallet();
-          console.log(acc);
-          if (acc) {
-            console.log("Ledger sign in success");
           }
         } else {
           setWalletName(lastWallet.name);
@@ -70,6 +60,12 @@ function AutoLogin(props) {
   useEffect(() => {
     if (props.getPassword) {
       setShowDialog(true);
+      console.log("ASDSAD", props.getPassword);
+      if (props.getPassword === "Connect") {
+        setExternalWalletMsg("Please open Cosmos app on your ledger");
+      } else {
+        setExternalWalletMsg(null);
+      }
     }
   }, [props.getPassword]);
 
@@ -88,15 +84,21 @@ function AutoLogin(props) {
   }, [props.activeWallet]);
 
   const unlockLocalWallet = async () => {
+    console.log("getPassworad", props.getPassword);
     let res;
     if (props.getPassword === "Unlock")
       res = await props.unlockWallet({
         name: walletName,
         password: password,
       });
-    else res = await props.downloadWallet(password);
+    else if (props.getPassword === "Download") {
+      res = await props.downloadWallet(password);
+    } else if (props.getPassword === "Connect") {
+      res = await props.unlockLedgerWallet({ name: walletName });
+      console.log(res);
+    }
     if (res) {
-      console.log("Local sign in success");
+      console.log("Sign in success");
       setShowDialog(false);
       setPassword("");
       setPasswordHint({ shown: false });
@@ -130,26 +132,30 @@ function AutoLogin(props) {
                 readOnly
               />
             </div>
-            <div className="">
-              <TextInput
-                type="password"
-                label={
-                  "Unlock wallet " +
-                  walletName +
-                  " (" +
-                  shrinkAddress(address) +
-                  ")"
-                }
-                name="wallet_password"
-                placeholder="Password"
-                value={password}
-                setValue={setPassword}
-                hint={passwordHint}
-                onEnter={unlockLocalWallet}
-                size="sm"
-                ref={inputEl}
-              />
-            </div>
+            {externalWalletMsg ? (
+              <div className="">{externalWalletMsg}</div>
+            ) : (
+              <div className="">
+                <TextInput
+                  type="password"
+                  label={
+                    "Unlock wallet " +
+                    walletName +
+                    " (" +
+                    shrinkAddress(address) +
+                    ")"
+                  }
+                  name="wallet_password"
+                  placeholder="Password"
+                  value={password}
+                  setValue={setPassword}
+                  hint={passwordHint}
+                  onEnter={unlockLocalWallet}
+                  size="sm"
+                  ref={inputEl}
+                />
+              </div>
+            )}
             <div className="modal-action">
               <button
                 className="btn btn-sm btn-block flex-1"
@@ -165,8 +171,12 @@ function AutoLogin(props) {
                 Cancel
               </button>
               <button
-                className="btn btn-sm btn-block btn-primary flex-1"
+                className={
+                  "btn btn-sm btn-block btn-primary flex-1" +
+                  (props.unlockingWallet ? " loading" : "")
+                }
                 onClick={unlockLocalWallet}
+                disabled={props.unlockingWallet}
               >
                 {props.getPassword}
               </button>
@@ -185,6 +195,7 @@ const mapStateToProps = (state) => {
     activeWallet: state.wallet.activeWallet,
     getPassword: state.wallet.getPassword,
     getPasswordPromise: state.wallet.getPasswordPromise,
+    unlockingWallet: state.wallet.unlockingWallet,
   };
 };
 

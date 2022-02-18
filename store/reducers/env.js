@@ -15,7 +15,6 @@ const initialState = {
   initialized: false,
   txClient: null,
   queryClient: null,
-  bankTxClient: null,
 };
 
 const reducer = (state = initialState, action) => {
@@ -94,12 +93,11 @@ const reducer = (state = initialState, action) => {
     }
 
     case envActions.SET_CLIENTS: {
-      const { txClient, queryClient, bankTxClient } = action.payload;
+      const { txClient, queryClient } = action.payload;
       return {
         ...state,
         txClient,
         queryClient,
-        bankTxClient,
       };
     }
 

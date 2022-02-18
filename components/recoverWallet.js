@@ -138,7 +138,7 @@ function RecoverWallet(props) {
           </div>
 
           <div className="max-w-md w-full p-4">
-            <div className="mb-1">
+            <div className="mb-4">
               <TextInput
                 type="text"
                 name="wallet_name"
@@ -148,7 +148,7 @@ function RecoverWallet(props) {
                 hint={nameHint}
               />
             </div>
-            <div className="mb-1">
+            <div className="mb-4">
               <TextInput
                 type="password"
                 name="wallet_password"
@@ -158,7 +158,7 @@ function RecoverWallet(props) {
                 hint={passwordHint}
               />
             </div>
-            <div className="mb-5">
+            <div className="mb-8">
               <TextInput
                 type="password"
                 name="wallet_confirm_password"
@@ -185,7 +185,7 @@ function RecoverWallet(props) {
             Enter your wallet recovery phrase to log in
           </div>
           <div className="max-w-md w-full p-4">
-            <div className="mb-5">
+            <div className="mb-8">
               <TextInput
                 type="text"
                 name="mnemonic"
