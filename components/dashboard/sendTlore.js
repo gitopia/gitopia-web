@@ -1,21 +1,22 @@
 import { useState } from "react";
-import getUser from "../../helpers/getUser";
 import { notify } from "reapop";
 import { connect } from "react-redux";
 import { updateUserBalance } from "../../store/actions/wallet";
 
 function SendTlore(props) {
-  const [validateAddressError, setValidateAddressError] = useState("");
-  const [validateAmountError, setValidateAmountError] = useState("");
+  const [validateAddressError, setValidateAddressError] = useState(null);
+  const [validateAmountError, setValidateAmountError] = useState(null);
   const validAddress = new RegExp("gitopia[a-z0-9]{39}");
   const [receiverAddress, setReceiverAddress] = useState("");
   const [amount, setAmount] = useState(0);
-  const validateUserAddress = async (address) => {
+  const [loading, setLoading] = useState(false);
+  const validateUserAddress = (address) => {
     if (address.trim() !== "" && validAddress.test(address)) {
-      const res = await getUser(address);
       setValidateAddressError(null);
+      return true;
     } else {
       setValidateAddressError("Enter a valid address");
+      return false;
     }
   };
 
@@ -26,11 +27,11 @@ function SendTlore(props) {
     return !isNaN(n1) && n2 === n1 && n1.toString() === n;
   }
 
-  const validateAmount = async (amount) => {
+  const validateAmount = (amount) => {
     setValidateAmountError(null);
     let Vamount = Number(amount);
     if (amount == "" || amount == 0) {
-      setValidateAmountError("Enter Valid Amount");
+      setValidateAmountError("Enter a valid amount");
     }
 
     let balance = props.loreBalance;
@@ -40,100 +41,103 @@ function SendTlore(props) {
     if (Vamount > 0 && isNaturalNumber(Vamount)) {
       if (Vamount < 10 || Vamount > 0) {
         if (Vamount > balance) {
-          setValidateAmountError("Insufficient Balance");
+          setValidateAmountError("Insufficient balance");
+          return false;
         }
       } else {
         setValidateAmountError("Amount should be in range 1-10");
+        return false;
       }
     } else {
-      setValidateAmountError("Enter a Valid Amount");
+      setValidateAmountError("Enter a valid amount");
+      return false;
     }
+    return true;
   };
 
   return (
-    <div className={"dropdown dropdown-end w-full"} tabIndex="0">
-      <div className="dropdown-content shadow-lg bg-base-300 rounded w-56 p-4 mt-1">
-        <div className="form-control mb-2">
-          <input
-            name="toAddress"
-            type="text"
-            placeholder="Receiver's Address"
-            autoComplete="off"
-            onKeyUp={async (e) => {
-              await validateUserAddress(e.target.value);
-            }}
-            onChange={(e) => {
-              setReceiverAddress(e.target.value);
-            }}
-            className="w-full input input-sm input-ghost input-bordered"
-          />
-          {validateAddressError ? (
-            <label className="label">
-              <span className="label-text-alt text-error">
-                {validateAddressError}
-              </span>
-            </label>
-          ) : (
-            ""
-          )}
-        </div>
-        <div>
-          <input
-            name="amount"
-            type="number"
-            placeholder="Amount"
-            autoComplete="off"
-            onKeyUp={async (e) => {
-              await validateAmount(e.target.value);
-            }}
-            onMouseUp={async (e) => {
-              await validateAmount(e.target.value);
-            }}
-            onChange={(e) => {
-              setAmount(e.target.value);
-            }}
-            className="w-full input input-sm input-ghost input-bordered"
-          />
-          {validateAmountError ? (
-            <label className="label">
-              <span className="label-text-alt text-error">
-                {validateAmountError}
-              </span>
-            </label>
-          ) : (
-            ""
-          )}
-        </div>
-        <div className="flex w-full mt-2 btn-group">
-          <a
-            className="btn btn-sm flex-1"
-            onClick={() => {
-              props.setMenuOpen(false);
-              props.setMenuState(1);
-            }}
-          >
-            Cancel
-          </a>
-          <button
-            className={"btn btn-sm btn-primary flex-1 "}
-            onClick={(e) => {
-              props.transferToWallet(
+    <div className="w-60 p-4 flex flex-col">
+      <div className="form-control mb-2">
+        <input
+          name="toAddress"
+          type="text"
+          placeholder="Receiver's Address"
+          autoComplete="off"
+          onKeyUp={(e) => {
+            validateUserAddress(e.target.value);
+          }}
+          onChange={(e) => {
+            setReceiverAddress(e.target.value);
+          }}
+          className="w-full input input-sm input-ghost input-bordered"
+        />
+        {validateAddressError ? (
+          <label className="label">
+            <span className="label-text-alt text-error">
+              {validateAddressError}
+            </span>
+          </label>
+        ) : (
+          ""
+        )}
+      </div>
+      <div>
+        <input
+          name="amount"
+          type="number"
+          step="0.1"
+          placeholder="Amount"
+          autoComplete="off"
+          onKeyUp={(e) => {
+            validateAmount(e.target.value);
+          }}
+          onMouseUp={(e) => {
+            validateAmount(e.target.value);
+          }}
+          onChange={(e) => {
+            setAmount(e.target.value);
+          }}
+          className="w-full input input-sm input-ghost input-bordered"
+        />
+        {validateAmountError ? (
+          <label className="label">
+            <span className="label-text-alt text-error">
+              {validateAmountError}
+            </span>
+          </label>
+        ) : (
+          ""
+        )}
+      </div>
+      <div className="flex w-full mt-2 btn-group">
+        <button
+          className={
+            "btn btn-sm btn-primary flex-1" + (loading ? " loading" : "")
+          }
+          disabled={loading}
+          onClick={async (e) => {
+            setLoading(true);
+            if (
+              validateUserAddress(receiverAddress) &&
+              validateAmount(amount)
+            ) {
+              const res = await props.transferToWallet(
                 props.selectedAddress,
                 receiverAddress,
                 props.advanceUser === true
                   ? amount.toString()
                   : (amount * 1000000).toString()
               );
-              props.setMenuOpen(false);
-              props.setMenuState(1);
-            }}
-            disabled={
-              validateAmountError !== null || validateAddressError !== null
+              if (res) {
+                props.setMenuState(1);
+                props.setMenuOpen(false);
+              }
             }
-          >
-            Send
-          </button>
-        </div>
+            setLoading(false);
+          }}
+        >
+          Send
+        </button>
       </div>
     </div>
   );

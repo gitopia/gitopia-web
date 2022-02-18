@@ -29,7 +29,6 @@ const reducer = (state = initialState, action) => {
     case walletActions.ADD_WALLET: {
       let { wallet, password } = action.payload;
       let wallets = state.wallets;
-      set("lastWallet", wallet);
       if (wallet.name && password) {
         wallets.push({
           name: wallet.name,
@@ -38,7 +37,31 @@ const reducer = (state = initialState, action) => {
             password
           ).toString(),
         });
+        set("lastWallet", wallet);
+        return {
+          ...state,
+          activeWallet: wallet,
+          wallets: wallets,
+        };
       }
+      return state;
+    }
+
+    case walletActions.ADD_EXTERNAL_WALLET: {
+      let { wallet, isKeplr, isLedger } = action.payload;
+      let wallets = state.wallets;
+      const item = {
+        name: wallet.name,
+        wallet: CryptoJS.AES.encrypt(
+          JSON.stringify(wallet),
+          "STRONG_LEDGER"
+        ).toString(),
+      };
+      if (isLedger) {
+        item.isLedger = true;
+      }
+      set("lastWallet", wallet);
+      wallets.push(item);
       return {
         ...state,
         activeWallet: wallet,
@@ -142,6 +165,13 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         unlockingWallet: true,
+      };
+    }
+
+    case walletActions.STOP_UNLOCKING_WALLET: {
+      return {
+        ...state,
+        unlockingWallet: false,
       };
     }
 

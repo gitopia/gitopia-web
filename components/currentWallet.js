@@ -1,11 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
-import { unlockWallet, removeWallet } from "../store/actions/wallet";
+import {
+  unlockWallet,
+  removeWallet,
+  unlockLedgerWallet,
+  unlockKeplrWallet,
+} from "../store/actions/wallet";
+import initKeplr from "../helpers/keplr";
 import TextInput from "./textInput";
+import Link from "next/link";
 
 function CurrentWallet(props) {
   const [isUnlocking, setIsUnlocking] = useState(false);
   const [selectedWallet, setSelectedWallet] = useState("");
+  const [externalWalletMsg, setExternalWalletMsg] = useState(null);
   const [password, setPassword] = useState("");
   const [passwordHint, setPasswordHint] = useState({
     shown: false,
@@ -48,6 +56,16 @@ function CurrentWallet(props) {
     setPasswordHint({ ...passwordHint, shown: false });
     setSelectedWallet(walletName);
     setIsUnlocking(true);
+
+    const wallet =
+      props.wallets[props.wallets.findIndex((x) => x.name === walletName)];
+    if (wallet && wallet.isLedger) {
+      props.unlockLedgerWallet({ name: wallet.name });
+      setExternalWalletMsg("Please open Cosmos app on your ledger to verify");
+    } else {
+      setExternalWalletMsg(null);
+    }
+
     setTimeout(() => {
       if (inputEl.current) inputEl.current.focus();
     }, 0);
@@ -86,32 +104,54 @@ function CurrentWallet(props) {
               />
             </svg>
           </button>
-          <TextInput
-            type="password"
-            name="wallet_password"
-            label={"Password for " + selectedWallet}
-            placeholder="Password"
-            value={password}
-            setValue={setPassword}
-            hint={passwordHint}
-            onEnter={unlockWallet}
-            size="sm"
-            ref={inputEl}
-          />
-          <div className="flex mt-4 w-full btn-group">
-            <button
-              className="btn btn-sm btn-block flex-1"
-              onClick={resetWallet}
-            >
-              Cancel
-            </button>
-            <button
-              className="btn btn-sm btn-block btn-primary flex-1"
-              onClick={unlockWallet}
-            >
-              Unlock
-            </button>
-          </div>
+          {externalWalletMsg ? (
+            <div className="mt-2">
+              <div className="text-sm">
+                <span>{selectedWallet}</span>
+                <span
+                  style={{ fontSize: "0.7em" }}
+                  className="rounded-md relative -top-px border border-secondary text-purple-50 ml-2 px-2 py-0.5"
+                >
+                  Ledger
+                </span>
+              </div>
+              <div className="mt-2 text-xs">{externalWalletMsg}</div>
+              <div className="flex mt-4 w-full btn-group">
+                <button
+                  className="btn btn-sm btn-block btn-primary flex-1"
+                  onClick={async () => {
+                    await props.unlockLedgerWallet({ name: selectedWallet });
+                  }}
+                  disabled={props.unlockingWallet}
+                >
+                  Connect
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <TextInput
+                type="password"
+                name="wallet_password"
+                label={"Password for " + selectedWallet}
+                placeholder="Password"
+                value={password}
+                setValue={setPassword}
+                hint={passwordHint}
+                onEnter={unlockWallet}
+                size="sm"
+                ref={inputEl}
+              />
+              <div className="flex mt-4 w-full btn-group">
+                <button
+                  className="btn btn-sm btn-block btn-primary flex-1"
+                  onClick={unlockWallet}
+                >
+                  Unlock
+                </button>
+              </div>
+            </>
+          )}
         </div>
       ) : (
         <div className="flex flex-col">
@@ -125,7 +165,7 @@ function CurrentWallet(props) {
                   startUnlockingWallet(wallet.name);
                 }}
                 className={
-                  "btn rounded-full px-4 mb-1 avatar relative " +
+                  "btn rounded-full px-4 mb-2 avatar relative justify-start " +
                   (isSelected ? "btn-disabled" : "btn-ghost")
                 }
                 key={i}
@@ -138,10 +178,57 @@ function CurrentWallet(props) {
                     }
                   />
                 </div>
-                <div className="ml-10 mr-2">{wallet.name}</div>
+                <span className="ml-10 mr-2 whitespace-nowrap">
+                  <span>{wallet.name}</span>
+                  {wallet.isLedger ? (
+                    <span
+                      style={{ fontSize: "0.7em" }}
+                      className="rounded-md relative -top-px border border-secondary text-purple-50 ml-2 px-2 py-0.5"
+                    >
+                      Ledger
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </span>
               </button>
             );
           })}
+
+          <button
+            className="btn btn-outline border-grey mb-2 rounded-full px-4 relative justify-start"
+            onClick={async () => {
+              await initKeplr();
+              props.unlockKeplrWallet();
+            }}
+          >
+            <div className="rounded-full mask mask-circle w-10 h-10 bg-primary flex justify-center items-center absolute left-1">
+              <img src="/keplr-logo.svg"></img>
+            </div>
+            <div className="ml-10 mr-2 whitespace-nowrap">Connect Keplr</div>
+          </button>
+
+          <Link href="/login">
+            <a className="btn btn-outline border-grey rounded-full px-4 relative justify-start">
+              <div className="rounded-full w-10 h-10 bg-primary flex justify-center items-center absolute left-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+              </div>
+              <div className="ml-10 mr-2 whitespace-nowrap">Create New</div>
+            </a>
+          </Link>
         </div>
       )}
     </div>
@@ -151,11 +238,14 @@ function CurrentWallet(props) {
 const mapStateToProps = (state) => {
   return {
     wallets: state.wallet.wallets,
+    unlockingWallet: state.wallet.unlockingWallet,
     activeWallet: state.wallet.activeWallet,
   };
 };
 
 export default connect(mapStateToProps, {
   unlockWallet,
+  unlockLedgerWallet,
   removeWallet,
+  unlockKeplrWallet,
 })(CurrentWallet);

@@ -4,12 +4,14 @@ import { useState } from "react";
 import CreateWallet from "../components/createWallet";
 import RecoverWallet from "../components/recoverWallet";
 import Footer from "../components/footer";
+import ConnectLedger from "../components/connectLedger";
 
 /*
 Wizard Steps
 1 - Default selection screen
-2 - Create new wallet
-3 - Recover existing wallet
+2 - Connect ledger
+3 - Create new wallet
+4 - Recover existing wallet
 */
 
 export default function Login(props) {
@@ -24,36 +26,46 @@ export default function Login(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="mt-12 container mx-auto flex flex-col justify-center items-center min-h-full relative">
+      <div className="mt-12 px-4 container mx-auto flex flex-1 flex-col justify-center items-center min-h-full relative">
         {step === 1 ? (
           <>
             <div className="text-xs uppercase text-green mt-12 mb-2">
               Welcome to Gitopia
             </div>
             <div className="text-6xl mb-16">Access Gitopia</div>
-            <div className="max-w-2xl w-full p-4">
-              <div className="flex">
+            <div className="max-w-lg w-full p-4">
+              <div className="flex flex-col gap-2">
                 <button
-                  className="flex-1 border-2 border-grey rounded-md mr-4 bg-base-100 overflow-hidden px-8 py-4 w-60 btn-ghost focus:outline-none flex flex-col items-center"
+                  className="flex-1 border-2 border-primary rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost w-full focus:outline-none hover:border-primary flex items-center"
                   onClick={(e) => {
                     setStep(2);
                   }}
                 >
-                  <img src="/new-wallet.svg" width="179px" height="131px" />
-                  <div className="mt-4">Create new wallet</div>
+                  <img src="/new-wallet-ledger.svg" className="w-20 h-20" />
+                  <div className="ml-8">
+                    <span>Connect Ledger</span>{" "}
+                    <span className="badge badge-priamry ml-2">
+                      Recommended
+                    </span>
+                  </div>
                 </button>
                 <button
-                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-4 w-60 btn-ghost focus:outline-none flex flex-col items-center"
+                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
                   onClick={(e) => {
                     setStep(3);
                   }}
                 >
-                  <img
-                    src="/existing-wallet.svg"
-                    width="179px"
-                    height="131px"
-                  />
-                  <div className="mt-4">Recover exisiting wallet</div>
+                  <img src="/new-wallet.svg" className="w-20 h-20" />
+                  <div className="ml-8">Create new local wallet</div>
+                </button>
+                <button
+                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
+                  onClick={(e) => {
+                    setStep(4);
+                  }}
+                >
+                  <img src="/existing-wallet.svg" className="w-20 h-20" />
+                  <div className="ml-8">Recover exisiting wallet</div>
                 </button>
               </div>
             </div>
@@ -65,7 +77,7 @@ export default function Login(props) {
         ) : (
           <div>
             <button
-              className="btn btn-ghost btn-circle absolute left-0 top-0"
+              className="btn btn-ghost btn-circle absolute left-4 top-0"
               onClick={(e) => {
                 setStep(1);
               }}
@@ -87,9 +99,9 @@ export default function Login(props) {
             </button>
           </div>
         )}
-
-        {step === 2 && <CreateWallet />}
-        {step === 3 && <RecoverWallet />}
+        {step === 2 && <ConnectLedger />}
+        {step === 3 && <CreateWallet />}
+        {step === 4 && <RecoverWallet />}
       </div>
       <Footer />
     </div>

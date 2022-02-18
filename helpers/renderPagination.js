@@ -160,7 +160,7 @@ export default function renderPagination(pagination, setPage, page) {
       {firstPage}
       {previousPage}
       {beforePage}
-      <button className="btn btn-sm btn-active">{page}</button>
+      <button className="btn btn-sm btn-disabled text-primary">{page}</button>
       {afterPage}
       {nextPage}
       {lastPage}
