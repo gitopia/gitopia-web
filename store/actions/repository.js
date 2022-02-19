@@ -182,6 +182,7 @@ export const createComment = ({
     if (system) {
       comment.system = true;
     }
+    console.log("comment", comment);
 
     try {
       const message = await env.txClient.msgCreateComment(comment);

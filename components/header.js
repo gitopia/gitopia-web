@@ -62,7 +62,7 @@ function Header(props) {
 
   const handleKeplrAccountChange = async () => {
     console.log("handling keplr wallet change");
-    if (props.activeWallet.isKeplr) {
+    if (props.activeWallet && props.activeWallet.isKeplr) {
       await props.unlockKeplrWallet();
     }
   };
