@@ -15,7 +15,6 @@ export const sendTransaction = ({
     };
     let notifId, result;
     if (wallet.activeWallet && wallet.activeWallet.isLedger) {
-      console.log("ledger device");
       const msg = dispatch(
         notify("Please sign the transaction on your ledger", "loading", {
           dismissible: false,

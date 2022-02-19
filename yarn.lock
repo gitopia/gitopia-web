@@ -350,7 +350,7 @@
 
 "@gitopia/gitopia-js@https://github.com/gitopia/gitopia-js.git":
   version "0.11.0"
-  resolved "https://github.com/gitopia/gitopia-js.git#8efaa8820f4e282f9c53c1acd2427e0cc0fc7e8f"
+  resolved "https://github.com/gitopia/gitopia-js.git#df05578af8722399215ba8d55c6935fc505b59a4"
 
 "@hapi/accept@5.0.1":
   version "5.0.1"
