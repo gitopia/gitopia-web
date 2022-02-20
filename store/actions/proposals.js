@@ -2,7 +2,10 @@ import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { stringToPath } from "@cosmjs/crypto";
 import { notify } from "reapop";
 import { Any } from "../cosmos.gov.v1beta1/module/types/google/protobuf/any";
-import { TextProposal } from "../cosmos.gov.v1beta1/module/types/cosmos/gov/v1beta1/gov";
+import {
+  TextProposal,
+  VoteOption,
+} from "../cosmos.gov.v1beta1/module/types/cosmos/gov/v1beta1/gov";
 import {
   SoftwareUpgradeProposal,
   Plan,
@@ -28,7 +31,7 @@ export const submitGovernanceProposal = (title, description, proposalType) => {
 
         const send = {
           content: msgAny,
-          initialDeposit: [],
+          initialDeposit: [{ amount: "5", denom: "utlore" }],
           proposer: wallet.selectedAddress,
         };
 
@@ -168,6 +171,89 @@ export const communityPoolSpendProposal = (
         });
         if (result && result.code === 0) {
           dispatch(notify("Proposal Submitted", "info"));
+        }
+        return result;
+      } catch (e) {
+        console.error(e);
+        dispatch(notify(e.message, "error"));
+      }
+    }
+  };
+};
+
+export const proposalDeposit = (proposalId, amount) => {
+  return async (dispatch, getState) => {
+    const { wallet } = getState();
+    if (wallet.activeWallet) {
+      try {
+        await setupTxClients(dispatch, getState);
+        const { env } = getState();
+        const amountToSend = [
+          {
+            amount: amount,
+            denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+          },
+        ];
+        const send = {
+          proposalId: proposalId,
+          depositor: wallet.selectedAddress,
+          amount: [{ amount: amount.toString(), denom: "utlore" }],
+        };
+
+        const msg = await env.govTxClient.msgDeposit(send);
+
+        const fee = {
+          amount: [{ amount: "0", denom: "tlore" }],
+          gas: "200000",
+        };
+
+        const memo = "";
+        const result = await env.govTxClient.signAndBroadcast([msg], {
+          fee,
+          memo,
+        });
+        if (result && result.code === 0) {
+          dispatch(notify("Proposal Deposit Submitted", "info"));
+        }
+        return result;
+      } catch (e) {
+        console.error(e);
+        dispatch(notify(e.message, "error"));
+      }
+    }
+  };
+};
+
+export const proposalVote = (proposalId, option) => {
+  return async (dispatch, getState) => {
+    console.log("proposalVote");
+    const { wallet } = getState();
+    if (wallet.activeWallet) {
+      try {
+        await setupTxClients(dispatch, getState);
+        const { env } = getState();
+
+        const send = {
+          proposalId: proposalId,
+          voter: wallet.selectedAddress,
+          option: VoteOption.VOTE_OPTION_YES,
+        };
+
+        const msg = await env.govTxClient.msgVote(send);
+
+        const fee = {
+          amount: [{ amount: "0", denom: "utlore" }],
+          gas: "200000",
+        };
+
+        const memo = "";
+        const result = await env.govTxClient.signAndBroadcast([msg], {
+          fee,
+          memo,
+        });
+        if (result && result.code === 0) {
+          dispatch(notify("Proposal Vote Submitted", "info"));
+          console.log(msg);
         }
         return result;
       } catch (e) {
