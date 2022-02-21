@@ -188,16 +188,15 @@ export const proposalDeposit = (proposalId, amount) => {
       try {
         await setupTxClients(dispatch, getState);
         const { env } = getState();
-        const amountToSend = [
-          {
-            amount: amount,
-            denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
-          },
-        ];
         const send = {
           proposalId: proposalId,
           depositor: wallet.selectedAddress,
-          amount: [{ amount: amount.toString(), denom: "utlore" }],
+          amount: [
+            {
+              amount: amount.toString(),
+              denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+            },
+          ],
         };
 
         const msg = await env.govTxClient.msgDeposit(send);
@@ -226,8 +225,17 @@ export const proposalDeposit = (proposalId, amount) => {
 
 export const proposalVote = (proposalId, option) => {
   return async (dispatch, getState) => {
-    console.log("proposalVote");
     const { wallet } = getState();
+    let choice;
+    if (option === "VOTE_OPTION_YES") {
+      choice = VoteOption.VOTE_OPTION_YES;
+    }
+    if (option === "VOTE_OPTION_NO") {
+      choice = VoteOption.VOTE_OPTION_NO;
+    }
+    if (option === "VOTE_OPTION_ABSTAIN") {
+      choice = VoteOption.VOTE_OPTION_ABSTAIN;
+    }
     if (wallet.activeWallet) {
       try {
         await setupTxClients(dispatch, getState);
@@ -236,7 +244,7 @@ export const proposalVote = (proposalId, option) => {
         const send = {
           proposalId: proposalId,
           voter: wallet.selectedAddress,
-          option: VoteOption.VOTE_OPTION_YES,
+          option: choice,
         };
 
         const msg = await env.govTxClient.msgVote(send);
@@ -253,7 +261,6 @@ export const proposalVote = (proposalId, option) => {
         });
         if (result && result.code === 0) {
           dispatch(notify("Proposal Vote Submitted", "info"));
-          console.log(msg);
         }
         return result;
       } catch (e) {

@@ -102,8 +102,14 @@ function RepositoryProposalCreateView(props) {
   }, [router.query]);
 
   const redirectToProposal = async (res) => {
+    let result = JSON.parse(res.rawLog);
     if (res.code === 0) {
-      router.push("/daos/" + router.query.orgId + "/proposals");
+      router.push(
+        "/daos/" +
+          router.query.orgId +
+          "/proposals/" +
+          result[0].events[4].attributes[0].value
+      );
     }
   };
 
