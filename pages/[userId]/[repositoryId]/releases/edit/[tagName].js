@@ -76,6 +76,7 @@ function RepositoryReleaseEditView(props) {
             uploader: props.selectedAddress,
           };
         }),
+        releaseId: parseInt(release.id),
       };
       console.log("before call", issue);
       const res = await props.createRelease(issue, true);

@@ -866,6 +866,7 @@ export const createRelease = (
     draft = null,
     preRelease = null,
     isTag = null,
+    releaseId = null,
   },
   edit = false
 ) => {
@@ -886,6 +887,10 @@ export const createRelease = (
       preRelease,
       isTag,
     };
+
+    if (edit) {
+      release.id = releaseId;
+    }
 
     console.log("release", release, "edit", edit);
     try {
