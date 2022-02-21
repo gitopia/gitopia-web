@@ -909,9 +909,10 @@ export const createRelease = (
 
 export const deleteRelease = ({ releaseId }) => {
   return async (dispatch, getState) => {
-    const { wallet, env } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "release")))
       return null;
+
+    const { wallet, env } = getState();
     const release = {
       creator: wallet.selectedAddress,
       id: releaseId,
@@ -919,8 +920,9 @@ export const deleteRelease = ({ releaseId }) => {
 
     console.log("release", release);
     try {
+      console.log(env.txClient.msgDeleteRelease);
       const message = await env.txClient.msgDeleteRelease(release);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {

@@ -54,7 +54,10 @@ function RepositoryReleaseView(props) {
         router.query.tagName
       );
       console.log(rel);
-      if (rel) setRelease(rel);
+
+      if (rel && rel.id && rel.id !== "0") {
+        setRelease(rel);
+      }
     }
   };
 

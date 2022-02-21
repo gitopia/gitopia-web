@@ -36,7 +36,8 @@ function RepositoryReleasesView(props) {
         repository.name
       );
       console.log(release);
-      if (release) setLatestRelease(release);
+      if (release && release.id && release.id !== "0")
+        setLatestRelease(release);
       if (repository.releases.length > 1) {
         const older = repository.releases
           .slice(0, repository.releases.length - 1)
