@@ -101,6 +101,12 @@ function RepositoryProposalCreateView(props) {
     }
   }, [router.query]);
 
+  const redirectToProposal = async (res) => {
+    if (res.code === 0) {
+      router.push("/daos/" + router.query.orgId + "/proposals");
+    }
+  };
+
   return (
     <div
       data-theme="dark"
@@ -300,6 +306,7 @@ function RepositoryProposalCreateView(props) {
                               setAddress("");
                               setAmount("");
                               setTitle("");
+                              redirectToProposal(res);
                             });
                         }}
                       >
@@ -379,6 +386,7 @@ function RepositoryProposalCreateView(props) {
                               setDescription("");
                               setReleaseVersionTag("");
                               setHeight("");
+                              redirectToProposal(res);
                             });
                         }}
                       >
@@ -483,6 +491,7 @@ function RepositoryProposalCreateView(props) {
                               setLoading(false);
                               setTitle("");
                               setDescription("");
+                              redirectToProposal(res);
                             });
                         }}
                       >
@@ -513,6 +522,7 @@ function RepositoryProposalCreateView(props) {
                             setLoading(false);
                             setTitle("");
                             setDescription("");
+                            redirectToProposal(res);
                           });
                       }}
                     >

@@ -4,10 +4,8 @@ export default function OrgViewTabs({ hrefBase, active }) {
   return (
     <div className="">
       <div className="tabs">
-        <Link href={hrefBase + "/repositories"}>
-          <a
-            className={"tab" + (active === "repositories" ? " tab-active" : "")}
-          >
+        <Link href={hrefBase + "/voting"}>
+          <a className={"tab" + (active === "voting" ? " tab-active" : "")}>
             <span className="icon mr-2">
               <svg
                 viewBox="0 0 24 24"
@@ -20,7 +18,7 @@ export default function OrgViewTabs({ hrefBase, active }) {
                 <path d="M14.5 7L19.5 12L14.5 17" strokeWidth="2" />
               </svg>
             </span>
-            <span>Repositories</span>
+            <span>Voting</span>
           </a>
         </Link>
         <Link href={hrefBase + "/proposals"}>
