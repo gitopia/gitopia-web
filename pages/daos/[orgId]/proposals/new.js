@@ -70,7 +70,7 @@ function RepositoryProposalCreateView(props) {
   };
 
   const router = useRouter();
-  const hrefBase = "/" + router.query.orgId;
+  const hrefBase = "/daos/" + router.query.orgId;
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");

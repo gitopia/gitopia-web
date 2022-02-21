@@ -13,8 +13,8 @@ import getOrganization from "../../../../helpers/getOrganization";
 import getProposals from "../../../../helpers/getProposals";
 
 function GitopiaProposalsView(props) {
-  const hrefBase = "/daos/" + props.currentDashboard;
   const router = useRouter();
+  const hrefBase = "/daos/" + router.query.orgId;
   const [org, setOrg] = useState({
     name: "",
     repositories: [],
@@ -155,7 +155,7 @@ function GitopiaProposalsView(props) {
             </div>
 
             <div className="mt-10 grid grid-rows-auto grid-cols-2 gap-5">
-              {proposals.length > 0 ? (
+              {proposals.length > 0 || proposals !== undefined ? (
                 proposals.map((p) => {
                   return (
                     <div className="flex flex-col items-center">
@@ -195,24 +195,28 @@ function GitopiaProposalsView(props) {
                         <div className="flex mt-2">
                           <div className="mr-5 secondary uppercase font-bold text-xs ml-3 text-type-secondary">
                             {p.final_tally_result !== undefined
-                              ? "yes " + parseInt(p.final_tally_result.yes)
+                              ? "yes " +
+                                parseInt(p.final_tally_result.yes) / 100000000
                               : ""}
                           </div>
                           <div className="mr-5 secondary uppercase font-bold text-xs ml-3 text-type-secondary">
                             {p.final_tally_result !== undefined
                               ? "abstain " +
-                                parseInt(p.final_tally_result.abstain)
+                                parseInt(p.final_tally_result.abstain) /
+                                  100000000
                               : ""}
                           </div>
                           <div className="mr-5 secondary uppercase font-bold text-xs ml-3 text-type-secondary">
                             {p.final_tally_result !== undefined
-                              ? "no " + parseInt(p.final_tally_result.no)
+                              ? "no " +
+                                parseInt(p.final_tally_result.no) / 100000000
                               : ""}
                           </div>
                           <div className="mr-5 secondary uppercase font-bold text-xs ml-3 text-type-secondary">
                             {p.final_tally_result !== undefined
                               ? "no with veto " +
-                                parseInt(p.final_tally_result.no_with_veto)
+                                parseInt(p.final_tally_result.no_with_veto) /
+                                  100000000
                               : ""}
                           </div>
                           <a

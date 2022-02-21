@@ -7,19 +7,82 @@ import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { proposalDeposit } from "../../../../store/actions/proposals";
 import { proposalVote } from "../../../../store/actions/proposals";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+import getTally from "../../../../helpers/getTally";
+import Link from "next/dist/client/link";
 
 function RepositoryProposalDetailsView(props) {
+  const [depositLoading, setDepositLoading] = useState(false);
+  const [voteAbstainLoading, setVoteAbstainLoading] = useState(false);
+  const [voteNoLoading, setVoteNoLoading] = useState(false);
+  const [voteYesloading, setVoteYesLoading] = useState(false);
   const [proposal, setProposal] = useState([""]);
+  const [proposer, setProposer] = useState("");
+  const [initialDeposit, setInitialDeposit] = useState("");
+  const [tally, setTally] = useState({});
   const router = useRouter();
   const id = router.query.proposalId;
+  const hrefBase = "/daos/" + router.query.orgId;
   const type = "@type";
   var localizedFormat = require("dayjs/plugin/localizedFormat");
   dayjs.extend(localizedFormat);
   useEffect(async () => {
-    const p = await getProposal(id);
-    //console.log(p);
-    setProposal(p);
-  });
+    if (id !== undefined) {
+      await getProposal(id).then((res) => {
+        if (res === undefined) {
+          router.push("/daos/" + router.query.orgId + "/proposals");
+        }
+        setProposal(res.msg);
+        setProposer(res.proposer);
+        setInitialDeposit(res.initial_deposit);
+      });
+    }
+  }, [id, proposal]);
+
+  useEffect(async () => {
+    if (id !== undefined) {
+      await getTally(id).then((res) => {
+        if (res === {}) {
+          setTally({
+            yes: 0,
+            no: 0,
+            abstain: 0,
+            no_with_veto: 0,
+          });
+        }
+        setTally(res.tally);
+      });
+    }
+  }, [id, proposal]);
+
+  function getPercentage(key) {
+    if (tally !== undefined) {
+      let total =
+        parseInt(tally.yes) +
+        parseInt(tally.no) +
+        parseInt(tally.abstain) +
+        parseInt(tally.no_with_veto);
+      if (total > 0) {
+        let count;
+        if (key == "yes") {
+          count = parseInt(tally.yes);
+        } else if (key == "no") {
+          count = parseInt(tally.no);
+        } else if (key == "abstain") {
+          count = parseInt(tally.abstain);
+        }
+        let percent = count / total;
+        return percent * 100;
+      }
+    }
+    return 0;
+  }
+  const letter = proposer ? proposer.slice(-1) : "x";
+
+  const avatarLink =
+    "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+    letter;
 
   return (
     <div
@@ -36,125 +99,272 @@ function RepositoryProposalDetailsView(props) {
         className="flex flex-col bg-base-100 text-base-content min-h-screen"
       >
         <main className="container mx-auto max-w-screen-lg">
-          <div className="flex-1 p-4 pt-24 px-36">
-            <h1 className="mb-4 text-2xl"> Proposal Details</h1>
-          </div>
-          <div className="flex mt-4 px-36">
+          <div className="flex  ">
+            <div className="">
+              <Link href={hrefBase + "/proposals"}>
+                <label className="flex link text-sm uppercase no-underline items-center hover:text-green mt-20">
+                  <svg
+                    width="8"
+                    height="11"
+                    viewBox="0 0 8 11"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    stroke="currentColor"
+                  >
+                    <path d="M7 1L2 5.5L7 10" stroke-width="2" />
+                  </svg>
+                  <span className="ml-2">BACK</span>
+                </label>
+              </Link>
+            </div>
             {proposal !== undefined ? (
-              <div>
-                <div className="flex flex-col items-center">
-                  <div className="h-full w-full border-2 border-grey rounded-lg p-3">
-                    <div className="flex">
-                      <div className="mt-2 ml-4 text-sm uppercase font-bold">
-                        {"#" + id}
-                      </div>
-                      <div className="mt-2 ml-auto font-bold text-xs secondary uppercase mr-3">
-                        {dayjs(proposal.submit_time).fromNow()}
-                      </div>
+              <div className="mt-4 px-28 mt-32">
+                <div className="flex">
+                  <div className="text-2xl uppercase font-bold">{"#" + id}</div>
+                  {proposal.status == "PROPOSAL_STATUS_PASSED" ? (
+                    <div className="badge badge-success ml-auto h-10 w-32 bg-green-900 text-white">
+                      PASSED
                     </div>
-                    <div className="mt-1  ml-4 text-sm uppercase font-medium text-type">
-                      {typeof proposal.content !== "undefined"
-                        ? proposal.content.title
-                        : ""}
+                  ) : (
+                    ""
+                  )}
+                  {proposal.status == "PROPOSAL_STATUS_REJECTED" ? (
+                    <div className="badge badge-error ml-auto h-10 w-32 bg-pink text-white">
+                      REJECTED
                     </div>
-                    <div className="mt-4 w-fit border-t-2 border-grey ml-3 mr-3 mb-4"></div>
-                    <div className="flex mr-5 mt-5 secondary font-bold text-xs ml-4">
-                      {"Proposer "}
-                      <div className="ml-auto secondary text-xs font-normal text-type-secondary mr-96">
-                        {
-                          //" " + proposal.voting_end_time
+                  ) : (
+                    ""
+                  )}
+                  {proposal.status == "PROPOSAL_STATUS_DEPOSIT_PERIOD" ? (
+                    <div className="badge badge-info ml-auto h-10 w-32 bg-tertiary text-white">
+                      DEPOSIT PERIOD
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                  {proposal.status == "PROPOSAL_STATUS_VOTING_PERIOD" ? (
+                    <div className="badge badge-info ml-auto h-10 w-32 bg-tertiary text-white">
+                      VOTING PERIOD
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div className="flex">
+                  <div className="mt-8 secondary font-bold w-1/2">
+                    {"Proposer "}
+                  </div>
+                  <div className="mt-5 secondary text font-normal text-type-secondary">
+                    {proposer}
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Type "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {typeof proposal.content !== "undefined"
+                      ? proposal.content["@type"] ==
+                        "/cosmos.gov.v1beta1.TextProposal"
+                        ? "TEXT"
+                        : ""
+                      : ""}
+                    {typeof proposal.content !== "undefined"
+                      ? proposal.content["@type"] ==
+                        "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal"
+                        ? "SOFTWARE UPGRADE"
+                        : ""
+                      : ""}
+                    {typeof proposal.content !== "undefined"
+                      ? proposal.content["@type"] ==
+                        "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal"
+                        ? "COMMUNITY POOL SPEND"
+                        : ""
+                      : ""}
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Total Deposit "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {typeof proposal.total_deposit !== "undefined"
+                      ? proposal.total_deposit[0].amount + " tlore"
+                      : ""}
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Initial Deposit "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {typeof initialDeposit !== "undefined"
+                      ? initialDeposit + " tlore"
+                      : ""}
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Submit Time "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {" " + dayjs(proposal.submit_time).format("LLL")}
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Deposit End Time "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {" " + dayjs(proposal.deposit_end_time).format("LLL")}
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Voting Start "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {" " + dayjs(proposal.voting_start_time).format("LLL")}
+                  </div>
+                </div>
+                <div className="flex mb-16">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Voting End "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {" " + dayjs(proposal.voting_end_time).format("LLL")}
+                  </div>
+                </div>
+
+                <div className="card w-full bg-base-300 shadow-xl rounded-lg h-48 mr-20">
+                  <div className="flex flex-row card-body">
+                    <div className="mt-12">Cast Your Vote</div>
+                    <div className="flex flex-col">
+                      <div style={{ width: 90, height: 90 }} className="ml-20">
+                        <CircularProgressbar
+                          value={getPercentage("yes")}
+                          text={`${getPercentage("yes")}%`}
+                          styles={buildStyles({
+                            textColor: "#E2EBF2",
+                            pathColor: "#66CE67",
+                            trailColor: "#3E4051",
+                          })}
+                        />
+                      </div>
+                      <button
+                        className={
+                          "btn btn-outline btn-xs h-8 w-24 text-xs mt-5 ml-20 " +
+                          (voteYesloading ? "loading" : "")
                         }
-                      </div>
+                        onClick={(e) => {
+                          setVoteYesLoading(true);
+                          props
+                            .proposalVote(id, "VOTE_OPTION_YES")
+                            .then((res) => {
+                              setVoteYesLoading(false);
+                            });
+                        }}
+                        disabled={
+                          !dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
+                          !dayjs().isBefore(dayjs(proposal.voting_start_time))
+                        }
+                      >
+                        YES
+                      </button>
                     </div>
-                    <div className="flex mr-5 mt-1 secondary font-bold text-xs ml-4">
-                      {"Status "}
-                      <div className="ml-auto secondary text-xs font-normal text-type-secondary mr-96">
-                        {proposal.status}
+                    <div className="flex flex-col">
+                      <div style={{ width: 90, height: 90 }} className="ml-20">
+                        <CircularProgressbar
+                          value={getPercentage("no")}
+                          text={`${getPercentage("no")}%`}
+                          styles={buildStyles({
+                            textColor: "#E2EBF2",
+                            pathColor: "#883BE6",
+                            trailColor: "#3E4051",
+                          })}
+                        />
                       </div>
+                      <button
+                        className={
+                          "btn btn-outline btn-xs h-8 w-24 text-xs mt-5 ml-20 " +
+                          (voteNoLoading ? "loading" : "")
+                        }
+                        onClick={(e) => {
+                          setVoteNoLoading(true);
+                          props
+                            .proposalVote(id, "VOTE_OPTION_NO")
+                            .then((res) => {
+                              setVoteNoLoading(false);
+                            });
+                        }}
+                        disabled={
+                          !dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
+                          !dayjs().isBefore(dayjs(proposal.voting_start_time))
+                        }
+                      >
+                        NO
+                      </button>
                     </div>
-                    <div className="flex mr-5 mt-1 secondary font-bold text-xs ml-4">
-                      {"Total Deposit "}
-                      <div className="ml-auto secondary text-xs font-normal text-type-secondary mr-96 pr-20">
-                        {typeof proposal.total_deposit !== "undefined"
-                          ? proposal.total_deposit[0].amount + " tlore"
-                          : ""}
+                    <div className="flex flex-col">
+                      <div style={{ width: 90, height: 90 }} className="ml-20">
+                        <CircularProgressbar
+                          value={getPercentage("abstain")}
+                          text={`${getPercentage("abstain")}%`}
+                          styles={buildStyles({
+                            textColor: "#E2EBF2",
+                            pathColor: "#29B7E4",
+                            trailColor: "#3E4051",
+                          })}
+                        />
                       </div>
-                    </div>
-                    <div className="flex mr-5 mt-1 secondary font-bold text-xs ml-4">
-                      {"Voting Start "}
-                      <div className="ml-auto secondary text-xs font-normal text-type-secondary mr-80 pr-6">
-                        {" " + dayjs(proposal.voting_start_time).format("LLL")}
-                      </div>
-                    </div>
-                    <div className="flex mr-5 mt-1 secondary font-bold text-xs ml-4">
-                      {"Voting End "}
-                      <div className="ml-auto secondary text-xs font-normal text-type-secondary mr-80 pr-6">
-                        {" " + dayjs(proposal.voting_end_time).format("LLL")}
-                      </div>
-                    </div>
-                    <div className="flex mr-5 mt-1 secondary font-bold text-xs ml-4">
-                      {"Type "}
-                      <div className="ml-auto secondary text-xs font-normal text-type-secondary mr-80">
-                        {typeof proposal.content !== "undefined"
-                          ? proposal.content["@type"]
-                          : ""}
-                      </div>
-                    </div>
-                    <div className="flex mr-5 mt-1 secondary font-bold text-xs ml-4">
-                      {"Submit Time "}
-                      <div className="ml-auto secondary text-xs font-normal text-type-secondary mr-80 pr-6">
-                        {" " + dayjs(proposal.submit_time).format("LLL")}
-                      </div>
-                    </div>
-                    <div className="flex mr-5 mt-1 secondary font-bold text-xs ml-4">
-                      {"Deposit End Time "}
-                      <div className="ml-auto secondary text-xs font-normal text-type-secondary mr-80 pr-6">
-                        {" " + dayjs(proposal.deposit_end_time).format("LLL")}
-                      </div>
-                    </div>
-                    <div className="flex mr-5 mt-1 secondary font-bold text-xs ml-4 mb-2">
-                      {"Details "}
-                      <div className="ml-32 secondary text-xs font-normal text-type-secondary">
-                        {typeof proposal.content !== "undefined"
-                          ? proposal.content.description
-                          : ""}
-                      </div>
+                      <button
+                        className={
+                          "btn btn-outline btn-xs h-8 w-24 text-xs mt-5 ml-20 " +
+                          (voteAbstainLoading ? "loading" : "")
+                        }
+                        onClick={(e) => {
+                          setVoteAbstainLoading(true);
+                          props
+                            .proposalVote(id, "VOTE_OPTION_ABSTAIN")
+                            .then((res) => {
+                              setVoteAbstainLoading(false);
+                            });
+                        }}
+                        disabled={
+                          !dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
+                          !dayjs().isBefore(dayjs(proposal.voting_start_time))
+                        }
+                      >
+                        ABSTAIN
+                      </button>
                     </div>
                   </div>
                 </div>
-                <button
-                  className={"btn btn-sm btn-primary btn-block h-8 text-xs "}
-                  onClick={(e) => {
-                    props.proposalDeposit(id, 10).then((res) => {});
-                  }}
-                  disabled={
-                    dayjs().unix() - dayjs(proposal.deposit_end_time).unix() >
-                      0 ===
-                    true
-                  }
-                >
-                  Submit Deposit
-                </button>
-                <div className="mt-18">
-                  <button
-                    className={"btn btn-sm btn-primary btn-block h-8 text-xs"}
-                    onClick={(e) => {
-                      props
-                        .proposalVote(id, "VOTE_OPTION_NO_WITH_VETO")
-                        .then((res) => {});
-                    }}
-                    disabled={
-                      (dayjs().unix() -
-                        dayjs(proposal.voting_start_time).unix() <
-                        0 &&
-                        dayjs().unix() -
-                          dayjs(proposal.voting_start_time).unix() >
-                          0) === true
-                    }
-                  >
-                    Submit Vote
-                  </button>
+                <div className="mt-14 text-2xl font-semibold">
+                  {typeof proposal.content !== "undefined"
+                    ? proposal.content.title
+                    : ""}
                 </div>
+                <div className="mt-3 text-type-secondary">
+                  {typeof proposal.content !== "undefined"
+                    ? proposal.content.description
+                    : ""}
+                </div>
+                <button
+                  className={
+                    "btn btn-primary btn-xs h-12 w-48 text-xs mt-12 mb-16 " +
+                    (depositLoading ? "loading" : "")
+                  }
+                  onClick={(e) => {
+                    setDepositLoading(true);
+                    props.proposalDeposit(id, 10).then((res) => {
+                      setDepositLoading(false);
+                    });
+                  }}
+                  disabled={!dayjs().isBefore(dayjs(proposal.deposit_end_time))}
+                >
+                  SUBMIT DEPOSIT
+                </button>
               </div>
             ) : (
               ""
