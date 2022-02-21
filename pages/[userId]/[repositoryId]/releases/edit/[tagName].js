@@ -27,6 +27,7 @@ import UploadButton from "@rpldy/upload-button";
 import UploadDropZone from "@rpldy/upload-drop-zone";
 import getBranchSha from "../../../../../helpers/getBranchSha";
 import getRepositoryRelease from "../../../../../helpers/getRepositoryRelease";
+import useRepository from "../../../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -34,16 +35,7 @@ export async function getServerSideProps() {
 
 function RepositoryReleaseEditView(props) {
   const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    collaborators: [],
-    branches: [],
-    tags: [],
-    forks: [],
-    stargazers: [],
-  });
+  const { repository, refreshRepository } = useRepository();
 
   const [release, setRelease] = useState({
     creator: "",
@@ -114,46 +106,21 @@ function RepositoryReleaseEditView(props) {
 
         setTitle(rel.name);
         setDescription(rel.description);
-        setTagName(rel.tagName);
-        setTarget({
-          name: rel.target,
-          sha: getBranchSha(rel.target, repository.branches, repository.tags),
-        });
+        if (!getBranchSha(tagName, [], repository.tags)) {
+          setTagName(rel.tagName);
+        }
+        if (!getBranchSha(target.name, repository.branches, repository.tags)) {
+          setTarget({
+            name: rel.target,
+            sha: getBranchSha(rel.target, repository.branches, repository.tags),
+          });
+        }
         setAttachments(rel.attachments);
       }
     }
   };
 
   useEffect(getRelease, [repository]);
-
-  const refreshRepository = async (tagName, targetName) => {
-    const r = await getUserRepository(repository.owner.id, repository.name);
-    console.log(r);
-    if (r) {
-      setRepository(r);
-      if (tagName) {
-        setTagName(tagName);
-      } else {
-        setTagName(
-          repository.tags.length
-            ? repository.tags[repository.tags.length - 1].name
-            : ""
-        );
-      }
-      if (targetName) {
-        setTarget({
-          name: targetName,
-          sha: getBranchSha(targetName, r.branches, r.tags),
-        });
-      } else {
-        setTarget({
-          name: r.defaultBranch,
-          sha: getBranchSha(r.defaultBranch, r.branches, r.tags),
-        });
-      }
-    }
-  };
-  useEffect(refreshRepository, [router.query.repositoryId]);
 
   const username = props.selectedAddress ? props.selectedAddress.slice(-1) : "";
 
@@ -194,10 +161,7 @@ function RepositoryReleaseEditView(props) {
       <div className="flex">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
-          <RepositoryMainTabs
-            active="code"
-            hrefBase={repository.owner.id + "/" + repository.name}
-          />
+          <RepositoryMainTabs repository={repository} active="code" />
           <div className="mt-8">
             {/* <div className="btn-group">
               <button className="btn btn-sm btn-active">Releases</button>
@@ -270,7 +234,7 @@ function RepositoryReleaseEditView(props) {
                         });
                         if (res && res.code === 0) {
                           setNewTagOptionShown(false);
-                          await refreshRepository(tagName, target.name);
+                          refreshRepository();
                         }
                         setCreatingTag(false);
                       }}

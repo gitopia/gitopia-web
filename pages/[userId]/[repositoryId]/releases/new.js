@@ -23,6 +23,7 @@ import Uploady, {
 import UploadButton from "@rpldy/upload-button";
 import UploadDropZone from "@rpldy/upload-drop-zone";
 import getBranchSha from "../../../../helpers/getBranchSha";
+import useRepository from "../../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -30,16 +31,7 @@ export async function getServerSideProps() {
 
 function RepositoryReleaseNewView(props) {
   const router = useRouter();
-  const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
-    name: router.query.repositoryId,
-    owner: { id: router.query.userId },
-    collaborators: [],
-    branches: [],
-    tags: [],
-    forks: [],
-    stargazers: [],
-  });
+  const { repository, refreshRepository } = useRepository();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -89,34 +81,38 @@ function RepositoryReleaseNewView(props) {
     setPostingIssue(false);
   };
 
-  const refreshRepository = async (tagName, targetName) => {
-    const r = await getUserRepository(repository.owner.id, repository.name);
-    console.log(r);
-    if (r) {
-      setRepository(r);
-      if (tagName) {
-        setTagName(tagName);
-      } else {
+  const updateTags = () => {
+    if (repository) {
+      if (!getBranchSha(tagName, [], repository.tags)) {
         setTagName(
           repository.tags.length
             ? repository.tags[repository.tags.length - 1].name
             : ""
         );
       }
-      if (targetName) {
+      let targetSha = getBranchSha(
+        target.name,
+        repository.branches,
+        repository.tags
+      );
+      if (targetSha) {
         setTarget({
-          name: targetName,
-          sha: getBranchSha(targetName, r.branches, r.tags),
+          name: target.name,
+          sha: targetSha,
         });
       } else {
         setTarget({
-          name: r.defaultBranch,
-          sha: getBranchSha(r.defaultBranch, r.branches, r.tags),
+          name: repository.defaultBranch,
+          sha: getBranchSha(
+            repository.defaultBranch,
+            repository.branches,
+            repository.tags
+          ),
         });
       }
     }
   };
-  useEffect(refreshRepository, [router.query.repositoryId]);
+  useEffect(updateTags, [repository]);
 
   const username = props.selectedAddress ? props.selectedAddress.slice(-1) : "";
 
@@ -230,7 +226,7 @@ function RepositoryReleaseNewView(props) {
                         });
                         if (res && res.code === 0) {
                           setNewTagOptionShown(false);
-                          await refreshRepository(tagName, target.name);
+                          refreshRepository();
                         }
                         setCreatingTag(false);
                       }}

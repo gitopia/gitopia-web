@@ -30,6 +30,9 @@ function RepositoryReleaseView(props) {
     attachments: [],
   });
   const [isLatest, setIsLatest] = useState(false);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
 
   useEffect(async () => {
     if (repository.releases.length) {
@@ -56,6 +59,12 @@ function RepositoryReleaseView(props) {
   };
 
   useEffect(getRelease, [repository]);
+
+  useEffect(async () => {
+    setCurrentUserEditPermission(
+      await props.isCurrentUserEligibleToUpdate(repository)
+    );
+  }, [repository, props.user]);
 
   return (
     <div

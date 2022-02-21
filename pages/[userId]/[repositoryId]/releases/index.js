@@ -13,7 +13,6 @@ import {
   isCurrentUserEligibleToUpdate,
   deleteRelease,
 } from "../../../../store/actions/repository";
-import getRepositoryReleaseAll from "../../../../helpers/getRepositoryReleaseAll";
 import getRepositoryReleaseLatest from "../../../../helpers/getRepositoryReleaseLatest";
 import ReleaseView from "../../../../components/repository/releaseView";
 import useRepository from "../../../../hooks/useRepository";
@@ -30,12 +29,6 @@ function RepositoryReleasesView(props) {
   const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
     false
   );
-
-  useEffect(refreshRepository, [
-    router.query.repositoryId,
-    router.query.userId,
-  ]);
-
   const getReleases = async () => {
     if (repository) {
       const release = await getRepositoryReleaseLatest(
@@ -60,7 +53,7 @@ function RepositoryReleasesView(props) {
 
   useEffect(async () => {
     setCurrentUserEditPermission(
-      await props.isCurrentUserEligibleToUpdate(repository.owner.id)
+      await props.isCurrentUserEligibleToUpdate(repository)
     );
   }, [repository, props.user]);
 
