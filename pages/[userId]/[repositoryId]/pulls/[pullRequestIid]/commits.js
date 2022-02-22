@@ -16,9 +16,9 @@ import PullRequestHeader from "../../../../../components/repository/pullRequestH
 import useRepository from "../../../../../hooks/useRepository";
 import usePullRequest from "../../../../../hooks/usePullRequest";
 import getPullRequestCommits from "../../../../../helpers/getPullRequestCommits";
-import { getCommit } from "../../../../../store/actions/git";
 import { useRouter } from "next/router";
 import CommitDetailRow from "../../../../../components/repository/commitDetailRow";
+import getCommitHistory from "../../../../../helpers/getCommitHistory";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -48,11 +48,10 @@ function RepositoryPullCommitsView(props) {
     setCommitShas(shas);
   }, [pullRequest.id]);
 
-  const paginationLimit = 10;
+  const paginationLimit = 100;
 
   const loadCommits = async (clearEarlier = false) => {
     setLoadingMore(true);
-    let creq = [];
     for (let i = 0; i < paginationLimit; i++) {
       if (i === paginationLimit - 1) {
         if (loadedTill + i !== commitShas.length) {
@@ -63,22 +62,22 @@ function RepositoryPullCommitsView(props) {
         setHasMore(false);
         break;
       }
-
-      creq.push(
-        getCommit(
-          repository.id,
-          commitShas[loadedTill + i],
-          repository.name,
-          router.query.userId
-        )
-      );
     }
-    const res = await Promise.all(creq);
-    console.log("getCommit", res);
-    if (clearEarlier) {
-      setCommits(res);
-    } else {
-      setCommits([...commits, ...res]);
+    const res = await getCommitHistory(
+      pullRequest.head.repositoryId,
+      commitShas[loadedTill],
+      null,
+      Math.min(commitShas.length - loadedTill, paginationLimit),
+      null,
+      false
+    );
+    console.log("getCommitHistory", res);
+    if (res.commits && res.commits.length) {
+      if (clearEarlier) {
+        setCommits(res.commits);
+      } else {
+        setCommits([...commits, ...res.commits]);
+      }
     }
     setLoadingMore(false);
   };
@@ -140,7 +139,7 @@ function RepositoryPullCommitsView(props) {
                       pullRequest.head.repository.owner.id,
                       pullRequest.head.repository.name,
                       "commit",
-                      c.oid,
+                      c.id,
                     ].join("/")}
                     maxMessageLength={90}
                   />

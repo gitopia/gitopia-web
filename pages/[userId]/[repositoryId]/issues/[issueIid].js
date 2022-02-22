@@ -39,6 +39,7 @@ function RepositoryIssueView(props) {
   const [issue, setIssue] = useState({
     iid: router.query.issueIid,
     creator: "",
+    description: "",
     comments: [],
     assignees: [],
     labels: [],

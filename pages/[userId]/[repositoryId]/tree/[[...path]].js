@@ -7,8 +7,6 @@ import Header from "../../../../components/header";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 
-import { initRepository } from "../../../../store/actions/git";
-
 import vscdarkplus from "react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus";
 import BranchSelector from "../../../../components/repository/branchSelector";
 import Breadcrumbs from "../../../../components/repository/breadcrumbs";
@@ -18,6 +16,9 @@ import Footer from "../../../../components/footer";
 import getBranchSha from "../../../../helpers/getBranchSha";
 import useRepository from "../../../../hooks/useRepository";
 import dynamic from "next/dynamic";
+import ReactMarkdown from "react-markdown";
+import getContent from "../../../../helpers/getContent";
+import getCommitHistory from "../../../../helpers/getCommitHistory";
 
 const SyntaxHighlighter = dynamic(
   async () => (await import("react-syntax-highlighter")).Prism
@@ -32,19 +33,20 @@ function RepositoryTreeView(props) {
   const { repository } = useRepository();
 
   const [entityList, setEntityList] = useState([]);
+  const [hasMoreEntities, setHasMoreEntities] = useState(null);
+  const [loadingEntities, setLoadingEntities] = useState(false);
   const [file, setFile] = useState(null);
   const [fileSyntax, setFileSyntax] = useState("");
   const [commitDetail, setCommitDetail] = useState({
-    commit: { author: {}, message: "" },
-    oid: "",
-    branches: [],
-    tags: [],
+    author: {},
+    message: "",
+    title: "",
+    id: "",
   });
+  const [commitsLength, setCommitsLength] = useState(0);
   const [repoPath, setRepoPath] = useState([]);
   const [branchName, setBranchName] = useState("");
   const [isTag, setIsTag] = useState(false);
-  // let repoPath = router.query.path || [];
-  // let branchName = "";
 
   useEffect(async () => {
     console.log("query", router.query);
@@ -66,7 +68,6 @@ function RepositoryTreeView(props) {
           setRepoPath(path);
           console.log("branchName", branch, "repoPath", path, "isTag", false);
           found = true;
-          return false;
         }
         return true;
       });
@@ -91,45 +92,68 @@ function RepositoryTreeView(props) {
         // TODO: show 404 page
       }
     }
-  }, [router.query.path, repository]);
+  }, [router.query.path, repository.id]);
 
-  useEffect(async () => {
+  const loadEntities = async (currentEntities = [], firstTime = false) => {
     if (typeof window !== "undefined") {
-      const res = await initRepository(
+      setLoadingEntities(true);
+      const res = await getContent(
         repository.id,
         getBranchSha(branchName, repository.branches, repository.tags),
-        repository.name,
-        router.query.userId,
-        repoPath
+        repoPath.join("/"),
+        firstTime ? null : hasMoreEntities
       );
-      console.log(router.query.userId);
+      console.log(res);
       if (res) {
-        console.log(res);
-        if (res.commit) {
-          setCommitDetail(res.commit);
-        }
-        if (res.entity) {
-          if (res.entity.tree) {
-            setEntityList(res.entity.tree);
-            setFile(null);
-          } else if (res.entity.blob) {
+        if (res.content) {
+          if (res.content[0].type === "BLOB" && res.content[0].content) {
+            // display file contents
             setEntityList([]);
             try {
-              let decodedFile = new TextDecoder().decode(res.entity.blob);
-              setFile(decodedFile);
+              let file = window.atob(res.content[0].content);
+              setFile(file);
               let filename = repoPath[repoPath.length - 1] || "";
               let extension = filename.split(".").pop() || "";
               setFileSyntax(extension);
             } catch (e) {
+              // TODO: show error to user
               console.error(e);
+              setFile(null);
             }
+          } else {
+            // display folder tree
+            firstTime
+              ? setEntityList(res.content)
+              : setEntityList([...currentEntities, ...res.content]);
+            setFile(null);
           }
-        } else {
-          console.log("Entity Not found");
         }
-      } else {
-        console.log("Repo Not found");
+        if (res.pagination && res.pagination.next_key) {
+          setHasMoreEntities(res.pagination.next_key);
+        } else {
+          setHasMoreEntities(null);
+        }
       }
+      setLoadingEntities(false);
+    }
+  };
+
+  useEffect(async () => {
+    loadEntities([], true);
+    const commitHistory = await getCommitHistory(
+      repository.id,
+      getBranchSha(branchName, repository.branches, repository.tags),
+      repoPath.join("/"),
+      1
+    );
+    console.log(commitHistory);
+    if (
+      commitHistory &&
+      commitHistory.commits &&
+      commitHistory.commits.length
+    ) {
+      setCommitDetail(commitHistory.commits[0]);
+      setCommitsLength(commitHistory.pagination.total);
     }
   }, [repoPath]);
 
@@ -179,7 +203,7 @@ function RepositoryTreeView(props) {
                     "/" +
                     repository.name +
                     "/commit/" +
-                    commitDetail.oid
+                    commitDetail.id
                   }
                   maxMessageLength={90}
                 />
@@ -190,15 +214,38 @@ function RepositoryTreeView(props) {
                   repoPath={repoPath}
                   repoName={repository.name}
                 />
+                {hasMoreEntities ? (
+                  <div className="pb-2">
+                    <button
+                      className={
+                        "btn btn-sm btn-block btn-link justify-start no-animation" +
+                        (loadingEntities ? "loading" : "")
+                      }
+                      onClick={() => {
+                        loadEntities(entityList);
+                      }}
+                    >
+                      Load more files..
+                    </button>
+                  </div>
+                ) : (
+                  ""
+                )}
                 {file !== null ? (
-                  <SyntaxHighlighter
-                    style={vscdarkplus}
-                    language={fileSyntax}
-                    showLineNumbers
-                    customStyle={{ margin: 0, background: "transparent" }}
-                  >
-                    {file}
-                  </SyntaxHighlighter>
+                  fileSyntax === "md" ? (
+                    <div className="markdown-body p-4">
+                      <ReactMarkdown>{file}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    <SyntaxHighlighter
+                      style={vscdarkplus}
+                      language={fileSyntax}
+                      showLineNumbers
+                      customStyle={{ margin: 0, background: "transparent" }}
+                    >
+                      {file}
+                    </SyntaxHighlighter>
+                  )
                 ) : (
                   ""
                 )}

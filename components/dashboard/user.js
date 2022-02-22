@@ -2,6 +2,7 @@ import Link from "next/link";
 import FaucetReceiver from "../faucetReceiver";
 import GreetUser from "../greetUser";
 import KnowledgeCenter from "./knowledgeCenter";
+import CreateUser from "../createUser";
 
 function UserDashboard(props) {
   return (
@@ -22,6 +23,7 @@ function UserDashboard(props) {
         </div> */}
       </div>
       <FaucetReceiver />
+      <CreateUser />
       <div className="flex mt-4">
         <div className="flex flex-1 mr-2 bg-box-grad-tl bg-base-200 p-4 rounded-md">
           <div className="flex-none bg-box-grad-v w-40 h-full rounded-md flex items-center">

@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import classnames from "classnames";
 import styles from "../styles/landing.module.css";
 import RepositoryMainTabs from "../components/repository/mainTabs";
-import { initRepository } from "../store/actions/git";
 import getBranchSha from "../helpers/getBranchSha";
 import getUserRepository from "../helpers/getUserRepository";
 import CommitDetailRow from "../components/repository/commitDetailRow";
@@ -14,6 +13,8 @@ import Link from "next/link";
 import BranchSelector from "../components/repository/branchSelector";
 import CloneRepoInfo from "../components/repository/cloneRepoInfo";
 import SupportOwner from "../components/repository/supportOwner";
+import getCommitHistory from "../helpers/getCommitHistory";
+import getContent from "../helpers/getContent";
 
 const pCircles = [
   {
@@ -159,8 +160,10 @@ export default function Landing() {
     releases: [],
   });
   const [commitDetail, setCommitDetail] = useState({
-    commit: { author: {}, message: "" },
-    oid: "",
+    author: {},
+    message: "",
+    title: "",
+    id: "",
   });
   const [entityList, setEntityList] = useState([]);
 
@@ -173,26 +176,20 @@ export default function Landing() {
     if (repo) {
       setRepository(repo);
       let branchSha = getBranchSha(repo.defaultBranch, repo.branches);
-      const res = await initRepository(
-        repo.id,
-        branchSha,
-        repo.name,
-        demoAddress,
-        []
-      );
+      const commitHistory = await getCommitHistory(repo.id, branchSha, null, 1);
+
+      if (
+        commitHistory &&
+        commitHistory.commits &&
+        commitHistory.commits.length
+      ) {
+        setCommitDetail(commitHistory.commits[0]);
+      }
+      const res = await getContent(repo.id, branchSha, null, null, 1000);
       if (res) {
-        if (res.commit) {
-          setCommitDetail(res.commit);
+        if (res.content) {
+          setEntityList(res.content);
         }
-        if (res.entity) {
-          if (res.entity.tree) {
-            setEntityList(res.entity.tree);
-          }
-        } else {
-          console.log("Entity Not found");
-        }
-      } else {
-        console.log("Repo Not found");
       }
     } else {
       console.log("Unable to query demo repo");

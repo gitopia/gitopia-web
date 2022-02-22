@@ -8,12 +8,12 @@ import { useRouter } from "next/router";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 
-import { getCommits } from "../../../../store/actions/git";
 import BranchSelector from "../../../../components/repository/branchSelector";
 import Footer from "../../../../components/footer";
 import getBranchSha from "../../../../helpers/getBranchSha";
 import useRepository from "../../../../hooks/useRepository";
 import CommitDetailRow from "../../../../components/repository/commitDetailRow";
+import getCommitHistory from "../../../../helpers/getCommitHistory";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -27,16 +27,15 @@ function RepositoryCommitTreeView(props) {
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [branchName, setBranchName] = useState("");
-  const maxMessageLength = 60;
-  // let repoPath = router.query.path || [];
-  // let branchName = "";
+  const [commitsLength, setCommitsLength] = useState(0);
 
   useEffect(async () => {
     if (repository) {
       const joinedPath = router.query.branch.join("/");
       repository.branches.every((b) => {
         let branch = b.name;
-        if (joinedPath.includes(branch)) {
+        let branchTest = new RegExp("^" + branch);
+        if (branchTest.test(joinedPath)) {
           let path = joinedPath.replace(branch, "").split("/");
           path = path.filter((p) => p !== "");
           setBranchName(branch);
@@ -52,23 +51,27 @@ function RepositoryCommitTreeView(props) {
   const loadCommits = async (earlierCommits) => {
     if (branchName === "") return;
     setLoadingMore(true);
-    let useHasMore = !!hasMore;
-    if (earlierCommits.length === 0) useHasMore = false;
-    const res = await getCommits(
+    const res = await getCommitHistory(
       repository.id,
-      useHasMore
-        ? hasMore
-        : getBranchSha(branchName, repository.branches, repository.tags),
-      repository.name,
-      router.query.userId,
-      9
+      getBranchSha(branchName, repository.branches, repository.tags),
+      null,
+      100,
+      hasMore,
+      true
     );
-    console.log("getCommits", res);
-    setCommits([...earlierCommits, ...res]);
-    if (res && res[res.length - 1] && res[res.length - 1].hasMore) {
-      setHasMore(res[res.length - 1].commit.parent[0]);
-    } else {
-      setHasMore(false);
+    console.log(res);
+    if (res) {
+      if (res.commits && res.commits.length) {
+        setCommits([...earlierCommits, ...res.commits]);
+      }
+      if (res.pagination && res.pagination.next_key) {
+        setHasMore(res.pagination.next_key);
+      } else {
+        setHasMore(null);
+      }
+      if (res.pagination && res.pagination.total) {
+        setCommitsLength(res.pagination.total);
+      }
     }
     setLoadingMore(false);
   };
@@ -113,6 +116,23 @@ function RepositoryCommitTreeView(props) {
                   }
                 />
               </div>
+              <div className="ml-4">
+                <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
+                  <svg
+                    className="w-4 h-4 mr-2"
+                    viewBox="0 0 25 25"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12.9 4.0293L6.04297 4.0293L6.04297 20.0293L18.043 20.0293L18.043 9.80707M12.9 4.0293L18.043 9.80707M12.9 4.0293L12.9 9.80707L18.043 9.80707"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                  {commitsLength} Commits
+                </div>
+              </div>
             </div>
             <div className="mt-8">
               {commits.map((c, i) => {
@@ -129,7 +149,7 @@ function RepositoryCommitTreeView(props) {
                         "/" +
                         repository.name +
                         "/commit/" +
-                        c.oid
+                        c.id
                       }
                       maxMessageLength={90}
                     />

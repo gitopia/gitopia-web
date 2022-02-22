@@ -10,14 +10,14 @@ export default function CommitDetailRow({
   maxMessageLength = 50,
 }) {
   let [author, setAuthor] = useState({ name: "", initial: "", link: null });
-  let [message, setMessage] = useState("");
+  let [title, setTitle] = useState("");
   let [hasMore, setHasMore] = useState(false);
   let [fullMessageShown, setFullMessageShown] = useState(false);
   const validAddress = new RegExp("gitopia[a-z0-9]{39}");
 
   useEffect(() => {
-    if (commitDetail && commitDetail.commit && commitDetail.commit.author) {
-      let name = commitDetail.commit.author.name || "";
+    if (commitDetail && commitDetail.author) {
+      let name = commitDetail.author.name || "";
       if (validAddress.test(name)) {
         setAuthor({
           name: shrinkAddress(name),
@@ -27,15 +27,17 @@ export default function CommitDetailRow({
       } else {
         setAuthor({ name, initial: name.slice(0, 1), link: null });
       }
-      let newMessage = commitDetail.commit.message || "";
-      if (commitDetail.commit.message.length > maxMessageLength) {
-        newMessage =
-          commitDetail.commit.message.slice(0, maxMessageLength) + "..";
+      let newTitle = commitDetail.title || "";
+      if (
+        commitDetail.title.length > maxMessageLength ||
+        commitDetail.message
+      ) {
+        newTitle = commitDetail.title.slice(0, maxMessageLength) + "..";
         setHasMore(true);
       } else {
         setHasMore(false);
       }
-      setMessage(newMessage);
+      setTitle(newTitle);
       setFullMessageShown(false);
     }
   }, [commitDetail]);
@@ -67,7 +69,7 @@ export default function CommitDetailRow({
               author.name
             )}
           </span>
-          <span className="pl-4 text-sm">{message}</span>
+          <span className="pl-4 text-sm">{title}</span>
           {hasMore ? (
             <button
               className="ml-1 btn btn-xs btn-ghost"
@@ -95,13 +97,13 @@ export default function CommitDetailRow({
                 //link link-primary text-sm no-underline hover:underline
               }
               <a className="btn btn-xs btn-ghost">
-                {commitDetail.oid.slice(0, 6)}
+                {commitDetail.id.slice(0, 6)}
               </a>
             </Link>
             <button
               className="btn btn-xs btn-ghost"
               onClick={(e) => {
-                navigator.clipboard.writeText(commitDetail.oid);
+                navigator.clipboard.writeText(commitDetail.id);
               }}
             >
               <svg
@@ -124,16 +126,13 @@ export default function CommitDetailRow({
           ""
         )}
         <div className="flex-none text-type-secondary text-xs pt-0.5">
-          {dayjs(
-            (commitDetail.commit.author.timestamp +
-              commitDetail.commit.author.timezoneOffset) *
-              1000
-          ).fromNow()}
+          {dayjs(commitDetail.author.date).fromNow()}
         </div>
       </div>
       {fullMessageShown ? (
-        <div className="markdown-body p-2 bg-base-200 text-sm">
-          <ReactMarkdown>{commitDetail.commit.message}</ReactMarkdown>
+        <div className="markdown-body p-2 bg-base-200">
+          <div className="mb-4">{commitDetail.title}</div>
+          <ReactMarkdown>{commitDetail.message}</ReactMarkdown>
         </div>
       ) : (
         ""

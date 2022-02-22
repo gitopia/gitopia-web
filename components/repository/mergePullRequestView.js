@@ -5,6 +5,7 @@ import { updatePullRequestState } from "../../store/actions/repository";
 import mergePullRequest from "../../helpers/mergePullRequest";
 import pullRequestStateClass from "../../helpers/pullRequestStateClass";
 import mergePullRequestCheck from "../../helpers/mergePullRequestCheck";
+import getPullRequestMergePermission from "../../helpers/getPullRequestMergePermission";
 
 function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
   const [isMerging, setIsMerging] = useState(false);
@@ -42,31 +43,40 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
 
   const mergePull = async () => {
     setIsMerging(true);
-    const res = await mergePullRequest(
-      pullRequest.iid,
-      pullRequest.base.repositoryId,
-      pullRequest.head.repositoryId,
-      pullRequest.base.branch,
-      pullRequest.head.branch,
-      "merge",
+    const user = await getPullRequestMergePermission(
       props.selectedAddress,
-      "<>",
-      props.selectedAddress
+      pullRequest.id
     );
-    console.log(res);
-    if (!res.data.merged) {
-      props.notify(res.error, "error");
-    } else {
-      const transaction = await props.updatePullRequestState({
-        id: pullRequest.id,
-        state: "MERGED",
-        mergeCommitSha: res.data.merge_commit_sha,
-      });
-      console.log(transaction);
-      if (transaction && transaction.code === 0) {
-        refreshPullRequest();
+    if (user && user.havePermission) {
+      const res = await mergePullRequest(
+        pullRequest.iid,
+        pullRequest.base.repositoryId,
+        pullRequest.head.repositoryId,
+        pullRequest.base.branch,
+        pullRequest.head.branch,
+        "merge",
+        props.selectedAddress,
+        "<>",
+        props.selectedAddress
+      );
+      console.log(res);
+      if (!res.data.merged) {
+        props.notify(res.error, "error");
+      } else {
+        const transaction = await props.updatePullRequestState({
+          id: pullRequest.id,
+          state: "MERGED",
+          mergeCommitSha: res.data.merge_commit_sha,
+        });
+        console.log(transaction);
+        if (transaction && transaction.code === 0) {
+          refreshPullRequest();
+        }
       }
+    } else {
+      props.notify("User not authorized for merging pull requests", "error");
     }
+
     setIsMerging(false);
   };
 

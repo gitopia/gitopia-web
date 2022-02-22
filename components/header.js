@@ -78,23 +78,6 @@ function Header(props) {
         ""
       )}
       <div className="navbar border-b border-grey bg-base-100 text-base-content">
-        <div className="flex-none lg:hidden">
-          <label htmlFor="main-drawer" className="btn btn-square btn-ghost">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="inline-block w-6 h-6 stroke-current"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              ></path>
-            </svg>
-          </label>
-        </div>
         <div
           className={
             "flex-none px-6 transition-all ease-out delay-150" +
@@ -160,8 +143,37 @@ function Header(props) {
         </div>
         <div className="flex-1"></div>
         {props.activeWallet ? (
-          <div className="flex-none mr-4">
-            <div className="badge badge-md badge-secondary uppercase">
+          <div className="flex-none mr-8">
+            <svg
+              width="10"
+              height="17"
+              viewBox="0 0 10 17"
+              fill="none"
+              className="mr-1 text-purple-50"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M5.00061 8.51845C6.33523 8.51845 7.41715 7.43653 7.41715 6.10192C7.41715 4.7673 6.33523 3.68538 5.00061 3.68538C3.666 3.68538 2.58408 4.7673 2.58408 6.10192C2.58408 7.43653 3.666 8.51845 5.00061 8.51845ZM5.00061 10.2314C7.28128 10.2314 9.13013 8.38259 9.13013 6.10192C9.13013 3.82125 7.28128 1.9724 5.00061 1.9724C2.71994 1.9724 0.871094 3.82125 0.871094 6.10192C0.871094 8.38259 2.71994 10.2314 5.00061 10.2314Z"
+                fill="currentColor"
+              />
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M2.58408 11.1195C2.58408 11.7593 2.84059 12.3714 3.29468 12.8215C3.74849 13.2713 4.36229 13.5225 5.00061 13.5225C5.63893 13.5225 6.25273 13.2713 6.70655 12.8215C7.16063 12.3714 7.41715 11.7593 7.41715 11.1195H9.13013C9.13013 12.2004 8.69698 13.2386 7.92343 14.0053C7.14962 14.7723 6.09841 15.2046 5.00061 15.2046C3.90281 15.2046 2.8516 14.7723 2.07779 14.0053C1.30425 13.2386 0.871094 12.2004 0.871094 11.1195H2.58408Z"
+                fill="currentColor"
+              />
+              <path
+                d="M4.19727 0.743828H5.8455V2.39206H4.19727V0.743828Z"
+                fill="currentColor"
+              />
+              <path
+                d="M4.19727 14.7537H5.8455V16.4019H4.19727V14.7537Z"
+                fill="currentColor"
+              />
+            </svg>
+            <div className="text-purple-50 uppercase">
               {props.advanceUser === true
                 ? props.loreBalance
                 : props.loreBalance / 1000000}{" "}
@@ -174,7 +186,7 @@ function Header(props) {
           ""
         )}
         {process.env.NEXT_PUBLIC_NETWORK_NAME ? (
-          <div className="flex-col mr-4 items-end">
+          <div className="flex-col mr-8 items-end">
             <div
               className="uppercase text-type-secondary"
               style={{ fontSize: "0.6rem", lineHeight: "1rem" }}
@@ -204,7 +216,7 @@ function Header(props) {
               <button
                 tabIndex="0"
                 className={
-                  "btn btn-primary rounded-full px-4 avatar relative " +
+                  "btn rounded-full px-4 avatar relative " +
                   (props.activeWallet ? "btn-outline" : "")
                 }
                 onClick={(e) => {
@@ -232,7 +244,7 @@ function Header(props) {
                         {props.activeWallet.name}
                         {props.activeWallet.isKeplr ? " [Keplr]" : ""}
                       </div>
-                      <div className="text-xs text-base-content">
+                      <div className="text-xs text-type-tertiary">
                         {addressToShow}
                       </div>
                     </>

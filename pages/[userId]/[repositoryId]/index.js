@@ -8,8 +8,6 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import { notify } from "reapop";
 
-import { initRepository } from "../../../store/actions/git";
-
 import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
 import EmptyRepository from "../../../components/repository/emptyRepository";
@@ -23,21 +21,27 @@ import AssigneeGroup from "../../../components/repository/assigneeGroup";
 import useRepository from "../../../hooks/useRepository";
 import CloneRepoInfo from "../../../components/repository/cloneRepoInfo";
 import SupportOwner from "../../../components/repository/supportOwner";
+import getContent from "../../../helpers/getContent";
+import getCommitHistory from "../../../helpers/getCommitHistory";
 
 export async function getServerSideProps() {
   return { props: {} };
 }
 
 function RepositoryView(props) {
-  const router = useRouter();
   const { repository } = useRepository();
 
   const [entityList, setEntityList] = useState([]);
+  const [hasMoreEntities, setHasMoreEntities] = useState(null);
+  const [loadingEntities, setLoadingEntities] = useState(false);
   const [readmeFile, setReadmeFile] = useState(null);
   const [commitDetail, setCommitDetail] = useState({
-    commit: { author: {}, message: "" },
-    oid: "",
+    author: {},
+    message: "",
+    title: "",
+    id: "",
   });
+  const [commitsLength, setCommitsLength] = useState(0);
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
   );
@@ -45,67 +49,99 @@ function RepositoryView(props) {
     false
   );
 
+  const loadEntities = async (currentEntities = [], firstTime = false) => {
+    setLoadingEntities(true);
+    let branchSha = getBranchSha(
+      selectedBranch,
+      repository.branches,
+      repository.tags
+    );
+    if (!branchSha) {
+      // TODO: can lead to different commit and file browser state
+      branchSha = repository.branches[0].sha;
+    }
+    const res = await getContent(
+      repository.id,
+      branchSha,
+      null,
+      firstTime ? null : hasMoreEntities
+    );
+    if (res) {
+      if (res.content) {
+        firstTime
+          ? setEntityList(res.content)
+          : setEntityList([...currentEntities, ...res.content]);
+
+        const readmeRegex = new RegExp(/^README/gi);
+        for (let i = 0; i < res.content.length; i++) {
+          if (readmeRegex.test(res.content[i].name)) {
+            const readme = await getContent(
+              repository.id,
+              branchSha,
+              res.content[i].name
+            );
+
+            if (readme) {
+              if (readme.content && readme.content[0]) {
+                try {
+                  let file = window.atob(readme.content[0].content);
+                  setReadmeFile(file);
+                } catch (e) {
+                  console.error(e);
+                  setReadmeFile(null);
+                }
+              } else {
+                console.log("Entity Not found");
+              }
+            }
+          }
+        }
+      }
+      if (res.pagination && res.pagination.next_key) {
+        setHasMoreEntities(res.pagination.next_key);
+      } else {
+        setHasMoreEntities(null);
+      }
+    }
+    setLoadingEntities(false);
+  };
+
   useEffect(async () => {
     console.log("repository", repository);
     if (typeof window !== "undefined" && repository.branches.length) {
+      loadEntities([], true);
       let branchSha = getBranchSha(
         repository.defaultBranch,
-        repository.branches
+        repository.branches,
+        repository.tags
       );
       if (!branchSha) {
         setSelectedBranch(repository.branches[0].name);
         branchSha = repository.branches[0].sha;
       }
-      const res = await initRepository(
+      const commitHistory = await getCommitHistory(
         repository.id,
         branchSha,
-        repository.name,
-        router.query.userId,
-        []
-      );
-      if (res) {
-        if (res.commit) {
-          setCommitDetail(res.commit);
-        }
-        if (res.entity) {
-          if (res.entity.tree) {
-            setEntityList(res.entity.tree);
-          }
-        } else {
-          console.log("Entity Not found");
-        }
-      } else {
-        console.log("Repo Not found");
-      }
-      const readme = await initRepository(
-        repository.id,
-        branchSha,
-        repository.name,
-        router.query.userId,
-        ["README.md"]
+        null,
+        1
       );
 
-      if (readme) {
-        if (readme.entity) {
-          if (readme.entity.blob) {
-            try {
-              let decodedFile = new TextDecoder().decode(readme.entity.blob);
-              setReadmeFile(decodedFile);
-            } catch (e) {
-              console.error(e);
-              setReadmeFile(null);
-            }
-          }
-        } else {
-          console.log("Entity Not found");
-        }
+      if (
+        commitHistory &&
+        commitHistory.commits &&
+        commitHistory.commits.length
+      ) {
+        setCommitDetail(commitHistory.commits[0]);
+        setCommitsLength(commitHistory.pagination.total);
       }
     }
+  }, [repository.id]);
 
+  useEffect(async () => {
     setCurrentUserEditPermission(
       await props.isCurrentUserEligibleToUpdate(repository)
     );
-  }, [props.user, repository.id]);
+  }, [props.user, repository]);
 
   return (
     <div
@@ -370,6 +406,23 @@ function RepositoryView(props) {
                       {repository.tags.length} Tags
                     </div>
                   </div>
+                  <div className="ml-4">
+                    <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
+                      <svg
+                        className="w-4 h-4 mr-2"
+                        viewBox="0 0 25 25"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M12.9 4.0293L6.04297 4.0293L6.04297 20.0293L18.043 20.0293L18.043 9.80707M12.9 4.0293L18.043 9.80707M12.9 4.0293L12.9 9.80707L18.043 9.80707"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        />
+                      </svg>
+                      {commitsLength} Commits
+                    </div>
+                  </div>
                   <div className="flex-1 text-right">
                     <CloneRepoInfo
                       remoteUrl={
@@ -393,6 +446,7 @@ function RepositoryView(props) {
                       "/commits/" +
                       selectedBranch
                     }
+                    commitHistoryLength={commitsLength}
                   />
                   <FileBrowser
                     entityList={entityList}
@@ -400,6 +454,23 @@ function RepositoryView(props) {
                     baseUrl={"/" + repository.owner.id + "/" + repository.name}
                     repoPath={[]}
                   />
+                  {hasMoreEntities ? (
+                    <div className="pb-2">
+                      <button
+                        className={
+                          "btn btn-sm btn-block btn-link justify-start no-animation" +
+                          (loadingEntities ? "loading" : "")
+                        }
+                        onClick={() => {
+                          loadEntities(entityList);
+                        }}
+                      >
+                        Load more files..
+                      </button>
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
 
                 {readmeFile ? (
@@ -410,7 +481,7 @@ function RepositoryView(props) {
                     <ReactMarkdown>{readmeFile}</ReactMarkdown>
                   </div>
                 ) : (
-                  <div>No readme file</div>
+                  <div className="mt-8">No readme file</div>
                 )}
               </div>
             </div>

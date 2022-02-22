@@ -93,7 +93,11 @@ function CommentView({
             </div>
           </div>
           <div className="p-4 markdown-body">
-            <ReactMarkdown linkTarget="_blank">{comment.body}</ReactMarkdown>
+            {comment.body.length ? (
+              <ReactMarkdown linkTarget="_blank">{comment.body}</ReactMarkdown>
+            ) : (
+              <ReactMarkdown>{"*No description given*"}</ReactMarkdown>
+            )}
           </div>
         </div>
       )}

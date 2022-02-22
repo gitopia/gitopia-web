@@ -1,22 +1,28 @@
 import Link from "next/link";
+import dayjs from "dayjs";
 
 export default function FileBrowser({
   entityList,
   baseUrl,
   repoPath = [],
   branchName,
-  repoName,
 }) {
   return (
     <>
       {entityList.map((e, i) => {
+        let commitTitle = e.last_commit ? e.last_commit.title : "";
+        let commitDate = e.last_commit
+          ? e.last_commit.author
+            ? e.last_commit.author.date
+            : null
+          : null;
         return (
           <Link
-            href={[baseUrl, "tree", branchName, ...repoPath, e.path].join("/")}
+            href={[baseUrl, "tree", branchName, e.path].join("/")}
             key={"entity" + i}
           >
             <a className="flex px-2 py-2 items-center hover:bg-neutral text-sm">
-              {e.type === "blob" ? (
+              {e.type === "BLOB" ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-2"
@@ -35,20 +41,20 @@ export default function FileBrowser({
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                  />
+                  <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
                 </svg>
               )}
 
-              <div className="flex-1">{e.path}</div>
+              <div className="flex-1">{e.name}</div>
+              <div className="w-1/2 text-left text-type-tertiary whitespace-nowrap truncate">
+                {commitTitle}
+              </div>
+              <div className="w-1/6 text-right text-type-tertiary">
+                {dayjs(commitDate).fromNow()}
+              </div>
             </a>
           </Link>
         );
