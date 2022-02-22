@@ -6,8 +6,9 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import PublicTabs from "../../components/dashboard/publicTabs";
 import getOrganization from "../../helpers/getOrganization";
-import getUser from "../../helpers/getUser";
 import Footer from "../../components/footer";
+import getProposals from "../../helpers/getProposals";
+import dayjs from "dayjs";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -19,6 +20,9 @@ function GitopiaProposals(props) {
     name: "",
     repositories: [],
   });
+  const [proposals, setProposals] = useState([]);
+  var localizedFormat = require("dayjs/plugin/localizedFormat");
+  dayjs.extend(localizedFormat);
 
   useEffect(async () => {
     const o = await getOrganization(router.query.userId);
@@ -37,6 +41,12 @@ function GitopiaProposals(props) {
       ? "/logo-g.svg"
       : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
         letter;
+
+  useEffect(async () => {
+    const p = await getProposals();
+    setProposals(p);
+  });
+
   return (
     <div
       data-theme="dark"
@@ -90,35 +100,93 @@ function GitopiaProposals(props) {
               ""
             )}
           </div>
-          <div className="border-b border-grey w-1/2 ml-7">
-            <div className="form-control flex-1 mt-5">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search for Proposal"
-                  className="w-full input input-ghost input-sm"
-                />
-                <button className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </button>
+
+          <div className="mt-10 grid grid-rows-auto grid-cols-2 gap-5">
+            {proposals.length > 0 || proposals !== undefined ? (
+              proposals.map((p) => {
+                return (
+                  <div className="flex flex-col items-center">
+                    <div className="w-full h-72 border-2 border-grey rounded-lg p-3">
+                      <div className="flex">
+                        <div className="mt-2 ml-4 text-sm uppercase font-bold">
+                          {"#" + p.proposal_id}
+                        </div>
+                        <div className="mt-2 ml-auto font-bold text-xs secondary uppercase mr-3">
+                          {dayjs(p.submit_time).fromNow()}
+                        </div>
+                      </div>
+                      <div className="mt-5 ml-4 text-sm uppercase font-medium text-type">
+                        {typeof p.content !== "undefined"
+                          ? p.content.title
+                          : ""}
+                      </div>
+                      <div className="mt-3 ml-4 text-xs text-type-secondary">
+                        {typeof p.content !== "undefined"
+                          ? p.content.description.slice(0, 250)
+                          : ""}
+                      </div>
+                      <div className="flex mr-5 mt-5 secondary font-bold text-xs ml-4">
+                        {"Voting Start "}
+                        <div className="ml-3 secondary text-xs font-normal text-type-secondary">
+                          {" " + dayjs(p.voting_start_time).format("LLL")}
+                        </div>
+                      </div>
+                      <div className="flex mr-5 mt-1 secondary font-bold text-xs ml-4">
+                        {"Voting End "}
+                        <div className="ml-5 secondary text-xs font-normal text-type-secondary">
+                          {" " + dayjs(p.voting_end_time).format("LLL")}
+                        </div>
+                      </div>
+
+                      <div className="mt-8 w-fit border-t-2 border-grey ml-3 mr-3"></div>
+                      <div className="flex mt-2">
+                        <div className="mr-5 secondary uppercase font-bold text-xs ml-3 text-type-secondary">
+                          {p.final_tally_result !== undefined
+                            ? "yes " +
+                              parseInt(p.final_tally_result.yes) / 100000000
+                            : ""}
+                        </div>
+                        <div className="mr-5 secondary uppercase font-bold text-xs ml-3 text-type-secondary">
+                          {p.final_tally_result !== undefined
+                            ? "abstain " +
+                              parseInt(p.final_tally_result.abstain) / 100000000
+                            : ""}
+                        </div>
+                        <div className="mr-5 secondary uppercase font-bold text-xs ml-3 text-type-secondary">
+                          {p.final_tally_result !== undefined
+                            ? "no " +
+                              parseInt(p.final_tally_result.no) / 100000000
+                            : ""}
+                        </div>
+                        <div className="mr-5 secondary uppercase font-bold text-xs ml-3 text-type-secondary">
+                          {p.final_tally_result !== undefined
+                            ? "no with veto " +
+                              parseInt(p.final_tally_result.no_with_veto) /
+                                100000000
+                            : ""}
+                        </div>
+                        <a
+                          className="link link-primary modal-button no-underline ml-auto font-bold text-xs uppercase text-green mr-3"
+                          href={
+                            "/daos/" +
+                            router.query.orgId +
+                            "/proposals/" +
+                            p.proposal_id
+                          }
+                          target="_blank"
+                        >
+                          read proposal
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="text-left px-5 pt-10 font-style: italic text-base">
+                <h2>No Proposals to Show</h2>
               </div>
-            </div>
-          </div>
-          <div className="text-left ml-12 pt-10 font-style: italic text-base">
-            <h2>No Proposals to Show</h2>
+            )}
           </div>
         </main>
       </div>
