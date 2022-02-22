@@ -11,6 +11,8 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import getTally from "../../../../helpers/getTally";
 import Link from "next/dist/client/link";
+import getDepositor from "../../../../helpers/getDepositor";
+import getVoter from "../../../../helpers/getVoter";
 
 function RepositoryProposalDetailsView(props) {
   const [depositLoading, setDepositLoading] = useState(false);
@@ -21,6 +23,8 @@ function RepositoryProposalDetailsView(props) {
   const [proposer, setProposer] = useState("");
   const [initialDeposit, setInitialDeposit] = useState("");
   const [tally, setTally] = useState({});
+  const [depositors, setDepositors] = useState([]);
+  const [voters, setVoters] = useState([]);
   const router = useRouter();
   const id = router.query.proposalId;
   const hrefBase = "/daos/" + router.query.orgId;
@@ -30,12 +34,11 @@ function RepositoryProposalDetailsView(props) {
   useEffect(async () => {
     if (id !== undefined) {
       await getProposal(id).then((res) => {
-        if (res === undefined) {
-          router.push("/daos/" + router.query.orgId + "/proposals");
+        if (res !== undefined) {
+          setProposal(res.msg);
+          setProposer(res.proposer);
+          setInitialDeposit(res.initial_deposit);
         }
-        setProposal(res.msg);
-        setProposer(res.proposer);
-        setInitialDeposit(res.initial_deposit);
       });
     }
   }, [id, proposal]);
@@ -52,6 +55,24 @@ function RepositoryProposalDetailsView(props) {
           });
         }
         setTally(res.tally);
+      });
+    }
+  }, [id, proposal]);
+
+  useEffect(async () => {
+    if (id !== undefined) {
+      await getDepositor(id).then((res) => {
+        if (res !== undefined) {
+          setDepositors(res.slice(1, res.length));
+        }
+      });
+    }
+  }, [id, proposal]);
+
+  useEffect(async () => {
+    if (id !== undefined) {
+      await getVoter(id).then((res) => {
+        setVoters(res);
       });
     }
   }, [id, proposal]);
@@ -150,90 +171,15 @@ function RepositoryProposalDetailsView(props) {
                     ""
                   )}
                 </div>
-                <div className="flex">
-                  <div className="mt-8 secondary font-bold w-1/2">
-                    {"Proposer "}
-                  </div>
-                  <div className="mt-5 secondary text font-normal text-type-secondary">
-                    {proposer}
-                  </div>
+                <div className="mt-5 text-2xl font-semibold">
+                  {typeof proposal.content !== "undefined"
+                    ? proposal.content.title
+                    : ""}
                 </div>
-                <div className="flex">
-                  <div className="mt-2 secondary font-bold w-1/2">
-                    {"Type "}
-                  </div>
-                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
-                    {typeof proposal.content !== "undefined"
-                      ? proposal.content["@type"] ==
-                        "/cosmos.gov.v1beta1.TextProposal"
-                        ? "TEXT"
-                        : ""
-                      : ""}
-                    {typeof proposal.content !== "undefined"
-                      ? proposal.content["@type"] ==
-                        "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal"
-                        ? "SOFTWARE UPGRADE"
-                        : ""
-                      : ""}
-                    {typeof proposal.content !== "undefined"
-                      ? proposal.content["@type"] ==
-                        "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal"
-                        ? "COMMUNITY POOL SPEND"
-                        : ""
-                      : ""}
-                  </div>
-                </div>
-                <div className="flex">
-                  <div className="mt-2 secondary font-bold w-1/2">
-                    {"Total Deposit "}
-                  </div>
-                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
-                    {typeof proposal.total_deposit !== "undefined"
-                      ? proposal.total_deposit[0].amount + " tlore"
-                      : ""}
-                  </div>
-                </div>
-                <div className="flex">
-                  <div className="mt-2 secondary font-bold w-1/2">
-                    {"Initial Deposit "}
-                  </div>
-                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
-                    {typeof initialDeposit !== "undefined"
-                      ? initialDeposit + " tlore"
-                      : ""}
-                  </div>
-                </div>
-                <div className="flex">
-                  <div className="mt-2 secondary font-bold w-1/2">
-                    {"Submit Time "}
-                  </div>
-                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
-                    {" " + dayjs(proposal.submit_time).format("LLL")}
-                  </div>
-                </div>
-                <div className="flex">
-                  <div className="mt-2 secondary font-bold w-1/2">
-                    {"Deposit End Time "}
-                  </div>
-                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
-                    {" " + dayjs(proposal.deposit_end_time).format("LLL")}
-                  </div>
-                </div>
-                <div className="flex">
-                  <div className="mt-2 secondary font-bold w-1/2">
-                    {"Voting Start "}
-                  </div>
-                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
-                    {" " + dayjs(proposal.voting_start_time).format("LLL")}
-                  </div>
-                </div>
-                <div className="flex mb-16">
-                  <div className="mt-2 secondary font-bold w-1/2">
-                    {"Voting End "}
-                  </div>
-                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
-                    {" " + dayjs(proposal.voting_end_time).format("LLL")}
-                  </div>
+                <div className="mt-3 text-type-secondary mb-14">
+                  {typeof proposal.content !== "undefined"
+                    ? proposal.content.description
+                    : ""}
                 </div>
 
                 <div className="card w-full bg-base-300 shadow-xl rounded-lg h-48 mr-20">
@@ -340,31 +286,167 @@ function RepositoryProposalDetailsView(props) {
                     </div>
                   </div>
                 </div>
-                <div className="mt-14 text-2xl font-semibold">
-                  {typeof proposal.content !== "undefined"
-                    ? proposal.content.title
-                    : ""}
+                <div className="flex">
+                  <button
+                    className={
+                      "btn btn-primary btn-xs h-8 w-36 text-xs ml-auto mt-4" +
+                      (depositLoading ? "loading" : "")
+                    }
+                    onClick={(e) => {
+                      setDepositLoading(true);
+                      props.proposalDeposit(id, 10).then((res) => {
+                        setDepositLoading(false);
+                      });
+                    }}
+                    disabled={
+                      !dayjs().isBefore(dayjs(proposal.deposit_end_time))
+                    }
+                  >
+                    SUBMIT DEPOSIT
+                  </button>
                 </div>
-                <div className="mt-3 text-type-secondary">
-                  {typeof proposal.content !== "undefined"
-                    ? proposal.content.description
-                    : ""}
+                <div className="text-xl">Details</div>
+                <div className="flex">
+                  <div className="mt-4 secondary font-bold w-1/2">
+                    {"Proposer "}
+                  </div>
+                  <div className="mt-4 secondary text font-normal text-type-secondary">
+                    {proposer}
+                  </div>
                 </div>
-                <button
-                  className={
-                    "btn btn-primary btn-xs h-12 w-48 text-xs mt-12 mb-16 " +
-                    (depositLoading ? "loading" : "")
-                  }
-                  onClick={(e) => {
-                    setDepositLoading(true);
-                    props.proposalDeposit(id, 10).then((res) => {
-                      setDepositLoading(false);
-                    });
-                  }}
-                  disabled={!dayjs().isBefore(dayjs(proposal.deposit_end_time))}
-                >
-                  SUBMIT DEPOSIT
-                </button>
+                <div className="flex">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Type "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {typeof proposal.content !== "undefined"
+                      ? proposal.content["@type"] ==
+                        "/cosmos.gov.v1beta1.TextProposal"
+                        ? "TEXT"
+                        : ""
+                      : ""}
+                    {typeof proposal.content !== "undefined"
+                      ? proposal.content["@type"] ==
+                        "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal"
+                        ? "SOFTWARE UPGRADE"
+                        : ""
+                      : ""}
+                    {typeof proposal.content !== "undefined"
+                      ? proposal.content["@type"] ==
+                        "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal"
+                        ? "COMMUNITY POOL SPEND"
+                        : ""
+                      : ""}
+                  </div>
+                </div>
+
+                <div className="flex">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Total Deposit "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {typeof proposal.total_deposit !== "undefined"
+                      ? proposal.total_deposit[0].amount + " tlore"
+                      : ""}
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Initial Deposit "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {typeof initialDeposit !== "undefined"
+                      ? initialDeposit + " tlore"
+                      : ""}
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Submit Time "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {" " + dayjs(proposal.submit_time).format("LLL")}
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Deposit End Time "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {" " + dayjs(proposal.deposit_end_time).format("LLL")}
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Voting Start "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {" " + dayjs(proposal.voting_start_time).format("LLL")}
+                  </div>
+                </div>
+                <div className="flex mb-16">
+                  <div className="mt-2 secondary font-bold w-1/2">
+                    {"Voting End "}
+                  </div>
+                  <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
+                    {" " + dayjs(proposal.voting_end_time).format("LLL")}
+                  </div>
+                </div>
+                {/* Depositors Section */}
+
+                <div className="text-xl">Depositors</div>
+                <div class="overflow-x-auto mb-10 mt-5">
+                  <table class="table w-full">
+                    <thead>
+                      <tr>
+                        <th>Depositor</th>
+                        <th>Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th>{proposer}</th>
+                        <td>{initialDeposit}</td>
+                      </tr>
+                      {depositors !== undefined
+                        ? depositors.map((depositor) => {
+                            return (
+                              <tr>
+                                <th>{depositor.body.messages[0].depositor}</th>
+                                <td>
+                                  {depositor.body.messages[0].amount[0].amount}
+                                </td>
+                              </tr>
+                            );
+                          })
+                        : ""}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="text-xl">Voters</div>
+                <div class="overflow-x-auto mb-10 mt-5">
+                  <table class="table w-full">
+                    <thead>
+                      <tr>
+                        <th>Voter</th>
+                        <th>Answer</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {voters !== undefined
+                        ? voters.map((voter) => {
+                            return (
+                              <tr>
+                                <th>{voter.body.messages[0].voter}</th>
+                                <td>{voter.body.messages[0].option}</td>
+                              </tr>
+                            );
+                          })
+                        : ""}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             ) : (
               ""
