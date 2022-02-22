@@ -151,7 +151,6 @@ export const unlockWallet = ({ name, password }) => {
           CryptoJS.enc.Utf8
         )
       );
-      console.log(wallet);
     } catch (e) {
       console.error(e);
       return false;
@@ -574,7 +573,7 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
         type: walletActions.ADD_EXTERNAL_WALLET,
         payload: {
           isLedger: true,
-          wallet: { name, accounts: [{ address, path }] },
+          wallet: { name, accounts: [{ address, path }], isLedger: true },
         },
       });
       dispatch({ type: walletActions.STORE_WALLETS });
