@@ -12,7 +12,7 @@ export default function Error404() {
           Looks like the page you’re looking for doesn’t exist
         </div>
         <div className="relative flex items-center justify-center">
-          <img width={500} src="/404.svg"></img>
+          <img width={500} height={364} src="/404.svg"></img>
         </div>
         <div className="text-center">
           Once our team is done watching the latest episode of
