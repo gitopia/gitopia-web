@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import getUserRepository from "../helpers/getUserRepository";
 import { useRouter } from "next/router";
+import { useErrorStatus } from "../pages/errorHandler";
 
 export default function useRepository() {
+  const { setErrorStatusCode } = useErrorStatus();
   const router = useRouter();
   const [repository, setRepository] = useState({
     id: router.query.repositoryId,
@@ -26,10 +28,13 @@ export default function useRepository() {
     const r = await getUserRepository(
       router.query.userId,
       router.query.repositoryId
-    );
-    if (r) {
-      setRepository(r);
-    }
+    ).then((r) => {
+      if (r) {
+        setRepository(r);
+      } else {
+        setErrorStatusCode(404);
+      }
+    });
   }, [router.query, refreshIndex]);
 
   return { repository, refreshRepository };
