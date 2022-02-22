@@ -19,7 +19,7 @@ export const createOrganization = ({ name = null, description = null }) => {
 
     try {
       const message = await env.txClient.msgCreateOrganization(organization);
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       console.log(result);
       if (result && result.code === 0) {
         await getUserDetailsForSelectedAddress()(dispatch, getState);
@@ -81,7 +81,7 @@ export const updateMember = ({ id = null, user = null, role = null }) => {
       const message = await env.txClient.msgUpdateOrganizationMember(
         collaborator
       );
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;
@@ -112,7 +112,7 @@ export const removeMember = ({ id = null, user = null }) => {
       const message = await env.txClient.msgRemoveOrganizationMember(
         collaborator
       );
-      const result = await sendTransaction({ message }, env);
+      const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
         return result;

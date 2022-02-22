@@ -1,7 +1,5 @@
-import shrinkAddress from "../../helpers/shrinkAddress";
-import Link from "next/link";
-
 export default function UserHeader({ user }) {
+  const name = user.creator ? user.creator : "u";
   return (
     <div className="flex flex-1 mb-8">
       <div className="avatar flex-none mr-8 items-center">
@@ -9,7 +7,7 @@ export default function UserHeader({ user }) {
           <img
             src={
               "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-              user.creator
+              name.slice(-1)
             }
           />
         </div>

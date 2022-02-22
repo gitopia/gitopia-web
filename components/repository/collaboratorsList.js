@@ -23,7 +23,6 @@ function CollaboratorsList({
   const [collabRole, setCollabRole] = useState("TRIAGE");
   const [isAdding, setIsAdding] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
-  console.log("collabs", collaborators);
 
   const validateCollaborator = async () => {
     const res = await getUser(collabAddress);

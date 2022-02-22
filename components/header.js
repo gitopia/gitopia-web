@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -12,25 +12,30 @@ import {
 import shrinkAddress from "../helpers/shrinkAddress";
 import getHomeUrl from "../helpers/getHomeUrl";
 import { notify } from "reapop";
-import initKeplr from "../keplr/init";
+import initKeplr from "../helpers/keplr";
 
 import dynamic from "next/dynamic";
 const SendTlore = dynamic(() => import("./dashboard/sendTlore"));
 const CurrentWallet = dynamic(() => import("./currentWallet"));
 /*
 Menu States
-1 - Default menu
+1 - Logged in menu
 2 - Wallet selection
+3 - Send Tokens
+4 - Logged out with no saved wallets
 */
 
 function Header(props) {
   const [menuState, setMenuState] = useState(1);
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
+  const menuRef = useRef();
 
   const onUserMenuClose = () => {
     setMenuOpen(false);
-    setMenuState(1);
+    if (menuRef.current) {
+      menuRef.current.blur();
+    }
   };
 
   let addressToShow = "";
@@ -38,7 +43,11 @@ function Header(props) {
     addressToShow = shrinkAddress(props.selectedAddress);
   }
 
-  useEffect(onUserMenuClose, [props.activeWallet]);
+  useEffect(() => {
+    onUserMenuClose();
+    if (props.activeWallet) setMenuState(1);
+    else setMenuState(2);
+  }, [props.activeWallet]);
 
   const [homeUrl, setHomeUrl] = useState(
     getHomeUrl(props.dashboards, props.currentDashboard)
@@ -53,7 +62,7 @@ function Header(props) {
 
   const handleKeplrAccountChange = async () => {
     console.log("handling keplr wallet change");
-    if (props.activeWallet.isKeplr) {
+    if (props.activeWallet && props.activeWallet.isKeplr) {
       await props.unlockKeplrWallet();
     }
   };
@@ -207,7 +216,12 @@ function Header(props) {
           ""
         )}
         <div className="flex-none mr-4">
-          <ClickAwayListener onClickAway={onUserMenuClose}>
+          <ClickAwayListener
+            onClickAway={() => {
+              onUserMenuClose();
+              if (props.activeWallet) setMenuState(1);
+            }}
+          >
             <div
               className={
                 "dropdown dropdown-end " + (menuOpen ? "dropdown-open" : "")
@@ -217,14 +231,16 @@ function Header(props) {
                 tabIndex="0"
                 className={
                   "btn rounded-full px-4 avatar relative " +
-                  (props.activeWallet ? "btn-outline" : "")
+                  (props.activeWallet ? "btn-ghost" : "btn-primary") +
+                  (props.unlockingWallet ? " loading" : "")
                 }
                 onClick={(e) => {
                   setMenuOpen(true);
                 }}
+                ref={menuRef}
               >
                 <div className="rounded-full w-10 h-10 absolute left-1">
-                  {props.activeWallet ? (
+                  {props.activeWallet && !props.unlockingWallet ? (
                     <img
                       src={
                         "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
@@ -236,15 +252,35 @@ function Header(props) {
                   )}
                 </div>
                 <div
-                  className={"mr-2 " + (props.activeWallet ? "ml-10" : "ml-2")}
+                  className={
+                    "mr-2 " +
+                    (props.activeWallet && !props.unlockingWallet
+                      ? "ml-10"
+                      : "ml-2")
+                  }
                 >
                   {props.activeWallet ? (
                     <>
                       <div className="text-xs text-left">
-                        {props.activeWallet.name}
-                        {props.activeWallet.isKeplr ? " [Keplr]" : ""}
+                        <span>{props.activeWallet.name}</span>
+                        {props.activeWallet.isLedger ||
+                        props.activeWallet.isKeplr ? (
+                          <span
+                            className={
+                              "ml-1 border rounded-md pl-1.5 pr-2 py-px relative -top-px " +
+                              (props.activeWallet.isLedger
+                                ? "text-purple-50 border-purple"
+                                : "text-teal-50 border-teal")
+                            }
+                            style={{ fontSize: "0.75em" }}
+                          >
+                            {props.activeWallet.isLedger ? " Ledger" : " Keplr"}
+                          </span>
+                        ) : (
+                          ""
+                        )}
                       </div>
-                      <div className="text-xs text-type-tertiary">
+                      <div className="text-xs text-left text-type-tertiary">
                         {addressToShow}
                       </div>
                     </>
@@ -273,73 +309,33 @@ function Header(props) {
                                 props.selectedAddress
                               );
                               setMenuOpen(false);
+                              if (menuRef.current) {
+                                menuRef.current.blur();
+                              }
                               props.notify("Copied to clipboard", "info");
                             }}
                           >
                             <span className="flex-1">Copy Address</span>
                           </a>
                         </li>
-                        <li>
-                          <a
-                            onClick={(e) => {
-                              props.downloadWalletForRemoteHelper();
-                              setMenuOpen(false);
-                            }}
-                          >
-                            Download Wallet
-                          </a>
-                        </li>
-                        {/* <li>
-                          <a>Assets</a>
-                        </li>
-                        <li>
-                          <a>Transactions</a>
-                        </li> */}
-                        <li className="h-4">
-                          <div className="border-b border-grey mt-2"></div>
-                        </li>{" "}
-                      </>
-                    ) : (
-                      ""
-                    )}
-
-                    {props.wallets.length ? (
-                      <li>
-                        <a
-                          href="#"
-                          onClick={(e) => {
-                            setMenuState(2);
-                            e.preventDefault();
-                          }}
-                        >
-                          {props.activeWallet ? "Switch" : "Saved"} Wallet
-                        </a>
-                      </li>
-                    ) : (
-                      ""
-                    )}
-                    <li>
-                      <Link href="/login">
-                        <a>Create New Wallet</a>
-                      </Link>
-                    </li>
-                    {/* <li>
-                      <a
-                        href="#"
-                        onClick={async () => {
-                          await initKeplr();
-                          await props.unlockKeplrWallet();
-                        }}
-                      >
-                        Connect Keplr Wallet
-                      </a>
-                    </li> */}
-
-                    {props.activeWallet ? (
-                      <>
-                        <li className="h-4">
-                          <div className="border-b border-grey mt-2"></div>
-                        </li>
+                        {props.activeWallet.isKeplr ||
+                        props.activeWallet.isLedger ? (
+                          ""
+                        ) : (
+                          <li>
+                            <a
+                              onClick={(e) => {
+                                props.downloadWalletForRemoteHelper();
+                                setMenuOpen(false);
+                                if (menuRef.current) {
+                                  menuRef.current.blur();
+                                }
+                              }}
+                            >
+                              Download Wallet
+                            </a>
+                          </li>
+                        )}
                         <li>
                           <a
                             href="#"
@@ -354,8 +350,29 @@ function Header(props) {
                               : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                           </a>
                         </li>
+                        <li className="h-4">
+                          <div className="border-b border-grey mt-2"></div>
+                        </li>
                         <li>
-                          <a onClick={props.signOut}>Log Out</a>
+                          <a
+                            href="#"
+                            onClick={(e) => {
+                              setMenuState(2);
+                              e.preventDefault();
+                            }}
+                          >
+                            Switch Wallet
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            onClick={() => {
+                              setMenuOpen(false);
+                              props.signOut();
+                            }}
+                          >
+                            Log Out
+                          </a>
                         </li>
                       </>
                     ) : (
@@ -381,6 +398,7 @@ const mapStateToProps = (state) => {
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
     advanceUser: state.user.advanceUser,
+    unlockingWallet: state.wallet.unlockingWallet,
   };
 };
 

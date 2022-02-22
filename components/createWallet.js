@@ -57,6 +57,7 @@ function CreateWallet(props) {
         alreadyAvailable = true;
         return false;
       }
+      return true;
     });
     if (alreadyAvailable) {
       setNameHint({
@@ -146,7 +147,7 @@ function CreateWallet(props) {
           </div>
 
           <div className="max-w-md w-full p-4">
-            <div className="mb-1">
+            <div className="mb-4">
               <TextInput
                 type="text"
                 name="wallet_name"
@@ -156,7 +157,7 @@ function CreateWallet(props) {
                 hint={nameHint}
               />
             </div>
-            <div className="mb-1">
+            <div className="mb-4">
               <TextInput
                 type="password"
                 name="wallet_password"
@@ -166,7 +167,7 @@ function CreateWallet(props) {
                 hint={passwordHint}
               />
             </div>
-            <div className="mb-5">
+            <div className="mb-8">
               <TextInput
                 type="password"
                 name="wallet_confirm_password"

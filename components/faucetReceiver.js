@@ -17,7 +17,7 @@ function FaucetReceiver(props) {
   const getTokens = (amount) => {
     if (loading !== 0) return;
     if (!props.selectedAddress) {
-      props.notify("Please login before claiming tokens", "error");
+      props.notify("Please sign in before claiming tokens", "error");
       return;
     }
     setLoading(amount);
@@ -33,8 +33,13 @@ function FaucetReceiver(props) {
         { timeout: 10000 }
       )
       .then((res) => {
-        console.log(res);
-        if (res.data.transfers[0].status === "error") {
+        if (
+          res &&
+          res.data &&
+          res.data.transfers &&
+          res.data.transfers.length &&
+          res.data.transfers[0].status === "error"
+        ) {
           props.notify(res.data.transfers[0].error, "error");
           setLoading(0);
         } else {
@@ -45,8 +50,11 @@ function FaucetReceiver(props) {
         }
       })
       .catch((err) => {
-        console.error(err);
-        props.notify("Unable to react faucet", "error");
+        if (err.response && err.response.data && err.response.data.error) {
+          props.notify(err.response.data.error, "error");
+        } else {
+          props.notify("Unable to reach faucet", "error");
+        }
         setLoading(0);
       });
   };

@@ -380,6 +380,9 @@ function RepositoryCompareView(props) {
                                 baseBranch: compare.target.name,
                                 headRepoId: compare.source.repository.id,
                                 headBranch: compare.source.name,
+                                reviewers: reviewers,
+                                assignees: assignees,
+                                labelIds: labels,
                               });
                               console.log(res);
                               if (res && res.code === 0) {
