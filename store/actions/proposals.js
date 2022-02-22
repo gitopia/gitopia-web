@@ -90,7 +90,7 @@ export const chainUpgradeProposal = (
         });
         const send = {
           content: msgAny,
-          initialDeposit: [],
+          initialDeposit: [{ amount: "5", denom: "utlore" }],
           proposer: wallet.selectedAddress,
         };
 
@@ -154,7 +154,7 @@ export const communityPoolSpendProposal = (
         });
         const send = {
           content: msgAny,
-          initialDeposit: [],
+          initialDeposit: [{ amount: "5", denom: "utlore" }],
           proposer: wallet.selectedAddress,
         };
         const msg = await env.govTxClient.msgSubmitProposal(send);

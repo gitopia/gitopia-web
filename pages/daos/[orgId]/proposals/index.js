@@ -21,7 +21,8 @@ function GitopiaProposalsView(props) {
   });
   const [allRepos, setAllRepos] = useState([""]);
   const [proposals, setProposals] = useState([]);
-
+  var localizedFormat = require("dayjs/plugin/localizedFormat");
+  dayjs.extend(localizedFormat);
   const letter = org.id ? org.name.slice(0, 1) : "x";
 
   const avatarLink =

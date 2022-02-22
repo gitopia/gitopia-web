@@ -14,7 +14,7 @@ import Link from "next/dist/client/link";
 import getDepositor from "../../../../helpers/getDepositor";
 import getVoter from "../../../../helpers/getVoter";
 
-function RepositoryProposalDetailsView(props) {
+function ProposalDetailsView(props) {
   const [depositLoading, setDepositLoading] = useState(false);
   const [voteAbstainLoading, setVoteAbstainLoading] = useState(false);
   const [voteNoLoading, setVoteNoLoading] = useState(false);
@@ -289,7 +289,7 @@ function RepositoryProposalDetailsView(props) {
                 <div className="flex">
                   <button
                     className={
-                      "btn btn-primary btn-xs h-8 w-36 text-xs ml-auto mt-4" +
+                      "btn btn-primary btn-xs h-8 w-36 text-xs ml-auto mt-4 " +
                       (depositLoading ? "loading" : "")
                     }
                     onClick={(e) => {
@@ -299,7 +299,8 @@ function RepositoryProposalDetailsView(props) {
                       });
                     }}
                     disabled={
-                      !dayjs().isBefore(dayjs(proposal.deposit_end_time))
+                      !dayjs().isBefore(dayjs(proposal.deposit_end_time)) ||
+                      proposal.status == "PROPOSAL_STATUS_VOTING_PERIOD"
                     }
                   >
                     SUBMIT DEPOSIT
@@ -346,7 +347,13 @@ function RepositoryProposalDetailsView(props) {
                   </div>
                   <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
                     {typeof proposal.total_deposit !== "undefined"
-                      ? proposal.total_deposit[0].amount + " tlore"
+                      ? (props.advanceUser === true
+                          ? proposal.total_deposit[0].amount
+                          : proposal.total_deposit[0].amount / 1000000) +
+                        " " +
+                        (props.advanceUser === true
+                          ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                          : process.env.NEXT_PUBLIC_CURRENCY_TOKEN)
                       : ""}
                   </div>
                 </div>
@@ -356,7 +363,13 @@ function RepositoryProposalDetailsView(props) {
                   </div>
                   <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
                     {typeof initialDeposit !== "undefined"
-                      ? initialDeposit + " tlore"
+                      ? (props.advanceUser === true
+                          ? initialDeposit
+                          : initialDeposit / 1000000) +
+                        " " +
+                        (props.advanceUser === true
+                          ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                          : process.env.NEXT_PUBLIC_CURRENCY_TOKEN)
                       : ""}
                   </div>
                 </div>
@@ -395,8 +408,8 @@ function RepositoryProposalDetailsView(props) {
                 {/* Depositors Section */}
 
                 <div className="text-xl">Depositors</div>
-                <div class="overflow-x-auto mb-10 mt-5">
-                  <table class="table w-full">
+                <div className="overflow-x-auto mb-10 mt-5">
+                  <table className="table w-full">
                     <thead>
                       <tr>
                         <th>Depositor</th>
@@ -406,7 +419,14 @@ function RepositoryProposalDetailsView(props) {
                     <tbody>
                       <tr>
                         <th>{proposer}</th>
-                        <td>{initialDeposit}</td>
+                        <td>
+                          {props.advanceUser === true
+                            ? initialDeposit
+                            : initialDeposit / 1000000}{" "}
+                          {props.advanceUser === true
+                            ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
+                            : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
+                        </td>
                       </tr>
                       {depositors !== undefined
                         ? depositors.map((depositor) => {
@@ -414,7 +434,14 @@ function RepositoryProposalDetailsView(props) {
                               <tr>
                                 <th>{depositor.body.messages[0].depositor}</th>
                                 <td>
-                                  {depositor.body.messages[0].amount[0].amount}
+                                  {props.advanceUser === true
+                                    ? depositor.body.messages[0].amount[0]
+                                        .amount
+                                    : depositor.body.messages[0].amount[0]
+                                        .amount / 1000000}{" "}
+                                  {props.advanceUser === true
+                                    ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
+                                    : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                                 </td>
                               </tr>
                             );
@@ -425,8 +452,8 @@ function RepositoryProposalDetailsView(props) {
                 </div>
 
                 <div className="text-xl">Voters</div>
-                <div class="overflow-x-auto mb-10 mt-5">
-                  <table class="table w-full">
+                <div className="overflow-x-auto mb-10 mt-5">
+                  <table className="table w-full">
                     <thead>
                       <tr>
                         <th>Voter</th>
@@ -459,9 +486,9 @@ function RepositoryProposalDetailsView(props) {
 }
 
 const mapStateToProps = (state) => {
-  return {};
+  return { advanceUser: state.user.advanceUser };
 };
 
 export default connect(mapStateToProps, { proposalDeposit, proposalVote })(
-  RepositoryProposalDetailsView
+  ProposalDetailsView
 );
