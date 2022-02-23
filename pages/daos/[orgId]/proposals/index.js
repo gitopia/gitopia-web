@@ -56,8 +56,11 @@ function GitopiaProposalsView(props) {
   }, [props.currentDashboard]);
 
   useEffect(async () => {
-    const p = await getProposals();
-    setProposals(p);
+    await getProposals().then((res) => {
+      if (res !== undefined) {
+        setProposals(res);
+      }
+    });
   });
 
   return (
