@@ -1,0 +1,300 @@
+@import url("https://fonts.googleapis.com/css2?family=Oxygen:wght@400;700&display=swap");
+
+.h1 {
+  font-size: 80px;
+  line-height: 1.142em;
+  font-weight: 700;
+  font-family: "Oxygen";
+}
+
+.a {
+  font-family: "Oxygen";
+}
+
+.header {
+  background-color: #19072f;
+  padding-right: 25%;
+  padding-top: 20%;
+  padding-bottom: 100px;
+  text-align: center;
+  font-size: 90px;
+  font-weight: bold;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  transition: 0.2s;
+}
+
+.h6 {
+  margin-left: 1vw;
+  padding-right: 0.5vw;
+  font-size: normal;
+}
+
+.h62 {
+  margin-left: 0.5vw;
+  font-size: normal;
+}
+
+.textName {
+  padding-top: 1vw;
+  padding-left: 1vw;
+  color: white;
+  font-weight: bold;
+  font-size: smaller;
+}
+
+.textId {
+  margin-top: 3vw;
+  padding-left: 1vw;
+  color: white;
+  font-weight: 100;
+  font-size: smaller;
+}
+
+.textId2 {
+  margin-top: 2.5vw;
+  padding-left: 1vw;
+  color: white;
+  font-weight: 100;
+  font-size: smaller;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-top: 0.5vw;
+}
+
+.box {
+  margin-left: 4vw;
+  padding-top: 4vw;
+}
+
+.box1 {
+  margin-left: 4vw;
+  padding-top: 3vw;
+}
+
+.box2 {
+  margin-left: 4vw;
+}
+
+.box3 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: normal;
+  font-weight: bold;
+  color: #777c81;
+}
+
+.boxed {
+  font-family: "Oxygen";
+  height: 40vw;
+  width: 93%;
+  background-color: #ffffff;
+}
+
+.boxed1 {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 7.5vw;
+  width: 18vw;
+  background-color: #883be6;
+}
+
+.boxed1a {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 1.3vw;
+  width: 18vw;
+  background: linear-gradient(
+    to right,
+    #a262eb 0% 25%,
+    #ba89f1 25% 50%,
+    #d1b1f5 50% 75%,
+    #e8d7fb 75% 100%,
+    #e8d7fb 100%
+  );
+  margin-top: 10px;
+}
+
+.boxed2 {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 7.5vw;
+  width: 18vw;
+  background-color: #e83d99;
+}
+
+.boxed2a {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 1.3vw;
+  width: 18vw;
+  background: linear-gradient(
+    to right,
+    #f064ae 0% 25%,
+    #f48ac2 25% 50%,
+    #f9b1d6 50% 75%,
+    #fbd7eb 75% 100%,
+    #fbd7eb 100%
+  );
+  margin-top: 10px;
+}
+
+.boxed3 {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 7.5vw;
+  width: 18vw;
+  background-color: #63d761;
+}
+
+.boxed3a {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 1.3vw;
+  width: 18vw;
+  background: linear-gradient(
+    to right,
+    #80d885 0% 25%,
+    #a1e1a5 25% 50%,
+    #c0ebc1 50% 75%,
+    #dff5e2 75% 100%,
+    #dff5e2 100%
+  );
+  margin-top: 10px;
+}
+
+.boxed4 {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 7vw;
+  width: 14vw;
+  background-color: #041b2d;
+}
+
+.boxed4a {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 1.3vw;
+  width: 14vw;
+  background: linear-gradient(
+    to right,
+    #041b2d 0% 25%,
+    #393939 25% 50%,
+    #9c9c9c 50% 75%,
+    #cecece 75% 100%,
+    #cecece 100%
+  );
+  margin-top: 10px;
+}
+
+.boxed5 {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 4.2vw;
+  width: 3.5vw;
+  background-color: #cbd4dd;
+  margin-left: 1vw;
+}
+
+.boxed5a {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 4.2vw;
+  width: 3.5vw;
+  background-color: #91a3b4;
+  margin-top: 1vw;
+  margin-left: 1vw;
+}
+
+.boxed6 {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 1.3vw;
+  width: 39.5vw;
+  background: linear-gradient(to right, #992e82 0%, #612adb 100%);
+}
+
+.boxed7 {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 1.3vw;
+  width: 39.5vw;
+  background: linear-gradient(to right, #ffffff 0%, #d0d0d0 100%);
+  margin-top: 1vw;
+}
+
+.boxed6a {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 1.3vw;
+  width: 3.8vw;
+  background-color: #992e82;
+}
+
+.boxed6b {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 1.3vw;
+  width: 3.8vw;
+  background-color: #612adb;
+  margin-left: 1vw;
+}
+
+.boxed7a {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 1.2vw;
+  width: 0.8vw;
+  margin-left: 3vw;
+}
+
+.boxed7b {
+  font-family: "Oxygen";
+  border-radius: 10px;
+  height: 1.3vw;
+  width: 3.8vw;
+  background-color: #d0d0d0;
+  margin-left: 1vw;
+}
+
+.dashBorder {
+  flex: 1;
+  border-bottom: 0.15vw dashed #777c81;
+  display: block;
+  width: 20vw;
+  height: 0.1vw;
+}
+
+.dashBorder1 {
+  flex: 1;
+  border-bottom: 0.15vw dashed #777c81;
+  display: block;
+  width: 19.4vw;
+  height: 0.1vw;
+}
+
+@media (min-width: 2000px) {
+  .dashBorder {
+    flex: 1;
+    border-bottom: 0.15vw dashed #777c81;
+    display: block;
+    width: 23vw;
+    height: 0.1vw;
+  }
+}
+
+@media (min-width: 2000px) {
+  .dashBorder {
+    flex: 1;
+    border-bottom: 0.15vw dashed #777c81;
+    display: block;
+    width: 21vw;
+    height: 0.1vw;
+  }
+}

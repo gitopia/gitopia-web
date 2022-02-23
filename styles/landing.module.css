@@ -51,7 +51,7 @@
 }
 
 .heroSection {
-  min-height: 720px;
+  min-height: 600px;
   position: relative;
   z-index: 2;
 }
@@ -86,7 +86,7 @@
 }
 
 .row {
-  max-width: 800px;
+  max-width: 900px;
   text-align: center;
 }
 
@@ -131,17 +131,20 @@
 }
 
 .byline {
-  margin: 34px auto 104px;
+  margin: 34px auto 54px;
   font-size: 22px;
   line-height: 1.5em;
   font-weight: 700;
-  max-width: 512px;
+  max-width: 612px;
+  position: relative;
+  z-index: 1;
 }
 
 .primaryCTA {
-  width: 500px;
-  display: inline-flex;
+  width: 430px;
+  display: flex;
   justify-content: center;
+  text-align: center;
 }
 
 .secondaryCTA {
@@ -161,7 +164,7 @@
 
 .blob2 {
   position: absolute;
-  top: 200px;
+  top: 400px;
   right: 0;
   pointer-events: none;
   z-index: 1;
@@ -237,7 +240,7 @@
   white-space: nowrap;
 }
 .platformCircles {
-  transition: transform 0.15s linear;
+  transition: transform 0.1s linear;
   will-change: transform;
   display: inline;
 }
@@ -320,8 +323,8 @@
   border-radius: 50%;
   border: 2px solid #cbd4dd;
   background: url("/logo-g.svg") no-repeat, #19072f;
-  background-size: 100px;
-  background-position: 54% 42%;
+  background-size: 120px;
+  background-position: 50% 50%;
 }
 
 .storageAnimSink {
@@ -628,12 +631,11 @@
 }
 
 .teamCard {
-  width: 460px;
-  height: 600px;
+  width: 350px;
+  height: 450px;
   display: inline-block;
   position: relative;
   z-index: 1;
-  margin-bottom: 4px;
 }
 
 .bufferCard {
@@ -648,19 +650,23 @@
   bottom: 0;
 }
 
+.teamLabelContainer {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
 .teamLabel {
-  position: absolute;
   background: #19072f;
-  bottom: 0;
-  left: 0;
-  right: 30%;
-  height: 100px;
+  position: absolute;
+  padding-left: 20px;
+  padding-right: 20px;
+  bottom: 48px;
 }
 
 .teamName {
-  padding-top: 16px;
-  padding-left: 16px;
-  font-size: 32px;
+  text-align: center;
+  font-size: 26px;
   line-height: 1.5em;
 }
 
@@ -671,11 +677,43 @@
 
 .teamWrapper {
   margin-top: 100px;
-  width: 940px;
+  width: 1000px;
+}
+
+.joinTeamContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 80px;
+  width: 800px;
+  height: 300px;
+}
+.joinTeamCard {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  padding: 5px;
+  height: 300px;
+  width: 800px;
+}
+
+.joinTeamBody {
+  margin-top: 30px;
+  width: 800px;
+}
+
+.joinTeamLogo {
+  margin: 20px 20px;
+  height: 380px;
+  width: 440px;
+}
+
+.joinTeamButton {
+  height: 50px;
+  width: 200px;
 }
 
 .footer {
-  margin-top: 200px;
+  margin-top: 150px;
   padding-bottom: 200px;
   display: flex;
   justify-content: center;
@@ -814,25 +852,40 @@
     font-size: 64px;
     opacity: 0.1;
   }
-  .teamCard {
-    width: 300px;
-    height: 392px;
-    overflow: hidden;
-  }
+
   .bufferCard {
     height: 95px;
   }
   .teamWrapper {
-    width: auto;
-    /* flex-direction: column; */
+    margin-top: 100px;
+    gap: 10px;
+    width: 800px;
+  }
+  .teamImage {
+    height: 300px;
+    width: 350px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+  }
+  .teamCard {
+    width: 300px;
+    height: 400px;
+    overflow: hidden;
   }
 
   .teamLabel {
-    right: 0;
-    height: 80px;
+    background: #19072f;
+    height: 40px;
+    width: 300px;
   }
+
   .teamName {
-    font-size: 18px;
+    text-align: center;
+    font-size: 20px;
+    line-height: 1.5em;
   }
   .teamDesig {
     font-size: 12px;
@@ -853,14 +906,68 @@
   .decentralizedDesc {
     width: 320px;
   }
+
+  .joinTeamContainer {
+    margin-top: 40px;
+    width: 700px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+  }
+  .joinTeamCard {
+    padding: 30px;
+    width: 600px;
+    height: 300px;
+
+    overflow: hidden;
+  }
+  .joinTeamLogo {
+    margin: 30px 10px;
+    height: 100px;
+    width: 180px;
+  }
+  .joinTeamBody {
+    margin-top: 3px;
+    width: 100px;
+  }
+  .joinTeamTitle {
+    font-size: 18px;
+  }
+  .joinTeamContent {
+    font-size: 15px;
+  }
+  .joinTeamButton {
+    height: 40px;
+    width: 130px;
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 640px) {
+  .teamWrapper {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+  }
   .teamCard {
-    width: 180px;
-    height: 260px;
+    width: 300px;
+    height: 400px;
     overflow: hidden;
   }
+
+  .teamLabel {
+    background: #19072f;
+    height: 40px;
+    width: 300px;
+  }
+
+  .teamName {
+    text-align: center;
+    font-size: 20px;
+    line-height: 1.5em;
+  }
+
   .bufferCard {
     height: 60px;
   }
@@ -897,4 +1004,51 @@
   .footerLinks a {
     margin-bottom: 24px;
   }
+  .joinTeamContainer {
+    display: flex;
+    align-items: flex-end;
+    margin-top: 30px;
+    width: 300px;
+    height: 400px;
+  }
+  .joinTeamCard {
+    padding: 5px;
+    height: 400px;
+    width: 400px;
+    overflow: hidden;
+  }
+
+  .joinTeamLogo {
+    position: absolute;
+    margin-top: 10px;
+    height: 200px;
+    width: 150px;
+  }
+  .joinTeamBody {
+    margin-top: 130px;
+    width: 30px;
+    justify-content: center;
+    align-items: center;
+  }
+  .joinTeamTitle {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .joinTeamContent {
+    font-size: 15px;
+    text-align: center;
+  }
+  .joinTeamButton {
+    font-size: 12px;
+    height: 30px;
+    width: 120px;
+  }
+}
+
+.codeSection {
+  position: relative;
+  z-index: 2;
+  margin-top: 10px;
+  margin-bottom: 300px;
+  font-family: "SegoeUI";
 }

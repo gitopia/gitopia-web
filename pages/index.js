@@ -2,11 +2,24 @@ import Head from "next/head";
 import { useState, useEffect } from "react";
 import classnames from "classnames";
 import styles from "../styles/landing.module.css";
+import RepositoryMainTabs from "../components/repository/mainTabs";
+import getBranchSha from "../helpers/getBranchSha";
+import getUserRepository from "../helpers/getUserRepository";
+import CommitDetailRow from "../components/repository/commitDetailRow";
+import FileBrowser from "../components/repository/fileBrowser";
+import RepositoryHeader from "../components/repository/header";
+import AssigneeGroup from "../components/repository/assigneeGroup";
+import Link from "next/link";
+import BranchSelector from "../components/repository/branchSelector";
+import CloneRepoInfo from "../components/repository/cloneRepoInfo";
+import SupportOwner from "../components/repository/supportOwner";
+import getCommitHistory from "../helpers/getCommitHistory";
+import getContent from "../helpers/getContent";
 
 const pCircles = [
   {
     url: "#circle1",
-    x: -70,
+    x: -20,
     y: -420,
     z: 11,
     mx: -350,
@@ -15,7 +28,7 @@ const pCircles = [
   },
   {
     url: "#circle2",
-    x: 430,
+    x: 470,
     y: -200,
     z: 5,
     mx: 440,
@@ -24,7 +37,7 @@ const pCircles = [
   },
   {
     url: "#circle3",
-    x: -480,
+    x: -430,
     y: -100,
     z: 9,
     mx: -600,
@@ -33,7 +46,7 @@ const pCircles = [
   },
   {
     url: "#circle4",
-    x: 80,
+    x: 130,
     y: 70,
     z: 7,
     mx: 800,
@@ -42,7 +55,7 @@ const pCircles = [
   },
   {
     url: "#circle5",
-    x: 130,
+    x: 170,
     y: 180,
     z: 9,
     mx: 450,
@@ -51,7 +64,7 @@ const pCircles = [
   },
   {
     url: "#circle6",
-    x: -500,
+    x: -430,
     y: -150,
     z: 15,
     mx: -500,
@@ -60,7 +73,7 @@ const pCircles = [
   },
   {
     url: "#circle7",
-    x: -700,
+    x: -650,
     y: 100,
     z: 13,
     mx: -700,
@@ -142,6 +155,46 @@ function addOrUpdateGlobs() {
 
 export default function Landing() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [repository, setRepository] = useState({
+    collaborators: [],
+    releases: [],
+  });
+  const [commitDetail, setCommitDetail] = useState({
+    author: {},
+    message: "",
+    title: "",
+    id: "",
+  });
+  const [entityList, setEntityList] = useState([]);
+
+  const demoAddress = process.env.NEXT_PUBLIC_GITOPIA_ADDRESS,
+    demoRepoName = "gitopia",
+    demoRepoBranch = "master";
+
+  const initDemoRepo = async () => {
+    const repo = await getUserRepository(demoAddress, demoRepoName);
+    if (repo) {
+      setRepository(repo);
+      let branchSha = getBranchSha(repo.defaultBranch, repo.branches);
+      const commitHistory = await getCommitHistory(repo.id, branchSha, null, 1);
+
+      if (
+        commitHistory &&
+        commitHistory.commits &&
+        commitHistory.commits.length
+      ) {
+        setCommitDetail(commitHistory.commits[0]);
+      }
+      const res = await getContent(repo.id, branchSha, null, null, 1000);
+      if (res) {
+        if (res.content) {
+          setEntityList(res.content);
+        }
+      }
+    } else {
+      console.log("Unable to query demo repo");
+    }
+  };
 
   useEffect(() => {
     if (window) {
@@ -190,6 +243,8 @@ export default function Landing() {
       });
     }
 
+    initDemoRepo();
+
     return () => {
       if (window) {
         window.removeEventListener("scroll", updateOffset);
@@ -201,21 +256,29 @@ export default function Landing() {
   return (
     <div className={styles.wrapper}>
       <Head>
-        <title>Gitopia</title>
-        <link rel="icon" href="/favicon.svg" />
+        <title>Gitopia - Code Collaboration for Web3</title>
+        <link rel="icon" href="/favicon.png" />
         <meta
           name="description"
-          content="The new age decentralized code collaboration platform"
+          content="A new age decentralized code collaboration platform for developers
+          to collaborate, BUIDL, and get rewarded."
         />
         <meta
           name="keywords"
-          content="code, collaboration, decentralized, git"
+          content="code, collaboration, decentralized, git, web3, crypto"
         />
-        <script
-          async
-          defer
-          data-domain="gitopia.org"
-          src="https://plausible.io/js/plausible.js"
+        <meta
+          property="og:title"
+          content="Gitopia - Code Collaboration for Web3"
+        />
+        <meta
+          property="og:description"
+          content="A new age decentralized code collaboration platform for developers
+            to collaborate, BUIDL, and get rewarded."
+        />
+        <meta
+          property="og:image"
+          content="https://testnet.gitopia.com/og-gitopia.jpg"
         />
       </Head>
       <header className={(menuOpen ? "bg-purple " : "") + styles.header}>
@@ -278,9 +341,16 @@ export default function Landing() {
           <div className={styles.row}>
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto w-full">
               <li className={menuOpen ? "" : "mr-4"}>
+                <Link href="/home">
+                  <a className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70">
+                    Try Testnet
+                  </a>
+                </Link>
+              </li>
+              <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="https://gitopia.org/whitepaper.pdf"
+                  href="https://gitopia.com/whitepaper.pdf"
                   target="_blank"
                 >
                   Whitepaper
@@ -305,64 +375,273 @@ export default function Landing() {
       <section className={classnames([styles.section, styles.heroSection])}>
         <div className={styles.row}>
           <h1 className={classnames([styles.h1, styles.wings])}>
-            The Future of Code Collaboration
+            Code Collaboration for Web3
           </h1>
           <div className={styles.byline}>
             A new age decentralized code collaboration platform for developers
             to collaborate, BUIDL, and get rewarded.
           </div>
-          <div className={styles.primaryCTA}>
-            <button
-              onClick={() => {
-                if (window) {
-                  window.open("https://discord.gg/mVpQVW3vKE");
-                }
-              }}
-              type="button"
-              className="flex inline-flex items-center justify-center h-14 px-8 py-4 w-full md:w-auto mr-4 mb-8 md:mb-0 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-            >
-              <svg
-                width="42"
-                height="30"
-                viewBox="0 0 42 30"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="mr-4"
+          <div className="flex flex-col justify-center items-center">
+            <div className={classnames("mb-8", styles.primaryCTA)}>
+              <Link href="/home">
+                <a className="h-14 px-8 py-4 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
+                  Try Our Testnet
+                </a>
+              </Link>
+            </div>
+            <div className={styles.primaryCTA}>
+              <button
+                onClick={() => {
+                  if (window) {
+                    window.open("https://discord.gg/mVpQVW3vKE");
+                  }
+                }}
+                type="button"
+                className="flex inline-flex items-center justify-center h-14 px-8 py-4 w-full md:w-auto mr-4 mb-8 md:mb-0 rounded text-white text-sm font-bold border-2 border-purple border-opacity-50 hover:border-opacity-100 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               >
-                <path
-                  d="M35.6668 4.00016C35.6668 4.00016 31.463 0.709329 26.5002 0.333496L26.0528 1.22908C30.539 2.32816 32.5978 3.89933 34.7502 5.8335C31.0404 3.93966 27.3802 2.16683 21.0002 2.16683C14.6202 2.16683 10.9599 3.93966 7.25016 5.8335C9.4025 3.89933 11.8518 2.15216 15.9475 1.22908L15.5002 0.333496C10.2935 0.823913 6.3335 4.00016 6.3335 4.00016C6.3335 4.00016 1.63925 10.8073 0.833496 24.1668C5.5635 29.6237 12.7502 29.6668 12.7502 29.6668L14.2535 27.6648C11.7015 26.7775 8.82316 25.1944 6.3335 22.3335C9.30166 24.5793 13.7814 26.9168 21.0002 26.9168C28.2189 26.9168 32.6987 24.5793 35.6668 22.3335C33.1781 25.1944 30.2997 26.7775 27.7468 27.6648L29.2502 29.6668C29.2502 29.6668 36.4368 29.6237 41.1668 24.1668C40.3611 10.8073 35.6668 4.00016 35.6668 4.00016ZM15.0418 20.5002C13.269 20.5002 11.8335 18.8593 11.8335 16.8335C11.8335 14.8077 13.269 13.1668 15.0418 13.1668C16.8147 13.1668 18.2502 14.8077 18.2502 16.8335C18.2502 18.8593 16.8147 20.5002 15.0418 20.5002ZM26.9585 20.5002C25.1857 20.5002 23.7502 18.8593 23.7502 16.8335C23.7502 14.8077 25.1857 13.1668 26.9585 13.1668C28.7313 13.1668 30.1668 14.8077 30.1668 16.8335C30.1668 18.8593 28.7313 20.5002 26.9585 20.5002Z"
-                  fill="white"
-                />
-              </svg>
-              <span>Join Our Discord</span>
-            </button>
-            <button
-              onClick={() => {
-                if (window) {
-                  window.open("https://t.me/Gitopia");
-                }
-              }}
-              type="button"
-              className="flex inline-flex items-center justify-center h-14 px-8 py-4 w-full md:w-auto rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-            >
-              <svg
-                width="30"
-                height="27"
-                viewBox="0 0 30 27"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="mr-4"
+                <svg
+                  width="42"
+                  height="30"
+                  viewBox="0 0 42 30"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mr-4"
+                >
+                  <path
+                    d="M35.6668 4.00016C35.6668 4.00016 31.463 0.709329 26.5002 0.333496L26.0528 1.22908C30.539 2.32816 32.5978 3.89933 34.7502 5.8335C31.0404 3.93966 27.3802 2.16683 21.0002 2.16683C14.6202 2.16683 10.9599 3.93966 7.25016 5.8335C9.4025 3.89933 11.8518 2.15216 15.9475 1.22908L15.5002 0.333496C10.2935 0.823913 6.3335 4.00016 6.3335 4.00016C6.3335 4.00016 1.63925 10.8073 0.833496 24.1668C5.5635 29.6237 12.7502 29.6668 12.7502 29.6668L14.2535 27.6648C11.7015 26.7775 8.82316 25.1944 6.3335 22.3335C9.30166 24.5793 13.7814 26.9168 21.0002 26.9168C28.2189 26.9168 32.6987 24.5793 35.6668 22.3335C33.1781 25.1944 30.2997 26.7775 27.7468 27.6648L29.2502 29.6668C29.2502 29.6668 36.4368 29.6237 41.1668 24.1668C40.3611 10.8073 35.6668 4.00016 35.6668 4.00016ZM15.0418 20.5002C13.269 20.5002 11.8335 18.8593 11.8335 16.8335C11.8335 14.8077 13.269 13.1668 15.0418 13.1668C16.8147 13.1668 18.2502 14.8077 18.2502 16.8335C18.2502 18.8593 16.8147 20.5002 15.0418 20.5002ZM26.9585 20.5002C25.1857 20.5002 23.7502 18.8593 23.7502 16.8335C23.7502 14.8077 25.1857 13.1668 26.9585 13.1668C28.7313 13.1668 30.1668 14.8077 30.1668 16.8335C30.1668 18.8593 28.7313 20.5002 26.9585 20.5002Z"
+                    fill="white"
+                  />
+                </svg>
+                <span>Join Discord</span>
+              </button>
+              <button
+                onClick={() => {
+                  if (window) {
+                    window.open("https://t.me/Gitopia");
+                  }
+                }}
+                type="button"
+                className="flex inline-flex items-center justify-center h-14 px-8 py-4 w-full md:w-auto rounded text-white text-sm font-bold border-2 border-purple border-opacity-50 hover:border-opacity-100 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               >
-                <path
-                  d="M27.3288 0.495365C26.9677 0.52164 26.6132 0.606367 26.2792 0.74624H26.2747C25.9541 0.873365 24.4297 1.51461 22.1122 2.48661L13.8074 5.98424C7.84832 8.49299 1.99045 10.9635 1.99045 10.9635L2.0602 10.9365C2.0602 10.9365 1.65632 11.0692 1.23445 11.3584C0.973816 11.5242 0.749543 11.7412 0.575197 11.9962C0.368197 12.3 0.201698 12.7646 0.263573 13.245C0.364823 14.0572 0.891322 14.5444 1.26932 14.8132C1.65182 15.0855 2.01632 15.2126 2.01632 15.2126H2.02532L7.5187 17.0632C7.76507 17.8541 9.1927 22.5476 9.53582 23.6287C9.73832 24.2745 9.9352 24.6784 10.1816 24.9866C10.3008 25.1441 10.4403 25.2757 10.6079 25.3815C10.6951 25.4322 10.788 25.4722 10.8847 25.5007L10.8284 25.4872C10.8453 25.4917 10.8588 25.5052 10.8712 25.5097C10.9162 25.5221 10.9466 25.5266 11.0039 25.5356C11.8736 25.7989 12.5722 25.2589 12.5722 25.2589L12.6116 25.2274L15.8549 22.2742L21.2909 26.4446L21.4147 26.4975C22.5476 26.9947 23.6951 26.718 24.3014 26.2297C24.9123 25.7381 25.1497 25.1092 25.1497 25.1092L25.1891 25.008L29.3898 3.48787C29.5091 2.95687 29.5394 2.45962 29.4078 1.97699C29.2721 1.48854 28.9587 1.06845 28.5292 0.799115C28.1685 0.579869 27.7503 0.474045 27.3288 0.495365ZM27.2152 2.80162C27.2107 2.87249 27.2242 2.86462 27.1927 3.00074V3.01312L23.0313 24.3094C23.0133 24.3397 22.9829 24.4061 22.8997 24.4725C22.8119 24.5422 22.7422 24.5861 22.3766 24.441L15.7278 19.3436L11.7116 23.0044L12.5553 17.6156L23.4183 7.49061C23.8661 7.07436 23.7164 6.98662 23.7164 6.98662C23.7479 6.47586 23.0403 6.83699 23.0403 6.83699L9.34232 15.3229L9.33782 15.3004L2.77232 13.0897V13.0852L2.75545 13.0819C2.76696 13.078 2.77823 13.0735 2.7892 13.0684L2.8252 13.0504L2.86007 13.038C2.86007 13.038 8.72245 10.5675 14.6816 8.05874C17.6651 6.80211 20.6711 5.53649 22.9829 4.55999C25.2948 3.58912 27.0037 2.87699 27.1004 2.83874C27.1927 2.80274 27.1488 2.80274 27.2152 2.80274V2.80162Z"
-                  fill="white"
-                />
-              </svg>
-              <span>Join Our Telegram</span>
-            </button>
+                <svg
+                  width="30"
+                  height="27"
+                  viewBox="0 0 30 27"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mr-4"
+                >
+                  <path
+                    d="M27.3288 0.495365C26.9677 0.52164 26.6132 0.606367 26.2792 0.74624H26.2747C25.9541 0.873365 24.4297 1.51461 22.1122 2.48661L13.8074 5.98424C7.84832 8.49299 1.99045 10.9635 1.99045 10.9635L2.0602 10.9365C2.0602 10.9365 1.65632 11.0692 1.23445 11.3584C0.973816 11.5242 0.749543 11.7412 0.575197 11.9962C0.368197 12.3 0.201698 12.7646 0.263573 13.245C0.364823 14.0572 0.891322 14.5444 1.26932 14.8132C1.65182 15.0855 2.01632 15.2126 2.01632 15.2126H2.02532L7.5187 17.0632C7.76507 17.8541 9.1927 22.5476 9.53582 23.6287C9.73832 24.2745 9.9352 24.6784 10.1816 24.9866C10.3008 25.1441 10.4403 25.2757 10.6079 25.3815C10.6951 25.4322 10.788 25.4722 10.8847 25.5007L10.8284 25.4872C10.8453 25.4917 10.8588 25.5052 10.8712 25.5097C10.9162 25.5221 10.9466 25.5266 11.0039 25.5356C11.8736 25.7989 12.5722 25.2589 12.5722 25.2589L12.6116 25.2274L15.8549 22.2742L21.2909 26.4446L21.4147 26.4975C22.5476 26.9947 23.6951 26.718 24.3014 26.2297C24.9123 25.7381 25.1497 25.1092 25.1497 25.1092L25.1891 25.008L29.3898 3.48787C29.5091 2.95687 29.5394 2.45962 29.4078 1.97699C29.2721 1.48854 28.9587 1.06845 28.5292 0.799115C28.1685 0.579869 27.7503 0.474045 27.3288 0.495365ZM27.2152 2.80162C27.2107 2.87249 27.2242 2.86462 27.1927 3.00074V3.01312L23.0313 24.3094C23.0133 24.3397 22.9829 24.4061 22.8997 24.4725C22.8119 24.5422 22.7422 24.5861 22.3766 24.441L15.7278 19.3436L11.7116 23.0044L12.5553 17.6156L23.4183 7.49061C23.8661 7.07436 23.7164 6.98662 23.7164 6.98662C23.7479 6.47586 23.0403 6.83699 23.0403 6.83699L9.34232 15.3229L9.33782 15.3004L2.77232 13.0897V13.0852L2.75545 13.0819C2.76696 13.078 2.77823 13.0735 2.7892 13.0684L2.8252 13.0504L2.86007 13.038C2.86007 13.038 8.72245 10.5675 14.6816 8.05874C17.6651 6.80211 20.6711 5.53649 22.9829 4.55999C25.2948 3.58912 27.0037 2.87699 27.1004 2.83874C27.1927 2.80274 27.1488 2.80274 27.2152 2.80274V2.80162Z"
+                    fill="white"
+                  />
+                </svg>
+                <span>Join Telegram</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>
+
+      {repository.id ? (
+        <section className={classnames([styles.section, styles.codeSection])}>
+          <div className="text-2xl mb-8">Try Gitopia Live, click around 👇</div>
+          <div className="text-left bg-base-100 bg-repo-grad-v p-8 rounded-md border border-grey container mx-auto max-w-screen-lg">
+            <RepositoryHeader repository={repository} />
+            <RepositoryMainTabs repository={repository} active="code" />
+            <div className="flex mt-8">
+              <div className="flex-none mt-4 w-64 pr-8 divide-y divide-grey">
+                <div className="pb-8">
+                  <div className="flex-1 text-left">About</div>
+
+                  <div className="text-xs mt-3">{repository.description}</div>
+                </div>
+
+                <div className="py-8">
+                  <Link
+                    href={"/" + demoAddress + "/" + demoRepoName + "/releases"}
+                  >
+                    <a className="flex items-center">
+                      <div className="flex-1 text-left">
+                        <span>Releases</span>
+                      </div>
+                      <span className="text-xs text-type-secondary font-semibold">
+                        {repository.releases.length + " TAGS"}
+                      </span>
+                    </a>
+                  </Link>
+
+                  {repository.releases.length ? (
+                    <div className="text-xs mt-3">
+                      <Link
+                        href={
+                          "/" +
+                          repository.owner.id +
+                          "/" +
+                          repository.name +
+                          "/releases/tag/" +
+                          repository.releases[repository.releases.length - 1]
+                            .tagName
+                        }
+                      >
+                        <a className="link link-primary no-underline hover:underline">
+                          {repository.name +
+                            " " +
+                            repository.releases[repository.releases.length - 1]
+                              .tagName}
+                        </a>
+                      </Link>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+
+                <div className="py-8">
+                  <Link
+                    href={
+                      "/" +
+                      demoAddress +
+                      "/" +
+                      demoRepoName +
+                      "/settings#collaborators"
+                    }
+                  >
+                    <a className="flex items-center">
+                      <div className="flex-1 text-left">
+                        <span>Collaborators</span>
+                      </div>
+                      <span className="text-xs text-type-secondary font-semibold">
+                        {repository.collaborators.length + 1 + " PEOPLE"}
+                      </span>
+                    </a>
+                  </Link>
+
+                  <div className="text-xs mt-3">
+                    <AssigneeGroup
+                      assignees={[
+                        repository.owner.id,
+                        ...repository.collaborators.map((c) => c.id),
+                      ]}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 mt-4 max-w-3xl">
+                <SupportOwner ownerAddress={demoAddress} />
+                <div className="mt-8 flex justify-start">
+                  <div className="">
+                    <BranchSelector
+                      branches={repository.branches}
+                      tags={repository.tags}
+                      baseUrl={
+                        "/" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name +
+                        "/tree"
+                      }
+                      branchName={demoRepoBranch}
+                    />
+                  </div>
+                  <div className="ml-4">
+                    <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        stroke="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-1"
+                      >
+                        <g transform="scale(0.8)">
+                          <path
+                            d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            fill="none"
+                          />
+                          <circle
+                            cx="8.5"
+                            cy="18.5"
+                            r="2.5"
+                            fill="currentColor"
+                          />
+                          <circle
+                            cx="8.5"
+                            cy="5.5"
+                            r="2.5"
+                            fill="currentColor"
+                          />
+                          <path
+                            d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
+                            fill="currentColor"
+                          />
+                        </g>
+                      </svg>
+                      {repository.branches.length} Branches
+                    </div>
+                  </div>
+                  <div className="ml-4">
+                    <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 mr-2"
+                      >
+                        <path
+                          d="M7.04297 19.0293V9.36084L12.043 4.4333L17.043 9.36084V19.0293H7.04297Z"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        />
+                        <path
+                          d="M12.043 11.5293V9.5293"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        />
+                      </svg>
+                      {repository.tags.length} Tags
+                    </div>
+                  </div>
+                  <div className="flex-1 text-right">
+                    <CloneRepoInfo
+                      remoteUrl={
+                        "gitopia://" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 border border-gray-700 rounded overflow-hidden">
+                  <CommitDetailRow
+                    commitDetail={commitDetail}
+                    commitLink={
+                      "/" +
+                      demoAddress +
+                      "/" +
+                      demoRepoName +
+                      "/commits/" +
+                      demoRepoBranch
+                    }
+                  />
+                  <FileBrowser
+                    entityList={entityList}
+                    branchName={demoRepoBranch}
+                    baseUrl={"/" + demoAddress + "/" + demoRepoName}
+                    repoPath={[]}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        ""
+      )}
 
       <section className={classnames([styles.section, styles.circleSection])}>
         <svg width="0" height="0">
@@ -382,10 +661,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -429,7 +705,7 @@ export default function Landing() {
             <g filter="url(#filter1_ii)">
               <circle cx="110" cy="110" r="110" fill="#5957AA"></circle>
             </g>
-            <g opacity=".5" fill-rule="evenodd" clip-rule="evenodd" fill="#fff">
+            <g opacity=".5" fillRule="evenodd" clipRule="evenodd" fill="#fff">
               <path d="M111.301 41.329c-.658-.606-.998-.617-1.055-.617-.057 0-.396.011-1.054.617-.676.621-1.483 1.694-2.353 3.349-1.737 3.303-3.399 8.296-4.832 14.739C99.154 72.25 97.361 90.135 97.361 110s1.793 37.75 4.646 50.583c1.433 6.443 3.095 11.436 4.832 14.739.87 1.655 1.677 2.728 2.353 3.349.658.606.997.617 1.054.617.057 0 .397-.011 1.055-.617.676-.621 1.483-1.694 2.353-3.349 1.737-3.303 3.399-8.296 4.831-14.739 2.854-12.833 4.647-30.718 4.647-50.583s-1.793-37.75-4.647-50.583c-1.432-6.443-3.094-11.436-4.831-14.739-.87-1.655-1.677-2.728-2.353-3.35zM126.374 110c0-40.058-7.221-72.53-16.128-72.53S94.119 69.941 94.119 110c0 40.057 7.22 72.53 16.127 72.53s16.128-32.473 16.128-72.53z"></path>
               <path d="M170.282 76.575c.196-.872.036-1.17.008-1.218-.028-.048-.207-.337-1.061-.603-.877-.275-2.211-.437-4.08-.363-3.732.149-8.89 1.207-15.19 3.188-12.547 3.947-28.943 11.339-46.157 21.27-17.215 9.933-31.817 20.428-41.511 29.314-4.867 4.461-8.363 8.396-10.357 11.551-1 1.581-1.525 2.816-1.726 3.711-.195.871-.035 1.17-.008 1.218.028.048.207.336 1.062.603.877.274 2.21.437 4.08.363 3.732-.149 8.89-1.207 15.19-3.189 12.547-3.947 28.943-11.338 46.157-21.27 17.214-9.932 31.817-20.427 41.511-29.313 4.867-4.461 8.362-8.397 10.357-11.551.999-1.58 1.524-2.816 1.725-3.71zm-122.889 69.69c4.454 7.709 36.204-2.278 70.916-22.307 34.712-20.028 59.242-42.514 54.789-50.223-4.454-7.709-36.204 2.278-70.917 22.307-34.712 20.028-59.241 42.514-54.788 50.223z"></path>
               <path d="M173.098 146.265c4.453-7.709-20.077-30.195-54.789-50.223-34.712-20.029-66.462-30.016-70.916-22.307-4.453 7.71 20.076 30.195 54.788 50.223 34.713 20.029 66.463 30.016 70.917 22.307zM50.2 75.357c.028-.049.208-.337 1.062-.603.877-.275 2.21-.437 4.08-.363 3.732.149 8.89 1.207 15.19 3.188 12.547 3.947 28.943 11.339 46.157 21.27 17.214 9.933 31.817 20.428 41.511 29.314 4.867 4.461 8.362 8.396 10.357 11.551.999 1.581 1.524 2.816 1.725 3.711.196.872.036 1.17.008 1.218-.028.048-.207.336-1.061.603-.877.274-2.211.437-4.08.363-3.732-.149-8.89-1.207-15.19-3.189-12.547-3.947-28.943-11.338-46.157-21.27-17.215-9.932-31.817-20.427-41.511-29.313-4.867-4.461-8.363-8.397-10.357-11.551-1-1.58-1.525-2.816-1.726-3.71-.195-.873-.035-1.171-.008-1.219z"></path>
@@ -452,10 +728,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -525,10 +798,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -595,10 +865,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -663,10 +930,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -731,10 +995,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -799,10 +1060,7 @@ export default function Landing() {
                 filterUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feFlood
-                  flood-opacity="0"
-                  result="BackgroundImageFix"
-                ></feFlood>
+                <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
                 <feBlend
                   in="SourceGraphic"
                   in2="BackgroundImageFix"
@@ -868,7 +1126,7 @@ export default function Landing() {
               filterUnits="userSpaceOnUse"
               colorInterpolationFilters="sRGB"
             >
-              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feFlood floodOpacity="0" result="BackgroundImageFix" />
               <feBlend
                 mode="normal"
                 in="SourceGraphic"
@@ -903,8 +1161,8 @@ export default function Landing() {
               y2="180.118"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stop-color="#C4C4C4" />
-              <stop offset="1" stop-color="#C4C4C4" stop-opacity="0" />
+              <stop stopColor="#C4C4C4" />
+              <stop offset="1" stopColor="#C4C4C4" stopOpacity="0" />
             </linearGradient>
           </defs>
           <mask
@@ -962,7 +1220,7 @@ export default function Landing() {
           </div>
           <div className={styles.circleSectionLink}>
             Learn more about Gitopia{" "}
-            <a href="https://gitopia.org/whitepaper.pdf" target="_blank">
+            <a href="https://gitopia.com/whitepaper.pdf" target="_blank">
               here
             </a>
           </div>
@@ -1041,7 +1299,7 @@ export default function Landing() {
                 type="button"
                 onClick={() => {
                   if (window) {
-                    window.open("https://gitopia.org/whitepaper.pdf");
+                    window.open("https://gitopia.com/whitepaper.pdf");
                   }
                 }}
                 className="ml-4 px-16 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -1078,7 +1336,7 @@ export default function Landing() {
               type="button"
               onClick={() => {
                 if (window) {
-                  window.open("https://gitopia.org/whitepaper.pdf");
+                  window.open("https://gitopia.com/whitepaper.pdf");
                 }
               }}
               className="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -1110,7 +1368,7 @@ export default function Landing() {
               type="button"
               onClick={() => {
                 if (window) {
-                  window.open("https://gitopia.org/whitepaper.pdf");
+                  window.open("https://gitopia.com/whitepaper.pdf");
                 }
               }}
               className="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -1218,55 +1476,127 @@ export default function Landing() {
       <section className={styles.section}>
         <h3 className={styles.h3}>Meet the Team</h3>
         <div
-          className={"grid grid-rows-9 grid-cols-2 gap-2 " + styles.teamWrapper}
+          className={"grid grid-rows-3 grid-cols-3 gap-2 " + styles.teamWrapper}
         >
           <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/parth.jpg" loading="lazy" />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Parth Oberoi</div>
-              <div className={styles.teamDesig}>CEO & Founder</div>
+            <img
+              className={styles.teamImage}
+              src="/kushagra.png"
+              loading="lazy"
+            />
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Kushagra Singh</div>
+              </div>
             </div>
           </div>
-          <div className={"block row-span-1 " + styles.bufferCard}></div>
           <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/faza.jpg" loading="lazy" />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Faza Mahamood</div>
-              <div className={styles.teamDesig}>CTO & Founder</div>
+            <img className={styles.teamImage} src="/parth.png" loading="lazy" />
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Parth Oberoi</div>
+              </div>
+            </div>
+          </div>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img className={styles.teamImage} src="/faza.png" loading="lazy" />
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Faza Mahamood</div>
+              </div>
+            </div>
+          </div>
+
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/snehil.png"
+              loading="lazy"
+            />
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Snehil Buxy</div>
+              </div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
-              src="/snehil.jpg"
+              src="/hariom.png"
               loading="lazy"
             />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Snehil Buxy</div>
-              <div className={styles.teamDesig}>Senior Developer</div>
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Hariom Verma</div>
+              </div>
+            </div>
+          </div>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img className={styles.teamImage} src="/stian.png" loading="lazy" />
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Stian Sandsgaard</div>
+              </div>
+            </div>
+          </div>
+
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img className={styles.teamImage} src="/ejaaz.png" loading="lazy" />
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Ejaaz Mahamood</div>
+              </div>
             </div>
           </div>
           <div className={"row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
-              src="/kushagra.jpg"
+              src="/abhiti.png"
               loading="lazy"
             />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Kushagra Singh</div>
-              <div className={styles.teamDesig}>Marketing</div>
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Abhiti Darbar</div>
+              </div>
             </div>
           </div>
-          <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/stian.jpg" loading="lazy" />
-            <div className={styles.teamLabel}>
-              <div className={styles.teamName}>Stian Sandsgaard</div>
-              <div className={styles.teamDesig}>Design</div>
+        </div>
+        <div className={styles.joinTeamContainer}>
+          <div
+            className={
+              "card lg:card-side bg-gradient-to-r from-type-dark to-purple-900 " +
+              styles.joinTeamCard
+            }
+          >
+            <div className={"ml-48 " + styles.joinTeamLogo}>
+              <figure>
+                <img src="/logo-g.svg" />
+              </figure>
+            </div>
+            <div className={"card-body " + styles.joinTeamBody}>
+              <div className={"card-title " + styles.joinTeamTitle}>
+                Want to join our team?
+              </div>
+              <div className={styles.joinTeamContent}>
+                Passionate about blockchain and a desire to change the world?
+                We’re always looking for hard working talent!
+              </div>
+              <div className="card-actions">
+                <button
+                  className={"btn btn-primary btn-sm " + styles.joinTeamButton}
+                  onClick={() => {
+                    if (window) {
+                      window.open("https://angel.co/company/gitopia");
+                    }
+                  }}
+                >
+                  Apply Here
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </section>
-
       <svg
         className={styles.blob1}
         width="874"
@@ -1371,9 +1701,9 @@ export default function Landing() {
         <div className={styles.footerLinks}>
           {/* <a href="#">About Us</a> */}
 
-          <a href="https://gitopia.org/whitepaper.pdf">Whitepaper</a>
+          <a href="https://gitopia.com/whitepaper.pdf">Whitepaper</a>
 
-          <a href="https://twitter.com/gitopiaOrg" target="_blank">
+          <a href="https://twitter.com/gitopiadao" target="_blank">
             Twitter
           </a>
 
