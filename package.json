@@ -7,7 +7,8 @@
     "build": "next build && next export",
     "start": "next start",
     "lint": "next lint",
-    "analyze": "cross-env ANALYZE=true next build"
+    "analyze": "cross-env ANALYZE=true next build",
+    "pm2": "pm2"
   },
   "dependencies": {
     "@badrap/bar-of-progress": "^0.1.2",
@@ -33,6 +34,7 @@
     "lodash": "^4.17.21",
     "next": "^12.1.0",
     "next-redux-wrapper": "^6.0.2",
+    "pm2": "^5.2.0",
     "react": "17.0.2",
     "react-click-away-listener": "^2.0.3",
     "react-diff-view": "^2.4.8",
