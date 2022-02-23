@@ -18,7 +18,8 @@ function ProposalDetailsView(props) {
   const [depositLoading, setDepositLoading] = useState(false);
   const [voteAbstainLoading, setVoteAbstainLoading] = useState(false);
   const [voteNoLoading, setVoteNoLoading] = useState(false);
-  const [voteYesloading, setVoteYesLoading] = useState(false);
+  const [voteYesLoading, setVoteYesLoading] = useState(false);
+  const [voteNoWithVetoLoading, setVoteNoWithVetoLoading] = useState(false);
   const [proposal, setProposal] = useState([""]);
   const [proposer, setProposer] = useState("");
   const [initialDeposit, setInitialDeposit] = useState("");
@@ -94,6 +95,8 @@ function ProposalDetailsView(props) {
           count = parseInt(tally.no);
         } else if (key == "abstain") {
           count = parseInt(tally.abstain);
+        } else if (key == "no_with_veto") {
+          count = parseInt(tally.no_with_veto);
         }
         let percent = count / total;
         return percent * 100;
@@ -202,7 +205,7 @@ function ProposalDetailsView(props) {
                       <button
                         className={
                           "btn btn-outline btn-xs h-8 w-24 text-xs mt-5 ml-20 " +
-                          (voteYesloading ? "loading" : "")
+                          (voteYesLoading ? "loading" : "")
                         }
                         onClick={(e) => {
                           setVoteYesLoading(true);
@@ -213,8 +216,13 @@ function ProposalDetailsView(props) {
                             });
                         }}
                         disabled={
-                          !dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
-                          !dayjs().isBefore(dayjs(proposal.voting_start_time))
+                          (!dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
+                            !dayjs().isBefore(
+                              dayjs(proposal.voting_start_time)
+                            )) ||
+                          voteAbstainLoading === true ||
+                          voteNoLoading === true ||
+                          voteNoWithVetoLoading === true
                         }
                       >
                         YES
@@ -246,8 +254,13 @@ function ProposalDetailsView(props) {
                             });
                         }}
                         disabled={
-                          !dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
-                          !dayjs().isBefore(dayjs(proposal.voting_start_time))
+                          (!dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
+                            !dayjs().isBefore(
+                              dayjs(proposal.voting_start_time)
+                            )) ||
+                          voteAbstainLoading === true ||
+                          voteYesLoading === true ||
+                          voteNoWithVetoLoading === true
                         }
                       >
                         NO
@@ -279,11 +292,54 @@ function ProposalDetailsView(props) {
                             });
                         }}
                         disabled={
-                          !dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
-                          !dayjs().isBefore(dayjs(proposal.voting_start_time))
+                          (!dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
+                            !dayjs().isBefore(
+                              dayjs(proposal.voting_start_time)
+                            )) ||
+                          voteNoLoading === true ||
+                          voteYesLoading === true ||
+                          voteNoWithVetoLoading === true
                         }
                       >
                         ABSTAIN
+                      </button>
+                    </div>
+                    <div className="flex flex-col">
+                      <div style={{ width: 90, height: 90 }} className="ml-20">
+                        <CircularProgressbar
+                          value={getPercentage("no_with_veto")}
+                          text={`${getPercentage("no_with_veto")}%`}
+                          styles={buildStyles({
+                            textColor: "#E2EBF2",
+                            pathColor: "#FCC945",
+                            trailColor: "#3E4051",
+                          })}
+                        />
+                      </div>
+                      <button
+                        className={
+                          "btn btn-outline btn-xs h-8 w-24 text-xs mt-5 ml-20 " +
+                          (voteNoWithVetoLoading ? "loading" : "")
+                        }
+                        onClick={(e) => {
+                          setVoteNoWithVetoLoading(true);
+                          props
+                            .proposalVote(id, "VOTE_OPTION_NO_WITH_VETO")
+                            .then((res) => {
+                              setVoteNoWithVetoLoading(false);
+                            });
+                        }}
+                        disabled={
+                          (!dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
+                            !dayjs().isBefore(
+                              dayjs(proposal.voting_start_time)
+                            )) ||
+                          voteNoLoading === true ||
+                          voteYesLoading === true ||
+                          voteAbstainLoading === true
+                        }
+                      >
+                        NO WITH VETO
                       </button>
                     </div>
                   </div>

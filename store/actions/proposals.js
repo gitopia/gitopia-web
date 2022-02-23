@@ -236,6 +236,9 @@ export const proposalVote = (proposalId, option) => {
     if (option === "VOTE_OPTION_ABSTAIN") {
       choice = VoteOption.VOTE_OPTION_ABSTAIN;
     }
+    if (option === "VOTE_OPTION_NO_WITH_VETO") {
+      choice = VoteOption.VOTE_OPTION_NO_WITH_VETO;
+    }
     if (wallet.activeWallet) {
       try {
         await setupTxClients(dispatch, getState);
