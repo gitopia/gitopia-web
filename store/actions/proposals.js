@@ -1,16 +1,13 @@
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { stringToPath } from "@cosmjs/crypto";
 import { notify } from "reapop";
-import { Any } from "../cosmos.gov.v1beta1/module/types/google/protobuf/any";
-import {
-  TextProposal,
-  VoteOption,
-} from "../cosmos.gov.v1beta1/module/types/cosmos/gov/v1beta1/gov";
+import { TextProposal, VoteOption } from "cosmjs-types/cosmos/gov/v1beta1/gov";
+import { Any } from "cosmjs-types/google/protobuf/any";
 import {
   SoftwareUpgradeProposal,
   Plan,
-} from "../ibc-go/ibc.applications.transfer.v1/module/types/cosmos/upgrade/v1beta1/upgrade";
-import { CommunityPoolSpendProposal } from "../cosmos.distribution.v1beta1/module/types/cosmos/distribution/v1beta1/distribution";
+} from "cosmjs-types/cosmos/upgrade/v1beta1/upgrade";
+import { CommunityPoolSpendProposal } from "cosmjs-types/cosmos/distribution/v1beta1/distribution";
 import { setupTxClients } from "./env";
 
 export const submitGovernanceProposal = (title, description, proposalType) => {
@@ -35,7 +32,7 @@ export const submitGovernanceProposal = (title, description, proposalType) => {
           proposer: wallet.selectedAddress,
         };
 
-        const msg = await env.govTxClient.msgSubmitProposal(send);
+        const msg = await env.txClient.msgSubmitProposal(send);
 
         const fee = {
           amount: [{ amount: "0", denom: "tlore" }],
@@ -43,7 +40,7 @@ export const submitGovernanceProposal = (title, description, proposalType) => {
         };
 
         const memo = "";
-        const result = await env.govTxClient.signAndBroadcast([msg], {
+        const result = await env.txClient.signAndBroadcast([msg], {
           fee,
           memo,
         });
@@ -94,7 +91,7 @@ export const chainUpgradeProposal = (
           proposer: wallet.selectedAddress,
         };
 
-        const msg = await env.govTxClient.msgSubmitProposal(send);
+        const msg = await env.txClient.msgSubmitProposal(send);
 
         const fee = {
           amount: [{ amount: "0", denom: "tlore" }],
@@ -102,7 +99,7 @@ export const chainUpgradeProposal = (
         };
 
         const memo = "";
-        const result = await env.govTxClient.signAndBroadcast([msg], {
+        const result = await env.txClient.signAndBroadcast([msg], {
           fee,
           memo,
         });
@@ -157,7 +154,7 @@ export const communityPoolSpendProposal = (
           initialDeposit: [{ amount: "5", denom: "utlore" }],
           proposer: wallet.selectedAddress,
         };
-        const msg = await env.govTxClient.msgSubmitProposal(send);
+        const msg = await env.txClient.msgSubmitProposal(send);
 
         const fee = {
           amount: [{ amount: "0", denom: "tlore" }],
@@ -165,7 +162,7 @@ export const communityPoolSpendProposal = (
         };
 
         const memo = "";
-        const result = await env.govTxClient.signAndBroadcast([msg], {
+        const result = await env.txClient.signAndBroadcast([msg], {
           fee,
           memo,
         });
@@ -199,7 +196,7 @@ export const proposalDeposit = (proposalId, amount) => {
           ],
         };
 
-        const msg = await env.govTxClient.msgDeposit(send);
+        const msg = await env.txClient.msgDeposit(send);
 
         const fee = {
           amount: [{ amount: "0", denom: "tlore" }],
@@ -207,7 +204,7 @@ export const proposalDeposit = (proposalId, amount) => {
         };
 
         const memo = "";
-        const result = await env.govTxClient.signAndBroadcast([msg], {
+        const result = await env.txClient.signAndBroadcast([msg], {
           fee,
           memo,
         });
@@ -250,7 +247,7 @@ export const proposalVote = (proposalId, option) => {
           option: choice,
         };
 
-        const msg = await env.govTxClient.msgVote(send);
+        const msg = await env.txClient.msgVote(send);
 
         const fee = {
           amount: [{ amount: "0", denom: "utlore" }],
@@ -258,7 +255,7 @@ export const proposalVote = (proposalId, option) => {
         };
 
         const memo = "";
-        const result = await env.govTxClient.signAndBroadcast([msg], {
+        const result = await env.txClient.signAndBroadcast([msg], {
           fee,
           memo,
         });

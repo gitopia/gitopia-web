@@ -216,10 +216,7 @@ function ProposalDetailsView(props) {
                             });
                         }}
                         disabled={
-                          (!dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
-                            !dayjs().isBefore(
-                              dayjs(proposal.voting_start_time)
-                            )) ||
+                          proposal.status !== "PROPOSAL_STATUS_VOTING_PERIOD" ||
                           voteAbstainLoading === true ||
                           voteNoLoading === true ||
                           voteNoWithVetoLoading === true
@@ -254,10 +251,7 @@ function ProposalDetailsView(props) {
                             });
                         }}
                         disabled={
-                          (!dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
-                            !dayjs().isBefore(
-                              dayjs(proposal.voting_start_time)
-                            )) ||
+                          proposal.status !== "PROPOSAL_STATUS_VOTING_PERIOD" ||
                           voteAbstainLoading === true ||
                           voteYesLoading === true ||
                           voteNoWithVetoLoading === true
@@ -292,10 +286,7 @@ function ProposalDetailsView(props) {
                             });
                         }}
                         disabled={
-                          (!dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
-                            !dayjs().isBefore(
-                              dayjs(proposal.voting_start_time)
-                            )) ||
+                          proposal.status !== "PROPOSAL_STATUS_VOTING_PERIOD" ||
                           voteNoLoading === true ||
                           voteYesLoading === true ||
                           voteNoWithVetoLoading === true
@@ -330,10 +321,7 @@ function ProposalDetailsView(props) {
                             });
                         }}
                         disabled={
-                          (!dayjs().isBefore(dayjs(proposal.voting_end_time)) &&
-                            !dayjs().isBefore(
-                              dayjs(proposal.voting_start_time)
-                            )) ||
+                          proposal.status !== "PROPOSAL_STATUS_VOTING_PERIOD" ||
                           voteNoLoading === true ||
                           voteYesLoading === true ||
                           voteAbstainLoading === true
