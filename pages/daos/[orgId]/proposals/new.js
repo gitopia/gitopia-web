@@ -16,6 +16,33 @@ function RepositoryProposalCreateView(props) {
   const [validateAddressError, setValidateAddressError] = useState("");
   const validAddress = new RegExp("gitopia[a-z0-9]{39}");
   const [validateAmountError, setValidateAmountError] = useState("");
+  const [validateTitleError, setValidateTitleError] = useState("");
+  const router = useRouter();
+  const hrefBase = "/daos/" + router.query.orgId;
+  const [loading, setLoading] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [proposalType, setProposalType] = useState("1");
+  const [amount, setAmount] = useState("");
+  const [address, setAddress] = useState("");
+  const [height, setHeight] = useState("");
+  const [releaseVersionTag, setReleaseVersionTag] = useState("");
+  const [parameterName, setParameterName] = useState({});
+  const [parameterValue, setParameterValue] = useState({});
+  const [menuState, setMenuState] = useState(1);
+  const [counter, setCounter] = useState(1);
+  const [paramNames, setParamNames] = useState([
+    "account_number",
+    "address",
+    "pub_key",
+  ]);
+
+  const validateTitle = async (title) => {
+    setValidateTitleError(null);
+    if (title.length < 3) {
+      setValidateTitleError("Title too short");
+    }
+  };
 
   const validateUserAddress = async (address) => {
     if (address.trim() !== "" && validAddress.test(address)) {
@@ -68,26 +95,6 @@ function RepositoryProposalCreateView(props) {
     temp[e.target.className] = e.target.value;
     setParameterName({ ...parameterName, ...temp });
   };
-
-  const router = useRouter();
-  const hrefBase = "/daos/" + router.query.orgId;
-  const [loading, setLoading] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [proposalType, setProposalType] = useState("1");
-  const [amount, setAmount] = useState("");
-  const [address, setAddress] = useState("");
-  const [height, setHeight] = useState("");
-  const [releaseVersionTag, setReleaseVersionTag] = useState("");
-  const [parameterName, setParameterName] = useState({});
-  const [parameterValue, setParameterValue] = useState({});
-  const [menuState, setMenuState] = useState(1);
-  const [counter, setCounter] = useState(1);
-  const [paramNames, setParamNames] = useState([
-    "account_number",
-    "address",
-    "pub_key",
-  ]);
 
   const [org, setOrg] = useState({
     name: "",
@@ -169,10 +176,22 @@ function RepositoryProposalCreateView(props) {
                       placeholder="Write title here"
                       className="input input-md input-bordered mb-4 text-xs h-8"
                       value={title}
+                      onKeyUp={async (e) => {
+                        await validateTitle(e.target.value);
+                      }}
                       onChange={(e) => {
                         setTitle(e.target.value);
                       }}
                     />
+                    {validateTitleError ? (
+                      <label className="label">
+                        <span className="label-text-alt text-error">
+                          {validateTitleError}
+                        </span>
+                      </label>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </div>
                 <div className="form-control mb-4 ml-4 w-1/2">
@@ -292,7 +311,7 @@ function RepositoryProposalCreateView(props) {
                           description === "" ||
                           amount === "" ||
                           address === "" ||
-                          title === ""
+                          title.length < 3
                         }
                         onClick={(e) => {
                           setLoading(true);
@@ -374,7 +393,7 @@ function RepositoryProposalCreateView(props) {
                           description === "" ||
                           releaseVersionTag === "" ||
                           height === "" ||
-                          title === ""
+                          title.length < 3
                         }
                         onClick={(e) => {
                           setLoading(true);
@@ -483,7 +502,7 @@ function RepositoryProposalCreateView(props) {
                           /* description === "" ||
                           parameterName === {} ||
                           parameterValue === {} ||
-                          title === "" */
+                            title.length < 3 */
                         }
                         onClick={(e) => {
                           setLoading(true);
@@ -515,7 +534,7 @@ function RepositoryProposalCreateView(props) {
                         "btn btn-sm btn-primary btn-block h-8 text-xs " +
                         (loading ? "loading" : "")
                       }
-                      disabled={description === "" || title === ""}
+                      disabled={description === "" || title.length < 3}
                       onClick={(e) => {
                         setLoading(true);
                         props
