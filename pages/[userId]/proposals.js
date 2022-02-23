@@ -43,6 +43,9 @@ function GitopiaProposals(props) {
         letter;
 
   useEffect(async () => {
+    if (props.currentDashboard !== process.env.NEXT_PUBLIC_GITOPIA_ADDRESS) {
+      router.push("/" + router.query.userId);
+    }
     const p = await getProposals();
     setProposals(p);
   });
@@ -128,13 +131,21 @@ function GitopiaProposals(props) {
                       <div className="flex mr-5 mt-5 secondary font-bold text-xs ml-4">
                         {"Voting Start "}
                         <div className="ml-3 secondary text-xs font-normal text-type-secondary">
-                          {" " + dayjs(p.voting_start_time).format("LLL")}
+                          {dayjs(p.submit_time).unix() -
+                            dayjs(p.voting_start_time).unix() >
+                          0
+                            ? "--"
+                            : " " + dayjs(p.voting_start_time).format("LLL")}
                         </div>
                       </div>
                       <div className="flex mr-5 mt-1 secondary font-bold text-xs ml-4">
                         {"Voting End "}
                         <div className="ml-5 secondary text-xs font-normal text-type-secondary">
-                          {" " + dayjs(p.voting_end_time).format("LLL")}
+                          {dayjs(p.submit_time).unix() -
+                            dayjs(p.voting_end_time).unix() >
+                          0
+                            ? "--"
+                            : " " + dayjs(p.voting_end_time).format("LLL")}
                         </div>
                       </div>
 

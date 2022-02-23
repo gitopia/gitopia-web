@@ -38,6 +38,8 @@ function ProposalDetailsView(props) {
           setProposal(res.msg);
           setProposer(res.proposer);
           setInitialDeposit(res.initial_deposit);
+        } else {
+          router.push("/daos/" + router.query.userId + "/proposals");
         }
       });
     }
@@ -394,7 +396,11 @@ function ProposalDetailsView(props) {
                     {"Voting Start "}
                   </div>
                   <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
-                    {" " + dayjs(proposal.voting_start_time).format("LLL")}
+                    {dayjs(proposal.submit_time).unix() -
+                      dayjs(proposal.voting_start_time).unix() >
+                    0
+                      ? "--"
+                      : " " + dayjs(proposal.voting_start_time).format("LLL")}
                   </div>
                 </div>
                 <div className="flex mb-16">
@@ -402,7 +408,11 @@ function ProposalDetailsView(props) {
                     {"Voting End "}
                   </div>
                   <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
-                    {" " + dayjs(proposal.voting_end_time).format("LLL")}
+                    {dayjs(proposal.submit_time).unix() -
+                      dayjs(proposal.voting_end_time).unix() >
+                    0
+                      ? "--"
+                      : " " + dayjs(proposal.voting_end_time).format("LLL")}
                   </div>
                 </div>
                 {/* Depositors Section */}
