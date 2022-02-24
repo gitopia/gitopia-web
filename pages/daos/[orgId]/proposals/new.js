@@ -16,6 +16,8 @@ function RepositoryProposalCreateView(props) {
   const [validateAddressError, setValidateAddressError] = useState("");
   const validAddress = new RegExp("gitopia[a-z0-9]{39}");
   const [validateAmountError, setValidateAmountError] = useState("");
+  const [validateInitialAmountError, setValidateInitialAmountError] =
+    useState("");
   const [validateTitleError, setValidateTitleError] = useState("");
   const router = useRouter();
   const hrefBase = "/daos/" + router.query.orgId;
@@ -31,6 +33,7 @@ function RepositoryProposalCreateView(props) {
   const [parameterValue, setParameterValue] = useState({});
   const [menuState, setMenuState] = useState(1);
   const [counter, setCounter] = useState(1);
+  const [initialDeposit, setInitialDeposit] = useState(0);
   const [paramNames, setParamNames] = useState([
     "account_number",
     "address",
@@ -77,6 +80,25 @@ function RepositoryProposalCreateView(props) {
       }
     } else {
       setValidateAmountError("Enter a Valid Amount");
+    }
+  };
+
+  const validateInitialAmount = async (amount) => {
+    setValidateInitialAmountError(null);
+    let Vamount = Number(amount);
+    if (amount == "") {
+      setValidateInitialAmountError("Enter Valid Amount");
+    }
+    let balance = props.loreBalance;
+    if (props.advanceUser === false) {
+      Vamount = Vamount * 1000000;
+    }
+    if (Vamount >= 0 && isNaturalNumber(Vamount)) {
+      if (Vamount > balance) {
+        setValidateInitialAmountError("Insufficient Balance");
+      }
+    } else {
+      setValidateInitialAmountError("Enter a Valid Amount");
     }
   };
 
@@ -236,6 +258,38 @@ function RepositoryProposalCreateView(props) {
                   setValue={setDescription}
                 />
               </div>
+              <div className="form-control mt-4 mb-4 w-1/2">
+                <label className="label">
+                  <span className="label-text text-sm">INITIAL AMOUNT</span>
+                </label>
+                <div className="form-control mb-4">
+                  <input
+                    name="initial amount"
+                    type="number"
+                    placeholder="Enter amount"
+                    onKeyUp={async (e) => {
+                      await validateInitialAmount(e.target.value);
+                    }}
+                    onMouseUp={async (e) => {
+                      await validateInitialAmount(e.target.value);
+                    }}
+                    className="input input-md input-bordered text-xs h-8"
+                    value={initialDeposit}
+                    onChange={(e) => {
+                      setInitialDeposit(e.target.value);
+                    }}
+                  />
+                  {validateInitialAmountError ? (
+                    <label className="label">
+                      <span className="label-text-alt text-error">
+                        {validateInitialAmountError}
+                      </span>
+                    </label>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
               {(menuState == 2 || menuState == 5) && (
                 <div className="container mx-auto max-w-screen-lg">
                   <div className="form-control mt-4 mb-4 w-1/2">
@@ -311,7 +365,8 @@ function RepositoryProposalCreateView(props) {
                           description === "" ||
                           amount === "" ||
                           address === "" ||
-                          title.length < 3
+                          title.length < 3 ||
+                          initialDeposit === ""
                         }
                         onClick={(e) => {
                           setLoading(true);
@@ -323,7 +378,10 @@ function RepositoryProposalCreateView(props) {
                               address,
                               props.advanceUser === true
                                 ? amount.toString()
-                                : (amount * 1000000).toString()
+                                : (amount * 1000000).toString(),
+                              props.advanceUser === true
+                                ? initialDeposit.toString()
+                                : (initialDeposit * 1000000).toString()
                             )
                             .then((res) => {
                               setLoading(false);
@@ -331,6 +389,7 @@ function RepositoryProposalCreateView(props) {
                               setAddress("");
                               setAmount("");
                               setTitle("");
+                              setInitialDeposit(0);
                               redirectToProposal(res);
                             });
                         }}
@@ -393,7 +452,8 @@ function RepositoryProposalCreateView(props) {
                           description === "" ||
                           releaseVersionTag === "" ||
                           height === "" ||
-                          title.length < 3
+                          title.length < 3 ||
+                          initialDeposit === ""
                         }
                         onClick={(e) => {
                           setLoading(true);
@@ -403,7 +463,10 @@ function RepositoryProposalCreateView(props) {
                               description,
                               proposalType,
                               releaseVersionTag,
-                              height
+                              height,
+                              props.advanceUser === true
+                                ? initialDeposit.toString()
+                                : (initialDeposit * 1000000).toString()
                             )
                             .then((res) => {
                               setLoading(false);
@@ -411,6 +474,7 @@ function RepositoryProposalCreateView(props) {
                               setDescription("");
                               setReleaseVersionTag("");
                               setHeight("");
+                              setInitialDeposit(0);
                               redirectToProposal(res);
                             });
                         }}
@@ -502,7 +566,8 @@ function RepositoryProposalCreateView(props) {
                           /* description === "" ||
                           parameterName === {} ||
                           parameterValue === {} ||
-                            title.length < 3 */
+                            title.length < 3 ||
+                          initialDeposit === ""*/
                         }
                         onClick={(e) => {
                           setLoading(true);
@@ -510,12 +575,16 @@ function RepositoryProposalCreateView(props) {
                             .submitGovernanceProposal(
                               title,
                               description,
-                              proposalType
+                              proposalType,
+                              props.advanceUser === true
+                                ? initialDeposit.toString()
+                                : (initialDeposit * 1000000).toString()
                             )
                             .then((res) => {
                               setLoading(false);
                               setTitle("");
                               setDescription("");
+                              setInitialDeposit(0);
                               redirectToProposal(res);
                             });
                         }}
@@ -534,19 +603,27 @@ function RepositoryProposalCreateView(props) {
                         "btn btn-sm btn-primary btn-block h-8 text-xs " +
                         (loading ? "loading" : "")
                       }
-                      disabled={description === "" || title.length < 3}
+                      disabled={
+                        description === "" ||
+                        title.length < 3 ||
+                        initialDeposit === ""
+                      }
                       onClick={(e) => {
                         setLoading(true);
                         props
                           .submitGovernanceProposal(
                             title,
                             description,
-                            proposalType
+                            proposalType,
+                            props.advanceUser === true
+                              ? initialDeposit.toString()
+                              : (initialDeposit * 1000000).toString()
                           )
                           .then((res) => {
                             setLoading(false);
                             setTitle("");
                             setDescription("");
+                            setInitialDeposit(0);
                             redirectToProposal(res);
                           });
                       }}

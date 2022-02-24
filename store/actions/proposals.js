@@ -9,7 +9,12 @@ import { CommunityPoolSpendProposal } from "cosmjs-types/cosmos/distribution/v1b
 import { setupTxClients } from "./env";
 import { longify } from "@cosmjs/stargate/build/queries/utils";
 
-export const submitGovernanceProposal = (title, description, proposalType) => {
+export const submitGovernanceProposal = (
+  title,
+  description,
+  proposalType,
+  initialDeposit
+) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
@@ -27,7 +32,10 @@ export const submitGovernanceProposal = (title, description, proposalType) => {
 
         const send = {
           content: msgAny,
-          initialDeposit: [{ amount: "5", denom: "utlore" }],
+          initialDeposit:
+            initialDeposit != 0
+              ? [{ amount: initialDeposit, denom: "utlore" }]
+              : [],
           proposer: wallet.selectedAddress,
         };
 
@@ -60,7 +68,8 @@ export const chainUpgradeProposal = (
   description,
   proposalType,
   releaseVersionTag,
-  height
+  height,
+  initialDeposit
 ) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
@@ -86,7 +95,10 @@ export const chainUpgradeProposal = (
         });
         const send = {
           content: msgAny,
-          initialDeposit: [{ amount: "5", denom: "utlore" }],
+          initialDeposit:
+            initialDeposit != 0
+              ? [{ amount: initialDeposit, denom: "utlore" }]
+              : [],
           proposer: wallet.selectedAddress,
         };
         const msg = await env.txClient.msgSubmitProposal(send);
@@ -118,7 +130,8 @@ export const communityPoolSpendProposal = (
   description,
   proposalType,
   address,
-  amount
+  amount,
+  initialDeposit
 ) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
@@ -149,7 +162,10 @@ export const communityPoolSpendProposal = (
         });
         const send = {
           content: msgAny,
-          initialDeposit: [{ amount: "5", denom: "utlore" }],
+          initialDeposit:
+            initialDeposit != 0
+              ? [{ amount: initialDeposit, denom: "utlore" }]
+              : [],
           proposer: wallet.selectedAddress,
         };
         const msg = await env.txClient.msgSubmitProposal(send);
@@ -188,7 +204,7 @@ export const proposalDeposit = (proposalId, amount) => {
           depositor: wallet.selectedAddress,
           amount: [
             {
-              amount: amount.toString(),
+              amount: amount,
               denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
             },
           ],

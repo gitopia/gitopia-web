@@ -15,6 +15,8 @@ import getDepositor from "../../../../helpers/getDepositor";
 import getVoter from "../../../../helpers/getVoter";
 
 function ProposalDetailsView(props) {
+  const [amount, setAmount] = useState("");
+  const [validateAmountError, setValidateAmountError] = useState("");
   const [depositLoading, setDepositLoading] = useState(false);
   const [voteAbstainLoading, setVoteAbstainLoading] = useState(false);
   const [voteNoLoading, setVoteNoLoading] = useState(false);
@@ -79,6 +81,33 @@ function ProposalDetailsView(props) {
       });
     }
   }, [id, proposal]);
+
+  function isNaturalNumber(n) {
+    n = n.toString();
+    var n1 = Math.abs(n),
+      n2 = parseInt(n, 10);
+    return !isNaN(n1) && n2 === n1 && n1.toString() === n;
+  }
+
+  const validateAmount = async (amount) => {
+    setValidateAmountError(null);
+    let Vamount = Number(amount);
+    if (amount == "" || amount == 0) {
+      setValidateAmountError("Enter Valid Amount");
+    }
+
+    let balance = props.loreBalance;
+    if (props.advanceUser === false) {
+      Vamount = Vamount * 1000000;
+    }
+    if (Vamount > 0 && isNaturalNumber(Vamount)) {
+      if (Vamount > balance) {
+        setValidateAmountError("Insufficient Balance");
+      }
+    } else {
+      setValidateAmountError("Enter a Valid Amount");
+    }
+  };
 
   function getPercentage(key) {
     if (tally !== undefined) {
@@ -309,7 +338,7 @@ function ProposalDetailsView(props) {
                       </div>
                       <button
                         className={
-                          "btn btn-outline btn-xs h-8 w-24 text-xs mt-5 ml-20 " +
+                          "btn btn-outline btn-xs h-8 w-32 text-xs mt-5 ml-16 " +
                           (voteNoWithVetoLoading ? "loading" : "")
                         }
                         onClick={(e) => {
@@ -332,26 +361,107 @@ function ProposalDetailsView(props) {
                     </div>
                   </div>
                 </div>
-                <div className="flex">
-                  <button
+                <div className="flex mt-4">
+                  <label
+                    htmlFor="my-modal-2"
                     className={
-                      "btn btn-primary btn-xs h-8 w-36 text-xs ml-auto mt-4 " +
+                      "btn btn-primary btn-xs modal-button text-xs h-8 w-36 uppercase ml-auto " +
                       (depositLoading ? "loading" : "")
                     }
-                    onClick={(e) => {
-                      setDepositLoading(true);
-                      props.proposalDeposit(id, 10).then((res) => {
-                        setDepositLoading(false);
-                      });
-                    }}
                     disabled={
                       !dayjs().isBefore(dayjs(proposal.deposit_end_time)) ||
                       proposal.status == "PROPOSAL_STATUS_VOTING_PERIOD"
                     }
                   >
                     SUBMIT DEPOSIT
-                  </button>
+                  </label>
                 </div>
+                <input
+                  type="checkbox"
+                  id="my-modal-2"
+                  className="modal-toggle"
+                />
+                <div class="modal">
+                  <div class="modal-box">
+                    <div>
+                      <label className="label">
+                        <span className="label-text text-xs font-bold text-gray-400">
+                          AMOUNT
+                        </span>
+                      </label>
+                      <div>
+                        <input
+                          name="Amount"
+                          placeholder="Enter Amount"
+                          autoComplete="off"
+                          onKeyUp={async (e) => {
+                            await validateAmount(e.target.value);
+                          }}
+                          onMouseUp={async (e) => {
+                            await validateAmount(e.target.value);
+                          }}
+                          onChange={(e) => {
+                            setAmount(e.target.value);
+                          }}
+                          className="w-full h-11 input input-xs input-ghost input-bordered "
+                        />
+                      </div>
+                      {validateAmountError ? (
+                        <label className="label">
+                          <span className="label-text-alt text-error">
+                            {validateAmountError}
+                          </span>
+                        </label>
+                      ) : (
+                        ""
+                      )}
+                      <div className="flex ml-auto self-center">
+                        <div className="modal-action">
+                          <label
+                            htmlFor="my-modal-2"
+                            className={
+                              "btn btn-sm btn-primary flex-1 bg-green-900 " +
+                              (depositLoading ? "loading" : "")
+                            }
+                            onClick={(e) => {
+                              setDepositLoading(true);
+                              props
+                                .proposalDeposit(
+                                  id,
+                                  props.advanceUser === true
+                                    ? amount.toString()
+                                    : (amount * 1000000).toString()
+                                )
+                                .then((res) => {
+                                  setDepositLoading(false);
+                                });
+                            }}
+                            disabled={
+                              !dayjs().isBefore(
+                                dayjs(proposal.deposit_end_time)
+                              ) ||
+                              proposal.status ==
+                                "PROPOSAL_STATUS_VOTING_PERIOD" ||
+                              validateAmountError !== null
+                            }
+                          >
+                            SUBMIT
+                          </label>
+                          <label
+                            htmlFor="my-modal-2"
+                            className="btn btn-sm"
+                            onClick={(e) => {
+                              setAmount("");
+                            }}
+                          >
+                            Close
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="text-xl">Details</div>
                 <div className="flex">
                   <div className="mt-4 secondary font-bold w-1/2">
@@ -392,7 +502,9 @@ function ProposalDetailsView(props) {
                     {"Total Deposit "}
                   </div>
                   <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
-                    {typeof proposal.total_deposit !== "undefined"
+                    {console.log(proposal.total_deposit)}
+                    {typeof proposal.total_deposit !== "undefined" &&
+                    proposal.total_deposit.length != 0
                       ? (props.advanceUser === true
                           ? proposal.total_deposit[0].amount
                           : proposal.total_deposit[0].amount / 1000000) +
@@ -400,7 +512,10 @@ function ProposalDetailsView(props) {
                         (props.advanceUser === true
                           ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
                           : process.env.NEXT_PUBLIC_CURRENCY_TOKEN)
-                      : ""}
+                      : "0 " +
+                        (props.advanceUser === true
+                          ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                          : process.env.NEXT_PUBLIC_CURRENCY_TOKEN)}
                   </div>
                 </div>
                 <div className="flex">
@@ -472,7 +587,7 @@ function ProposalDetailsView(props) {
                     </thead>
                     <tbody>
                       <tr>
-                        <th>{proposer}</th>
+                        <td>{proposer}</td>
                         <td>
                           {props.advanceUser === true
                             ? initialDeposit
@@ -480,13 +595,21 @@ function ProposalDetailsView(props) {
                           {props.advanceUser === true
                             ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
                             : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
+                          <span
+                            className={
+                              "ml-2 border rounded-md pl-1.5 pr-2 py-px relative -top-px text-green-50 border-green"
+                            }
+                            style={{ fontSize: "0.75em" }}
+                          >
+                            initial deposit
+                          </span>
                         </td>
                       </tr>
                       {depositors !== undefined
                         ? depositors.map((depositor) => {
                             return (
                               <tr>
-                                <th>{depositor.body.messages[0].depositor}</th>
+                                <td>{depositor.body.messages[0].depositor}</td>
                                 <td>
                                   {props.advanceUser === true
                                     ? depositor.body.messages[0].amount[0]
@@ -519,7 +642,7 @@ function ProposalDetailsView(props) {
                         ? voters.map((voter) => {
                             return (
                               <tr>
-                                <th>{voter.body.messages[0].voter}</th>
+                                <td>{voter.body.messages[0].voter}</td>
                                 <td>{voter.body.messages[0].option}</td>
                               </tr>
                             );

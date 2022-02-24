@@ -13,7 +13,9 @@ export default async function getProposal(id) {
     .then(({ data }) => {
       proposer = data.tx_responses[0].tx.body.messages[0].proposer;
       initialDeposit =
-        data.tx_responses[0].tx.body.messages[0].initial_deposit[0].amount;
+        data.tx_responses[0].tx.body.messages[0].initial_deposit.length == 0
+          ? []
+          : data.tx_responses[0].tx.body.messages[0].initial_deposit[0].amount;
     })
     .catch((err) => {
       console.error(err);
