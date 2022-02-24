@@ -1,5 +1,3 @@
-import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
-import { stringToPath } from "@cosmjs/crypto";
 import { notify } from "reapop";
 import { TextProposal, VoteOption } from "cosmjs-types/cosmos/gov/v1beta1/gov";
 import { Any } from "cosmjs-types/google/protobuf/any";
@@ -9,6 +7,7 @@ import {
 } from "cosmjs-types/cosmos/upgrade/v1beta1/upgrade";
 import { CommunityPoolSpendProposal } from "cosmjs-types/cosmos/distribution/v1beta1/distribution";
 import { setupTxClients } from "./env";
+import { longify } from "@cosmjs/stargate/build/queries/utils";
 
 export const submitGovernanceProposal = (title, description, proposalType) => {
   return async (dispatch, getState) => {
@@ -71,7 +70,7 @@ export const chainUpgradeProposal = (
         const { env } = getState();
         const msgPlan = Plan.fromPartial({
           name: releaseVersionTag,
-          height: height,
+          height: longify(height),
           info: "",
         });
         const softwareUpgradeProposal = SoftwareUpgradeProposal.fromPartial({
@@ -90,7 +89,6 @@ export const chainUpgradeProposal = (
           initialDeposit: [{ amount: "5", denom: "utlore" }],
           proposer: wallet.selectedAddress,
         };
-
         const msg = await env.txClient.msgSubmitProposal(send);
 
         const fee = {
@@ -186,7 +184,7 @@ export const proposalDeposit = (proposalId, amount) => {
         await setupTxClients(dispatch, getState);
         const { env } = getState();
         const send = {
-          proposalId: proposalId,
+          proposalId: longify(proposalId),
           depositor: wallet.selectedAddress,
           amount: [
             {
@@ -197,7 +195,6 @@ export const proposalDeposit = (proposalId, amount) => {
         };
 
         const msg = await env.txClient.msgDeposit(send);
-
         const fee = {
           amount: [{ amount: "0", denom: "tlore" }],
           gas: "200000",
@@ -242,7 +239,7 @@ export const proposalVote = (proposalId, option) => {
         const { env } = getState();
 
         const send = {
-          proposalId: proposalId,
+          proposalId: longify(proposalId),
           voter: wallet.selectedAddress,
           option: choice,
         };
