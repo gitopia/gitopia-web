@@ -8,6 +8,10 @@ import {
 import { CommunityPoolSpendProposal } from "cosmjs-types/cosmos/distribution/v1beta1/distribution";
 import { setupTxClients } from "./env";
 import { longify } from "@cosmjs/stargate/build/queries/utils";
+import {
+  ParameterChangeProposal,
+  ParamChange,
+} from "cosmjs-types/cosmos/params/v1beta1/params";
 
 export const submitGovernanceProposal = (
   title,
@@ -175,6 +179,72 @@ export const communityPoolSpendProposal = (
           gas: "200000",
         };
 
+        const memo = "";
+        const result = await env.txClient.signAndBroadcast([msg], {
+          fee,
+          memo,
+        });
+        if (result && result.code === 0) {
+          dispatch(notify("Proposal Submitted", "info"));
+        }
+        return result;
+      } catch (e) {
+        console.error(e);
+        dispatch(notify(e.message, "error"));
+      }
+    }
+  };
+};
+
+export const paramChangeProposal = (
+  title,
+  description,
+  proposalType,
+  paramSubspaces,
+  paramKeys,
+  paramValues,
+  initialDeposit
+) => {
+  return async (dispatch, getState) => {
+    const { wallet } = getState();
+    if (wallet.activeWallet) {
+      try {
+        await setupTxClients(dispatch, getState);
+        const { env } = getState();
+        const changes = [];
+
+        for (let i = 0; i < paramSubspaces.length; i++) {
+          const change = ParamChange.fromPartial({
+            subspace: paramSubspaces[i],
+            key: paramKeys[i],
+            value: paramValues[i],
+          });
+          changes.push(change);
+        }
+        const paramChangeProposal = ParameterChangeProposal.fromPartial({
+          title: title,
+          description: description,
+          changes: changes,
+        });
+        const msgAny = Any.fromPartial({
+          typeUrl: "/cosmos.params.v1beta1.ParameterChangeProposal",
+          value: Uint8Array.from(
+            ParameterChangeProposal.encode(paramChangeProposal).finish()
+          ),
+        });
+        const send = {
+          content: msgAny,
+          initialDeposit:
+            initialDeposit != 0
+              ? [{ amount: initialDeposit, denom: "utlore" }]
+              : [],
+          proposer: wallet.selectedAddress,
+        };
+        const msg = await env.txClient.msgSubmitProposal(send);
+        const fee = {
+          amount: [{ amount: "0", denom: "tlore" }],
+          gas: "200000",
+        };
         const memo = "";
         const result = await env.txClient.signAndBroadcast([msg], {
           fee,

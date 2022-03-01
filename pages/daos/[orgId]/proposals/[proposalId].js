@@ -494,6 +494,12 @@ function ProposalDetailsView(props) {
                         ? "COMMUNITY POOL SPEND"
                         : ""
                       : ""}
+                    {typeof proposal.content !== "undefined"
+                      ? proposal.content["@type"] ==
+                        "/cosmos.params.v1beta1.ParameterChangeProposal"
+                        ? "PARAMETER CHANGE"
+                        : ""
+                      : ""}
                   </div>
                 </div>
 
@@ -502,7 +508,6 @@ function ProposalDetailsView(props) {
                     {"Total Deposit "}
                   </div>
                   <div className="mt-2 secondary text font-normal text-type-secondary w-1/2">
-                    {console.log(proposal.total_deposit)}
                     {typeof proposal.total_deposit !== "undefined" &&
                     proposal.total_deposit.length != 0
                       ? (props.advanceUser === true

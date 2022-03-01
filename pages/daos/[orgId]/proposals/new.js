@@ -8,6 +8,7 @@ import { submitGovernanceProposal } from "../../../../store/actions/proposals";
 import { chainUpgradeProposal } from "../../../../store/actions/proposals";
 import MarkdownEditor from "../../../../components/markdownEditor";
 import { communityPoolSpendProposal } from "../../../../store/actions/proposals";
+import { paramChangeProposal } from "../../../../store/actions/proposals";
 import getOrganization from "../../../../helpers/getOrganization";
 import getRepository from "../../../../helpers/getRepository";
 import getUser from "../../../../helpers/getUser";
@@ -29,16 +30,19 @@ function RepositoryProposalCreateView(props) {
   const [address, setAddress] = useState("");
   const [height, setHeight] = useState("");
   const [releaseVersionTag, setReleaseVersionTag] = useState("");
-  const [parameterName, setParameterName] = useState({});
-  const [parameterValue, setParameterValue] = useState({});
+  const [paramSubspaces, setParamSubspaces] = useState([""]);
+  const [paramKeys, setParamKeys] = useState([""]);
+  const [paramValues, setParamValues] = useState([""]);
   const [menuState, setMenuState] = useState(1);
   const [counter, setCounter] = useState(1);
   const [initialDeposit, setInitialDeposit] = useState(0);
-  const [paramNames, setParamNames] = useState([
-    "account_number",
-    "address",
-    "pub_key",
-  ]);
+
+  useEffect(async () => {
+    const o = await getOrganization(router.query.orgId);
+    if (o) {
+      setOrg(o);
+    }
+  }, [router.query]);
 
   const validateTitle = async (title) => {
     setValidateTitleError(null);
@@ -104,31 +108,41 @@ function RepositoryProposalCreateView(props) {
 
   const handleClick = () => {
     setCounter(counter + 1);
+    let array = paramSubspaces.slice();
+    array.push(undefined);
+    setParamSubspaces(array);
+
+    array = paramKeys.slice();
+    array.push(undefined);
+    setParamKeys(array);
+
+    array = paramValues.slice();
+    array.push(undefined);
+    setParamValues(array);
   };
 
-  const handleValueOnChange = (e) => {
-    const temp = {};
-    temp[e.target.className] = e.target.value;
-    setParameterValue({ ...parameterValue, ...temp });
+  const handleParamSubspaceOnChange = (subspace, index) => {
+    const array = paramSubspaces.slice();
+    array[index] = subspace;
+    setParamSubspaces(array);
   };
 
-  const handleNameOnChange = (e) => {
-    const temp = {};
-    temp[e.target.className] = e.target.value;
-    setParameterName({ ...parameterName, ...temp });
+  const handleParamKeyOnChange = (key, index) => {
+    const array = paramKeys.slice();
+    array[index] = key;
+    setParamKeys(array);
+  };
+
+  const handleParamValueOnChange = (value, index) => {
+    const array = paramValues.slice();
+    array[index] = value;
+    setParamValues(array);
   };
 
   const [org, setOrg] = useState({
     name: "",
     repositories: [],
   });
-
-  useEffect(async () => {
-    const o = await getOrganization(router.query.orgId);
-    if (o) {
-      setOrg(o);
-    }
-  }, [router.query]);
 
   const redirectToProposal = async (res) => {
     let result = JSON.parse(res.rawLog);
@@ -230,8 +244,9 @@ function RepositoryProposalCreateView(props) {
                       setAddress("");
                       setHeight("");
                       setReleaseVersionTag("");
-                      setParameterName({});
-                      setParameterValue({});
+                      setParamSubspaces([]);
+                      setParamKeys([]);
+                      setParamValues([]);
                       setCounter(1);
                     }}
                   >
@@ -489,52 +504,52 @@ function RepositoryProposalCreateView(props) {
                 <div>
                   <div>
                     <label className="label mt-4 ">
-                      <span className="label-text text-sm">PARAMETER NAME</span>
+                      <span className="label-text text-sm">PARAMETERS</span>
                     </label>
                   </div>
                   {Array.from(Array(counter)).map((c, index) => {
                     return (
-                      <div className="flex" id="param">
-                        <div className="form-control w-1/2">
-                          <select
-                            className={
-                              "select select-bordered select-md text-xs" + index
-                            }
-                            value={
-                              parameterName[
-                                "input input-md input-bordered mb-4 text-xs" +
-                                  index
-                              ]
-                            }
-                            key={c}
-                            onChange={handleNameOnChange}
-                          >
-                            {paramNames.map((i) => {
-                              return (
-                                <option value={i} key={i}>
-                                  {i}
-                                </option>
-                              );
-                            })}
-                          </select>
-                        </div>
-                        <div className="form-control ml-4 w-1/2">
+                      <div className="flex">
+                        <div className="form-control mr-3">
                           <input
-                            name="parameter value"
-                            key={c}
-                            className={
-                              "input input-md input-bordered mb-4 text-xs" +
-                              index
-                            }
-                            value={
-                              parameterValue[
-                                "input input-md input-bordered mb-4 text-xs" +
-                                  index
-                              ]
-                            }
+                            name="subspace"
+                            type="text"
+                            placeholder="subspace"
+                            className="input input-md input-bordered mb-4 text-xs h-8"
+                            value={paramSubspaces[index]}
+                            key={"s-" + index}
+                            onChange={(e) => {
+                              handleParamSubspaceOnChange(
+                                e.target.value,
+                                index
+                              );
+                            }}
+                          />
+                        </div>
+                        <div className="form-control mr-3">
+                          <input
+                            name="key"
+                            type="text"
+                            placeholder="key"
+                            className="input input-md input-bordered mb-4 text-xs h-8"
+                            value={paramKeys[index]}
+                            key={"k-" + index}
+                            onChange={(e) => {
+                              handleParamKeyOnChange(e.target.value, index);
+                            }}
+                          />
+                        </div>
+                        <div className="form-control w-96">
+                          <input
+                            name="value"
                             type="text"
                             placeholder="value"
-                            onChange={handleValueOnChange}
+                            className="input input-md w-full input-bordered mb-4 text-xs h-8"
+                            value={paramValues[index]}
+                            key={"v-" + index}
+                            onChange={(e) => {
+                              handleParamValueOnChange(e.target.value, index);
+                            }}
                           />
                         </div>
                       </div>
@@ -544,10 +559,10 @@ function RepositoryProposalCreateView(props) {
                     <div className="inline-block w-36">
                       <button
                         className={
-                          "btn btn-sm btn-primary btn-block h-8 " +
+                          "btn btn-xs btn-primary btn-block h-5 w-32 " +
                           (false ? "loading" : "")
                         }
-                        disabled={true}
+                        disabled={false}
                         onClick={handleClick}
                       >
                         ADD PARAMETER
@@ -562,20 +577,23 @@ function RepositoryProposalCreateView(props) {
                           (loading ? "loading" : "")
                         }
                         disabled={
-                          true
-                          /* description === "" ||
-                          parameterName === {} ||
-                          parameterValue === {} ||
-                            title.length < 3 ||
-                          initialDeposit === ""*/
+                          description === "" ||
+                          title.length < 3 ||
+                          initialDeposit === "" ||
+                          paramSubspaces.length === 0 ||
+                          paramKeys.length === 0 ||
+                          paramValues.length === 0
                         }
                         onClick={(e) => {
                           setLoading(true);
                           props
-                            .submitGovernanceProposal(
+                            .paramChangeProposal(
                               title,
                               description,
                               proposalType,
+                              paramSubspaces,
+                              paramKeys,
+                              paramValues,
                               props.advanceUser === true
                                 ? initialDeposit.toString()
                                 : (initialDeposit * 1000000).toString()
@@ -656,4 +674,5 @@ export default connect(mapStateToProps, {
   submitGovernanceProposal,
   chainUpgradeProposal,
   communityPoolSpendProposal,
+  paramChangeProposal,
 })(RepositoryProposalCreateView);
