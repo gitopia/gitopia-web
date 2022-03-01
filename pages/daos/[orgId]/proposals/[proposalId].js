@@ -211,9 +211,80 @@ function ProposalDetailsView(props) {
                     : ""}
                 </div>
                 <div className="mt-3 text-type-secondary mb-14">
-                  {typeof proposal.content !== "undefined"
-                    ? proposal.content.description
-                    : ""}
+                  {typeof proposal.content !== "undefined" ? (
+                    <div className="mb-3">{proposal.content.description} </div>
+                  ) : (
+                    ""
+                  )}
+
+                  {typeof proposal.content !== "undefined" ? (
+                    proposal.content["@type"] ==
+                    "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal" ? (
+                      <div>
+                        <div>{"Plan Name: " + proposal.content.plan.name}</div>
+                        <div>
+                          {"Upgrade Height: " + proposal.content.plan.height}
+                        </div>
+                        <div>
+                          {"Upgraded Client State: " +
+                            (proposal.content.plan.upgraded_client_state == null
+                              ? "--"
+                              : proposal.content.plan.upgraded_client_state)}
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )
+                  ) : (
+                    ""
+                  )}
+                  {typeof proposal.content !== "undefined" ? (
+                    proposal.content["@type"] ==
+                    "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal" ? (
+                      <div>
+                        <div>
+                          {"Recipient: " + proposal.content["recipient"]}
+                        </div>
+                        <div>
+                          {"Amount: " +
+                            (props.advanceUser === true
+                              ? proposal.content.amount[0].amount
+                              : proposal.content.amount[0].amount / 1000000) +
+                            " " +
+                            (props.advanceUser === true
+                              ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                              : process.env.NEXT_PUBLIC_CURRENCY_TOKEN)}
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )
+                  ) : (
+                    ""
+                  )}
+                  {typeof proposal.content !== "undefined" ? (
+                    proposal.content["@type"] ==
+                    "/cosmos.params.v1beta1.ParameterChangeProposal" ? (
+                      <div>
+                        {proposal.content["changes"].map((change, index) => {
+                          return (
+                            <div>
+                              <div>{"Change " + (index + 1)}</div>
+                              <div className="ml-5">
+                                <div>{"Subspace: " + change.subspace}</div>
+                                <div>{"Key: " + change.key}</div>
+                                <div>{"Value: " + change.value}</div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      ""
+                    )
+                  ) : (
+                    ""
+                  )}
                 </div>
 
                 <div className="card w-full bg-base-300 shadow-xl rounded-lg h-48 mr-20">

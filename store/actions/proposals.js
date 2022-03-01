@@ -55,8 +55,12 @@ export const submitGovernanceProposal = (
           fee,
           memo,
         });
-        if (result && result.code === 0) {
-          dispatch(notify("Proposal Submitted", "info"));
+        if (result) {
+          if (result.code === 0) {
+            dispatch(notify("Proposal Submitted", "info"));
+          } else {
+            dispatch(notify(result.rawLog, "error"));
+          }
         }
         return result;
       } catch (e) {
@@ -117,8 +121,12 @@ export const chainUpgradeProposal = (
           fee,
           memo,
         });
-        if (result && result.code === 0) {
-          dispatch(notify("Proposal Submitted", "info"));
+        if (result) {
+          if (result.code === 0) {
+            dispatch(notify("Proposal Submitted", "info"));
+          } else {
+            dispatch(notify(result.rawLog, "error"));
+          }
         }
         return result;
       } catch (e) {
@@ -184,8 +192,12 @@ export const communityPoolSpendProposal = (
           fee,
           memo,
         });
-        if (result && result.code === 0) {
-          dispatch(notify("Proposal Submitted", "info"));
+        if (result) {
+          if (result.code === 0) {
+            dispatch(notify("Proposal Submitted", "info"));
+          } else {
+            dispatch(notify(result.rawLog, "error"));
+          }
         }
         return result;
       } catch (e) {
@@ -250,8 +262,13 @@ export const paramChangeProposal = (
           fee,
           memo,
         });
-        if (result && result.code === 0) {
-          dispatch(notify("Proposal Submitted", "info"));
+        console.log(result);
+        if (result) {
+          if (result.code === 0) {
+            dispatch(notify("Proposal Submitted", "info"));
+          } else {
+            dispatch(notify(result.rawLog, "error"));
+          }
         }
         return result;
       } catch (e) {
