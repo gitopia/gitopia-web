@@ -1,8 +1,12 @@
+import getNodeInfo from "./getNodeInfo";
+
 export default async function initKeplr() {
   if (typeof window === "undefined") return;
   if (!window.keplr) {
     alert("Please install keplr extension");
   } else {
+    const info = await getNodeInfo();
+    
     if (window.keplr.experimentalSuggestChain) {
       try {
         // Keplr v0.6.4 introduces an experimental feature that supports the feature to suggests the chain from a webpage.
@@ -13,9 +17,9 @@ export default async function initKeplr() {
         // If the same chain id is already registered, it will resolve and not require the user interactions.
         const suggestChain = await window.keplr.experimentalSuggestChain({
           // Chain-id of the Cosmos SDK chain.
-          chainId: "gitopia",
+          chainId: info.node_info.network,
           // The name of the chain to be displayed to the user.
-          chainName: "Gitopia",
+          chainName: info.application_version.name,
           // RPC endpoint of the chain.
           rpc: process.env.NEXT_PUBLIC_RPC_URL,
           // REST endpoint of the chain.
@@ -23,9 +27,9 @@ export default async function initKeplr() {
           // Staking coin information
           stakeCurrency: {
             // Coin denomination to be displayed to the user.
-            coinDenom: "tlore",
+            coinDenom: process.env.NEXT_PUBLIC_CURRENCY_TOKEN,
             // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-            coinMinimalDenom: "utlore",
+            coinMinimalDenom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN,
             // # of decimal points to convert minimal denomination to user-facing denomination.
             coinDecimals: 6,
             // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -63,9 +67,9 @@ export default async function initKeplr() {
           currencies: [
             {
               // Coin denomination to be displayed to the user.
-              coinDenom: "tlore",
+              coinDenom: process.env.NEXT_PUBLIC_CURRENCY_TOKEN,
               // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-              coinMinimalDenom: "utlore",
+              coinMinimalDenom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN,
               // # of decimal points to convert minimal denomination to user-facing denomination.
               coinDecimals: 6,
               // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -77,9 +81,9 @@ export default async function initKeplr() {
           feeCurrencies: [
             {
               // Coin denomination to be displayed to the user.
-              coinDenom: "tlore",
+              coinDenom: process.env.NEXT_PUBLIC_CURRENCY_TOKEN,
               // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-              coinMinimalDenom: "utlore",
+              coinMinimalDenom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN,
               // # of decimal points to convert minimal denomination to user-facing denomination.
               coinDecimals: 6,
               // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -110,12 +114,11 @@ export default async function initKeplr() {
     } else {
       alert("Please use the recent version of keplr extension");
     }
-    const chainId = "gitopia";
 
     // Enabling before using the Keplr is recommended.
     // This method will ask the user whether or not to allow access if they haven't visited this website.
     // Also, it will request user to unlock the wallet if the wallet is locked.
-    await window.keplr.enable(chainId);
+    await window.keplr.enable(info.node_info.network);
 
     // const offlineSigner = window.getOfflineSigner(chainId);
     // console.log(offlineSigner);
