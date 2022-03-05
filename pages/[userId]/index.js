@@ -13,7 +13,18 @@ import getOrganization from "../../helpers/getOrganization";
 import dayjs from "dayjs";
 import PublicTabs from "../../components/dashboard/publicTabs";
 import UserHeader from "../../components/user/header";
-import { useErrorStatus } from "../errorHandler";
+import { useErrorStatus } from "../../hooks/errorHandler";
+
+export async function getStaticProps() {
+  return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
+}
 
 function AccountView(props) {
   const router = useRouter();

@@ -28,7 +28,7 @@ import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
 import IssuePullTitle from "../../../../components/repository/issuePullTitle";
 import IssuePullDescription from "../../../../components/repository/issuePullDescription";
-import { useErrorStatus } from "../../../errorHandler";
+import { useErrorStatus } from "../../../../hooks/errorHandler";
 
 export async function getStaticProps() {
   return { props: {} };

@@ -12,7 +12,7 @@ import Footer from "../../../../../components/footer";
 import getRepositoryRelease from "../../../../../helpers/getRepositoryRelease";
 import ReleaseView from "../../../../../components/repository/releaseView";
 import useRepository from "../../../../../hooks/useRepository";
-import { useErrorStatus } from "../../../../errorHandler";
+import { useErrorStatus } from "../../../../../hooks/errorHandler";
 
 export async function getStaticProps() {
   return { props: {} };

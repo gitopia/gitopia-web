@@ -13,7 +13,7 @@ import useRepository from "../../../../hooks/useRepository";
 import CommitDetailRow from "../../../../components/repository/commitDetailRow";
 import DiffView from "../../../../components/repository/diffView";
 import getCommit from "../../../../helpers/getCommit";
-import { useErrorStatus } from "../../../errorHandler";
+import { useErrorStatus } from "../../../../hooks/errorHandler";
 
 export async function getStaticProps() {
   return { props: {} };

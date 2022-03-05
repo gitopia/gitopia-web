@@ -7,7 +7,7 @@ import AutoLogin from "../components/autoLogin";
 import NotificationManager from "../components/notificationManager";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import ErrorHandler from "../pages/errorHandler";
+import ErrorHandler from "../hooks/errorHandler";
 
 const progress = new ProgressBar({
   size: 2,

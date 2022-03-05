@@ -18,7 +18,7 @@ import dynamic from "next/dynamic";
 import ReactMarkdown from "react-markdown";
 import getContent from "../../../../helpers/getContent";
 import getCommitHistory from "../../../../helpers/getCommitHistory";
-import { useErrorStatus } from "../../../errorHandler";
+import { useErrorStatus } from "../../../../hooks/errorHandler";
 
 let vscdarkplus;
 const SyntaxHighlighter = dynamic(
