@@ -30,8 +30,15 @@ import IssuePullTitle from "../../../../components/repository/issuePullTitle";
 import IssuePullDescription from "../../../../components/repository/issuePullDescription";
 import { useErrorStatus } from "../../../errorHandler";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function RepositoryIssueView(props) {

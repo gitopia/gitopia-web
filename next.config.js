@@ -7,17 +7,22 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
 
+const path = require('path');
+
 module.exports = withBundleAnalyzer(
-  withTM({
+  {
     webpack(config, { buildId, dev, isServer, defaultLoaders, webpack }) {
-      // ${previousConfig...}
 
       if (!dev && !isServer) {
         config.plugins.push(
-          new webpack.IgnorePlugin(/^\.\/wordlists\/(?!english)/, /bip39\/src$/)
+          new webpack.IgnorePlugin(
+          {
+            resourceRegExp: /^\.\/wordlists\/(?!english)/,
+            contextRegExp: /bip39\/src$/,
+          })
         );
       }
-
+      
       return config;
     },
     poweredByHeader: false,
@@ -35,6 +40,11 @@ module.exports = withBundleAnalyzer(
     images: {
       loader: "imgix",
       path: process.env.NEXT_PUBLIC_IMAGES_URL,
+    },
+    eslint: {
+      // Warning: This allows production builds to successfully complete even if
+      // your project has ESLint errors.
+      ignoreDuringBuilds: true,
     },
     async rewrites() {
       return [
@@ -80,5 +90,5 @@ module.exports = withBundleAnalyzer(
         },
       ];
     },
-  })
+  }
 );

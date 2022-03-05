@@ -17,6 +17,17 @@ import {
 } from "../../../components/user/getUserTransactions";
 import UserHeader from "../../../components/user/header";
 
+export async function getStaticProps() {
+  return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
+}
+
 function TransactionView(props) {
   const router = useRouter();
   const [user, setUser] = useState({

@@ -11,8 +11,15 @@ import getUser from "../../helpers/getUser";
 import getOrganization from "../../helpers/getOrganization";
 import PublicTabs from "../../components/dashboard/publicTabs";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function OrganizationPeopleView(props) {

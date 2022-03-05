@@ -9,9 +9,6 @@ import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import find from "lodash/find";
 import { notify } from "reapop";
 import { setupTxClients } from "./env";
-import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
-import { LedgerSigner } from "@cosmjs/ledger-amino";
-import { stringToPath } from "@cosmjs/crypto";
 import getNodeInfo from "../../helpers/getNodeInfo";
 
 let ledgerTransport;
@@ -427,11 +424,12 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
 
 export const unlockLedgerWallet = ({ name }) => {
   return async (dispatch, getState) => {
-    // const TransportWebUSB = (await import("@ledgerhq/hw-transport-webusb"))
-    //   .default;
+    const TransportWebUSB = (await import("@ledgerhq/hw-transport-webusb"))
+      .default;
     // const TransportWebHID = (await import("@ledgerhq/hw-transport-webhid"))
     //   .default;
-    // const LedgerSigner = (await import("@cosmjs/ledger-amino")).LedgerSigner;
+    const LedgerSigner = (await import("@cosmjs/ledger-amino")).LedgerSigner;
+    const stringToPath = (await import("@cosmjs/crypto")).stringToPath;
     const { wallet } = getState();
     let accountSigner;
     const encryptedWallet =
@@ -513,6 +511,8 @@ export const unlockLedgerWallet = ({ name }) => {
 
 export const initLedgerTransport = ({ force } = { force: false }) => {
   return async (dispatch, getState) => {
+    const TransportWebUSB = (await import("@ledgerhq/hw-transport-webusb"))
+      .default;
     try {
       if (!ledgerTransport || force) {
         ledgerTransport = await TransportWebUSB.create();
@@ -529,6 +529,8 @@ export const initLedgerTransport = ({ force } = { force: false }) => {
 export const getLedgerSigner = () => {
   return async (dispatch, getState) => {
     if (!ledgerTransport) return { message: "No connection available" };
+    const LedgerSigner = (await import("@cosmjs/ledger-amino")).LedgerSigner;
+    const stringToPath = (await import("@cosmjs/crypto")).stringToPath;
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
       const accountSigner = new LedgerSigner(ledgerTransport, {
@@ -556,6 +558,7 @@ export const getLedgerSigner = () => {
 export const showLedgerAddress = (ledgerSigner) => {
   return async (dispatch, getState) => {
     if (!ledgerSigner) return { message: "No connection available" };
+    const stringToPath = (await import("@cosmjs/crypto")).stringToPath;
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
       const addr = await ledgerSigner.showAddress(path);
@@ -569,6 +572,7 @@ export const showLedgerAddress = (ledgerSigner) => {
 export const addLedgerWallet = (name, address, ledgerSigner) => {
   return async (dispatch, getState) => {
     if (!ledgerSigner) return { message: "No connection available" };
+    const stringToPath = (await import("@cosmjs/crypto")).stringToPath;
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
       dispatch({

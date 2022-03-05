@@ -15,10 +15,6 @@ import PublicTabs from "../../components/dashboard/publicTabs";
 import UserHeader from "../../components/user/header";
 import { useErrorStatus } from "../errorHandler";
 
-export async function getServerSideProps() {
-  return { props: {} };
-}
-
 function AccountView(props) {
   const router = useRouter();
   const { setErrorStatusCode } = useErrorStatus();

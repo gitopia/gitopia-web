@@ -29,8 +29,15 @@ import usePullRequest from "../../../../../hooks/usePullRequest";
 import MergePullRequestView from "../../../../../components/repository/mergePullRequestView";
 import IssuePullDescription from "../../../../../components/repository/issuePullDescription";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function RepositoryPullView(props) {

@@ -15,8 +15,15 @@ import DiffView from "../../../../components/repository/diffView";
 import getCommit from "../../../../helpers/getCommit";
 import { useErrorStatus } from "../../../errorHandler";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function RepositoryCommitDiffView(props) {
