@@ -49,7 +49,7 @@ function UserDashboard(props) {
               A DAO is a self-organizing online community that uses Gitopia to
               manage its development securely
             </div>
-            <Link href="/account/organizations/new">
+            <Link href="/account/daos/new">
               <button className="btn btn-outline btn-sm">Create a DAO</button>
             </Link>
           </div>
