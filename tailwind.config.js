@@ -100,7 +100,7 @@ module.exports = {
           "base-content": "#E2EBF2",
           info: "#2094f3",
           success: "#009485",
-          warning: "#ff9900",
+          warning: "#FBBD23",
           error: "#E83D99",
           "--btn-text-case": "none" /* default text case for buttons */,
         },

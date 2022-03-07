@@ -72,7 +72,7 @@ function Header(props) {
     window.addEventListener("keplr_keystorechange", handleKeplrAccountChange);
     if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
       const info = await getNodeInfo();
-      setChainId(info.node_info.network)
+      setChainId(info.node_info.network);
     }
     return () => {
       window.removeEventListener(
@@ -235,7 +235,7 @@ function Header(props) {
               <button
                 tabIndex="0"
                 className={
-                  "btn rounded-full px-4 avatar relative " +
+                  "btn rounded-full px-4 relative " +
                   (props.activeWallet ? "btn-ghost" : "btn-primary") +
                   (props.unlockingWallet ? " loading" : "")
                 }
@@ -244,17 +244,19 @@ function Header(props) {
                 }}
                 ref={menuRef}
               >
-                <div className="rounded-full w-10 h-10 absolute left-1">
-                  {props.activeWallet && !props.unlockingWallet ? (
-                    <img
-                      src={
-                        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
-                        addressToShow.slice(-1)
-                      }
-                    />
-                  ) : (
-                    ""
-                  )}
+                <div className="avatar absolute left-1">
+                  <div className="rounded-full w-10 h-10">
+                    {props.activeWallet && !props.unlockingWallet ? (
+                      <img
+                        src={
+                          "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
+                          addressToShow.slice(-1)
+                        }
+                      />
+                    ) : (
+                      ""
+                    )}
+                  </div>
                 </div>
                 <div
                   className={
@@ -355,8 +357,8 @@ function Header(props) {
                               : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                           </a>
                         </li>
-                        <li className="h-4">
-                          <div className="border-b border-grey mt-2"></div>
+                        <li className="disabled menu-title">
+                          <div className="border-b border-grey mb-2"></div>
                         </li>
                         <li>
                           <a
