@@ -257,7 +257,7 @@ function Header(props) {
                     onClick={(e) => {
                       setUnread(false);
                       setMenuOpen(true);
-                      setMenuState(4);
+                      setMenuState(5);
                       e.preventDefault();
                     }}
                   >
