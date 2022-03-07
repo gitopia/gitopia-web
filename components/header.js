@@ -244,7 +244,7 @@ function Header(props) {
             }}
           >
             <div className="flex">
-              <div className="mt-1">
+              <div className="mt-2">
                 <div className="indicator flex-none mr-4">
                   {unread === true && menuOpen !== true ? (
                     <div class="indicator-item badge badge-primary"></div>
