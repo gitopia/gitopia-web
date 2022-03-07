@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { readNotification } from "../../store/actions/userNotification";
 import { connect } from "react-redux";
+import db from "../../helpers/db";
 
 function NotificationsCard(props) {
   const [notifications, setNotifications] = useState({
@@ -10,30 +11,44 @@ function NotificationsCard(props) {
     toDos: 0,
   });
 
-  function countNotification(type) {
-    let state = props.userNotification;
-    let count = 0;
-    state.map((i) => {
-      if (i.type === type && i.unread === true) {
-        count++;
+  async function unreadNotificationIndexDB(type) {
+    try {
+      db.notifications.where("type").equals(type).modify({ unread: false });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function countNotification() {
+    let countIssue = 0;
+    let countPulls = 0;
+    db.notifications.each(function (notification) {
+      if (notification.unread === true && notification.type === "issue") {
+        countIssue++;
+        setNotifications({
+          issues: countIssue,
+          pulls: notifications.pulls,
+          gov: notifications.gov,
+          toDos: notifications.toDos,
+        });
+      } else if (
+        notification.unread === true &&
+        notification.type === "pulls"
+      ) {
+        countPulls++;
+        setNotifications({
+          issues: notifications.issues,
+          pulls: countPulls,
+          gov: notifications.gov,
+          toDos: notifications.toDos,
+        });
       }
     });
-    return count;
   }
 
   useEffect(async () => {
-    let issues = countNotification("issue");
-    let pulls = countNotification("pulls");
-    let gov = countNotification("gov");
-    let toDos = countNotification("toDos");
-
-    setNotifications({
-      issues: issues,
-      pulls: pulls,
-      gov: gov,
-      toDos: toDos,
-    });
-  }, [props.userNotification]);
+    countNotification();
+  }, [db.notifications]);
 
   return (
     <div className="card w-96 px-5 py-5 bg-base-300 rounded-xl">
@@ -76,6 +91,7 @@ function NotificationsCard(props) {
               props.setMenuOpen(false);
               props.setMenuState(1);
               props.readNotification("issue");
+              unreadNotificationIndexDB("issue");
             }}
           >
             {notifications.issues + " NEW"}
@@ -125,6 +141,7 @@ function NotificationsCard(props) {
             class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
             onClick={() => {
               props.readNotification("pulls");
+              unreadNotificationIndexDB("pulls");
               props.setMenuOpen(false);
               props.setMenuState(1);
             }}
