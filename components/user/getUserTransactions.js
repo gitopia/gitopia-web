@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../../helpers/axiosFetch";
 import { notify } from "reapop";
 
 export const txTypes = {

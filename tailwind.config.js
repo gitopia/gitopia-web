@@ -1,13 +1,8 @@
 module.exports = {
-  purge: {
-    content: [
-      "./pages/**/*.{js,ts,jsx,tsx}",
-      "./components/**/*.{js,ts,jsx,tsx}",
-    ],
-    options: {
-      safelist: [/data-theme$/],
-    },
-  },
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+  ],
   darkMode: "media", // or 'media' or 'class'
   theme: {
     fontFamily: {

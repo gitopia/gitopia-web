@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../helpers/axiosFetch";
 
 const validSha = new RegExp(/^[a-f0-9]{40}$/);
 

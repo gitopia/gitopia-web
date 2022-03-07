@@ -1,8 +1,3 @@
-const withTM = require("@module-federation/next-transpile-modules")([
-  "@gitopia/gitopia-js",
-  "react-syntax-highlighter",
-]); // pass the modules you would like to see transpiled
-
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
@@ -27,16 +22,6 @@ module.exports = withBundleAnalyzer(
     },
     poweredByHeader: false,
     productionBrowserSourceMaps: process.env.ANALYZE === "true",
-    exportPathMap: async function (
-      defaultPathMap,
-      { dev, dir, outDir, distDir, buildId }
-    ) {
-      return {
-        "/": { page: "/" },
-        "/home": { page: "/home" },
-        "/design": { page: "/design" },
-      };
-    },
     images: {
       loader: "imgix",
       path: process.env.NEXT_PUBLIC_IMAGES_URL,

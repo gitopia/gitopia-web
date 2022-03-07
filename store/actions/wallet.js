@@ -210,9 +210,16 @@ export const createWalletWithMnemonic = ({
     const [firstAccount] = await accountSigner.getAccounts();
     const account = { address: firstAccount.address, pathIncrement: 0 };
     wallet.accounts.push(account);
+    
+    const CryptoJS = (await import("crypto-js")).default;
+    const encryptedWallet = CryptoJS.AES.encrypt(
+      JSON.stringify(wallet),
+      password
+    ).toString();
+
     await dispatch({
       type: walletActions.ADD_WALLET,
-      payload: { wallet, password },
+      payload: { wallet, encryptedWallet },
     });
 
     try {
@@ -246,9 +253,15 @@ export const restoreWallet = ({ encrypted, password }) => {
         prefix: wallet.prefix,
       }
     );
+
+    const encryptedWallet = CryptoJS.AES.encrypt(
+      JSON.stringify(wallet),
+      password
+    ).toString();
+
     await dispatch({
       type: walletActions.ADD_WALLET,
-      payload: { wallet, password },
+      payload: { wallet, encryptedWallet },
     });
 
     try {
@@ -573,13 +586,22 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
   return async (dispatch, getState) => {
     if (!ledgerSigner) return { message: "No connection available" };
     const stringToPath = (await import("@cosmjs/crypto")).stringToPath;
+    const CryptoJS = (await import("crypto-js")).default;
+
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
+      const wallet = { name, accounts: [{ address, path }], isLedger: true };
+    const password = "STRONG_LEDGER";
+    const encryptedWallet = CryptoJS.AES.encrypt(
+      JSON.stringify(wallet),
+      password
+    ).toString();
       dispatch({
         type: walletActions.ADD_EXTERNAL_WALLET,
         payload: {
           isLedger: true,
-          wallet: { name, accounts: [{ address, path }], isLedger: true },
+          wallet,
+          encryptedWallet,
         },
       });
       dispatch({ type: walletActions.STORE_WALLETS });

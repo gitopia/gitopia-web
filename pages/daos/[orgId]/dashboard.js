@@ -9,6 +9,17 @@ import { useRouter } from "next/router";
 import { getOrganizationDetailsForDashboard } from "../../../store/actions/organization";
 import Org from "../../../components/dashboard/org";
 
+export async function getStaticProps() {
+  return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
+}
+
 function OrgDashboard(props) {
   const router = useRouter();
   useEffect(() => {
