@@ -16,6 +16,7 @@ import {
 import getRepositoryRelease from "../../../../../helpers/getRepositoryRelease";
 import ReleaseView from "../../../../../components/repository/releaseView";
 import useRepository from "../../../../../hooks/useRepository";
+import { useErrorStatus } from "../../../../errorHandler";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -24,6 +25,7 @@ export async function getServerSideProps() {
 function RepositoryReleaseView(props) {
   const router = useRouter();
   const { repository } = useRepository();
+  const { setErrorStatusCode } = useErrorStatus();
 
   const [release, setRelease] = useState({
     creator: "",
@@ -55,8 +57,10 @@ function RepositoryReleaseView(props) {
       );
       console.log(rel);
 
-      if (rel && rel.id && rel.id !== "0") {
+      if (rel && rel.id) {
         setRelease(rel);
+      } else {
+        setErrorStatusCode(404);
       }
     }
   };
@@ -119,6 +123,7 @@ function RepositoryReleaseView(props) {
                   );
                 }
               }}
+              noLink={true}
             />
           </div>
         </main>

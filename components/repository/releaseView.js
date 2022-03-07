@@ -11,6 +11,7 @@ export default function ReleaseView({
   latest = false,
   showEditControls = false,
   onDelete = () => {},
+  noLink = false,
   ...props
 }) {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -19,20 +20,26 @@ export default function ReleaseView({
   return (
     <div className="p-4">
       <div className="flex items-center">
-        <Link
-          href={
-            "/" +
-            repository.owner.id +
-            "/" +
-            repository.name +
-            "/releases/tag/" +
-            release.tagName
-          }
-        >
-          <a className="text-3xl link link-primary no-underline hover:underline">
+        {noLink ? (
+          <div className="text-3xl text-type-secondary">
             {repository.name + " " + release.tagName}
-          </a>
-        </Link>
+          </div>
+        ) : (
+          <Link
+            href={
+              "/" +
+              repository.owner.id +
+              "/" +
+              repository.name +
+              "/releases/tag/" +
+              release.tagName
+            }
+          >
+            <a className="text-3xl link link-primary no-underline hover:underline">
+              {repository.name + " " + release.tagName}
+            </a>
+          </Link>
+        )}
         {latest ? (
           <span className="ml-4 mt-1 badge badge-primary badge-outline">
             Latest

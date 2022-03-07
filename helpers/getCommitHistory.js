@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const validSha = new RegExp(/^[a-f0-9]{40}$/);
 
 export default async function getCommitHistory(
@@ -31,16 +33,13 @@ export default async function getCommitHistory(
     params.pagination.nextKey = nextKey;
   }
   console.log("params", params);
-  await fetch(baseUrl, {
-    method: "POST", // *GET, POST, PUT, DELETE, etc.
-    mode: "cors", // no-cors, *cors, same-origin
-    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-    body: JSON.stringify(params),
-  })
+
+  await axios
+    .post(baseUrl, params, {})
     .then((response) => {
-      obj = response.json();
+      obj = response.data;
     })
-    .catch((err) => console.error(err));
+    .catch((err) => console.log(err));
 
   return obj;
 }

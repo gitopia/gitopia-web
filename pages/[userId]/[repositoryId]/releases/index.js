@@ -23,7 +23,6 @@ export async function getServerSideProps() {
 
 function RepositoryReleasesView(props) {
   const { repository, refreshRepository } = useRepository();
-
   const [latestRelease, setLatestRelease] = useState(null);
   const [olderReleases, setOlderReleases] = useState([]);
   const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
@@ -36,8 +35,7 @@ function RepositoryReleasesView(props) {
         repository.name
       );
       console.log(release);
-      if (release && release.id && release.id !== "0")
-        setLatestRelease(release);
+      if (release && release.id) setLatestRelease(release);
       if (repository.releases.length > 1) {
         const older = repository.releases
           .slice(0, repository.releases.length - 1)

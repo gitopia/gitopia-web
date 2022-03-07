@@ -947,6 +947,7 @@ ul.mde-suggestions li[aria-selected="true"] {
   --diff-code-delete-edit-background-color: #f39ea2;
   --diff-code-selected-background-color: #fffce0;
   --diff-omit-gutter-line-color: #cb2a1d;
+  color-scheme: dark;
 }
 .diff {
   background-color: initial;

@@ -925,7 +925,6 @@ export const deleteRelease = ({ releaseId }) => {
 
     console.log("release", release);
     try {
-      console.log(env.txClient.msgDeleteRelease);
       const message = await env.txClient.msgDeleteRelease(release);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {

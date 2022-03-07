@@ -19,6 +19,7 @@ import dynamic from "next/dynamic";
 import ReactMarkdown from "react-markdown";
 import getContent from "../../../../helpers/getContent";
 import getCommitHistory from "../../../../helpers/getCommitHistory";
+import { useErrorStatus } from "../../../errorHandler";
 
 const SyntaxHighlighter = dynamic(
   async () => (await import("react-syntax-highlighter")).Prism
@@ -31,6 +32,7 @@ export async function getServerSideProps() {
 function RepositoryTreeView(props) {
   const router = useRouter();
   const { repository } = useRepository();
+  const { setErrorStatusCode } = useErrorStatus();
 
   const [entityList, setEntityList] = useState([]);
   const [hasMoreEntities, setHasMoreEntities] = useState(null);
@@ -50,10 +52,10 @@ function RepositoryTreeView(props) {
 
   useEffect(async () => {
     console.log("query", router.query);
-    if (repository) {
-      console.log(repository);
+    if (repository.branches.length) {
+      console.log(repository, router.query.path);
       if (!router.query.path) {
-        // TODO: show 404 page
+        setErrorStatusCode(404);
       }
       const joinedPath = router.query.path.join("/");
       let found = false;
@@ -89,7 +91,7 @@ function RepositoryTreeView(props) {
         });
       }
       if (!found) {
-        // TODO: show 404 page
+        setErrorStatusCode(404);
       }
     }
   }, [router.query.path, repository.id]);
@@ -127,6 +129,8 @@ function RepositoryTreeView(props) {
               : setEntityList([...currentEntities, ...res.content]);
             setFile(null);
           }
+        } else {
+          setErrorStatusCode(404);
         }
         if (res.pagination && res.pagination.next_key) {
           setHasMoreEntities(res.pagination.next_key);
@@ -139,21 +143,23 @@ function RepositoryTreeView(props) {
   };
 
   useEffect(async () => {
-    loadEntities([], true);
-    const commitHistory = await getCommitHistory(
-      repository.id,
-      getBranchSha(branchName, repository.branches, repository.tags),
-      repoPath.join("/"),
-      1
-    );
-    console.log(commitHistory);
-    if (
-      commitHistory &&
-      commitHistory.commits &&
-      commitHistory.commits.length
-    ) {
-      setCommitDetail(commitHistory.commits[0]);
-      setCommitsLength(commitHistory.pagination.total);
+    if (repository.branches.length) {
+      loadEntities([], true);
+      const commitHistory = await getCommitHistory(
+        repository.id,
+        getBranchSha(branchName, repository.branches, repository.tags),
+        repoPath.join("/"),
+        1
+      );
+      console.log(commitHistory);
+      if (
+        commitHistory &&
+        commitHistory.commits &&
+        commitHistory.commits.length
+      ) {
+        setCommitDetail(commitHistory.commits[0]);
+        setCommitsLength(commitHistory.pagination.total);
+      }
     }
   }, [repoPath]);
 

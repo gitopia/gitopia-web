@@ -126,54 +126,56 @@ function AssigneeSelector({
             ""
           )}
         </div>
-        {collabAddresses.length ? (
-          <div className="py-2 text-type-secondary font-bold text-xs uppercase">
-            Collaborators
-          </div>
-        ) : (
-          ""
-        )}
-        {collabAddresses.map((c, i) => {
-          return (
-            <div className="form-control" key={"collaborator" + i}>
-              <label className="cursor-pointer label justify-start">
-                <input
-                  type="checkbox"
-                  checked={checkMap[c]}
-                  onChange={() => {
-                    setCheckMap({ ...checkMap, [c]: !checkMap[c] });
-                  }}
-                  className="checkbox checkbox-sm mr-2"
-                />
-                <span className="label-text">{shrinkAddress(c)}</span>
-              </label>
+        <div className="max-h-60 overflow-auto">
+          {collabAddresses.length ? (
+            <div className="py-2 text-type-secondary font-bold text-xs uppercase">
+              Collaborators
             </div>
-          );
-        })}
-        {newAssignees.length ? (
-          <div className="py-2 text-type-secondary font-bold text-xs uppercase">
-            Others
-          </div>
-        ) : (
-          ""
-        )}
-        {newAssignees.map((a, i) => {
-          return (
-            <div className="form-control" key={"newassignee" + i}>
-              <label className="cursor-pointer label justify-start">
-                <input
-                  type="checkbox"
-                  checked={checkMap[a]}
-                  onChange={() => {
-                    setCheckMap({ ...checkMap, [a]: !checkMap[a] });
-                  }}
-                  className="checkbox checkbox-sm mr-2"
-                />
-                <span className="label-text">{shrinkAddress(a)}</span>
-              </label>
+          ) : (
+            ""
+          )}
+          {collabAddresses.map((c, i) => {
+            return (
+              <div className="form-control" key={"collaborator" + i}>
+                <label className="cursor-pointer label justify-start">
+                  <input
+                    type="checkbox"
+                    checked={checkMap[c]}
+                    onChange={() => {
+                      setCheckMap({ ...checkMap, [c]: !checkMap[c] });
+                    }}
+                    className="checkbox checkbox-sm mr-2"
+                  />
+                  <span className="label-text">{shrinkAddress(c)}</span>
+                </label>
+              </div>
+            );
+          })}
+          {newAssignees.length ? (
+            <div className="py-2 text-type-secondary font-bold text-xs uppercase">
+              Others
             </div>
-          );
-        })}
+          ) : (
+            ""
+          )}
+          {newAssignees.map((a, i) => {
+            return (
+              <div className="form-control" key={"newassignee" + i}>
+                <label className="cursor-pointer label justify-start">
+                  <input
+                    type="checkbox"
+                    checked={checkMap[a]}
+                    onChange={() => {
+                      setCheckMap({ ...checkMap, [a]: !checkMap[a] });
+                    }}
+                    className="checkbox checkbox-sm mr-2"
+                  />
+                  <span className="label-text">{shrinkAddress(a)}</span>
+                </label>
+              </div>
+            );
+          })}
+        </div>
         <div className="flex w-full mt-2 btn-group">
           <a
             className="btn btn-sm flex-1"

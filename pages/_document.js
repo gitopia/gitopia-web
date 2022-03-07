@@ -8,7 +8,7 @@ class GitopiaDocument extends Document {
 
   render() {
     return (
-      <Html>
+      <Html className="dark">
         <Head>
           {process.env.NODE_ENV === "production" && (
             <script
@@ -18,6 +18,7 @@ class GitopiaDocument extends Document {
               src="https://plausible.io/js/plausible.js"
             />
           )}
+          <meta name="color-scheme" content="dark"></meta>
         </Head>
         <body>
           <Main />

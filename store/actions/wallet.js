@@ -463,6 +463,14 @@ export const unlockLedgerWallet = ({ name }) => {
         )
       );
       if (addr !== wallet.accounts[0].address) {
+        dispatch(
+          notify("Wallet address not matching Ledger's address", "error")
+        );
+        if (!wallet.selectedAddress) {
+          dispatch({ type: walletActions.SIGN_OUT });
+        } else {
+          dispatch({ type: walletActions.STOP_UNLOCKING_WALLET });
+        }
         return null;
       }
 
@@ -566,7 +574,7 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
         type: walletActions.ADD_EXTERNAL_WALLET,
         payload: {
           isLedger: true,
-          wallet: { name, accounts: [{ address, path }] },
+          wallet: { name, accounts: [{ address, path }], isLedger: true },
         },
       });
       dispatch({ type: walletActions.STORE_WALLETS });

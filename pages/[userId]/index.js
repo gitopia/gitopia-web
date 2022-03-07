@@ -13,6 +13,7 @@ import getOrganization from "../../helpers/getOrganization";
 import dayjs from "dayjs";
 import PublicTabs from "../../components/dashboard/publicTabs";
 import UserHeader from "../../components/user/header";
+import { useErrorStatus } from "../errorHandler";
 
 export async function getServerSideProps() {
   return { props: {} };
@@ -20,6 +21,7 @@ export async function getServerSideProps() {
 
 function AccountView(props) {
   const router = useRouter();
+  const { setErrorStatusCode } = useErrorStatus();
   const [user, setUser] = useState({
     creator: "",
     repositories: [],
@@ -42,6 +44,8 @@ function AccountView(props) {
       setOrg({ name: "", repositories: [] });
     } else if (o) {
       setOrg(o);
+    } else {
+      setErrorStatusCode(404);
       setUser({ creator: "", repositories: [] });
     }
   }, [router.query]);
