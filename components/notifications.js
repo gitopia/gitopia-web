@@ -8,8 +8,21 @@ import getPullRequest from "../helpers/getPullRequest";
 import { notify } from "reapop";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { createNotification } from "../store/actions/userNotification";
+import db from "../helpers/db";
 
 function Notifications(props) {
+  async function addNotification(type, msg, unread) {
+    try {
+      const id = await db.notifications.add({
+        type,
+        msg,
+        unread,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const ws = new W3CWebSocket("ws://localhost:26657/websocket");
 
   const parser = async (tx) => {
@@ -29,6 +42,7 @@ function Notifications(props) {
               repo.name +
               '"';
             props.createNotification(tx.message, "issue");
+            addNotification("issue", tx.message, true);
             props.notify(msg, "info");
           }
         }
@@ -55,6 +69,7 @@ function Notifications(props) {
                 repo.name +
                 '"';
               props.createNotification(tx.message, "issue");
+              addNotification("issue", tx.message, true);
               props.notify(msg, "info");
             }
           } else if (tx.message.commentType === "PULLREQUEST") {
@@ -343,7 +358,10 @@ function Notifications(props) {
     };
     ws.onmessage = async (message) => {
       let evalData = JSON.parse(message.data);
-      let jsonData = evalData.result.data;
+      let jsonData;
+      if (evalData) {
+        jsonData = evalData.result.data;
+      }
       if (jsonData) {
         await parser(decodeTx(jsonData.value.TxResult.tx));
       }
@@ -360,6 +378,7 @@ function Notifications(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
+    userNotification: state.userNotification,
   };
 };
 
