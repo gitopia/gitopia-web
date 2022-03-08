@@ -11,12 +11,13 @@ import { createNotification } from "../store/actions/userNotification";
 import db from "../helpers/db";
 
 function Notifications(props) {
-  async function addNotification(type, msg, unread) {
+  async function addNotification(type, msg, unread, formattedMsg) {
     try {
       const id = await db.notifications.add({
         type,
         msg,
         unread,
+        formattedMsg,
       });
     } catch (error) {
       console.log(error);
@@ -42,7 +43,7 @@ function Notifications(props) {
               repo.name +
               '"';
             props.createNotification(tx.message, "issue");
-            addNotification("issue", tx.message, true);
+            addNotification("issue", tx.message, true, msg);
             props.notify(msg, "info");
           }
         }
@@ -61,15 +62,13 @@ function Notifications(props) {
             ) {
               let msg =
                 shrinkAddress(tx.message.creator) +
-                ' commented "' +
-                tx.message.body +
-                '" on issue "' +
-                issue.title +
-                '" in repository "' +
+                " commented on issue id " +
+                issue.iid +
+                ' in repository "' +
                 repo.name +
                 '"';
               props.createNotification(tx.message, "issue");
-              addNotification("issue", tx.message, true);
+              addNotification("issue", tx.message, true, msg);
               props.notify(msg, "info");
             }
           } else if (tx.message.commentType === "PULLREQUEST") {
@@ -85,14 +84,13 @@ function Notifications(props) {
               ) {
                 let msg =
                   shrinkAddress(tx.message.creator) +
-                  ' commented "' +
-                  tx.message.body +
-                  '" on pull request "' +
-                  pull.title +
-                  '" in repository "' +
+                  " commented on pull request id " +
+                  pull.iid +
+                  'in repository "' +
                   repo.name +
                   '"';
                 props.createNotification(tx.message, "pulls");
+                addNotification("pulls", tx.message, true, msg);
                 props.notify(msg, "info");
               }
             }
@@ -106,14 +104,13 @@ function Notifications(props) {
               ) {
                 let msg =
                   shrinkAddress(tx.message.creator) +
-                  ' commented "' +
-                  tx.message.body +
-                  '" on pull request "' +
-                  pull.title +
-                  '" in repository "' +
+                  " commented on pull request id " +
+                  pull.iid +
+                  'in repository "' +
                   repo.name +
                   '"';
                 props.createNotification(tx.message, "pulls");
+                addNotification("pulls", tx.message, true, msg);
                 props.notify(msg, "info");
               }
             }
@@ -124,14 +121,13 @@ function Notifications(props) {
             ) {
               let msg =
                 shrinkAddress(tx.message.creator) +
-                ' commented "' +
-                tx.message.body +
-                '" on pull request "' +
-                pull.title +
-                '" in repository "' +
+                " commented on pull request id " +
+                pull.iid +
+                'in repository "' +
                 repo.name +
                 '"';
               props.createNotification(tx.message, "pulls");
+              addNotification("pulls", tx.message, true, msg);
               props.notify(msg, "info");
             }
           }
@@ -157,6 +153,7 @@ function Notifications(props) {
               repo.name +
               '"';
             props.createNotification(tx.message, "issue");
+            addNotification("issue", tx.message, true, msg);
             props.notify(msg, "info");
           }
         }
@@ -184,6 +181,7 @@ function Notifications(props) {
                 repo.name +
                 '"';
               props.createNotification(tx.message, "issue");
+              addNotification("issue", tx.message, true, msg);
               props.notify(msg, "info");
             }
           }
@@ -208,6 +206,7 @@ function Notifications(props) {
                 repo.name +
                 '"';
               props.createNotification(tx.message, "pulls");
+              addNotification("pulls", tx.message, true, msg);
               props.notify(msg, "info");
             }
           }
@@ -226,6 +225,7 @@ function Notifications(props) {
                 repo.name +
                 '"';
               props.createNotification(tx.message, "pulls");
+              addNotification("pulls", tx.message, true, msg);
               props.notify(msg, "info");
             }
           }
@@ -241,6 +241,7 @@ function Notifications(props) {
               repo.name +
               '"';
             props.createNotification(tx.message, "pulls");
+            addNotification("pulls", tx.message, true, msg);
             props.notify(msg, "info");
           }
         }
@@ -258,6 +259,7 @@ function Notifications(props) {
                 shrinkAddress(tx.message.creator) +
                 " changed pull request reviewer";
               props.createNotification(tx.message, "pulls");
+              addNotification("pulls", tx.message, true, msg);
               props.notify(msg, "info");
             }
           }
@@ -276,6 +278,7 @@ function Notifications(props) {
                 shrinkAddress(tx.message.creator) +
                 " changed pull request assignees";
               props.createNotification(tx.message, "pulls");
+              addNotification("pulls", tx.message, true, msg);
               props.notify(msg, "info");
             }
           }
@@ -301,6 +304,7 @@ function Notifications(props) {
                 repo.name +
                 '"';
               props.createNotification(tx.message, "pulls");
+              addNotification("pulls", tx.message, true, msg);
               props.notify(msg, "info");
             }
           }
@@ -319,6 +323,7 @@ function Notifications(props) {
                 repo.name +
                 '"';
               props.createNotification(tx.message, "pulls");
+              addNotification("pulls", tx.message, true, msg);
               props.notify(msg, "info");
             }
           }
@@ -335,6 +340,7 @@ function Notifications(props) {
               repo.name +
               '"';
             props.createNotification(tx.message, "pulls");
+            addNotification("pulls", tx.message, true, msg);
             props.notify(msg, "info");
           }
         }
@@ -359,7 +365,7 @@ function Notifications(props) {
     ws.onmessage = async (message) => {
       let evalData = JSON.parse(message.data);
       let jsonData;
-      if (evalData) {
+      if (evalData !== undefined) {
         jsonData = evalData.result.data;
       }
       if (jsonData) {
