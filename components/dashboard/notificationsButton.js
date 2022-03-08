@@ -4,12 +4,8 @@ import { connect } from "react-redux";
 import db from "../../helpers/db";
 
 function NotificationsCard(props) {
-  const [notifications, setNotifications] = useState({
-    issues: 0,
-    pulls: 0,
-    gov: 0,
-    toDos: 0,
-  });
+  const [issueNotifications, setIssueNotifications] = useState(0);
+  const [pullNotifications, setPullNotifications] = useState(0);
 
   async function unreadNotificationIndexDB(type) {
     try {
@@ -22,26 +18,20 @@ function NotificationsCard(props) {
   function countNotification() {
     let countIssue = 0;
     let countPulls = 0;
+    let issueList = [];
+    let pullList = [];
     db.notifications.each(function (notification) {
       if (notification.unread === true && notification.type === "issue") {
         countIssue++;
-        setNotifications({
-          issues: countIssue,
-          pulls: notifications.pulls,
-          gov: notifications.gov,
-          toDos: notifications.toDos,
-        });
-      } else if (
-        notification.unread === true &&
-        notification.type === "pulls"
-      ) {
+        setIssueNotifications(countIssue);
+        issueList.push(notification);
+        props.setFormattedIssueNotifications(issueList);
+      }
+      if (notification.unread === true && notification.type === "pulls") {
         countPulls++;
-        setNotifications({
-          issues: notifications.issues,
-          pulls: countPulls,
-          gov: notifications.gov,
-          toDos: notifications.toDos,
-        });
+        setPullNotifications(countPulls);
+        pullList.push(notification);
+        props.setFormattedPullNotifications(pullList);
       }
     });
   }
@@ -74,7 +64,7 @@ function NotificationsCard(props) {
           <h4>Issues</h4>
         </label>
 
-        {notifications.issues === 0 ? (
+        {issueNotifications === 0 ? (
           <button
             class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-grey-300"
             onClick={() => {
@@ -88,13 +78,14 @@ function NotificationsCard(props) {
           <button
             class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
             onClick={() => {
-              props.setMenuOpen(false);
-              props.setMenuState(1);
+              props.setMenuOpen(true);
+              props.setMenuState(6);
+              props.setShowNotificationListState("ISSUE");
               props.readNotification("issue");
               unreadNotificationIndexDB("issue");
             }}
           >
-            {notifications.issues + " NEW"}
+            {issueNotifications + " NEW"}
           </button>
         )}
       </div>
@@ -126,7 +117,7 @@ function NotificationsCard(props) {
           <h4>Pull Requests</h4>
         </label>
 
-        {notifications.pulls === 0 ? (
+        {pullNotifications === 0 ? (
           <button
             class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-grey-300"
             onClick={() => {
@@ -140,118 +131,14 @@ function NotificationsCard(props) {
           <button
             class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
             onClick={() => {
+              props.setShowNotificationListState("PULLS");
+              props.setMenuOpen(true);
+              props.setMenuState(6);
               props.readNotification("pulls");
               unreadNotificationIndexDB("pulls");
-              props.setMenuOpen(false);
-              props.setMenuState(1);
             }}
           >
-            {notifications.pulls + " NEW"}
-          </button>
-        )}
-      </div>
-      <div className="flex mt-2">
-        <div className="h-9 w-9 bg-blue bg-opacity-10 rounded-lg flex items-center mr-3">
-          <div className="mx-2">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle
-                cx="10.0005"
-                cy="9.99932"
-                r="8.65484"
-                stroke="#ADBECB"
-                stroke-width="2"
-              />
-              <path
-                d="M18.3865 8.22557C17.6578 7.1307 14.1387 6.32495 9.97263 6.32495C5.90649 6.32495 2.48857 7.10477 1.65039 8.16064"
-                stroke="#ADBECB"
-                stroke-width="2"
-              />
-              <path
-                d="M18.4002 11.7019C17.6693 12.791 14.1746 13.5945 9.99612 13.5945C5.91782 13.5945 2.46325 12.8017 1.62256 11.7515"
-                stroke="#ADBECB"
-                stroke-width="2"
-              />
-              <path
-                d="M10.1797 19.3074C10.1797 18.4936 10.1797 14.6222 10.1797 9.96917C10.1797 5.4277 10.1797 1.63087 10.1797 0.694702"
-                stroke="#ADBECB"
-                stroke-width="2"
-              />
-            </svg>
-          </div>
-        </div>
-        <label className="text-lg text-base-content flex items-center">
-          <h4>Governance</h4>
-        </label>
-
-        {notifications.gov === 0 ? (
-          <button
-            class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-grey-300"
-            onClick={() => {
-              props.setMenuOpen(false);
-              props.setMenuState(1);
-            }}
-          >
-            NO NOTIFICATIONS
-          </button>
-        ) : (
-          <button
-            class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
-            onClick={() => {
-              props.setMenuOpen(false);
-              props.setMenuState(1);
-            }}
-          >
-            {notifications.gov + " NEW"}
-          </button>
-        )}
-      </div>
-      <div className="flex mt-2">
-        <div className="h-9 w-9 bg-blue bg-opacity-10 rounded-lg flex items-center mr-3">
-          <div className="mx-1.5">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M5.11035 13.9871L8.39497 17.272L18.4056 7.26172"
-                stroke="#ADBECB"
-                stroke-width="2"
-              />
-            </svg>
-          </div>
-        </div>
-        <label className="text-lg text-base-content flex items-center">
-          <h4>To-Do</h4>
-        </label>
-
-        {notifications.toDos === 0 ? (
-          <button
-            class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-grey-300"
-            onClick={() => {
-              props.setMenuOpen(false);
-              props.setMenuState(1);
-            }}
-          >
-            NO TO-DOS
-          </button>
-        ) : (
-          <button
-            class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
-            onClick={() => {
-              props.setMenuOpen(false);
-              props.setMenuState(1);
-            }}
-          >
-            {notifications.toDos + " NEW"}
+            {pullNotifications + " NEW"}
           </button>
         )}
       </div>

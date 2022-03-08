@@ -20,6 +20,9 @@ const CurrentWallet = dynamic(() => import("./currentWallet"));
 const NotificationsCard = dynamic(() =>
   import("./dashboard/notificationsButton")
 );
+const NotificationsList = dynamic(() =>
+  import("./dashboard/notificationsList")
+);
 /*
 Menu States
 1 - Logged in menu
@@ -35,6 +38,13 @@ function Header(props) {
   const [unread, setUnread] = useState(false);
   const router = useRouter();
   const menuRef = useRef();
+  const [formattedIssueNotifications, setFormattedIssueNotifications] =
+    useState([]);
+  const [formattedPullNotifications, setFormattedPullNotifications] = useState(
+    []
+  );
+  const [showNotificationListState, setShowNotificationListState] =
+    useState("");
 
   const onUserMenuClose = () => {
     setMenuOpen(false);
@@ -359,10 +369,28 @@ function Header(props) {
                   </div>
                 </button>
                 <div className="shadow-xl dropdown-content bg-base-300 rounded mt-1">
+                  {menuState === 6 && (
+                    <NotificationsList
+                      setMenuOpen={setMenuOpen}
+                      setMenuState={setMenuState}
+                      formattedIssueNotifications={formattedIssueNotifications}
+                      formattedPullNotifications={formattedPullNotifications}
+                      showNotificationListState={showNotificationListState}
+                    />
+                  )}
                   {menuState === 5 && (
                     <NotificationsCard
                       setMenuOpen={setMenuOpen}
                       setMenuState={setMenuState}
+                      setFormattedIssueNotifications={
+                        setFormattedIssueNotifications
+                      }
+                      setFormattedPullNotifications={
+                        setFormattedPullNotifications
+                      }
+                      setShowNotificationListState={
+                        setShowNotificationListState
+                      }
                     />
                   )}
                   {menuState === 2 && <CurrentWallet />}
