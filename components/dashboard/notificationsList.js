@@ -9,7 +9,10 @@ function NotificationsList(props) {
       return (
         <div className="card w-full px-5 py-5 bg-base-300 rounded-xl">
           <label className="text-lg text-base-content flex items-center">
-            <h4>Issue Notifications</h4>
+            <h4 className="pl-5">Issue Notifications</h4>
+            <h4 className="text-sm text-green ml-auto mr-5">
+              {props.formattedIssueNotifications.length}
+            </h4>
           </label>
           {props.formattedIssueNotifications.length ? (
             <ul className="menu text-xs mt-2 max-h-80 overflow-auto">
@@ -32,7 +35,10 @@ function NotificationsList(props) {
       return (
         <div className="card w-full px-5 py-5 bg-base-300 rounded-xl">
           <label className="text-lg text-base-content flex items-center">
-            <h4>Pulls Notifications</h4>
+            <h4 className="pl-5">Pulls Notifications</h4>
+            <h4 className="text-sm text-green ml-auto pr-5">
+              {props.formattedPullNotifications.length}
+            </h4>
           </label>
           {props.formattedPullNotifications.length ? (
             <ul className="menu text-xs mt-2 max-h-80 overflow-auto">
