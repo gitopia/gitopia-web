@@ -46,7 +46,7 @@ function FaucetReceiver(props) {
           setTimeout(() => {
             props.updateUserBalance(true);
             setLoading(0);
-          }, 5000);
+          }, 2000);
         }
       })
       .catch((err) => {

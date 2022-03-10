@@ -12,9 +12,9 @@ import {
 import shrinkAddress from "../helpers/shrinkAddress";
 import getHomeUrl from "../helpers/getHomeUrl";
 import { notify } from "reapop";
-import initKeplr from "../helpers/keplr";
 
 import dynamic from "next/dynamic";
+import getNodeInfo from "../helpers/getNodeInfo";
 const SendTlore = dynamic(() => import("./dashboard/sendTlore"));
 const CurrentWallet = dynamic(() => import("./currentWallet"));
 /*
@@ -28,6 +28,7 @@ Menu States
 function Header(props) {
   const [menuState, setMenuState] = useState(1);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [chainId, setChainId] = useState("");
   const router = useRouter();
   const menuRef = useRef();
 
@@ -67,8 +68,12 @@ function Header(props) {
     }
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     window.addEventListener("keplr_keystorechange", handleKeplrAccountChange);
+    if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
+      const info = await getNodeInfo();
+      setChainId(info.node_info.network)
+    }
     return () => {
       window.removeEventListener(
         "keplr_keystorechange",
@@ -194,13 +199,13 @@ function Header(props) {
         ) : (
           ""
         )}
-        {process.env.NEXT_PUBLIC_NETWORK_NAME ? (
+        {process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES ? (
           <div className="flex-col mr-8 items-end">
             <div
               className="uppercase text-type-secondary"
               style={{ fontSize: "0.6rem", lineHeight: "1rem" }}
             >
-              {process.env.NEXT_PUBLIC_NETWORK_NAME}
+              {chainId}
             </div>
             <div style={{ fontSize: "0.6rem", lineHeight: "1rem" }}>
               <a

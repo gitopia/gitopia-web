@@ -12,6 +12,7 @@ import { setupTxClients } from "./env";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import { LedgerSigner } from "@cosmjs/ledger-amino";
 import { stringToPath } from "@cosmjs/crypto";
+import getNodeInfo from "../../helpers/getNodeInfo";
 
 let ledgerTransport;
 
@@ -95,7 +96,8 @@ export const unlockKeplrWallet = () => {
   return async (dispatch, getState) => {
     if (window.keplr && window.getOfflineSigner) {
       try {
-        const chainId = "gitopia";
+        const info = await getNodeInfo();
+        const chainId = info.node_info.network;
         const offlineSigner = window.getOfflineSigner(chainId);
         const accounts = await offlineSigner.getAccounts();
         const key = await window.keplr.getKey(chainId);
