@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
 import { readNotification } from "../../store/actions/userNotification";
 import { connect } from "react-redux";
-import db from "../../helpers/db";
 
 function NotificationsList(props) {
   switch (props.showNotificationListState) {
     case "ISSUE":
       return (
-        <div className="card w-full px-5 py-5 bg-base-300 rounded-xl">
+        <div className="card w-96 px-0 py-0 bg-base-300 rounded-xl">
           <label className="text-lg text-base-content flex items-center">
-            <h4 className="pl-5">Issue Notifications</h4>
-            <h4 className="text-sm text-green ml-auto mr-5">
+            <h4 className="pl-5 pt-5">Issue Notifications</h4>
+            <h4 className="text-sm text-green ml-auto mr-5 pt-5">
               {props.formattedIssueNotifications.length}
             </h4>
           </label>
@@ -18,8 +17,24 @@ function NotificationsList(props) {
             <ul className="menu text-xs mt-2 max-h-80 overflow-auto">
               {props.formattedIssueNotifications.map((n, i) => {
                 return (
-                  <li key={"branch-selector" + i}>
-                    <a className="whitespace-nowrap">{n.formattedMsg}</a>
+                  <li key={"issue" + i}>
+                    <a className="flex-wrap">
+                      <span className="text-green mr-1">
+                        {n.formattedMsg[0]}
+                      </span>
+                      <span className="mr-1">{n.formattedMsg[1]}</span>
+                      <span className="mr-1 text-teal">
+                        {n.formattedMsg[2]}
+                      </span>
+                      <span className="mr-1">{n.formattedMsg[3]}</span>
+                      <span className="mr-1 text-teal">
+                        {n.formattedMsg[4]}
+                      </span>
+                      <span className="mr-1">{n.formattedMsg[5]}</span>
+                      <span className="mr-1 text-green">
+                        {n.formattedMsg[6]}
+                      </span>
+                    </a>
                   </li>
                 );
               })}
@@ -33,10 +48,10 @@ function NotificationsList(props) {
       );
     case "PULLS":
       return (
-        <div className="card w-full px-5 py-5 bg-base-300 rounded-xl">
+        <div className="card w-96 px-0 py-0 bg-base-300 rounded-xl">
           <label className="text-lg text-base-content flex items-center">
-            <h4 className="pl-5">Pulls Notifications</h4>
-            <h4 className="text-sm text-green ml-auto pr-5">
+            <h4 className="pl-5 pt-5">Pull Notifications</h4>
+            <h4 className="text-sm text-green ml-auto mr-5 pt-5">
               {props.formattedPullNotifications.length}
             </h4>
           </label>
@@ -44,8 +59,24 @@ function NotificationsList(props) {
             <ul className="menu text-xs mt-2 max-h-80 overflow-auto">
               {props.formattedPullNotifications.map((n, i) => {
                 return (
-                  <li key={"branch-selector" + i}>
-                    <a className="whitespace-nowrap">{n.formattedMsg}</a>
+                  <li key={"pull" + i}>
+                    <a className="flex-wrap">
+                      <span className="text-green mr-1">
+                        {n.formattedMsg[0]}
+                      </span>
+                      <span className="mr-1">{n.formattedMsg[1]}</span>
+                      <span className="mr-1 text-teal">
+                        {n.formattedMsg[2]}
+                      </span>
+                      <span className="mr-1">{n.formattedMsg[3]}</span>
+                      <span className="mr-1 text-teal">
+                        {n.formattedMsg[4]}
+                      </span>
+                      <span className="mr-1">{n.formattedMsg[5]}</span>
+                      <span className="mr-1 text-green">
+                        {n.formattedMsg[6]}
+                      </span>
+                    </a>
                   </li>
                 );
               })}
