@@ -35,16 +35,18 @@ function Notifications(props) {
             props.selectedAddress === repo.owner.id &&
             tx.message.creator !== props.selectedAddress
           ) {
-            let msg =
-              shrinkAddress(tx.message.creator) +
-              ' created issue "' +
-              tx.message.title +
-              '" in your repository "' +
-              repo.name +
-              '"';
+            let formattedMsg = [
+              shrinkAddress(tx.message.creator),
+              "",
+              "",
+              "created issue",
+              tx.message.title,
+              "in repository",
+              repo.name,
+            ];
             props.createNotification(tx.message, "issue");
-            addNotification("issue", tx.message, true, msg);
-            props.notify(msg, "info");
+            addNotification("issue", tx.message, true, formattedMsg);
+            props.notify(formattedMsg.join(" "), "info");
           }
         }
         break;
@@ -60,16 +62,20 @@ function Notifications(props) {
               (props.selectedAddress === issue.creator &&
                 tx.message.creator !== props.selectedAddress)
             ) {
-              let msg =
-                shrinkAddress(tx.message.creator) +
-                " commented on issue id " +
-                issue.iid +
-                ' in repository "' +
-                repo.name +
-                '"';
+              let formattedMsg = [
+                shrinkAddress(tx.message.creator),
+                "commented",
+                tx.message.body.length > 64
+                  ? tx.message.body.slice(0, 64) + "..."
+                  : tx.message.body,
+                "on issue",
+                issue.title,
+                "in repository",
+                repo.name,
+              ];
               props.createNotification(tx.message, "issue");
-              addNotification("issue", tx.message, true, msg);
-              props.notify(msg, "info");
+              addNotification("issue", tx.message, true, formattedMsg);
+              props.notify(formattedMsg.join(" "), "info");
             }
           } else if (tx.message.commentType === "PULLREQUEST") {
             let pull = await getPullRequest(tx.message.parentId);
@@ -82,16 +88,20 @@ function Notifications(props) {
                 pull.assignees.includes(pull.reviewers[j]) === false &&
                 props.selectedAddress !== pull.creator
               ) {
-                let msg =
-                  shrinkAddress(tx.message.creator) +
-                  " commented on pull request id " +
-                  pull.iid +
-                  'in repository "' +
-                  repo.name +
-                  '"';
+                let formattedMsg = [
+                  shrinkAddress(tx.message.creator),
+                  "commented",
+                  tx.message.body.length > 64
+                    ? tx.message.body.slice(0, 64) + "..."
+                    : tx.message.body,
+                  "on pull request",
+                  pull.title,
+                  "in repository",
+                  repo.name,
+                ];
                 props.createNotification(tx.message, "pulls");
-                addNotification("pulls", tx.message, true, msg);
-                props.notify(msg, "info");
+                addNotification("pulls", tx.message, true, formattedMsg);
+                props.notify(formattedMsg.join(" "), "info");
               }
             }
 
@@ -102,16 +112,20 @@ function Notifications(props) {
                 props.selectedAddress === pull.assignees[j] &&
                 props.selectedAddress !== pull.creator
               ) {
-                let msg =
-                  shrinkAddress(tx.message.creator) +
-                  " commented on pull request id " +
-                  pull.iid +
-                  'in repository "' +
-                  repo.name +
-                  '"';
+                let formattedMsg = [
+                  shrinkAddress(tx.message.creator),
+                  "commented",
+                  tx.message.body.length > 64
+                    ? tx.message.body.slice(0, 64) + "..."
+                    : tx.message.body,
+                  "on pull request",
+                  pull.title,
+                  "in repository",
+                  repo.name,
+                ];
                 props.createNotification(tx.message, "pulls");
-                addNotification("pulls", tx.message, true, msg);
-                props.notify(msg, "info");
+                addNotification("pulls", tx.message, true, formattedMsg);
+                props.notify(formattedMsg.join(" "), "info");
               }
             }
 
@@ -119,47 +133,124 @@ function Notifications(props) {
               props.selectedAddress === pull.creator &&
               tx.message.creator !== props.selectedAddress
             ) {
-              let msg =
-                shrinkAddress(tx.message.creator) +
-                " commented on pull request id " +
-                pull.iid +
-                'in repository "' +
-                repo.name +
-                '"';
+              let formattedMsg = [
+                shrinkAddress(tx.message.creator),
+                "commented",
+                tx.message.body.length > 64
+                  ? tx.message.body.slice(0, 64) + "..."
+                  : tx.message.body,
+                "on pull request",
+                pull.title,
+                "in repository",
+                repo.name,
+              ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, msg);
-              props.notify(msg, "info");
+              addNotification("pulls", tx.message, true, formattedMsg);
+              props.notify(formattedMsg.join(" "), "info");
             }
           }
         }
         break;
 
       case "/gitopia.gitopia.gitopia.MsgAddIssueLabels":
-      case "/gitopia.gitopia.gitopia.MsgRemoveIssueLabels":
         {
+          console.log(tx.message);
           let issue = await getIssue(tx.message.issueId);
           let repo = await getRepository(issue.repositoryId);
+          let labels = [];
+          tx.message.labelIds.map((lid, _) => {
+            for (let i = 0; i < repo.labels.length; i++) {
+              if (repo.labels[i].id == lid) {
+                labels.push(repo.labels[i].name);
+              }
+            }
+          });
           if (
             (props.selectedAddress === repo.owner.id &&
               tx.message.creator !== props.selectedAddress) ||
             (props.selectedAddress === issue.creator &&
               tx.message.creator !== props.selectedAddress)
           ) {
-            let msg =
-              shrinkAddress(tx.message.creator) +
-              ' changed label on issue "' +
-              issue.title +
-              '" in repository "' +
-              repo.name +
-              '"';
+            let formattedMsg = [
+              shrinkAddress(tx.message.creator),
+              "added label",
+              labels.join(", "),
+              "to issue",
+              issue.title,
+              "in repository",
+              repo.name,
+            ];
             props.createNotification(tx.message, "issue");
-            addNotification("issue", tx.message, true, msg);
-            props.notify(msg, "info");
+            addNotification("issue", tx.message, true, formattedMsg);
+            props.notify(formattedMsg.join(" "), "info");
+          }
+        }
+        break;
+
+      case "/gitopia.gitopia.gitopia.MsgRemoveIssueLabels":
+        {
+          console.log(tx.message);
+          let issue = await getIssue(tx.message.issueId);
+          let repo = await getRepository(issue.repositoryId);
+          let labels = [];
+          tx.message.labelIds.map((lid, _) => {
+            for (let i = 0; i < repo.labels.length; i++) {
+              if (repo.labels[i].id == lid) {
+                labels.push(repo.labels[i].name);
+              }
+            }
+          });
+          if (
+            (props.selectedAddress === repo.owner.id &&
+              tx.message.creator !== props.selectedAddress) ||
+            (props.selectedAddress === issue.creator &&
+              tx.message.creator !== props.selectedAddress)
+          ) {
+            let formattedMsg = [
+              shrinkAddress(tx.message.creator),
+              "removed label",
+              labels.join(", "),
+              "from issue",
+              issue.title,
+              "in repository",
+              repo.name,
+            ];
+            props.createNotification(tx.message, "issue");
+            addNotification("issue", tx.message, true, formattedMsg);
+            props.notify(formattedMsg.join(" "), "info");
           }
         }
         break;
 
       case "/gitopia.gitopia.gitopia.MsgRemoveIssueAssignees":
+        {
+          let issue = await getIssue(tx.message.id);
+          let repo = await getRepository(issue.repositoryId);
+
+          for (let j = 0; j < tx.message.assignees.length; j++) {
+            if (
+              (repo.owner.id === props.selectedAddress &&
+                props.selectedAddress !== tx.message.creator) ||
+              (props.selectedAddress !== tx.message.creator &&
+                props.selectedAddress === tx.message.assignees[j] &&
+                repo.owner.id !== props.selectedAddress)
+            ) {
+              let formattedMsg = [
+                shrinkAddress(tx.message.creator),
+                "removed assignee",
+                tx.message.assignees.join(", "),
+                "from issue",
+                issue.title,
+                "in repository",
+                repo.name,
+              ];
+              props.createNotification(tx.message, "issue");
+              addNotification("issue", tx.message, true, formattedMsg);
+              props.notify(formattedMsg.join(" "), "info");
+            }
+          }
+        }
+        break;
       case "/gitopia.gitopia.gitopia.MsgAddIssueAssignees":
         {
           let issue = await getIssue(tx.message.id);
@@ -173,16 +264,18 @@ function Notifications(props) {
                 props.selectedAddress === tx.message.assignees[j] &&
                 repo.owner.id !== props.selectedAddress)
             ) {
-              let msg =
-                shrinkAddress(tx.message.creator) +
-                " changed assignees in issue " +
-                issue.title +
-                '" in repository "' +
-                repo.name +
-                '"';
+              let formattedMsg = [
+                shrinkAddress(tx.message.creator),
+                "added assignee",
+                tx.message.assignees.join(", "),
+                "to issue",
+                issue.title,
+                "in repository",
+                repo.name,
+              ];
               props.createNotification(tx.message, "issue");
-              addNotification("issue", tx.message, true, msg);
-              props.notify(msg, "info");
+              addNotification("issue", tx.message, true, formattedMsg);
+              props.notify(formattedMsg.join(" "), "info");
             }
           }
         }
@@ -198,16 +291,18 @@ function Notifications(props) {
               props.selectedAddress === tx.message.reviewers[j] &&
               tx.message.assignees.includes(tx.message.reviewers[j]) === false
             ) {
-              let msg =
-                shrinkAddress(tx.message.creator) +
-                ' created a pr "' +
-                tx.message.title +
-                '" in repository "' +
-                repo.name +
-                '"';
+              let formattedMsg = [
+                shrinkAddress(tx.message.creator),
+                "",
+                "",
+                "created pull request",
+                tx.message.title,
+                "in repository",
+                repo.name,
+              ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, msg);
-              props.notify(msg, "info");
+              addNotification("pulls", tx.message, true, formattedMsg);
+              props.notify(formattedMsg.join(" "), "info");
             }
           }
 
@@ -217,69 +312,137 @@ function Notifications(props) {
               props.selectedAddress !== repo.owner.id &&
               props.selectedAddress === tx.message.assignees[j]
             ) {
-              let msg =
-                shrinkAddress(tx.message.creator) +
-                ' created a pr "' +
-                tx.message.title +
-                '" in repository "' +
-                repo.name +
-                '"';
+              let formattedMsg = [
+                shrinkAddress(tx.message.creator),
+                "",
+                "",
+                "created pull request",
+                tx.message.title,
+                "in repository",
+                repo.name,
+              ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, msg);
-              props.notify(msg, "info");
+              addNotification("pulls", tx.message, true, formattedMsg);
+              props.notify(formattedMsg.join(" "), "info");
             }
           }
           if (
             props.selectedAddress === repo.owner.id &&
             tx.message.creator !== props.selectedAddress
           ) {
-            let msg =
-              shrinkAddress(tx.message.creator) +
-              ' created a pr "' +
-              tx.message.title +
-              '" in repository "' +
-              repo.name +
-              '"';
+            let formattedMsg = [
+              shrinkAddress(tx.message.creator),
+              "",
+              "",
+              "created pull request",
+              tx.message.title,
+              "in repository",
+              repo.name,
+            ];
             props.createNotification(tx.message, "pulls");
-            addNotification("pulls", tx.message, true, msg);
-            props.notify(msg, "info");
+            addNotification("pulls", tx.message, true, formattedMsg);
+            props.notify(formattedMsg.join(" "), "info");
           }
         }
         break;
 
       case "/gitopia.gitopia.gitopia.MsgRemovePullRequestReviewers":
-      case "/gitopia.gitopia.gitopia.MsgAddPullRequestReviewers":
         {
+          let pull = await getPullRequest(tx.message.id);
+          let repo = await getRepository(pull.head.repositoryId);
           for (let j = 0; j < tx.message.reviewers.length; j++) {
             if (
               props.selectedAddress !== tx.message.creator &&
               props.selectedAddress === tx.message.reviewers[j]
             ) {
-              let msg =
-                shrinkAddress(tx.message.creator) +
-                " changed pull request reviewer";
+              let formattedMsg = [
+                shrinkAddress(tx.message.creator),
+                "removed reviewer",
+                tx.message.reviewers.join(", "),
+                "to pull request",
+                pull.title,
+                "in repository",
+                repo.name,
+              ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, msg);
-              props.notify(msg, "info");
+              addNotification("pulls", tx.message, true, formattedMsg);
+              props.notify(formattedMsg.join(" "), "info");
+            }
+          }
+        }
+        break;
+      case "/gitopia.gitopia.gitopia.MsgAddPullRequestReviewers":
+        {
+          let pull = await getPullRequest(tx.message.id);
+          let repo = await getRepository(pull.head.repositoryId);
+          for (let j = 0; j < tx.message.reviewers.length; j++) {
+            if (
+              props.selectedAddress !== tx.message.creator &&
+              props.selectedAddress === tx.message.reviewers[j]
+            ) {
+              let formattedMsg = [
+                shrinkAddress(tx.message.creator),
+                "added reviewer",
+                tx.message.reviewers.join(", "),
+                "to pull request",
+                pull.title,
+                "in repository",
+                repo.name,
+              ];
+              props.createNotification(tx.message, "pulls");
+              addNotification("pulls", tx.message, true, formattedMsg);
+              props.notify(formattedMsg.join(" "), "info");
             }
           }
         }
         break;
 
       case "/gitopia.gitopia.gitopia.MsgRemovePullRequestAssignees":
-      case "/gitopia.gitopia.gitopia.MsgAddPullRequestAssignees":
         {
+          let pull = await getPullRequest(tx.message.id);
+          let repo = await getRepository(pull.head.repositoryId);
           for (let j = 0; j < tx.message.assignees.length; j++) {
             if (
               props.selectedAddress !== tx.message.creator &&
               props.selectedAddress === tx.message.assignees[j]
             ) {
-              let msg =
-                shrinkAddress(tx.message.creator) +
-                " changed pull request assignees";
+              let formattedMsg = [
+                shrinkAddress(tx.message.creator),
+                "removed assignee",
+                tx.message.assignees.join(", "),
+                "from pull request",
+                pull.title,
+                "in repository",
+                repo.name,
+              ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, msg);
-              props.notify(msg, "info");
+              addNotification("pulls", tx.message, true, formattedMsg);
+              props.notify(formattedMsg.join(" "), "info");
+            }
+          }
+        }
+        break;
+      case "/gitopia.gitopia.gitopia.MsgAddPullRequestAssignees":
+        {
+          let pull = await getPullRequest(tx.message.id);
+          let repo = await getRepository(pull.head.repositoryId);
+          for (let j = 0; j < tx.message.assignees.length; j++) {
+            if (
+              props.selectedAddress !== tx.message.creator &&
+              props.selectedAddress === tx.message.assignees[j]
+            ) {
+              let formattedMsg = [
+                shrinkAddress(tx.message.creator),
+                "added assignee",
+                tx.message.assignees.join(", "),
+                "to pull request",
+                pull.title,
+                "in repository",
+                repo.name,
+              ];
+              props.createNotification(tx.message, "pulls");
+              addNotification("pulls", tx.message, true, formattedMsg);
+              props.notify(formattedMsg.join(" "), "info");
             }
           }
         }
@@ -296,16 +459,18 @@ function Notifications(props) {
               props.selectedAddress === pull.reviewers[j] &&
               pull.assignees.includes(pull.reviewers[j]) === false
             ) {
-              let msg =
-                shrinkAddress(tx.message.creator) +
-                ' closed a pr "' +
-                pull.title +
-                '" in repository "' +
-                repo.name +
-                '"';
+              let formattedMsg = [
+                shrinkAddress(tx.message.creator),
+                "",
+                tx.message.state,
+                "pull request",
+                pull.title,
+                "in repository",
+                repo.name,
+              ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, msg);
-              props.notify(msg, "info");
+              addNotification("pulls", tx.message, true, formattedMsg);
+              props.notify(formattedMsg.join(" "), "info");
             }
           }
 
@@ -315,16 +480,18 @@ function Notifications(props) {
               props.selectedAddress !== repo.owner.id &&
               props.selectedAddress === pull.assignees[j]
             ) {
-              let msg =
-                shrinkAddress(tx.message.creator) +
-                ' closed a pr "' +
-                pull.title +
-                '" in repository "' +
-                repo.name +
-                '"';
+              let formattedMsg = [
+                shrinkAddress(tx.message.creator),
+                "",
+                tx.message.state,
+                "pull request",
+                pull.title,
+                "in repository",
+                repo.name,
+              ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, msg);
-              props.notify(msg, "info");
+              addNotification("pulls", tx.message, true, formattedMsg);
+              props.notify(formattedMsg.join(" "), "info");
             }
           }
 
@@ -332,16 +499,18 @@ function Notifications(props) {
             props.selectedAddress === repo.owner.id &&
             tx.message.creator !== props.selectedAddress
           ) {
-            let msg =
-              shrinkAddress(tx.message.creator) +
-              ' closed a pr "' +
-              pull.title +
-              '" in repository "' +
-              repo.name +
-              '"';
+            let formattedMsg = [
+              shrinkAddress(tx.message.creator),
+              "",
+              tx.message.state,
+              "pull request",
+              pull.title,
+              "in repository",
+              repo.name,
+            ];
             props.createNotification(tx.message, "pulls");
-            addNotification("pulls", tx.message, true, msg);
-            props.notify(msg, "info");
+            addNotification("pulls", tx.message, true, formattedMsg);
+            props.notify(formattedMsg.join(" "), "info");
           }
         }
         break;
