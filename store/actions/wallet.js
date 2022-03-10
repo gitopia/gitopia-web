@@ -151,6 +151,7 @@ export const unlockWallet = ({ name, password }) => {
           CryptoJS.enc.Utf8
         )
       );
+      console.log(wallet);
     } catch (e) {
       console.error(e);
       return false;

@@ -9,6 +9,10 @@ import Link from "next/link";
 import RepositoryHeader from "../../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
 import Footer from "../../../../../components/footer";
+import {
+  isCurrentUserEligibleToUpdate,
+  deleteRelease,
+} from "../../../../../store/actions/repository";
 import getRepositoryRelease from "../../../../../helpers/getRepositoryRelease";
 import ReleaseView from "../../../../../components/repository/releaseView";
 import useRepository from "../../../../../hooks/useRepository";
@@ -28,6 +32,9 @@ function RepositoryReleaseView(props) {
     attachments: [],
   });
   const [isLatest, setIsLatest] = useState(false);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
 
   useEffect(async () => {
     if (repository.releases.length) {
@@ -49,14 +56,22 @@ function RepositoryReleaseView(props) {
         router.query.tagName
       );
       console.log(rel);
-      if (rel) setRelease(rel);
-      else {
+
+      if (rel && rel.id) {
+        setRelease(rel);
+      } else {
         setErrorStatusCode(404);
       }
     }
   };
 
   useEffect(getRelease, [repository]);
+
+  useEffect(async () => {
+    setCurrentUserEditPermission(
+      await props.isCurrentUserEligibleToUpdate(repository)
+    );
+  }, [repository, props.user]);
 
   return (
     <div
@@ -95,6 +110,19 @@ function RepositoryReleaseView(props) {
               repository={repository}
               release={release}
               latest={isLatest}
+              showEditControls={currentUserEditPermission}
+              onDelete={async (id) => {
+                const res = await props.deleteRelease({ releaseId: id });
+                if (res && res.code === 0) {
+                  router.push(
+                    "/" +
+                      repository.owner.id +
+                      "/" +
+                      repository.name +
+                      "/releases"
+                  );
+                }
+              }}
               noLink={true}
             />
           </div>
@@ -112,4 +140,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryReleaseView);
+export default connect(mapStateToProps, {
+  isCurrentUserEligibleToUpdate,
+  deleteRelease,
+})(RepositoryReleaseView);

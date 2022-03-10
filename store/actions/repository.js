@@ -710,30 +710,33 @@ export const updateRepositoryLabel = ({
 
 export const isCurrentUserEligibleToUpdate = (repository) => {
   return async (dispatch, getState) => {
-    let permission = false,
-      repoOwnerAddress = repository.owner.id;
-    const { wallet, user } = getState();
-    if (wallet.selectedAddress === repoOwnerAddress) {
-      permission = true;
-    } else if (user) {
-      user.organizations.every((o) => {
-        if (o.id === repoOwnerAddress) {
-          permission = true;
-          return false;
-        }
-        return true;
-      });
+    if (repository && repository.owner) {
+      let permission = false,
+        repoOwnerAddress = repository.owner.id;
+      const { wallet, user } = getState();
+      if (wallet.selectedAddress === repoOwnerAddress) {
+        permission = true;
+      } else if (user) {
+        user.organizations.every((o) => {
+          if (o.id === repoOwnerAddress) {
+            permission = true;
+            return false;
+          }
+          return true;
+        });
+      }
+      if (repository.collaborators.length) {
+        repository.collaborators.every((c) => {
+          if (wallet.selectedAddress === c.id && c.permission !== "READ") {
+            permission = true;
+            return false;
+          }
+          return true;
+        });
+      }
+      return permission;
     }
-    if (repository.collaborators.length) {
-      repository.collaborators.every((c) => {
-        if (wallet.selectedAddress === c.id && c.permission !== "READ") {
-          permission = true;
-          return false;
-        }
-        return true;
-      });
-    }
-    return permission;
+    return false;
   };
 };
 
@@ -852,17 +855,21 @@ export const createPullRequest = ({
   };
 };
 
-export const createRelease = ({
-  repositoryId = null,
-  tagName = null,
-  target = null,
-  name = null,
-  description = null,
-  attachments = null,
-  draft = null,
-  preRelease = null,
-  isTag = null,
-}) => {
+export const createRelease = (
+  {
+    repositoryId = null,
+    tagName = null,
+    target = null,
+    name = null,
+    description = null,
+    attachments = null,
+    draft = null,
+    preRelease = null,
+    isTag = null,
+    releaseId = null,
+  },
+  edit = false
+) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "release")))
       return null;
@@ -881,8 +888,44 @@ export const createRelease = ({
       isTag,
     };
 
+    if (edit) {
+      release.id = releaseId;
+    }
+
+    console.log("release", release, "edit", edit);
     try {
-      const message = await env.txClient.msgCreateRelease(release);
+      const message = edit
+        ? await env.txClient.msgUpdateRelease(release)
+        : await env.txClient.msgCreateRelease(release);
+      const result = await sendTransaction({ message })(dispatch, getState);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        console.log(result);
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const deleteRelease = ({ releaseId }) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "release")))
+      return null;
+
+    const { wallet, env } = getState();
+    const release = {
+      creator: wallet.selectedAddress,
+      id: releaseId,
+    };
+
+    console.log("release", release);
+    try {
+      const message = await env.txClient.msgDeleteRelease(release);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         return result;
