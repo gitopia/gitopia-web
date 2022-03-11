@@ -61,7 +61,7 @@ function GitopiaProposalsView(props) {
         setProposals(res);
       }
     });
-  });
+  }, []);
 
   return (
     <div

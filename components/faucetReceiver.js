@@ -60,7 +60,7 @@ function FaucetReceiver(props) {
   };
 
   return (
-    <div className="flex mt-12 bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md">
+    <div className="flex bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md">
       <div
         className={
           "w-14 h-14 flex-none mr-10 flex justify-center items-center rounded-full border" +

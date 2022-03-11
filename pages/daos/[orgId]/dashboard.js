@@ -8,7 +8,7 @@ import getHomeUrl from "../../../helpers/getHomeUrl";
 import { useRouter } from "next/router";
 import { getOrganizationDetailsForDashboard } from "../../../store/actions/organization";
 import Org from "../../../components/dashboard/org";
-import Link from "next/dist/client/link";
+import Link from "next/link";
 
 function OrgDashboard(props) {
   const hrefBase = "/daos/" + props.currentDashboard;
@@ -39,14 +39,6 @@ function OrgDashboard(props) {
                 return { owner: props.currentDashboard, ...r };
               })}
             />
-            {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
-            props.currentDashboard ? (
-              <button className="text-sm text-type-secondary text-left mx-8 border-b border-grey py-2 mb-4 w-48">
-                <a href={hrefBase + "/proposals"}>Gitopia</a>
-              </button>
-            ) : (
-              ""
-            )}
           </div>
           <div>
             <div className="bg-footer-grad py-6">
@@ -55,13 +47,20 @@ function OrgDashboard(props) {
               </div>
               <div className="mx-6">
                 {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ? (
-                  <a
-                    className={"btn btn-xs btn-link mt-2"}
-                    href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
-                    target="_blank"
-                  >
-                    View source code
-                  </a>
+                  <>
+                    <Link
+                      href={
+                        "/" +
+                        process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
+                        "/proposals"
+                      }
+                    >
+                      <a className={"btn btn-xs btn-link mt-2"}>Proposals</a>
+                    </Link>
+                    <Link href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}>
+                      <a className={"btn btn-xs btn-link mt-2"}>Source code</a>
+                    </Link>
+                  </>
                 ) : (
                   ""
                 )}
@@ -70,7 +69,10 @@ function OrgDashboard(props) {
           </div>
         </div>
         <div className="flex-1 px-4">
-          <Org organization={props.organization} />
+          <Org
+            organization={props.organization}
+            currentDashboard={props.currentDashboard}
+          />
         </div>
       </div>
     </div>

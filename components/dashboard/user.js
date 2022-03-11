@@ -7,10 +7,10 @@ import CreateUser from "../createUser";
 function UserDashboard(props) {
   return (
     <main className="container mx-auto max-w-screen-lg py-12">
-      <div className="flex">
+      {/* <div className="flex">
         <GreetUser />
         <div className="flex-1"></div>
-        {/* <div>
+        <div>
           <div className="text-xs uppercase ml-2">Show:</div>
           <select
             className="select select-ghost select-xs w-32"
@@ -20,8 +20,8 @@ function UserDashboard(props) {
             <option value="2">Issues</option>
             <option value="3">Proposals</option>
           </select>
-        </div> */}
-      </div>
+        </div>
+      </div> */}
       <FaucetReceiver />
       <CreateUser />
       <div className="flex mt-4">

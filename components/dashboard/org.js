@@ -7,13 +7,13 @@ function OrgDashboard({ organization = {}, ...props }) {
   return (
     <main className="container mx-auto max-w-screen-lg py-12">
       <div className="flex">
-        <div>
+        {/* <div>
           <div className="text-xs uppercase">Welcome to,</div>
           <Link href={"/" + organization.address}>
             <a className="text-lg btn-link">{organization.name}</a>
           </Link>
         </div>
-        <div className="flex-1"></div>
+        <div className="flex-1"></div> */}
         {/* <div>
           <div className="text-xs uppercase ml-2">Show:</div>
           <select
@@ -26,7 +26,7 @@ function OrgDashboard({ organization = {}, ...props }) {
           </select>
         </div> */}
       </div>
-      <div className="flex mt-12">
+      <div className="flex">
         <div className="flex flex-1 bg-box-grad-tl bg-base-200 p-4 rounded-md">
           <div className="flex-none bg-box-grad-v w-40 h-full rounded-md flex items-center">
             <img src="/repository.svg" />

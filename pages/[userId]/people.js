@@ -82,7 +82,7 @@ function OrganizationPeopleView(props) {
               showPeople={true}
               showProposal={
                 process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
-                  props.currentDashboard && org.address
+                  router.query.userId && org.address
               }
             />
           </div>

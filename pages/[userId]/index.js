@@ -112,7 +112,7 @@ function AccountView(props) {
               showPeople={org.address}
               showProposal={
                 process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
-                  props.currentDashboard && org.address
+                  router.query.userId && org.address
               }
             />
           </div>

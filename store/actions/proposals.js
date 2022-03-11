@@ -12,6 +12,7 @@ import {
   ParameterChangeProposal,
   ParamChange,
 } from "cosmjs-types/cosmos/params/v1beta1/params";
+import { updateUserBalance } from "./wallet";
 
 export const submitGovernanceProposal = (
   title,
@@ -55,6 +56,7 @@ export const submitGovernanceProposal = (
           fee,
           memo,
         });
+        updateUserBalance()(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Submitted", "info"));
@@ -121,6 +123,7 @@ export const chainUpgradeProposal = (
           fee,
           memo,
         });
+        updateUserBalance()(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Submitted", "info"));
@@ -157,13 +160,14 @@ export const communityPoolSpendProposal = (
             denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
           },
         ];
-        const communityPoolSpendProposal =
-          CommunityPoolSpendProposal.fromPartial({
+        const communityPoolSpendProposal = CommunityPoolSpendProposal.fromPartial(
+          {
             title: title,
             description: description,
             recipient: address,
             amount: amountToSend,
-          });
+          }
+        );
         const msgAny = Any.fromPartial({
           typeUrl: "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal",
           value: Uint8Array.from(
@@ -192,6 +196,7 @@ export const communityPoolSpendProposal = (
           fee,
           memo,
         });
+        updateUserBalance()(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Submitted", "info"));
@@ -262,7 +267,7 @@ export const paramChangeProposal = (
           fee,
           memo,
         });
-        console.log(result);
+        updateUserBalance()(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Submitted", "info"));
@@ -308,8 +313,13 @@ export const proposalDeposit = (proposalId, amount) => {
           fee,
           memo,
         });
-        if (result && result.code === 0) {
-          dispatch(notify("Proposal Deposit Submitted", "info"));
+        updateUserBalance()(dispatch, getState);
+        if (result) {
+          if (result.code === 0) {
+            dispatch(notify("Proposal Deposit Submitted", "info"));
+          } else {
+            dispatch(notify(result.rawLog, "error"));
+          }
         }
         return result;
       } catch (e) {
@@ -359,8 +369,13 @@ export const proposalVote = (proposalId, option) => {
           fee,
           memo,
         });
+        updateUserBalance()(dispatch, getState);
         if (result && result.code === 0) {
-          dispatch(notify("Proposal Vote Submitted", "info"));
+          if (result.code === 0) {
+            dispatch(notify("Proposal Vote Submitted", "info"));
+          } else {
+            dispatch(notify(result.rawLog, "error"));
+          }
         }
         return result;
       } catch (e) {
