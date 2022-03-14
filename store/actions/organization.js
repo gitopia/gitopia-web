@@ -32,6 +32,7 @@ export const createOrganization = ({ name = null, description = null }) => {
         });
         updateUserBalance()(dispatch, getState);
         setCurrentDashboard(wallet.selectedAddress)(dispatch, getState);
+        // TODO: return org dashboard url
         return { url: "/home" };
       } else {
         dispatch(notify(result.rawLog, "error"));

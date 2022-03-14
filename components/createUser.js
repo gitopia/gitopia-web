@@ -77,6 +77,10 @@ function CreateUser(props) {
               (loading ? "loading" : "")
             }
             onClick={async () => {
+              if (!props.selectedAddress) {
+                props.notify("Please sign in before creating profile", "error");
+                return;
+              }
               setLoading(true);
               const res = await props.createUser();
               if (res && res.code === 0) {

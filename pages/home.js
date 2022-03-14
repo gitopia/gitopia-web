@@ -49,7 +49,7 @@ function Home(props) {
           content="https://testnet.gitopia.com/og-gitopia.jpg"
         />
       </Head>
-      <Header />
+
       <div className="flex-1 flex">
         <div className="w-64 border-r border-grey flex flex-col">
           <div className="flex-1">

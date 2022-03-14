@@ -92,7 +92,7 @@ function NewOrganization(props) {
         <title>New DAO - Gitopia</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
-      <Header />
+
       <div className="flex flex-1">
         <main className="container mx-auto max-w-md py-12">
           <div className="text-2xl">Create a new DAO</div>

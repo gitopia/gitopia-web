@@ -96,7 +96,7 @@ function RepositoryPullCommitsView(props) {
         <title>{repository.name}</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
-      <Header />
+
       <div className="flex flex-1 bg-repo-grad-v">
         <main
           className={

@@ -158,7 +158,7 @@ function RepositoryReleaseEditView(props) {
         <title>{repository.name}</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
-      <Header />
+
       <div className="flex">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />

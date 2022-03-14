@@ -281,7 +281,7 @@ export default function Landing() {
           content="https://testnet.gitopia.com/og-gitopia.jpg"
         />
       </Head>
-      <header className={(menuOpen ? "bg-purple " : "") + styles.header}>
+      {/* <header className={(menuOpen ? "bg-purple " : "") + styles.header}>
         <div className={styles.headerLogo}></div>
         <div className={styles.headerMenuIcon}>
           <button
@@ -365,12 +365,12 @@ export default function Landing() {
                   Blog
                 </a>
               </li>
-              {/* <li className="border-b-2 lg:border-r-2 lg:border-b-0 border-white border-opacity-10 w-full h-2 mb-4 lg:h-6 lg:w-1 lg:mr-4 lg:mb-0 mt-2"></li> */}
+              <li className="border-b-2 lg:border-r-2 lg:border-b-0 border-white border-opacity-10 w-full h-2 mb-4 lg:h-6 lg:w-1 lg:mr-4 lg:mb-0 mt-2"></li>
             </ul>
           </div>
         </div>
         <div className={styles.headerLine}></div>
-      </header>
+      </header> */}
 
       <section className={classnames([styles.section, styles.heroSection])}>
         <div className={styles.row}>

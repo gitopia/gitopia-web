@@ -38,10 +38,6 @@ function AutoLogin(props) {
         if (lastWallet.isKeplr) {
           await initKeplr();
           const acc = await props.unlockKeplrWallet();
-          console.log(acc);
-          if (acc) {
-            console.log("Keplr sign in success");
-          }
         } else {
           setWalletName(lastWallet.name);
           setAddress(lastWallet.accounts[0].address);
@@ -60,7 +56,6 @@ function AutoLogin(props) {
   useEffect(() => {
     if (props.getPassword) {
       setShowDialog(true);
-      console.log("ASDSAD", props.getPassword);
       if (props.getPassword === "Connect") {
         setExternalWalletMsg("Please open Cosmos app on your ledger");
       } else {
@@ -84,7 +79,6 @@ function AutoLogin(props) {
   }, [props.activeWallet]);
 
   const unlockLocalWallet = async () => {
-    console.log("getPassworad", props.getPassword);
     let res;
     if (props.getPassword === "Unlock")
       res = await props.unlockWallet({
@@ -95,7 +89,6 @@ function AutoLogin(props) {
       res = await props.downloadWallet(password);
     } else if (props.getPassword === "Connect") {
       res = await props.unlockLedgerWallet({ name: walletName });
-      console.log(res);
     }
     if (res) {
       console.log("Sign in success");

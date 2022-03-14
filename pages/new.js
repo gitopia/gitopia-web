@@ -113,7 +113,7 @@ function NewRepository(props) {
         <title>New Repository - Gitopia</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
-      <Header />
+
       <div className="flex flex-1">
         <main className="container mx-auto max-w-screen-lg min-h-full py-12">
           <div className="text-2xl">Create a new repository</div>

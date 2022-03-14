@@ -25,7 +25,7 @@ export default function Login(props) {
         <title>Gitopia - Login</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
-      <Header />
+
       <div className="mt-12 px-4 container mx-auto flex flex-1 flex-col justify-center items-center min-h-full relative">
         {step === 1 ? (
           <>

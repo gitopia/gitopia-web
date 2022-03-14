@@ -72,7 +72,7 @@ function Header(props) {
     window.addEventListener("keplr_keystorechange", handleKeplrAccountChange);
     if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
       const info = await getNodeInfo();
-      setChainId(info.node_info.network)
+      setChainId(info.node_info.network);
     }
     return () => {
       window.removeEventListener(
@@ -91,12 +91,16 @@ function Header(props) {
       ) : (
         ""
       )}
-      <div className="navbar border-b border-grey bg-base-100 text-base-content">
+      <div
+        className={
+          "navbar text-base-content " +
+          (router.pathname === "/"
+            ? "py-4 absolute left-0 right-0 top-0 z-10 bg-transparent"
+            : "border-b border-grey bg-base-100")
+        }
+      >
         <div
-          className={
-            "flex-none px-6 transition-all ease-out delay-150" +
-            (router.pathname === "/home" ? " w-64" : " w-42")
-          }
+          className={"flex-none px-6 transition-all ease-out delay-150 w-42"}
         >
           <Link href={homeUrl}>
             <a>
@@ -140,7 +144,7 @@ function Header(props) {
         <div className="items-stretch">
           <a
             className="btn btn-ghost btn-sm rounded-btn"
-            href="https://explorer.gitopia.com/"
+            href="https://explorer.gitopia.com"
             target="_blank"
           >
             Explorer
@@ -149,21 +153,39 @@ function Header(props) {
         <div className="items-stretch">
           <a
             className="btn btn-ghost btn-sm rounded-btn"
-            href="https://docs.gitopia.com/"
+            href="https://docs.gitopia.com"
             target="_blank"
           >
             Docs
+          </a>
+        </div>
+        <div className="items-stretch">
+          <a
+            className="btn btn-ghost btn-sm rounded-btn"
+            href="https://medium.com/gitopia"
+            target="_blank"
+          >
+            Blog
+          </a>
+        </div>
+        <div className="items-stretch">
+          <a
+            className="btn btn-ghost btn-sm rounded-btn"
+            href="https://gitopia.com/whitepaper.pdf"
+            target="_blank"
+          >
+            Whitepaper
           </a>
         </div>
         <div className="flex-1"></div>
         {props.activeWallet ? (
           <div className="flex-none mr-8">
             <svg
-              width="10"
-              height="17"
+              width="8"
+              height="13"
               viewBox="0 0 10 17"
               fill="none"
-              className="mr-1 text-purple-50"
+              className="mr-1 mt-px text-purple-50"
               xmlns="http://www.w3.org/2000/svg"
             >
               <path

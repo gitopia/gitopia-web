@@ -28,7 +28,7 @@ function OrgDashboard(props) {
         <title>Gitopia</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
-      <Header />
+
       <div className="flex flex-1">
         <div className="w-64 border-r border-grey flex flex-col">
           <div className="flex-1">

@@ -130,6 +130,7 @@ const reducer = (state = initialState, action) => {
       state.selectedAddress = null;
       state.activeWallet = null;
       state.unlockingWallet = false;
+      state.loreBalance = 0;
       del("lastWallet");
       return {
         ...state,

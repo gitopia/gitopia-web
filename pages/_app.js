@@ -8,6 +8,7 @@ import NotificationManager from "../components/notificationManager";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import ErrorHandler from "../pages/errorHandler";
+import Header from "../components/header";
 
 const progress = new ProgressBar({
   size: 2,
@@ -26,6 +27,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <ErrorHandler>
+        <Header />
         <Component {...pageProps} />
       </ErrorHandler>
       <AutoLogin />
