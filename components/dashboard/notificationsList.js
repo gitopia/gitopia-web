@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
-import { readNotification } from "../../store/actions/userNotification";
 import { connect } from "react-redux";
+import router from "next/router";
 
 function NotificationsList(props) {
   switch (props.showNotificationListState) {
@@ -17,7 +16,12 @@ function NotificationsList(props) {
             <ul className="menu text-xs mt-2 max-h-80 overflow-auto">
               {props.formattedIssueNotifications.map((n, i) => {
                 return (
-                  <li key={"issue" + i}>
+                  <li
+                    key={"issue" + i}
+                    onClick={() => {
+                      router.push("/" + n.pathToRedirect);
+                    }}
+                  >
                     <a className="flex-wrap">
                       <span className="text-green mr-1">
                         {n.formattedMsg[0]}
@@ -59,7 +63,12 @@ function NotificationsList(props) {
             <ul className="menu text-xs mt-2 max-h-80 overflow-auto">
               {props.formattedPullNotifications.map((n, i) => {
                 return (
-                  <li key={"pull" + i}>
+                  <li
+                    key={"pull" + i}
+                    onClick={() => {
+                      router.push("/" + n.pathToRedirect);
+                    }}
+                  >
                     <a className="flex-wrap">
                       <span className="text-green mr-1">
                         {n.formattedMsg[0]}
