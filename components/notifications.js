@@ -11,13 +11,20 @@ import { createNotification } from "../store/actions/userNotification";
 import db from "../helpers/db";
 
 function Notifications(props) {
-  async function addNotification(type, msg, unread, formattedMsg) {
+  async function addNotification(
+    type,
+    msg,
+    unread,
+    formattedMsg,
+    pathToRedirect
+  ) {
     try {
       const id = await db.notifications.add({
         type,
         msg,
         unread,
         formattedMsg,
+        pathToRedirect,
       });
     } catch (error) {
       console.log(error);
@@ -45,7 +52,13 @@ function Notifications(props) {
               repo.name,
             ];
             props.createNotification(tx.message, "issue");
-            addNotification("issue", tx.message, true, formattedMsg);
+            addNotification(
+              "issue",
+              tx.message,
+              true,
+              formattedMsg,
+              repo.owner.id + "/" + repo.name + "/issues/" + tx.message.iid
+            );
             props.notify(formattedMsg.join(" "), "info");
           }
         }
@@ -74,7 +87,13 @@ function Notifications(props) {
                 repo.name,
               ];
               props.createNotification(tx.message, "issue");
-              addNotification("issue", tx.message, true, formattedMsg);
+              addNotification(
+                "issue",
+                tx.message,
+                true,
+                formattedMsg,
+                repo.owner.id + "/" + repo.name + "/issues/" + issue.iid
+              );
               props.notify(formattedMsg.join(" "), "info");
             }
           } else if (tx.message.commentType === "PULLREQUEST") {
@@ -100,7 +119,13 @@ function Notifications(props) {
                   repo.name,
                 ];
                 props.createNotification(tx.message, "pulls");
-                addNotification("pulls", tx.message, true, formattedMsg);
+                addNotification(
+                  "pulls",
+                  tx.message,
+                  true,
+                  formattedMsg,
+                  repo.owner.id + "/" + repo.name + "/pulls/" + pull.iid
+                );
                 props.notify(formattedMsg.join(" "), "info");
               }
             }
@@ -124,7 +149,13 @@ function Notifications(props) {
                   repo.name,
                 ];
                 props.createNotification(tx.message, "pulls");
-                addNotification("pulls", tx.message, true, formattedMsg);
+                addNotification(
+                  "pulls",
+                  tx.message,
+                  true,
+                  formattedMsg,
+                  repo.owner.id + "/" + repo.name + "/pulls/" + pull.iid
+                );
                 props.notify(formattedMsg.join(" "), "info");
               }
             }
@@ -145,7 +176,13 @@ function Notifications(props) {
                 repo.name,
               ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, formattedMsg);
+              addNotification(
+                "pulls",
+                tx.message,
+                true,
+                formattedMsg,
+                repo.owner.id + "/" + repo.name + "/pulls/" + pull.iid
+              );
               props.notify(formattedMsg.join(" "), "info");
             }
           }
@@ -181,7 +218,13 @@ function Notifications(props) {
               repo.name,
             ];
             props.createNotification(tx.message, "issue");
-            addNotification("issue", tx.message, true, formattedMsg);
+            addNotification(
+              "issue",
+              tx.message,
+              true,
+              formattedMsg,
+              repo.owner.id + "/" + repo.name + "/issues/" + issue.iid
+            );
             props.notify(formattedMsg.join(" "), "info");
           }
         }
@@ -216,7 +259,13 @@ function Notifications(props) {
               repo.name,
             ];
             props.createNotification(tx.message, "issue");
-            addNotification("issue", tx.message, true, formattedMsg);
+            addNotification(
+              "issue",
+              tx.message,
+              true,
+              formattedMsg,
+              repo.owner.id + "/" + repo.name + "/issues/" + issue.iid
+            );
             props.notify(formattedMsg.join(" "), "info");
           }
         }
@@ -245,7 +294,13 @@ function Notifications(props) {
                 repo.name,
               ];
               props.createNotification(tx.message, "issue");
-              addNotification("issue", tx.message, true, formattedMsg);
+              addNotification(
+                "issue",
+                tx.message,
+                true,
+                formattedMsg,
+                repo.owner.id + "/" + repo.name + "/issues/" + issue.iid
+              );
               props.notify(formattedMsg.join(" "), "info");
             }
           }
@@ -274,7 +329,13 @@ function Notifications(props) {
                 repo.name,
               ];
               props.createNotification(tx.message, "issue");
-              addNotification("issue", tx.message, true, formattedMsg);
+              addNotification(
+                "issue",
+                tx.message,
+                true,
+                formattedMsg,
+                repo.owner.id + "/" + repo.name + "/issues/" + issue.iid
+              );
               props.notify(formattedMsg.join(" "), "info");
             }
           }
@@ -301,7 +362,13 @@ function Notifications(props) {
                 repo.name,
               ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, formattedMsg);
+              addNotification(
+                "pulls",
+                tx.message,
+                true,
+                formattedMsg,
+                repo.owner.id + "/" + repo.name + "/pulls/" + pull.iid
+              );
               props.notify(formattedMsg.join(" "), "info");
             }
           }
@@ -322,7 +389,13 @@ function Notifications(props) {
                 repo.name,
               ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, formattedMsg);
+              addNotification(
+                "pulls",
+                tx.message,
+                true,
+                formattedMsg,
+                repo.owner.id + "/" + repo.name + "/pulls/" + pull.iid
+              );
               props.notify(formattedMsg.join(" "), "info");
             }
           }
@@ -340,7 +413,13 @@ function Notifications(props) {
               repo.name,
             ];
             props.createNotification(tx.message, "pulls");
-            addNotification("pulls", tx.message, true, formattedMsg);
+            addNotification(
+              "pulls",
+              tx.message,
+              true,
+              formattedMsg,
+              repo.owner.id + "/" + repo.name + "/pulls/" + pull.iid
+            );
             props.notify(formattedMsg.join(" "), "info");
           }
         }
@@ -365,7 +444,13 @@ function Notifications(props) {
                 repo.name,
               ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, formattedMsg);
+              addNotification(
+                "pulls",
+                tx.message,
+                true,
+                formattedMsg,
+                repo.owner.id + "/" + repo.name + "/pulls/" + pull.iid
+              );
               props.notify(formattedMsg.join(" "), "info");
             }
           }
@@ -390,7 +475,13 @@ function Notifications(props) {
                 repo.name,
               ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, formattedMsg);
+              addNotification(
+                "pulls",
+                tx.message,
+                true,
+                formattedMsg,
+                repo.owner.id + "/" + repo.name + "/pulls/" + pull.iid
+              );
               props.notify(formattedMsg.join(" "), "info");
             }
           }
@@ -416,7 +507,13 @@ function Notifications(props) {
                 repo.name,
               ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, formattedMsg);
+              addNotification(
+                "pulls",
+                tx.message,
+                true,
+                formattedMsg,
+                repo.owner.id + "/" + repo.name + "/pulls/" + pull.iid
+              );
               props.notify(formattedMsg.join(" "), "info");
             }
           }
@@ -441,7 +538,13 @@ function Notifications(props) {
                 repo.name,
               ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, formattedMsg);
+              addNotification(
+                "pulls",
+                tx.message,
+                true,
+                formattedMsg,
+                repo.owner.id + "/" + repo.name + "/pulls/" + pull.iid
+              );
               props.notify(formattedMsg.join(" "), "info");
             }
           }
@@ -469,7 +572,13 @@ function Notifications(props) {
                 repo.name,
               ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, formattedMsg);
+              addNotification(
+                "pulls",
+                tx.message,
+                true,
+                formattedMsg,
+                repo.owner.id + "/" + repo.name + "/pulls/" + pull.iid
+              );
               props.notify(formattedMsg.join(" "), "info");
             }
           }
@@ -490,7 +599,13 @@ function Notifications(props) {
                 repo.name,
               ];
               props.createNotification(tx.message, "pulls");
-              addNotification("pulls", tx.message, true, formattedMsg);
+              addNotification(
+                "pulls",
+                tx.message,
+                true,
+                formattedMsg,
+                repo.owner.id + "/" + repo.name + "/pulls/" + pull.iid
+              );
               props.notify(formattedMsg.join(" "), "info");
             }
           }
@@ -509,7 +624,13 @@ function Notifications(props) {
               repo.name,
             ];
             props.createNotification(tx.message, "pulls");
-            addNotification("pulls", tx.message, true, formattedMsg);
+            addNotification(
+              "pulls",
+              tx.message,
+              true,
+              formattedMsg,
+              repo.owner.id + "/" + repo.name + "/pulls/" + pull.iid
+            );
             props.notify(formattedMsg.join(" "), "info");
           }
         }
