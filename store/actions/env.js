@@ -25,7 +25,8 @@ export const sendTransaction = ({
     }
     try {
       result = await env.txClient.signAndBroadcast([message], {
-        fee,
+        // fee,
+        fee: "auto",
         memo,
       });
       dispatch(dismissNotification(notifId));

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { connect } from "react-redux";
+import Link from "next/link";
 import Head from "next/head";
 import Header from "../components/header";
 import TopRepositories from "../components/topRepositories";
@@ -67,13 +68,22 @@ function Home(props) {
               </div>
               <div className="mx-6">
                 {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ? (
-                  <a
-                    className={"btn btn-xs btn-link mt-2"}
-                    href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
-                    target="_blank"
-                  >
-                    View source code
-                  </a>
+                  <>
+                    <Link
+                      href={
+                        "/" +
+                        process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
+                        "/proposals"
+                      }
+                    >
+                      <a className={"btn btn-xs btn-link mt-2"}>Proposals</a>
+                    </Link>
+                    <Link href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}>
+                      <a className={"btn btn-xs btn-link mt-2"} target="_blank">
+                        Source code
+                      </a>
+                    </Link>
+                  </>
                 ) : (
                   ""
                 )}

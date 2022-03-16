@@ -1,27 +1,29 @@
 import Head from "next/head";
 import Header from "../../components/header";
-
-import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
-
-import Footer from "../../components/footer";
-import getUser from "../../helpers/getUser";
-import getOrganization from "../../helpers/getOrganization";
+import { useState, useEffect } from "react";
 import PublicTabs from "../../components/dashboard/publicTabs";
+import getOrganization from "../../helpers/getOrganization";
+import Footer from "../../components/footer";
+import getProposals from "../../helpers/getProposals";
+import dayjs from "dayjs";
+import ProposalItem from "../../components/dashboard/proposalItem";
 
 export async function getServerSideProps() {
   return { props: {} };
 }
 
-function OrganizationPeopleView(props) {
+function GitopiaProposals(props) {
   const router = useRouter();
   const [org, setOrg] = useState({
     name: "",
     repositories: [],
   });
-  const [allMembers, setAllMembers] = useState([]);
+  const [proposals, setProposals] = useState([]);
+  var localizedFormat = require("dayjs/plugin/localizedFormat");
+  dayjs.extend(localizedFormat);
 
   useEffect(async () => {
     const o = await getOrganization(router.query.userId);
@@ -31,17 +33,8 @@ function OrganizationPeopleView(props) {
     }
   }, [router.query]);
 
-  const getAllMembers = async () => {
-    if (org.id) {
-      const pr = org.members.map((m) => getUser(m.id));
-      const members = await Promise.all(pr);
-      setAllMembers(members);
-    }
-  };
-
-  useEffect(getAllMembers, [org]);
-
   const hrefBase = "/" + router.query.userId;
+  const hrefBaseOrg = "/daos/" + router.query.userId;
   const letter = org.name.slice(0, 1);
 
   const avatarLink =
@@ -49,6 +42,14 @@ function OrganizationPeopleView(props) {
       ? "/logo-g.svg"
       : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
         letter;
+
+  useEffect(async () => {
+    if (router.query.userId !== process.env.NEXT_PUBLIC_GITOPIA_ADDRESS) {
+      router.push("/" + router.query.userId);
+    }
+    const p = await getProposals();
+    setProposals(p);
+  }, []);
 
   return (
     <div
@@ -77,7 +78,7 @@ function OrganizationPeopleView(props) {
           </div>
           <div className="flex flex-1 mt-8 border-b border-grey">
             <PublicTabs
-              active="people"
+              active="proposals"
               hrefBase={hrefBase}
               showPeople={true}
               showProposal={
@@ -86,35 +87,40 @@ function OrganizationPeopleView(props) {
               }
             />
           </div>
-          <div className="mt-8 max-w-3xl">
-            <ul className="divide-y divide-grey">
-              {allMembers.map((m, i) => {
+          <div className="flex">
+            <div className="text-type-primary text-left items-center mt-8 ml-7">
+              Proposal List
+            </div>
+            {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
+            router.query.userId ? (
+              <div className="flex-none w-42 ml-auto mr-5">
+                <Link href={hrefBaseOrg + "/proposals/new"}>
+                  <button className="btn btn-primary btn-sm btn-block text-xs mt-8">
+                    CREATE NEW PROPOSAL
+                  </button>
+                </Link>
+              </div>
+            ) : (
+              ""
+            )}
+          </div>
+
+          <div className="mt-10 grid grid-rows-auto grid-cols-2 gap-5">
+            {proposals.length > 0 || proposals !== undefined ? (
+              proposals.map((p) => {
                 return (
-                  <li className="p-4" key={m.id}>
-                    <div className="flex items-center">
-                      <div className="avatar mr-2">
-                        <div className="w-8 h-8 rounded-full">
-                          <img
-                            src={
-                              "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                              m.creator.slice(-1)
-                            }
-                          />
-                        </div>
-                      </div>
-                      <div className="mr-8">
-                        <Link href={"/" + m.creator}>
-                          <a className="text-sm btn-link">{m.creator}</a>
-                        </Link>
-                      </div>
-                      <div className="flex-1 text-right text-sm">
-                        {org.members[i].role}
-                      </div>
-                    </div>
-                  </li>
+                  <ProposalItem
+                    proposal={p}
+                    hrefBase={hrefBaseOrg + "/proposals"}
+                    key={p.proposal_id}
+                  />
                 );
-              })}
-            </ul>
+              })
+            ) : (
+              <div className="text-left px-5 pt-10 font-style: italic text-base">
+                <h2>No Proposals to Show</h2>
+              </div>
+            )}
           </div>
         </main>
       </div>
@@ -125,9 +131,11 @@ function OrganizationPeopleView(props) {
 
 const mapStateToProps = (state) => {
   return {
-    selectedAddress: state.wallet.selectedAddress,
     currentDashboard: state.user.currentDashboard,
+    dashboards: state.user.dashboards,
+    repositories: state.organization.repositories,
+    organization: state.organization,
   };
 };
 
-export default connect(mapStateToProps, {})(OrganizationPeopleView);
+export default connect(mapStateToProps, {})(GitopiaProposals);

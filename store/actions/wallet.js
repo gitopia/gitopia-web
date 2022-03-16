@@ -29,7 +29,7 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
     const { queryClient, txClient } = await import("@gitopia/gitopia-js");
 
     const [tc, qc, amount] = await Promise.all([
-      txClient(accountSigner, { addr: env.rpcNode }),
+      txClient(accountSigner, { addr: env.rpcNode, gasPrice: wallet.gasPrice }),
       queryClient({ addr: env.apiNode }),
       updateUserBalance()(dispatch, getState),
     ]);

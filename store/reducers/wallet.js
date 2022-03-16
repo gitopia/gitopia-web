@@ -6,7 +6,7 @@ const initialState = {
   wallets: get("wallets") || [],
   activeWallet: null,
   selectedAddress: null,
-  gasPrice: "0.0000025" + process.env.NEXT_PUBLIC_CURRENCY_TOKEN,
+  gasPrice: process.env.NEXT_PUBLIC_GAS_PRICE,
   backupState: false,
   loreBalance: 0,
   getPassword: false,

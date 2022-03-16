@@ -3,6 +3,7 @@ export default function PublicTabs({
   hrefBase,
   active,
   showPeople = false,
+  showProposal = false,
   ...props
 }) {
   return (
@@ -40,6 +41,20 @@ export default function PublicTabs({
             }
           >
             <span>People</span>
+          </a>
+        </Link>
+      ) : (
+        ""
+      )}
+      {showProposal ? (
+        <Link href={hrefBase + "/proposals"}>
+          <a
+            className={
+              "tab  tab-md tab-bordered" +
+              (active === "proposals" ? " tab-active" : "")
+            }
+          >
+            <span>Proposals</span>
           </a>
         </Link>
       ) : (

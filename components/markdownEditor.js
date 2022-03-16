@@ -4,9 +4,12 @@ import ReactMarkdown from "react-markdown";
 
 function MarkdownEditor(props) {
   const [selectedTab, setSelectedTab] = useState("write");
-
+  let properties;
+  props.property
+    ? (properties = props.property)
+    : (properties = "text-neutral");
   return (
-    <div className="text-neutral">
+    <div className={properties}>
       <ReactMde
         value={props.value}
         onChange={props.setValue}
