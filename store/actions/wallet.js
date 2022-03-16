@@ -12,6 +12,7 @@ import { setupTxClients } from "./env";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import { LedgerSigner } from "@cosmjs/ledger-amino";
 import { stringToPath } from "@cosmjs/crypto";
+import getNodeInfo from "../../helpers/getNodeInfo";
 
 let ledgerTransport;
 
@@ -28,7 +29,7 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
     const { queryClient, txClient } = await import("@gitopia/gitopia-js");
 
     const [tc, qc, amount] = await Promise.all([
-      txClient(accountSigner, { addr: env.rpcNode }),
+      txClient(accountSigner, { addr: env.rpcNode, gasPrice: wallet.gasPrice }),
       queryClient({ addr: env.apiNode }),
       updateUserBalance()(dispatch, getState),
     ]);
@@ -95,7 +96,8 @@ export const unlockKeplrWallet = () => {
   return async (dispatch, getState) => {
     if (window.keplr && window.getOfflineSigner) {
       try {
-        const chainId = "gitopia";
+        const info = await getNodeInfo();
+        const chainId = info.node_info.network;
         const offlineSigner = window.getOfflineSigner(chainId);
         const accounts = await offlineSigner.getAccounts();
         const key = await window.keplr.getKey(chainId);
@@ -151,6 +153,7 @@ export const unlockWallet = ({ name, password }) => {
           CryptoJS.enc.Utf8
         )
       );
+      console.log(wallet);
     } catch (e) {
       console.error(e);
       return false;

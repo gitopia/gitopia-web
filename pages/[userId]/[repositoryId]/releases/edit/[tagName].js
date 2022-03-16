@@ -1,19 +1,22 @@
 import Head from "next/head";
-import Header from "../../../../components/header";
+import Header from "../../../../../components/header";
 
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
-import RepositoryHeader from "../../../../components/repository/header";
-import RepositoryMainTabs from "../../../../components/repository/mainTabs";
-import MarkdownEditor from "../../../../components/markdownEditor";
+import getUserRepository from "../../../../../helpers/getUserRepository";
+import RepositoryHeader from "../../../../../components/repository/header";
+import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
+import MarkdownEditor from "../../../../../components/markdownEditor";
 
-import { createRelease, createTag } from "../../../../store/actions/repository";
-import BranchSelector from "../../../../components/repository/branchSelector";
-import formatBytes from "../../../../helpers/formatBytes";
-import shrinkSha from "../../../../helpers/shrinkSha";
+import {
+  createRelease,
+  createTag,
+} from "../../../../../store/actions/repository";
+import BranchSelector from "../../../../../components/repository/branchSelector";
+import formatBytes from "../../../../../helpers/formatBytes";
+import shrinkSha from "../../../../../helpers/shrinkSha";
 
 import Uploady, {
   useItemProgressListener,
@@ -22,16 +25,22 @@ import Uploady, {
 } from "@rpldy/uploady";
 import UploadButton from "@rpldy/upload-button";
 import UploadDropZone from "@rpldy/upload-drop-zone";
-import getBranchSha from "../../../../helpers/getBranchSha";
-import useRepository from "../../../../hooks/useRepository";
+import getBranchSha from "../../../../../helpers/getBranchSha";
+import getRepositoryRelease from "../../../../../helpers/getRepositoryRelease";
+import useRepository from "../../../../../hooks/useRepository";
 
 export async function getServerSideProps() {
   return { props: {} };
 }
 
-function RepositoryReleaseNewView(props) {
+function RepositoryReleaseEditView(props) {
   const router = useRouter();
   const { repository, refreshRepository } = useRepository();
+
+  const [release, setRelease] = useState({
+    creator: "",
+    attachments: [],
+  });
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -59,14 +68,18 @@ function RepositoryReleaseNewView(props) {
         isTag: true,
         attachments: attachments.map((a) => {
           return {
-            name: a.file.name,
-            size: a.uploadResponse.data.size,
-            sha: a.uploadResponse.data.sha,
+            name: a.file ? a.file.name : a.name,
+            size: a.uploadResponse
+              ? a.uploadResponse.data.size
+              : Number(a.size),
+            sha: a.uploadResponse ? a.uploadResponse.data.sha : a.sha,
             uploader: props.selectedAddress,
           };
         }),
+        releaseId: parseInt(release.id),
       };
-      const res = await props.createRelease(issue);
+      console.log("before call", issue);
+      const res = await props.createRelease(issue, true);
       if (res && res.code === 0) {
         router.push(
           "/" +
@@ -81,38 +94,34 @@ function RepositoryReleaseNewView(props) {
     setPostingIssue(false);
   };
 
-  const updateTags = () => {
+  const getRelease = async () => {
     if (repository) {
-      if (!getBranchSha(tagName, [], repository.tags)) {
-        setTagName(
-          repository.tags.length
-            ? repository.tags[repository.tags.length - 1].name
-            : ""
-        );
-      }
-      let targetSha = getBranchSha(
-        target.name,
-        repository.branches,
-        repository.tags
+      const rel = await getRepositoryRelease(
+        repository.owner.id,
+        repository.name,
+        router.query.tagName
       );
-      if (targetSha) {
-        setTarget({
-          name: target.name,
-          sha: targetSha,
-        });
-      } else {
-        setTarget({
-          name: repository.defaultBranch,
-          sha: getBranchSha(
-            repository.defaultBranch,
-            repository.branches,
-            repository.tags
-          ),
-        });
+      console.log(rel);
+      if (rel) {
+        setRelease(rel);
+
+        setTitle(rel.name);
+        setDescription(rel.description);
+        if (!getBranchSha(tagName, [], repository.tags)) {
+          setTagName(rel.tagName);
+        }
+        if (!getBranchSha(target.name, repository.branches, repository.tags)) {
+          setTarget({
+            name: rel.target,
+            sha: getBranchSha(rel.target, repository.branches, repository.tags),
+          });
+        }
+        setAttachments(rel.attachments);
       }
     }
   };
-  useEffect(updateTags, [repository]);
+
+  useEffect(getRelease, [repository]);
 
   const username = props.selectedAddress ? props.selectedAddress.slice(-1) : "";
 
@@ -150,7 +159,7 @@ function RepositoryReleaseNewView(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex bg-repo-grad-v">
+      <div className="flex">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs repository={repository} active="code" />
@@ -285,18 +294,23 @@ function RepositoryReleaseNewView(props) {
                 <div className="my-4 divide-y divide-grey">
                   {attachments.map((a, i) => {
                     return (
-                      <div
-                        className={"flex py-2 items-center"}
-                        key={"attachment-" + i}
-                      >
-                        <div className="flex-1 text-sm">{a.file.name}</div>
+                      <div className={"flex py-2 items-center"}>
+                        <div className="flex-1 text-sm">
+                          {a.file ? a.file.name : a.name}
+                        </div>
                         <div className="text-xs mr-2">
-                          {formatBytes(a.file.size)}
+                          {formatBytes(a.file ? a.file.size : a.size)}
                         </div>
                         <div className="">
                           <div className="text-xs flex items-center">
                             <div className="mr-2">
-                              {"(" + shrinkSha(a.uploadResponse.data.sha) + ")"}
+                              {"(" +
+                                shrinkSha(
+                                  a.uploadResponse
+                                    ? a.uploadResponse.data.sha
+                                    : a.sha
+                                ) +
+                                ")"}
                             </div>
                             <button
                               className="btn btn-square btn-xs"
@@ -347,9 +361,7 @@ function RepositoryReleaseNewView(props) {
                 </div>
                 <div>
                   <Uploady
-                    destination={{
-                      url: process.env.NEXT_PUBLIC_OBJECTS_URL + "/upload",
-                    }}
+                    destination={{ url: "http://localhost:5000/upload" }}
                   >
                     <UploadDropZone
                       className="flex items-center justify-center p-8 border border-grey border-dashed text-type-secondary"
@@ -372,7 +384,7 @@ function RepositoryReleaseNewView(props) {
                       disabled={title.trim().length === 0 || postingIssue}
                       onClick={createIssue}
                     >
-                      Create Release
+                      Update Release
                     </button>
                   </div>
                 </div>
@@ -411,9 +423,10 @@ function RepositoryReleaseNewView(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
+    activeWallet: state.wallet.activeWallet,
   };
 };
 
 export default connect(mapStateToProps, { createRelease, createTag })(
-  RepositoryReleaseNewView
+  RepositoryReleaseEditView
 );

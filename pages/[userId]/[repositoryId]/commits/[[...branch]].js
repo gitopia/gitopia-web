@@ -15,7 +15,6 @@ import useRepository from "../../../../hooks/useRepository";
 import CommitDetailRow from "../../../../components/repository/commitDetailRow";
 import getCommitHistory from "../../../../helpers/getCommitHistory";
 import { useErrorStatus } from "../../../errorHandler";
-import getCommitHistory from "../../../../helpers/getCommitHistory";
 
 export async function getServerSideProps() {
   return { props: {} };
