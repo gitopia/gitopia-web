@@ -112,6 +112,7 @@ function GitopiaProposals(props) {
                   <ProposalItem
                     proposal={p}
                     hrefBase={hrefBaseOrg + "/proposals"}
+                    key={p.proposal_id}
                   />
                 );
               })

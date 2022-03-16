@@ -328,7 +328,7 @@ function ProposalDetailsView(props) {
                     }
                     disabled={depositLoading}
                   >
-                    SUBMIT DEPOSIT
+                    Submit Deposit
                   </label>
                 </div>
               ) : (
@@ -378,7 +378,7 @@ function ProposalDetailsView(props) {
                           text={`${getPercentage("no")}%`}
                           styles={buildStyles({
                             textColor: "#E2EBF2",
-                            pathColor: "#883BE6",
+                            pathColor: "#E83D99",
                             trailColor: "#3E4051",
                           })}
                         />
@@ -452,7 +452,7 @@ function ProposalDetailsView(props) {
                           text={`${getPercentage("no_with_veto")}%`}
                           styles={buildStyles({
                             textColor: "#E2EBF2",
-                            pathColor: "#FCC945",
+                            pathColor: "#C52A7D",
                             trailColor: "#3E4051",
                           })}
                         />
@@ -486,8 +486,8 @@ function ProposalDetailsView(props) {
                 </div>
               )}
               <input type="checkbox" id="my-modal-2" className="modal-toggle" />
-              <div class="modal">
-                <div class="modal-box">
+              <div className="modal">
+                <div className="modal-box">
                   <div>
                     <label className="label">
                       <span className="label-text text-xs font-bold text-gray-400">
@@ -552,7 +552,7 @@ function ProposalDetailsView(props) {
                             validateAmountError !== null
                           }
                         >
-                          SUBMIT
+                          Submit
                         </label>
                         <label
                           htmlFor="my-modal-2"
@@ -708,9 +708,9 @@ function ProposalDetailsView(props) {
                       </td>
                     </tr>
                     {depositors !== undefined
-                      ? depositors.map((depositor) => {
+                      ? depositors.map((depositor, i) => {
                           return (
-                            <tr>
+                            <tr key={"depositor" + i}>
                               <td>{depositor.body.messages[0].depositor}</td>
                               <td>
                                 {props.advanceUser === true
@@ -739,12 +739,12 @@ function ProposalDetailsView(props) {
                   </thead>
                   <tbody className="text-type-tertiary">
                     {voters !== undefined
-                      ? voters.map((voter) => {
+                      ? voters.map((voter, i) => {
                           let option = voter.body.messages[0].option;
                           option = option.replace("VOTE_OPTION_", "");
                           option = option.replace(/\_/g, " ");
                           return (
-                            <tr>
+                            <tr key={"voter" + i}>
                               <td>{voter.body.messages[0].voter}</td>
                               <td>{option}</td>
                             </tr>
