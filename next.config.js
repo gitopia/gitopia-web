@@ -30,6 +30,7 @@ module.exports = withBundleAnalyzer(
         "/": { page: "/" },
         "/home": { page: "/home" },
         "/design": { page: "/design" },
+        "/nft": { page: "/nft" },
       };
     },
     images: {

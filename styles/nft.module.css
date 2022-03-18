@@ -1,0 +1,512 @@
+@import url("https://fonts.googleapis.com/css2?family=Oxygen:wght@400;700&display=swap");
+.wrapper {
+  font-family: "Oxygen";
+  background: #13181e;
+  position: relative;
+  z-index: 1;
+  overflow-x: hidden;
+  color: #e2ebf2;
+}
+.blob1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+.blob2 {
+  position: absolute;
+  z-index: -1;
+  top: 410.7px;
+  width: 100%;
+  height: auto;
+}
+
+.header {
+  display: flex;
+  padding: 40px 64px;
+}
+.headerLogo {
+  background: url("/logo-white.svg") no-repeat;
+  background-position: 50%;
+  background-size: 160px;
+  width: 160px;
+  height: 60px;
+  margin-right: 20px;
+}
+.headerMenuIcon {
+  float: right;
+  position: absolute;
+  top: 44px;
+  right: 44px;
+  display: none;
+}
+.headerMenu {
+  border-bottom: 2px solid rgb(255 255 255 / 10%);
+  height: 40px;
+}
+.row {
+  max-width: 900px;
+  text-align: center;
+}
+
+.vl {
+  margin-top: 10px;
+  opacity: 0.3;
+  border-left: 1px solid #e5e5e5;
+  height: 20px;
+}
+.title {
+  margin-top: 50px;
+  align-items: center;
+  text-align: center;
+  font-size: 48px;
+  font-weight: 700;
+}
+.title2 {
+  align-items: center;
+  text-align: center;
+  font-size: 48px;
+  font-weight: 700;
+}
+.content1 {
+  text-align: center;
+  font-weight: 400;
+  font-size: 18px;
+}
+.content2 {
+  display: flex;
+  align-items: center;
+  margin-top: 1.4vw;
+  margin-left: 29.2vw;
+  margin-right: 29.5vw;
+  font-size: 18px;
+  font-weight: 400;
+}
+.content3 {
+  display: flex;
+  align-items: center;
+  margin-top: 3vw;
+  margin-left: 29.2vw;
+  margin-right: 28vw;
+  font-size: 32px;
+  font-weight: 400;
+}
+.wallet {
+  margin-top: 50px;
+  margin-bottom: 60px;
+}
+
+.hr {
+  border-top: 1px solid #cbd4dd;
+  margin-top: 22px;
+  margin-left: 29vw;
+  margin-right: 29vw;
+  margin-bottom: 2vw;
+  opacity: 0.2;
+}
+
+.tableTitle1 {
+  margin-top: 50px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #767c87;
+  text-transform: uppercase;
+}
+.tableTitle2 {
+  margin-top: 50px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #767c87;
+  text-transform: uppercase;
+}
+.tableTitle3 {
+  margin-top: 50px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #767c87;
+  text-transform: uppercase;
+}
+.tableTitle4 {
+  margin-top: 50px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #767c87;
+  text-transform: uppercase;
+}
+.hr1 {
+  border-top: 1px solid #cbd4dd;
+  margin-top: 10px;
+  margin-left: 29vw;
+  margin-right: 29vw;
+  margin-bottom: 1vw;
+  opacity: 0.2;
+}
+.assetCard {
+  margin-left: 29vw;
+  width: 42vw;
+  display: flex;
+  align-items: center;
+}
+.asset {
+  display: flex;
+  align-items: center;
+  height: 69px;
+  width: 103px;
+  margin-right: 1.3vw;
+}
+.assetName {
+  margin-top: 1.2vw;
+  font-weight: 400;
+  font-size: 14px;
+}
+.assetAmountMinted {
+  font-weight: 400;
+  font-size: 14px;
+}
+.assetAvailability {
+  font-weight: 400;
+  font-size: 14px;
+}
+.rarityCard {
+  height: 2vw;
+  width: 7vw;
+  background: linear-gradient(90deg, #404a55 0%, #415062 100%);
+  border-radius: 8px;
+}
+.rarityVl {
+  border-left: 1px solid #13181e;
+  height: 2vw;
+}
+.rarity {
+  padding: 0.6vw 0.9vw;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.cardLogo {
+  margin-top: 35px;
+  height: 55px;
+  width: 100px;
+}
+
+.cardDetails {
+  margin-top: 30px;
+  font-size: 32px;
+}
+
+.joinGitopia {
+  margin-left: 10px;
+  font-weight: 700;
+  display: flex;
+  flex-direction: row;
+}
+.endCardmargin {
+  margin-left: 25px;
+  margin-top: 80px;
+}
+.endCard {
+  font-size: 18px;
+  font-weight: 400;
+}
+.cardButton {
+  font-weight: 700;
+  font-size: 14px;
+  width: 230px;
+  height: 50px;
+}
+
+.footer {
+  margin-top: 150px;
+  padding-bottom: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footerLogo {
+  background: url("/logo-white.svg") no-repeat;
+  background-position: 50%;
+  background-size: 160px;
+  height: 160px;
+  width: 240px;
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: space-around;
+}
+
+.footerLinks a {
+  border-left: 2px solid #91a3b4;
+  color: white;
+  padding: 0 16px;
+  margin-right: 16px;
+}
+@media (max-width: 1800px) {
+  .content2 {
+    margin-top: 1.4vw;
+    margin-left: 23vw;
+    margin-right: 23vw;
+  }
+  .content3 {
+    margin-left: 23vw;
+    margin-right: 23vw;
+  }
+  .hr {
+    margin-left: 23vw;
+    margin-right: 23vw;
+    margin-bottom: 6vw;
+  }
+  .tableTitle1 {
+    margin-top: 30px;
+  }
+  .tableTitle2 {
+    margin-top: 30px;
+  }
+  .tableTitle3 {
+    margin-top: 30px;
+  }
+  .tableTitle4 {
+    margin-top: 30px;
+  }
+  .hr1 {
+    margin-left: 23vw;
+    margin-right: 23vw;
+  }
+  .assetCard {
+    margin-left: 23vw;
+    width: 53vw;
+  }
+  .assetName {
+    margin-top: 1.7vw;
+  }
+  .rarityCard {
+    height: 3vw;
+    width: 10vw;
+  }
+  .rarityVl {
+    height: 3vw;
+  }
+  .rarity {
+    padding: 1vw 1.4vw;
+  }
+}
+@media (max-width: 1024px) {
+  .blob1,
+  .blob2 {
+    opacity: 0.3;
+  }
+  .headerMenuIcon {
+    display: block;
+  }
+  .headerMenu {
+    height: auto;
+    border-bottom: none;
+  }
+  .header {
+    display: block;
+    padding: 40px 44px;
+  }
+  .row {
+    text-align: left;
+    padding: 0 44px;
+    width: 100%;
+  }
+  .title {
+    font-size: 38px;
+  }
+  .title2 {
+    font-size: 38px;
+  }
+  .content2 {
+    margin-top: 1.4vw;
+    margin-left: 7vw;
+    margin-right: 7vw;
+  }
+  .content3 {
+    margin-left: 7vw;
+    margin-right: 7vw;
+  }
+  .hr {
+    margin-left: 7vw;
+    margin-right: 7vw;
+    margin-bottom: 6vw;
+  }
+
+  .hr1 {
+    margin-left: 7vw;
+    margin-right: 7vw;
+  }
+  .assetCard {
+    margin-left: 7vw;
+    width: 84vw;
+  }
+  .assetName {
+    margin-top: 2.5vw;
+  }
+  .rarityCard {
+    height: 4vw;
+    width: 14vw;
+  }
+  .rarityVl {
+    height: 4vw;
+  }
+  .rarity {
+    padding: 1vw 1.5vw;
+  }
+  .cardLogo {
+    margin-top: 5px;
+    margin-left: 2vw;
+    height: 40px;
+    width: 70px;
+  }
+  .cardDetails {
+    margin-top: 0.1vw;
+    font-size: 25px;
+  }
+  .endCard {
+    font-size: 14px;
+    font-weight: 400;
+  }
+  .endCardmargin {
+    margin-left: 1px;
+    margin-top: 5.3vw;
+    margin-right: 2vw;
+  }
+  .cardButton {
+    font-weight: 700;
+    font-size: 14px;
+    width: 250px;
+    height: 49px;
+  }
+
+  .cards {
+    width: 100vw;
+  }
+  .footer {
+    margin-top: 45px;
+    padding: 50px;
+    flex-direction: column;
+  }
+  .footerLinks {
+    margin-bottom: 50px;
+    flex-direction: row;
+  }
+}
+@media (max-width: 640px) {
+  .blob1,
+  .blob2 {
+    display: none;
+  }
+  .title {
+    font-size: 25px;
+  }
+  .title2 {
+    font-size: 26px;
+  }
+  .content1 {
+    text-align: center;
+    font-weight: 400;
+    font-size: 12px;
+  }
+  .content2 {
+    margin-left: 5vw;
+    margin-right: 5vw;
+    font-size: 13px;
+    font-weight: 400;
+  }
+  .content3 {
+    margin-left: 5vw;
+    margin-right: 5vw;
+    font-size: 16px;
+  }
+  .hr {
+    margin-left: 5vw;
+    margin-right: 5vw;
+    margin-bottom: 10vw;
+  }
+  .tableTitle1 {
+    margin-top: 10px;
+  }
+  .tableTitle2 {
+    margin-top: 10px;
+  }
+  .tableTitle3 {
+    margin-top: 10px;
+  }
+  .tableTitle4 {
+    margin-top: 10px;
+  }
+  .hr1 {
+    margin-left: 5vw;
+    margin-right: 5vw;
+  }
+  .assetCard {
+    margin-left: 5vw;
+    width: 86.2vw;
+  }
+  .asset {
+    margin-right: 0vw;
+  }
+  .assetName {
+    margin-top: 5vw;
+    font-size: 12px;
+  }
+  .assetAmountMinted {
+    font-size: 12px;
+  }
+  .assetAvailability {
+    font-size: 12px;
+  }
+  .rarityCard {
+    height: 6vw;
+    width: 19vw;
+  }
+  .rarityVl {
+    height: 6vw;
+  }
+  .rarity {
+    padding: 1.3vw 1.3vw;
+  }
+  .joinGitopia {
+    margin-left: 0px;
+  }
+  .cardLogo {
+    margin-left: 0vw;
+    width: 70px;
+  }
+  .endCard {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+  }
+  .endCardmargin {
+    margin-top: 2vw;
+  }
+  .cardButton {
+    margin-left: 80px;
+    height: 10vw;
+    width: 40vw;
+  }
+
+  .cards {
+    margin-left: 0px;
+    width: 490px;
+    display: flex;
+    flex-direction: column;
+  }
+  .footer {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    flex-direction: column;
+  }
+  .footerLinks {
+    margin-bottom: 24px;
+    flex-direction: column;
+  }
+
+  .footerLinks a {
+    margin-bottom: 24px;
+  }
+}
