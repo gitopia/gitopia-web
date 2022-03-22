@@ -43,7 +43,8 @@ function CreateWallet(props) {
       setNameHint({ ...nameHint, shown: true, message: "Please enter a name" });
       return false;
     }
-    if (name.trim().length > 39) {
+    if (name.length > 39) {
+      console.log(name);
       setNameHint({
         ...nameHint,
         shown: true,
@@ -72,6 +73,15 @@ function CreateWallet(props) {
         ...passwordHint,
         shown: true,
         message: "Please enter a password",
+      });
+      return false;
+    }
+    if (password.length < 8 || password.length > 30) {
+      console.log(password);
+      setPasswordHint({
+        ...passwordHint,
+        shown: true,
+        message: "Please enter a valid password",
       });
       return false;
     }
