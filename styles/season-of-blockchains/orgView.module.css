@@ -1,0 +1,859 @@
+.wrapper {
+  background: #13181e;
+  position: relative;
+  z-index: 1;
+}
+
+.header {
+  display: flex;
+  padding: 40px 64px 0px 64px;
+}
+
+.headerLogo {
+  background: url("/logo-white.svg") no-repeat;
+  background-position: 50%;
+  background-size: 160px;
+  width: 160px;
+  height: 60px;
+  margin-right: 20px;
+}
+
+.headerMenu {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  height: 40px;
+}
+
+.headerLinks a {
+  color: white;
+  padding: 16px;
+  display: inline-block;
+  font-family: Oxygen;
+}
+
+.headerMenuIcon {
+  float: right;
+  position: absolute;
+  top: 44px;
+  right: 44px;
+  display: none;
+}
+
+.row {
+  max-width: 900px;
+  text-align: center;
+}
+
+.vl {
+  margin-top: 10px;
+  opacity: 0.3;
+  border-left: 1px solid #e5e5e5;
+  height: 20px;
+}
+.blob1 {
+  position: absolute;
+  left: 0;
+  top: 112.4vw;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.9;
+}
+.blob2 {
+  position: absolute;
+  right: 0;
+  top: 93.5vw;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.9;
+}
+.image {
+  position: absolute;
+  top: 0px;
+  z-index: -1;
+}
+
+.title {
+  display: flex;
+  margin-top: 26vw;
+  margin-left: 29.2vw;
+  font-size: 64px;
+  font-weight: 700;
+}
+
+.content {
+  display: flex;
+  margin-top: 0vw;
+  margin-left: 29.2vw;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.content1 {
+  display: flex;
+  margin-top: 0vw;
+  margin-left: 29.2vw;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.content2 {
+  display: flex;
+  align-items: center;
+  margin-top: 1.4vw;
+  margin-left: 29.2vw;
+  margin-right: 28vw;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.content3 {
+  display: flex;
+  margin-top: 1.1vw;
+  margin-left: 29.2vw;
+  margin-right: 28vw;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.content4 {
+  display: flex;
+  margin-top: 4vw;
+  margin-left: 29.2vw;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.cardContainer {
+  margin-top: 50px;
+  margin-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card1 {
+  display: flex;
+  flex-direction: column;
+  width: 940px;
+  height: 329px;
+  background-color: #1a2028;
+  padding: 40px 80px;
+  border-radius: 24px;
+}
+
+.card1a {
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  text-align: left;
+}
+
+.card1a1 {
+  width: 50%;
+  margin-right: 2vw;
+}
+
+.card1a2 {
+  width: 50%;
+  margin-right: 2vw;
+  margin-left: 3vw;
+}
+.card1b {
+  margin-top: 1.5vw;
+  display: flex;
+  flex-direction: row;
+}
+
+.card1b1 {
+  margin-right: 2vw;
+}
+
+.card1b2 {
+  margin-top: 0.3vw;
+  margin-left: 0.6vw;
+  font-size: 12px;
+}
+
+.cardTech {
+  margin-right: 1vw;
+  margin-bottom: 1vw;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 149px;
+  height: 35px;
+  background-color: #28313c;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.hr {
+  margin-top: 2vw;
+  border-top: 1px solid #28313c;
+  width: 780px;
+}
+
+.cardTitle {
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: 400px;
+}
+.cardBody {
+  font-size: 18px;
+  font-weight: 400px;
+}
+
+.cardContainer2 {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card2 {
+  width: 780px;
+  height: 323px;
+  border: 2px solid #3e4051;
+  box-sizing: border-box;
+  padding: 30px 30px;
+  border-radius: 8px;
+}
+
+.projectLogo {
+  width: 34px;
+  height: 34px;
+}
+
+.projectTitle {
+  margin-top: 3px;
+  margin-left: 20px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  color: #adbecb;
+}
+.card2a {
+  margin-top: 50px;
+}
+.card2b {
+  margin-top: 17px;
+}
+.projectTime {
+  margin-top: 3px;
+  margin-left: auto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 12px;
+  color: #adbecb;
+  text-transform: uppercase;
+}
+.content5 {
+  margin-top: 35px;
+  font-size: 18px;
+  font-weight: normal;
+  color: #e2ebf2;
+}
+.content6 {
+  margin-top: 0.5vw;
+  font-size: 14px;
+  font-weight: normal;
+  color: #adbecb;
+}
+.content7 {
+  margin-top: 1px;
+  margin-left: 15px;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: bold;
+  color: #e5edf5;
+}
+.hr1 {
+  margin-top: 8px;
+  border-top: 1px solid #3e4051;
+  width: 713px;
+}
+.votes {
+  margin-right: 10px;
+  color: #adbecb;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 12px;
+}
+.Arrow {
+  margin-top: 5px;
+}
+.content8 {
+  margin-left: auto;
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #66ce67;
+}
+
+.cardLogo {
+  margin-top: 35px;
+  height: 55px;
+  width: 100px;
+}
+
+.cardDetails {
+  margin-top: 30px;
+  font-size: 32px;
+}
+
+.joinGitopia {
+  margin-left: 10px;
+  font-weight: 700;
+  display: flex;
+  flex-direction: row;
+}
+.endCardmargin {
+  margin-left: 25px;
+  margin-top: 80px;
+}
+.endCard {
+  font-size: 18px;
+  font-weight: 400;
+}
+.cardButton {
+  font-weight: 700;
+  font-size: 14px;
+  width: 230px;
+  height: 50px;
+}
+
+.footer {
+  margin-top: 150px;
+  padding-bottom: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footerLogo {
+  background: url("/logo-white.svg") no-repeat;
+  background-position: 50%;
+  background-size: 160px;
+  height: 160px;
+  width: 240px;
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: space-around;
+}
+
+.footerLinks a {
+  border-left: 2px solid #91a3b4;
+  color: white;
+  padding: 0 16px;
+  margin-right: 16px;
+}
+@media (max-width: 1800px) {
+  .blob1 {
+    position: absolute;
+    left: 0;
+    top: 141.2vw;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.9;
+  }
+  .blob2 {
+    position: absolute;
+    right: 0;
+    top: 116vw;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.9;
+  }
+  .image {
+    position: absolute;
+    top: 1vw;
+    z-index: -1;
+  }
+  .title {
+    display: flex;
+    margin-top: 26vw;
+    margin-left: 22.5vw;
+    font-size: 64px;
+    font-weight: 700;
+  }
+
+  .content {
+    display: flex;
+    margin-top: 0vw;
+    margin-left: 22.5vw;
+    font-size: 32px;
+    font-weight: 400;
+  }
+
+  .content1 {
+    display: flex;
+    margin-top: 0vw;
+    margin-left: 22.5vw;
+    font-size: 24px;
+    font-weight: 400;
+  }
+
+  .content2 {
+    display: flex;
+    align-items: center;
+    margin-top: 1.4vw;
+    margin-left: 22.5vw;
+    margin-right: 23vw;
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  .content3 {
+    display: flex;
+    margin-top: 1.1vw;
+    margin-left: 22.5vw;
+    margin-right: 23vw;
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  .content4 {
+    display: flex;
+    margin-top: 4vw;
+    margin-left: 22.5vw;
+    font-size: 32px;
+    font-weight: 400;
+  }
+
+  .joinGitopia {
+    font: 32px;
+    font-weight: 700;
+    display: flex;
+    flex-direction: row;
+  }
+  .endCard {
+    font-size: 18px;
+    font-weight: 400;
+  }
+  .cardButton {
+    font-weight: 700;
+    font-size: 14px;
+    width: 250px;
+    height: 50px;
+  }
+}
+@media (max-width: 1024px) {
+  .headerMenuIcon {
+    display: block;
+  }
+  .headerMenu {
+    height: auto;
+    border-bottom: none;
+  }
+  .header {
+    display: block;
+    padding: 40px 44px;
+  }
+  .row {
+    text-align: left;
+    padding: 0 44px;
+    width: 100%;
+  }
+  .blob1 {
+    position: absolute;
+    left: 0;
+    top: 153.1vw;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.9;
+  }
+  .blob2 {
+    position: absolute;
+    right: 0;
+    top: 117.2vw;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.9;
+  }
+  .image {
+    position: absolute;
+    top: 4vw;
+    z-index: -1;
+  }
+  .title {
+    display: flex;
+    margin-top: 26vw;
+    margin-left: 13vw;
+    font-size: 54px;
+    font-weight: 700;
+  }
+
+  .content {
+    display: flex;
+    margin-top: 0vw;
+    margin-left: 13vw;
+    font-size: 27px;
+    font-weight: 400;
+  }
+
+  .content1 {
+    display: flex;
+    margin-top: 0vw;
+    margin-left: 13vw;
+    font-size: 20px;
+    font-weight: 400;
+  }
+
+  .content2 {
+    display: flex;
+    align-items: center;
+    margin-top: 1.7vw;
+    margin-left: 13vw;
+    margin-right: 14vw;
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .content3 {
+    display: flex;
+    margin-top: 1.1vw;
+    margin-left: 13vw;
+    margin-right: 14vw;
+    font-size: 16px;
+    font-weight: 400;
+  }
+  .content4 {
+    display: flex;
+    margin-top: 4vw;
+    margin-left: 13vw;
+    font-size: 27px;
+    font-weight: 400;
+  }
+
+  .cardContainer {
+    margin-top: 50px;
+    margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card1 {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 83vw;
+    height: auto;
+    min-height: 23vw;
+    background-color: #1a2028;
+    padding: 4vw 8vw;
+    border-radius: 24px;
+  }
+  .hr {
+    margin-top: 2vw;
+    border-top: 1px solid #28313c;
+    width: 66vw;
+  }
+
+  .card1b {
+    margin-top: 2.3vw;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .cardContainer2 {
+    overflow: hidden;
+    margin-top: 2vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card2 {
+    width: 73vw;
+    height: auto;
+    min-height: 18vw;
+    border: 2px solid #3e4051;
+    box-sizing: border-box;
+    padding: 2vw 3vw;
+    border-radius: 0.8vw;
+  }
+
+  .projectLogo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .projectTitle {
+    margin-top: 0.3vw;
+    margin-left: 2vw;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    color: #adbecb;
+  }
+  .card2a {
+    margin-top: 4vw;
+  }
+  .card2b {
+    margin-top: 1.2vw;
+  }
+  .projectTime {
+    margin-top: 0.7vw;
+    margin-left: auto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 12px;
+    color: #adbecb;
+    text-transform: uppercase;
+  }
+  .content5 {
+    margin-top: 3vw;
+    font-size: 1.8vw;
+    font-weight: normal;
+    color: #e2ebf2;
+  }
+  .content6 {
+    margin-top: 0.5vw;
+    font-size: 1.4vw;
+    font-weight: normal;
+    color: #adbecb;
+  }
+  .content7 {
+    margin-top: 0.1vw;
+    margin-left: 1.5vw;
+    text-transform: uppercase;
+    font-size: 1.2vw;
+    font-weight: bold;
+    color: #e5edf5;
+  }
+  .hr1 {
+    margin-top: 0.8vw;
+    border-top: 1px solid #3e4051;
+    width: 67.3vw;
+  }
+  .cardLogo {
+    margin-top: 5px;
+    margin-left: 2vw;
+    height: 40px;
+    width: 70px;
+  }
+  .cardDetails {
+    margin-top: 0.1vw;
+    font-size: 25px;
+  }
+  .endCard {
+    font-size: 14px;
+    font-weight: 400;
+  }
+  .endCardmargin {
+    margin-left: 1px;
+    margin-top: 5.3vw;
+    margin-right: 2vw;
+  }
+  .cardButton {
+    font-weight: 700;
+    font-size: 14px;
+    width: 250px;
+    height: 49px;
+  }
+
+  .cards {
+    width: 100vw;
+  }
+
+  .footer {
+    margin-top: 45px;
+    padding: 50px;
+    flex-direction: column;
+  }
+  .footerLinks {
+    margin-bottom: 50px;
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 640px) {
+  .image {
+    position: absolute;
+    top: 15vw;
+    z-index: -1;
+  }
+  .title {
+    display: flex;
+    margin-top: 26vw;
+    margin-left: 15vw;
+    font-size: 44px;
+    font-weight: 700;
+  }
+
+  .content {
+    display: flex;
+    margin-top: 0vw;
+    margin-left: 15vw;
+    font-size: 26px;
+    font-weight: 400;
+  }
+
+  .content1 {
+    display: flex;
+    margin-top: 0vw;
+    margin-left: 15vw;
+    font-size: 20px;
+    font-weight: 400;
+  }
+
+  .content2 {
+    display: flex;
+    align-items: center;
+    margin-top: 3vw;
+    margin-left: 15vw;
+    margin-right: 8vw;
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .content3 {
+    display: flex;
+    margin-top: 1.2vw;
+    margin-left: 15vw;
+    margin-right: 8vw;
+    font-size: 16px;
+    font-weight: 400;
+  }
+  .content5 {
+    margin-top: 3vw;
+    font-size: 2.3vw;
+    font-weight: normal;
+    color: #e2ebf2;
+  }
+  .content6 {
+    margin-top: 0.5vw;
+    font-size: 2.3vw;
+    font-weight: normal;
+    color: #adbecb;
+  }
+  .content7 {
+    margin-top: 1vw;
+    margin-left: 1.5vw;
+    text-transform: uppercase;
+    font-size: 1.6vw;
+    font-weight: bold;
+    color: #e5edf5;
+  }
+
+  .arrow1 {
+    margin-top: 4px;
+  }
+
+  .blob1,
+  .blob2 {
+    display: none;
+  }
+  .card1 {
+    display: flex;
+    flex-direction: column;
+    width: 70vw;
+    height: 90vw;
+    background-color: #1a2028;
+    padding: 3vw 3vw;
+    border-radius: 24px;
+  }
+
+  .card1a {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    text-align: left;
+  }
+
+  .card1a1 {
+    width: 50vw;
+    margin-right: 2vw;
+  }
+
+  .card1a2 {
+    margin-right: 2vw;
+    margin-left: 0vw;
+    margin-top: 5vw;
+  }
+  .card1b {
+    margin-top: 1.5vw;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .card1b1 {
+    margin-right: 0.5vw;
+  }
+
+  .card1b2 {
+    margin-top: 0.3vw;
+    margin-left: 0.6vw;
+    font-size: 10px;
+  }
+
+  .cardTech {
+    margin-right: 2vw;
+    margin-bottom: 2vw;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28vw;
+    height: 7vw;
+    background-color: #28313c;
+    padding: 10px 20px;
+    border-radius: 8px;
+  }
+
+  .hr {
+    margin-top: 4vw;
+    border-top: 1px solid #28313c;
+    width: 60vw;
+  }
+
+  .cardTitle {
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-weight: 400px;
+  }
+  .joinGitopia {
+    margin-left: 0px;
+  }
+  .cardLogo {
+    margin-left: 0vw;
+    width: 70px;
+  }
+  .endCard {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+  }
+  .endCardmargin {
+    margin-top: 2vw;
+  }
+  .cardButton {
+    margin-left: 80px;
+    height: 10vw;
+    width: 40vw;
+  }
+
+  .cards {
+    margin-left: 0px;
+    width: 490px;
+    display: flex;
+    flex-direction: column;
+  }
+  .footer {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    flex-direction: column;
+  }
+  .footerLinks {
+    margin-bottom: 24px;
+    flex-direction: column;
+  }
+
+  .footerLinks a {
+    margin-bottom: 24px;
+  }
+}
