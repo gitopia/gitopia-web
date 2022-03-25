@@ -1,15 +1,15 @@
 import Head from "next/head";
-import Header from "../../components/header";
+import Header from "../../../components/header";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import PublicTabs from "../../components/dashboard/publicTabs";
-import getOrganization from "../../helpers/getOrganization";
-import Footer from "../../components/footer";
-import getProposals from "../../helpers/getProposals";
+import PublicTabs from "../../../components/dashboard/publicTabs";
+import getOrganization from "../../../helpers/getOrganization";
+import Footer from "../../../components/footer";
+import getProposals from "../../../helpers/getProposals";
 import dayjs from "dayjs";
-import ProposalItem from "../../components/dashboard/proposalItem";
+import ProposalItem from "../../../components/dashboard/proposalItem";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -34,14 +34,12 @@ function GitopiaProposals(props) {
 
   useEffect(async () => {
     const o = await getOrganization(router.query.userId);
-
     if (o) {
       setOrg(o);
     }
   }, [router.query]);
 
   const hrefBase = "/" + router.query.userId;
-  const hrefBaseOrg = "/daos/" + router.query.userId;
   const letter = org.name.slice(0, 1);
 
   const avatarLink =
@@ -101,7 +99,7 @@ function GitopiaProposals(props) {
             {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
             router.query.userId ? (
               <div className="flex-none w-42 ml-auto mr-5">
-                <Link href={hrefBaseOrg + "/proposals/new"}>
+                <Link href={hrefBase + "/proposals/new"}>
                   <button className="btn btn-primary btn-sm btn-block text-xs mt-8">
                     CREATE NEW PROPOSAL
                   </button>
@@ -118,7 +116,7 @@ function GitopiaProposals(props) {
                 return (
                   <ProposalItem
                     proposal={p}
-                    hrefBase={hrefBaseOrg + "/proposals"}
+                    hrefBase={hrefBase + "/proposals"}
                     key={p.proposal_id}
                   />
                 );
