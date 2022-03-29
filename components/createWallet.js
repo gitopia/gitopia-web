@@ -10,6 +10,10 @@ import { useRouter } from "next/router";
 
 function CreateWallet(props) {
   const [mnemonic, setMnemonic] = useState(bip39.generateMnemonic(256));
+  const onValidUsername = (val) => {
+    const usernameRegex = /^(?!-)(?!.*-$)(?!.*?--)[A-Za-z0-9-]+$/;
+    return usernameRegex.test(val);
+  };
   const [name, setName] = useState("");
   const [nameHint, setNameHint] = useState({
     shown: false,
@@ -44,11 +48,19 @@ function CreateWallet(props) {
       return false;
     }
     if (name.length > 39) {
-      console.log(name);
       setNameHint({
         ...nameHint,
         shown: true,
         message: "Name can be maximum 39 characters",
+      });
+      return false;
+    }
+    if (!onValidUsername(name)) {
+      setNameHint({
+        ...nameHint,
+        shown: true,
+        message:
+          "Name may only contain alphanumeric characters or single hyphens",
       });
       return false;
     }
@@ -77,7 +89,6 @@ function CreateWallet(props) {
       return false;
     }
     if (password.length < 8 || password.length > 30) {
-      console.log(password);
       setPasswordHint({
         ...passwordHint,
         shown: true,
