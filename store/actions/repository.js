@@ -3,6 +3,7 @@ import { sendTransaction, setupTxClients } from "./env";
 import { createUser, getUserDetailsForSelectedAddress } from "./user";
 import { updateUserBalance } from "./wallet";
 import forkRepositoryFiles from "../../helpers/forkRepositoryFiles";
+import dayjs from "dayjs";
 
 export const validatePostingEligibility = async (
   dispatch,
@@ -1190,6 +1191,49 @@ export const toggleRepositoryForking = ({ id }) => {
     try {
       const message = await env.txClient.msgToggleRepositoryForking(repo);
       const result = await sendTransaction({ message })(dispatch, getState);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const grantGitServerForkAccess = () => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "grant access")))
+      return null;
+
+    const { wallet, env } = getState();
+    // const access = {
+    //   granter: wallet.selectedAddress,
+    //   grantee: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+    //   grant: {
+    //     authorization: {
+    //       "@type": "/cosmos.authz.v1beta1.GenericAuthorization",
+
+    //       msg: "",
+    //     },
+    //     expiration: "4522-03-21T14:47:56Z",
+    //   },
+    // };
+
+    try {
+      const message = await env.txClient.msgGrant(
+        wallet.selectedAddress,
+        process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+        "/gitopia.gitopia.gitopia.MsgForkRepository",
+        dayjs().add(1, "M").unix()
+      );
+      console.log("Grant", message);
+      const result = await sendTransaction({ message })(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
+      console.log(result);
       if (result && result.code === 0) {
         return result;
       } else {

@@ -6,6 +6,7 @@ import mergePullRequest from "../../helpers/mergePullRequest";
 import pullRequestStateClass from "../../helpers/pullRequestStateClass";
 import mergePullRequestCheck from "../../helpers/mergePullRequestCheck";
 import getPullRequestMergePermission from "../../helpers/getPullRequestMergePermission";
+import { getGitServerAuthStatusForPullState } from "../../helpers/getGitServerAuthStatus";
 
 function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
   const [isMerging, setIsMerging] = useState(false);
@@ -82,6 +83,7 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
 
   useEffect(() => {
     setStateClass(pullRequestStateClass(pullRequest.state));
+    getGitServerAuthStatusForPullState(props.selectedAddress);
     switch (pullRequest.state) {
       case "OPEN":
         checkMerge();
