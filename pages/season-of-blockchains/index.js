@@ -132,144 +132,146 @@ export default function SeasonOfBlockchains() {
           <div className={" " + styles.title3}>Benefits for the</div>
           <div className={" " + styles.title4}>participants</div>
           <div className="">
-            <div className={"card lg:card-side mt-16 " + styles.card}>
-              <div className={"mt-1 ml-1" + styles.cardImage}>
-                <figure className="">
-                  <img src="/season-of-blockchains/exposure.svg" />
-                </figure>
+            <div className="flex">
+              <div className={"mt-1 ml-1 " + styles.cardImage}>
+                <img src="/season-of-blockchains/exposure.svg" />
               </div>
-              <div className="card-body py-0">
-                <div className={"card-title  " + styles.cardTitle}>
-                  Exposure:
-                </div>
-                <div className={"  " + styles.cardBody}>
-                  Get a chance to work with the top developers in the industry
-                  and get to learn the hottest thing in blockchain technology
-                  firsthand
-                </div>
-              </div>
-            </div>
-            <hr className={styles.hr} />
-            <div className={"card lg:card-side " + styles.card}>
-              <div className={"mt-1 ml-1" + styles.cardImage}>
-                <figure className="">
-                  <img src="/season-of-blockchains/cool-stipend.svg" />
-                </figure>
-              </div>
-              <div className="card-body py-0">
-                <div className={"card-title  " + styles.cardTitle}>
-                  Cool stipend:
-                </div>
-                <div className={"  " + styles.cardBody}>
-                  With Gitopia Season of blockchain, your contributions to the
-                  technology would never be free. You will also receive a fixed
-                  stipend of $5000 for completing the entire program
+              <div className={"card mt-16 " + styles.card}>
+                <div className="card-body py-0">
+                  <div className={"card-title  " + styles.cardTitle}>
+                    Exposure:
+                  </div>
+                  <div className={"  " + styles.cardBody}>
+                    Get a chance to work with the top developers in the industry
+                    and get to learn the hottest thing in blockchain technology
+                    firsthand
+                  </div>
                 </div>
               </div>
             </div>
             <hr className={styles.hr} />
-            <div className={"card lg:card-side " + styles.card}>
-              <div className={"mt-1 ml-1" + styles.cardImage}>
-                <figure className="">
-                  <img src="/season-of-blockchains/bragging-rights.svg" />
-                </figure>
+            <div className="flex">
+              <div className={"mt-1 ml-1 " + styles.cardImage2}>
+                <img src="/season-of-blockchains/cool-stipend.svg" />
               </div>
-              <div className="card-body py-0">
-                <div className={"card-title  " + styles.cardTitle}>
-                  Bragging rights:
-                </div>
-                <div className={"  " + styles.cardBody}>
-                  Work with top blockchain projects people follow and brag about
-                  it on your social profiles to build a reputation
+              <div className={"card " + styles.card}>
+                <div className="card-body py-0">
+                  <div className={"card-title  " + styles.cardTitle}>
+                    Cool stipend:
+                  </div>
+                  <div className={"  " + styles.cardBody}>
+                    With Gitopia Season of blockchain, your contributions to the
+                    technology would never be free. You will also receive a
+                    fixed stipend of $5000 for completing the entire program
+                  </div>
                 </div>
               </div>
             </div>
             <hr className={styles.hr} />
-            <div className={"card lg:card-side " + styles.card}>
-              <div className={"mt-1 ml-1" + styles.cardImage}>
-                <figure className="">
-                  <img src="/season-of-blockchains/community.svg" />
-                </figure>
+            <div className="flex">
+              <div className={"mt-1 ml-1 " + styles.cardImage2}>
+                <img src="/season-of-blockchains/bragging-rights.svg" />
               </div>
-              <div className="card-body py-0">
-                <div className={"card-title  " + styles.cardTitle}>
-                  Community:
+              <div className={"card " + styles.card}>
+                <div className="card-body py-0">
+                  <div className={"card-title  " + styles.cardTitle}>
+                    Bragging rights:
+                  </div>
+                  <div className={"  " + styles.cardBody}>
+                    Work with top blockchain projects people follow and brag
+                    about it on your social profiles to build a reputation
+                  </div>
                 </div>
-                <div className={"  " + styles.cardBody}>
-                  Helps you in networking and gaining contacts in the industry
+              </div>
+            </div>
+            <hr className={styles.hr} />
+            <div className="flex">
+              <div className={"mt-1 ml-1 " + styles.cardImage2}>
+                <img src="/season-of-blockchains/community.svg" />
+              </div>
+              <div className={"card  " + styles.card}>
+                <div className="card-body py-0">
+                  <div className={"card-title  " + styles.cardTitle}>
+                    Community:
+                  </div>
+                  <div className={"  " + styles.cardBody}>
+                    Helps you in networking and gaining contacts in the industry
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           <div className={" " + styles.image2}>
-            <img width={700} src="/season-of-blockchains/home-2.svg"></img>
+            <img width={1050} src="/season-of-blockchains/home-2.svg"></img>
           </div>
           <div className="mb-36">
-            <div className={"card lg:card-side mt-3 " + styles.card}>
-              <div className={"mt-1 ml-1" + styles.cardImage}>
-                <figure className="">
-                  <img src="/season-of-blockchains/hiring-pool.svg" />
-                </figure>
+            <div className="flex">
+              <div className={"mt-1 ml-1 " + styles.cardImage3}>
+                <img src="/season-of-blockchains/hiring-pool.svg" />
               </div>
-              <div className="card-body py-0">
-                <div className={"card-title  " + styles.cardTitle}>
-                  Access to open hiring pool:
-                </div>
-                <div className={"  " + styles.cardBody}>
-                  We will also share the entire batch who are interested in
-                  getting interviewed by other projects present in the program
-                  if no other offer was already offered to the participant.
-                </div>
-              </div>
-            </div>
-            <hr className={styles.hr} />
-            <div className={"card lg:card-side " + styles.card}>
-              <div className="mt-1 ml-1">
-                <figure className={"mt-1 ml-1" + styles.cardImage}>
-                  <img src="/season-of-blockchains/entrepreneurship.svg" />
-                </figure>
-              </div>
-              <div className="card-body py-0">
-                <div className={"card-title  " + styles.cardTitle}>
-                  Entrepreneurship:
-                </div>
-                <div className={"  " + styles.cardBody}>
-                  Get to know a lot more about blockchain and projects. This
-                  would help you in starting one of your own. Maybe funded by
-                  the project you worked for.
+              <div className={"card mt-3 " + styles.card}>
+                <div className="card-body py-0">
+                  <div className={"card-title  " + styles.cardTitle}>
+                    Access to open hiring pool:
+                  </div>
+                  <div className={"  " + styles.cardBody}>
+                    We will also share the entire batch who are interested in
+                    getting interviewed by other projects present in the program
+                    if no other offer was already offered to the participant.
+                  </div>
                 </div>
               </div>
             </div>
             <hr className={styles.hr} />
-            <div className={"card lg:card-side " + styles.card}>
-              <div className={"mt-1 ml-1" + styles.cardImage}>
-                <figure className="">
-                  <img src="/season-of-blockchains/grants.svg" />
-                </figure>
+            <div className="flex">
+              <div className={"mt-1 ml-1 " + styles.cardImage2}>
+                <img src="/season-of-blockchains/entrepreneurship.svg" />
               </div>
-              <div className="card-body py-0">
-                <div className={"card-title  " + styles.cardTitle}>Grants:</div>
-                <div className={"  " + styles.cardBody}>
-                  You can get a grant to continue working on the project you
-                  submitted and also hire individuals to work alongside you.
+              <div className={"card " + styles.card}>
+                <div className="card-body py-0">
+                  <div className={"card-title  " + styles.cardTitle}>
+                    Entrepreneurship:
+                  </div>
+                  <div className={"  " + styles.cardBody}>
+                    Get to know a lot more about blockchain and projects. This
+                    would help you in starting one of your own. Maybe funded by
+                    the project you worked for.
+                  </div>
                 </div>
               </div>
             </div>
             <hr className={styles.hr} />
-            <div className={"card lg:card-side " + styles.card}>
-              <div className={"mt-1 ml-1" + styles.cardImage}>
-                <figure className="">
-                  <img src="/season-of-blockchains/learning-experience.svg" />
-                </figure>
+            <div className="flex">
+              <div className={"mt-1 ml-1 " + styles.cardImage2}>
+                <img src="/season-of-blockchains/grants.svg" />
               </div>
-              <div className={"card-body py-0"}>
-                <div className={"card-title  " + styles.cardTitle}>
-                  Provide immersive learning experience:
+              <div className={"card e " + styles.card}>
+                <div className="card-body py-0">
+                  <div className={"card-title  " + styles.cardTitle}>
+                    Grants:
+                  </div>
+                  <div className={"  " + styles.cardBody}>
+                    You can get a grant to continue working on the project you
+                    submitted and also hire individuals to work alongside you.
+                  </div>
                 </div>
-                <div className={"  " + styles.cardBody}>
-                  Long term mentorship such as 3 months can help in immersive
-                  learning experience and would help in providing long term
-                  benefits to the contributor
+              </div>
+            </div>
+            <hr className={styles.hr} />
+            <div className="flex">
+              <div className={"mt-1 ml-1 " + styles.cardImage2}>
+                <img src="/season-of-blockchains/learning-experience.svg" />
+              </div>
+              <div className={"card " + styles.card}>
+                <div className={"card-body py-0"}>
+                  <div className={"card-title  " + styles.cardTitle}>
+                    Provide immersive learning experience:
+                  </div>
+                  <div className={"  " + styles.cardBody}>
+                    Long term mentorship such as 3 months can help in immersive
+                    learning experience and would help in providing long term
+                    benefits to the contributor
+                  </div>
                 </div>
               </div>
             </div>

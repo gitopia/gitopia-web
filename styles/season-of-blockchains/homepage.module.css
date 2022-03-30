@@ -62,7 +62,7 @@
 .blob2 {
   position: absolute;
   left: 0;
-  top: 154.8vw;
+  top: 177.8vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
@@ -80,7 +80,7 @@
 .blob4 {
   position: absolute;
   left: 18vw;
-  top: 140vw;
+  top: 161vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
@@ -94,10 +94,11 @@
   z-index: -1;
   opacity: 0.9;
 }
+
 .blob6 {
   position: absolute;
   right: 0;
-  top: 135.9vw;
+  top: 158.8vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
@@ -131,7 +132,7 @@
   flex-direction: column;
   align-items: center;
   justify-items: center;
-  margin-top: 1vw;
+  margin-top: 3.5vw;
 }
 
 .title {
@@ -162,6 +163,7 @@
   margin-left: 27vw;
   font-size: 64px;
   font-weight: 700;
+  margin-bottom: 3vw;
 }
 
 .content {
@@ -171,34 +173,49 @@
 }
 
 .card {
-  height: 90px;
-  width: 600px;
+  width: 677px;
   align-items: left;
-  margin-left: 27vw;
+  margin-left: 1vw;
   margin-right: 27vw;
+  margin-top: 0.5vw;
 }
 
 .cardTitle {
-  margin-left: 5px;
   font-size: 24px;
-  font-weight: 400;
+  font-style: normal;
+  font-weight: lighter;
+  letter-spacing: 0.368571px;
 }
 
 .cardBody {
-  margin-left: 5px;
+  margin-top: 0.5vw;
   font-size: 18px;
   font-weight: 400;
 }
 
 .cardImage {
-  width: 41px;
-  height: 57.66px;
+  width: 40px;
+  height: 35px;
+  margin-left: 27vw;
+  margin-top: 0.5vw;
+}
+.cardImage2 {
+  width: 40px;
+  height: 35px;
+  margin-left: 27vw;
+  margin-top: 0.5vw;
+}
+.cardImage3 {
+  width: 40px;
+  height: 35px;
+  margin-left: 27vw;
+  margin-top: 0.8vw;
 }
 .hr {
   border-top: 1px solid #444b53;
   margin-top: 22px;
-  margin-left: 30vw;
-  margin-right: 29vw;
+  margin-left: 31.8vw;
+  margin-right: 35.5vw;
   margin-bottom: 0.7vw;
 }
 
@@ -271,12 +288,41 @@
 }
 
 @media (max-width: 1800px) {
-  .image3 {
-    margin-top: 30px;
+  .card {
+    margin-top: 1vw;
+    width: 676px;
+    margin-right: 20vw;
+  }
+
+  .cardBody {
+    margin-top: 0.7vw;
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  .cardImage {
+    margin-top: 1vw;
+  }
+  .cardImage2 {
+    margin-top: 1vw;
+  }
+  .cardImage3 {
+    margin-top: 1.3vw;
+  }
+  .hr {
+    margin-left: 32.9vw;
+    margin-right: 23.2vw;
+  }
+
+  .image2 {
     display: flex;
-    margin-left: 180px;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+    margin-left: 18vw;
+    margin-top: 3.5vw;
     height: 500px;
-    width: 600px;
+    width: 950px;
   }
   .joinGitopia {
     font: 32px;
@@ -298,7 +344,7 @@
   .blob2 {
     position: absolute;
     left: 0;
-    top: 202.2vw;
+    top: 234.2vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
@@ -315,8 +361,8 @@
 
   .blob4 {
     position: absolute;
-    left: 10vw;
-    top: 185vw;
+    left: 19vw;
+    top: 212vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
@@ -325,7 +371,7 @@
   .blob6 {
     position: absolute;
     right: 0;
-    top: 176.9vw;
+    top: 208.9vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
@@ -358,7 +404,7 @@
   .blob2 {
     position: absolute;
     left: 0;
-    top: 261.2vw;
+    top: 321.9vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
@@ -376,7 +422,7 @@
   .blob4 {
     position: absolute;
     left: 0vw;
-    top: 270vw;
+    top: 320vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
@@ -385,7 +431,7 @@
   .blob6 {
     position: absolute;
     right: 0;
-    top: 225.5vw;
+    top: 281.2vw;
     pointer-events: none;
     z-index: -1;
     opacity: 0.9;
@@ -432,11 +478,9 @@
   .card {
     display: flex;
     flex-direction: row;
-    height: 90px;
-    width: 70vw;
+    width: 180vw;
     align-items: left;
-    margin-left: 17vw;
-    margin-right: 17vw;
+    margin-right: 10vw;
   }
 
   .cardTitle {
@@ -447,11 +491,35 @@
     margin-left: 5px;
   }
 
+  .cardImage {
+    width: 100px;
+    height: 40px;
+    margin-left: 15vw;
+    margin-top: 1vw;
+  }
+  .cardImage2 {
+    width: 100px;
+    height: 40px;
+    margin-left: 15vw;
+    margin-top: 1.3vw;
+  }
+  .cardImage3 {
+    width: 100px;
+    height: 40px;
+    margin-left: 15vw;
+    margin-top: 1.7vw;
+  }
   .hr {
     border-top: 1px solid #444b53;
     margin-left: 24.5vw;
     margin-right: 15vw;
     margin-bottom: 0.7vw;
+  }
+  .image2 {
+    margin-left: 4vw;
+    margin-top: 8vw;
+    height: 400px;
+    width: 800px;
   }
   .image3 {
     display: flex;
@@ -517,8 +585,7 @@
     height: 10vx;
     width: 79vw;
     align-items: left;
-    margin-left: 10vw;
-    margin-right: 20vw;
+    margin-right: 5vw;
   }
 
   .cardTitle {
@@ -531,10 +598,28 @@
     font-weight: 400;
   }
 
+  .cardImage {
+    width: 50px;
+    height: 40px;
+    margin-left: 15vw;
+    margin-top: 1vw;
+  }
+  .cardImage2 {
+    width: 50px;
+    height: 40px;
+    margin-left: 15vw;
+    margin-top: 1.3vw;
+  }
+  .cardImage3 {
+    width: 50px;
+    height: 40px;
+    margin-left: 15vw;
+    margin-top: 1.7vw;
+  }
   .hr {
     border-top: 1px solid #444b53;
-    margin-left: 20.5vw;
-    margin-right: 14vw;
+    margin-left: 12vw;
+    margin-right: 13vw;
     margin-bottom: 0.7vw;
   }
   .title {
@@ -581,6 +666,9 @@
     align-items: center;
     justify-items: center;
     margin-top: 1vw;
+    width: 500px;
+    height: 300px;
+    margin-left: 0vw;
   }
 
   .image3 {
