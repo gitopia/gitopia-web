@@ -171,7 +171,7 @@ function Header(props) {
         <div className="items-stretch">
           <a
             className="btn btn-ghost btn-sm rounded-btn"
-            href="https://explorer.gitopia.com/"
+            href={process.env.NEXT_PUBLIC_EXPLORER_URL}
             target="_blank"
           >
             Explorer
@@ -180,10 +180,19 @@ function Header(props) {
         <div className="items-stretch">
           <a
             className="btn btn-ghost btn-sm rounded-btn"
-            href="https://docs.gitopia.com/"
+            href={process.env.NEXT_PUBLIC_DOCS_URL}
             target="_blank"
           >
             Docs
+          </a>
+        </div>
+        <div className="items-stretch">
+          <a
+            className="btn btn-ghost btn-sm rounded-btn"
+            href={process.env.NEXT_PUBLIC_FORUM_URL}
+            target="_blank"
+          >
+            Forum
           </a>
         </div>
         <div className="flex-1"></div>

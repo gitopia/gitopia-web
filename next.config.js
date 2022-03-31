@@ -1,3 +1,39 @@
+const { async } = require("regenerator-runtime");
+
+const ContentSecurityPolicy = `
+  default-src 'self'; 
+  style-src 'self' 'unsafe-inline' unpkg.com;
+  script-src 'self' 'unsafe-eval';
+  img-src 'self' avatar.oxro.io;
+`;
+
+const securityHeaders = [
+  {
+    key: "Strict-Transport-Security",
+    value: "max-age=31536000; includeSubDomains",
+  },
+  {
+    key: "X-Frame-Options",
+    value: "SAMEORIGIN",
+  },
+  {
+    key: "X-Content-Type-Options",
+    value: "nosniff",
+  },
+  {
+    key: "Referrer-Policy",
+    value: "strict-origin-when-cross-origin",
+  },
+  {
+    key: "Permissions-Policy",
+    value: "",
+  },
+  /* {
+    key: "Content-Security-Policy",
+    value: ContentSecurityPolicy.replace(/\s{2,}/g, " ").trim(),
+  },*/
+];
+
 const withTM = require("@module-federation/next-transpile-modules")([
   "@gitopia/gitopia-js",
   "react-syntax-highlighter",
@@ -30,6 +66,7 @@ module.exports = withBundleAnalyzer(
         "/": { page: "/" },
         "/home": { page: "/home" },
         "/design": { page: "/design" },
+        "/season-of-blockchains": { page: "/season-of-blockchains" },
       };
     },
     images: {
@@ -77,6 +114,14 @@ module.exports = withBundleAnalyzer(
         {
           source: "/api/commits/:path*",
           destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/commits/:path*",
+        },
+      ];
+    },
+    async headers() {
+      return [
+        {
+          source: "/(.*)",
+          headers: securityHeaders,
         },
       ];
     },
