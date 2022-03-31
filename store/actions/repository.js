@@ -764,12 +764,13 @@ export const forkRepository = ({
       repositoryId,
       ownerId,
       ownerType,
+      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
     };
     console.log("fork", repository);
     const { env } = getState();
 
     try {
-      const message = await env.txClient.msgForkRepository(repository);
+      const message = await env.txClient.msgInvokeForkRepository(repository);
       const result = await sendTransaction({ message })(dispatch, getState);
       console.log(result);
       if (result && result.code === 0) {

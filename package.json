@@ -13,7 +13,7 @@
     "@cosmjs/crypto": "^0.27.0",
     "@cosmjs/ledger-amino": "^0.27.1",
     "@cosmjs/proto-signing": "0.27.1",
-    "@gitopia/gitopia-js": "0.13.0",
+    "@gitopia/gitopia-js": "git+https://github.com/gitopia/gitopia-js#buxy/authz",
     "@gitopia/stargate": "0.27.1",
     "@ledgerhq/hw-transport-webhid": "^6.20.0",
     "@ledgerhq/hw-transport-webusb": "^6.20.0",

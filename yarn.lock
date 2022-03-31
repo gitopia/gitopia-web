@@ -341,10 +341,9 @@
   resolved "https://registry.yarnpkg.com/@cosmjs/utils/-/utils-0.27.1.tgz#1c8efde17256346ef142a3bd15158ee4055470e2"
   integrity sha512-VG7QPDiMUzVPxRdJahDV8PXxVdnuAHiIuG56hldV4yPnOz/si/DLNd7VAUUA5923b6jS1Hhev0Hr6AhEkcxBMg==
 
-"@gitopia/gitopia-js@0.13.0":
+"@gitopia/gitopia-js@git+https://github.com/gitopia/gitopia-js#buxy/authz":
   version "0.13.0"
-  resolved "https://registry.yarnpkg.com/@gitopia/gitopia-js/-/gitopia-js-0.13.0.tgz#fe07a924a3ad06121fb1b1b8377c625e5b9c790b"
-  integrity sha512-k50B1aibIaRZpTWUS1HqGVwC+SVYKRylnm217h4/SuxC0hSJozfsQOf9q0GvQYeM5twAqj6DMlk06zA/9ZF9IQ==
+  resolved "git+https://github.com/gitopia/gitopia-js#f7c3f401d0907efac7554dd268e8b53ecfb636be"
 
 "@gitopia/stargate@0.27.1":
   version "0.27.1"
