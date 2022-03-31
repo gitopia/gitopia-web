@@ -11,6 +11,7 @@
     "pm2": "pm2"
   },
   "dependencies": {
+    "@apollo/client": "^3.5.10",
     "@badrap/bar-of-progress": "^0.1.2",
     "@cosmjs/crypto": "^0.27.0",
     "@cosmjs/ledger-amino": "^0.27.1",
@@ -31,6 +32,7 @@
     "dayjs": "^1.10.6",
     "dexie": "^3.2.1",
     "file-saver": "^2.0.5",
+    "graphql": "^15.8.0",
     "lodash": "^4.17.21",
     "next": "^12.1.0",
     "next-redux-wrapper": "^6.0.2",
