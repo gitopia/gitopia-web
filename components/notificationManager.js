@@ -11,7 +11,7 @@ setUpNotifications({
   defaultProps: {
     position: "top-right",
     dismissible: true,
-    dismissAfter: 10000,
+    dismissAfter: 5000,
   },
 });
 

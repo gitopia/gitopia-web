@@ -118,7 +118,7 @@ function NewRepository(props) {
         <main className="container mx-auto max-w-screen-lg min-h-full py-12">
           <div className="text-2xl">Create a new repository</div>
           <div className="flex justify-between mt-4">
-            <div className="w-96 text-sm">
+            <div className="w-3/4 text-sm">
               Your repository will be created on the blockchain, meaning it will
               outlive even you once it’s created. You can archive repositories,
               but they will still be visible to the public.

@@ -35,7 +35,7 @@ function UserDashboard(props) {
               Begin from scratch or import an existing repository
             </div>
             <Link href="/new">
-              <a className="btn btn-outline btn-sm">Create a Repository</a>
+              <a className="btn btn-outline btn-sm mt-4">Create a Repository</a>
             </Link>
           </div>
         </div>

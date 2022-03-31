@@ -1479,18 +1479,6 @@ export default function Landing() {
           className={"grid grid-rows-3 grid-cols-3 gap-2 " + styles.teamWrapper}
         >
           <div className={"row-span-4 " + styles.teamCard}>
-            <img
-              className={styles.teamImage}
-              src="/kushagra.png"
-              loading="lazy"
-            />
-            <div className={styles.teamLabelContainer}>
-              <div className={styles.teamLabel}>
-                <div className={styles.teamName}>Kushagra Singh</div>
-              </div>
-            </div>
-          </div>
-          <div className={"row-span-4 " + styles.teamCard}>
             <img className={styles.teamImage} src="/parth.png" loading="lazy" />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
@@ -1506,7 +1494,6 @@ export default function Landing() {
               </div>
             </div>
           </div>
-
           <div className={"row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
@@ -1522,12 +1509,12 @@ export default function Landing() {
           <div className={"row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
-              src="/hariom.png"
+              src="/janani.png"
               loading="lazy"
             />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
-                <div className={styles.teamName}>Hariom Verma</div>
+                <div className={styles.teamName}>Janani Anbarasan</div>
               </div>
             </div>
           </div>
@@ -1539,12 +1526,28 @@ export default function Landing() {
               </div>
             </div>
           </div>
-
           <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/ejaaz.png" loading="lazy" />
+            <img
+              className={styles.teamImage}
+              src="/hariom.png"
+              loading="lazy"
+            />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
-                <div className={styles.teamName}>Ejaaz Mahamood</div>
+                <div className={styles.teamName}>Hariom Verma</div>
+              </div>
+            </div>
+          </div>
+
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/kushagra.png"
+              loading="lazy"
+            />
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Kushagra Singh</div>
               </div>
             </div>
           </div>
@@ -1560,7 +1563,16 @@ export default function Landing() {
               </div>
             </div>
           </div>
+          <div className={"row-span-4 " + styles.teamCard}>
+            <img className={styles.teamImage} src="/ejaaz.png" loading="lazy" />
+            <div className={styles.teamLabelContainer}>
+              <div className={styles.teamLabel}>
+                <div className={styles.teamName}>Ejaaz Mahamood</div>
+              </div>
+            </div>
+          </div>
         </div>
+
         <div className={styles.joinTeamContainer}>
           <div
             className={

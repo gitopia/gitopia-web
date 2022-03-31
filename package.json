@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build && next export",
     "start": "next start",
-    "analyze": "cross-env ANALYZE=true next build"
+    "lint": "next lint",
+    "analyze": "cross-env ANALYZE=true next build",
+    "pm2": "pm2"
   },
   "dependencies": {
     "@badrap/bar-of-progress": "^0.1.2",
@@ -30,11 +32,13 @@
     "daisyui": "^1.14.0",
     "date-fns": "^2.19.0",
     "dayjs": "^1.10.6",
+    "dexie": "^3.2.1",
     "file-saver": "^2.0.5",
     "lodash": "^4.17.21",
     "next": "10.0.9",
     "next-redux-wrapper": "^6.0.2",
     "prism-color-variables": "^1.0.1",
+    "pm2": "^5.2.0",
     "react": "17.0.2",
     "react-circular-progressbar": "^2.0.4",
     "react-click-away-listener": "^2.0.3",
@@ -47,7 +51,13 @@
     "reapop": "^4.0.0",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "regenerator-runtime": "^0.13.7"
+    "regenerator-runtime": "^0.13.7",
+    "websocket": "^1.0.34",
+    "workbox-core": "^5.1.4",
+    "workbox-expiration": "^5.1.4",
+    "workbox-precaching": "^5.1.4",
+    "workbox-routing": "^5.1.4",
+    "workbox-strategies": "^5.1.4"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.5",
