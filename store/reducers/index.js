@@ -7,6 +7,7 @@ import { reducer as notificationsReducer } from "reapop";
 import userReducer from "./user";
 import organizationReducer from "./organization";
 import userNotificationReducer from "./userNotification";
+import taskQueueReducer from "./taskQueue";
 
 const rootReducer = combineReducers({
   //   hydrate: hydrateReducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   notifications: notificationsReducer(),
   organization: organizationReducer,
   userNotification: userNotificationReducer,
+  taskQueue: taskQueueReducer,
 });
 
 export default rootReducer;

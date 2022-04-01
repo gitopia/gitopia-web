@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
   forkRepository,
-  grantGitServerForkAccess,
+  authorizeGitServer,
 } from "../../store/actions/repository";
 import { useRouter } from "next/router";
-import { getGitServerAuthStatusForRepoFork } from "../../helpers/getGitServerAuthStatus";
+import { getGitServerAuthorization } from "../../helpers/getGitServerAuthStatus";
+import { notify } from "reapop";
 
 function RepositoryHeader({ repository, ...props }) {
   const [forkTargetShown, setForkTargetShown] = useState(false);
@@ -23,13 +24,10 @@ function RepositoryHeader({ repository, ...props }) {
         repository.owner.id.slice(-1);
 
   const refreshForkingAccess = async () => {
-    setForkingAccess(
-      await getGitServerAuthStatusForRepoFork(props.selectedAddress)
-    );
+    setForkingAccess(await getGitServerAuthorization(props.selectedAddress));
   };
-  useEffect(refreshForkingAccess, [repository]);
+  useEffect(refreshForkingAccess, [props.selectedAddress]);
 
-  console.log("forking", forkingAccess);
   return (
     <div className="flex flex-1 mb-8">
       <div className="avatar flex-none mr-8 items-center">
@@ -212,7 +210,7 @@ function RepositoryHeader({ repository, ...props }) {
         className="modal-toggle"
       />
       <div className="modal">
-        <div className="modal-box max-w-xs">
+        <div className="modal-box max-w-sm">
           {repository.allowForking ? (
             forkingAccess ? (
               <>
@@ -301,7 +299,12 @@ function RepositoryHeader({ repository, ...props }) {
             ) : (
               <>
                 <p>
-                  Gitopia server does not have repository forking grant access
+                  Gitopia data server does not have repository forking access on
+                  behalf of your account.
+                </p>
+                <p className="text-xs mt-4">Server Address:</p>
+                <p className="text-xs">
+                  {process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS}
                 </p>
                 <div className="modal-action">
                   <label
@@ -309,18 +312,24 @@ function RepositoryHeader({ repository, ...props }) {
                     onClick={() => {
                       setForkTargetShown(false);
                     }}
-                    disabled={isGrantingAccess}
                   >
                     Cancel
                   </label>
                   <button
-                    className="btn btn-sm btn-primary"
+                    className={
+                      "btn btn-sm btn-primary" +
+                      (isGrantingAccess ? " loading" : "")
+                    }
                     onClick={async () => {
                       setIsGrantingAccess(true);
-                      const res = await props.grantGitServerForkAccess();
+                      const res = await props.authorizeGitServer();
                       console.log(res);
                       setIsGrantingAccess(false);
-                      refreshForkingAccess();
+                      if (res.code !== 0) {
+                        props.notify(res.rawLog, "error");
+                      } else {
+                        refreshForkingAccess();
+                      }
                     }}
                     disabled={isGrantingAccess}
                   >
@@ -392,5 +401,6 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   forkRepository,
-  grantGitServerForkAccess,
+  authorizeGitServer,
+  notify,
 })(RepositoryHeader);

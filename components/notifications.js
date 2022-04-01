@@ -8,6 +8,7 @@ import getPullRequest from "../helpers/getPullRequest";
 import { notify } from "reapop";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { createNotification } from "../store/actions/userNotification";
+import { addCompletedTask } from "../store/actions/taskQueue";
 import db from "../helpers/db";
 
 function Notifications(props) {
@@ -31,9 +32,8 @@ function Notifications(props) {
     }
   }
 
-  const ws = new W3CWebSocket("ws://localhost:26657/websocket");
-
-  const parser = async (tx) => {
+  const parseTx = async (tx) => {
+    if (!tx) return null;
     switch (tx.typeurl) {
       case "/gitopia.gitopia.gitopia.MsgCreateIssue":
         {
@@ -637,36 +637,116 @@ function Notifications(props) {
         break;
 
       default:
+        console.log("Unhandled", tx.typeurl, tx.message);
         break;
     }
   };
 
-  useEffect(() => {
-    ws.onopen = () => {
-      ws.send(
-        JSON.stringify({
-          jsonrpc: "2.0",
-          method: "subscribe",
-          params: ["tm.event='Tx'"],
-          id: 1,
-        })
-      );
-    };
-    ws.onmessage = async (message) => {
+  const parseLog = async (log) => {
+    let logData;
+    try {
+      logData = JSON.parse(log);
+      console.log("logs", logData);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const parseEvents = async (events) => {
+    for (let i = 0; i < events.length; i++) {
+      if (events[i].type === "message") {
+        let isTask = false,
+          taskId,
+          taskState,
+          taskMesssage;
+        let task = {};
+        for (let j = 0; j < events[i].attributes.length; j++) {
+          let key = atob(events[i].attributes[j].key),
+            value = atob(events[i].attributes[j].value);
+          if (key === "action") {
+            if (value === "InvokeForkRepository" || value === "ForkRepository")
+              isTask = true;
+          }
+          if (key === "TaskId") {
+            taskId = Number(value);
+          }
+
+          if (key === "TaskState") {
+            taskState = value;
+          }
+          task[key] = value;
+          console.log(key, value);
+        }
+        if (isTask && taskId) {
+          console.log(taskId, taskState, taskMesssage);
+          let searchIndex = props.taskQueue.findIndex((x) => x.id === taskId);
+          console.log(searchIndex, props.taskQueue);
+          if (searchIndex > -1) {
+            if (
+              taskState == "TASK_STATE_SUCCESS" &&
+              props.taskQueue[searchIndex].resolve
+            ) {
+              props.taskQueue[searchIndex].resolve(task);
+            } else if (props.taskQueue[searchIndex].reject) {
+              props.taskQueue[searchIndex].reject(task);
+            }
+            return;
+          }
+          console.log("Task limit", props.env.recordingTasks);
+          // if (props.env.recordingTasks) {
+          console.log("Recording task..", task);
+          props.addCompletedTask(task);
+          // }
+        }
+      }
+    }
+  };
+
+  const wsMessage = async (message) => {
+    let jsonData;
+    try {
       let evalData = JSON.parse(message.data);
-      let jsonData;
       if (evalData !== undefined) {
         jsonData = evalData.result.data;
       }
-      if (jsonData) {
-        await parser(decodeTx(jsonData.value.TxResult.tx));
-      }
-    };
+    } catch (e) {
+      console.error(e);
+    }
+    if (jsonData) {
+      console.log("Data", jsonData);
+      const fullTx = decodeTx(jsonData.value.TxResult.tx);
+      console.log("Tx", fullTx);
+      parseTx(fullTx);
+      parseEvents(jsonData.value.TxResult.result.events);
+    }
+  };
 
-    ws.onerror = (error) => {
-      console.log(`WebSocket error: ${error}`);
+  let ws;
+
+  useEffect(() => {
+    if (!ws) {
+      ws = new W3CWebSocket("ws://localhost:26657/websocket");
+      ws.onopen = () => {
+        ws.send(
+          JSON.stringify({
+            jsonrpc: "2.0",
+            method: "subscribe",
+            params: ["tm.event='Tx'"],
+            id: 1,
+          })
+        );
+      };
+
+      ws.onerror = (error) => {
+        console.log(`WebSocket error: ${error}`);
+      };
+    }
+    ws.addEventListener("message", wsMessage);
+
+    return () => {
+      ws.removeEventListener("message", wsMessage);
     };
-  });
+  }, []);
 
   return null;
 }
@@ -675,9 +755,13 @@ const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
     userNotification: state.userNotification,
+    env: state.env,
+    taskQueue: state.taskQueue,
   };
 };
 
-export default connect(mapStateToProps, { notify, createNotification })(
-  Notifications
-);
+export default connect(mapStateToProps, {
+  notify,
+  createNotification,
+  addCompletedTask,
+})(Notifications);

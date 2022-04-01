@@ -2,8 +2,8 @@ import { notify } from "reapop";
 import { sendTransaction, setupTxClients } from "./env";
 import { createUser, getUserDetailsForSelectedAddress } from "./user";
 import { updateUserBalance } from "./wallet";
-import forkRepositoryFiles from "../../helpers/forkRepositoryFiles";
 import dayjs from "dayjs";
+import { watchTask } from "./taskQueue";
 
 export const validatePostingEligibility = async (
   dispatch,
@@ -771,25 +771,19 @@ export const forkRepository = ({
 
     try {
       const message = await env.txClient.msgInvokeForkRepository(repository);
+      dispatch({ type: "START_RECORDING_TASKS" });
       const result = await sendTransaction({ message })(dispatch, getState);
       console.log(result);
       if (result && result.code === 0) {
-        const newRepoQuery = await env.queryClient.queryAddressRepository(
-          ownerId,
-          repositoryName
-        );
-        if (newRepoQuery.ok) {
-          const forkFilesQuery = await forkRepositoryFiles(
-            repositoryId,
-            newRepoQuery.data.Repository.id
-          );
-          console.log("fork files", forkFilesQuery);
-          if (!forkFilesQuery.data.forked) {
-            dispatch(notify(forkFilesQuery.error, "error"));
-          }
-        }
+        const log = JSON.parse(result.rawLog);
+        const taskId =
+          log[0].events[0].attributes[
+            log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
+          ].value;
+        const res = await watchTask(taskId)(dispatch, getState);
+        console.log("Watch task result", res);
         getUserDetailsForSelectedAddress()(dispatch, getState);
-        let url = "/" + ownerId + "/" + repositoryName;
+        let url = "/" + ownerId + "/" + res.RepositoryName;
         console.log(url);
         return { url };
       } else {
@@ -1205,7 +1199,7 @@ export const toggleRepositoryForking = ({ id }) => {
   };
 };
 
-export const grantGitServerForkAccess = () => {
+export const authorizeGitServer = () => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "grant access")))
       return null;
@@ -1225,12 +1219,10 @@ export const grantGitServerForkAccess = () => {
     // };
 
     try {
-      const message = await env.txClient.msgGrant(
-        wallet.selectedAddress,
-        process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
-        "/gitopia.gitopia.gitopia.MsgForkRepository",
-        dayjs().add(1, "M").unix()
-      );
+      const message = await env.txClient.msgAuthorizeGitServer({
+        creator: wallet.selectedAddress,
+        provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+      });
       console.log("Grant", message);
       const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);

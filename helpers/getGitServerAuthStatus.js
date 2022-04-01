@@ -1,37 +1,21 @@
-import { Api } from "../store/cosmos.authz.v1beta1/module/rest";
-const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
+import api from "./getApi";
 
-export async function getGitServerAuthStatusForRepoFork(userAddress) {
+export async function getGitServerAuthorization(userAddress) {
+  console.log("getGitServerAuthorization", userAddress);
+  if (!userAddress) return null;
   try {
-    const query = {
-      granter: userAddress,
-      grantee: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
-      msgTypeUrl: "/gitopia.gitopia.gitopia.MsgForkRepository",
-    };
-    const res = await api.queryGrants(query);
-    if (res.ok) {
-      console.log(res.data);
+    const res = await api.queryCheckGitServerAuthorization(
+      userAddress,
+      process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS
+    );
+    console.log(res);
+    if (res.ok && res.data.haveAuthorization) {
       return true;
+    } else {
+      return false;
     }
   } catch (e) {
     // console.error(e);
     return null;
-  }
-}
-
-export async function getGitServerAuthStatusForPullState(userAddress) {
-  try {
-    const query = {
-      granter: userAddress,
-      grantee: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
-      msgTypeUrl: "/gitopia.gitopia.gitopia.MsgSetPullRequestState",
-    };
-    const res = await api.queryGrants(query);
-    if (res.ok) {
-      console.log(res.data);
-      return {};
-    }
-  } catch (e) {
-    console.error(e);
   }
 }
