@@ -1,19 +1,18 @@
 const initialState = [];
 
 const reducer = (state = initialState, action) => {
-  console.log(state);
   let index = -2;
-  if (action.payload && action.payload.id && state.findIndex) {
+  if (action.payload && action.payload.id) {
     index = state.findIndex((x) => x.id === action.payload.id);
   }
   switch (action.type) {
     case "ADD_TASK_TO_QUEUE":
       if (index > -1) {
-        console.log("----> task updated");
+        console.log("----> task updated", action.payload);
         state[index] = action.payload;
         return state;
       } else {
-        console.log("----> task added");
+        console.log("----> task added", action.payload);
         state.push(action.payload);
         return state;
       }

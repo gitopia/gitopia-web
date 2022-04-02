@@ -747,11 +747,11 @@ export const forkRepository = ({
   repositoryName = "",
 }) => {
   return async (dispatch, getState) => {
-    const { wallet } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
+
+    const { wallet, user } = getState();
     let ownerType;
-    const { user } = getState();
     user.dashboards.every((d) => {
       if (d.id === ownerId) {
         ownerType = d.type == "User" ? "USER" : "ORGANIZATION";
@@ -1172,6 +1172,44 @@ export const updatePullRequestState = ({ id, state, mergeCommitSha }) => {
   };
 };
 
+export const mergePullRequest = ({ id }) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+      return null;
+
+    const { wallet, env } = getState();
+    const mergePull = {
+      creator: wallet.selectedAddress,
+      id,
+      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+    };
+
+    try {
+      const message = await env.txClient.msgInvokeMergePullRequest(mergePull);
+      dispatch({ type: "START_RECORDING_TASKS" });
+      const result = await sendTransaction({ message })(dispatch, getState);
+      if (result && result.code === 0) {
+        // return result;
+        const log = JSON.parse(result.rawLog);
+        const taskId =
+          log[0].events[0].attributes[
+            log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
+          ].value;
+        const res = await watchTask(taskId)(dispatch, getState);
+        console.log("Watch task result", res);
+        getUserDetailsForSelectedAddress()(dispatch, getState);
+        return res;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
 export const toggleRepositoryForking = ({ id }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
@@ -1205,19 +1243,6 @@ export const authorizeGitServer = () => {
       return null;
 
     const { wallet, env } = getState();
-    // const access = {
-    //   granter: wallet.selectedAddress,
-    //   grantee: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
-    //   grant: {
-    //     authorization: {
-    //       "@type": "/cosmos.authz.v1beta1.GenericAuthorization",
-
-    //       msg: "",
-    //     },
-    //     expiration: "4522-03-21T14:47:56Z",
-    //   },
-    // };
-
     try {
       const message = await env.txClient.msgAuthorizeGitServer({
         creator: wallet.selectedAddress,

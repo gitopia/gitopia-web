@@ -1,19 +1,23 @@
 export const watchTask = (id) => {
   return async (dispatch, getState) => {
     const state = getState().taskQueue;
-    console.log("Attempt to watch taskId", id, state);
-    let index = state.findIndex((x) => x.id === id);
+    let index = state.findIndex((x) => x.id === Number(id));
+    console.log("Attempt to watch taskId", id, index);
     if (index > -1) {
       //Task already in queue, must be completed ?
       const task = { ...state[index] };
+      console.log("Found task already", task);
       if (
         task.TaskState === "TASK_STATE_FAILURE" ||
         task.TaskState === "TASK_STATE_SUCCESS"
       ) {
-        console.log("Found task", task);
+        console.log("Found completed task");
         dispatch({ type: "STOP_RECORDING_TASKS" });
         dispatch({ type: "CLEAR_TASK_QUEUE" });
         return task;
+      } else if (task.resolve) {
+        console.log("Already watching task");
+        return null;
       } else {
         console.log("TaskState not satifactory. continue watching..", task);
       }

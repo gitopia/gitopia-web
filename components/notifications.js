@@ -62,6 +62,27 @@ function Notifications(props) {
             props.notify(formattedMsg.join(" "), "info");
           }
         }
+        if (tx.message.assignees.includes(props.selectedAddress)) {
+          let formattedMsg = [
+            shrinkAddress(tx.message.creator),
+            "",
+            "",
+            "created issue",
+            tx.message.title,
+            "in repository",
+            repo.name,
+            "and assigned it to you",
+          ];
+          props.createNotification(tx.message, "issue");
+          addNotification(
+            "issue",
+            tx.message,
+            true,
+            formattedMsg,
+            repo.owner.id + "/" + repo.name + "/issues/" + tx.message.iid
+          );
+          props.notify(formattedMsg.join(" "), "info");
+        }
         break;
 
       case "/gitopia.gitopia.gitopia.MsgCreateComment":
@@ -664,7 +685,14 @@ function Notifications(props) {
           let key = atob(events[i].attributes[j].key),
             value = atob(events[i].attributes[j].value);
           if (key === "action") {
-            if (value === "InvokeForkRepository" || value === "ForkRepository")
+            if (
+              [
+                // "InvokeForkRepository",
+                "ForkRepository",
+                // "InvokeMergePullRequest",
+                "SetPullRequestState",
+              ].includes(value)
+            )
               isTask = true;
           }
           if (key === "TaskId") {
@@ -682,18 +710,27 @@ function Notifications(props) {
           let searchIndex = props.taskQueue.findIndex((x) => x.id === taskId);
           console.log(searchIndex, props.taskQueue);
           if (searchIndex > -1) {
-            if (
-              taskState == "TASK_STATE_SUCCESS" &&
-              props.taskQueue[searchIndex].resolve
+            let queuedTask = props.taskQueue[searchIndex];
+            console.log(
+              "queuedTask",
+              queuedTask,
+              taskState === "TASK_STATE_FAILURE" && queuedTask.reject
+            );
+            if (taskState === "TASK_STATE_SUCCESS" && queuedTask.resolve) {
+              console.log("Resolving");
+              queuedTask.resolve(task);
+            } else if (
+              taskState === "TASK_STATE_FAILURE" &&
+              queuedTask.reject
             ) {
-              props.taskQueue[searchIndex].resolve(task);
-            } else if (props.taskQueue[searchIndex].reject) {
-              props.taskQueue[searchIndex].reject(task);
+              console.log("Rejecting");
+              queuedTask.reject(task);
             }
             return;
           }
           console.log("Task limit", props.env.recordingTasks);
           // if (props.env.recordingTasks) {
+          // if ([].includes(task.action))
           console.log("Recording task..", task);
           props.addCompletedTask(task);
           // }
