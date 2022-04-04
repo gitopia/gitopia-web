@@ -782,17 +782,22 @@ export const forkRepository = ({
           ].value;
         const res = await watchTask(taskId)(dispatch, getState);
         console.log("Watch task result", res);
-        getUserDetailsForSelectedAddress()(dispatch, getState);
-        let url = "/" + ownerId + "/" + res.RepositoryName;
-        console.log(url);
-        return { url };
+        if (res.TaskState === "TASK_STATE_SUCCESS") {
+          getUserDetailsForSelectedAddress()(dispatch, getState);
+          let url = "/" + ownerId + "/" + res.RepositoryName;
+          console.log(url);
+          return { url };
+        } else if (res.TaskState === "TASK_STATE_FAILURE") {
+          dispatch(notify(res.Message, "error"));
+          return null;
+        }
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
       }
     } catch (e) {
       console.error(e);
-      dispatch(notify(e.message, "error"));
+      dispatch(notify(e.Message || e.message, "error"));
       return null;
     }
   };

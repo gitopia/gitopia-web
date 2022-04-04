@@ -25,7 +25,8 @@ const reducer = (state = initialState, action) => {
       return state;
     case "CLEAR_TASK_QUEUE":
       state.forEach((task) => {
-        if (task.reject) task.reject({ message: "Queue cleared" });
+        if (task.reject)
+          task.reject({ message: "Queue cleared", noDispatch: true });
       });
       console.log("----> task queue cleared");
       return [];

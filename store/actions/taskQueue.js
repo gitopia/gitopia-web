@@ -29,11 +29,15 @@ export const watchTask = (id) => {
         payload: {
           id: Number(id),
           resolve: (task) => {
-            dispatch({ type: "REMOVE_TASK_FROM_QUEUE", payload: { id: id } });
+            if (!task.noDispatch) {
+              dispatch({ type: "REMOVE_TASK_FROM_QUEUE", payload: { id: id } });
+            }
             resolve(task);
           },
           reject: (task) => {
-            dispatch({ type: "REMOVE_TASK_FROM_QUEUE", payload: { id: id } });
+            if (!task.noDispatch) {
+              dispatch({ type: "REMOVE_TASK_FROM_QUEUE", payload: { id: id } });
+            }
             reject(task);
           },
         },

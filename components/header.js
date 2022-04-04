@@ -17,12 +17,12 @@ import dynamic from "next/dynamic";
 import getNodeInfo from "../helpers/getNodeInfo";
 const SendTlore = dynamic(() => import("./dashboard/sendTlore"));
 const CurrentWallet = dynamic(() => import("./currentWallet"));
-const NotificationsCard = dynamic(() =>
-  import("./dashboard/notificationsButton")
-);
-const NotificationsList = dynamic(() =>
-  import("./dashboard/notificationsList")
-);
+// const NotificationsCard = dynamic(() =>
+//   import("./dashboard/notificationsButton")
+// );
+// const NotificationsList = dynamic(() =>
+//   import("./dashboard/notificationsList")
+// );
 /*
 Menu States
 1 - Logged in menu
@@ -324,7 +324,7 @@ function Header(props) {
                 <button
                   tabIndex="0"
                   className={
-                    "btn rounded-full px-4 avatar relative " +
+                    "btn rounded-full px-4 relative " +
                     (props.activeWallet ? "btn-ghost" : "btn-primary") +
                     (props.unlockingWallet ? " loading" : "")
                   }
@@ -333,17 +333,19 @@ function Header(props) {
                   }}
                   ref={menuRef}
                 >
-                  <div className="rounded-full w-10 h-10 absolute left-1">
-                    {props.activeWallet && !props.unlockingWallet ? (
-                      <img
-                        src={
-                          "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
-                          addressToShow.slice(-1)
-                        }
-                      />
-                    ) : (
-                      ""
-                    )}
+                  <div className="avatar absolute left-1">
+                    <div className="rounded-full w-10 h-10">
+                      {props.activeWallet && !props.unlockingWallet ? (
+                        <img
+                          src={
+                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
+                            addressToShow.slice(-1)
+                          }
+                        />
+                      ) : (
+                        ""
+                      )}
+                    </div>
                   </div>
                   <div
                     className={
@@ -470,9 +472,7 @@ function Header(props) {
                                 : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                             </a>
                           </li>
-                          <li className="h-4">
-                            <div className="border-b border-grey mt-2"></div>
-                          </li>
+                          <div className="border-b border-grey my-2"></div>
                           <li>
                             <a
                               href="#"

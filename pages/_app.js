@@ -8,7 +8,7 @@ import NotificationManager from "../components/notificationManager";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Notifications from "../components/notifications";
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+// import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import ErrorHandler from "../hooks/errorHandler";
 
 const progress = new ProgressBar({
@@ -36,5 +36,5 @@ function MyApp({ Component, pageProps }) {
     </>
   );
 }
-serviceWorkerRegistration.register();
+// serviceWorkerRegistration.register();
 export default wrapper.withRedux(MyApp);

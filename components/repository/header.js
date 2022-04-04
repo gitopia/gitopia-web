@@ -219,14 +219,14 @@ function RepositoryHeader({ repository, ...props }) {
                 ) : (
                   <p>Please login to fork repository</p>
                 )}
-                <ul className="menu compact mt-8 max-h-80 overflow-auto">
+                <ul className="mt-8 pr-1 max-h-80 overflow-y-auto">
                   {props.dashboards.map((d) => {
                     const isOwner = repository.owner.id === d.id;
                     return (
                       <li key={d.name}>
                         <button
                           className={
-                            "btn btn-sm btn-primary btn-outline my-2 justify-start " +
+                            "btn btn-sm btn-primary btn-block btn-outline my-2 justify-start " +
                             (isForking === d.id ? "loading" : "")
                           }
                           disabled={isOwner || isForking}
@@ -272,14 +272,16 @@ function RepositoryHeader({ repository, ...props }) {
                               />
                             </svg>
                           )}
-                          {d.name} - {shrinkAddress(d.id)}
-                          {isOwner ? (
-                            <div className="ml-2 badge badge-secondary badge-sm">
-                              Owner
-                            </div>
-                          ) : (
-                            ""
-                          )}
+                          <div>
+                            {d.name} - {shrinkAddress(d.id)}
+                            {isOwner ? (
+                              <div className="ml-2 badge badge-secondary badge-sm">
+                                Owner
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                          </div>
                         </button>
                       </li>
                     );
