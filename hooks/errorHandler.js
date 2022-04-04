@@ -1,9 +1,8 @@
 import React from "react";
-import { connect } from "react-redux";
 import { useState, useEffect } from "react";
 import { useMemo } from "react";
 import { useContext } from "react";
-import Error404 from "./404";
+import Error404 from "../pages/404";
 import Router from "next/router";
 
 const ErrorStatusContext = React.createContext();
@@ -39,9 +38,4 @@ const ErrorHandler = ({ children }) => {
 };
 
 export const useErrorStatus = () => useContext(ErrorStatusContext);
-
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(mapStateToProps, {})(ErrorHandler);
+export default ErrorHandler;

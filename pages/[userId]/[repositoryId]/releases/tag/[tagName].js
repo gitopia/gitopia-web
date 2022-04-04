@@ -16,10 +16,17 @@ import {
 import getRepositoryRelease from "../../../../../helpers/getRepositoryRelease";
 import ReleaseView from "../../../../../components/repository/releaseView";
 import useRepository from "../../../../../hooks/useRepository";
-import { useErrorStatus } from "../../../../errorHandler";
+import { useErrorStatus } from "../../../../../hooks/errorHandler";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function RepositoryReleaseView(props) {

@@ -10,6 +10,17 @@ import { getOrganizationDetailsForDashboard } from "../../../store/actions/organ
 import Org from "../../../components/dashboard/org";
 import Link from "next/link";
 
+export async function getStaticProps() {
+  return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
+}
+
 function OrgDashboard(props) {
   const hrefBase = "/daos/" + props.currentDashboard;
   const router = useRouter();

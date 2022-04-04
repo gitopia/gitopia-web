@@ -1,5 +1,4 @@
 import { walletActions } from "../actions/actionTypes";
-import CryptoJS from "crypto-js";
 import { set, get, del } from "../persist";
 
 const initialState = {
@@ -27,15 +26,12 @@ const reducer = (state = initialState, action) => {
     }
 
     case walletActions.ADD_WALLET: {
-      let { wallet, password } = action.payload;
+      let { wallet, encryptedWallet } = action.payload;
       let wallets = state.wallets;
-      if (wallet.name && password) {
+      if (wallet.name && encryptedWallet) {
         wallets.push({
           name: wallet.name,
-          wallet: CryptoJS.AES.encrypt(
-            JSON.stringify(wallet),
-            password
-          ).toString(),
+          wallet: encryptedWallet,
         });
         set("lastWallet", wallet);
         return {
@@ -48,14 +44,11 @@ const reducer = (state = initialState, action) => {
     }
 
     case walletActions.ADD_EXTERNAL_WALLET: {
-      let { wallet, isKeplr, isLedger } = action.payload;
+      let { wallet, isKeplr, isLedger, encryptedWallet } = action.payload;
       let wallets = state.wallets;
       const item = {
         name: wallet.name,
-        wallet: CryptoJS.AES.encrypt(
-          JSON.stringify(wallet),
-          "STRONG_LEDGER"
-        ).toString(),
+        wallet: encryptedWallet,
       };
       if (isLedger) {
         item.isLedger = true;
@@ -86,21 +79,21 @@ const reducer = (state = initialState, action) => {
       };
     }
 
-    case walletActions.ADD_ACCOUNT: {
-      let { account } = action.payload;
-      state.activeWallet.accounts.push(account);
-      if (state.activeWallet.name && state.activeWallet.password) {
-        state.wallets[
-          state.wallets.findIndex((x) => x.name === state.activeWallet.name)
-        ].wallet = CryptoJS.AES.encrypt(
-          JSON.stringify(state.activeWallet),
-          state.activeWallet.password
-        ).toString();
-      }
-      return {
-        ...state,
-      };
-    }
+    // case walletActions.ADD_ACCOUNT: {
+    //   let { account } = action.payload;
+    //   state.activeWallet.accounts.push(account);
+    //   if (state.activeWallet.name && state.activeWallet.password) {
+    //     state.wallets[
+    //       state.wallets.findIndex((x) => x.name === state.activeWallet.name)
+    //     ].wallet = CryptoJS.AES.encrypt(
+    //       JSON.stringify(state.activeWallet),
+    //       state.activeWallet.password
+    //     ).toString();
+    //   }
+    //   return {
+    //     ...state,
+    //   };
+    // }
 
     case walletActions.SET_SELECTED_ADDRESS: {
       let { address } = action.payload;

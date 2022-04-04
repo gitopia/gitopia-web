@@ -28,10 +28,17 @@ import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
 import IssuePullTitle from "../../../../components/repository/issuePullTitle";
 import IssuePullDescription from "../../../../components/repository/issuePullDescription";
-import { useErrorStatus } from "../../../errorHandler";
+import { useErrorStatus } from "../../../../hooks/errorHandler";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function RepositoryIssueView(props) {

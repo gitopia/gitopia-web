@@ -1,13 +1,8 @@
 module.exports = {
-  purge: {
-    content: [
-      "./pages/**/*.{js,ts,jsx,tsx}",
-      "./components/**/*.{js,ts,jsx,tsx}",
-    ],
-    options: {
-      safelist: [/data-theme$/],
-    },
-  },
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+  ],
   darkMode: "media", // or 'media' or 'class'
   theme: {
     fontFamily: {
@@ -109,7 +104,7 @@ module.exports = {
           "base-content": "#E2EBF2",
           info: "#2094f3",
           success: "#009485",
-          warning: "#ff9900",
+          warning: "#FBBD23",
           error: "#E83D99",
           "--btn-text-case": "none" /* default text case for buttons */,
         },

@@ -3,7 +3,7 @@ import getRepository from "../helpers/getRepository";
 import getRepositoryPull from "../helpers/getRepositoryPull";
 import getBranchSha from "../helpers/getBranchSha";
 import { useRouter } from "next/router";
-import { useErrorStatus } from "../pages/errorHandler";
+import { useErrorStatus } from "./errorHandler";
 
 export default function usePullRequest(repository) {
   const router = useRouter();

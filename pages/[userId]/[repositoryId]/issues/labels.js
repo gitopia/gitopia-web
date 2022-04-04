@@ -13,8 +13,15 @@ import LabelEditor from "../../../../components/repository/labelEditor";
 import LabelView from "../../../../components/repository/labelView";
 import useRepository from "../../../../hooks/useRepository";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function RepositoryIssueLabelsView(props) {

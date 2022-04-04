@@ -17,8 +17,15 @@ import getRepositoryReleaseLatest from "../../../../helpers/getRepositoryRelease
 import ReleaseView from "../../../../components/repository/releaseView";
 import useRepository from "../../../../hooks/useRepository";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function RepositoryReleasesView(props) {

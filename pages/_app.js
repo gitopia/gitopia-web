@@ -1,4 +1,4 @@
-import "regenerator-runtime/runtime.js";
+// import "regenerator-runtime/runtime.js";
 import "../styles/globals.css";
 import { wrapper } from "../store";
 import ProgressBar from "@badrap/bar-of-progress";
@@ -7,9 +7,9 @@ import AutoLogin from "../components/autoLogin";
 import NotificationManager from "../components/notificationManager";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import ErrorHandler from "../pages/errorHandler";
 import Notifications from "../components/notifications";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import ErrorHandler from "../hooks/errorHandler";
 
 const progress = new ProgressBar({
   size: 2,

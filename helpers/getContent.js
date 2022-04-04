@@ -1,5 +1,5 @@
 const validSha = new RegExp(/^[a-f0-9]{40}$/);
-import axios from "axios";
+import axios from "../helpers/axiosFetch";
 
 export default async function getContent(
   repoId = null,
