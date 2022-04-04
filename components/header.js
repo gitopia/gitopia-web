@@ -39,13 +39,16 @@ function Header(props) {
   const [unread, setUnread] = useState(false);
   const router = useRouter();
   const menuRef = useRef();
-  const [formattedIssueNotifications, setFormattedIssueNotifications] =
-    useState([]);
+  const [
+    formattedIssueNotifications,
+    setFormattedIssueNotifications,
+  ] = useState([]);
   const [formattedPullNotifications, setFormattedPullNotifications] = useState(
     []
   );
-  const [showNotificationListState, setShowNotificationListState] =
-    useState("");
+  const [showNotificationListState, setShowNotificationListState] = useState(
+    ""
+  );
 
   const onUserMenuClose = () => {
     setMenuOpen(false);
@@ -268,7 +271,7 @@ function Header(props) {
             }}
           >
             <div className="flex">
-              <div className="mt-2">
+              {/* <div className="mt-2">
                 <div className="indicator flex-none mr-4">
                   {unread === true && menuOpen !== true ? (
                     <div class="indicator-item badge badge-primary"></div>
@@ -312,7 +315,7 @@ function Header(props) {
                     </svg>
                   </a>
                 </div>
-              </div>
+              </div> */}
               <div
                 className={
                   "dropdown dropdown-end " + (menuOpen ? "dropdown-open" : "")
@@ -383,7 +386,7 @@ function Header(props) {
                   </div>
                 </button>
                 <div className="shadow-xl dropdown-content bg-base-300 rounded mt-1">
-                  {menuState === 6 && (
+                  {/* {menuState === 6 && (
                     <NotificationsList
                       setMenuOpen={setMenuOpen}
                       setMenuState={setMenuState}
@@ -406,7 +409,7 @@ function Header(props) {
                         setShowNotificationListState
                       }
                     />
-                  )}
+                  )} */}
                   {menuState === 2 && <CurrentWallet />}
                   {menuState === 3 && menuOpen && (
                     <SendTlore
