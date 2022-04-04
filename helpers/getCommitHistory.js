@@ -32,7 +32,6 @@ export default async function getCommitHistory(
   if (nextKey) {
     params.pagination.nextKey = nextKey;
   }
-  console.log("params", params);
 
   await axios
     .post(baseUrl, params, {})

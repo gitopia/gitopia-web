@@ -8,17 +8,14 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case "ADD_TASK_TO_QUEUE":
       if (index > -1) {
-        console.log("----> task updated", action.payload);
         state[index] = action.payload;
         return state;
       } else {
-        console.log("----> task added", action.payload);
         state.push(action.payload);
         return state;
       }
     case "REMOVE_TASK_FROM_QUEUE":
       if (index > -1) {
-        console.log("----> task removed");
         state.splice(index, 1);
         return state;
       }
@@ -28,7 +25,6 @@ const reducer = (state = initialState, action) => {
         if (task.reject)
           task.reject({ message: "Queue cleared", noDispatch: true });
       });
-      console.log("----> task queue cleared");
       return [];
     default:
       return state;

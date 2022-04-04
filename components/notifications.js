@@ -212,7 +212,6 @@ function Notifications(props) {
 
       case "/gitopia.gitopia.gitopia.MsgAddIssueLabels":
         {
-          console.log(tx.message);
           let issue = await getIssue(tx.message.issueId);
           let repo = await getRepository(issue.repositoryId);
           let labels = [];
@@ -253,7 +252,6 @@ function Notifications(props) {
 
       case "/gitopia.gitopia.gitopia.MsgRemoveIssueLabels":
         {
-          console.log(tx.message);
           let issue = await getIssue(tx.message.issueId);
           let repo = await getRepository(issue.repositoryId);
           let labels = [];
@@ -657,9 +655,9 @@ function Notifications(props) {
         }
         break;
 
-      default:
-        console.log("Unhandled", tx.typeurl, tx.message);
-        break;
+      // default:
+      //   console.log("Unhandled", tx.typeurl, tx.message);
+      //   break;
     }
   };
 
@@ -703,35 +701,23 @@ function Notifications(props) {
             taskState = value;
           }
           task[key] = value;
-          console.log(key, value);
         }
         if (isTask && taskId) {
-          console.log(taskId, taskState, taskMesssage);
           let searchIndex = props.taskQueue.findIndex((x) => x.id === taskId);
-          console.log(searchIndex, props.taskQueue);
           if (searchIndex > -1) {
             let queuedTask = props.taskQueue[searchIndex];
-            console.log(
-              "queuedTask",
-              queuedTask,
-              taskState === "TASK_STATE_FAILURE" && queuedTask.reject
-            );
             if (taskState === "TASK_STATE_SUCCESS" && queuedTask.resolve) {
-              console.log("Resolving");
               queuedTask.resolve(task);
             } else if (
               taskState === "TASK_STATE_FAILURE" &&
               queuedTask.reject
             ) {
-              console.log("Rejecting");
               queuedTask.reject(task);
             }
             return;
           }
-          console.log("Task limit", props.env.recordingTasks);
           // if (props.env.recordingTasks) {
           // if ([].includes(task.action))
-          console.log("Recording task..", task);
           props.addCompletedTask(task);
           // }
         }
@@ -750,9 +736,7 @@ function Notifications(props) {
       console.error(e);
     }
     if (jsonData) {
-      console.log("Data", jsonData);
       const fullTx = decodeTx(jsonData.value.TxResult.tx);
-      console.log("Tx", fullTx);
       parseTx(fullTx);
       parseEvents(jsonData.value.TxResult.result.events);
     }

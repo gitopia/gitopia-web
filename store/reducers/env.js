@@ -103,7 +103,6 @@ const reducer = (state = initialState, action) => {
     }
 
     case "START_RECORDING_TASKS": {
-      console.log("Starting recording tasks ============++++>");
       return {
         ...state,
         recordingTasks: 100,
@@ -111,7 +110,6 @@ const reducer = (state = initialState, action) => {
     }
 
     case "STOP_RECORDING_TASKS": {
-      console.log("Stopping recording tasks ============---<<");
       return {
         ...state,
         recordingTasks: 0,

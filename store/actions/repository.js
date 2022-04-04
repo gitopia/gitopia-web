@@ -773,7 +773,6 @@ export const forkRepository = ({
       const message = await env.txClient.msgInvokeForkRepository(repository);
       dispatch({ type: "START_RECORDING_TASKS" });
       const result = await sendTransaction({ message })(dispatch, getState);
-      console.log(result);
       if (result && result.code === 0) {
         const log = JSON.parse(result.rawLog);
         const taskId =
@@ -785,7 +784,6 @@ export const forkRepository = ({
         if (res.TaskState === "TASK_STATE_SUCCESS") {
           getUserDetailsForSelectedAddress()(dispatch, getState);
           let url = "/" + ownerId + "/" + res.RepositoryName;
-          console.log(url);
           return { url };
         } else if (res.TaskState === "TASK_STATE_FAILURE") {
           dispatch(notify(res.Message, "error"));

@@ -30,7 +30,6 @@ export default async function getContent(
   if (path) {
     params.path = path;
   }
-  console.log("params", params);
   await axios
     .post(baseUrl, params, {})
     .then((response) => {
