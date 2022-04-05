@@ -6,7 +6,7 @@ import {
   Plan,
 } from "cosmjs-types/cosmos/upgrade/v1beta1/upgrade";
 import { CommunityPoolSpendProposal } from "cosmjs-types/cosmos/distribution/v1beta1/distribution";
-import { setupTxClients } from "./env";
+import { sendTransaction, setupTxClients } from "./env";
 import { longify } from "@cosmjs/stargate/build/queries/utils";
 import {
   ParameterChangeProposal,
@@ -34,7 +34,6 @@ export const submitGovernanceProposal = (
           typeUrl: "/cosmos.gov.v1beta1.TextProposal",
           value: Uint8Array.from(TextProposal.encode(textProposal).finish()),
         });
-
         const send = {
           content: msgAny,
           initialDeposit:
@@ -43,19 +42,8 @@ export const submitGovernanceProposal = (
               : [],
           proposer: wallet.selectedAddress,
         };
-
-        const msg = await env.txClient.msgSubmitProposal(send);
-
-        const fee = {
-          amount: [{ amount: "0", denom: "tlore" }],
-          gas: "200000",
-        };
-
-        const memo = "";
-        const result = await env.txClient.signAndBroadcast([msg], {
-          fee,
-          memo,
-        });
+        const message = await env.txClient.msgSubmitProposal(send);
+        const result = await sendTransaction({ message })(dispatch, getState);
         updateUserBalance()(dispatch, getState);
         if (result) {
           if (result.code === 0) {
@@ -111,18 +99,8 @@ export const chainUpgradeProposal = (
               : [],
           proposer: wallet.selectedAddress,
         };
-        const msg = await env.txClient.msgSubmitProposal(send);
-
-        const fee = {
-          amount: [{ amount: "0", denom: "tlore" }],
-          gas: "200000",
-        };
-
-        const memo = "";
-        const result = await env.txClient.signAndBroadcast([msg], {
-          fee,
-          memo,
-        });
+        const message = await env.txClient.msgSubmitProposal(send);
+        const result = await sendTransaction({ message })(dispatch, getState);
         updateUserBalance()(dispatch, getState);
         if (result) {
           if (result.code === 0) {
@@ -160,14 +138,13 @@ export const communityPoolSpendProposal = (
             denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
           },
         ];
-        const communityPoolSpendProposal = CommunityPoolSpendProposal.fromPartial(
-          {
+        const communityPoolSpendProposal =
+          CommunityPoolSpendProposal.fromPartial({
             title: title,
             description: description,
             recipient: address,
             amount: amountToSend,
-          }
-        );
+          });
         const msgAny = Any.fromPartial({
           typeUrl: "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal",
           value: Uint8Array.from(
@@ -184,18 +161,8 @@ export const communityPoolSpendProposal = (
               : [],
           proposer: wallet.selectedAddress,
         };
-        const msg = await env.txClient.msgSubmitProposal(send);
-
-        const fee = {
-          amount: [{ amount: "0", denom: "tlore" }],
-          gas: "200000",
-        };
-
-        const memo = "";
-        const result = await env.txClient.signAndBroadcast([msg], {
-          fee,
-          memo,
-        });
+        const message = await env.txClient.msgSubmitProposal(send);
+        const result = await sendTransaction({ message })(dispatch, getState);
         updateUserBalance()(dispatch, getState);
         if (result) {
           if (result.code === 0) {
@@ -257,16 +224,8 @@ export const paramChangeProposal = (
               : [],
           proposer: wallet.selectedAddress,
         };
-        const msg = await env.txClient.msgSubmitProposal(send);
-        const fee = {
-          amount: [{ amount: "0", denom: "tlore" }],
-          gas: "200000",
-        };
-        const memo = "";
-        const result = await env.txClient.signAndBroadcast([msg], {
-          fee,
-          memo,
-        });
+        const message = await env.txClient.msgSubmitProposal(send);
+        const result = await sendTransaction({ message })(dispatch, getState);
         updateUserBalance()(dispatch, getState);
         if (result) {
           if (result.code === 0) {
@@ -302,17 +261,8 @@ export const proposalDeposit = (proposalId, amount) => {
           ],
         };
 
-        const msg = await env.txClient.msgDeposit(send);
-        const fee = {
-          amount: [{ amount: "0", denom: "tlore" }],
-          gas: "200000",
-        };
-
-        const memo = "";
-        const result = await env.txClient.signAndBroadcast([msg], {
-          fee,
-          memo,
-        });
+        const message = await env.txClient.msgDeposit(send);
+        const result = await sendTransaction({ message })(dispatch, getState);
         updateUserBalance()(dispatch, getState);
         if (result) {
           if (result.code === 0) {
@@ -356,19 +306,8 @@ export const proposalVote = (proposalId, option) => {
           voter: wallet.selectedAddress,
           option: choice,
         };
-
-        const msg = await env.txClient.msgVote(send);
-
-        const fee = {
-          amount: [{ amount: "0", denom: "utlore" }],
-          gas: "200000",
-        };
-
-        const memo = "";
-        const result = await env.txClient.signAndBroadcast([msg], {
-          fee,
-          memo,
-        });
+        const message = await env.txClient.msgVote(send);
+        const result = await sendTransaction({ message })(dispatch, getState);
         updateUserBalance()(dispatch, getState);
         if (result && result.code === 0) {
           if (result.code === 0) {

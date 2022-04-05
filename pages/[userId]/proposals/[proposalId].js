@@ -1,18 +1,19 @@
 import Head from "next/head";
-import Header from "../../../../components/header";
+import Header from "../../../components/header";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import getProposal from "../../../../helpers/getProposal";
+import getProposal from "../../../helpers/getProposal";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
-import { proposalDeposit } from "../../../../store/actions/proposals";
-import { proposalVote } from "../../../../store/actions/proposals";
+import { proposalDeposit } from "../../../store/actions/proposals";
+import { proposalVote } from "../../../store/actions/proposals";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import getTally from "../../../../helpers/getTally";
+import getTally from "../../../helpers/getTally";
 import Link from "next/dist/client/link";
-import getDepositor from "../../../../helpers/getDepositor";
-import getVoter from "../../../../helpers/getVoter";
+import getDepositor from "../../../helpers/getDepositor";
+import getVoter from "../../../helpers/getVoter";
+import ReactMarkdown from "react-markdown";
 
 function ProposalDetailsView(props) {
   const [amount, setAmount] = useState("");
@@ -30,7 +31,7 @@ function ProposalDetailsView(props) {
   const [voters, setVoters] = useState([]);
   const router = useRouter();
   const id = router.query.proposalId;
-  const hrefBase = "/daos/" + router.query.orgId;
+  const hrefBase = "/" + router.query.userId;
   const type = "@type";
   var localizedFormat = require("dayjs/plugin/localizedFormat");
   dayjs.extend(localizedFormat);
@@ -43,7 +44,7 @@ function ProposalDetailsView(props) {
           setProposer(res.proposer);
           setInitialDeposit(res.initial_deposit);
         } else {
-          router.push("/daos/" + router.query.userId + "/proposals");
+          router.push(router.query.userId + "/proposals");
         }
       });
     }
@@ -150,11 +151,25 @@ function ProposalDetailsView(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div
-        data-theme="dark"
-        className="flex flex-col bg-base-100 text-base-content min-h-screen"
-      >
-        <main className="container mx-auto max-w-screen-md p-8">
+      <div className="flex">
+        <main className="container mx-auto max-w-screen-lg p-8 mt-10">
+          <div className="pb-4">
+            <Link href={hrefBase + "/proposals"}>
+              <label className="flex link text-sm uppercase no-underline items-center hover:text-green">
+                <svg
+                  width="8"
+                  height="11"
+                  viewBox="0 0 8 11"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor"
+                >
+                  <path d="M7 1L2 5.5L7 10" stroke-width="2" />
+                </svg>
+                <span className="ml-2">BACK</span>
+              </label>
+            </Link>
+          </div>
           {proposal !== undefined ? (
             <div className="">
               <div>
@@ -245,7 +260,11 @@ function ProposalDetailsView(props) {
               </div>
               <div className="mt-3 text-type-secondary mb-14">
                 {typeof proposal.content !== "undefined" ? (
-                  <div className="mb-3">{proposal.content.description} </div>
+                  <div className="mb-3 markdown-body">
+                    <ReactMarkdown linkTarget="_blank">
+                      {proposal.content.description}
+                    </ReactMarkdown>
+                  </div>
                 ) : (
                   ""
                 )}

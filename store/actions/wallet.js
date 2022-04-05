@@ -401,15 +401,7 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
           ],
         };
         const msg = await env.txClient.msgSend(send);
-        const fee = {
-          amount: [
-            {
-              amount: "0",
-              denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
-            },
-          ],
-          gas: "200000",
-        };
+        const fee = "auto";
         const memo = "";
         const result = await env.txClient.signAndBroadcast([msg], {
           fee,
