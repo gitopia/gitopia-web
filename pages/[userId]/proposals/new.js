@@ -18,8 +18,9 @@ function RepositoryProposalCreateView(props) {
   const [validateAddressError, setValidateAddressError] = useState("");
   const validAddress = new RegExp("gitopia[a-z0-9]{39}");
   const [validateAmountError, setValidateAmountError] = useState("");
-  const [validateInitialAmountError, setValidateInitialAmountError] =
-    useState("");
+  const [validateInitialAmountError, setValidateInitialAmountError] = useState(
+    ""
+  );
   const [validateTitleError, setValidateTitleError] = useState("");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -83,19 +84,19 @@ function RepositoryProposalCreateView(props) {
     setValidateAmountError(null);
     let Vamount = Number(amount);
     if (amount == "" || amount == 0) {
-      setValidateAmountError("Enter Valid Amount");
+      setValidateAmountError("Enter a valid amount");
     }
 
-    let balance = props.loreBalance;
-    if (props.advanceUser === false) {
-      Vamount = Vamount * 1000000;
-    }
-    if (Vamount > 0 && isNaturalNumber(Vamount)) {
-      if (Vamount > balance) {
-        setValidateAmountError("Insufficient Balance");
-      }
-    } else {
-      setValidateAmountError("Enter a Valid Amount");
+    // let balance = props.loreBalance;
+    // if (props.advanceUser === false) {
+    //   Vamount = Vamount * 1000000;
+    // }
+    if (!isNaturalNumber(Vamount)) {
+      // if (Vamount > balance) {
+      //   setValidateAmountError("Insufficient Balance");
+      // }
+      // } else {
+      setValidateAmountError("Enter a valid amount");
     }
   };
 
@@ -103,7 +104,7 @@ function RepositoryProposalCreateView(props) {
     setValidateInitialAmountError(null);
     let Vamount = Number(amount);
     if (amount == "") {
-      setValidateInitialAmountError("Enter Valid Amount");
+      setValidateInitialAmountError("Enter a valid amount");
     }
     let balance = props.loreBalance;
     if (props.advanceUser === false) {
@@ -111,10 +112,10 @@ function RepositoryProposalCreateView(props) {
     }
     if (Vamount >= 0 && isNaturalNumber(Vamount)) {
       if (Vamount > balance) {
-        setValidateInitialAmountError("Insufficient Balance");
+        setValidateInitialAmountError("Insufficient balance");
       }
     } else {
-      setValidateInitialAmountError("Enter a Valid Amount");
+      setValidateInitialAmountError("Enter a valid amount");
     }
   };
 
@@ -153,7 +154,7 @@ function RepositoryProposalCreateView(props) {
 
   const redirectToProposal = async (res) => {
     let result = JSON.parse(res.rawLog);
-    if (res.code === 0) {
+    if (res && res.code === 0) {
       console.log(router);
       router.push(
         hrefBase + "/proposals/" + result[0].events[4].attributes[0].value
@@ -424,7 +425,7 @@ function RepositoryProposalCreateView(props) {
                                 : (initialDeposit * 1000000).toString()
                             )
                             .then((res) => {
-                              if (res.code === 0) {
+                              if (res && res.code === 0) {
                                 setDescription("");
                                 setAddress("");
                                 setAmount("");
@@ -512,7 +513,7 @@ function RepositoryProposalCreateView(props) {
                                 : (initialDeposit * 1000000).toString()
                             )
                             .then((res) => {
-                              if (res.code === 0) {
+                              if (res && res.code === 0) {
                                 setTitle("");
                                 setDescription("");
                                 setReleaseVersionTag("");
@@ -630,7 +631,7 @@ function RepositoryProposalCreateView(props) {
                                 : (initialDeposit * 1000000).toString()
                             )
                             .then((res) => {
-                              if (res.code === 0) {
+                              if (res && res.code === 0) {
                                 setTitle("");
                                 setDescription("");
                                 setInitialDeposit(0);
@@ -672,7 +673,7 @@ function RepositoryProposalCreateView(props) {
                               : (initialDeposit * 1000000).toString()
                           )
                           .then((res) => {
-                            if (res.code === 0) {
+                            if (res && res.code === 0) {
                               setTitle("");
                               setDescription("");
                               setInitialDeposit(0);
