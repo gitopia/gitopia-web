@@ -1,13 +1,8 @@
 module.exports = {
-  purge: {
-    content: [
-      "./pages/**/*.{js,ts,jsx,tsx}",
-      "./components/**/*.{js,ts,jsx,tsx}",
-    ],
-    options: {
-      safelist: [/data-theme$/],
-    },
-  },
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+  ],
   darkMode: "media", // or 'media' or 'class'
   theme: {
     fontFamily: {
@@ -42,12 +37,16 @@ module.exports = {
         grey: {
           // DEFAULT: "#404450",
           DEFAULT: "#3E4051",
+          300: "#6F7A8F",
         },
         pink: {
           50: "#FFB0DB",
           DEFAULT: "#E83D99",
           400: "#F364B2",
           900: "#C52A7D",
+        },
+        blue: {
+          DEFAULT: "#BFD6F8",
         },
         type: {
           DEFAULT: "#E2EBF2",
@@ -105,7 +104,7 @@ module.exports = {
           "base-content": "#E2EBF2",
           info: "#2094f3",
           success: "#009485",
-          warning: "#ff9900",
+          warning: "#FBBD23",
           error: "#E83D99",
           "--btn-text-case": "none" /* default text case for buttons */,
         },

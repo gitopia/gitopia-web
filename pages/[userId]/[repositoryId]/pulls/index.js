@@ -18,8 +18,15 @@ import Label from "../../../../components/repository/label";
 import parseFilters from "../../../../helpers/parseFilters";
 import pullRequestStateClass from "../../../../helpers/pullRequestStateClass";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function RepositoryPullsView(props) {

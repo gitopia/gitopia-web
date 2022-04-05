@@ -1,17 +1,27 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import { notify } from "reapop";
-import { updatePullRequestState } from "../../store/actions/repository";
-import mergePullRequest from "../../helpers/mergePullRequest";
+import {
+  updatePullRequestState,
+  authorizeGitServer,
+  mergePullRequest,
+} from "../../store/actions/repository";
+// import mergePullRequest from "../../helpers/mergePullRequest";
 import pullRequestStateClass from "../../helpers/pullRequestStateClass";
 import mergePullRequestCheck from "../../helpers/mergePullRequestCheck";
 import getPullRequestMergePermission from "../../helpers/getPullRequestMergePermission";
+import { getGitServerAuthorization } from "../../helpers/getGitServerAuthStatus";
 
 function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
   const [isMerging, setIsMerging] = useState(false);
   const [stateClass, setStateClass] = useState("");
   const [iconType, setIconType] = useState("check");
   const [message, setMessage] = useState("");
+  const [pullMergeAccess, setPullMergeAccess] = useState(false);
+  const [pullMergeAccessDialogShown, setPullMergeAccessDialogShown] = useState(
+    false
+  );
+  const [isGrantingAccess, setIsGrantingAccess] = useState(false);
 
   const checkMerge = async () => {
     setIsMerging(true);
@@ -48,30 +58,43 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
       pullRequest.id
     );
     if (user && user.havePermission) {
-      const res = await mergePullRequest(
-        pullRequest.iid,
-        pullRequest.base.repositoryId,
-        pullRequest.head.repositoryId,
-        pullRequest.base.branch,
-        pullRequest.head.branch,
-        "merge",
-        props.selectedAddress,
-        "<>",
-        props.selectedAddress
-      );
-      console.log(res);
-      if (!res.data.merged) {
-        props.notify(res.error, "error");
+      if (!pullMergeAccess) {
+        setPullMergeAccessDialogShown(true);
+        setIsMerging(false);
+        return;
+      }
+      // const res = await mergePullRequest(
+      //   pullRequest.iid,
+      //   pullRequest.base.repositoryId,
+      //   pullRequest.head.repositoryId,
+      //   pullRequest.base.branch,
+      //   pullRequest.head.branch,
+      //   "merge",
+      //   props.selectedAddress,
+      //   "<>",
+      //   props.selectedAddress
+      // );
+      // console.log(res);
+      // if (!res.data.merged) {
+      //   props.notify(res.error, "error");
+      // } else {
+      //   const transaction = await props.updatePullRequestState({
+      //     id: pullRequest.id,
+      //     state: "MERGED",
+      //     mergeCommitSha: res.data.merge_commit_sha,
+      //   });
+      //   console.log(transaction);
+      //   if (transaction && transaction.code === 0) {
+      //     refreshPullRequest();
+      //   }
+      // }
+      const res = await props.mergePullRequest({ id: pullRequest.id });
+      if (res) {
+        if (res.TaskState === "TASK_STATE_SUCCESS") refreshPullRequest();
+        else if (res.TaskState === "TASK_STATE_FAILURE")
+          props.notify(res.Message, "error");
       } else {
-        const transaction = await props.updatePullRequestState({
-          id: pullRequest.id,
-          state: "MERGED",
-          mergeCommitSha: res.data.merge_commit_sha,
-        });
-        console.log(transaction);
-        if (transaction && transaction.code === 0) {
-          refreshPullRequest();
-        }
+        props.notify("Unknown error", "error");
       }
     } else {
       props.notify("User not authorized for merging pull requests", "error");
@@ -94,6 +117,11 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
         setIconType("warning");
     }
   }, [pullRequest]);
+
+  const refreshPullMergeAccess = async () => {
+    setPullMergeAccess(await getGitServerAuthorization(props.selectedAddress));
+  };
+  useEffect(refreshPullMergeAccess, [props.selectedAddress]);
 
   return (
     <div className="flex w-full mt-8">
@@ -177,6 +205,55 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
           ""
         )}
       </div>
+      <input
+        type="checkbox"
+        checked={pullMergeAccessDialogShown}
+        readOnly
+        className="modal-toggle"
+      />
+      <div className="modal">
+        <div className="modal-box max-w-sm">
+          <p>
+            Gitopia data server does not have repository merge access on behalf
+            of your account.
+          </p>
+          <p className="text-xs mt-4">Server Address:</p>
+          <p className="text-xs">
+            {process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS}
+          </p>
+          <div className="modal-action">
+            <label
+              className="btn btn-sm"
+              onClick={() => {
+                setPullMergeAccessDialogShown(false);
+              }}
+            >
+              Cancel
+            </label>
+            <button
+              className={
+                "btn btn-sm btn-primary" + (isGrantingAccess ? " loading" : "")
+              }
+              onClick={async () => {
+                setIsGrantingAccess(true);
+                const res = await props.authorizeGitServer();
+                console.log(res);
+                setIsGrantingAccess(false);
+                if (res.code !== 0) {
+                  props.notify(res.rawLog, "error");
+                } else {
+                  refreshPullMergeAccess();
+                  setPullMergeAccessDialogShown(false);
+                  mergePull();
+                }
+              }}
+              disabled={isGrantingAccess}
+            >
+              Grant Access
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -190,4 +267,6 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   notify,
   updatePullRequestState,
+  authorizeGitServer,
+  mergePullRequest,
 })(MergePullRequestView);

@@ -20,8 +20,15 @@ import { useRouter } from "next/router";
 import CommitDetailRow from "../../../../../components/repository/commitDetailRow";
 import getCommitHistory from "../../../../../helpers/getCommitHistory";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function RepositoryPullCommitsView(props) {

@@ -7,7 +7,6 @@ import Header from "../../../../components/header";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 
-import vscdarkplus from "react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus";
 import BranchSelector from "../../../../components/repository/branchSelector";
 import Breadcrumbs from "../../../../components/repository/breadcrumbs";
 import CommitDetailRow from "../../../../components/repository/commitDetailRow";
@@ -19,14 +18,25 @@ import dynamic from "next/dynamic";
 import ReactMarkdown from "react-markdown";
 import getContent from "../../../../helpers/getContent";
 import getCommitHistory from "../../../../helpers/getCommitHistory";
-import { useErrorStatus } from "../../../errorHandler";
+import { useErrorStatus } from "../../../../hooks/errorHandler";
 
+let vscdarkplus;
 const SyntaxHighlighter = dynamic(
-  async () => (await import("react-syntax-highlighter")).Prism
+  async () => {
+    vscdarkplus = (await import ("react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus")).default;
+    return (await import("react-syntax-highlighter")).Prism
+  }
 );
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function RepositoryTreeView(props) {

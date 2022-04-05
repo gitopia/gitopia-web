@@ -1,5 +1,5 @@
 import { starportActions, envActions } from "./actionTypes";
-import axios from "axios";
+import axios from "../../helpers/axiosFetch";
 import { config } from "./env";
 
 const apiNode =

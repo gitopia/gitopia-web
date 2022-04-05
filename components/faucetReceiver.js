@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import axios from "axios";
+import axios from "../helpers/axiosFetch";
 import { updateUserBalance } from "../store/actions/wallet";
 import { notify } from "reapop";
 

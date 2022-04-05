@@ -18,8 +18,15 @@ import parseFilters from "../../../../helpers/parseFilters";
 import renderPagination from "../../../../helpers/renderPagination";
 import Label from "../../../../components/repository/label";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function RepositoryIssueView(props) {

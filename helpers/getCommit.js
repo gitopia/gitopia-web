@@ -18,7 +18,6 @@ export default async function getCommit(repoId = null, commitSha = null) {
   if (commitSha) {
     baseUrl = baseUrl + "/" + commitSha;
   }
-  console.log("params", params);
   await fetch(baseUrl, {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     mode: "cors", // no-cors, *cors, same-origin

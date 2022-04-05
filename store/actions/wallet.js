@@ -9,9 +9,6 @@ import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import find from "lodash/find";
 import { notify } from "reapop";
 import { setupTxClients } from "./env";
-import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
-import { LedgerSigner } from "@cosmjs/ledger-amino";
-import { stringToPath } from "@cosmjs/crypto";
 import getNodeInfo from "../../helpers/getNodeInfo";
 
 let ledgerTransport;
@@ -25,7 +22,6 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
   });
 
   if (accountSigner) {
-    console.log("accountSigner", accountSigner);
     const { queryClient, txClient } = await import("@gitopia/gitopia-js");
 
     const [tc, qc, amount] = await Promise.all([
@@ -108,11 +104,10 @@ export const unlockKeplrWallet = () => {
         await postWalletUnlocked(offlineSigner, dispatch, getState);
         return accounts[0];
       } catch (e) {
-        console.log(e);
+        console.error(e);
         return null;
       }
     } else {
-      console.log("Unable to use keplr getOfflineSigner");
       dispatch(notify("Please ensure keplr extension is installed", "error"));
     }
   };
@@ -153,7 +148,6 @@ export const unlockWallet = ({ name, password }) => {
           CryptoJS.enc.Utf8
         )
       );
-      console.log(wallet);
     } catch (e) {
       console.error(e);
       return false;
@@ -214,9 +208,16 @@ export const createWalletWithMnemonic = ({
     const [firstAccount] = await accountSigner.getAccounts();
     const account = { address: firstAccount.address, pathIncrement: 0 };
     wallet.accounts.push(account);
+
+    const CryptoJS = (await import("crypto-js")).default;
+    const encryptedWallet = CryptoJS.AES.encrypt(
+      JSON.stringify(wallet),
+      password
+    ).toString();
+
     await dispatch({
       type: walletActions.ADD_WALLET,
-      payload: { wallet, password },
+      payload: { wallet, encryptedWallet },
     });
 
     try {
@@ -250,9 +251,15 @@ export const restoreWallet = ({ encrypted, password }) => {
         prefix: wallet.prefix,
       }
     );
+
+    const encryptedWallet = CryptoJS.AES.encrypt(
+      JSON.stringify(wallet),
+      password
+    ).toString();
+
     await dispatch({
       type: walletActions.ADD_WALLET,
-      payload: { wallet, password },
+      payload: { wallet, encryptedWallet },
     });
 
     try {
@@ -393,7 +400,6 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
             },
           ],
         };
-        console.log(send);
         const msg = await env.txClient.msgSend(send);
         const fee = {
           amount: [
@@ -428,11 +434,12 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
 
 export const unlockLedgerWallet = ({ name }) => {
   return async (dispatch, getState) => {
-    // const TransportWebUSB = (await import("@ledgerhq/hw-transport-webusb"))
-    //   .default;
+    const TransportWebUSB = (await import("@ledgerhq/hw-transport-webusb"))
+      .default;
     // const TransportWebHID = (await import("@ledgerhq/hw-transport-webhid"))
     //   .default;
-    // const LedgerSigner = (await import("@cosmjs/ledger-amino")).LedgerSigner;
+    const LedgerSigner = (await import("@cosmjs/ledger-amino")).LedgerSigner;
+    const stringToPath = (await import("@cosmjs/crypto")).stringToPath;
     const { wallet } = getState();
     let accountSigner;
     const encryptedWallet =
@@ -441,12 +448,9 @@ export const unlockLedgerWallet = ({ name }) => {
     dispatch({ type: walletActions.START_UNLOCKING_WALLET });
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
-      console.log("path", path);
 
       if (!ledgerTransport) {
         ledgerTransport = await TransportWebUSB.create();
-      } else {
-        console.log("Already init");
       }
 
       accountSigner = new LedgerSigner(ledgerTransport, {
@@ -514,11 +518,11 @@ export const unlockLedgerWallet = ({ name }) => {
 
 export const initLedgerTransport = ({ force } = { force: false }) => {
   return async (dispatch, getState) => {
+    const TransportWebUSB = (await import("@ledgerhq/hw-transport-webusb"))
+      .default;
     try {
       if (!ledgerTransport || force) {
         ledgerTransport = await TransportWebUSB.create();
-      } else {
-        console.log("Already init");
       }
       return { transport: ledgerTransport };
     } catch (e) {
@@ -530,6 +534,8 @@ export const initLedgerTransport = ({ force } = { force: false }) => {
 export const getLedgerSigner = () => {
   return async (dispatch, getState) => {
     if (!ledgerTransport) return { message: "No connection available" };
+    const LedgerSigner = (await import("@cosmjs/ledger-amino")).LedgerSigner;
+    const stringToPath = (await import("@cosmjs/crypto")).stringToPath;
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
       const accountSigner = new LedgerSigner(ledgerTransport, {
@@ -557,6 +563,7 @@ export const getLedgerSigner = () => {
 export const showLedgerAddress = (ledgerSigner) => {
   return async (dispatch, getState) => {
     if (!ledgerSigner) return { message: "No connection available" };
+    const stringToPath = (await import("@cosmjs/crypto")).stringToPath;
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
       const addr = await ledgerSigner.showAddress(path);
@@ -570,13 +577,23 @@ export const showLedgerAddress = (ledgerSigner) => {
 export const addLedgerWallet = (name, address, ledgerSigner) => {
   return async (dispatch, getState) => {
     if (!ledgerSigner) return { message: "No connection available" };
+    const stringToPath = (await import("@cosmjs/crypto")).stringToPath;
+    const CryptoJS = (await import("crypto-js")).default;
+
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
+      const wallet = { name, accounts: [{ address, path }], isLedger: true };
+      const password = "STRONG_LEDGER";
+      const encryptedWallet = CryptoJS.AES.encrypt(
+        JSON.stringify(wallet),
+        password
+      ).toString();
       dispatch({
         type: walletActions.ADD_EXTERNAL_WALLET,
         payload: {
           isLedger: true,
-          wallet: { name, accounts: [{ address, path }], isLedger: true },
+          wallet,
+          encryptedWallet,
         },
       });
       dispatch({ type: walletActions.STORE_WALLETS });

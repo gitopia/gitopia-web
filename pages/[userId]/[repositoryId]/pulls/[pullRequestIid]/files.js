@@ -19,8 +19,15 @@ import getDiff from "../../../../../helpers/getDiff";
 import useRepository from "../../../../../hooks/useRepository";
 import usePullRequest from "../../../../../hooks/usePullRequest";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function RepositoryPullFilesView(props) {

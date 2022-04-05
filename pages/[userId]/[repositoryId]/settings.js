@@ -14,8 +14,15 @@ import TransferOwnership from "../../../components/repository/transferOwnership"
 import useRepository from "../../../hooks/useRepository";
 import ToggleForking from "../../../components/repository/toggleForking";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   return { props: {} };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking' 
+  }
 }
 
 function RepositorySettingsView(props) {

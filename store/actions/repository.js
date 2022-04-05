@@ -2,7 +2,8 @@ import { notify } from "reapop";
 import { sendTransaction, setupTxClients } from "./env";
 import { createUser, getUserDetailsForSelectedAddress } from "./user";
 import { updateUserBalance } from "./wallet";
-import forkRepositoryFiles from "../../helpers/forkRepositoryFiles";
+import dayjs from "dayjs";
+import { watchTask } from "./taskQueue";
 
 export const validatePostingEligibility = async (
   dispatch,
@@ -746,11 +747,11 @@ export const forkRepository = ({
   repositoryName = "",
 }) => {
   return async (dispatch, getState) => {
-    const { wallet } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
+
+    const { wallet, user } = getState();
     let ownerType;
-    const { user } = getState();
     user.dashboards.every((d) => {
       if (d.id === ownerId) {
         ownerType = d.type == "User" ? "USER" : "ORGANIZATION";
@@ -763,40 +764,38 @@ export const forkRepository = ({
       repositoryId,
       ownerId,
       ownerType,
+      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
     };
     console.log("fork", repository);
     const { env } = getState();
 
     try {
-      const message = await env.txClient.msgForkRepository(repository);
+      const message = await env.txClient.msgInvokeForkRepository(repository);
+      dispatch({ type: "START_RECORDING_TASKS" });
       const result = await sendTransaction({ message })(dispatch, getState);
-      console.log(result);
       if (result && result.code === 0) {
-        const newRepoQuery = await env.queryClient.queryAddressRepository(
-          ownerId,
-          repositoryName
-        );
-        if (newRepoQuery.ok) {
-          const forkFilesQuery = await forkRepositoryFiles(
-            repositoryId,
-            newRepoQuery.data.Repository.id
-          );
-          console.log("fork files", forkFilesQuery);
-          if (!forkFilesQuery.data.forked) {
-            dispatch(notify(forkFilesQuery.error, "error"));
-          }
+        const log = JSON.parse(result.rawLog);
+        const taskId =
+          log[0].events[0].attributes[
+            log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
+          ].value;
+        const res = await watchTask(taskId)(dispatch, getState);
+        console.log("Watch task result", res);
+        if (res.TaskState === "TASK_STATE_SUCCESS") {
+          getUserDetailsForSelectedAddress()(dispatch, getState);
+          let url = "/" + ownerId + "/" + res.RepositoryName;
+          return { url };
+        } else if (res.TaskState === "TASK_STATE_FAILURE") {
+          dispatch(notify(res.Message, "error"));
+          return null;
         }
-        getUserDetailsForSelectedAddress()(dispatch, getState);
-        let url = "/" + ownerId + "/" + repositoryName;
-        console.log(url);
-        return { url };
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
       }
     } catch (e) {
       console.error(e);
-      dispatch(notify(e.message, "error"));
+      dispatch(notify(e.Message || e.message, "error"));
       return null;
     }
   };
@@ -1176,6 +1175,44 @@ export const updatePullRequestState = ({ id, state, mergeCommitSha }) => {
   };
 };
 
+export const mergePullRequest = ({ id }) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+      return null;
+
+    const { wallet, env } = getState();
+    const mergePull = {
+      creator: wallet.selectedAddress,
+      id,
+      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+    };
+
+    try {
+      const message = await env.txClient.msgInvokeMergePullRequest(mergePull);
+      dispatch({ type: "START_RECORDING_TASKS" });
+      const result = await sendTransaction({ message })(dispatch, getState);
+      if (result && result.code === 0) {
+        // return result;
+        const log = JSON.parse(result.rawLog);
+        const taskId =
+          log[0].events[0].attributes[
+            log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
+          ].value;
+        const res = await watchTask(taskId)(dispatch, getState);
+        console.log("Watch task result", res);
+        getUserDetailsForSelectedAddress()(dispatch, getState);
+        return res;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
 export const toggleRepositoryForking = ({ id }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
@@ -1190,6 +1227,34 @@ export const toggleRepositoryForking = ({ id }) => {
     try {
       const message = await env.txClient.msgToggleRepositoryForking(repo);
       const result = await sendTransaction({ message })(dispatch, getState);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const authorizeGitServer = () => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "grant access")))
+      return null;
+
+    const { wallet, env } = getState();
+    try {
+      const message = await env.txClient.msgAuthorizeGitServer({
+        creator: wallet.selectedAddress,
+        provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+      });
+      console.log("Grant", message);
+      const result = await sendTransaction({ message })(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
+      console.log(result);
       if (result && result.code === 0) {
         return result;
       } else {

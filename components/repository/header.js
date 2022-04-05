@@ -1,20 +1,32 @@
 import shrinkAddress from "../../helpers/shrinkAddress";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { forkRepository } from "../../store/actions/repository";
+import {
+  forkRepository,
+  authorizeGitServer,
+} from "../../store/actions/repository";
 import { useRouter } from "next/router";
+import { getGitServerAuthorization } from "../../helpers/getGitServerAuthStatus";
+import { notify } from "reapop";
 
 function RepositoryHeader({ repository, ...props }) {
   const [forkTargetShown, setForkTargetShown] = useState(false);
   const [isForking, setIsForking] = useState(false);
   const [forkingSuccess, setForkingSuccess] = useState(false);
+  const [forkingAccess, setForkingAccess] = useState(false);
+  const [isGrantingAccess, setIsGrantingAccess] = useState(false);
   const router = useRouter();
   const avatarLink =
     process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === repository.owner.id
       ? "/logo-g.svg"
       : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
         repository.owner.id.slice(-1);
+
+  const refreshForkingAccess = async () => {
+    setForkingAccess(await getGitServerAuthorization(props.selectedAddress));
+  };
+  useEffect(refreshForkingAccess, [props.selectedAddress]);
 
   return (
     <div className="flex flex-1 mb-8">
@@ -198,91 +210,136 @@ function RepositoryHeader({ repository, ...props }) {
         className="modal-toggle"
       />
       <div className="modal">
-        <div className="modal-box max-w-xs">
+        <div className="modal-box max-w-sm">
           {repository.allowForking ? (
-            <>
-              {props.selectedAddress ? (
-                <p>Select forked repository owner</p>
-              ) : (
-                <p>Please login to fork repository</p>
-              )}
-              <ul className="menu compact mt-8 max-h-80 overflow-auto">
-                {props.dashboards.map((d) => {
-                  const isOwner = repository.owner.id === d.id;
-                  return (
-                    <li key={d.name}>
-                      <button
-                        className={
-                          "btn btn-sm btn-primary btn-outline my-2 justify-start " +
-                          (isForking === d.id ? "loading" : "")
-                        }
-                        disabled={isOwner || isForking}
-                        onClick={async () => {
-                          if (isOwner) return;
-                          setIsForking(d.id);
-                          const res = await props.forkRepository({
-                            repositoryId: repository.id,
-                            repositoryName: repository.name,
-                            ownerId: d.id,
-                          });
-                          if (res && res.url) {
-                            setForkTargetShown(false);
-                            setForkingSuccess(res.url);
+            forkingAccess ? (
+              <>
+                {props.selectedAddress ? (
+                  <p>Select forked repository owner</p>
+                ) : (
+                  <p>Please login to fork repository</p>
+                )}
+                <ul className="mt-8 pr-1 max-h-80 overflow-y-auto">
+                  {props.dashboards.map((d) => {
+                    const isOwner = repository.owner.id === d.id;
+                    return (
+                      <li key={d.name}>
+                        <button
+                          className={
+                            "btn btn-sm btn-primary btn-block btn-outline my-2 justify-start " +
+                            (isForking === d.id ? "loading" : "")
                           }
-                          setIsForking(false);
-                        }}
-                      >
-                        {d.type === "User" ? (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 mr-2"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        ) : (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 mr-2"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        )}
-                        {d.name} - {shrinkAddress(d.id)}
-                        {isOwner ? (
-                          <div className="ml-2 badge badge-secondary badge-sm">
-                            Owner
+                          disabled={isOwner || isForking}
+                          onClick={async () => {
+                            if (isOwner) return;
+                            setIsForking(d.id);
+                            const res = await props.forkRepository({
+                              repositoryId: repository.id,
+                              repositoryName: repository.name,
+                              ownerId: d.id,
+                            });
+                            if (res && res.url) {
+                              setForkTargetShown(false);
+                              setForkingSuccess(res.url);
+                            }
+                            setIsForking(false);
+                          }}
+                        >
+                          {d.type === "User" ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 mr-2"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 mr-2"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          )}
+                          <div>
+                            {d.name} - {shrinkAddress(d.id)}
+                            {isOwner ? (
+                              <div className="ml-2 badge badge-secondary badge-sm">
+                                Owner
+                              </div>
+                            ) : (
+                              ""
+                            )}
                           </div>
-                        ) : (
-                          ""
-                        )}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-              <div className="modal-action">
-                <label
-                  className="btn btn-sm"
-                  onClick={() => {
-                    setForkTargetShown(false);
-                  }}
-                >
-                  {props.selectedAddress ? "Cancel" : "Ok"}
-                </label>
-              </div>
-            </>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <div className="modal-action">
+                  <label
+                    className="btn btn-sm"
+                    onClick={() => {
+                      setForkTargetShown(false);
+                    }}
+                  >
+                    {props.selectedAddress ? "Cancel" : "Ok"}
+                  </label>
+                </div>
+              </>
+            ) : (
+              <>
+                <p>
+                  Gitopia data server does not have repository forking access on
+                  behalf of your account.
+                </p>
+                <p className="text-xs mt-4">Server Address:</p>
+                <p className="text-xs">
+                  {process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS}
+                </p>
+                <div className="modal-action">
+                  <label
+                    className="btn btn-sm"
+                    onClick={() => {
+                      setForkTargetShown(false);
+                    }}
+                  >
+                    Cancel
+                  </label>
+                  <button
+                    className={
+                      "btn btn-sm btn-primary" +
+                      (isGrantingAccess ? " loading" : "")
+                    }
+                    onClick={async () => {
+                      setIsGrantingAccess(true);
+                      const res = await props.authorizeGitServer();
+                      console.log(res);
+                      setIsGrantingAccess(false);
+                      if (res.code !== 0) {
+                        props.notify(res.rawLog, "error");
+                      } else {
+                        refreshForkingAccess();
+                      }
+                    }}
+                    disabled={isGrantingAccess}
+                  >
+                    Grant Access
+                  </button>
+                </div>
+              </>
+            )
           ) : (
             <>
               <p>
@@ -344,4 +401,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { forkRepository })(RepositoryHeader);
+export default connect(mapStateToProps, {
+  forkRepository,
+  authorizeGitServer,
+  notify,
+})(RepositoryHeader);

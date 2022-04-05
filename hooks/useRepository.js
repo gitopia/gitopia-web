@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import getUserRepository from "../helpers/getUserRepository";
 import { useRouter } from "next/router";
-import { useErrorStatus } from "../pages/errorHandler";
+import { useErrorStatus } from "./errorHandler";
 
 export default function useRepository() {
   const { setErrorStatusCode } = useErrorStatus();

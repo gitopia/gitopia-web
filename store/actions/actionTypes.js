@@ -53,3 +53,8 @@ export const starportActions = {
   SET_TIMER: "SET_TIMER",
   CLEAR_TIMER: "CLEAR_TIMER",
 };
+
+export const userNotificationActions = {
+  ADD_USER_NOTIFICATIONS: "ADD_USER_NOTIFICATIONS",
+  MARK_AS_READ: "MARK_AS_READ",
+};

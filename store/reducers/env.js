@@ -15,6 +15,7 @@ const initialState = {
   initialized: false,
   txClient: null,
   queryClient: null,
+  recordingTasks: 0,
 };
 
 const reducer = (state = initialState, action) => {
@@ -98,6 +99,20 @@ const reducer = (state = initialState, action) => {
         ...state,
         txClient,
         queryClient,
+      };
+    }
+
+    case "START_RECORDING_TASKS": {
+      return {
+        ...state,
+        recordingTasks: 100,
+      };
+    }
+
+    case "STOP_RECORDING_TASKS": {
+      return {
+        ...state,
+        recordingTasks: 0,
       };
     }
 
