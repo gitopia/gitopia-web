@@ -746,7 +746,7 @@ function Notifications(props) {
 
   useEffect(() => {
     if (!ws) {
-      ws = new W3CWebSocket("ws://localhost:26657/websocket");
+      ws = new W3CWebSocket(process.env.NEXT_PUBLIC_WS_URL);
       ws.onopen = () => {
         ws.send(
           JSON.stringify({
