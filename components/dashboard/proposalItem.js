@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 
 const showProposalStatus = (proposal) => {
   const baseClass = "w-4 h-4 mr-2";
@@ -106,8 +107,10 @@ export default function ProposalItem({
             {"#" + proposal.proposal_id}
           </span>
         </div>
-        <div className="mt-2 text-xs text-type-secondary">
-          {proposal.content.description.slice(0, 250)}
+        <div className="mt-2 text-xs text-type-secondary markdown-body">
+          <ReactMarkdown linkTarget="_blank">
+            {proposal.content.description.slice(0, 250)}
+          </ReactMarkdown>
         </div>
         <div className="mt-4 flex justify-start items-center">
           {showProposalStatus(proposal)}

@@ -13,6 +13,7 @@ import getTally from "../../../helpers/getTally";
 import Link from "next/dist/client/link";
 import getDepositor from "../../../helpers/getDepositor";
 import getVoter from "../../../helpers/getVoter";
+import ReactMarkdown from "react-markdown";
 
 function ProposalDetailsView(props) {
   const [amount, setAmount] = useState("");
@@ -151,24 +152,24 @@ function ProposalDetailsView(props) {
       </Head>
       <Header />
       <div className="flex">
-        <div className="">
-          <Link href={hrefBase + "/proposals"}>
-            <label className="flex link text-sm uppercase no-underline items-center hover:text-green absolute ml-48 mt-10">
-              <svg
-                width="8"
-                height="11"
-                viewBox="0 0 8 11"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                stroke="currentColor"
-              >
-                <path d="M7 1L2 5.5L7 10" stroke-width="2" />
-              </svg>
-              <span className="ml-2">BACK</span>
-            </label>
-          </Link>
-        </div>
         <main className="container mx-auto max-w-screen-lg p-8 mt-10">
+          <div className="pb-4">
+            <Link href={hrefBase + "/proposals"}>
+              <label className="flex link text-sm uppercase no-underline items-center hover:text-green">
+                <svg
+                  width="8"
+                  height="11"
+                  viewBox="0 0 8 11"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor"
+                >
+                  <path d="M7 1L2 5.5L7 10" stroke-width="2" />
+                </svg>
+                <span className="ml-2">BACK</span>
+              </label>
+            </Link>
+          </div>
           {proposal !== undefined ? (
             <div className="">
               <div>
@@ -259,7 +260,11 @@ function ProposalDetailsView(props) {
               </div>
               <div className="mt-3 text-type-secondary mb-14">
                 {typeof proposal.content !== "undefined" ? (
-                  <div className="mb-3">{proposal.content.description} </div>
+                  <div className="mb-3 markdown-body">
+                    <ReactMarkdown linkTarget="_blank">
+                      {proposal.content.description}
+                    </ReactMarkdown>
+                  </div>
                 ) : (
                   ""
                 )}
