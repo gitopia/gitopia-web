@@ -1380,96 +1380,44 @@ export default function Landing() {
       </section>
 
       <section className={classnames([styles.section, styles.roadmapSection])}>
-        <h3 className={styles.h3}>Our Roadmap</h3>
-        <div className={styles.roadmapBase}>
-          <div className={styles.roadmapQtrWrapper}>
-            <span className={styles.roadmapYearStart}>2021</span>
-            <img
-              src="/roadmap.svg"
-              className={styles.roadmapGraph}
-              loading="lazy"
-            ></img>
+        <div className={styles.cgRow}>
+          <h3 className={classnames([styles.h3, styles.roadmapText])}>
+            Join the Roadmap community
+          </h3>
+        </div>
+        <div className={classnames([styles.cgRow, "relative"])}>
+          <div className={styles.roadmapText}>
             <div
               className={classnames([
-                styles.roadmapQtr,
-                styles.roadmapQtrSize4,
-              ])}
-              style={{ marginTop: 118 }}
-            >
-              <span className={styles.roadmapQtrDisplay}>Q2</span>
-              <span className={styles.roadmapVerticalSeperator}></span>
-            </div>
-            <div
-              className={classnames([
-                styles.roadmapQtr,
-                styles.roadmapQtrSize5,
+                styles.hlBorder,
+                styles.mb36,
+                styles.mt36,
               ])}
             >
-              <span className={styles.roadmapQtrDisplay}>Q3</span>
-              <span className={styles.roadmapVerticalSeperator}></span>
+              <div>
+                At it’s core, Gitopia live and breathe decentralization.
+                Therefore we invite our community to help govern and navigate
+                the roadmap moving forward. Join our community forum and learn
+                and help build the future of freedom of choice and speech.
+              </div>
             </div>
-            <div
-              className={classnames([
-                styles.roadmapQtr,
-                styles.roadmapQtrSize3,
-              ])}
+            <button
+              type="button"
+              onClick={() => {
+                if (window) {
+                  window.open(process.env.NEXT_PUBLIC_ROADMAP_URL);
+                }
+              }}
+              className="ml-4 px-8 py-2 rounded text-white text-sm font-bold bg-purple active:bg-purple-900 hover:bg-purple-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
             >
-              <span className={styles.roadmapQtrDisplay}>Q4</span>
-              <span className={styles.roadmapVerticalSeperator}></span>
-            </div>
-            <div
-              className={classnames([
-                styles.roadmapQtr,
-                styles.roadmapQtrSize4,
-              ])}
-            >
-              <span className={styles.roadmapQtrDisplay}>Q1</span>
-              <span className={styles.roadmapVerticalSeperator}></span>
-            </div>
-            <span className={styles.roadmapYearEnd}>2022</span>
+              Go to Roadmap
+            </button>
           </div>
-          <div className={styles.roadmapActions}>
-            <span className={styles.roadmapActionItem}>MVP Implementation</span>
-            <span className={styles.roadmapActionItem}>
-              Start developing Gitopia blockchain built with Cosmos SDK
-            </span>
-            <span className={styles.roadmapActionItem}>
-              Launch first version of Gitopia Webapp
-            </span>
-            <span className={styles.roadmapActionItem}>
-              Release the git remote helper for Gitopia
-            </span>
-            <span className={styles.roadmapActionItem}>
-              Release the GitHub Mirror Action for easy migration from GitHub
-            </span>
-            <span className={styles.roadmapActionItem}>
-              Gitopia Web Wallet release
-            </span>
-            <span className={styles.roadmapActionItem}>
-              Gitopia Explorer release
-            </span>
-            <span className={styles.roadmapActionItem}>
-              Exchange listings of LORE token
-            </span>
-            <span className={styles.roadmapActionItem}>
-              Ecosystem Partnerships
-            </span>
-            <span className={styles.roadmapActionItem}>
-              Release Organization/Repository governance
-            </span>
-            <span className={styles.roadmapActionItem}>
-              Release IBC Interface
-            </span>
-            <span className={styles.roadmapActionItem}>
-              Launch Gitopia Desktop app
-            </span>
-            <span className={styles.roadmapActionItem}>
-              Support CI/CD Integrations
-            </span>
-            <span className={styles.roadmapActionItem}>
-              Release Static Code Analysis
-            </span>
-          </div>
+          <img
+            className={styles.roadmapImage}
+            src="/roadmap.png"
+            loading="lazy"
+          ></img>
         </div>
       </section>
 

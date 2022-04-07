@@ -397,6 +397,10 @@
   margin-bottom: 36px;
 }
 
+.mt36 {
+  margin-top: 36px;
+}
+
 .mb72 {
   margin-bottom: 72px;
 }
@@ -526,36 +530,19 @@
 
 .roadmapSection {
   margin-top: 200px;
+  margin-bottom: 300px;
 }
 
-.roadmapBase {
-  /* position: relative; */
-  width: 100%;
-  height: 1600px;
-  z-index: 1;
-  display: flex;
-  justify-content: flex-start;
-  margin-top: 200px;
+.roadmapText {
+  width: 450px;
 }
 
-.roadmapQtrWrapper {
+.roadmapImage {
   position: absolute;
-  z-index: -1;
-  left: 0;
   right: 0;
-}
-
-.roadmapActions {
-  position: absolute;
-  margin-top: -4px;
-  left: calc(45% + 220px);
-  max-width: 400px;
-}
-
-.roadmapActionItem {
-  display: block;
-  height: 103.5px;
-  font-size: 18px;
+  top: -30px;
+  width: 650px;
+  z-index: -1;
 }
 
 @media only screen and (-webkit-device-pixel-ratio: 2) {
