@@ -6,7 +6,7 @@ export default async function initKeplr() {
     alert("Please install keplr extension");
   } else {
     const info = await getNodeInfo();
-    
+
     if (window.keplr.experimentalSuggestChain) {
       try {
         // Keplr v0.6.4 introduces an experimental feature that supports the feature to suggests the chain from a webpage.
@@ -102,9 +102,9 @@ export default async function initKeplr() {
           // Currently, Keplr doesn't support dynamic calculation of the gas prices based on on-chain data.
           // Make sure that the gas prices are higher than the minimum gas prices accepted by chain validators and RPC/REST endpoint.
           gasPriceStep: {
-            low: "0.00001",
-            average: "0.00002",
-            high: "0.00004",
+            low: "0.0012",
+            average: "0.0016",
+            high: "0.0024",
           },
         });
         // console.log("suggest chain", suggestChain);

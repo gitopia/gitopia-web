@@ -1,4 +1,4 @@
-import { w3cwebsocket as W3CWebSocket } from "websocket";
+import ReconnectingWebSocket from "reconnecting-websocket";
 import { decodeTx } from "../helpers/blockParser";
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
@@ -746,7 +746,7 @@ function Notifications(props) {
 
   useEffect(() => {
     if (!ws) {
-      ws = new W3CWebSocket(process.env.NEXT_PUBLIC_WS_URL);
+      ws = new ReconnectingWebSocket(process.env.NEXT_PUBLIC_WS_URL);
       ws.onopen = () => {
         ws.send(
           JSON.stringify({
