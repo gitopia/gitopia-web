@@ -58,7 +58,8 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
       pullRequest.id
     );
     if (user && user.havePermission) {
-      if (!pullMergeAccess) {
+      let access = await getGitServerAuthorization(props.selectedAddress);
+      if (!access) {
         setPullMergeAccessDialogShown(true);
         setIsMerging(false);
         return;
@@ -118,8 +119,9 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
     }
   }, [pullRequest]);
 
-  const refreshPullMergeAccess = async () => {
+  const refreshPullMergeAccess = async (mergeAfter = false) => {
     setPullMergeAccess(await getGitServerAuthorization(props.selectedAddress));
+    if (mergeAfter) setTimeout(mergePull, 0);
   };
   useEffect(refreshPullMergeAccess, [props.selectedAddress]);
 
@@ -242,9 +244,8 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
                 if (res.code !== 0) {
                   props.notify(res.rawLog, "error");
                 } else {
-                  refreshPullMergeAccess();
+                  refreshPullMergeAccess(true);
                   setPullMergeAccessDialogShown(false);
-                  mergePull();
                 }
               }}
               disabled={isGrantingAccess}
