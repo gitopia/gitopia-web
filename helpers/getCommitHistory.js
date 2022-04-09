@@ -30,7 +30,7 @@ export default async function getCommitHistory(
     params.path = path;
   }
   if (nextKey) {
-    params.pagination.nextKey = nextKey;
+    params.pagination.key = nextKey;
   }
   console.log("params", params);
 
