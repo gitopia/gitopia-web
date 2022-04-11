@@ -50,6 +50,8 @@ function install {
 	#find ARCH
 	if uname -m | grep 64 > /dev/null; then
 		ARCH="amd64"
+	elif uname -m | grep arm64 > /dev/null; then
+		ARCH="arm64"
 	elif uname -m | grep arm > /dev/null; then
 		ARCH="arm" #TODO armv6/v7
 	elif uname -m | grep 386 > /dev/null; then
@@ -71,6 +73,18 @@ function install {
 		;;
 	"linux_amd64")
 		URL="$OBJECTS_URL/releases/$USER/git-remote-gitopia/v$VERSION/git-remote-gitopia_$VERSION_linux_amd64.tar.gz"
+		FTYPE=".tar.gz"
+		;;
+	"linux_386")
+		URL="$OBJECTS_URL/releases/$USER/git-remote-gitopia/v$VERSION/git-remote-gitopia_$VERSION_linux_386.tar.gz"
+		FTYPE=".tar.gz"
+		;;
+    "linux_arm")
+		URL="$OBJECTS_URL/releases/$USER/git-remote-gitopia/v$VERSION/git-remote-gitopia_$VERSION_linux_arm.tar.gz"
+		FTYPE=".tar.gz"
+		;;
+    "linux_arm64")
+		URL="$OBJECTS_URL/releases/$USER/git-remote-gitopia/v$VERSION/git-remote-gitopia_$VERSION_linux_arm64.tar.gz"
 		FTYPE=".tar.gz"
 		;;
 	*) fail "No asset for platform ${OS}-${ARCH}";;
