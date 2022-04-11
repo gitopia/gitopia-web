@@ -21,6 +21,7 @@ export default function useRepository() {
     releases: [],
   });
   const [refreshIndex, setRefreshIndex] = useState(1);
+  const [firstFetchLoading, setFirstFetchLoading] = useState(true);
 
   const refreshRepository = () => setRefreshIndex((prevIndex) => prevIndex + 1);
 
@@ -34,8 +35,9 @@ export default function useRepository() {
       } else {
         setErrorStatusCode(404);
       }
+      setFirstFetchLoading(false);
     });
   }, [router.query, refreshIndex]);
 
-  return { repository, refreshRepository };
+  return { repository, refreshRepository, firstFetchLoading };
 }

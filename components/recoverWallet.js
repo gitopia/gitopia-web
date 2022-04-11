@@ -69,6 +69,14 @@ function RecoverWallet(props) {
       });
       return false;
     }
+    if (password.length < 8) {
+      setPasswordHint({
+        ...passwordHint,
+        shown: true,
+        message: "Password should be atleast 8 characters",
+      });
+      return false;
+    }
     if (confirmPassword !== password) {
       setConfirmPasswordHint({
         ...confirmPasswordHint,

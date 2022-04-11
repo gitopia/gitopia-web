@@ -88,11 +88,11 @@ function CreateWallet(props) {
       });
       return false;
     }
-    if (password.length < 8 || password.length > 30) {
+    if (password.length < 8) {
       setPasswordHint({
         ...passwordHint,
         shown: true,
-        message: "Please enter a valid password",
+        message: "Password should be atleast 8 characters",
       });
       return false;
     }
