@@ -33,7 +33,7 @@ function RepositoryCommitTreeView(props) {
 
   const { setErrorStatusCode } = useErrorStatus();
   const [commits, setCommits] = useState([]);
-  const [hasMore, setHasMore] = useState(false);
+  const [nextKey, setNextKey] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [branchName, setBranchName] = useState("");
   const [commitsLength, setCommitsLength] = useState(0);
@@ -70,7 +70,7 @@ function RepositoryCommitTreeView(props) {
       getBranchSha(branchName, repository.branches, repository.tags),
       null,
       100,
-      hasMore,
+      nextKey,
       true
     );
     console.log(res);
@@ -79,9 +79,9 @@ function RepositoryCommitTreeView(props) {
         setCommits([...earlierCommits, ...res.commits]);
       }
       if (res.pagination && res.pagination.next_key) {
-        setHasMore(res.pagination.next_key);
+        setNextKey(res.pagination.next_key);
       } else {
-        setHasMore(null);
+        setNextKey(null);
       }
       if (res.pagination && res.pagination.total) {
         setCommitsLength(res.pagination.total);
@@ -96,7 +96,7 @@ function RepositoryCommitTreeView(props) {
         "branchName updated, earlier commits will be cleared",
         branchName
       );
-      setHasMore(false);
+      setNextKey(null);
       await loadCommits([]);
     }
   }, [branchName]);
@@ -171,7 +171,7 @@ function RepositoryCommitTreeView(props) {
                 );
               })}
             </div>
-            {hasMore ? (
+            {nextKey ? (
               <div className="mt-8 text-center">
                 <button
                   className={
