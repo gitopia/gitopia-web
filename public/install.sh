@@ -48,7 +48,7 @@ function install {
 	*) fail "unknown os: $(uname -s)";;
 	esac
 	#find ARCH
-	if uname -m | grep 64 > /dev/null; then
+	if uname -m | grep amd64 > /dev/null; then
 		ARCH="amd64"
 	elif uname -m | grep arm64 > /dev/null; then
 		ARCH="arm64"
@@ -64,33 +64,33 @@ function install {
 	FTYPE=""
 	case "${OS}_${ARCH}" in
 	"darwin_amd64")
-		URL="$OBJECTS_URL/releases/$USER/git-remote-gitopia/v$VERSION/git-remote-gitopia_$VERSION_darwin_amd64.tar.gz"
+		URL="${OBJECTS_URL}/releases/${USER}/git-remote-gitopia/v${VERSION}/git-remote-gitopia_${VERSION}_darwin_amd64.tar.gz"
 		FTYPE=".tar.gz"
 		;;
 	"darwin_arm64")
-		URL="$OBJECTS_URL/releases/$USER/git-remote-gitopia/v$VERSION/git-remote-gitopia_$VERSION_darwin_arm64.tar.gz"
+		URL="${OBJECTS_URL}/releases/${USER}/git-remote-gitopia/v${VERSION}/git-remote-gitopia_${VERSION}_darwin_arm64.tar.gz"
 		FTYPE=".tar.gz"
 		;;
 	"linux_amd64")
-		URL="$OBJECTS_URL/releases/$USER/git-remote-gitopia/v$VERSION/git-remote-gitopia_$VERSION_linux_amd64.tar.gz"
+		URL="${OBJECTS_URL}/releases/${USER}/git-remote-gitopia/v${VERSION}/git-remote-gitopia_${VERSION}_linux_amd64.tar.gz"
 		FTYPE=".tar.gz"
 		;;
 	"linux_386")
-		URL="$OBJECTS_URL/releases/$USER/git-remote-gitopia/v$VERSION/git-remote-gitopia_$VERSION_linux_386.tar.gz"
+		URL="${OBJECTS_URL}/releases/${USER}/git-remote-gitopia/v${VERSION}/git-remote-gitopia_${VERSION}_linux_386.tar.gz"
 		FTYPE=".tar.gz"
 		;;
     "linux_arm")
-		URL="$OBJECTS_URL/releases/$USER/git-remote-gitopia/v$VERSION/git-remote-gitopia_$VERSION_linux_arm.tar.gz"
+		URL="${OBJECTS_URL}/releases/${USER}/git-remote-gitopia/v${VERSION}/git-remote-gitopia_${VERSION}_linux_arm.tar.gz"
 		FTYPE=".tar.gz"
 		;;
     "linux_arm64")
-		URL="$OBJECTS_URL/releases/$USER/git-remote-gitopia/v$VERSION/git-remote-gitopia_$VERSION_linux_arm64.tar.gz"
+		URL="${OBJECTS_URL}/releases/${USER}/git-remote-gitopia/v${VERSION}/git-remote-gitopia_${VERSION}_linux_arm64.tar.gz"
 		FTYPE=".tar.gz"
 		;;
 	*) fail "No asset for platform ${OS}-${ARCH}";;
 	esac
 	#got URL! download it...
-	echo -n "Installing $USER/$PROG v$VERSION"
+	echo -n "Installing ${USER}/${PROG} v${VERSION}"
 	
 	echo "....."
 	
@@ -101,7 +101,7 @@ function install {
 		which gzip > /dev/null || fail "gzip is not installed"
 		#gzipped binary
 		NAME="${PROG}_${RELEASE}_${OS}_${ARCH}.gz"
-		GZURL="$OBJECTS_URL/releases/$USER/git-remote-gitopia/v$VERSION/$NAME"
+		GZURL="${OBJECTS_URL}/releases/${USER}/git-remote-gitopia/v${VERSION}/${NAME}"
 		#gz download!
 		bash -c "$GET $URL" | gzip -d - > $PROG || fail "download failed"
 	elif [[ $FTYPE = ".tar.gz" ]] || [[ $FTYPE = ".tgz" ]]; then
