@@ -31,12 +31,12 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryView(props) {
-  const { repository } = useRepository();
+  const { repository, firstFetchLoading } = useRepository();
 
   const [entityList, setEntityList] = useState([]);
   const [hasMoreEntities, setHasMoreEntities] = useState(null);
@@ -52,8 +52,9 @@ function RepositoryView(props) {
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
   );
-  const [currentUserEditPermission, setCurrentUserEditPermission] =
-    useState(false);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
 
   const loadEntities = async (currentEntities = [], firstTime = false) => {
     setLoadingEntities(true);
@@ -162,7 +163,11 @@ function RepositoryView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs repository={repository} active="code" />
-          {repository.branches.length ? (
+          {firstFetchLoading ? (
+            <div className="flex mt-8 items-center justify-center">
+              <button className="btn btn-square btn-ghost loading" />
+            </div>
+          ) : repository.branches.length ? (
             <div className="flex mt-8">
               <div className="flex-none w-64 pr-8 divide-y divide-grey">
                 <div className="pb-8">
