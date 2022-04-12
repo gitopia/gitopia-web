@@ -7,7 +7,7 @@ function fail {
 	cleanup
 	msg=$1
 	echo "============"
-	echo "Error: $msg" 1>&2
+	printf "Error: $msg" 1>&2
 	exit 1
 }
 function install {
@@ -131,7 +131,7 @@ function install {
 	#move into PATH or cwd
 	chmod +x $TMP_BIN || fail "chmod +x failed"
 	
-	mv $TMP_BIN $OUT_DIR/$PROG || fail "mv failed" #FINAL STEP!
+	mv $TMP_BIN $OUT_DIR/$PROG || fail "mv failed\nRun the below command to finish the installation\n\nsudo mv ${TMP_DIR}/${PROG} ${OUT_DIR}/${PROG}\n\n" #FINAL STEP!
 	echo "Installed at $OUT_DIR/$PROG"
 	#done
 	cleanup
