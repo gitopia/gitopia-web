@@ -1,0 +1,419 @@
+.wrapper {
+  background: #13181e;
+  position: relative;
+  z-index: 1;
+}
+.header {
+  display: flex;
+  padding: 40px 64px 0px 64px;
+}
+.headerLogo {
+  background: url("/logo-white.svg") no-repeat;
+  background-position: 50%;
+  background-size: 160px;
+  width: 160px;
+  height: 60px;
+  margin-right: 20px;
+}
+.headerMenu {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  height: 40px;
+}
+.headerLinks a {
+  color: white;
+  padding: 16px;
+  display: inline-block;
+  font-family: Oxygen;
+}
+.headerMenuIcon {
+  float: right;
+  position: absolute;
+  top: 44px;
+  right: 44px;
+  display: none;
+}
+.row {
+  max-width: 900px;
+  text-align: center;
+}
+.vl {
+  margin-top: 10px;
+  opacity: 0.3;
+  border-left: 1px solid #e5e5e5;
+  height: 20px;
+}
+.blob1 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.9;
+}
+.title {
+  margin-top: 80px;
+  align-items: center;
+  text-align: center;
+  font-size: 64px;
+  font-weight: 700;
+}
+.content {
+  text-align: center;
+  font-weight: 700;
+  font-size: 22px;
+}
+.section {
+  margin-top: 140px;
+}
+.section1 {
+  margin-top: 0px;
+}
+.stepDetailsCard {
+  height: 757px;
+  width: 800px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-sizing: border-box;
+}
+.step {
+  margin-left: 4vw;
+  margin-top: 5.5vw;
+  margin-bottom: 1vw;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 133px;
+  height: 32px;
+  background-color: #28313c;
+  padding: 10px 20px;
+  border-radius: 29px;
+}
+.stepMargin1 {
+  margin-top: 7.8vw;
+}
+.stepMargin2 {
+  margin-top: 3vw;
+}
+.stepName1 {
+  margin-left: 4vw;
+  align-items: center;
+  text-align: left;
+  font-size: 80px;
+  font-weight: 700;
+}
+.stepName2 {
+  margin-left: 4vw;
+  align-items: center;
+  text-align: left;
+  font-size: 80px;
+  font-weight: 700;
+}
+.stepDetails {
+  margin-left: 4vw;
+  align-items: flex-end;
+  text-align: left;
+  font-size: 18px;
+  font-weight: 400;
+}
+.stepDetailsButton {
+  margin-top: 2.5vw;
+  margin-left: 4vw;
+  font-weight: 700;
+  font-size: 14px;
+  width: 320px;
+  height: 46px;
+}
+.image {
+  z-index: -1;
+  height: 900px;
+  width: 1800px;
+}
+.images {
+  height: 757px;
+  width: 800px;
+}
+.cardLogo {
+  margin-top: 35px;
+  height: 55px;
+  width: 100px;
+}
+.cardDetails {
+  margin-top: 30px;
+  font-size: 32px;
+}
+.joinGitopia {
+  margin-left: 10px;
+  font-weight: 700;
+  display: flex;
+  flex-direction: row;
+}
+.endCardmargin {
+  margin-left: 25px;
+  margin-top: 80px;
+}
+.endCard {
+  font-size: 18px;
+  font-weight: 400;
+}
+.cardButton {
+  font-weight: 700;
+  font-size: 14px;
+  width: 230px;
+  height: 50px;
+}
+.footer {
+  margin-top: 150px;
+  padding-bottom: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footerLogo {
+  background: url("/logo-white.svg") no-repeat;
+  background-position: 50%;
+  background-size: 160px;
+  height: 160px;
+  width: 240px;
+}
+.footerLinks {
+  display: flex;
+  justify-content: space-around;
+}
+.footerLinks a {
+  border-left: 2px solid #91a3b4;
+  color: white;
+  padding: 0 16px;
+  margin-right: 16px;
+}
+
+@media (max-width: 1800px) {
+  .image {
+    z-index: -1;
+    height: 800px;
+    width: 1800px;
+  }
+  .images {
+    height: 675px;
+    width: 800px;
+  }
+  .joinGitopia {
+    font: 32px;
+    font-weight: 700;
+    display: flex;
+    flex-direction: row;
+  }
+  .endCard {
+    font-size: 18px;
+    font-weight: 400;
+  }
+  .cardButton {
+    font-weight: 700;
+    font-size: 14px;
+    width: 250px;
+    height: 50px;
+  }
+  .stepDetailsCard {
+    height: 675px;
+    width: 800px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 1024px) {
+  .image {
+    z-index: -1;
+    height: 454px;
+    width: 800px;
+  }
+  .images {
+    height: 400px;
+    width: 400px;
+  }
+  .stepMargin1 {
+    margin-top: 3vw;
+  }
+  .stepMargin2 {
+    margin-top: 0.5vw;
+  }
+  .stepDetailsCard {
+    height: 400px;
+    width: 400px;
+    overflow: hidden;
+  }
+  .step {
+    font-size: 14px;
+    margin-top: 4vw;
+  }
+  .stepName1 {
+    font-size: 36px;
+  }
+  .stepName2 {
+    font-size: 36px;
+  }
+  .stepDetails {
+    font-size: 12px;
+  }
+  .stepDetailsButton {
+    margin-top: 2vw;
+    margin-left: 4vw;
+    font-weight: 700;
+    font-size: 12px;
+    width: 250px;
+    height: 50px;
+  }
+  .headerMenuIcon {
+    display: block;
+  }
+  .headerMenu {
+    height: auto;
+    border-bottom: none;
+  }
+  .header {
+    display: block;
+    padding: 40px 44px;
+  }
+  .row {
+    text-align: left;
+    padding: 0 44px;
+    width: 100%;
+  }
+  .cardLogo {
+    margin-top: 5px;
+    margin-left: 2vw;
+    height: 40px;
+    width: 70px;
+  }
+  .cardDetails {
+    margin-top: 0.1vw;
+    font-size: 25px;
+  }
+  .endCard {
+    font-size: 14px;
+    font-weight: 400;
+  }
+  .endCardmargin {
+    margin-left: 1px;
+    margin-top: 5.3vw;
+    margin-right: 2vw;
+  }
+  .cardButton {
+    font-weight: 700;
+    font-size: 14px;
+    width: 250px;
+    height: 49px;
+  }
+
+  .cards {
+    width: 100vw;
+  }
+
+  .footer {
+    margin-top: 45px;
+    padding: 50px;
+    flex-direction: column;
+  }
+  .footerLinks {
+    margin-bottom: 50px;
+    flex-direction: row;
+  }
+}
+@media (max-width: 640px) {
+  .blob1 {
+    display: none;
+  }
+  .title {
+    margin-top: 10vw;
+    align-items: center;
+    text-align: center;
+    font-size: 40px;
+    font-weight: 700;
+  }
+  .content {
+    text-align: center;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .image {
+    z-index: -1;
+    height: 270px;
+    width: 480px;
+  }
+  .images {
+    height: 450px;
+    width: 480px;
+  }
+  .stepDetailsCard {
+    height: 450px;
+    width: 480px;
+  }
+  .stepMargin1 {
+    margin-top: 14vw;
+  }
+  .stepMargin2 {
+    margin-top: 7vw;
+  }
+  .step {
+    margin-top: 6vw;
+  }
+  .stepName1 {
+    font-size: 40px;
+  }
+  .stepName2 {
+    font-size: 40px;
+  }
+  .stepDetails {
+    font-size: 16px;
+  }
+  .section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .section1 {
+    margin-top: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .joinGitopia {
+    margin-left: 0px;
+  }
+  .cardLogo {
+    margin-left: 0vw;
+    width: 70px;
+  }
+  .endCard {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+  }
+  .endCardmargin {
+    margin-top: 2vw;
+  }
+  .cardButton {
+    margin-left: 80px;
+    height: 10vw;
+    width: 40vw;
+  }
+  .cards {
+    margin-left: 0px;
+    width: 490px;
+    display: flex;
+    flex-direction: column;
+  }
+  .footer {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    flex-direction: column;
+  }
+  .footerLinks {
+    margin-bottom: 24px;
+    flex-direction: column;
+  }
+
+  .footerLinks a {
+    margin-bottom: 24px;
+  }
+}
