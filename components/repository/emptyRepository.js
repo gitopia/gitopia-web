@@ -1,11 +1,19 @@
 import { notify } from "reapop";
 import { downloadWalletForRemoteHelper } from "../../store/actions/wallet";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function EmptyRepository(props) {
   const { repository } = props;
   const remoteUrl = "gitopia://" + repository.owner.id + "/" + repository.name;
   const dispatch = useDispatch();
+  const activeWallet = useSelector((state) => state.wallet.activeWallet);
+  let shouldShowDownloadWallet = false;
+  if (activeWallet) {
+    if (activeWallet.isKeplr || activeWallet.isLedger) {
+    } else {
+      shouldShowDownloadWallet = true;
+    }
+  }
   return (
     <>
       <div className="flex rounded-md py-2 mt-16 items-center">
@@ -75,6 +83,18 @@ export default function EmptyRepository(props) {
               >
                 Learn more
               </a>
+              {shouldShowDownloadWallet ? (
+                <button
+                  onClick={() => {
+                    dispatch(downloadWalletForRemoteHelper());
+                  }}
+                  className="ml-2 btn btn-secondary btn-outline btn-sm"
+                >
+                  Download wallet
+                </button>
+              ) : (
+                ""
+              )}
             </div>
           </div>
         </div>
