@@ -117,7 +117,7 @@ function RepositoryIssueView(props) {
           <div className="mt-4 flex items-center">
             <span
               className={
-                "flex items-center rounded-full border pl-4 pr-6 py-2 mr-4 " +
+                "flex items-center rounded-full border pl-4 pr-6 py-1 mr-4 " +
                 (issue.state === "OPEN" ? "border-green-900" : "border-red-900")
               }
             >
@@ -127,7 +127,7 @@ function RepositoryIssueView(props) {
                   (issue.state === "OPEN" ? "bg-green-900" : "bg-red-900")
                 }
               />
-              <span className="text-type uppercase">{issue.state}</span>
+              <span className="text-type text-sm uppercase">{issue.state}</span>
             </span>
             <span className="text-xs mr-2 text-type-secondary">
               {shrinkAddress(issue.creator) +

@@ -147,8 +147,10 @@ export default function DiffView({
         <div className="flex-1 flex">
           <div className="pr-4">
             {stats.files_changed}
-            <span className="mx-1 capitalize">
-              {pluralize("file", stats.files_changed)}
+            <span className="mx-1">
+              {pluralize("file", stats.files_changed).replace(/^\w/, (c) =>
+                c.toUpperCase()
+              )}
             </span>
             Changed
           </div>

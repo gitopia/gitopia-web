@@ -135,10 +135,9 @@ function Header(props) {
           <Link href={homeUrl}>
             <a>
               <img
-                width={110}
-                height={30}
+                width={80}
                 src="/logo-white.svg"
-                className="cursor-pointer"
+                className="cursor-pointer mt-2"
               ></img>
             </a>
           </Link>
@@ -202,11 +201,11 @@ function Header(props) {
         {props.activeWallet ? (
           <div className="flex-none mr-8">
             <svg
-              width="10"
-              height="17"
+              width="8"
+              height="14"
               viewBox="0 0 10 17"
               fill="none"
-              className="mr-1 text-purple-50"
+              className="mr-1 mt-px text-purple-50"
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
