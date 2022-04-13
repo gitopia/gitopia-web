@@ -19,6 +19,7 @@ import getPullRequestCommits from "../../../../../helpers/getPullRequestCommits"
 import { useRouter } from "next/router";
 import CommitDetailRow from "../../../../../components/repository/commitDetailRow";
 import getCommitHistory from "../../../../../helpers/getCommitHistory";
+import pluralize from "../../../../../helpers/pluralize";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -27,8 +28,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryPullCommitsView(props) {
@@ -131,7 +132,12 @@ function RepositoryPullCommitsView(props) {
               active="commits"
             />
           </div>
-          <div className="mt-8 px-4">{commitShas.length + " Commits"}</div>
+          <div className="mt-8 px-4">
+            {commitShas.length}
+            <span className="ml-1 capitalize">
+              {pluralize("commit", commitShas.length)}
+            </span>
+          </div>
           <div className="mt-8">
             {commits.map((c, i) => {
               return (

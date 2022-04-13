@@ -29,6 +29,7 @@ import useRepository from "../../../../hooks/useRepository";
 import IssuePullTitle from "../../../../components/repository/issuePullTitle";
 import IssuePullDescription from "../../../../components/repository/issuePullDescription";
 import { useErrorStatus } from "../../../../hooks/errorHandler";
+import pluralize from "../../../../helpers/pluralize";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -37,8 +38,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryIssueView(props) {
@@ -116,7 +117,7 @@ function RepositoryIssueView(props) {
           <div className="mt-4 flex items-center">
             <span
               className={
-                "flex items-center rounded-full border pl-4 pr-6 py-2 mr-4 " +
+                "flex items-center rounded-full border pl-4 pr-6 py-1 mr-4 " +
                 (issue.state === "OPEN" ? "border-green-900" : "border-red-900")
               }
             >
@@ -126,7 +127,7 @@ function RepositoryIssueView(props) {
                   (issue.state === "OPEN" ? "bg-green-900" : "bg-red-900")
                 }
               />
-              <span className="text-type uppercase">{issue.state}</span>
+              <span className="text-type text-sm uppercase">{issue.state}</span>
             </span>
             <span className="text-xs mr-2 text-type-secondary">
               {shrinkAddress(issue.creator) +
@@ -135,7 +136,10 @@ function RepositoryIssueView(props) {
             </span>
             <span className="text-xl mr-2 text-type-secondary">&middot;</span>
             <span className="text-xs text-type-secondary">
-              {issue.comments.length + " comments"}
+              {issue.comments.length}
+              <span className="ml-1">
+                {pluralize("comment", issue.comments.length)}
+              </span>
             </span>
           </div>
           <div className="flex mt-8">

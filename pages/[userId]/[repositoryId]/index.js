@@ -23,6 +23,7 @@ import CloneRepoInfo from "../../../components/repository/cloneRepoInfo";
 import SupportOwner from "../../../components/repository/supportOwner";
 import getContent from "../../../helpers/getContent";
 import getCommitHistory from "../../../helpers/getCommitHistory";
+import pluralize from "../../../helpers/pluralize";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -234,7 +235,10 @@ function RepositoryView(props) {
                         <span>Releases</span>
                       </div>
                       <span className="ml-2 text-xs text-type-secondary font-semibold">
-                        {repository.releases.length + " TAGS"}
+                        {repository.releases.length}
+                        <span className="ml-1 uppercase">
+                          {pluralize("tag", repository.releases.length)}
+                        </span>
                       </span>
                     </a>
                   </Link>
@@ -320,7 +324,13 @@ function RepositoryView(props) {
                         <span>Collaborators</span>
                       </div>
                       <span className="ml-2 text-xs text-type-secondary font-semibold">
-                        {repository.collaborators.length + 1 + " PEOPLE"}
+                        {repository.collaborators.length + 1}
+                        <span className="ml-1 uppercase">
+                          {pluralize(
+                            "person",
+                            repository.collaborators.length + 1
+                          )}
+                        </span>
                       </span>
                     </a>
                   </Link>
@@ -389,7 +399,10 @@ function RepositoryView(props) {
                           />
                         </g>
                       </svg>
-                      {repository.branches.length} Branches
+                      {repository.branches.length}
+                      <span className="ml-1 uppercase">
+                        {pluralize("branch", repository.branches.length)}
+                      </span>
                     </div>
                   </div>
                   <div className="ml-4">
@@ -413,7 +426,10 @@ function RepositoryView(props) {
                           strokeWidth="2"
                         />
                       </svg>
-                      {repository.tags.length} Tags
+                      {repository.tags.length}
+                      <span className="ml-1 uppercase">
+                        {pluralize("tag", repository.tags.length)}
+                      </span>
                     </div>
                   </div>
                   <div className="ml-4">
@@ -430,7 +446,10 @@ function RepositoryView(props) {
                           strokeWidth="2"
                         />
                       </svg>
-                      {commitsLength} Commits
+                      {commitsLength}
+                      <span className="ml-1 uppercase">
+                        {pluralize("commit", commitsLength)}
+                      </span>
                     </div>
                   </div>
                   <div className="flex-1 text-right">
