@@ -10,6 +10,7 @@ import find from "lodash/find";
 import { notify } from "reapop";
 import { setupTxClients } from "./env";
 import getNodeInfo from "../../helpers/getNodeInfo";
+const fee_1 = require("@gitopia/stargate/build/fee");
 
 let ledgerTransport;
 
@@ -383,6 +384,30 @@ export const downloadWallet = (password) => {
   };
 };
 
+export const calculateEstimatedFee = (msg) => {
+  return async (dispatch, getState) => {
+    const { wallet } = getState();
+    if (wallet.activeWallet) {
+      try {
+        await setupTxClients(dispatch, getState);
+        const { env } = getState();
+        const memo = "";
+        let estimatedFee;
+        const gasEstimation = await env.txClient.simulate(msg, memo);
+        const muliplier = 1.3;
+        estimatedFee = (0, fee_1.calculateFee)(
+          Math.round(gasEstimation * muliplier),
+          process.env.NEXT_PUBLIC_GAS_PRICE.toString()
+        );
+        return estimatedFee.amount[0].amount;
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    }
+  };
+};
+
 export const transferToWallet = (fromAddress, toAddress, amount) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
@@ -401,6 +426,26 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
           ],
         };
         const msg = await env.txClient.msgSend(send);
+        const calculatedFee = await calculateEstimatedFee([msg])(
+          dispatch,
+          getState
+        );
+        let loreNeeded = parseInt(calculatedFee) + parseInt(amount);
+        if (loreNeeded > wallet.loreBalance) {
+          const { user } = getState();
+          dispatch(
+            notify(
+              "Insufficient balance: estimated required fee " +
+                (user.advanceUser === true
+                  ? calculatedFee +
+                    process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                  : calculatedFee / 1000000 +
+                    process.env.NEXT_PUBLIC_CURRENCY_TOKEN),
+              "error"
+            )
+          );
+          return null;
+        }
         const fee = "auto";
         const memo = "";
         const result = await env.txClient.signAndBroadcast([msg], {
