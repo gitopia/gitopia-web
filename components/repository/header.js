@@ -9,6 +9,7 @@ import {
 import { useRouter } from "next/router";
 import { getGitServerAuthorization } from "../../helpers/getGitServerAuthStatus";
 import { notify } from "reapop";
+import pluralize from "../../helpers/pluralize";
 
 function RepositoryHeader({ repository, ...props }) {
   const [forkTargetShown, setForkTargetShown] = useState(false);
@@ -101,7 +102,10 @@ function RepositoryHeader({ repository, ...props }) {
                   />
                 </g>
               </svg>
-              {repository.branches.length} Branches
+              {repository.branches.length}
+              <span className="ml-1 uppercase">
+                {pluralize("branch", repository.branches.length)}
+              </span>
             </div>
             <div className="ml-6 text-type-secondary text-xs font-semibold uppercase flex">
               <svg
@@ -123,7 +127,10 @@ function RepositoryHeader({ repository, ...props }) {
                   strokeWidth="2"
                 />
               </svg>
-              {repository.tags.length} Tags
+              {repository.tags.length}
+              <span className="ml-1 uppercase">
+                {pluralize("tag", repository.tags.length)}
+              </span>
             </div>
           </div>
         </div>

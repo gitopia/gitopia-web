@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import getDiff from "../../helpers/getDiff";
 import { parseDiff, Diff, Hunk } from "react-diff-view";
 import getPullDiff from "../../helpers/getPullDiff";
+import pluralize from "../../helpers/pluralize";
 
 export default function DiffView({
   stats,
@@ -144,7 +145,13 @@ export default function DiffView({
     <>
       <div className="flex px-4 py-2">
         <div className="flex-1 flex">
-          <div className="pr-4">{stats.files_changed} Files Changed</div>
+          <div className="pr-4">
+            {stats.files_changed}
+            <span className="mx-1 capitalize">
+              {pluralize("file", stats.files_changed)}
+            </span>
+            Changed
+          </div>
           <div className="pr-4 text-green ">
             {" + " + (stats.stat ? stats.stat.addition : 0)}
           </div>

@@ -29,6 +29,7 @@ import useRepository from "../../../../hooks/useRepository";
 import IssuePullTitle from "../../../../components/repository/issuePullTitle";
 import IssuePullDescription from "../../../../components/repository/issuePullDescription";
 import { useErrorStatus } from "../../../../hooks/errorHandler";
+import pluralize from "../../../../helpers/pluralize";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -37,8 +38,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryIssueView(props) {
@@ -135,7 +136,10 @@ function RepositoryIssueView(props) {
             </span>
             <span className="text-xl mr-2 text-type-secondary">&middot;</span>
             <span className="text-xs text-type-secondary">
-              {issue.comments.length + " comments"}
+              {issue.comments.length}
+              <span className="ml-1">
+                {pluralize("comment", issue.comments.length)}
+              </span>
             </span>
           </div>
           <div className="flex mt-8">

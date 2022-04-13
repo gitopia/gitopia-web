@@ -15,6 +15,7 @@ import useRepository from "../../../../hooks/useRepository";
 import CommitDetailRow from "../../../../components/repository/commitDetailRow";
 import getCommitHistory from "../../../../helpers/getCommitHistory";
 import { useErrorStatus } from "../../../../hooks/errorHandler";
+import pluralize from "../../../../helpers/pluralize";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -144,7 +145,10 @@ function RepositoryCommitTreeView(props) {
                       strokeWidth="2"
                     />
                   </svg>
-                  {commitsLength} Commits
+                  {commitsLength}
+                  <span className="ml-1">
+                    {pluralize("commit", commitsLength)}
+                  </span>
                 </div>
               </div>
             </div>
