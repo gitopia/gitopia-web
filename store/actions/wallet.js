@@ -94,7 +94,7 @@ export const unlockKeplrWallet = () => {
       try {
         const info = await getNodeInfo();
         const chainId = info.node_info.network;
-        const offlineSigner = window.getOfflineSigner(chainId);
+        const offlineSigner = await window.getOfflineSignerAuto(chainId);
         const accounts = await offlineSigner.getAccounts();
         const key = await window.keplr.getKey(chainId);
         await dispatch({
