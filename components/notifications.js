@@ -759,7 +759,7 @@ function Notifications(props) {
       };
 
       ws.onerror = (error) => {
-        console.log(`WebSocket error: ${error}`);
+        console.log(`WebSocket error`, error);
       };
     }
     ws.addEventListener("message", wsMessage);
