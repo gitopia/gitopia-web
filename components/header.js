@@ -95,26 +95,28 @@ function Header(props) {
 
   const headerMessage = process.env.NEXT_PUBLIC_HEADER_MESSAGE;
 
-  const handleKeplrAccountChange = async () => {
-    console.log("handling keplr wallet change");
+  const updateNetworkName = async () => {
+    if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
+      const info = await getNodeInfo();
+      setChainId(info.node_info.network);
+    }
+  };
+
+  const kelprWalletChange = async () => {
+    console.log("Keplr wallet change", props.activeWallet);
     if (props.activeWallet && props.activeWallet.isKeplr) {
       await props.unlockKeplrWallet();
     }
   };
 
-  useEffect(async () => {
-    window.addEventListener("keplr_keystorechange", handleKeplrAccountChange);
-    if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
-      const info = await getNodeInfo();
-      setChainId(info.node_info.network);
-    }
+  useEffect(updateNetworkName, []);
+
+  useEffect(() => {
+    window.addEventListener("keplr_keystorechange", kelprWalletChange);
     return () => {
-      window.removeEventListener(
-        "keplr_keystorechange",
-        handleKeplrAccountChange
-      );
+      window.removeEventListener("keplr_keystorechange", kelprWalletChange);
     };
-  });
+  }, [null, props.activeWallet]);
 
   return (
     <>
