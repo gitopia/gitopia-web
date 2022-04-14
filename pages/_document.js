@@ -14,7 +14,7 @@ class GitopiaDocument extends Document {
             <script
               async
               defer
-              data-domain="testnet.gitopia.com"
+              data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN}
               src="https://plausible.io/js/plausible.js"
             />
           )}
