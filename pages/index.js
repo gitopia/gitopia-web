@@ -278,7 +278,7 @@ export default function Landing() {
         />
         <meta
           property="og:image"
-          content="https://testnet.gitopia.com/og-gitopia.jpg"
+          content="https://gitopia.com/og-gitopia.jpg"
         />
       </Head>
       <header className={(menuOpen ? "bg-purple " : "") + styles.header}>

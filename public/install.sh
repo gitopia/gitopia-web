@@ -18,7 +18,7 @@ function install {
 	VERSION="0.3.0"
 	INSECURE="false"
 	OUT_DIR="/usr/local/bin"
-	OBJECTS_URL="https://server.testnet.gitopia.com"
+	OBJECTS_URL="https://server.gitopia.com"
 	#bash check
 	[ ! "$BASH_VERSION" ] && fail "Please use bash instead"
 	[ ! -d $OUT_DIR ] && fail "output directory missing: $OUT_DIR"
