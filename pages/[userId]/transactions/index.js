@@ -14,7 +14,7 @@ import getOrganization from "../../../helpers/getOrganization";
 import {
   getUserTransaction,
   txTypes,
-} from "../../../components/user/getUserTransactions";
+} from "../../../helpers/getUserTransactions";
 import UserHeader from "../../../components/user/header";
 
 export async function getStaticProps() {
@@ -24,8 +24,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function TransactionView(props) {
@@ -172,7 +172,7 @@ function TransactionView(props) {
                                   if (window) {
                                     window.open(
                                       process.env.NEXT_PUBLIC_EXPLORER_URL +
-                                        "/" +
+                                        "/transactions/" +
                                         txs.txhash
                                     );
                                   }
