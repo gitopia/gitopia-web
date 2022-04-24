@@ -50,6 +50,8 @@ function install {
 	#find ARCH
 	if uname -m | grep amd64 > /dev/null; then
 		ARCH="amd64"
+	elif uname -m | grep x86_64 > /dev/null; then
+		ARCH="amd64"
 	elif uname -m | grep arm64 > /dev/null; then
 		ARCH="arm64"
 	elif uname -m | grep arm > /dev/null; then
