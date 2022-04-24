@@ -310,30 +310,20 @@ function RepositoryView(props) {
                   </div>
                 </div>
                 <div className="py-8">
-                  <Link
-                    href={
-                      "/" +
-                      repository.owner.id +
-                      "/" +
-                      repository.name +
-                      "/settings#collaborators"
-                    }
-                  >
-                    <a className="flex items-center">
-                      <div className="flex-1 text-left">
-                        <span>Collaborators</span>
-                      </div>
-                      <span className="ml-2 text-xs text-type-secondary font-semibold">
-                        {repository.collaborators.length + 1}
-                        <span className="ml-1 uppercase">
-                          {pluralize(
-                            "person",
-                            repository.collaborators.length + 1
-                          )}
-                        </span>
+                  <div className="flex items-center pb-2">
+                    <div className="flex-1 text-left">
+                      <span>Collaborators</span>
+                    </div>
+                    <span className="ml-2 text-xs text-type-secondary font-semibold">
+                      {repository.collaborators.length + 1}
+                      <span className="ml-1 uppercase">
+                        {pluralize(
+                          "person",
+                          repository.collaborators.length + 1
+                        )}
                       </span>
-                    </a>
-                  </Link>
+                    </span>
+                  </div>
 
                   <div className="text-xs mt-3">
                     <AssigneeGroup

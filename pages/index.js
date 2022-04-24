@@ -498,24 +498,14 @@ export default function Landing() {
                 </div>
 
                 <div className="py-8">
-                  <Link
-                    href={
-                      "/" +
-                      demoAddress +
-                      "/" +
-                      demoRepoName +
-                      "/settings#collaborators"
-                    }
-                  >
-                    <a className="flex items-center">
-                      <div className="flex-1 text-left">
-                        <span>Collaborators</span>
-                      </div>
-                      <span className="text-xs text-type-secondary font-semibold">
-                        {repository.collaborators.length + 1 + " PEOPLE"}
-                      </span>
-                    </a>
-                  </Link>
+                  <div className="flex items-center pb-2">
+                    <div className="flex-1 text-left">
+                      <span>Collaborators</span>
+                    </div>
+                    <span className="text-xs text-type-secondary font-semibold">
+                      {repository.collaborators.length + 1 + " PEOPLE"}
+                    </span>
+                  </div>
 
                   <div className="text-xs mt-3">
                     <AssigneeGroup
