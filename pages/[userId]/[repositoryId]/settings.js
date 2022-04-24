@@ -21,8 +21,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositorySettingsView(props) {
@@ -84,7 +84,7 @@ function RepositorySettingsView(props) {
                       router.push(url);
                     }}
                   />
-                  <div className="mt-6">
+                  {/* <div className="mt-6">
                     <TransferOwnership
                       currentOwnerId={repository.owner.id}
                       repoName={repository.name}
@@ -100,7 +100,7 @@ function RepositorySettingsView(props) {
                         router.push(url);
                       }}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 {/* <div className="flex py-6 items-center">
                   <div className="flex-1 mr-8">
