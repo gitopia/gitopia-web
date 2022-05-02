@@ -15,6 +15,7 @@ import CloneRepoInfo from "../components/repository/cloneRepoInfo";
 import SupportOwner from "../components/repository/supportOwner";
 import getCommitHistory from "../helpers/getCommitHistory";
 import getContent from "../helpers/getContent";
+import pluralize from "../helpers/pluralize";
 
 const pCircles = [
   {
@@ -503,7 +504,13 @@ export default function Landing() {
                       <span>Collaborators</span>
                     </div>
                     <span className="text-xs text-type-secondary font-semibold">
-                      {repository.collaborators.length + 1 + " PEOPLE"}
+                      {repository.collaborators.length + 1}
+                      <span className="ml-1 uppercase">
+                        {pluralize(
+                          "person",
+                          repository.collaborators.length + 1
+                        )}
+                      </span>
                     </span>
                   </div>
 
@@ -568,7 +575,10 @@ export default function Landing() {
                           />
                         </g>
                       </svg>
-                      {repository.branches.length} Branches
+                      {repository.branches.length}
+                      <span className="ml-1 uppercase">
+                        {pluralize("branch", repository.branches.length)}
+                      </span>
                     </div>
                   </div>
                   <div className="ml-4">
@@ -592,7 +602,10 @@ export default function Landing() {
                           strokeWidth="2"
                         />
                       </svg>
-                      {repository.tags.length} Tags
+                      {repository.tags.length}
+                      <span className="ml-1 uppercase">
+                        {pluralize("tag", repository.tags.length)}
+                      </span>
                     </div>
                   </div>
                   <div className="flex-1 text-right">
