@@ -20,13 +20,15 @@ import getContent from "../../../../helpers/getContent";
 import getCommitHistory from "../../../../helpers/getCommitHistory";
 import { useErrorStatus } from "../../../../hooks/errorHandler";
 
-let vscdarkplus;
-const SyntaxHighlighter = dynamic(
-  async () => {
-    vscdarkplus = (await import ("react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus")).default;
-    return (await import("react-syntax-highlighter")).Prism
-  }
-);
+// let vscdarkplus;
+import vscdarkplus from "react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus";
+
+const SyntaxHighlighter = dynamic(async () => {
+  // vscdarkplus = (
+  //   await import("react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus")
+  // ).default;
+  return (await import("react-syntax-highlighter")).Prism;
+});
 
 export async function getStaticProps() {
   return { props: {} };
@@ -35,8 +37,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryTreeView(props) {
