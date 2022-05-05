@@ -6,11 +6,11 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import WebSocket from "ws";
 
 const httpLink = new HttpLink({
-  uri: "http://gql.gitopia.dev/v1/graphql",
+  uri: "https://gql.gitopia.com/v1/graphql",
 });
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://gql.gitopia.dev/v1/graphql",
+    url: "ws://gql.gitopia.com/v1/graphql",
     webSocketImpl: require("websocket").w3cwebsocket,
   })
 );
