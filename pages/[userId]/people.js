@@ -28,6 +28,7 @@ function OrganizationPeopleView(props) {
   const [org, setOrg] = useState({
     name: "",
     repositories: [],
+    organizations: [],
   });
   const [allMembers, setAllMembers] = useState([]);
   const [isMobile, setIsMobile] = useState(false);

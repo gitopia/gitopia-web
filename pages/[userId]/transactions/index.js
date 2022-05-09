@@ -34,6 +34,7 @@ function TransactionView(props) {
     name: "",
     followers: [],
     following: [],
+    organizations: [],
   });
   const [org, setOrg] = useState({
     name: "",
