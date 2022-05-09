@@ -10,9 +10,6 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Notifications from "../components/notifications";
 // import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import ErrorHandler from "../hooks/errorHandler";
-import { ApolloProvider } from "@apollo/client";
-import QueryTransaction from "../helpers/queryTransaction";
-import client from "../helpers/apolloClient";
 const progress = new ProgressBar({
   size: 2,
   color: "#66ce67",
@@ -30,9 +27,6 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <Notifications />
-      <ApolloProvider client={client}>
-        <QueryTransaction />
-      </ApolloProvider>
       <ErrorHandler>
         <Component {...pageProps} />
       </ErrorHandler>

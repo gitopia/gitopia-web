@@ -1108,3 +1108,13 @@ ul.mde-suggestions li[aria-selected="true"] {
 .menu li.bordered span {
   border-left-width: 2px;
 }
+
+.react-calendar-heatmap .color-gitopia-empty {
+  fill: #2d3845;
+}
+.react-calendar-heatmap .color-gitopia-low {
+  fill: #29b7e4;
+}
+.react-calendar-heatmap .color-gitopia-high {
+  fill: #66ce67;
+}

@@ -37,6 +37,7 @@ module.exports = {
         grey: {
           // DEFAULT: "#404450",
           DEFAULT: "#3E4051",
+          100: "#E5EDF5",
           300: "#6F7A8F",
         },
         pink: {

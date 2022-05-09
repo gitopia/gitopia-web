@@ -12,6 +12,17 @@ export default function PublicTabs({
         <a
           className={
             "tab tab-md tab-bordered" +
+            (active === "overview" ? " tab-active" : "")
+          }
+        >
+          <span>Overview</span>
+        </a>
+      </Link>
+
+      <Link href={hrefBase + "/repositories"}>
+        <a
+          className={
+            "tab tab-md tab-bordered" +
             (active === "repositories" ? " tab-active" : "")
           }
         >
