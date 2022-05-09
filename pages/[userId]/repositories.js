@@ -14,12 +14,6 @@ import dayjs from "dayjs";
 import PublicTabs from "../../components/dashboard/publicTabs";
 import UserHeader from "../../components/user/header";
 import { useErrorStatus } from "../../hooks/errorHandler";
-import { ApolloProvider } from "@apollo/client";
-import QueryTransaction from "../../helpers/queryTransaction";
-import client from "../../helpers/apolloClient";
-import CalendarHeatmap from "react-calendar-heatmap";
-import "react-calendar-heatmap/dist/styles.css";
-import ReactTooltip from "react-tooltip";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -32,7 +26,7 @@ export async function getStaticPaths() {
   };
 }
 
-function AccountView(props) {
+function AccountRepositoryView(props) {
   const router = useRouter();
   const { setErrorStatusCode } = useErrorStatus();
   const [user, setUser] = useState({
@@ -45,8 +39,6 @@ function AccountView(props) {
   });
   const [allRepos, setAllRepos] = useState([]);
   const [avatarLink, setAvatarLink] = useState("");
-  const [contributions, setContributions] = useState([{}]);
-  const [totalContributions, setTotalContributions] = useState(0);
 
   useEffect(async () => {
     const [u, o] = await Promise.all([
@@ -122,7 +114,7 @@ function AccountView(props) {
           )}
           <div className="flex flex-1 mt-8 border-b border-grey">
             <PublicTabs
-              active="overview"
+              active="repositories"
               hrefBase={hrefBase}
               showPeople={org.address}
               showProposal={
@@ -131,75 +123,27 @@ function AccountView(props) {
               }
             />
           </div>
-          {!org.address ? (
-            <div className="">
-              <ApolloProvider client={client}>
-                <QueryTransaction
-                  setContributions={setContributions}
-                  setTotalContributions={setTotalContributions}
-                />
-              </ApolloProvider>
-              <div className="mt-8 border px-10 pt-12 pb-5 border-grey">
-                <CalendarHeatmap
-                  startDate={new Date().setFullYear(
-                    new Date().getFullYear() - 1
-                  )}
-                  endDate={new Date()}
-                  /*
-                values={[
-                  { date: "2022-01-01", count: 1 },
-                  { date: "2022-01-22", count: 1 },
-                  { date: "2022-01-30", count: 2 },
-                ]}
-                */
-                  values={contributions}
-                  gutterSize={4}
-                  showWeekdayLabels={true}
-                  classForValue={(value) => {
-                    if (!value) {
-                      return `color-gitopia-empty`;
-                    }
-                    if (value.count > 1) {
-                      return "color-gitopia-high";
-                    } else if (value.count == 1) {
-                      return `color-gitopia-low`;
-                    }
-                    return `color-gitopia-empty`;
-                  }}
-                  tooltipDataAttrs={(value) => {
-                    if (!value.count) {
-                      return {
-                        "data-tip": `No contributions`,
-                      };
-                    }
-                    return {
-                      "data-tip": `${value.count} ${
-                        value.count == 1 ? "contribution" : "contributions"
-                      } on ${dayjs(value.date).format("DD MMM YYYY")}`,
-                    };
-                  }}
-                  //onClick={(value) => alert(`Clicked on value with count`)}
-                />
-                <ReactTooltip backgroundColor={"#6a737d"} />
-                <div className="flex mb-5">
-                  <div className="pl-9 text-grey-100 text-sm">
-                    User committed {totalContributions}{" "}
-                    {totalContributions < 1 ? "contribution" : "contributions"}{" "}
-                    in the past year.
-                  </div>
-                  <div className="flex ml-auto text-xs text-grey-300 font-bold mr-1">
-                    <div>LESS</div>
-                    <div className="mt-1 bg-type-quaternary w-2.5 h-2.5 mr-1 ml-1"></div>
-                    <div className="mt-1 bg-teal w-2.5 h-2.5"></div>
-                    <div className="mt-1 bg-green w-2.5 h-2.5 mr-1 ml-1"></div>
-                    <div>MORE</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            ""
-          )}
+          <div className="mt-8">
+            <ul className="">
+              {allRepos.map((r) => {
+                return (
+                  <li className="p-4" key={r.id}>
+                    <div>
+                      <div>
+                        <Link href={hrefBase + "/" + r.name}>
+                          <a className="text-base btn-link">{r.name}</a>
+                        </Link>
+                      </div>
+                      <div className="mt-2 text-sm">{r.description}</div>
+                      <div className="mt-2 text-xs text-type-secondary">
+                        {"Last updated " + dayjs(r.updatedAt * 1000).fromNow()}
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </main>
       </div>
       <Footer />
@@ -214,4 +158,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(AccountView);
+export default connect(mapStateToProps, {})(AccountRepositoryView);
