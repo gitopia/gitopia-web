@@ -2,8 +2,9 @@ import { useQuery, useSubscription, gql } from "@apollo/client";
 import { useEffect } from "react";
 import { connect } from "react-redux";
 import dayjs from "dayjs";
-
+import { useRouter } from "next/router";
 function QueryTransaction(props) {
+  const router = useRouter();
   const QUERY_TRANSACTIONS = gql`
   query UserContributionsByBlockTime {
     transaction(
@@ -20,7 +21,7 @@ function QueryTransaction(props) {
             ]
           }
           involved_accounts_addresses: {
-            _eq: "{${props.selectedAddress}}"
+            _eq: "{${router.query.userId}}"
           }
         }
       }

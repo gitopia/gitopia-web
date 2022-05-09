@@ -38,6 +38,7 @@ function AccountView(props) {
   const [user, setUser] = useState({
     creator: "",
     repositories: [],
+    organizations: [],
   });
   const [org, setOrg] = useState({
     name: "",

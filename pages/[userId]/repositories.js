@@ -32,6 +32,7 @@ function AccountRepositoryView(props) {
   const [user, setUser] = useState({
     creator: "",
     repositories: [],
+    organizations: [],
   });
   const [org, setOrg] = useState({
     name: "",
@@ -125,23 +126,26 @@ function AccountRepositoryView(props) {
           </div>
           <div className="mt-8">
             <ul className="">
-              {allRepos.map((r) => {
-                return (
-                  <li className="p-4" key={r.id}>
-                    <div>
-                      <div>
-                        <Link href={hrefBase + "/" + r.name}>
-                          <a className="text-base btn-link">{r.name}</a>
-                        </Link>
-                      </div>
-                      <div className="mt-2 text-sm">{r.description}</div>
-                      <div className="mt-2 text-xs text-type-secondary">
-                        {"Last updated " + dayjs(r.updatedAt * 1000).fromNow()}
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
+              {allRepos !== null
+                ? allRepos.map((r) => {
+                    return (
+                      <li className="p-4" key={r.id}>
+                        <div>
+                          <div>
+                            <Link href={hrefBase + "/" + r.name}>
+                              <a className="text-base btn-link">{r.name}</a>
+                            </Link>
+                          </div>
+                          <div className="mt-2 text-sm">{r.description}</div>
+                          <div className="mt-2 text-xs text-type-secondary">
+                            {"Last updated " +
+                              dayjs(r.updatedAt * 1000).fromNow()}
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })
+                : ""}
             </ul>
           </div>
         </main>
