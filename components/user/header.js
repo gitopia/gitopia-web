@@ -52,21 +52,18 @@ function UserHeader(props) {
   const updateBio = async () => {
     setSavingBio(true);
     if (validateBio(newBio)) {
-      await props.updateUserBio({
-        bio: newBio,
-      });
+      const res = await props.updateUserBio(newBio);
 
       if (res && res.code === 0) {
-        if (refreshBio) await refreshBio(newBio);
+        if (refresh) await refresh();
         setIsEditing(false);
       } else {
-        if (onError) onError();
+        if (onError) console.log("error");
       }
     }
     setSavingBio(false);
   };
   useEffect(async () => {
-    console.log(router.query.userId);
     const u = await getUser(router.query.userId);
     if (u) {
       setUser(u);
@@ -75,6 +72,7 @@ function UserHeader(props) {
     }
   }, [router.query.userId]);
   const validateImageUrl = async (url) => {
+    setLoading(true);
     setValidateImageUrlError(null);
     var image = new Image();
     image.onload = function () {
@@ -86,8 +84,9 @@ function UserHeader(props) {
       setValidateImageUrlError("image doesn't exist");
     };
     image.src = url;
+    setLoading(false);
   };
-  const refreshBio = async () => {
+  const refresh = async () => {
     const u = await getUser(router.query.userId);
     if (u) {
       setUser(u);
@@ -112,6 +111,17 @@ function UserHeader(props) {
               >
                 ✕
               </label>
+              <div className="avatar flex-none mr-8 items-center">
+                <div className={"w-40 h-40 rounded-full"}>
+                  <img
+                    src={
+                      validateImageUrlError !== ""
+                        ? imageUrl
+                        : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=!"
+                    }
+                  />
+                </div>
+              </div>
               <div>
                 <label className="label">
                   <span className="label-text text-xs font-bold text-gray-400">
@@ -150,13 +160,12 @@ function UserHeader(props) {
                   htmlFor="avatar-url-modal"
                   className={"btn btn-sm btn-primary btn-outline btn-block "}
                   onClick={async (e) => {
-                    console.log("click");
                     setLoading(true);
-                    const res = await props.updateUserAvatar();
+                    const res = await props.updateUserAvatar(imageUrl);
                     if (res && res.code === 0) {
                       props.notify("Your user avatar is updated", "info");
+                      if (refresh) await refresh();
                     }
-                    console.log(res);
                     setLoading(false);
                   }}
                   disabled={validateImageUrlError !== null}
