@@ -46,3 +46,41 @@ export const setCurrentDashboard = (id) => {
     });
   };
 };
+
+export const updateUserBio = (bio) => {
+  return async (dispatch, getState) => {
+    try {
+      await setupTxClients(dispatch, getState);
+      const { env, wallet } = getState();
+      const message = await env.txClient.msgUpdateUserBio({
+        creator: wallet.selectedAddress,
+        bio: bio,
+      });
+      const result = await sendTransaction({ message })(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
+      return result;
+    } catch (e) {
+      dispatch(notify(e.message, "error"));
+      console.error(e);
+    }
+  };
+};
+
+export const updateUserAvatar = (avatarUrl) => {
+  return async (dispatch, getState) => {
+    try {
+      await setupTxClients(dispatch, getState);
+      const { env, wallet } = getState();
+      const message = await env.txClient.msgUpdateUserAvatar({
+        creator: wallet.selectedAddress,
+        url: avatarUrl,
+      });
+      const result = await sendTransaction({ message })(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
+      return result;
+    } catch (e) {
+      dispatch(notify(e.message, "error"));
+      console.error(e);
+    }
+  };
+};
