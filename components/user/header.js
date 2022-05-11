@@ -2,11 +2,78 @@ import shrinkAddress from "../../helpers/shrinkAddress";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { connect } from "react-redux";
+import { updateUserBio, updateUserAvatar } from "../../store/actions/user";
+import { notify } from "reapop";
+import getUser from "../../helpers/getUser";
+import { useEffect } from "react";
+import TextInput from "../textInput";
 function UserHeader(props) {
   const [validateImageUrlError, setValidateImageUrlError] = useState("");
   const [imageUrl, setImageUrl] = useState(0);
   const name = props.user.creator ? props.user.creator : "u";
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState({
+    creator: "",
+    repositories: [],
+    organizations: [],
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [newBio, setNewBio] = useState("");
+  const [newBioHint, setNewBioHint] = useState({
+    shown: false,
+    type: "info",
+    message: "",
+  });
+  const [savingBio, setSavingBio] = useState(false);
+
+  useEffect(() => {
+    setNewBio(user.bio);
+    setNewBioHint({ shown: false });
+  }, [user]);
+
+  const validateBio = (bio) => {
+    setNewBioHint({
+      ...newBioHint,
+      shown: false,
+    });
+
+    if (bio === user.bio) {
+      setNewBioHint({
+        shown: true,
+        type: "error",
+        message: "Bio is same as earlier",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const updateBio = async () => {
+    setSavingBio(true);
+    if (validateBio(newBio)) {
+      await props.updateUserBio({
+        bio: newBio,
+      });
+
+      if (res && res.code === 0) {
+        if (refreshBio) await refreshBio(newBio);
+        setIsEditing(false);
+      } else {
+        if (onError) onError();
+      }
+    }
+    setSavingBio(false);
+  };
+  useEffect(async () => {
+    console.log(router.query.userId);
+    const u = await getUser(router.query.userId);
+    if (u) {
+      setUser(u);
+    } else {
+      setErrorStatusCode(404);
+    }
+  }, [router.query.userId]);
   const validateImageUrl = async (url) => {
     setValidateImageUrlError(null);
     var image = new Image();
@@ -19,6 +86,14 @@ function UserHeader(props) {
       setValidateImageUrlError("image doesn't exist");
     };
     image.src = url;
+  };
+  const refreshBio = async () => {
+    const u = await getUser(router.query.userId);
+    if (u) {
+      setUser(u);
+    } else {
+      setErrorStatusCode(404);
+    }
   };
   return (
     <div className="flex flex-1 mb-8">
@@ -73,8 +148,17 @@ function UserHeader(props) {
               <div className="modal-action ml-auto w-28">
                 <label
                   htmlFor="avatar-url-modal"
-                  className="btn btn-sm btn-primary flex-1 bg-green-900"
-                  onClick={(e) => {}}
+                  className={"btn btn-sm btn-primary btn-outline btn-block "}
+                  onClick={async (e) => {
+                    console.log("click");
+                    setLoading(true);
+                    const res = await props.updateUserAvatar();
+                    if (res && res.code === 0) {
+                      props.notify("Your user avatar is updated", "info");
+                    }
+                    console.log(res);
+                    setLoading(false);
+                  }}
                   disabled={validateImageUrlError !== null}
                 >
                   UPDATE
@@ -114,41 +198,63 @@ function UserHeader(props) {
             <div className={"w-40 h-40 rounded-full"}>
               <img
                 src={
-                  props.user.avatarUrl == ""
+                  user.avatarUrl == ""
                     ? "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
                       name.slice(-1)
-                    : props.user.avatarUrl
+                    : user.avatarUrl
                 }
               />
             </div>
           </div>
         </div>
         <div className="mx-8 text-type-secondary text-lg mt-1">
-          <p>{shrinkAddress(props.user.creator)}</p>
+          <p>{shrinkAddress(user.creator)}</p>
         </div>
       </div>
       <div className="flex flex-1 text-type text-md items-center">
         <div className="pl-12">
           <div className="text-2xl">About</div>
-          <div
+          {/*<div
             className={
               "h-16 w-96 pr-5 pt-4 text-sm" +
-              (props.user.bio == "" ? " text-grey italic" : " text-grey-100")
+              (user.bio == "" ? " text-grey italic" : " text-grey-100")
             }
           >
-            {props.user.bio == "" ? "No Bio Provided" : props.user.bio}
+            {user.bio == "" ? "No Bio Provided" : user.bio}
+          </div>*/}
+          <div className="flex-1 h-20 w-96 pr-20 mr-10">
+            {isEditing ? (
+              <TextInput
+                type="text"
+                name="bio"
+                placeholder="Bio"
+                multiline={true}
+                value={newBio}
+                setValue={setNewBio}
+                hint={newBioHint}
+                size="sm"
+              />
+            ) : (
+              <div>
+                <span
+                  className={
+                    "h-16 w-96 pr-5 pt-4 text-sm" +
+                    (user.bio == "" ? " text-grey italic" : " text-grey-100")
+                  }
+                >
+                  {" "}
+                  {user.bio == "" ? "No Bio Provided" : user.bio}
+                </span>
+              </div>
+            )}
           </div>
           <div className="flex mt-10">
             <div className="text-type-secondary text-xs font-semibold flex">
-              {props.user.followers == undefined
-                ? "0"
-                : props.user.followers.length}{" "}
+              {user.followers == undefined ? "0" : user.followers.length}{" "}
               followers
             </div>
             <div className="ml-6 text-type-secondary text-xs font-semibold flex">
-              {props.user.following == undefined
-                ? "0"
-                : props.user.following.length}{" "}
+              {user.following == undefined ? "0" : user.following.length}{" "}
               following
             </div>
           </div>
@@ -157,9 +263,8 @@ function UserHeader(props) {
       <div className="mt-5 mr-40">
         <div className="text-lg">DAOs</div>
         <div className="flex mt-4">
-          {props.user.organizations.length > 0 ? (
-            props.user.organizations.map((dao) => {
-              console.log(dao);
+          {user.organizations.length > 0 ? (
+            user.organizations.map((dao) => {
               return (
                 <div className="flex" key={dao.id}>
                   <div className="avatar flex-none mr-2 items-center">
@@ -179,12 +284,51 @@ function UserHeader(props) {
             <div className="text-type-secondary text-xs font-semibold">---</div>
           )}
         </div>
-        {router.query.userId == props.selectedAddress ? (
+        {/*router.query.userId == props.selectedAddress ? (
           <div className="text-xs font-bold uppercase no-underline text-primary mt-20">
             EDIT PROFILE
           </div>
         ) : (
           ""
+        )*/}
+        {isEditing ? (
+          <div className="flex flex-none w-60 btn-group ml-1">
+            <button
+              className="flex-1 btn btn-sm mt-20 text-xs "
+              onClick={() => {
+                setIsEditing(false);
+                setNewBio(user.bio);
+                setNewBioHint({ shown: false });
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              className={
+                "flex-1 btn btn-sm btn-primary mt-20 text-xs " +
+                (savingBio ? "loading" : "")
+              }
+              onClick={updateBio}
+              disabled={savingBio}
+            >
+              Save
+            </button>
+          </div>
+        ) : (
+          <>
+            {user.creator === props.selectedAddress ? (
+              <button
+                className="btn btn-sm btn-ghost text-xs font-bold uppercase no-underline text-primary mt-20"
+                onClick={() => {
+                  setIsEditing(true);
+                }}
+              >
+                EDIT PROFILE
+              </button>
+            ) : (
+              ""
+            )}
+          </>
         )}
       </div>
     </div>
@@ -195,4 +339,8 @@ const mapStateToProps = (state) => {
   return { selectedAddress: state.wallet.selectedAddress };
 };
 
-export default connect(mapStateToProps, {})(UserHeader);
+export default connect(mapStateToProps, {
+  updateUserAvatar,
+  updateUserBio,
+  notify,
+})(UserHeader);
