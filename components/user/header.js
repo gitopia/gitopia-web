@@ -9,10 +9,16 @@ import { useEffect } from "react";
 import TextInput from "../textInput";
 function UserHeader(props) {
   const [validateImageUrlError, setValidateImageUrlError] = useState("");
-  const [imageUrl, setImageUrl] = useState(0);
+  const [imageUrl, setImageUrl] = useState("");
   const name = props.user.creator ? props.user.creator : "u";
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewAvatarUrl, setPreviewAvatarUrl] = useState(
+    "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&name=.&background=2d3845"
+  );
+  const [previewAvatarText, setPreviewAvatarText] =
+    useState("Nothing to Preview");
   const [user, setUser] = useState({
     creator: "",
     repositories: [],
@@ -72,19 +78,38 @@ function UserHeader(props) {
     }
   }, [router.query.userId]);
   const validateImageUrl = async (url) => {
-    setLoading(true);
+    if (url == "") {
+      setValidateImageUrlError(null);
+      setPreviewAvatarText("Nothing to Preview");
+      setPreviewAvatarUrl(
+        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
+      );
+      return;
+    }
     setValidateImageUrlError(null);
+    setPreviewLoading(true);
+    setPreviewAvatarText("Loading...");
+    setPreviewAvatarUrl(
+      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
+    );
     var image = new Image();
     image.onload = function () {
       if (this.width > 0) {
+        setPreviewLoading(false);
         setValidateImageUrlError(null);
+        setPreviewAvatarText("");
+        setPreviewAvatarUrl(imageUrl);
       }
     };
     image.onerror = function () {
+      setPreviewLoading(false);
       setValidateImageUrlError("image doesn't exist");
+      setPreviewAvatarText("");
+      setPreviewAvatarUrl(
+        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=!&background=2d3845&color=6F7A8F"
+      );
     };
     image.src = url;
-    setLoading(false);
   };
   const refresh = async () => {
     const u = await getUser(router.query.userId);
@@ -111,15 +136,13 @@ function UserHeader(props) {
               >
                 ✕
               </label>
-              <div className="avatar flex-none mr-8 items-center">
-                <div className={"w-40 h-40 rounded-full"}>
-                  <img
-                    src={
-                      validateImageUrlError !== ""
-                        ? imageUrl
-                        : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=!"
-                    }
-                  />
+
+              <div className="avatar flex-none mr-8 items-center mx-36">
+                <div className={"relative w-40 h-40 rounded-full"}>
+                  <img src={previewAvatarUrl} />
+                  <div className="absolute w-full bottom-16 text-center italic text-grey-300 text-sm">
+                    {previewAvatarText}
+                  </div>
                 </div>
               </div>
               <div>
@@ -133,10 +156,8 @@ function UserHeader(props) {
                     name="Image Url"
                     placeholder="Enter Url"
                     autoComplete="off"
+                    value={imageUrl}
                     onKeyUp={async (e) => {
-                      await validateImageUrl(e.target.value);
-                    }}
-                    onMouseUp={async (e) => {
                       await validateImageUrl(e.target.value);
                     }}
                     onChange={(e) => {
@@ -154,11 +175,23 @@ function UserHeader(props) {
                 ) : (
                   ""
                 )}
+                {previewLoading ? (
+                  <label className="label">
+                    <span className="label-text-alt text-amber-300">
+                      checking avatar url...
+                    </span>
+                  </label>
+                ) : (
+                  ""
+                )}
               </div>
               <div className="modal-action ml-auto w-28">
                 <label
                   htmlFor="avatar-url-modal"
-                  className={"btn btn-sm btn-primary btn-outline btn-block "}
+                  className={
+                    "btn btn-sm btn-primary btn-block " +
+                    (loading ? "loading" : "")
+                  }
                   onClick={async (e) => {
                     setLoading(true);
                     const res = await props.updateUserAvatar(imageUrl);
@@ -166,9 +199,18 @@ function UserHeader(props) {
                       props.notify("Your user avatar is updated", "info");
                       if (refresh) await refresh();
                     }
+                    setImageUrl("");
+                    setPreviewAvatarText("Nothing to Preview");
+                    setPreviewAvatarUrl(
+                      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
+                    );
                     setLoading(false);
                   }}
-                  disabled={validateImageUrlError !== null}
+                  disabled={
+                    validateImageUrlError !== null ||
+                    previewLoading == true ||
+                    imageUrl == ""
+                  }
                 >
                   UPDATE
                 </label>
@@ -216,13 +258,13 @@ function UserHeader(props) {
             </div>
           </div>
         </div>
-        <div className="mx-8 text-type-secondary text-lg mt-1">
+        <div className="mx-9 text-type-secondary text mt-1">
           <p>{shrinkAddress(user.creator)}</p>
         </div>
       </div>
       <div className="flex flex-1 text-type text-md items-center">
         <div className="pl-12">
-          <div className="text-2xl">About</div>
+          <div className="text-2xl pb-3">About</div>
           {/*<div
             className={
               "h-16 w-96 pr-5 pt-4 text-sm" +
@@ -251,7 +293,6 @@ function UserHeader(props) {
                     (user.bio == "" ? " text-grey italic" : " text-grey-100")
                   }
                 >
-                  {" "}
                   {user.bio == "" ? "No Bio Provided" : user.bio}
                 </span>
               </div>
@@ -270,7 +311,7 @@ function UserHeader(props) {
         </div>
       </div>
       <div className="mt-5 mr-40">
-        <div className="text-lg">DAOs</div>
+        <div className="text-xl">DAOs</div>
         <div className="flex mt-4">
           {user.organizations.length > 0 ? (
             user.organizations.map((dao) => {
