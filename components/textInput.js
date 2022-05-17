@@ -42,6 +42,7 @@ const TextInput = React.forwardRef(
             onChange={(e) => {
               props.setValue(e.target.value);
             }}
+            data-test={props.name}
           />
         ) : (
           <input
@@ -64,6 +65,7 @@ const TextInput = React.forwardRef(
             onChange={(e) => {
               props.setValue(e.target.value);
             }}
+            data-test={props.name}
           />
         )}
 

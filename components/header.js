@@ -423,7 +423,9 @@ function Header(props) {
                     {props.activeWallet ? (
                       <>
                         <div className="text-xs text-left">
-                          <span>{props.activeWallet.name}</span>
+                          <span data-test="current_wallet_name">
+                            {props.activeWallet.name}
+                          </span>
                           {props.activeWallet.isLedger ||
                           props.activeWallet.isKeplr ? (
                             <span

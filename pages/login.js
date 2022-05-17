@@ -56,6 +56,7 @@ export default function Login(props) {
                   onClick={(e) => {
                     setStep(3);
                   }}
+                  data-test="create-new-local-wallet"
                 >
                   <img src="/new-wallet.svg" className="w-20 h-20" />
                   <div className="ml-8">Create new local wallet</div>
@@ -65,6 +66,7 @@ export default function Login(props) {
                   onClick={(e) => {
                     setStep(4);
                   }}
+                  data-test="recover-local-wallet"
                 >
                   <img src="/existing-wallet.svg" className="w-20 h-20" />
                   <div className="ml-8">Recover exisiting wallet</div>
