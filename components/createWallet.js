@@ -267,6 +267,7 @@ function CreateWallet(props) {
               <button
                 className="btn btn-secondary btn-block"
                 onClick={createWallet}
+                data-test="create_wallet"
               >
                 Create
               </button>
