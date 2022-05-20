@@ -180,6 +180,7 @@ function RecoverWallet(props) {
               <button
                 className="btn btn-secondary btn-block"
                 onClick={createWallet}
+                data-test="recover_wallet_button"
               >
                 Recover
               </button>
@@ -210,6 +211,7 @@ function RecoverWallet(props) {
               <button
                 className="btn btn-secondary btn-block"
                 onClick={recoverWallet}
+                data-test="recover_wallet_button"
               >
                 Recover
               </button>

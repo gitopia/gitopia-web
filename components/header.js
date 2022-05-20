@@ -40,16 +40,13 @@ function Header(props) {
   const [unread, setUnread] = useState(false);
   const router = useRouter();
   const menuRef = useRef();
-  const [
-    formattedIssueNotifications,
-    setFormattedIssueNotifications,
-  ] = useState([]);
+  const [formattedIssueNotifications, setFormattedIssueNotifications] =
+    useState([]);
   const [formattedPullNotifications, setFormattedPullNotifications] = useState(
     []
   );
-  const [showNotificationListState, setShowNotificationListState] = useState(
-    ""
-  );
+  const [showNotificationListState, setShowNotificationListState] =
+    useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -445,7 +442,10 @@ function Header(props) {
                             ""
                           )}
                         </div>
-                        <div className="text-xs text-left text-type-tertiary">
+                        <div
+                          className="text-xs text-left text-type-tertiary"
+                          data-test="current_wallet_address"
+                        >
                           {addressToShow}
                         </div>
                       </>
@@ -520,6 +520,7 @@ function Header(props) {
                                     menuRef.current.blur();
                                   }
                                 }}
+                                data-test="download_wallet"
                               >
                                 Download Wallet
                               </a>
