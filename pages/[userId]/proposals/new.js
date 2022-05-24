@@ -18,9 +18,8 @@ function RepositoryProposalCreateView(props) {
   const [validateAddressError, setValidateAddressError] = useState("");
   const validAddress = new RegExp("gitopia[a-z0-9]{39}");
   const [validateAmountError, setValidateAmountError] = useState("");
-  const [validateInitialAmountError, setValidateInitialAmountError] = useState(
-    ""
-  );
+  const [validateInitialAmountError, setValidateInitialAmountError] =
+    useState("");
   const [validateTitleError, setValidateTitleError] = useState("");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -88,9 +87,9 @@ function RepositoryProposalCreateView(props) {
     }
 
     // let balance = props.loreBalance;
-    // if (props.advanceUser === false) {
-    //   Vamount = Vamount * 1000000;
-    // }
+    if (props.advanceUser === false) {
+      Vamount = Vamount * 1000000;
+    }
     if (!isNaturalNumber(Vamount)) {
       // if (Vamount > balance) {
       //   setValidateAmountError("Insufficient Balance");
