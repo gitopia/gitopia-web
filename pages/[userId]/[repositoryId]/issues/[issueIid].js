@@ -142,7 +142,7 @@ function RepositoryIssueView(props) {
               </span>
             </span>
           </div>
-          <div className="flex mt-8">
+          <div className="sm:flex mt-8">
             <div className="flex flex-1">
               <div className="flex flex-col w-full">
                 <IssuePullDescription
@@ -199,7 +199,7 @@ function RepositoryIssueView(props) {
                 </div>
               </div>
             </div>
-            <div className="flex-none w-64 pl-8 divide-y divide-grey">
+            <div className="flex-none sm:w-64 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
               <div className="pb-8">
                 <AssigneeSelector
                   assignees={issue.assignees}

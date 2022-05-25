@@ -31,7 +31,7 @@ function RepositoryHeader({ repository, ...props }) {
 
   return (
     <div className="flex flex-1 mb-8">
-      <div className="avatar flex-none mr-8 items-center">
+      <div className="avatar flex-none mr-1 sm:mr-8 items-center">
         <div
           className={
             "w-14 h-14 " +

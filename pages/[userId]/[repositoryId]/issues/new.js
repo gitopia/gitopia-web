@@ -22,8 +22,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryIssueCreateView(props) {
@@ -87,7 +87,7 @@ function RepositoryIssueCreateView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs repository={repository} active="issues" />
-          <div className="flex mt-8">
+          <div className="sm:flex mt-8">
             <div className="flex flex-1">
               <div className="flex-none mr-4">
                 <div className="avatar">
@@ -130,7 +130,7 @@ function RepositoryIssueCreateView(props) {
                 </div>
               </div>
             </div>
-            <div className="flex-none w-64 pl-8 divide-y divide-grey">
+            <div className="flex-none sm:w-64 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
               <div className="w-full pb-8">
                 <AssigneeSelector
                   assignees={assignees}

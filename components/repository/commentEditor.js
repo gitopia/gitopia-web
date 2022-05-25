@@ -90,10 +90,10 @@ function CommentEditor({
           </span>
         </label>
       )}
-      <div className="text-right mt-4">
+      <div className="flex text-right mt-4 sm:justify-end">
         {!isEdit ? (
           commentType === "ISSUE" ? (
-            <div className="inline-block w-36 mr-4">
+            <div className="inline-block w-28 sm:w-36 mr-4">
               <button
                 className={
                   "btn btn-sm btn-accent btn-outline btn-block " +
@@ -117,7 +117,7 @@ function CommentEditor({
               </button>
             </div>
           ) : issueState === "OPEN" ? (
-            <div className="inline-block w-36 mr-4">
+            <div className="inline-block w-28 sm:w-36 mr-4">
               <button
                 className={
                   "btn btn-sm btn-accent btn-outline btn-block " +
@@ -149,7 +149,7 @@ function CommentEditor({
           ""
         )}
         {onCancel ? (
-          <div className="inline-block w-36 mr-4">
+          <div className="inline-block w-28 sm:w-36 mr-4">
             <button
               className="btn btn-sm btn-ghost btn-block"
               onClick={onCancel}
@@ -160,7 +160,7 @@ function CommentEditor({
         ) : (
           ""
         )}
-        <div className="inline-block w-36">
+        <div className="inline-block w-28 sm:w-36">
           <button
             className={
               "btn btn-sm btn-primary btn-block " +

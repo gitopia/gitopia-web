@@ -39,16 +39,13 @@ function Header(props) {
   const [unread, setUnread] = useState(false);
   const router = useRouter();
   const menuRef = useRef();
-  const [
-    formattedIssueNotifications,
-    setFormattedIssueNotifications,
-  ] = useState([]);
+  const [formattedIssueNotifications, setFormattedIssueNotifications] =
+    useState([]);
   const [formattedPullNotifications, setFormattedPullNotifications] = useState(
     []
   );
-  const [showNotificationListState, setShowNotificationListState] = useState(
-    ""
-  );
+  const [showNotificationListState, setShowNotificationListState] =
+    useState("");
 
   const onUserMenuClose = () => {
     setMenuOpen(false);
@@ -127,7 +124,7 @@ function Header(props) {
       ) : (
         ""
       )}
-      <div className="navbar border-b border-grey bg-base-100 text-base-content">
+      <div className="navbar border-b border-grey bg-base-100 text-base-content overflow-x-scroll overflow-y-hidden">
         <div
           className={
             "flex-none px-6 transition-all ease-out delay-150" +
