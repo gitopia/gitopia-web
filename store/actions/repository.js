@@ -709,6 +709,32 @@ export const updateRepositoryLabel = ({
   };
 };
 
+export const deleteRepositoryLabel = ({
+  repositoryId = null,
+  labelId = null,
+}) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "label")))
+      return null;
+
+    const { wallet, env } = getState();
+    const label = {
+      creator: wallet.selectedAddress,
+      repositoryId,
+      labelId,
+    };
+    try {
+      const message = await env.txClient.msgDeleteRepositoryLabel(label);
+      const result = await sendTransaction({ message })(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
+      return result;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
 export const isCurrentUserEligibleToUpdate = (repository) => {
   return async (dispatch, getState) => {
     if (repository && repository.owner) {

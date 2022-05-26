@@ -12,6 +12,7 @@ import Footer from "../../../../components/footer";
 import LabelEditor from "../../../../components/repository/labelEditor";
 import LabelView from "../../../../components/repository/labelView";
 import useRepository from "../../../../hooks/useRepository";
+import { deleteRepositoryLabel } from "../../../../store/actions/repository";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -20,8 +21,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryIssueLabelsView(props) {
@@ -90,6 +91,15 @@ function RepositoryIssueLabelsView(props) {
                 <LabelView
                   label={l}
                   repoId={repository.id}
+                  onDelete={async (id) => {
+                    const res = await props.deleteRepositoryLabel({
+                      repositoryId: repository.id,
+                      labelId: l.id,
+                    });
+                    if (res && res.code === 0) {
+                      refreshRepository();
+                    }
+                  }}
                   refreshLabels={refreshRepository}
                 />
               );
@@ -108,4 +118,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryIssueLabelsView);
+export default connect(mapStateToProps, { deleteRepositoryLabel })(
+  RepositoryIssueLabelsView
+);
