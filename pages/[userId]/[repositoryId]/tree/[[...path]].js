@@ -52,6 +52,7 @@ function RepositoryTreeView(props) {
   const [loadingEntities, setLoadingEntities] = useState(false);
   const [file, setFile] = useState(null);
   const [fileSyntax, setFileSyntax] = useState("");
+  const [fileSize, setFileSize] = useState("");
   const [commitDetail, setCommitDetail] = useState({
     author: {},
     message: "",
@@ -132,6 +133,7 @@ function RepositoryTreeView(props) {
                 let filename = repoPath[repoPath.length - 1] || "";
                 let extension = filename.split(".").pop() || "";
                 setFileSyntax(extension);
+                setFileSize(formatBytes(res.content[0].size));
               } catch (e) {
                 // TODO: show error to user
                 console.error(e);
@@ -140,11 +142,8 @@ function RepositoryTreeView(props) {
             } else if (res.content[0].size) {
               // file not displayed due to restriction
               setFileSyntax("md");
-              setFile(
-                "File is too big to show (" +
-                  formatBytes(res.content[0].size) +
-                  ")"
-              );
+              setFile("File is too big to show");
+              setFileSize(formatBytes(res.content[0].size));
               setEntityList([]);
             } else {
               // single file in current path
@@ -168,6 +167,30 @@ function RepositoryTreeView(props) {
         }
       }
       setLoadingEntities(false);
+    }
+  };
+
+  const downloadFile = async () => {
+    if (file) {
+      const res = await getContent(
+        repository.id,
+        getBranchSha(branchName, repository.branches, repository.tags),
+        repoPath.join("/"),
+        null,
+        1,
+        true
+      );
+      if (res?.content?.length == 1 && res?.content[0]?.type === "BLOB") {
+        const fileContent = window.atob(res.content[0].content);
+        const filename = res.content[0].name || "";
+        const mime = (await import("mime-types")).default;
+        const mimeType = mime.lookup(filename);
+        const blob = new Blob([fileContent], {
+          type: mimeType,
+        });
+        const saveAs = (await import("file-saver")).default.saveAs;
+        saveAs(blob, filename);
+      }
     }
   };
 
@@ -266,12 +289,29 @@ function RepositoryTreeView(props) {
                 ) : (
                   ""
                 )}
-                {file !== null ? (
-                  fileSyntax === "md" ? (
-                    <div className="markdown-body p-4">
-                      <ReactMarkdown>{file}</ReactMarkdown>
-                    </div>
-                  ) : (
+              </div>
+            </div>
+            {file !== null ? (
+              <div className="mt-4 border border-gray-700 rounded overflow-hidden ">
+                <div className="flex px-2 py-2 bg-base-200 items-center">
+                  <div className="flex-1">
+                    <div className="text-sm">{fileSize}</div>
+                  </div>
+                  <div className="flex-none flex btn-group">
+                    <button
+                      className="btn btn-xs btn-ghost"
+                      onClick={downloadFile}
+                    >
+                      Download File
+                    </button>
+                  </div>
+                </div>
+                {fileSyntax === "md" ? (
+                  <div className="flex-1 markdown-body p-4">
+                    <ReactMarkdown>{file}</ReactMarkdown>
+                  </div>
+                ) : (
+                  <div className="flex-1 ">
                     <SyntaxHighlighter
                       style={vscdarkplus}
                       language={fileSyntax}
@@ -280,12 +320,12 @@ function RepositoryTreeView(props) {
                     >
                       {file}
                     </SyntaxHighlighter>
-                  )
-                ) : (
-                  ""
-                )}
+                  </div>
+                )}{" "}
               </div>
-            </div>
+            ) : (
+              ""
+            )}
           </div>
         </main>
       </div>
