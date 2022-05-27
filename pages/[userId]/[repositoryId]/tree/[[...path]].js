@@ -18,6 +18,7 @@ import dynamic from "next/dynamic";
 import ReactMarkdown from "react-markdown";
 import getContent from "../../../../helpers/getContent";
 import getCommitHistory from "../../../../helpers/getCommitHistory";
+import formatBytes from "../../../../helpers/formatBytes";
 import { useErrorStatus } from "../../../../hooks/errorHandler";
 
 // let vscdarkplus;
@@ -120,19 +121,35 @@ function RepositoryTreeView(props) {
       console.log(res);
       if (res) {
         if (res.content) {
-          if (res.content[0].type === "BLOB" && res.content[0].content) {
-            // display file contents
-            setEntityList([]);
-            try {
-              let file = window.atob(res.content[0].content);
-              setFile(file);
-              let filename = repoPath[repoPath.length - 1] || "";
-              let extension = filename.split(".").pop() || "";
-              setFileSyntax(extension);
-            } catch (e) {
-              // TODO: show error to user
-              console.error(e);
+          if (res.content.length == 1 && res.content[0].type === "BLOB") {
+            // only 1 blob child
+            if (res.content[0].encoding) {
+              // file size within restriction, display file contents
+              setEntityList([]);
+              try {
+                let file = window.atob(res.content[0].content);
+                setFile(file);
+                let filename = repoPath[repoPath.length - 1] || "";
+                let extension = filename.split(".").pop() || "";
+                setFileSyntax(extension);
+              } catch (e) {
+                // TODO: show error to user
+                console.error(e);
+                setFile(null);
+              }
+            } else if (res.content[0].size) {
+              // file not displayed due to restriction
+              setFileSyntax("md");
+              setFile(
+                "File is too big to show (" +
+                  formatBytes(res.content[0].size) +
+                  ")"
+              );
+              setEntityList([]);
+            } else {
+              // single file in current path
               setFile(null);
+              setEntityList(res.content);
             }
           } else {
             // display folder tree
