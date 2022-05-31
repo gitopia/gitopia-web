@@ -40,7 +40,22 @@ function RepositoryIssueView(props) {
     limit: 10,
     countTotal: true,
   });
+  const [isMobile, setIsMobile] = useState(false);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.screen.width <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }, [typeof window !== "undefined" ? window.screen.width : ""]);
+
+  function detectWindowSize() {
+    if (typeof window !== "undefined") {
+      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }
+  if (typeof window !== "undefined") {
+    window.onresize = detectWindowSize;
+  }
   const getAllIssues = async () => {
     if (repository) {
       const option = {};
@@ -542,9 +557,13 @@ function RepositoryIssueView(props) {
                       </div>
                     </div>
                     <div className="flex items-center">
-                      <div className="mt-1">
-                        <AssigneeGroup assignees={i.assignees} />
-                      </div>
+                      {!isMobile ? (
+                        <div className={"mt-1 "}>
+                          <AssigneeGroup assignees={i.assignees} />
+                        </div>
+                      ) : (
+                        ""
+                      )}
                       <div className="ml-4 flex text-type-secondary items-center">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"

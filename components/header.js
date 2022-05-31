@@ -54,7 +54,7 @@ function Header(props) {
     if (typeof window !== "undefined") {
       window.screen.width <= 760 ? setIsMobile(true) : setIsMobile(false);
     }
-  });
+  }, [typeof window !== "undefined" ? window.screen.width : ""]);
 
   function detectWindowSize() {
     if (typeof window !== "undefined") {

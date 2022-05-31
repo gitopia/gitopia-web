@@ -7,7 +7,7 @@ function Drawer(props) {
   return (
     <main
       className={
-        " fixed overflow-hidden z-20 bg-gray-900 bg-opacity-25 inset-0 transform ease-in-out " +
+        " fixed overflow-hidden z-20 bg-base-100 bg-opacity-25 inset-0 transform ease-in-out " +
         (props.isOpen
           ? " transition-opacity opacity-100 duration-300 translate-x-0  "
           : " transition-all delay-500 opacity-0 -translate-x-full  ")
@@ -19,7 +19,7 @@ function Drawer(props) {
           (props.isOpen ? " translate-x-0 " : " -translate-x-full ")
         }
       >
-        <div className="relative w-full max-w-xs pb-10 flex flex-col space-y-6 overflow-y-scroll h-full">
+        <div className="relative max-w-xs pb-10 flex flex-col space-y-6 overflow-y-scroll overflow-x-hidden h-full">
           <header className="font-bold text-lg border-b border-grey py-4 content-center">
             <div
               className={
@@ -87,6 +87,9 @@ function Drawer(props) {
                 className="hover:bg-gray-700"
                 href={process.env.NEXT_PUBLIC_EXPLORER_URL}
                 target="_blank"
+                onClick={() => {
+                  props.setIsOpen(false);
+                }}
               >
                 Explorer
               </a>
@@ -96,6 +99,9 @@ function Drawer(props) {
                 className="hover:bg-gray-700"
                 href={process.env.NEXT_PUBLIC_DOCS_URL}
                 target="_blank"
+                onClick={() => {
+                  props.setIsOpen(false);
+                }}
               >
                 Docs
               </a>
@@ -105,6 +111,9 @@ function Drawer(props) {
                 className="hover:bg-gray-700"
                 href={process.env.NEXT_PUBLIC_FORUM_URL}
                 target="_blank"
+                onClick={() => {
+                  props.setIsOpen(false);
+                }}
               >
                 Forum
               </a>
