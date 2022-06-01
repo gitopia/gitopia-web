@@ -21,6 +21,22 @@ export default function BranchSelector({
   const mainEl = useRef();
 
   const [filteredList, setFilteredList] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.screen.width <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }, [typeof window !== "undefined" ? window.screen.width : ""]);
+
+  function detectWindowSize() {
+    if (typeof window !== "undefined") {
+      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }
+  if (typeof window !== "undefined") {
+    window.onresize = detectWindowSize;
+  }
 
   useEffect(() => {
     let list = tab === "tags" ? tags : branches;
@@ -47,7 +63,11 @@ export default function BranchSelector({
   }, [branches]);
 
   return (
-    <div className={"dropdown outline-none"} tabIndex="0" ref={mainEl}>
+    <div
+      className={"dropdown outline-none " + (isMobile ? "dropdown-end" : "")}
+      tabIndex="0"
+      ref={mainEl}
+    >
       <div
         className="btn btn-sm btn-outline items-center"
         onClick={() => {
