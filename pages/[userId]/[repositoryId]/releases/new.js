@@ -32,8 +32,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryReleaseNewView(props) {
@@ -166,7 +166,7 @@ function RepositoryReleaseNewView(props) {
               <button className="btn btn-sm btn-active">Releases</button>
               <button className="btn btn-sm">Tags</button>
             </div> */}
-            <div className="flex mt-4 items-end">
+            <div className="sm:flex mt-4 items-end">
               {newTagOptionShown ? (
                 <div className="form-control mr-4">
                   <label className="label">
@@ -218,43 +218,45 @@ function RepositoryReleaseNewView(props) {
                       }}
                     />
                   </div>
-                  <div className="form-control mr-4">
-                    <button
-                      className={
-                        "btn btn-secondary btn-sm " +
-                        (creatingTag ? "loading" : "")
-                      }
-                      onClick={async () => {
-                        setCreatingTag(true);
-                        const res = await props.createTag({
-                          repositoryId: repository.id,
-                          name: tagName,
-                          sha: target.sha,
-                        });
-                        if (res && res.code === 0) {
-                          setNewTagOptionShown(false);
-                          refreshRepository();
+                  <div className="flex mt-4 sm:mt-0">
+                    <div className="form-control mr-4">
+                      <button
+                        className={
+                          "btn btn-secondary btn-sm " +
+                          (creatingTag ? "loading" : "")
                         }
-                        setCreatingTag(false);
-                      }}
-                    >
-                      Create Tag
-                    </button>
-                  </div>
-                  <div className="form-control">
-                    <button
-                      className={"btn btn-sm "}
-                      onClick={() => {
-                        setTagName(
-                          repository.tags.length
-                            ? repository.tags[repository.tags.length - 1].name
-                            : ""
-                        );
-                        setNewTagOptionShown(false);
-                      }}
-                    >
-                      Cancel
-                    </button>
+                        onClick={async () => {
+                          setCreatingTag(true);
+                          const res = await props.createTag({
+                            repositoryId: repository.id,
+                            name: tagName,
+                            sha: target.sha,
+                          });
+                          if (res && res.code === 0) {
+                            setNewTagOptionShown(false);
+                            refreshRepository();
+                          }
+                          setCreatingTag(false);
+                        }}
+                      >
+                        Create Tag
+                      </button>
+                    </div>
+                    <div className="form-control">
+                      <button
+                        className={"btn btn-sm "}
+                        onClick={() => {
+                          setTagName(
+                            repository.tags.length
+                              ? repository.tags[repository.tags.length - 1].name
+                              : ""
+                          );
+                          setNewTagOptionShown(false);
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 </>
               ) : (
@@ -262,7 +264,7 @@ function RepositoryReleaseNewView(props) {
               )}
             </div>
           </div>
-          <div className="flex mt-8">
+          <div className="sm:flex mt-8">
             <div className="flex flex-1">
               <div className="flex-none mr-4">
                 <div className="avatar">
@@ -385,7 +387,7 @@ function RepositoryReleaseNewView(props) {
                 </div>
               </div>
             </div>
-            <div className="flex-none w-64 pl-8 text-sm text-type-secondary">
+            <div className="flex-none sm:w-64 sm:pl-8 text-sm text-type-secondary mt-8 sm:mt-0">
               <h5 className="text-xl">Tagging Suggestions</h5>
               <p className="mt-4">
                 It’s common practice to prefix your version names with the

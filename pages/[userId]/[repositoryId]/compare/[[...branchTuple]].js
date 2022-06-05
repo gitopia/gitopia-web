@@ -277,6 +277,7 @@ function RepositoryCompareView(props) {
                       )
                     );
                   }}
+                  isRight={false}
                 />
               </div>
             </div>
@@ -334,6 +335,7 @@ function RepositoryCompareView(props) {
                       )
                     );
                   }}
+                  isRight={false}
                 />
               </div>
             </div>
