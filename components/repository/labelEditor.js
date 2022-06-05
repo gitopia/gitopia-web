@@ -161,7 +161,7 @@ function LabelEditor({
         </span>
         <Label name={name} color={color} />
       </div>
-      <div className="flex flex-col sm:flex-row mt-4">
+      <div className="sm:flex mt-4">
         <div className="flex-none w-68 sm:w-60 mr-4">
           <TextInput
             type="text"
@@ -173,7 +173,7 @@ function LabelEditor({
             size="sm"
           />
         </div>
-        <div className={"flex flex-row " + (isMobile ? "mt-3 mb-3" : "w-full")}>
+        <div className={"flex " + (isMobile ? "mt-3 mb-3" : "w-full")}>
           <div className="flex-1 mr-4">
             <TextInput
               type="text"
