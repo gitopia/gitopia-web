@@ -121,7 +121,7 @@ function CommentEditor({
               <button
                 className={
                   "btn btn-sm btn-accent btn-outline btn-block " +
-                  (togglingIssue ? "loading" : "")
+                  (togglingIssue ? "loading h-12" : "")
                 }
                 disabled={togglingIssue || postingComment}
                 onClick={async () => {
