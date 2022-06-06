@@ -3,7 +3,7 @@ import Header from "../../../components/header";
 
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
@@ -28,6 +28,22 @@ export async function getStaticPaths() {
 function RepositorySettingsView(props) {
   const router = useRouter();
   const { repository, refreshRepository } = useRepository();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.screen.width <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }, [typeof window !== "undefined" ? window.screen.width : ""]);
+
+  function detectWindowSize() {
+    if (typeof window !== "undefined") {
+      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }
+  if (typeof window !== "undefined") {
+    window.onresize = detectWindowSize;
+  }
 
   return (
     <div
@@ -43,32 +59,39 @@ function RepositorySettingsView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs repository={repository} active="settings" />
-          <div className="flex mt-8">
-            <div className="flex-none w-64">
-              <ul className="menu py-4">
-                <li>
-                  <a className="rounded" href="#repository">
-                    Repository
-                  </a>
-                </li>
-                <li>
-                  <a className="rounded" href="#collaborators">
-                    Collaborators
-                  </a>
-                </li>
-                <li>
-                  <a className="rounded" href="#permissions">
-                    Permissions
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div className="flex-1 px-4">
+          <div className="sm:flex mt-4 sm:mt-8">
+            {!isMobile ? (
+              <div className="flex-none w-64">
+                <ul className="menu py-4">
+                  <li>
+                    <a className="rounded" href="#repository">
+                      Repository
+                    </a>
+                  </li>
+                  <li>
+                    <a className="rounded" href="#collaborators">
+                      Collaborators
+                    </a>
+                  </li>
+                  <li>
+                    <a className="rounded" href="#permissions">
+                      Permissions
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              ""
+            )}
+            <div className="flex-1 sm:px-4">
               <div className="divide-y divide-grey">
-                <div className="text-2xl py-6" id="repository">
+                <div
+                  className="text-lg sm:text-2xl py-4 sm:py-6"
+                  id="repository"
+                >
                   Repository
                 </div>
-                <div className="px-4 py-6">
+                <div className="sm:px-4 py-4 sm:py-6">
                   <RenameRepository
                     currentName={repository.name}
                     repoId={repository.id}
@@ -116,8 +139,11 @@ function RepositorySettingsView(props) {
                   </div>
                 </div> */}
               </div>
-              <div className="mt-8 divide-y divide-grey">
-                <div className="text-2xl py-6" id="collaborators">
+              <div className="mt-2 sm:mt-8 divide-y divide-grey">
+                <div
+                  className="text-lg sm:text-2xl py-4 sm:py-6"
+                  id="collaborators"
+                >
                   Collaborators
                 </div>
                 <div className="py-4">
@@ -131,8 +157,11 @@ function RepositorySettingsView(props) {
                   />
                 </div>
               </div>
-              <div className="mt-8 divide-y divide-grey">
-                <div className="text-2xl py-6" id="permissions">
+              <div className="sm:mt-8 divide-y divide-grey">
+                <div
+                  className="text-lg sm:text-2xl py-4 sm:py-6"
+                  id="permissions"
+                >
                   Permissions
                 </div>
                 {/* <div className="form-control py-4">
@@ -171,7 +200,7 @@ function RepositorySettingsView(props) {
                     <input type="checkbox" className="toggle toggle-primary" />
                   </label>
                 </div> */}
-                <div className="form-control py-6 px-4">
+                <div className="form-control sm:px-4 py-4 sm:py-6">
                   <ToggleForking
                     repoId={repository.id}
                     allowForking={repository.allowForking}

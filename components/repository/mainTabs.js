@@ -19,7 +19,7 @@ function RepositoryMainTabs({ repository, active, ...props }) {
 
   return (
     <div className="">
-      <div className="tabs relative z-10 block whitespace-nowrap flex-nowrap overflow-x-scroll overflow-y-hidden">
+      <div className="tabs relative z-10 block whitespace-nowrap flex-nowrap overflow-x-auto overflow-y-hidden">
         <Link href={hrefBase}>
           <a
             className={
