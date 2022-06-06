@@ -22,8 +22,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryInsightsView(props) {
@@ -133,7 +133,7 @@ function RepositoryInsightsView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs repository={repository} active="insights" />
-          <div className="flex mt-8">
+          <div className="sm:flex mt-8">
             <div className="flex-none w-64 py-4">
               <ul className="menu compact rounded bg-base-200">
                 <li className="bordered">
@@ -141,7 +141,7 @@ function RepositoryInsightsView(props) {
                 </li>
               </ul>
             </div>
-            <div className="flex-1 p-4">
+            <div className="flex-1 sm:p-4">
               {parentRepo ? (
                 <ul>
                   <li>{ownerRepoLinkItem(parentRepo)}</li>
