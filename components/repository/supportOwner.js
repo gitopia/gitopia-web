@@ -6,8 +6,9 @@ import {
   transferToWallet,
   updateUserBalance,
 } from "../../store/actions/wallet";
+import shrinkAddress from "../../helpers/shrinkAddress";
 
-function SupportOwner({ ownerAddress, ...props }) {
+function SupportOwner({ ownerAddress, isMobile, ...props }) {
   const [ownerBalance, setOwnerBalance] = useState(0);
   const [validateAmountError, setValidateAmountError] = useState("");
   const [amount, setAmount] = useState(0);
@@ -55,7 +56,7 @@ function SupportOwner({ ownerAddress, ...props }) {
   return (
     <div className="p-4 border border-gray-700 rounded flex items-center">
       <div
-        className="border rounded-full w-7 h-7 mr-2 flex items-center justify-center"
+        className="border rounded-full w-6 h-6 sm:w-7 sm:h-7 mr-2 flex items-center justify-center"
         style={{ borderColor: "#66CE67" }}
       >
         <svg
@@ -84,10 +85,12 @@ function SupportOwner({ ownerAddress, ...props }) {
         >
           Owner Address
         </div>
-        <div className="text-xs">{ownerAddress}</div>
+        <div className="text-xs">
+          {isMobile ? shrinkAddress(ownerAddress) : ownerAddress}
+        </div>
       </div>
       <div
-        className="border rounded-full w-7 h-7 mr-2 ml-4 flex items-center justify-center"
+        className="border rounded-full w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:ml-4 flex items-center justify-center"
         style={{ borderColor: "#883BE6" }}
       >
         <svg
@@ -128,7 +131,7 @@ function SupportOwner({ ownerAddress, ...props }) {
         </div>
         <div className="text-xs uppercase">{ownerBalance}</div>
       </div>
-      <div className="ml-auto self-center">
+      <div className="sm:ml-auto self-center">
         <label
           htmlFor="my-modal-2"
           className="link link-primary modal-button text-xs uppercase no-underline"

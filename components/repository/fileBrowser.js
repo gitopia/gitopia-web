@@ -6,6 +6,7 @@ export default function FileBrowser({
   baseUrl,
   repoPath = [],
   branchName,
+  isMobile = false,
 }) {
   return (
     <>
@@ -49,10 +50,14 @@ export default function FileBrowser({
               )}
 
               <div className="flex-1">{e.name}</div>
-              <div className="w-1/2 text-left text-type-tertiary whitespace-nowrap truncate">
-                {commitTitle}
-              </div>
-              <div className="w-1/6 text-right text-type-tertiary">
+              {!isMobile ? (
+                <div className="w-1/2 text-left text-type-tertiary whitespace-nowrap truncate">
+                  {commitTitle}
+                </div>
+              ) : (
+                ""
+              )}
+              <div className="sm:w-1/6 text-right text-type-tertiary">
                 {dayjs(commitDate).fromNow()}
               </div>
             </a>

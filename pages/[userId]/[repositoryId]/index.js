@@ -24,6 +24,7 @@ import SupportOwner from "../../../components/repository/supportOwner";
 import getContent from "../../../helpers/getContent";
 import getCommitHistory from "../../../helpers/getCommitHistory";
 import pluralize from "../../../helpers/pluralize";
+import shrinkAddress from "../../../helpers/shrinkAddress";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -53,9 +54,24 @@ function RepositoryView(props) {
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
   );
-  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
-    false
-  );
+  const [currentUserEditPermission, setCurrentUserEditPermission] =
+    useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.screen.width <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }, [typeof window !== "undefined" ? window.screen.width : ""]);
+
+  function detectWindowSize() {
+    if (typeof window !== "undefined") {
+      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }
+  if (typeof window !== "undefined") {
+    window.onresize = detectWindowSize;
+  }
 
   const loadEntities = async (currentEntities = [], firstTime = false) => {
     setLoadingEntities(true);
@@ -169,56 +185,60 @@ function RepositoryView(props) {
               <button className="btn btn-square btn-ghost loading" />
             </div>
           ) : repository.branches.length ? (
-            <div className="flex mt-8">
-              <div className="flex-none w-64 pr-8 divide-y divide-grey">
-                <div className="pb-8">
-                  <div className="flex-1 text-left">About</div>
+            <div className="flex mt-8 flex-col sm:flex-row">
+              <div className="flex-none sm:w-64 sm:pr-8 divide-y divide-grey order-2 sm:order-1 mt-4 sm:mt-0">
+                {!isMobile ? (
+                  <div className="pb-8">
+                    <div className="flex-1 text-left">About</div>
 
-                  <div className="text-xs mt-3">{repository.description}</div>
-                  {readmeFile ? (
-                    <Link
-                      href={
-                        "/" +
-                        repository.owner.id +
-                        "/" +
-                        repository.name +
-                        "#readme"
-                      }
-                    >
-                      <a className="mt-6 flex items-center text-xs text-type-secondary font-semibold hover:text-green">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 mr-2"
-                        >
-                          <rect
-                            x="4"
-                            y="5"
-                            width="8"
-                            height="14"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
-                          <rect
-                            x="12"
-                            y="5"
-                            width="8"
-                            height="14"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
-                        </svg>
+                    <div className="text-xs mt-3">{repository.description}</div>
+                    {readmeFile ? (
+                      <Link
+                        href={
+                          "/" +
+                          repository.owner.id +
+                          "/" +
+                          repository.name +
+                          "#readme"
+                        }
+                      >
+                        <a className="mt-6 flex items-center text-xs text-type-secondary font-semibold hover:text-green">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4 mr-2"
+                          >
+                            <rect
+                              x="4"
+                              y="5"
+                              width="8"
+                              height="14"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            />
+                            <rect
+                              x="12"
+                              y="5"
+                              width="8"
+                              height="14"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            />
+                          </svg>
 
-                        <span>README</span>
-                      </a>
-                    </Link>
-                  ) : (
-                    ""
-                  )}
-                </div>
+                          <span>README</span>
+                        </a>
+                      </Link>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                ) : (
+                  ""
+                )}
 
                 <div className="py-8">
                   <Link
@@ -336,12 +356,15 @@ function RepositoryView(props) {
                 </div>
               </div>
               <div
-                className="flex-1"
+                className="flex-1 order-1 sm:order-2"
                 style={{ maxWidth: "calc(1024px - 18rem)" }}
               >
-                <SupportOwner ownerAddress={repository.owner.id} />
-                <div className="mt-8 flex justify-start">
-                  <div className="">
+                <SupportOwner
+                  ownerAddress={repository.owner.id}
+                  isMobile={isMobile}
+                />
+                <div className="mt-8 sm:flex justify-start">
+                  <div className="flex mb-2 sm:mb-0">
                     <BranchSelector
                       branches={repository.branches}
                       tags={repository.tags}
@@ -355,103 +378,110 @@ function RepositoryView(props) {
                       branchName={selectedBranch}
                     />
                   </div>
-                  <div className="ml-4">
-                    <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        stroke="currentColor"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-1"
-                      >
-                        <g transform="scale(0.8)">
+                  <div className="flex">
+                    <div className="sm:ml-4">
+                      <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          stroke="currentColor"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 mr-1"
+                        >
+                          <g transform="scale(0.8)">
+                            <path
+                              d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              fill="none"
+                            />
+                            <circle
+                              cx="8.5"
+                              cy="18.5"
+                              r="2.5"
+                              fill="currentColor"
+                            />
+                            <circle
+                              cx="8.5"
+                              cy="5.5"
+                              r="2.5"
+                              fill="currentColor"
+                            />
+                            <path
+                              d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
+                              fill="currentColor"
+                            />
+                          </g>
+                        </svg>
+                        {repository.branches.length}
+                        <span className="ml-1 uppercase">
+                          {pluralize("branch", repository.branches.length)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="sm:ml-4">
+                      <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 mr-2"
+                        >
                           <path
-                            d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
+                            d="M7.04297 19.0293V9.36084L12.043 4.4333L17.043 9.36084V19.0293H7.04297Z"
                             stroke="currentColor"
                             strokeWidth="2"
-                            fill="none"
-                          />
-                          <circle
-                            cx="8.5"
-                            cy="18.5"
-                            r="2.5"
-                            fill="currentColor"
-                          />
-                          <circle
-                            cx="8.5"
-                            cy="5.5"
-                            r="2.5"
-                            fill="currentColor"
                           />
                           <path
-                            d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
-                            fill="currentColor"
+                            d="M12.043 11.5293V9.5293"
+                            stroke="currentColor"
+                            strokeWidth="2"
                           />
-                        </g>
-                      </svg>
-                      {repository.branches.length}
-                      <span className="ml-1 uppercase">
-                        {pluralize("branch", repository.branches.length)}
-                      </span>
+                        </svg>
+                        {repository.tags.length}
+                        <span className="ml-1 uppercase">
+                          {pluralize("tag", repository.tags.length)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="sm:ml-4">
+                      <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
+                        <svg
+                          className="w-4 h-4 mr-2"
+                          viewBox="0 0 25 25"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12.9 4.0293L6.04297 4.0293L6.04297 20.0293L18.043 20.0293L18.043 9.80707M12.9 4.0293L18.043 9.80707M12.9 4.0293L12.9 9.80707L18.043 9.80707"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                        </svg>
+                        {commitsLength}
+                        <span className="ml-1 uppercase">
+                          {pluralize("commit", commitsLength)}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="ml-4">
-                    <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 mr-2"
-                      >
-                        <path
-                          d="M7.04297 19.0293V9.36084L12.043 4.4333L17.043 9.36084V19.0293H7.04297Z"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                        <path
-                          d="M12.043 11.5293V9.5293"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                      </svg>
-                      {repository.tags.length}
-                      <span className="ml-1 uppercase">
-                        {pluralize("tag", repository.tags.length)}
-                      </span>
+                  {!isMobile ? (
+                    <div className="flex-1 text-right">
+                      <CloneRepoInfo
+                        remoteUrl={
+                          "gitopia://" +
+                          repository.owner.id +
+                          "/" +
+                          repository.name
+                        }
+                      />
                     </div>
-                  </div>
-                  <div className="ml-4">
-                    <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
-                      <svg
-                        className="w-4 h-4 mr-2"
-                        viewBox="0 0 25 25"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M12.9 4.0293L6.04297 4.0293L6.04297 20.0293L18.043 20.0293L18.043 9.80707M12.9 4.0293L18.043 9.80707M12.9 4.0293L12.9 9.80707L18.043 9.80707"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                      </svg>
-                      {commitsLength}
-                      <span className="ml-1 uppercase">
-                        {pluralize("commit", commitsLength)}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex-1 text-right">
-                    <CloneRepoInfo
-                      remoteUrl={
-                        "gitopia://" +
-                        repository.owner.id +
-                        "/" +
-                        repository.name
-                      }
-                    />
-                  </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
 
                 <div className="mt-4 border border-gray-700 rounded overflow-hidden max-w-3xl">
@@ -466,12 +496,15 @@ function RepositoryView(props) {
                       selectedBranch
                     }
                     commitHistoryLength={commitsLength}
+                    maxMessageLength={isMobile ? 0 : 50}
+                    isMobile={isMobile}
                   />
                   <FileBrowser
                     entityList={entityList}
                     branchName={selectedBranch}
                     baseUrl={"/" + repository.owner.id + "/" + repository.name}
                     repoPath={[]}
+                    isMobile={isMobile}
                   />
                   {hasMoreEntities ? (
                     <div className="pb-2">
