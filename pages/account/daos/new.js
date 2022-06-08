@@ -94,7 +94,7 @@ function NewOrganization(props) {
       </Head>
       <Header />
       <div className="flex flex-1">
-        <main className="container mx-auto max-w-md py-12">
+        <main className="container mx-auto max-w-md py-12 px-4 sm:px-0">
           <div className="text-2xl">Create a new DAO</div>
           <div className="mt-4">
             <TextInput
