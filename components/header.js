@@ -177,7 +177,7 @@ function Header(props) {
         <div
           className={
             "flex-none px-6 transition-all ease-out delay-150" +
-            (router.pathname === "/home" ? " w-64" : " w-42")
+            (router.pathname === "/home" ? " sm:w-64" : " sm:w-42")
           }
         >
           <Link href={homeUrl}>

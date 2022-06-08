@@ -5,7 +5,7 @@ import { getOrganizationDetailsForDashboard } from "../../store/actions/organiza
 
 function OrgDashboard({ organization = {}, ...props }) {
   return (
-    <main className="container mx-auto max-w-screen-lg py-12">
+    <main className="container mx-auto max-w-screen-lg py-4 sm:py-12">
       <div className="flex">
         {/* <div>
           <div className="text-xs uppercase">Welcome to,</div>
@@ -28,12 +28,12 @@ function OrgDashboard({ organization = {}, ...props }) {
       </div>
       <div className="flex">
         <div className="flex flex-1 bg-box-grad-tl bg-base-200 p-4 rounded-md">
-          <div className="flex-none bg-box-grad-v w-40 h-full rounded-md flex items-center">
+          <div className="flex-none bg-box-grad-v w-28 sm:w-40 h-full rounded-md flex items-center">
             <img src="/repository.svg" />
           </div>
-          <div className="flex flex-col px-8 py-12">
-            <div className="text-lg mb-8">Create a New Repository</div>
-            <div className="text-xs mb-8 text-type-secondary">
+          <div className="flex flex-col px-2 sm:px-8 sm:py-12">
+            <div className="text-lg mb-4 sm:mb-8">Create a New Repository</div>
+            <div className="text-xs mb-4 sm:mb-8 text-type-secondary">
               Begin from scratch or import an existing repository
             </div>
             <Link href="/new">
@@ -65,7 +65,7 @@ function OrgDashboard({ organization = {}, ...props }) {
 
         <a className="btn btn-primary btn-link btn-xs">Import files</a>
       </div> */}
-      <div className="mt-12">
+      <div className="mt-12 overflow-x-scroll">
         <MembersList
           members={organization.members}
           orgId={organization.address}

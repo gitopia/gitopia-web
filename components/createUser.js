@@ -16,54 +16,55 @@ function CreateUser(props) {
   }, [props.user]);
 
   return (
-    <div className="mt-4 flex mb-4 bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md">
-      <div
-        className={
-          "w-14 h-14 flex-none mr-10 flex justify-center items-center rounded-full border" +
-          (userCreated ? " border-green bg-green-900" : " border-grey")
-        }
-      >
-        {userCreated ? (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-            />
-          </svg>
-        )}
-      </div>
-      <div className="flex-1">
-        <div className="text-lg">Create your on-chain profile </div>
-        <div className="text-xs mt-2 text-type-secondary">
-          Your profile is required to interact with Gitopia chain and
-          collaborate with other people
+    <div className="mt-4 sm:flex mb-4 bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md">
+      <div className="flex">
+        <div
+          className={
+            "w-14 h-14 flex-none mr-5 sm:mr-10 flex justify-center items-center rounded-full border" +
+            (userCreated ? " border-green bg-green-900" : " border-grey")
+          }
+        >
+          {userCreated ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+              />
+            </svg>
+          )}
+        </div>
+        <div className="sm:flex-1">
+          <div className="text-lg">Create your on-chain profile </div>
+          <div className="text-xs mt-2 text-type-secondary">
+            Your profile is required to interact with Gitopia chain and
+            collaborate with other people
+          </div>
         </div>
       </div>
-
-      <div className="flex-none w-60 mr-8">
+      <div className="flex-none w-60 mr-8 mt-4 sm:mt-0">
         {userCreated ? (
           <Link href={"/" + props.selectedAddress}>
             <a className={"btn btn-sm btn-primary btn-outline btn-block "}>
