@@ -115,7 +115,7 @@ function NewRepository(props) {
       </Head>
       <Header />
       <div className="flex flex-1">
-        <main className="container mx-auto max-w-screen-lg min-h-full py-12">
+        <main className="container mx-auto max-w-screen-lg min-h-full py-12 px-4 sm:px-0">
           <div className="text-2xl">Create a new repository</div>
           <div className="flex justify-between mt-4">
             <div className="w-3/4 text-sm">
@@ -134,12 +134,12 @@ function NewRepository(props) {
           </div>
           <div className="mt-4">
             <div className="flex items-top">
-              <div className="form-control flex-1 mr-12">
+              <div className="form-control flex-1 sm:mr-12">
                 <label className="label">
                   <span className="label-text">Repository Owner</span>
                 </label>
                 <select
-                  className="select select-bordered select-md"
+                  className="select select-bordered select-md mr-2 sm:mr-0"
                   value={ownerId}
                   onChange={(e) => {
                     console.log("onchange");
@@ -177,7 +177,7 @@ function NewRepository(props) {
                   setName(v);
                 }}
                 hint={nameHint}
-                className="flex-1"
+                className="flex-1 w-10"
               />
             </div>
             <div className="mt-4">
