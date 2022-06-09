@@ -107,7 +107,9 @@ function ConnectLedger(props) {
 
   return (
     <>
-      <div className="text-6xl mb-6">Connect Ledger</div>
+      <div className="text-4xl mt-16 sm:mt-0 sm:text-6xl mb-6">
+        Connect Ledger
+      </div>
       <div className="text-xs mb-8">
         Your wallet is your login information to access the app
       </div>
