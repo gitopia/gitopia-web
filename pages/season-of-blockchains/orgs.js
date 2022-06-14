@@ -2,7 +2,7 @@ import Head from "next/head";
 import styles from "../../styles/season-of-blockchains/orgView.module.css";
 import Link from "next/link";
 import { useState } from "react";
-export default function SeasonOfBlockchains() {
+export default function SeasonOfBlockchainsOrgPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
     <div className={styles.wrapper}>
@@ -425,47 +425,6 @@ export default function SeasonOfBlockchains() {
               }
             >
               read proposal
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className={"flex items-center justify-center mt-20 " + styles.cards}>
-        <div className={"flex"}>
-          <div className={"card lg:card-side " + styles.joinGitopia}>
-            <div className={"mt-3 " + styles.cardLogo}>
-              <figure>
-                <img src="/logo-g.svg" />
-              </figure>
-            </div>
-            <div className={"px-0 py-0 " + styles.cardDetails}>
-              <div className=" ">Join the gitopia</div>
-              <div className=" ">community</div>
-            </div>
-          </div>
-        </div>
-        <div className={"card lg:card-side ml-5 " + styles.endCardmargin}>
-          <div className={"card-body py-0"}>
-            <div className={styles.endCard}>
-              Check out ideas that you can get started on
-            </div>
-            <div className={styles.endCard}>
-              right now through our organization page.
-            </div>
-            <div className="card-actions">
-              <button
-                onClick={() => {
-                  if (window) {
-                    window.open("https://t.me/Gitopia");
-                  }
-                }}
-                type="button"
-                className={
-                  "px-16 lg:px-20 lg:py-1 py-4 rounded text-white bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 " +
-                  styles.cardButton
-                }
-              >
-                Contact us
-              </button>
             </div>
           </div>
         </div>
