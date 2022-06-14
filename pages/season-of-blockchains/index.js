@@ -105,29 +105,353 @@ export default function SeasonOfBlockchains() {
       </header>
       <div className="flex flex-col h-screen">
         <div className="justify-center items-center">
-          <div className={" " + styles.title}>Season of</div>
-          <div className={" " + styles.title2}>Blockchains is here!</div>
-          <div className={"mt-5 " + styles.content}>
-            A 3-month long program for developers to work closely
+          <div className="sm:flex">
+            <div>
+              <div className={" " + styles.title}>Season of</div>
+              <div className={" " + styles.title2}>Blockchains is here!</div>
+              <div className={"mt-5 " + styles.content}>
+                A 3-month long program for developers
+              </div>
+              <div className={" " + styles.content}>
+                to work closely with experienced
+              </div>
+              <div className={" " + styles.content}>
+                mentors from the project you like.
+              </div>
+              <div className={"flex " + styles.topButtons}>
+                <button
+                  onClick={() => {
+                    if (window) {
+                      window.open("/home");
+                    }
+                  }}
+                  type="button"
+                  className={
+                    "btn-sm py-1.5 mr-2 btn-primary rounded w-44 h-10 " +
+                    styles.seeOrgButton
+                  }
+                >
+                  See Organizations
+                </button>
+                <button
+                  onClick={() => {
+                    if (window) {
+                      window.open("/home");
+                    }
+                  }}
+                  type="button"
+                  className="btn-sm py-1.5 btn-secondary rounded w-44 h-10"
+                >
+                  Register for Program
+                </button>
+              </div>
+            </div>
+            <div className="relative flex items-center justify-center mt-12 sm:mt-20 ml-16 sm:ml-0">
+              <img width={650} src="/season-of-blockchains/home-1.svg"></img>
+            </div>
           </div>
-          <div className={" " + styles.content}>
-            with experienced mentors from the project you like.
-          </div>
-          <div className="relative flex items-center justify-center mt-5">
-            <img width={600} src="/season-of-blockchains/home-1.svg"></img>
-          </div>
-          <div className="flex justify-center mt-2">
-            <button
-              onClick={() => {
-                if (window) {
-                  window.open("/home");
-                }
-              }}
-              type="button"
-              className="btn-sm px-16 lg:px-20 py-1.5 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-            >
-              Join Gitopia
-            </button>
+          <div
+            className={
+              "grid grid-cols-2 grid-rows-4 sm:grid-cols-4 sm:grid-rows-2 gap-y-8 gap-x-10 " +
+              styles.orgCard
+            }
+          >
+            <div className="flex">
+              <div>
+                <svg
+                  width="91"
+                  height="91"
+                  viewBox="0 0 91 91"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+                </svg>
+              </div>
+              <div className="">
+                <div className={styles.orgTitle}>Affonda</div>
+                <div className={styles.orgBody}>Marketplace</div>
+                <div className={"flex " + styles.orgButton}>
+                  <div>LEARN MORE</div>
+                  <div className="mt-1 ml-2">
+                    <svg
+                      width="10"
+                      height="9"
+                      viewBox="0 0 10 9"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                        stroke="#898B8E"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex">
+              <div>
+                <svg
+                  width="91"
+                  height="91"
+                  viewBox="0 0 91 91"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+                </svg>
+              </div>
+              <div className="">
+                <div className={styles.orgTitle}>Affonda</div>
+                <div className={styles.orgBody}>Marketplace</div>
+                <div className={"flex " + styles.orgButton}>
+                  <div>LEARN MORE</div>
+                  <div className="mt-1 ml-2">
+                    <svg
+                      width="10"
+                      height="9"
+                      viewBox="0 0 10 9"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                        stroke="#898B8E"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex">
+              <div>
+                <svg
+                  width="91"
+                  height="91"
+                  viewBox="0 0 91 91"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+                </svg>
+              </div>
+              <div className="">
+                <div className={styles.orgTitle}>Affonda</div>
+                <div className={styles.orgBody}>Marketplace</div>
+                <div className={"flex " + styles.orgButton}>
+                  <div>LEARN MORE</div>
+                  <div className="mt-1 ml-2">
+                    <svg
+                      width="10"
+                      height="9"
+                      viewBox="0 0 10 9"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                        stroke="#898B8E"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex">
+              <div>
+                <svg
+                  width="91"
+                  height="91"
+                  viewBox="0 0 91 91"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+                </svg>
+              </div>
+              <div className="">
+                <div className={styles.orgTitle}>Affonda</div>
+                <div className={styles.orgBody}>Marketplace</div>
+                <div className={"flex " + styles.orgButton}>
+                  <div>LEARN MORE</div>
+                  <div className="mt-1 ml-2">
+                    <svg
+                      width="10"
+                      height="9"
+                      viewBox="0 0 10 9"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                        stroke="#898B8E"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex">
+              <div>
+                <svg
+                  width="91"
+                  height="91"
+                  viewBox="0 0 91 91"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+                </svg>
+              </div>
+              <div className="">
+                <div className={styles.orgTitle}>Affonda</div>
+                <div className={styles.orgBody}>Marketplace</div>
+                <div className={"flex " + styles.orgButton}>
+                  <div>LEARN MORE</div>
+                  <div className="mt-1 ml-2">
+                    <svg
+                      width="10"
+                      height="9"
+                      viewBox="0 0 10 9"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                        stroke="#898B8E"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex">
+              <div>
+                <svg
+                  width="91"
+                  height="91"
+                  viewBox="0 0 91 91"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+                </svg>
+              </div>
+              <div className="">
+                <div className={styles.orgTitle}>Affonda</div>
+                <div className={styles.orgBody}>Marketplace</div>
+                <div className={"flex " + styles.orgButton}>
+                  <div>LEARN MORE</div>
+                  <div className="mt-1 ml-2">
+                    <svg
+                      width="10"
+                      height="9"
+                      viewBox="0 0 10 9"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                        stroke="#898B8E"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex">
+              <div>
+                <svg
+                  width="91"
+                  height="91"
+                  viewBox="0 0 91 91"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+                </svg>
+              </div>
+              <div className="">
+                <div className={styles.orgTitle}>Affonda</div>
+                <div className={styles.orgBody}>Marketplace</div>
+                <div className={"flex " + styles.orgButton}>
+                  <div>LEARN MORE</div>
+                  <div className="mt-1 ml-2">
+                    <svg
+                      width="10"
+                      height="9"
+                      viewBox="0 0 10 9"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                        stroke="#898B8E"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex">
+              <div>
+                <svg
+                  width="91"
+                  height="91"
+                  viewBox="0 0 91 91"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+                </svg>
+              </div>
+              <div className="">
+                <div className={styles.orgTitle}>Affonda</div>
+                <div className={styles.orgBody}>Marketplace</div>
+                <div className={"flex " + styles.orgButton}>
+                  <div>LEARN MORE</div>
+                  <div className="mt-1 ml-2">
+                    <svg
+                      width="10"
+                      height="9"
+                      viewBox="0 0 10 9"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                        stroke="#898B8E"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div className={" " + styles.title3}>Benefits for the</div>
           <div className={" " + styles.title4}>participants</div>
@@ -204,7 +528,7 @@ export default function SeasonOfBlockchains() {
           <div className={" " + styles.image2}>
             <img width={1050} src="/season-of-blockchains/home-2.svg"></img>
           </div>
-          <div className="mb-36">
+          <div className="sm:mb-36">
             <div className="flex">
               <div className={"mt-1 ml-1 " + styles.cardImage3}>
                 <img src="/season-of-blockchains/hiring-pool.svg" />
@@ -276,14 +600,14 @@ export default function SeasonOfBlockchains() {
               </div>
             </div>
           </div>
-          <div className={" " + styles.title}>How does it work?</div>
+          <div className={" " + styles.title5}>How does it work?</div>
           <div
             className={"flex items-center justify-center " + styles.section3}
           >
             <div className={" " + styles.image3}>
               <img src="/season-of-blockchains/home-3.png"></img>
             </div>
-            <div className="w-1/2 ml-12">
+            <div className="ml-4 sm:w-1/2 sm:ml-12">
               <div>
                 <div className="">
                   <div className="flex">
@@ -340,49 +664,6 @@ export default function SeasonOfBlockchains() {
                       Get open access to the hiring pool from the partners
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            className={"flex items-center justify-center mt-20 " + styles.cards}
-          >
-            <div className={"flex"}>
-              <div className={"card lg:card-side " + styles.joinGitopia}>
-                <div className={"mt-3 " + styles.cardLogo}>
-                  <figure>
-                    <img src="/logo-g.svg" />
-                  </figure>
-                </div>
-                <div className={"px-0 py-0 " + styles.cardDetails}>
-                  <div className=" ">Join the gitopia</div>
-                  <div className=" ">community</div>
-                </div>
-              </div>
-            </div>
-            <div className={"card lg:card-side ml-5 " + styles.endCardmargin}>
-              <div className={"card-body py-0"}>
-                <div className={styles.endCard}>
-                  Check out ideas that you can get started on
-                </div>
-                <div className={styles.endCard}>
-                  right now through our organization page.
-                </div>
-                <div className="card-actions">
-                  <button
-                    onClick={() => {
-                      if (window) {
-                        window.open("https://t.me/Gitopia");
-                      }
-                    }}
-                    type="button"
-                    className={
-                      "px-16 lg:px-20 lg:py-1 py-4 rounded text-white bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 " +
-                      styles.cardButton
-                    }
-                  >
-                    Contact us
-                  </button>
                 </div>
               </div>
             </div>
