@@ -130,7 +130,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -167,7 +174,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -204,7 +218,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -241,7 +262,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -278,7 +306,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -315,7 +350,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -352,7 +394,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -389,7 +438,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -426,7 +482,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -496,7 +559,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -533,7 +603,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -570,7 +647,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -607,7 +691,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -644,7 +735,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -681,7 +779,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -718,7 +823,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -755,7 +867,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg
@@ -792,7 +911,14 @@ export default function Partnerships() {
           <div className="">
             <div className={styles.orgTitle}>Affonda</div>
             <div className={styles.orgBody}>Marketplace</div>
-            <div className={"flex " + styles.orgButton}>
+            <div
+              className={"flex cursor-pointer " + styles.orgButton}
+              onClick={() => {
+                if (window) {
+                  window.open("/season-of-blockchains/orgs");
+                }
+              }}
+            >
               <div>LEARN MORE</div>
               <div className="mt-1 ml-2">
                 <svg

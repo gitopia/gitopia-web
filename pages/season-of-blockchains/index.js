@@ -122,7 +122,7 @@ export default function SeasonOfBlockchains() {
                 <button
                   onClick={() => {
                     if (window) {
-                      window.open("/home");
+                      window.open("/season-of-blockchains/partnerships");
                     }
                   }}
                   type="button"
@@ -136,7 +136,7 @@ export default function SeasonOfBlockchains() {
                 <button
                   onClick={() => {
                     if (window) {
-                      window.open("/home");
+                      window.open("https://airtable.com/shr5PEUTXvcCRF717");
                     }
                   }}
                   type="button"
