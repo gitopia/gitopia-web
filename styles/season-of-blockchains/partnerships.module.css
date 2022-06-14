@@ -1,0 +1,280 @@
+.wrapper {
+    background: #13181e;
+    position: relative;
+    z-index: 1;
+  }
+  .header {
+    display: flex;
+    padding: 40px 64px;
+  }
+  .headerLogo {
+    background: url("/logo-white.svg") no-repeat;
+    background-position: 50%;
+    background-size: 160px;
+    width: 160px;
+    height: 60px;
+    margin-right: 20px;
+  }
+  .headerMenu {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    height: 40px;
+  }
+  .headerLinks a {
+    color: white;
+    padding: 16px;
+    display: inline-block;
+    font-family: Oxygen;
+  } 
+  .headerMenuIcon {
+    float: right;
+    position: absolute;
+    top: 44px;
+    right: 44px;
+    display: none;
+  }
+  .row {
+    max-width: 900px;
+    text-align: center;
+  }
+  .vl {
+    margin-top: 10px;
+    opacity: 0.3;
+    border-left: 1px solid #e5e5e5;
+    height: 20px;
+  }
+  .blob1 {
+	position: absolute;
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	z-index: -1;
+	opacity: 0.9;
+  }
+  .blob2 {
+	position: absolute;
+	right: 0;
+	top: 15vw;
+	pointer-events: none;
+	z-index: -1;
+	opacity: 0.9;
+  }
+	.image {
+		position: absolute;
+		top: 0px;
+		z-index: -1;
+	}	
+	.title {
+		margin-top: 23vw;
+		align-items: center;
+		text-align: left;
+		font-size: 64px;
+		font-weight: 700;
+		margin-left: 20vw;
+	}
+	.orgCard{
+		margin-left: 20vw;
+		margin-right: 18vw;
+		margin-top: 3.5vw;
+		}
+	.orgTitle{
+		margin-left:0.8vw;
+		font-size: 20px;
+		font-weight: 700;
+	}
+	.orgBody{
+		margin-left: 0.8vw;
+		font-size: 14px;
+		font-weight: 400;
+		opacity: 0.5;
+	}
+	.orgButton{
+		margin-top: 1vw;
+		margin-left: 0.8vw;
+		font-size: 10px;
+		font-weight: 700;
+		opacity: 0.5;
+	}
+	.cardBorder{
+		margin-left: 20vw;
+		margin-top: 3vw;
+		box-sizing: border-box;
+		width: 1000px;
+		height: 282px;
+		background-color: #2f3c4b;
+		border: 1px solid #ffffff;
+		border-radius: 12px;
+	}
+	.cardTitle{
+		margin-top: 2vw;
+		font-weight: 700;
+		font-size: 32px;
+	}
+	.cardBody{
+		margin-left: 25vw;
+	}
+	.cardButton{
+		font-size: 14px;
+		font-weight: 700;
+		margin-top: 2vw;
+		width: 16vw;
+	}
+	.cardImage{
+		position: absolute;
+		width: 700px;
+	}
+  .footer {
+    margin-top: 150px;
+    padding-bottom: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .footerLogo {
+    background: url("/logo-white.svg") no-repeat;
+    background-position: 50%;
+    background-size: 160px;
+    height: 160px;
+    width: 240px;
+  }
+  .footerLinks {
+    display: flex;
+    justify-content: space-around;
+  }
+  .footerLinks a {
+    border-left: 2px solid #91a3b4;
+    color: white;
+    padding: 0 16px;
+    margin-right: 16px;
+  }
+
+@media (max-width: 1800px) {
+	.image {
+		top: 1vw;
+	}
+	.orgCard{
+		margin-left: 20vw;
+		margin-right: 15vw;
+		margin-top: 3.5vw;
+	}
+	.cardBody{
+		margin-left: 24vw;
+	}
+	.cardBorder{
+		width: 830px;
+		height: 230px;
+	}
+	.cardImage{
+		width: 370px
+	}
+}
+
+@media (max-width: 1024px) {
+  .headerMenuIcon {
+    display: block;
+  }
+  .headerMenu {
+    height: auto;
+    border-bottom: none;
+  }
+  .header {
+    display: block;
+    padding: 40px 44px;
+  }
+  .row {
+    text-align: left;
+    padding: 0 44px;
+    width: 100%;
+  }
+	.image {
+    top: 4vw;
+  }
+	.orgCard{
+    margin-left: 8vw;
+    margin-right: 6vw;
+    margin-top: 9vw;
+  }
+	.cardBorder{
+		overflow: hidden;
+		margin-left: 10vw;
+		width: 700px;
+		height: 230px;
+	}
+	.cardTitle{
+		font-size: 24px;
+	}
+	.cardBody{
+		margin-left: 39vw;
+		margin-top: 1vw;
+	}
+	.cardImage{
+		width: 370px
+	}
+	.cardButton{
+		width: 200px;
+	}
+  .footer {
+    margin-top: 40px;
+    padding: 50px;
+    flex-direction: column;
+  }
+  .footerLinks {
+    margin-bottom: 50px;
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 640px) {
+	.blob1,
+  .blob2 {
+    display: none;
+  }
+	.wrapper {
+		background: #13181e;
+		position: relative;
+		z-index: 1;
+	}
+	.image {
+    top: 15vw;
+  }
+	.title {
+    margin-top: 17vw;
+    text-align: left;
+    font-size: 40px;
+  }
+	.orgCard{
+    margin-left: 2vw;
+  }
+	.cardBorder{
+		display: flex;
+		flex-direction: column;
+		height: auto;
+		width: 70vw;
+		margin-left: 16vw;
+		margin-top: 7vw;
+	}
+	.cardBody{
+		margin-left: 6vw;
+	}
+	.cardImage{
+		position:relative;
+		width:80vw;
+	}
+	.cardButton{
+		width: 48vw;
+		height: 12vw;
+		margin-bottom: 4vw;
+	}
+	.footer {
+		margin-top: 0px;
+		margin-bottom: 0px;
+		flex-direction: column;
+	}
+	.footerLinks {
+		margin-bottom: 24px;
+		flex-direction: column;
+	}
+	.footerLinks a {
+		margin-bottom: 24px;
+	}
+}
+    

@@ -3,12 +3,10 @@
   position: relative;
   z-index: 1;
 }
-
 .header {
   display: flex;
   padding: 40px 64px 0px 64px;
 }
-
 .headerLogo {
   background: url("/logo-white.svg") no-repeat;
   background-position: 50%;
@@ -17,19 +15,16 @@
   height: 60px;
   margin-right: 20px;
 }
-
 .headerMenu {
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
   height: 40px;
 }
-
 .headerLinks a {
   color: white;
   padding: 16px;
   display: inline-block;
   font-family: Oxygen;
 }
-
 .headerMenuIcon {
   float: right;
   position: absolute;
@@ -37,12 +32,10 @@
   right: 44px;
   display: none;
 }
-
 .row {
   max-width: 900px;
   text-align: center;
 }
-
 .vl {
   margin-top: 10px;
   opacity: 0.3;
@@ -70,7 +63,6 @@
   top: 0px;
   z-index: -1;
 }
-
 .title {
   display: flex;
   margin-top: 26vw;
@@ -78,7 +70,6 @@
   font-size: 64px;
   font-weight: 700;
 }
-
 .content {
   display: flex;
   margin-top: 0vw;
@@ -86,7 +77,6 @@
   font-size: 32px;
   font-weight: 400;
 }
-
 .content1 {
   display: flex;
   margin-top: 0vw;
@@ -94,7 +84,6 @@
   font-size: 24px;
   font-weight: 400;
 }
-
 .content2 {
   display: flex;
   align-items: center;
@@ -104,7 +93,6 @@
   font-size: 18px;
   font-weight: 400;
 }
-
 .content3 {
   display: flex;
   margin-top: 1.1vw;
@@ -113,7 +101,6 @@
   font-size: 18px;
   font-weight: 400;
 }
-
 .content4 {
   display: flex;
   margin-top: 4vw;
@@ -121,7 +108,6 @@
   font-size: 32px;
   font-weight: 400;
 }
-
 .cardContainer {
   margin-top: 50px;
   margin-bottom: 60px;
@@ -129,7 +115,6 @@
   flex-direction: column;
   align-items: center;
 }
-
 .card1 {
   display: flex;
   flex-direction: column;
@@ -139,19 +124,16 @@
   padding: 40px 80px;
   border-radius: 24px;
 }
-
 .card1a {
   display: flex;
   flex-direction: row;
   align-items: left;
   text-align: left;
 }
-
 .card1a1 {
   width: 50%;
   margin-right: 2vw;
 }
-
 .card1a2 {
   width: 50%;
   margin-right: 2vw;
@@ -281,7 +263,6 @@
   text-transform: uppercase;
   color: #66ce67;
 }
-
 .footer {
   margin-top: 150px;
   padding-bottom: 200px;
@@ -289,7 +270,6 @@
   justify-content: center;
   align-items: center;
 }
-
 .footerLogo {
   background: url("/logo-white.svg") no-repeat;
   background-position: 50%;
@@ -297,12 +277,10 @@
   height: 160px;
   width: 240px;
 }
-
 .footerLinks {
   display: flex;
   justify-content: space-around;
 }
-
 .footerLinks a {
   border-left: 2px solid #91a3b4;
   color: white;
@@ -328,27 +306,22 @@
     margin-left: 22.5vw;
     font-size: 64px;
   }
-
   .content {
     margin-left: 22.5vw;
     font-size: 32px;
   }
-
   .content1 {
     margin-left: 22.5vw;
   }
-
   .content2 {
     margin-top: 1.4vw;
     margin-left: 22.5vw;
     margin-right: 23vw;
   }
-
   .content3 {
     margin-left: 22.5vw;
     margin-right: 23vw;
   }
-
   .content4 {
     margin-left: 22.5vw;
   }
@@ -489,22 +462,18 @@
     margin-left: 15vw;
     font-size: 44px;
   }
-
   .content {
     margin-left: 15vw;
     font-size: 26px;
   }
-
   .content1 {
     margin-left: 15vw;
   }
-
   .content2 {
     margin-top: 3vw;
     margin-left: 15vw;
     margin-right: 8vw;
   }
-
   .content3 {
     margin-top: 1.2vw;
     margin-left: 15vw;
@@ -522,11 +491,9 @@
     margin-left: 1.5vw;
     font-size: 1.6vw;
   }
-
   .arrow1 {
     margin-top: 4px;
   }
-
   .blob1,
   .blob2 {
     display: none;
@@ -543,7 +510,6 @@
     width: 50vw;
     margin-right: 2vw;
   }
-
   .card1a2 {
     margin-right: 2vw;
     margin-left: 0vw;
@@ -580,7 +546,6 @@
     margin-bottom: 24px;
     flex-direction: column;
   }
-
   .footerLinks a {
     margin-bottom: 24px;
   }
