@@ -75,30 +75,36 @@
 		margin-left: 20vw;
 		margin-right: 18vw;
 		margin-top: 3.5vw;
+		column-gap: 1.5vw;
 		}
 	.orgTitle{
-		margin-left:0.8vw;
+		margin-top: 1vw;
+		margin-left: 1vw;
 		font-size: 20px;
 		font-weight: 700;
 	}
 	.orgBody{
-		margin-left: 0.8vw;
+		margin-top: 0.3vw;
+		margin-left: 1vw;
 		font-size: 14px;
 		font-weight: 400;
 		opacity: 0.5;
 	}
 	.orgButton{
-		margin-top: 1vw;
-		margin-left: 0.8vw;
+		margin-top: 1.6vw;
+		margin-left: 1vw;
 		font-size: 10px;
 		font-weight: 700;
 		opacity: 0.5;
+	}
+	.orgArrow{
+		margin-left: 3vw;
 	}
 	.cardBorder{
 		margin-left: 20vw;
 		margin-top: 3vw;
 		box-sizing: border-box;
-		width: 1000px;
+		width: 1100px;
 		height: 282px;
 		background-color: #2f3c4b;
 		border: 1px solid #ffffff;
@@ -155,16 +161,17 @@
 		margin-left: 20vw;
 		margin-right: 15vw;
 		margin-top: 3.5vw;
+		column-gap: 0vw;
 	}
 	.cardBody{
-		margin-left: 24vw;
+		margin-left: 28vw;
 	}
 	.cardBorder{
-		width: 830px;
-		height: 230px;
+		width: 900px;
+		height: 250px;
 	}
 	.cardImage{
-		width: 370px
+		width: 410px
 	}
 }
 
@@ -193,10 +200,14 @@
     margin-right: 6vw;
     margin-top: 9vw;
   }
+	.orgArrow{
+		margin-left: 2px;
+	}
 	.cardBorder{
+		margin-top: 9vw;
 		overflow: hidden;
 		margin-left: 10vw;
-		width: 700px;
+		width: 620px;
 		height: 230px;
 	}
 	.cardTitle{
@@ -242,8 +253,22 @@
     font-size: 40px;
   }
 	.orgCard{
-    margin-left: 2vw;
+    margin-left: 8vw;
   }
+	.orgTitle{
+		margin-top: 3vw;
+		margin-left: 5vw;
+	}
+	.orgBody{
+		margin-left: 5vw;
+	}
+	.orgButton{
+		margin-left: 5vw;
+		margin-top: 10vw;
+	}
+	.orgArrow{
+		margin-left: 19vw;
+	}
 	.cardBorder{
 		display: flex;
 		flex-direction: column;

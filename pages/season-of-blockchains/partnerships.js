@@ -111,20 +111,20 @@ export default function Partnerships() {
       <div className={" " + styles.title}>Partnerships</div>
       <div
         className={
-          "grid grid-cols-2 grid-rows-5 sm:grid-cols-3 sm:grid-rows-3 gap-y-8 gap-x-10 " +
+          "grid grid-cols-1 grid-rows-9 sm:grid-cols-3 sm:grid-rows-3 gap-y-8 " +
           styles.orgCard
         }
       >
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -139,16 +139,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -162,13 +162,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -183,16 +183,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -206,13 +206,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -227,16 +227,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -250,13 +250,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -271,16 +271,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -294,13 +294,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -315,16 +315,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -338,13 +338,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -359,16 +359,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -382,13 +382,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -403,16 +403,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -426,13 +426,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -447,16 +447,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -470,13 +470,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -491,16 +491,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -540,20 +540,20 @@ export default function Partnerships() {
       </div>
       <div
         className={
-          "grid grid-cols-2 grid-rows-5 sm:grid-cols-3 sm:grid-rows-3 gap-y-8 gap-x-10 " +
+          "grid grid-cols-1 grid-rows-9 sm:grid-cols-3 sm:grid-rows-3 gap-y-8 gap-x-10 " +
           styles.orgCard
         }
       >
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -568,16 +568,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -591,13 +591,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -612,16 +612,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -635,13 +635,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -656,16 +656,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -679,13 +679,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -700,16 +700,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -723,13 +723,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -744,16 +744,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -767,13 +767,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -788,16 +788,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -811,13 +811,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -832,16 +832,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -855,13 +855,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -876,16 +876,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
@@ -899,13 +899,13 @@ export default function Partnerships() {
         <div className="flex">
           <div>
             <svg
-              width="91"
-              height="91"
-              viewBox="0 0 91 91"
+              width="140"
+              height="139"
+              viewBox="0 0 140 139"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <rect width="91" height="91" rx="8" fill="#2F3C4B" />
+              <rect width="139.176" height="139" rx="8" fill="#2F3C4B" />
             </svg>
           </div>
           <div className="">
@@ -920,16 +920,16 @@ export default function Partnerships() {
               }}
             >
               <div>LEARN MORE</div>
-              <div className="mt-1 ml-2">
+              <div className={styles.orgArrow}>
                 <svg
-                  width="10"
-                  height="9"
-                  viewBox="0 0 10 9"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 4.5H8.5M8.5 4.5L5 1M8.5 4.5L5 8"
+                    d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
                     stroke-width="2"
                     stroke-linecap="round"
