@@ -223,6 +223,15 @@ function RepositoryTreeView(props) {
                     "/commit/" +
                     commitDetail.id
                   }
+                  commitHistoryLink={
+                    "/" +
+                    repository.owner.id +
+                    "/" +
+                    repository.name +
+                    "/commits/" +
+                    branchName
+                  }
+                  commitsLength={commitsLength}
                   maxMessageLength={90}
                 />
                 <FileBrowser
