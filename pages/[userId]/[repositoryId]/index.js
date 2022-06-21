@@ -54,9 +54,8 @@ function RepositoryView(props) {
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
   );
-  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
-    false
-  );
+  const [currentUserEditPermission, setCurrentUserEditPermission] =
+    useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   function detectWindowSize() {
@@ -385,7 +384,16 @@ function RepositoryView(props) {
                     />
                   </div>
                   <div className="flex">
-                    <div className="sm:ml-4">
+                    <a
+                      className="sm:ml-4"
+                      href={
+                        "/" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name +
+                        "/tree/branches"
+                      }
+                    >
                       <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
                         <svg
                           viewBox="0 0 24 24"
@@ -424,8 +432,17 @@ function RepositoryView(props) {
                           {pluralize("branch", repository.branches.length)}
                         </span>
                       </div>
-                    </div>
-                    <div className="sm:ml-4">
+                    </a>
+                    <a
+                      className="sm:ml-4"
+                      href={
+                        "/" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name +
+                        "/releases/tags"
+                      }
+                    >
                       <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
                         <svg
                           width="24"
@@ -451,9 +468,19 @@ function RepositoryView(props) {
                           {pluralize("tag", repository.tags.length)}
                         </span>
                       </div>
-                    </div>
+                    </a>
 
-                    <div className="sm:ml-4">
+                    <a
+                      className="sm:ml-4"
+                      href={
+                        "/" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name +
+                        "/commits/" +
+                        selectedBranch
+                      }
+                    >
                       <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
                         <svg
                           className="w-4 h-4 mr-2"
@@ -472,7 +499,7 @@ function RepositoryView(props) {
                           {pluralize("commit", commitsLength)}
                         </span>
                       </div>
-                    </div>
+                    </a>
                   </div>
                   {!isMobile ? (
                     <div className="flex-1 text-right">
