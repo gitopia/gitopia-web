@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TextInput from "../textInput";
 import { connect } from "react-redux";
 import Label from "./label";
@@ -69,6 +69,24 @@ function LabelEditor({
     message: "",
   });
   const [isSaving, setIsSaving] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  function detectWindowSize() {
+    if (typeof window !== "undefined") {
+      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", detectWindowSize);
+    }
+    detectWindowSize();
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", detectWindowSize);
+      }
+    };
+  });
   const shouldShowSuggestions = !isEdit;
 
   const validateLabel = () => {
@@ -145,8 +163,8 @@ function LabelEditor({
         </span>
         <Label name={name} color={color} />
       </div>
-      <div className="flex mt-4">
-        <div className="flex-none w-60 mr-4">
+      <div className="sm:flex mt-4">
+        <div className="flex-none w-68 sm:w-60 mr-4">
           <TextInput
             type="text"
             name="label_name"
@@ -157,27 +175,29 @@ function LabelEditor({
             size="sm"
           />
         </div>
-        <div className="flex-1 mr-4">
-          <TextInput
-            type="text"
-            name="label_description"
-            placeholder="Description"
-            value={description}
-            setValue={setDescription}
-            hint={descriptionHint}
-            size="sm"
-          />
-        </div>
-        <div className="flex-none mr-4">
-          <TextInput
-            type="color"
-            name="label_color"
-            placeholder="Color"
-            value={color}
-            setValue={setColor}
-            hint={colorHint}
-            size="sm"
-          />
+        <div className={"flex " + (isMobile ? "mt-3 mb-3" : "w-full")}>
+          <div className="flex-1 mr-4">
+            <TextInput
+              type="text"
+              name="label_description"
+              placeholder="Description"
+              value={description}
+              setValue={setDescription}
+              hint={descriptionHint}
+              size="sm"
+            />
+          </div>
+          <div className="flex-none mr-4">
+            <TextInput
+              type="color"
+              name="label_color"
+              placeholder="Color"
+              value={color}
+              setValue={setColor}
+              hint={colorHint}
+              size="sm"
+            />
+          </div>
         </div>
         <div className="flex flex-none w-60 btn-group">
           <button className={"flex-1 btn btn-sm btn-block "} onClick={onCancel}>

@@ -32,8 +32,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryCompareView(props) {
@@ -239,8 +239,8 @@ function RepositoryCompareView(props) {
               the target revision.
             </div>
           </div>
-          <div className="mt-8 flex items-center">
-            <div className="flex-1 mr-2 border border-grey p-4 rounded-lg">
+          <div className="mt-8 sm:flex items-center">
+            <div className="flex-1 sm:mr-2 border border-grey p-4 rounded-lg">
               <div className="text-xs font-bold uppercase text-type-secondary">
                 Source
               </div>
@@ -277,13 +277,14 @@ function RepositoryCompareView(props) {
                       )
                     );
                   }}
+                  isRight={false}
                 />
               </div>
             </div>
-            <div className="text-type-quaternary">
+            <div className="text-type-quaternary flex justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="h-6 w-6 rotate-90 sm:rotate-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -296,7 +297,7 @@ function RepositoryCompareView(props) {
                 />
               </svg>
             </div>
-            <div className="flex-1 ml-2 border border-grey p-4 rounded-lg">
+            <div className="flex-1 sm:ml-2 border border-grey p-4 rounded-lg">
               <div className="text-xs font-bold uppercase text-type-secondary">
                 Target
               </div>
@@ -334,6 +335,7 @@ function RepositoryCompareView(props) {
                       )
                     );
                   }}
+                  isRight={false}
                 />
               </div>
             </div>
@@ -341,7 +343,7 @@ function RepositoryCompareView(props) {
           <div className="my-8">
             {startCreatingPull ? (
               <div>
-                <div className="flex">
+                <div className="sm:flex">
                   <div className="flex flex-1">
                     <div className="flex-none mr-4">
                       <div className="avatar">
@@ -412,7 +414,7 @@ function RepositoryCompareView(props) {
                       </div>
                     </div>
                   </div>
-                  <div className="flex-none w-64 pl-8 divide-y divide-grey">
+                  <div className="flex-none sm:w-64 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
                     <div className="w-full pb-8">
                       <AssigneeSelector
                         assignees={reviewers}

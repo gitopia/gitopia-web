@@ -13,6 +13,7 @@ export default function BranchSelector({
   isTag = false,
   onCreateTag = null,
   onChange = () => {},
+  isRight = true,
   ...props
 }) {
   const [tab, setTab] = useState(showTagsOnly ? "tags" : "branches");
@@ -47,7 +48,11 @@ export default function BranchSelector({
   }, [branches]);
 
   return (
-    <div className={"dropdown outline-none"} tabIndex="0" ref={mainEl}>
+    <div
+      className={"dropdown outline-none " + (isRight ? "" : "dropdown-end")}
+      tabIndex="0"
+      ref={mainEl}
+    >
       <div
         className="btn btn-sm btn-outline items-center"
         onClick={() => {

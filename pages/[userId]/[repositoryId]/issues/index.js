@@ -25,8 +25,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryIssueView(props) {
@@ -39,6 +39,25 @@ function RepositoryIssueView(props) {
   const [pagination, setPagination] = useState({
     limit: 10,
     countTotal: true,
+  });
+  const [isMobile, setIsMobile] = useState(false);
+
+  function detectWindowSize() {
+    if (typeof window !== "undefined") {
+      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", detectWindowSize);
+    }
+    detectWindowSize();
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", detectWindowSize);
+      }
+    };
   });
 
   const getAllIssues = async () => {
@@ -167,8 +186,8 @@ function RepositoryIssueView(props) {
             </div>
           </div>
           <div className="mt-8">
-            <div className="bg-base-200 px-4 py-2 rounded">
-              <div className="text-left flex">
+            <div className="sm:bg-base-200 px-2 sm:px-4 py-2 rounded">
+              <div className="text-left sm:flex">
                 <div className="tabs flex-1 relative -top-1">
                   <div
                     className={
@@ -223,7 +242,7 @@ function RepositoryIssueView(props) {
                 </div>
                 <div className="flex items-center">
                   <button
-                    className="btn btn-xs btn-ghost mr-2 my-px"
+                    className="btn btn-xs btn-ghost mr-0.5 sm:mr-2 my-px"
                     onClick={() => {
                       let newFilterText = filterText
                         .replace(
@@ -249,12 +268,15 @@ function RepositoryIssueView(props) {
                     </svg>
                     <span>Clear All</span>
                   </button>
-                  <div className="dropdown dropdown-end mr-2" tabIndex="0">
+                  <div
+                    className="dropdown dropdown-end mr-0 sm:mr-2"
+                    tabIndex="0"
+                  >
                     <button className="btn btn-xs btn-ghost">
                       <span>Author</span>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 ml-1 mt-px"
+                        className="h-5 w-5 ml-0 sm:ml-1 mt-px"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -302,12 +324,15 @@ function RepositoryIssueView(props) {
                       </ul>
                     </div>
                   </div>
-                  <div className="dropdown dropdown-end mr-2" tabIndex="0">
+                  <div
+                    className="dropdown dropdown-end mr-0 sm:mr-2"
+                    tabIndex="0"
+                  >
                     <button className="btn btn-xs btn-ghost">
                       <span>Label</span>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 ml-1 mt-px"
+                        className="h-5 w-5 ml-0.5 sm:ml-1 mt-px"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -365,12 +390,15 @@ function RepositoryIssueView(props) {
                       </ul>
                     </div>
                   </div>
-                  <div className="dropdown dropdown-end mr-2" tabIndex="0">
+                  <div
+                    className="dropdown dropdown-end mr-0 sm:mr-2"
+                    tabIndex="0"
+                  >
                     <button className="btn btn-xs btn-ghost">
                       <span>Assignee</span>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 ml-1 mt-px"
+                        className="h-5 w-5 ml-0.5 sm:ml-1 mt-px"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -420,12 +448,15 @@ function RepositoryIssueView(props) {
                       </ul>
                     </div>
                   </div>
-                  <div className="dropdown dropdown-end -mr-2" tabIndex="0">
+                  <div
+                    className="dropdown dropdown-end mr-0 sm:mr-2"
+                    tabIndex="0"
+                  >
                     <button className="btn btn-xs btn-ghost">
                       <span>Sort</span>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 ml-1 mt-px"
+                        className="h-5 w-5 ml-0.5 sm:ml-1 mt-px"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -530,9 +561,13 @@ function RepositoryIssueView(props) {
                       </div>
                     </div>
                     <div className="flex items-center">
-                      <div className="mt-1">
-                        <AssigneeGroup assignees={i.assignees} />
-                      </div>
+                      {!isMobile ? (
+                        <div className={"mt-1 "}>
+                          <AssigneeGroup assignees={i.assignees} />
+                        </div>
+                      ) : (
+                        ""
+                      )}
                       <div className="ml-4 flex text-type-secondary items-center">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"

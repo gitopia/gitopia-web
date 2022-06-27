@@ -17,6 +17,7 @@ import dynamic from "next/dynamic";
 import getNodeInfo from "../helpers/getNodeInfo";
 const SendTlore = dynamic(() => import("./dashboard/sendTlore"));
 const CurrentWallet = dynamic(() => import("./currentWallet"));
+import Drawer from "./drawer";
 // const NotificationsCard = dynamic(() =>
 //   import("./dashboard/notificationsButton")
 // );
@@ -49,6 +50,26 @@ function Header(props) {
   const [showNotificationListState, setShowNotificationListState] = useState(
     ""
   );
+  const [isMobile, setIsMobile] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  function detectWindowSize() {
+    if (typeof window !== "undefined") {
+      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", detectWindowSize);
+    }
+    detectWindowSize();
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", detectWindowSize);
+      }
+    };
+  });
 
   const onUserMenuClose = () => {
     setMenuOpen(false);
@@ -127,11 +148,42 @@ function Header(props) {
       ) : (
         ""
       )}
-      <div className="navbar border-b border-grey bg-base-100 text-base-content">
+      <div className="navbar border-b border-grey bg-base-100 text-base-content sticky top-0 z-20 sm:relative ">
+        {isMobile ? (
+          <div className="items-stretch">
+            <a
+              className="btn btn-ghost btn-sm rounded-btn"
+              onClick={() => setIsOpen(true)}
+              target="_blank"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                className="inline-block w-6 h-6 stroke-current"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                ></path>
+              </svg>
+            </a>
+          </div>
+        ) : (
+          ""
+        )}
+        <Drawer
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          homeUrl={homeUrl}
+          chainId={chainId}
+        ></Drawer>
         <div
           className={
             "flex-none px-6 transition-all ease-out delay-150" +
-            (router.pathname === "/home" ? " w-64" : " w-42")
+            (router.pathname === "/home" ? " sm:w-64" : " sm:w-42")
           }
         >
           <Link href={homeUrl}>
@@ -172,35 +224,47 @@ function Header(props) {
             </div>
           </div>
         </div> */}
-        <div className="items-stretch">
-          <a
-            className="btn btn-ghost btn-sm rounded-btn"
-            href={process.env.NEXT_PUBLIC_EXPLORER_URL}
-            target="_blank"
-          >
-            Explorer
-          </a>
-        </div>
-        <div className="items-stretch">
-          <a
-            className="btn btn-ghost btn-sm rounded-btn"
-            href={process.env.NEXT_PUBLIC_DOCS_URL}
-            target="_blank"
-          >
-            Docs
-          </a>
-        </div>
-        <div className="items-stretch">
-          <a
-            className="btn btn-ghost btn-sm rounded-btn"
-            href={process.env.NEXT_PUBLIC_FORUM_URL}
-            target="_blank"
-          >
-            Forum
-          </a>
-        </div>
+        {!isMobile ? (
+          <div className="items-stretch">
+            <a
+              className="btn btn-ghost btn-sm rounded-btn"
+              href={process.env.NEXT_PUBLIC_EXPLORER_URL}
+              target="_blank"
+            >
+              Explorer
+            </a>
+          </div>
+        ) : (
+          ""
+        )}
+        {!isMobile ? (
+          <div className="items-stretch">
+            <a
+              className="btn btn-ghost btn-sm rounded-btn"
+              href={process.env.NEXT_PUBLIC_DOCS_URL}
+              target="_blank"
+            >
+              Docs
+            </a>
+          </div>
+        ) : (
+          ""
+        )}
+        {!isMobile ? (
+          <div className="items-stretch">
+            <a
+              className="btn btn-ghost btn-sm rounded-btn"
+              href={process.env.NEXT_PUBLIC_FORUM_URL}
+              target="_blank"
+            >
+              Forum
+            </a>
+          </div>
+        ) : (
+          ""
+        )}
         <div className="flex-1"></div>
-        {props.activeWallet ? (
+        {props.activeWallet && !isMobile ? (
           <div className="flex-none mr-8">
             <svg
               width="8"
@@ -243,7 +307,7 @@ function Header(props) {
         ) : (
           ""
         )}
-        {process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES ? (
+        {process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES && !isMobile ? (
           <div className="flex-col mr-8 items-end">
             <div
               className="uppercase text-type-secondary"

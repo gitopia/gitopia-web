@@ -62,7 +62,7 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
   };
 
   return (
-    <table className="table w-full">
+    <table className="table sm:w-full">
       <thead>
         <tr>
           <th>Member</th>

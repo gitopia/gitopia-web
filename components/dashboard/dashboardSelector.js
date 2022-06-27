@@ -36,7 +36,7 @@ function DashboardSelector(props) {
   }, [props.dashboards, props.currentDashboard]);
 
   return props.address ? (
-    <div className="pl-4 pr-4 mt-8">
+    <div className="pl-4 pr-4 mt-4 sm:mt-8">
       <ClickAwayListener
         onClickAway={() => {
           setMenuOpen(false);

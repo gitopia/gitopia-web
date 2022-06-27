@@ -131,13 +131,15 @@ function CreateWallet(props) {
     <>
       {walletCreated ? (
         <>
-          <div className="text-6xl mb-6">Recovery Phrase</div>
-          <div className="text-sm mb-8">
+          <div className="text-4xl mt-16 sm:mt-0 sm:text-6xl mb-6">
+            Recovery Phrase
+          </div>
+          <div className="text-sm mb-8 text-center sm:text-left">
             If you ever lose your login information, you can use this phrase to
             recover your account
           </div>
           <div className="max-w-2xl w-full p-4 mb-5">
-            <ul className="grid grid-cols-6 grid-rows-4 gap-5 list-decimal list-inside">
+            <ul className="grid grid-cols-4 grid-rows-6 sm:grid-cols-6 sm:grid-rows-4 gap-5 list-decimal list-inside text-xs sm:text-base">
               {mnemonic.split(" ").map((word, i) => {
                 return <li key={i}>{word}</li>;
               })}
@@ -162,7 +164,9 @@ function CreateWallet(props) {
         </>
       ) : (
         <>
-          <div className="text-6xl mb-6">Create Wallet</div>
+          <div className="text-4xl mt-16 sm:mt-0 sm:text-6xl mb-6">
+            Create Wallet
+          </div>
           <div className="text-xs mb-8">
             Your wallet is your login information to access the app
           </div>

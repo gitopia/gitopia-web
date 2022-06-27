@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import Link from "next/link";
 import Head from "next/head";
@@ -11,6 +11,25 @@ import getHomeUrl from "../helpers/getHomeUrl";
 
 function Home(props) {
   const router = useRouter();
+  const [isMobile, setIsMobile] = useState(false);
+
+  function detectWindowSize() {
+    if (typeof window !== "undefined") {
+      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", detectWindowSize);
+    }
+    detectWindowSize();
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", detectWindowSize);
+      }
+    };
+  });
+
   useEffect(() => {
     if (props.selectedAddress !== props.currentDashboard) {
       const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
@@ -51,22 +70,72 @@ function Home(props) {
         />
       </Head>
       <Header />
-      <div className="flex-1 flex">
-        <div className="w-64 border-r border-grey flex flex-col">
-          <div className="flex-1">
+      <div className="sm:flex-1 sm:flex">
+        {!isMobile ? (
+          <div className="w-64 border-r border-grey flex flex-col">
+            <div className="flex-1">
+              <DashboardSelector />
+              <TopRepositories
+                repositories={props.repositories.map((r) => {
+                  return { owner: props.selectedAddress, ...r };
+                })}
+              />
+            </div>
+            <div>
+              <div className="bg-footer-grad py-6">
+                <div className="text-xs text-type-secondary mx-8 mb-4">
+                  &copy; Gitopia {new Date().getFullYear()}
+                </div>
+                <div className="mx-6">
+                  {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ? (
+                    <>
+                      <Link
+                        href={
+                          "/" +
+                          process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
+                          "/proposals"
+                        }
+                      >
+                        <a className={"btn btn-xs btn-link mt-2"}>Proposals</a>
+                      </Link>
+                      <Link
+                        href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
+                      >
+                        <a
+                          className={"btn btn-xs btn-link mt-2"}
+                          target="_blank"
+                        >
+                          Source code
+                        </a>
+                      </Link>
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
             <DashboardSelector />
             <TopRepositories
               repositories={props.repositories.map((r) => {
                 return { owner: props.selectedAddress, ...r };
               })}
             />
-          </div>
-          <div>
-            <div className="bg-footer-grad py-6">
-              <div className="text-xs text-type-secondary mx-8 mb-4">
+          </>
+        )}
+        <div className="flex-1 px-4">
+          <UserDashboard />
+        </div>
+        {isMobile ? (
+          <div className="border-t border-grey mt-4">
+            <div className="py-6 w-1/2 m-auto">
+              <div className="text-xs text-type-secondary text-center">
                 &copy; Gitopia {new Date().getFullYear()}
               </div>
-              <div className="mx-6">
+              <div className="mx-6 flex">
                 {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ? (
                   <>
                     <Link
@@ -76,10 +145,10 @@ function Home(props) {
                         "/proposals"
                       }
                     >
-                      <a className={"btn btn-xs btn-link mt-2"}>Proposals</a>
+                      <a className={"btn btn-xs btn-link mt-1"}>Proposals</a>
                     </Link>
                     <Link href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}>
-                      <a className={"btn btn-xs btn-link mt-2"} target="_blank">
+                      <a className={"btn btn-xs btn-link mt-1"} target="_blank">
                         Source code
                       </a>
                     </Link>
@@ -90,10 +159,9 @@ function Home(props) {
               </div>
             </div>
           </div>
-        </div>
-        <div className="flex-1 px-4">
-          <UserDashboard />
-        </div>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );

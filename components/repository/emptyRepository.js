@@ -16,9 +16,9 @@ export default function EmptyRepository(props) {
   }
   return (
     <>
-      <div className="flex rounded-md py-2 mt-16 items-center">
+      <div className="sm:flex rounded-md py-2 mt-16 items-center">
         <div className="flex-none w-72 text-xl">Quick Setup</div>
-        <div className="flex-1 flex items-center">
+        <div className="mt-8 sm:mt-0 flex-1 flex items-center">
           <div className="flex-none text-xs uppercase text-type-secondary mr-4 font-bold">
             Remote
           </div>
@@ -58,48 +58,54 @@ export default function EmptyRepository(props) {
         </div>
       </div>
       <div className="mt-8">
-        <div className="py-8">
+        <div className="sm:py-8">
           <div className="alert alert-warning justify-center">
-            <div className="">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 mr-2 mt-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
-              <span className="mr-2">Install gitopia remote helper first</span>
-              <a
-                href="https://docs.gitopia.com/git-remote-gitopia"
-                target="_blank"
-                className="btn btn-secondary btn-outline btn-sm"
-              >
-                Learn more
-              </a>
-              {shouldShowDownloadWallet ? (
-                <button
-                  onClick={() => {
-                    dispatch(downloadWalletForRemoteHelper());
-                  }}
-                  className="ml-2 btn btn-secondary btn-outline btn-sm"
+            <div className="flex flex-col sm:flex-row">
+              <div className="flex">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 mr-4 mt-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
                 >
-                  Download wallet
-                </button>
-              ) : (
-                ""
-              )}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+                <span className="mr-2 mt-0.5">
+                  Install gitopia remote helper first
+                </span>
+              </div>
+              <div>
+                <a
+                  href="https://docs.gitopia.com/git-remote-gitopia"
+                  target="_blank"
+                  className="btn btn-secondary btn-outline btn-sm"
+                >
+                  Learn more
+                </a>
+                {shouldShowDownloadWallet ? (
+                  <button
+                    onClick={() => {
+                      dispatch(downloadWalletForRemoteHelper());
+                    }}
+                    className="ml-4 btn btn-secondary btn-outline btn-sm"
+                  >
+                    Download wallet
+                  </button>
+                ) : (
+                  ""
+                )}
+              </div>
             </div>
           </div>
         </div>
-        <div className="rounded-md py-8">
-          <div className="mb-8 text-type-tertiary">
+        <div className="rounded-md py-6 sm:py-8">
+          <div className="mb-4 sm:mb-8 text-type-tertiary">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -176,8 +182,8 @@ export default function EmptyRepository(props) {
             </div>
           </div>
         </div> */}
-        <div className="rounded-md py-8">
-          <div className="mb-8 text-type-tertiary">
+        <div className="rounded-md sm:py-8">
+          <div className="sm:mb-8 text-type-tertiary">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"

@@ -25,8 +25,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryPullsView(props) {
@@ -38,6 +38,25 @@ function RepositoryPullsView(props) {
   const [pagination, setPagination] = useState({
     limit: 10,
     countTotal: true,
+  });
+  const [isMobile, setIsMobile] = useState(false);
+
+  function detectWindowSize() {
+    if (typeof window !== "undefined") {
+      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", detectWindowSize);
+    }
+    detectWindowSize();
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", detectWindowSize);
+      }
+    };
   });
 
   const getAllPulls = async () => {
@@ -165,8 +184,8 @@ function RepositoryPullsView(props) {
             </div>
           </div>
           <div className="mt-8">
-            <div className="bg-base-200 px-4 py-2 rounded">
-              <div className="text-left flex">
+            <div className="sm:bg-base-200 px-2 sm:px-4  py-2 rounded">
+              <div className="text-left sm:flex">
                 <div className="tabs flex-1 relative -top-1">
                   <div
                     className={
@@ -585,9 +604,13 @@ function RepositoryPullsView(props) {
                       </div>
                     </div>
                     <div className="flex items-center">
-                      <div className="mt-1">
-                        <AssigneeGroup assignees={i.assignees} />
-                      </div>
+                      {!isMobile ? (
+                        <div className="mt-1">
+                          <AssigneeGroup assignees={i.assignees} />
+                        </div>
+                      ) : (
+                        ""
+                      )}
                       <div className="ml-4 flex text-type-secondary items-center">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"

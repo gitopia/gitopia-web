@@ -1,8 +1,9 @@
+import shrinkAddress from "../../helpers/shrinkAddress";
 export default function UserHeader({ user }) {
   const name = user.creator ? user.creator : "u";
   return (
     <div className="flex flex-1 mb-8">
-      <div className="avatar flex-none mr-8 items-center">
+      <div className="avatar flex-none mr-3 sm:mr-8 items-center">
         <div className={"w-14 h-14 rounded-full"}>
           <img
             src={
@@ -14,7 +15,7 @@ export default function UserHeader({ user }) {
       </div>
       <div className="flex flex-1 text-primary text-md items-center">
         <div>
-          <div className="flex">
+          <div className="flex text-xs sm:text-base">
             <p>{user.creator}</p>
           </div>
           <div className="flex mt-2">

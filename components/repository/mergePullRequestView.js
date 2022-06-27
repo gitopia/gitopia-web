@@ -18,9 +18,8 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
   const [iconType, setIconType] = useState("check");
   const [message, setMessage] = useState("");
   const [pullMergeAccess, setPullMergeAccess] = useState(false);
-  const [pullMergeAccessDialogShown, setPullMergeAccessDialogShown] = useState(
-    false
-  );
+  const [pullMergeAccessDialogShown, setPullMergeAccessDialogShown] =
+    useState(false);
   const [isGrantingAccess, setIsGrantingAccess] = useState(false);
 
   const checkMerge = async () => {
@@ -161,48 +160,53 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
           "flex flex-1 items-center border p-4 rounded-md border-" + stateClass
         }
       >
-        {iconType === "check" ? (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 mr-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 mr-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        )}
-        <div className="flex-1">{message}</div>
+        <div className="flex">
+          {iconType === "check" ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 sm:mr-4 mr-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 sm:mr-4 mr-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          )}
+          <div className="flex-1 text-xs sm:text-base">{message}</div>
+        </div>
         {pullRequest.state === "OPEN" ? (
-          <button
-            className={
-              "btn btn-sm btn-primary ml-4" + (isMerging ? " loading" : "")
-            }
-            onClick={mergePull}
-            disabled={isMerging || stateClass === "warning"}
-          >
-            Merge Pull Request
-          </button>
+          <div className="sm:ml-auto">
+            <button
+              className={
+                "btn btn-xs sm:btn-sm btn-primary sm:ml-4 m-0.5 h-10" +
+                (isMerging ? " loading" : "")
+              }
+              onClick={mergePull}
+              disabled={isMerging || stateClass === "warning"}
+            >
+              Merge Pull Request
+            </button>
+          </div>
         ) : (
           ""
         )}

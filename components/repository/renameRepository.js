@@ -67,7 +67,7 @@ function RenameRepository({
   };
 
   return startRename ? (
-    <div className="flex items-top">
+    <div className="sm:flex items-top">
       <div className="flex-1 mr-8">
         <TextInput
           type="text"
@@ -93,7 +93,7 @@ function RenameRepository({
           size="sm"
         />
       </div>
-      <div className="flex-none w-48 pt-9">
+      <div className="flex-none w-48 pt-4 sm:pt-9">
         <button
           className={
             "btn btn-sm btn-block btn-outline " + (isChanging ? "loading" : "")
@@ -106,7 +106,7 @@ function RenameRepository({
       </div>
     </div>
   ) : (
-    <div className="flex items-center">
+    <div className="sm:flex items-center">
       <div className="flex-1 mr-8">
         <div className="label-text">Rename Repository</div>
         <div className="label-text-alt text-type-secondary">
@@ -114,7 +114,7 @@ function RenameRepository({
           will have to update their settings
         </div>
       </div>
-      <div className="flex-none w-48">
+      <div className="flex-none w-48 pt-4 sm:pt-0">
         <button
           className="btn btn-sm btn-block btn-accent btn-outline"
           onClick={() => setStartRename(true)}

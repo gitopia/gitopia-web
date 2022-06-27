@@ -26,13 +26,15 @@ export default function Login(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="mt-12 px-4 container mx-auto flex flex-1 flex-col justify-center items-center min-h-full relative">
+      <div className="mt-4 sm:mt-12 px-4 container mx-auto flex flex-1 flex-col justify-center items-center min-h-full relative">
         {step === 1 ? (
           <>
             <div className="text-xs uppercase text-green mt-12 mb-2">
               Welcome to Gitopia
             </div>
-            <div className="text-6xl mb-16">Access Gitopia</div>
+            <div className="text-4xl sm:text-6xl mb-8 sm:mb-16">
+              Access Gitopia
+            </div>
             <div className="max-w-lg w-full p-4">
               <div className="flex flex-col gap-2">
                 <button

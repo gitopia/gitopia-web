@@ -26,11 +26,11 @@ function LabelView({ label, repoId, onDelete, refreshLabels, ...props }) {
         />
       ) : (
         <div className="flex items-center">
-          <div className="flex-none w-64">
+          <div className="flex-none mr-2 sm:mr-0 sm:w-64">
             <Label color={label.color} name={label.name} />
           </div>
-          <div className="flex-1">{label.description}</div>
-          <div className="flex-none w-20 mr-2">
+          <div className="flex-1 text-sm sm:text-base">{label.description}</div>
+          <div className="flex-none text-sm sm:text-base w-10 sm:w-20 sm:mr-2">
             <button
               className={"btn btn-sm btn-ghost btn-block "}
               onClick={() => {
@@ -40,7 +40,7 @@ function LabelView({ label, repoId, onDelete, refreshLabels, ...props }) {
               Edit
             </button>
           </div>
-          <div className="flex-none w-20">
+          <div className="flex-none text-sm sm:text-base w-10 sm:w-20">
             <button
               className={"btn btn-sm btn-ghost btn-block "}
               onClick={() => {
