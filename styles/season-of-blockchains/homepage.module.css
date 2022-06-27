@@ -52,24 +52,24 @@
 }
 .blob2 {
   position: absolute;
-  left: 0;
-  top: 154vw;
+  right: 0;
+  top: 4vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
 }
 .blob3 {
   position: absolute;
-  left: 36vw;
-  top: 3vw;
+  right: 0vw;
+  top: 25vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
 }
 .blob4 {
   position: absolute;
-  left: 18vw;
-  top: 161vw;
+  right: 0vw;
+  top: 90vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
@@ -77,174 +77,417 @@
 .blob5 {
   position: absolute;
   right: 0;
-  top: 22vw;
+  top: 224.8vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
 }
 .blob6 {
   position: absolute;
-  right: 0;
-  top: 135vw;
+  left: 0;
+  top: 224.5vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
 }
-.section3a {
-  margin-top: 1.7vw;
+.blob7{
+  position: absolute;
+  z-index: -1;
+  left:0;
+  top: 1075px;
+  width: 100%;
+  height: auto;
 }
-.circle {
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  padding: 9px;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  color: white;
-  display: flex;
-  align-items: center;
-  text-align: center;
+.coin1{
+  position: absolute;
+  left: 22vw;
+  top: 42.5vw;
+  pointer-events: none;
+  z-index: -1;
 }
-.number {
-  opacity: 1;
-  font-weight: 700;
-  font-size: 14px;
+.coin2{
+  position: absolute;
+  left: 3vw;
+  top: 56vw;
+  pointer-events: none;
+  z-index: -1;
 }
-.working {
-  margin-top: 5px;
-  font-weight: 400;
-  font-size: 14px;
-  margin-right: 0px;
+.coin3{
+  position: absolute;
+  left: 19vw;
+  top: 68vw;
+  pointer-events: none;
+  z-index: -1;
 }
-.image2 {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-items: center;
-  margin-top: 3.5vw;
+.coin4{
+  position: absolute;
+  left: 0vw;
+  top: 72vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin5{
+  position: absolute;
+  right: 3vw;
+  top: 53vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin6{
+  position: absolute;
+  right:0vw;
+  top: 68vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin7{
+  position: absolute;
+  right: 23vw;
+  top: 77vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin8{
+  position: absolute;
+  left: 2vw;
+  top: 96vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin9{
+  position: absolute;
+  left: 21vw;
+  top: 102vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin10{
+  position: absolute;
+  right: 28vw;
+  top: 100vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin11{
+  position: absolute;
+  right: 14vw;
+  top: 108vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin11b{
+  position: absolute;
+  right: 15.5vw;
+  top: 109.4vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin12{
+  position: absolute;
+  right: 23vw;
+  top: 150vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin13{
+  position: absolute;
+  left: 17vw;
+  top: 159vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin14{
+  position: absolute;
+  right: 7vw;
+  top: 180vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin15{
+  position: absolute;
+  left: 10vw;
+  top: 200vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin16{
+  position: absolute;
+  right: 5vw;
+  top: 214vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin17{
+  position: absolute;
+  right: 0vw;
+  top: 230vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin18{
+  position: absolute;
+  right: 25vw;
+  top: 234vw;
+  pointer-events: none;
+  z-index: -1;
+}
+.coin19{
+  position: absolute;
+  left: 0vw;
+  top: 220vw;
+  pointer-events: none;
+  z-index: -1;
 }
 .title {
-  margin-top: 80px;
   align-items: center;
   text-align: left;
   font-size: 48px;
   font-weight: 700;
-  margin-left: 17vw;
+  line-height: 114.27%;
+  letter-spacing: -0.02em;
+  width:447px;
 }
 .title2 {
   align-items: center;
   text-align: left;
   font-size: 48px;
   font-weight: 700;
-  margin-left: 17vw;
+  line-height: 114.27%;
+  letter-spacing: -0.02em;
+  width:447px;
 }
 .title3 {
   display: flex;
-  margin-top: 80px;
-  margin-left: 23vw;
-  font-size: 64px;
+  font-size: 32px;
   font-weight: 700;
+  line-height: 114.27%;
+  letter-spacing: -0.02em;
 }
 .title4 {
   display: flex;
-  margin-left: 23vw;
-  font-size: 64px;
+  font-size: 32px;
   font-weight: 700;
-  margin-bottom: 3vw;
-}
-.title5 {
-  margin-top: 80px;
-  align-items: center;
-  text-align: center;
-  font-size: 64px;
-  font-weight: 700;
-  margin-bottom: 2.5vw;
+  margin-bottom: 1.5vw;
+  line-height: 114.27%;
+  letter-spacing: -0.02em;
 }
 .content {
   text-align: left;
-  margin-left: 17vw;
-  font-weight: 700;
-  font-size: 18px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  width:421px;
 }
-.seeOrgButton{
+.registerButton{
   background-color:  #2F995A;
+  height: 40px;
+  width:220px;
 }
 .topButtons {
 margin-top: 4.5vw;
-margin-left: 17vw;
 text-align: left;
 }
 .orgCard{
-margin-left: 17.5vw;
-margin-right: 18vw;
-margin-top: 3.5vw;
-}
-.orgTitle{
-  margin-left:0.8vw;
-font-size: 20px;
-font-weight: 700;
-}
-.orgBody{
-  margin-left: 0.8vw;
-  font-size: 14px;
-  font-weight: 400;
-  opacity: 0.5;
-}
-.orgButton{
-  margin-top: 1vw;
-  margin-left: 0.8vw;
-  font-size: 10px;
-  font-weight: 700;
-  opacity: 0.5;
+margin-top: 1vw;
+margin-bottom: 5vw;
 }
 .card {
-  width: 755px;
+  width: 311px;
   align-items: left;
-  margin-left: 1vw;
-  margin-right: 27vw;
   margin-top: 0.5vw;
+  margin-left: 0.7vw;
+  margin-bottom: 1vw;
 }
 .cardTitle {
-  font-size: 24px;
-  font-style: normal;
-  font-weight: lighter;
+  font-size: 18px;
   letter-spacing: 0.368571px;
+  line-height: 25.2px;
+  font-weight:700;
 }
 .cardBody {
-  margin-top: 0.5vw;
-  font-size: 18px;
+  font-size: 13px;
   font-weight: 400;
+  width:256px;
 }
 .cardImage {
-  width: 40px;
-  height: 35px;
-  margin-left: 23vw;
+  width: 41px;
+  height: 57.66px;
+  margin-top: 1vw;
+}
+.card2{
+  width:270px;
+}
+.image2 {
+  margin-top: 4.2vw;
+  height: 448.5px;
+  width: 940px;
+}
+.section3{
+  margin-top:16vw;
+  margin-bottom:16vw;
+  margin-left: auto;
+  width:82%;
+}
+.section3Content{
+width:569px;
+height:185px;
+font-size: 32px;
+font-weight: 700;
+line-height: 114.27%;
+letter-spacing: -0.02em;
+}
+.section3End{
+  margin-top: 1vw;
+}
+.section3Name{
   margin-top: 0.5vw;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 114.27%;
+  letter-spacing: -0.02em;
 }
-.cardImage2 {
-  width: 40px;
-  height: 35px;
-  margin-left: 23vw;
+.section3Designation{
   margin-top: 0.5vw;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 114.27%;
+  letter-spacing: -0.02em;
 }
-.cardImage3 {
-  width: 40px;
-  height: 35px;
-  margin-left: 23vw;
-  margin-top: 0.8vw;
+.section4{
+  margin-top: 3vw;
 }
-.hr {
-  border-top: 1px solid #444b53;
-  margin-top: 22px;
-  margin-left: 27.8vw;
-  margin-right: 35.5vw;
-  margin-bottom: 0.7vw;
+.margin{
+  margin-top: 7vw;
 }
-.image3 {
-  margin-top: 20px;
+.section5{
+  position:relative;
+  margin-bottom: 0.5vw;
+}
+.box{
+ background: linear-gradient(to right, #B5C7F8, #B3C5F4, transparent);
+ width: 940px;
+ height: 259px;
+ opacity: 0.1;
+}
+.section5Title{
+  padding-right :3.5vw;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 34.6038px;
+  line-height: 114.27%;
+}
+.section5Content{
+  width: 370px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 137.27%;
+}
+.section5BodyTitle{
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 114.27%;
+  margin-bottom: 0.5vw;
+}
+.section5Body{
+  padding:2vw;
+}
+.vl2{
+  border:0;
+  border-left: 5px solid #792BAB;
+  height: 269px;
+  margin-left:1vw;
+  margin-right: 2vw;
+}
+.vl3{
+  border:0;
+  border-left: 5px solid #792BAB;
+  height: 259px;
+  margin-left:1vw;
+  margin-right: 2vw;
+}
+.vlCircle {
+  margin-right: 1vw;
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #792BAB;
+}
+.endHeadline {
+  margin-top: 7vw;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 114.27%;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  opacity:0.5;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 3.5vw;
+}
+.endCircle  {
+  width: 64px;
+  height: 64px;
+  background-color: #324051;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  margin-bottom: 1.5vw;
+}
+.endCircleImage {
+  position: absolute;
+  top: 35%;
+  left: 35%;
+}
+.endQuote {
+  width: 785px;
+  height: 138px;
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 114.27%;
+  letter-spacing: -0.02em;
+}
+.endQuoteContent {
+ margin-top: 1vw;
+}
+.endQuoteName {
+  margin-top:0.5vw;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 114.27%;
+  letter-spacing: -0.02em;
   display: flex;
-  margin-left: 25vw;
-  height: 400px;
-  width: 440px;
+  align-items: center;
+  margin-right: 1vw;
+}
+.endQuoteDesig{
+  margin-top: 0.5vw;
+  margin-left: 1vw;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 114.27%;
+  align-items: center;
+  letter-spacing: -0.02em;
+}
+.endQuoteContent  {
+  margin-bottom: 5vw;
+}
+.linksBoxContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 15px;
+}
+.linksBox {
+  width: 270px;
+  height: 56px;
+  border: 2px solid #38195E;
+  box-sizing: border-box;
+  padding: 7px 7px;
+  border-radius: 6px;
+}
+.links{
+  margin: 5px 30px;
 }
 .footer {
   margin-top: 150px;
@@ -273,44 +516,25 @@ font-weight: 700;
 
 @media (max-width: 1800px) {
   .card {
-   margin-top: 1vw;
-    width: 770px;
-    margin-right: 20vw;
+    margin-top: 1vw;
+  }
+  .orgCard{
+    margin-top: 5vw;
   }
   .cardBody {
-    margin-top: 0.7vw;
+    margin-top: 0.5vw;
   }
   .cardImage {
-    margin-top: 1vw;
-  }
-  .cardImage2 {
-    margin-top: 1vw;
-  }
-  .cardImage3 {
-    margin-top: 1.3vw;
-  }
-  .hr {
-    margin-left: 29vw;
-    margin-right: 22vw;
+    margin-top: 1.2vw;
   }
   .image2 {
-    margin-left: 18vw;
-    height: 500px;
-    width: 950px;
+    margin-top: 4.8vw;
   }
-  .blob2 {
-    top: 200.4vw;
+  .blob5{
+    top:274vw;
   }
-  .blob3 {
-    left: 43vw;
-    top: 3vw;
-  }
-  .blob4 {
-    left: 17vw;
-    top: 212vw;
-  }
-  .blob6 {
-    top: 175vw;
+  .blob6{
+    top: 273.3vw;
   }
 }
 @media (max-width: 1024px) {
@@ -330,57 +554,20 @@ font-weight: 700;
     padding: 0 44px;
     width: 100%;
   }
-  .blob2 {
-    top: 272vw;
-  }
-  .blob3 {
-    left: 35vw;
-    top: 10vw;
-  }
-  .blob4 {
-    top: 290vw;
-  }
-  .blob6 {
-    top: 235vw;
-  }
-  .title{
-    margin-left: 8vw;
-  }
-  .title2{
-    margin-left: 8vw;
-  }
   .title3 {
     display: flex;
     margin-top: 80px;
-    margin-left: 23vw;
     font-size: 64px;
     font-weight: 700;
   }
   .title4 {
     display: flex;
-    margin-left: 23vw;
     font-size: 64px;
     font-weight: 700;
   }
-  .content{
-      margin-left: 8vw; 
-  }
-  .topButtons {
-    margin-left: 8vw;
-  }
   .orgCard{
-    margin-left: 8vw;
-    margin-right: 6vw;
     margin-top: 9vw;
     }
-  .circle {
-    width: 27px;
-    height: 28px;
-    padding: 7px;
-  }
-  .working {
-    font-size: 16px;
-  }
   .card {
     display: flex;
     flex-direction: row;
@@ -396,36 +583,22 @@ font-weight: 700;
   .cardImage {
     width: 100px;
     height: 40px;
-    margin-left: 15vw;
     margin-top: 1vw;
   }
   .cardImage2 {
     width: 100px;
     height: 40px;
-    margin-left: 15vw;
     margin-top: 1.3vw;
   }
   .cardImage3 {
     width: 100px;
     height: 40px;
-    margin-left: 15vw;
     margin-top: 1.7vw;
   }
-  .hr {
-    margin-left: 23vw;
-    margin-right: 14vw;
-    margin-bottom: 0.7vw;
-  }
   .image2 {
-    margin-left: 4vw;
     margin-top: 8vw;
     height: 400px;
     width: 800px;
-  }
-  .image3 {
-    margin-left: 3vw;
-    height: 43vw;
-    width: 50vw;
   }
   .footer {
     margin-top: 40px;
@@ -444,12 +617,6 @@ font-weight: 700;
     position: relative;
     z-index: 1;
   }
-  .topButtons {
-    margin-left: 3vw;
-  }
-  .orgCard{
-    margin-left: 2vw;
-  }
   .card {
     width: 90vw;
     margin-right: 0vw;
@@ -465,21 +632,14 @@ font-weight: 700;
   .cardImage {
     width: 30px;
     height: 40px;
-    margin-left: 10vw;
   }
   .cardImage2 {
     width: 30px;
     height: 40px;
-    margin-left: 10vw;
   }
   .cardImage3 {
     width: 30px;
     height: 40px;
-    margin-left: 10vw;
-  }
-  .hr {
-    margin-left: 25vw;
-    margin-right: 8vw;
   }
   .title {
     margin-top: 10vw;
@@ -491,19 +651,13 @@ font-weight: 700;
     font-size: 40px;
   }
   .title3 {
-    margin-left: 10vw;
     margin-top: 10vw;
     text-align: center;
     font-size: 40px;
   }
   .title4 {
-    margin-left: 10vw;
     text-align: center;
     font-size: 40px;
-  }
-  .title5{
-    font-size:40px;
-    margin-top: 30px;
   }
   .content {
     text-align: center;
@@ -515,25 +669,6 @@ font-weight: 700;
     width: 350px;
     height: 300px;
     margin-left: 0vw;
-  }
-  .image3 {
-    height: 400px;
-    width: 350px;
-    margin-bottom: 6vw;
-  }
-  .circle {
-    width: 27px;
-    height: 28px;
-    padding: 7px;
-  }
-  .working {
-    margin-top: 0px;
-  }
-  .section3 {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: left;
   }
   .blob1,
   .blob2,
