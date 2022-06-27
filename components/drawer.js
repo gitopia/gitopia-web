@@ -38,7 +38,7 @@ function Drawer(props) {
               </Link>
             </div>
           </header>
-          <ul class="menu p-4 overflow-y-auto w-80 bg-base-200">
+          <ul className="menu p-4 overflow-y-auto w-80 bg-base-200">
             {props.activeWallet ? (
               <div className="flex flex-row mx-4 mt-auto">
                 <svg
