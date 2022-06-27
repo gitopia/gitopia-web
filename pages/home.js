@@ -13,20 +13,22 @@ function Home(props) {
   const router = useRouter();
   const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.screen.width <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }, [typeof window !== "undefined" ? window.screen.width : ""]);
-
   function detectWindowSize() {
     if (typeof window !== "undefined") {
       window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
     }
   }
-  if (typeof window !== "undefined") {
-    window.onresize = detectWindowSize;
-  }
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", detectWindowSize);
+    }
+    detectWindowSize();
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", detectWindowSize);
+      }
+    };
+  });
 
   useEffect(() => {
     if (props.selectedAddress !== props.currentDashboard) {
@@ -115,7 +117,14 @@ function Home(props) {
             </div>
           </div>
         ) : (
-          <DashboardSelector />
+          <>
+            <DashboardSelector />
+            <TopRepositories
+              repositories={props.repositories.map((r) => {
+                return { owner: props.selectedAddress, ...r };
+              })}
+            />
+          </>
         )}
         <div className="flex-1 px-4">
           <UserDashboard />
