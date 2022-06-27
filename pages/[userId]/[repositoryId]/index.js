@@ -54,8 +54,9 @@ function RepositoryView(props) {
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
   );
-  const [currentUserEditPermission, setCurrentUserEditPermission] =
-    useState(false);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -141,6 +142,8 @@ function RepositoryView(props) {
       if (!branchSha) {
         setSelectedBranch(repository.branches[0].name);
         branchSha = repository.branches[0].sha;
+      } else {
+        setSelectedBranch(repository.defaultBranch);
       }
       const commitHistory = await getCommitHistory(
         repository.id,
