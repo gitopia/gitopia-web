@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function SeasonOfBlockchains() {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <div className={styles.wrapper}>
+    <div className={"overflow-x-hidden " + styles.wrapper}>
       <Head>
         <title>Gitopia - Season of Blockchains</title>
         <link rel="icon" href="/favicon.png" />
@@ -134,8 +134,8 @@ export default function SeasonOfBlockchains() {
         <div className={styles.headerLine}></div>
       </header>
       <div className="flex flex-col h-screen">
-        <div className="justify-center items-center mx-auto max-w-screen-lg py-12 px-4">
-          <div className="sm:flex" id="applyNow">
+        <div className="justify-center items-center lg:mx-auto lg:max-w-screen-lg py-12 lg:px-4">
+          <div className={"sm:flex " + styles.midScreen} id="applyNow">
             <div>
               <div className={" " + styles.title}>Season of</div>
               <div className={" " + styles.title2}>Blockchains is here!</div>
@@ -154,82 +154,84 @@ export default function SeasonOfBlockchains() {
                   }}
                   type="button"
                   className={
-                    "btn-sm py-1.5 btn-primary rounded " + styles.registerButton
+                    "btn-sm sm:py-1.5 btn-primary rounded " +
+                    styles.registerButton
                   }
                 >
                   Register for Program
                 </button>
               </div>
             </div>
-            <div className="">
+            <div className={styles.midScreenImage}>
               <img src="/season-of-blockchains/home-1.svg"></img>
             </div>
           </div>
-          <div
-            id="organisations"
-            className={
-              "grid grid-cols-2 grid-rows-3 sm:grid-cols-5 sm:grid-rows-1 " +
-              styles.orgCard
-            }
-          >
-            <div className="">
-              <svg
-                width="175"
-                height="47"
-                viewBox="0 0 175 47"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect width="175" height="47" rx="8" fill="#2F3C4B" />
-              </svg>
-            </div>
-            <div className="">
-              <svg
-                width="175"
-                height="47"
-                viewBox="0 0 175 47"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect width="175" height="47" rx="8" fill="#2F3C4B" />
-              </svg>
-            </div>
-            <div className="">
-              <svg
-                width="175"
-                height="47"
-                viewBox="0 0 175 47"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect width="175" height="47" rx="8" fill="#2F3C4B" />
-              </svg>
-            </div>
-            <div className="">
-              <svg
-                width="175"
-                height="47"
-                viewBox="0 0 175 47"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect width="175" height="47" rx="8" fill="#2F3C4B" />
-              </svg>
-            </div>
-            <div className="">
-              <svg
-                width="175"
-                height="47"
-                viewBox="0 0 175 47"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect width="175" height="47" rx="8" fill="#2F3C4B" />
-              </svg>
+          <div className={styles.orgCardWrapper}>
+            <div
+              id="organisations"
+              className={
+                "grid grid-cols-2 grid-rows-3 sm:grid-cols-3 sm:grid-rows-2 lg:grid-cols-5 sm:grid-rows-1 " +
+                styles.orgCard
+              }
+            >
+              <div className="">
+                <svg
+                  width="175"
+                  height="47"
+                  viewBox="0 0 175 47"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="175" height="47" rx="8" fill="#2F3C4B" />
+                </svg>
+              </div>
+              <div className="">
+                <svg
+                  width="175"
+                  height="47"
+                  viewBox="0 0 175 47"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="175" height="47" rx="8" fill="#2F3C4B" />
+                </svg>
+              </div>
+              <div className="">
+                <svg
+                  width="175"
+                  height="47"
+                  viewBox="0 0 175 47"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="175" height="47" rx="8" fill="#2F3C4B" />
+                </svg>
+              </div>
+              <div className="">
+                <svg
+                  width="175"
+                  height="47"
+                  viewBox="0 0 175 47"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="175" height="47" rx="8" fill="#2F3C4B" />
+                </svg>
+              </div>
+              <div className="">
+                <svg
+                  width="175"
+                  height="47"
+                  viewBox="0 0 175 47"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="175" height="47" rx="8" fill="#2F3C4B" />
+                </svg>
+              </div>
             </div>
           </div>
-
-          <div className="flex">
+          <div className={"flex " + styles.midScreen}>
             <div className={" " + styles.image2}>
               <img src="/season-of-blockchains/home-2.svg"></img>
             </div>
@@ -317,7 +319,7 @@ export default function SeasonOfBlockchains() {
               </div>
             </div>
           </div>
-          <div className="flex">
+          <div className={"flex " + styles.midScreen}>
             <div className={"sm:mb-36 " + styles.section4}>
               <div className={" " + styles.title3}>
                 How GSOB will contribute
@@ -388,7 +390,7 @@ export default function SeasonOfBlockchains() {
                 </div>
               </div>
             </div>
-            <div className={" "}>
+            <div className={styles.midScreenImage}>
               <img src="/season-of-blockchains/home-3.svg"></img>
             </div>
           </div>
@@ -397,7 +399,7 @@ export default function SeasonOfBlockchains() {
               <div className={styles.box}></div>
               <div
                 className={
-                  "flex flex-row items-center justify-center absolute w-full top-0"
+                  "flex flex-row items-center justify-center absolute lg:w-full top-0"
                 }
               >
                 <div className={styles.section5Title}>PHASE 1</div>
@@ -422,7 +424,7 @@ export default function SeasonOfBlockchains() {
 
               <div
                 className={
-                  "flex flex-row items-center justify-center absolute w-full top-0"
+                  "flex flex-row items-center justify-center absolute lg:w-full top-0"
                 }
               >
                 <div className={styles.section5Title}>PHASE 2</div>
@@ -450,7 +452,7 @@ export default function SeasonOfBlockchains() {
               <div className={styles.box}></div>
               <div
                 className={
-                  "flex flex-row items-center justify-center absolute w-full top-0"
+                  "flex flex-row items-center justify-center absolute lg:w-full top-0"
                 }
               >
                 <div className={styles.section5Title}>PHASE 3</div>
@@ -474,7 +476,7 @@ export default function SeasonOfBlockchains() {
               <div className={styles.box}></div>
               <div
                 className={
-                  "flex flex-row items-center justify-center absolute w-full top-0"
+                  "flex flex-row items-center justify-center absolute lg:w-full top-0"
                 }
               >
                 <div className={styles.section5Title}>PHASE 4</div>
@@ -499,7 +501,7 @@ export default function SeasonOfBlockchains() {
               <div className={styles.box}></div>
               <div
                 className={
-                  "flex flex-row items-center justify-center absolute w-full top-0"
+                  "flex flex-row items-center justify-center absolute lg:w-full top-0"
                 }
               >
                 <div className={styles.section5Title}>PHASE 5</div>
@@ -531,7 +533,7 @@ export default function SeasonOfBlockchains() {
               <div className={styles.box}></div>
               <div
                 className={
-                  "flex flex-row items-center justify-center absolute w-full top-0"
+                  "flex flex-row items-center justify-center absolute lg:w-full top-0"
                 }
               >
                 <div className={styles.section5Title}>PHASE 6</div>
@@ -579,7 +581,7 @@ export default function SeasonOfBlockchains() {
             </div>
           </div>
           <div
-            className="flex flex-row items-center justify-center text-center"
+            className="flex flex-col lg:flex-row items-center justify-center text-center"
             id="contact"
           >
             <a

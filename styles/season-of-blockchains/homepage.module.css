@@ -94,7 +94,7 @@
   position: absolute;
   z-index: -1;
   left:0;
-  top: 1075px;
+  top: 1210px;
   width: 100%;
   height: auto;
 }
@@ -115,14 +115,14 @@
 .coin3{
   position: absolute;
   left: 19vw;
-  top: 68vw;
+  top: 71vw;
   pointer-events: none;
   z-index: -1;
 }
 .coin4{
   position: absolute;
   left: 0vw;
-  top: 72vw;
+  top: 73vw;
   pointer-events: none;
   z-index: -1;
 }
@@ -142,43 +142,43 @@
 }
 .coin7{
   position: absolute;
-  right: 23vw;
-  top: 77vw;
+  right: 19vw;
+  top: 82vw;
   pointer-events: none;
   z-index: -1;
 }
 .coin8{
   position: absolute;
   left: 2vw;
-  top: 96vw;
+  top: 106vw;
   pointer-events: none;
   z-index: -1;
 }
 .coin9{
   position: absolute;
-  left: 21vw;
-  top: 102vw;
+  left: 19vw;
+  top: 111vw;
   pointer-events: none;
   z-index: -1;
 }
 .coin10{
   position: absolute;
-  right: 28vw;
-  top: 100vw;
+  right: 23vw;
+  top: 107vw;
   pointer-events: none;
   z-index: -1;
 }
 .coin11{
   position: absolute;
-  right: 14vw;
-  top: 108vw;
+  right: 8vw;
+  top: 119vw;
   pointer-events: none;
   z-index: -1;
 }
 .coin11b{
   position: absolute;
-  right: 15.5vw;
-  top: 109.4vw;
+  right: 9.5vw;
+  top: 120.5vw;
   pointer-events: none;
   z-index: -1;
 }
@@ -521,23 +521,118 @@ letter-spacing: -0.02em;
   .orgCard{
     margin-top: 5vw;
   }
-  .cardBody {
-    margin-top: 0.5vw;
-  }
   .cardImage {
     margin-top: 1.2vw;
   }
   .image2 {
-    margin-top: 4.8vw;
+    margin-top: 8vw;
+  }
+  .title3{
+    margin-top:4vw;
+  }
+  .section5{
+    padding-left:2vw;
   }
   .blob5{
-    top:274vw;
+    top:288vw;
   }
   .blob6{
-    top: 273.3vw;
+    top: 288vw;
+  }
+  .blob7{
+    top:89vw;
+  }
+  .coin1{
+    top:62vw;
+    left: 13vw;
+  }
+  .coin2{
+    top:80vw;
+    left: 2vw;
+  }
+  .coin3{
+    top:95vw;
+    left: 9vw;
+  }
+  .coin4{
+    top:100vw;
+    left: 0vw;
+  }
+  .coin5{
+    top:77vw;
+    right: 2vw;
+  }
+  .coin6{
+    top:94vw;
+    right: 0vw;
+  }
+  .coin7{
+    top:103vw;
+    right: 18vw;
+  }
+  .coin8{
+    top:138vw;
+    left: 2vw;
+  }
+  .coin9{
+    top:145vw;
+    left: 12vw;
+  }
+  .coin10{
+    top:130vw;
+    right: 20vw;
+  }
+  .coin11{
+    top:139vw;
+    right: 9vw;
+  }
+  .coin11b{
+    top:141vw;
+    right: 11vw;
+  }
+  .coin12{
+    top:196vw;
+    right: 16vw;
+  }
+  .coin13{
+    top:209vw;
+    left: 7vw;
+  }
+  .coin14{
+    top:235vw;
+    right: 5vw;
+  }
+  .coin15{
+    top:264vw;
+    left: 1vw;
+  }
+  .coin16{
+    top: 280vw;
+    right: 5vw;
+  }
+  .coin17{
+    top:300vw;
+    right: 0vw;
+  }
+  .coin18{
+    top:308vw;
+    right: 15vw;
+  }
+  .coin19{
+    top:290vw;
+    right: 11vw;
   }
 }
 @media (max-width: 1024px) {
+  .blob1,.blob2,.blob3,.blob4{
+    opacity:0.3;
+  }
+  .blob5,.blob6{
+   display:none;
+  }
+	.coin1,.coin2,.coin3,.coin4,.coin5,.coin6,.coin7,.coin8,.coin9,.coin10,.coin11,.coin11b,.coin12,.coin13,.coin14,.coin15,.coin16,.coin17,.coin18,.coin19{
+		opacity:0.3
+	}
   .headerMenuIcon {
     display: block;
   }
@@ -554,52 +649,154 @@ letter-spacing: -0.02em;
     padding: 0 44px;
     width: 100%;
   }
-  .title3 {
+	.midScreen{
+		flex-direction: column;
+	}
+	.title{
+		display:flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		width:100%;
+	}
+	.title2	{
+		display:flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		width:100%;
+	}
+	.content {
+		padding-left: 50px;
+		padding-right: 50px;
+		width:100%;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
     display: flex;
+	}
+	.topButtons {
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+    display: flex;
+	}
+	.title2{
+		display:flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		margin-right: 0;
+	}
+  .title3 {
+    display:flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
     margin-top: 80px;
-    font-size: 64px;
+    font-size: 32px;
     font-weight: 700;
   }
   .title4 {
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
     display: flex;
-    font-size: 64px;
-    font-weight: 700;
+		margin-bottom: 8vw;
+
   }
+	.orgCardWrapper {
+		display:flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+	}
   .orgCard{
     margin-top: 9vw;
-    }
-  .card {
-    display: flex;
-    flex-direction: row;
-    width: 180vw;
-    margin-right: 10vw;
+		gap: 20px;
+		width:600px;
   }
+  .card {
+    display:flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		width:70vw;
+		margin-bottom: 3vw;
+  }
+	.card2{
+		display:flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		width:100%;
+		margin-bottom: 3vw;
+	}
   .cardTitle {
     margin-left: 5px;
+		font-size: 24px;
   }
   .cardBody {
     margin-left: 5px;
+		font-size: 16px;
+		width:500px;
   }
   .cardImage {
     width: 100px;
     height: 40px;
     margin-top: 1vw;
-  }
-  .cardImage2 {
-    width: 100px;
-    height: 40px;
-    margin-top: 1.3vw;
-  }
-  .cardImage3 {
-    width: 100px;
-    height: 40px;
-    margin-top: 1.7vw;
+		margin-left: 14vw;
   }
   .image2 {
+		display:flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
     margin-top: 8vw;
+		margin-bottom: 8vw;
     height: 400px;
     width: 800px;
   }
+	.midScreenImage{
+		display:flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+	}
+	.section3 {
+		margin-top: 9vw;
+		margin-bottom: 0vw;
+	}
+	.section5 {
+		padding-left:0px;
+		width: 700px;
+	}
+	.section5Title {
+		margin-right: 5vw;
+		margin-left: 5vw;
+		width:170px;
+	}
+	.section5Body {
+		width:100px;
+	}
+	.box {
+		width:850px;
+	}
+	.endQuote {
+		width:500px;
+		height:300px;
+	}
+	.linksBoxContainer	{
+		margin-right: 0;
+		margin: 2vw;
+	}
   .footer {
     margin-top: 40px;
     padding: 50px;
@@ -617,67 +814,157 @@ letter-spacing: -0.02em;
     position: relative;
     z-index: 1;
   }
-  .card {
-    width: 90vw;
-    margin-right: 0vw;
-  }
-  .cardTitle {
-    font-size: 17px;
-    font-weight: 400;
-  }
-  .cardBody {
-    font-size: 12px;
-    margin-right: 0px;
-  }
-  .cardImage {
-    width: 30px;
-    height: 40px;
-  }
-  .cardImage2 {
-    width: 30px;
-    height: 40px;
-  }
-  .cardImage3 {
-    width: 30px;
-    height: 40px;
-  }
   .title {
     margin-top: 10vw;
     text-align: center;
-    font-size: 40px;
+    font-size: 32px;
   }
   .title2 {
     text-align: center;
-    font-size: 40px;
+    font-size: 32px;
   }
   .title3 {
     margin-top: 10vw;
     text-align: center;
-    font-size: 40px;
+    font-size: 28px;
   }
   .title4 {
     text-align: center;
-    font-size: 40px;
+    font-size: 32px;
   }
+	.topButtons {
+		width:100vw;
+	}
   .content {
     text-align: center;
     font-size: 14px;
   }
+	.orgCardWrapper {
+		margin-left: 3.2vw;
+		width:94vw;
+	}
+	.orgCard {
+		gap: 10px 10px;
+	}
   .image2 {
     flex-direction: row;
     margin-top: 1vw;
     width: 350px;
     height: 300px;
-    margin-left: 0vw;
+		margin-left: 3vw;
   }
+	.card {
+		margin-left: 0.5vw;
+		margin-bottom: 4vw;
+		width: 300vw;
+	}
+	.card2 {
+		margin-left: 0.5vw;
+		margin-bottom: 4vw;
+		width: 300vw;
+	}
+	.cardImage {
+		margin-top: 3vw;
+		margin-left: 3vw;
+	}
+	.cardTitle {
+		font-size: 14px;
+	}
+	.cardBody {
+		font-size: 10px;
+		width:100%;
+	}
+	.section3 {
+		margin-top: 20vw;
+		margin-bottom: 10vw;
+		margin-left: 2vw;
+	}
+	.section3Content {
+		margin-left: 5vw;
+		width:89vw;
+		font-size: 24px;
+	}
+	.section3End {
+		margin-left: 5vw;
+	}
+	.section3Name {
+		font-size: 15px;
+		margin-top: 2.5vw;
+	}
+	.section3Designation {
+		font-size: 15px;
+		margin-top: 3vw;
+	}
+	.section5 {
+		width:300px;
+	}
+	.box{
+		width:100px;
+	}
+	.section5Title {
+		font-size: 20px;
+		margin-right: 0;
+		width:100px;
+	}
+	.section5Body{
+		width:200px;
+	}
+	.section5BodyTitle	{
+		width: 200px;
+	}
+	.section5Content{
+		width:230px;
+		font-size: 10px;
+	}
+	.box{ 
+		width:380px;
+	}
+	.endHeadline {
+		margin-top: 20vw;
+		width:370px;
+	}
+	.endQuote {
+		width:300px;
+		height:200px;
+		font-size: 24px;
+	}
+	.endQuoteDesig {
+		margin-top: 1.7vw;
+	}
+	.linksBox {
+		margin-bottom: 4vw;
+		width: 230px;
+		margin-right: 1vw;
+	}
   .blob1,
   .blob2,
   .blob3,
   .blob4,
   .blob5,
-  .blob6 {
+  .blob6,
+	.coin1,
+	.coin2,
+	.coin3,
+	.coin4,
+	.coin5,
+	.coin6,
+	.coin7,
+	.coin8,
+	.coin9,
+	.coin10,
+	.coin11,
+	.coin11b,
+	.coin12,
+	.coin13,
+	.coin14,
+	.coin15,
+	.coin16,
+	.coin17,
+	.coin18,
+	.coin19 {
     display: none;
   }
+
   .footer {
     margin-top: 0px;
     margin-bottom: 0px;
