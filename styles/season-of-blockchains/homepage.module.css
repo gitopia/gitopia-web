@@ -762,7 +762,7 @@ letter-spacing: -0.02em;
     margin-top: 8vw;
 		margin-bottom: 8vw;
     height: 400px;
-    width: 800px;
+    width: 100vw;
   }
 	.midScreenImage{
 		display:flex;
@@ -776,7 +776,7 @@ letter-spacing: -0.02em;
 	}
 	.section5 {
 		padding-left:0px;
-		width: 700px;
+		width: 93vw;
 	}
 	.section5Title {
 		margin-right: 5vw;
@@ -784,10 +784,10 @@ letter-spacing: -0.02em;
 		width:170px;
 	}
 	.section5Body {
-		width:100px;
+		width:55vw;
 	}
 	.box {
-		width:850px;
+		width:93vw;
 	}
 	.endQuote {
 		width:500px;
@@ -809,11 +809,6 @@ letter-spacing: -0.02em;
 }
 
 @media (max-width: 640px) {
-  .wrapper {
-    background: #13181e;
-    position: relative;
-    z-index: 1;
-  }
   .title {
     margin-top: 10vw;
     text-align: center;

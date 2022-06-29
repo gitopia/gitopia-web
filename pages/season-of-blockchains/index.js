@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function SeasonOfBlockchains() {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <div className={"overflow-x-hidden " + styles.wrapper}>
+    <div className={styles.wrapper}>
       <Head>
         <title>Gitopia - Season of Blockchains</title>
         <link rel="icon" href="/favicon.png" />
@@ -80,7 +80,8 @@ export default function SeasonOfBlockchains() {
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href={"/season-of-blockchains/#organisations"}
+                  href={"/season-of-blockchains/partnerships"}
+                  target="_blank"
                 >
                   Organisations
                 </a>
