@@ -105,7 +105,8 @@ export default function SeasonOfBlockchains() {
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href={"/season-of-blockchains/#about"}
+                  href={"https://medium.com/@gitopia"}
+                  target="_blank"
                 >
                   About
                 </a>
@@ -113,7 +114,8 @@ export default function SeasonOfBlockchains() {
               <li>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href={"/season-of-blockchains/#faqs"}
+                  href={"https://docs.gitopia.com/basic-faq"}
+                  target="_blank"
                 >
                   FAQs
                 </a>
