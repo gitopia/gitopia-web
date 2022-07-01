@@ -282,9 +282,7 @@ export default function SeasonOfBlockchains() {
                       Transition:
                     </div>
                     <div className={"  " + styles.cardBody}>
-                      Give exposure to developers
-                    </div>
-                    <div className={"  " + styles.cardBody}>
+                      Give exposure to developers<br className={styles.br}></br>{" "}
                       transitioning into the Web3 space
                     </div>
                   </div>
@@ -300,7 +298,8 @@ export default function SeasonOfBlockchains() {
                       Learning:
                     </div>
                     <div className={"  " + styles.cardBody}>
-                      Providing an immersive learning experience to the
+                      Providing an immersive learning
+                      <br className={styles.br}></br> experience to the
                       participants
                     </div>
                   </div>
@@ -416,8 +415,9 @@ export default function SeasonOfBlockchains() {
                   </div>
                   <div className={styles.section5Content}>
                     User visits the GSOB site Sign up for Gitopia Join discord
-                    and Register for GSOB (can be a voluntary step to receive
-                    updates regarding GSOB)
+                    <br className={styles.br}></br> and Register for GSOB (can
+                    be a voluntary step to receive
+                    <br className={styles.br}></br> updates regarding GSOB)
                   </div>
                 </div>
               </div>
@@ -442,11 +442,16 @@ export default function SeasonOfBlockchains() {
 
                   <div className={styles.section5Content}>
                     Users can check ideas of the participating organizations
-                    They can interact with the participating organization
-                    members to discuss application ideas and flows and get
-                    initial insights into the project (This can be done on our
-                    discord. We can make a specific category for GSOB on discord
-                    and channels will be named after participating orgs)
+                    <br className={styles.br}></br> They can interact with the
+                    participating organization
+                    <br className={styles.br}></br> members to discuss
+                    application ideas and flows and get
+                    <br className={styles.br}></br> initial insights into the
+                    project (This can be done on our
+                    <br className={styles.br}></br> discord. We can make a
+                    specific category for GSOB on{" "}
+                    <br className={styles.br}></br> discord and channels will be
+                    named after participating orgs)
                   </div>
                 </div>
               </div>
@@ -469,8 +474,9 @@ export default function SeasonOfBlockchains() {
                   </div>
                   <div className={styles.section5Content}>
                     Contributors can share their proposals to the organization
-                    that they are willing to participate Accepted participants
-                    announced
+                    <br className={styles.br}></br> that they are willing to
+                    participate Accepted participants
+                    <br className={styles.br}></br> announced
                   </div>
                 </div>
               </div>

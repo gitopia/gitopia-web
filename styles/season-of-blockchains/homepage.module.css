@@ -316,6 +316,10 @@ margin-bottom: 5vw;
 }
 .card2{
   width:270px;
+  align-items: left;
+  margin-top: 0.5vw;
+  margin-left: 0.7vw;
+  margin-bottom: 1vw;
 }
 .image2 {
   margin-top: 4.2vw;
@@ -377,7 +381,7 @@ letter-spacing: -0.02em;
   line-height: 114.27%;
 }
 .section5Content{
-  width: 370px;
+  width: 430px;
   font-weight: 400;
   font-size: 14px;
   line-height: 137.27%;
@@ -395,18 +399,18 @@ letter-spacing: -0.02em;
   border:0;
   border-left: 5px solid #792BAB;
   height: 269px;
-  margin-left:1vw;
+  margin-left:3vw;
   margin-right: 2vw;
 }
 .vl3{
   border:0;
   border-left: 5px solid #792BAB;
   height: 259px;
-  margin-left:1vw;
+  margin-left:3vw;
   margin-right: 2vw;
 }
 .vlCircle {
-  margin-right: 1vw;
+  margin-left: 1vw;
   position: absolute;
   width: 30px;
   height: 30px;
@@ -533,6 +537,12 @@ letter-spacing: -0.02em;
   .section5{
     padding-left:2vw;
   }
+  .section5Title  {
+    padding-right :4vw;
+  }
+  .section5Content2 {
+    width:430px;
+  }
   .blob5{
     top:288vw;
   }
@@ -624,6 +634,9 @@ letter-spacing: -0.02em;
   }
 }
 @media (max-width: 1024px) {
+  .wrapper {
+    overflow-x: hidden;
+  }
   .blob1,.blob2,.blob3,.blob4{
     opacity:0.3;
   }
@@ -779,9 +792,9 @@ letter-spacing: -0.02em;
 		width: 93vw;
 	}
 	.section5Title {
-		margin-right: 5vw;
+    margin-right: 0;
 		margin-left: 5vw;
-		width:170px;
+		width:200px;
 	}
 	.section5Body {
 		width:55vw;
@@ -809,6 +822,9 @@ letter-spacing: -0.02em;
 }
 
 @media (max-width: 640px) {
+  .br {
+    display: none;
+  }
   .title {
     margin-top: 10vw;
     text-align: center;
@@ -851,7 +867,7 @@ letter-spacing: -0.02em;
 	.card {
 		margin-left: 0.5vw;
 		margin-bottom: 4vw;
-		width: 300vw;
+		width: 180vw;
 	}
 	.card2 {
 		margin-left: 0.5vw;
@@ -863,10 +879,10 @@ letter-spacing: -0.02em;
 		margin-left: 3vw;
 	}
 	.cardTitle {
-		font-size: 14px;
+		font-size: 16px;
 	}
 	.cardBody {
-		font-size: 10px;
+		font-size: 14px;
 		width:100%;
 	}
 	.section3 {
@@ -902,12 +918,17 @@ letter-spacing: -0.02em;
 		width:100px;
 	}
 	.section5Body{
+    margin-left: 5vw;
 		width:200px;
 	}
 	.section5BodyTitle	{
 		width: 200px;
 	}
 	.section5Content{
+		width:180px;
+		font-size: 10px;
+	}
+  .section5Content2{
 		width:230px;
 		font-size: 10px;
 	}
