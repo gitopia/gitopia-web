@@ -61,6 +61,7 @@ function RepositoryTreeView(props) {
   const [repoPath, setRepoPath] = useState([]);
   const [branchName, setBranchName] = useState("");
   const [isTag, setIsTag] = useState(false);
+  const [readmeFile, setReadmeFile] = useState(null);
 
   useEffect(async () => {
     console.log("query", router.query);
@@ -120,6 +121,36 @@ function RepositoryTreeView(props) {
       console.log(res);
       if (res) {
         if (res.content) {
+          const readmeRegex = new RegExp(/^README/gi);
+          let readmeFileFound = false;
+          for (let i = 0; i < res.content.length; i++) {
+            if (readmeRegex.test(res.content[i].name)) {
+              const readme = await getContent(
+                repository.id,
+                getBranchSha(branchName, repository.branches, repository.tags),
+                res.content[i].name
+              );
+
+              if (readme) {
+                if (readme.content && readme.content[0]) {
+                  try {
+                    let file = window.atob(readme.content[0].content);
+                    setReadmeFile(file);
+                    readmeFileFound = true;
+                    break;
+                  } catch (e) {
+                    console.error(e);
+                    setReadmeFile(null);
+                  }
+                } else {
+                  console.log("Entity Not found");
+                }
+              }
+            }
+          }
+          if (!readmeFileFound) {
+            setReadmeFile(null);
+          }
           if (res.content[0].type === "BLOB" && res.content[0].content) {
             // display file contents
             setEntityList([]);
@@ -223,6 +254,15 @@ function RepositoryTreeView(props) {
                     "/commit/" +
                     commitDetail.id
                   }
+                  commitHistoryLink={
+                    "/" +
+                    repository.owner.id +
+                    "/" +
+                    repository.name +
+                    "/commits/" +
+                    branchName
+                  }
+                  commitsLength={commitsLength}
                   maxMessageLength={90}
                 />
                 <FileBrowser
@@ -270,6 +310,16 @@ function RepositoryTreeView(props) {
               </div>
             </div>
           </div>
+          {readmeFile ? (
+            <div
+              id="readme"
+              className="border border-gray-700 rounded overflow-hidden p-4 markdown-body mt-8"
+            >
+              <ReactMarkdown>{readmeFile}</ReactMarkdown>
+            </div>
+          ) : (
+            ""
+          )}
         </main>
       </div>
       <Footer />
