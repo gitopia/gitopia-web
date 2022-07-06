@@ -122,6 +122,7 @@ function RepositoryTreeView(props) {
       if (res) {
         if (res.content) {
           const readmeRegex = new RegExp(/^README/gi);
+          let readmeFileFound = false;
           for (let i = 0; i < res.content.length; i++) {
             if (readmeRegex.test(res.content[i].name)) {
               const readme = await getContent(
@@ -135,6 +136,8 @@ function RepositoryTreeView(props) {
                   try {
                     let file = window.atob(readme.content[0].content);
                     setReadmeFile(file);
+                    readmeFileFound = true;
+                    break;
                   } catch (e) {
                     console.error(e);
                     setReadmeFile(null);
@@ -144,6 +147,9 @@ function RepositoryTreeView(props) {
                 }
               }
             }
+          }
+          if (!readmeFileFound) {
+            setReadmeFile(null);
           }
           if (res.content[0].type === "BLOB" && res.content[0].content) {
             // display file contents
@@ -312,7 +318,7 @@ function RepositoryTreeView(props) {
               <ReactMarkdown>{readmeFile}</ReactMarkdown>
             </div>
           ) : (
-            <div className="mt-8">No readme file</div>
+            ""
           )}
         </main>
       </div>
