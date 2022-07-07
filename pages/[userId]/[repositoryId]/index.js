@@ -26,7 +26,7 @@ import getCommitHistory from "../../../helpers/getCommitHistory";
 import pluralize from "../../../helpers/pluralize";
 import shrinkAddress from "../../../helpers/shrinkAddress";
 
-export async function getStaticProps() {
+export async function getStaticProps({ params }) {
   return { props: {} };
 }
 
@@ -54,8 +54,9 @@ function RepositoryView(props) {
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
   );
-  const [currentUserEditPermission, setCurrentUserEditPermission] =
-    useState(false);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
   const [isMobile, setIsMobile] = useState(false);
 
   function detectWindowSize() {

@@ -8,7 +8,5 @@ export default async function getUser(userId) {
       let u = res.data.User;
       return u;
     }
-  } catch (e) {
-    console.error(e);
-  }
+  } catch (e) {}
 }

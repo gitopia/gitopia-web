@@ -14,16 +14,59 @@ import dayjs from "dayjs";
 import PublicTabs from "../../components/dashboard/publicTabs";
 import UserHeader from "../../components/user/header";
 import { useErrorStatus } from "../../hooks/errorHandler";
+import getUserAll from "../../helpers/getUserAll";
+import getOrganizationAll from "../../helpers/getOrganizationAll";
 
-export async function getStaticProps() {
-  return { props: {} };
+const getAllRepos = async (repoIds) => {
+  console.log("Getting all repos");
+  const pr = repoIds.map((r) => getRepository(r.id));
+  return await Promise.all(pr);
+};
+
+const getOrgAvatarLink = (org) => {
+  if (org?.name) {
+    let letter = org.name.slice(0, 1);
+    const link =
+      process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === org.address
+        ? "/logo-g.svg"
+        : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+          letter;
+    return link;
+  }
+  return "";
+};
+
+export async function getStaticProps({ params }) {
+  const [u, o] = await Promise.all([
+    getUser(params.userId),
+    getOrganization(params.userId),
+  ]);
+  const orgAvatarLink = getOrgAvatarLink(o);
+  let allRepos = [];
+  if (u && u.id) {
+    allRepos = await getAllRepos(u.repositories);
+  } else if (o && o.id) {
+    allRepos = await getAllRepos(o.repositories);
+  }
+  return {
+    props: { user: u || {}, org: o || {}, orgAvatarLink, allRepos },
+    revalidate: 1,
+  };
 }
 
 export async function getStaticPaths() {
+  const [users, orgs] = await Promise.all([getUserAll(), getOrganizationAll()]);
+  let paths = [];
+  users?.map((u) => {
+    paths.push({ params: { userId: u.creator } });
+  });
+  orgs?.map((o) => {
+    paths.push({ params: { userId: o.address } });
+  });
   return {
-    paths: [],
-    fallback: 'blocking' 
-  }
+    paths,
+    fallback: "blocking",
+  };
 }
 
 function AccountView(props) {
@@ -32,54 +75,42 @@ function AccountView(props) {
   const [user, setUser] = useState({
     creator: "",
     repositories: [],
+    ...props.user,
   });
   const [org, setOrg] = useState({
     name: "",
     repositories: [],
+    ...props.org,
   });
-  const [allRepos, setAllRepos] = useState([]);
-  const [avatarLink, setAvatarLink] = useState("");
+  const [allRepos, setAllRepos] = useState(props.allRepos);
+  const [avatarLink, setAvatarLink] = useState(props.orgAvatarLink);
 
   useEffect(async () => {
     const [u, o] = await Promise.all([
       getUser(router.query.userId),
       getOrganization(router.query.userId),
     ]);
-    console.log(u, o);
     if (u) {
       setUser(u);
       setOrg({ name: "", repositories: [] });
     } else if (o) {
       setOrg(o);
+      setUser({ creator: "", repositories: [] });
     } else {
       setErrorStatusCode(404);
       setUser({ creator: "", repositories: [] });
+      setOrg({ name: "", repositories: [] });
     }
   }, [router.query]);
 
-  const getAllRepos = async () => {
-    let letter = "x";
-    if (user.id) {
-      const pr = user.repositories.map((r) => getRepository(r.id));
-      const repos = await Promise.all(pr);
-      setAllRepos(repos.reverse());
-      console.log(repos);
-    } else if (org.id) {
-      const pr = org.repositories.map((r) => getRepository(r.id));
-      const repos = await Promise.all(pr);
-      setAllRepos(repos.reverse());
-      console.log(repos);
-      letter = org.name.slice(0, 1);
+  useEffect(async () => {
+    setAvatarLink(getOrgAvatarLink(org));
+    if (user && user.id) {
+      setAllRepos(await getAllRepos(user.repositories));
+    } else if (org && org.id) {
+      setAllRepos(await getAllRepos(org.repositories));
     }
-    const link =
-      process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === org.address
-        ? "/logo-g.svg"
-        : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-          letter;
-    setAvatarLink(link);
-  };
-
-  useEffect(getAllRepos, [user, org]);
+  }, [user.id, org.id]);
 
   const hrefBase = "/" + router.query.userId;
 

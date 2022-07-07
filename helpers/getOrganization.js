@@ -8,7 +8,5 @@ export default async function getOrganization(orgId) {
       let u = res.data.Organization;
       return u;
     }
-  } catch (e) {
-    console.error(e);
-  }
+  } catch (e) {}
 }
