@@ -1,5 +1,5 @@
 import Head from "next/head";
-import Header from "../../../../components/header";
+import Header from "../../../../../components/header";
 
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -7,29 +7,30 @@ import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import find from "lodash/find";
 
-import getRepositoryIssue from "../../../../helpers/getRepositoryIssue";
-import getComment from "../../../../helpers/getComment";
-import shrinkAddress from "../../../../helpers/shrinkAddress";
-import RepositoryHeader from "../../../../components/repository/header";
-import RepositoryMainTabs from "../../../../components/repository/mainTabs";
-import Footer from "../../../../components/footer";
-import CommentEditor from "../../../../components/repository/commentEditor";
-import CommentView from "../../../../components/repository/commentView";
-import SystemCommentView from "../../../../components/repository/systemCommentView";
+import getRepositoryIssue from "../../../../../helpers/getRepositoryIssue";
+import getComment from "../../../../../helpers/getComment";
+import shrinkAddress from "../../../../../helpers/shrinkAddress";
+import RepositoryHeader from "../../../../../components/repository/header";
+import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
+import Footer from "../../../../../components/footer";
+import CommentEditor from "../../../../../components/repository/commentEditor";
+import CommentView from "../../../../../components/repository/commentView";
+import SystemCommentView from "../../../../../components/repository/systemCommentView";
 import {
   deleteComment,
   updateIssueLabels,
   updateIssueAssignees,
-} from "../../../../store/actions/repository";
-import AssigneeSelector from "../../../../components/repository/assigneeSelector";
-import LabelSelector from "../../../../components/repository/labelSelector";
-import Label from "../../../../components/repository/label";
-import AssigneeGroup from "../../../../components/repository/assigneeGroup";
-import useRepository from "../../../../hooks/useRepository";
-import IssuePullTitle from "../../../../components/repository/issuePullTitle";
-import IssuePullDescription from "../../../../components/repository/issuePullDescription";
-import { useErrorStatus } from "../../../../hooks/errorHandler";
-import pluralize from "../../../../helpers/pluralize";
+} from "../../../../../store/actions/repository";
+import AssigneeSelector from "../../../../../components/repository/assigneeSelector";
+import LabelSelector from "../../../../../components/repository/labelSelector";
+import Label from "../../../../../components/repository/label";
+import AssigneeGroup from "../../../../../components/repository/assigneeGroup";
+import useRepository from "../../../../../hooks/useRepository";
+import IssuePullTitle from "../../../../../components/repository/issuePullTitle";
+import IssuePullDescription from "../../../../../components/repository/issuePullDescription";
+import { useErrorStatus } from "../../../../../hooks/errorHandler";
+import pluralize from "../../../../../helpers/pluralize";
+import IssueTabs from "../../../../../components/repository/issueTabs";
 import Link from "next/link";
 
 export async function getStaticProps() {
@@ -146,6 +147,11 @@ function RepositoryIssueView(props) {
               </span>
             </span>
           </div>
+          <IssueTabs
+            repository={repository}
+            issueId={issue.iid}
+            active="conversation"
+          />
           <div className="sm:flex mt-8">
             <div className="flex flex-1">
               <div className="flex flex-col w-full">
