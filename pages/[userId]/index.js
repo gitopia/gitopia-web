@@ -18,7 +18,6 @@ import getUserAll from "../../helpers/getUserAll";
 import getOrganizationAll from "../../helpers/getOrganizationAll";
 
 const getAllRepos = async (repoIds) => {
-  console.log("Getting all repos");
   const pr = repoIds.map((r) => getRepository(r.id));
   return await Promise.all(pr);
 };

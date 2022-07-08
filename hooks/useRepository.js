@@ -3,7 +3,7 @@ import getUserRepository from "../helpers/getUserRepository";
 import { useRouter } from "next/router";
 import { useErrorStatus } from "./errorHandler";
 
-export default function useRepository() {
+export default function useRepository(initialRepository = {}) {
   const { setErrorStatusCode } = useErrorStatus();
   const router = useRouter();
   const [repository, setRepository] = useState({
@@ -19,9 +19,10 @@ export default function useRepository() {
     forks: [],
     stargazers: [],
     releases: [],
+    ...initialRepository,
   });
   const [refreshIndex, setRefreshIndex] = useState(1);
-  const [firstFetchLoading, setFirstFetchLoading] = useState(true);
+  const [firstFetchLoading, setFirstFetchLoading] = useState(false);
 
   const refreshRepository = () => setRefreshIndex((prevIndex) => prevIndex + 1);
 
