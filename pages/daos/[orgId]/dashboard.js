@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { getOrganizationDetailsForDashboard } from "../../../store/actions/organization";
 import Org from "../../../components/dashboard/org";
 import Link from "next/link";
+import useWindowSize from "../../../hooks/useWindowSize";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -24,25 +25,7 @@ export async function getStaticPaths() {
 function OrgDashboard(props) {
   const hrefBase = "/daos/" + props.currentDashboard;
   const router = useRouter();
-  const [isMobile, setIsMobile] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
+  const { isMobile } = useWindowSize();
 
   useEffect(() => {
     console.log("org dashboard", router.query.orgId, props.currentDashboard);

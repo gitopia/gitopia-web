@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { getGitServerAuthorization } from "../../helpers/getGitServerAuthStatus";
 import { notify } from "reapop";
 import pluralize from "../../helpers/pluralize";
+import useWindowSize from "../../hooks/useWindowSize";
 
 function RepositoryHeader({ repository, ...props }) {
   const [forkTargetShown, setForkTargetShown] = useState(false);
@@ -17,24 +18,7 @@ function RepositoryHeader({ repository, ...props }) {
   const [forkingSuccess, setForkingSuccess] = useState(false);
   const [forkingAccess, setForkingAccess] = useState(false);
   const [isGrantingAccess, setIsGrantingAccess] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
+  const { isMobile } = useWindowSize();
   const router = useRouter();
   const avatarLink =
     process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === repository.owner.id

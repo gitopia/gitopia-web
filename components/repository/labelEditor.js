@@ -6,6 +6,7 @@ import {
   createRepositoryLabel,
   updateRepositoryLabel,
 } from "../../store/actions/repository";
+import useWindowSize from "../../hooks/useWindowSize";
 
 const defaultLabels = [
   {
@@ -69,24 +70,7 @@ function LabelEditor({
     message: "",
   });
   const [isSaving, setIsSaving] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
+  const { isMobile } = useWindowSize();
   const shouldShowSuggestions = !isEdit;
 
   const validateLabel = () => {

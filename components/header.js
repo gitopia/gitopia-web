@@ -18,6 +18,7 @@ import getNodeInfo from "../helpers/getNodeInfo";
 const SendTlore = dynamic(() => import("./dashboard/sendTlore"));
 const CurrentWallet = dynamic(() => import("./currentWallet"));
 import Drawer from "./drawer";
+import useWindowSize from "../hooks/useWindowSize";
 // const NotificationsCard = dynamic(() =>
 //   import("./dashboard/notificationsButton")
 // );
@@ -50,26 +51,8 @@ function Header(props) {
   const [showNotificationListState, setShowNotificationListState] = useState(
     ""
   );
-  const [isMobile, setIsMobile] = useState(false);
+  const { isMobile } = useWindowSize();
   const [isOpen, setIsOpen] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
 
   const onUserMenuClose = () => {
     setMenuOpen(false);

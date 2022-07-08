@@ -11,6 +11,7 @@ import getUser from "../../helpers/getUser";
 import getOrganization from "../../helpers/getOrganization";
 import PublicTabs from "../../components/dashboard/publicTabs";
 import shrinkAddress from "../../helpers/shrinkAddress";
+import useWindowSize from "../../hooks/useWindowSize";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -30,25 +31,7 @@ function OrganizationPeopleView(props) {
     repositories: [],
   });
   const [allMembers, setAllMembers] = useState([]);
-  const [isMobile, setIsMobile] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
+  const { isMobile } = useWindowSize();
 
   useEffect(async () => {
     const o = await getOrganization(router.query.userId);

@@ -3,7 +3,6 @@ import Header from "../../../components/header";
 
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { useRouter } from "next/router";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import { notify } from "reapop";
@@ -24,7 +23,7 @@ import SupportOwner from "../../../components/repository/supportOwner";
 import getContent from "../../../helpers/getContent";
 import getCommitHistory from "../../../helpers/getCommitHistory";
 import pluralize from "../../../helpers/pluralize";
-import shrinkAddress from "../../../helpers/shrinkAddress";
+import useWindowSize from "../../../hooks/useWindowSize";
 
 export async function getStaticProps({ params }) {
   return { props: {} };
@@ -57,25 +56,7 @@ function RepositoryView(props) {
   const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
     false
   );
-  const [isMobile, setIsMobile] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
+  const { isMobile } = useWindowSize();
 
   const loadEntities = async (currentEntities = [], firstTime = false) => {
     setLoadingEntities(true);

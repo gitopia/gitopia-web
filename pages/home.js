@@ -8,27 +8,11 @@ import UserDashboard from "../components/dashboard/user";
 import { useRouter } from "next/router";
 import DashboardSelector from "../components/dashboard/dashboardSelector";
 import getHomeUrl from "../helpers/getHomeUrl";
+import useWindowSize from "../hooks/useWindowSize";
 
 function Home(props) {
   const router = useRouter();
-  const [isMobile, setIsMobile] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
+  const { isMobile } = useWindowSize();
 
   useEffect(() => {
     if (props.selectedAddress !== props.currentDashboard) {
