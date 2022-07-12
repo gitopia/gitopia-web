@@ -28,22 +28,62 @@ import useRepository from "../../../../../hooks/useRepository";
 import usePullRequest from "../../../../../hooks/usePullRequest";
 import MergePullRequestView from "../../../../../components/repository/mergePullRequestView";
 import IssuePullDescription from "../../../../../components/repository/issuePullDescription";
+import getRepositoryPull from "../../../../../helpers/getRepositoryPull";
+import getPullRepoInfo from "../../../../../helpers/getPullRepoInfo";
+import getPullAll from "../../../../../helpers/getPullAll";
+import getRepositoryAll from "../../../../../helpers/getRepositoryAll";
+import getUserRepository from "../../../../../helpers/getUserRepository";
 
-export async function getStaticProps() {
+export async function getStaticProps({ params }) {
+  const r = await getUserRepository(params.userId, params.repositoryId);
+  if (r) {
+    const p = await getRepositoryPull(
+      params.userId,
+      params.repositoryId,
+      params.pullRequestIid
+    );
+    if (p) {
+      const pullRequest = await getPullRepoInfo(p, r);
+      const pr = pullRequest.comments.map((c) => getComment(c));
+      const comments = await Promise.all(pr);
+      return { props: { repository: r, pullRequest, comments }, revalidate: 1 };
+    }
+  }
   return { props: {} };
 }
 
 export async function getStaticPaths() {
+  const [pulls, repos] = await Promise.all([getPullAll(), getRepositoryAll()]);
+  let repoIdMap = {},
+    paths = [];
+  repos?.map((r) => {
+    repoIdMap[r.id] = r;
+  });
+  pulls?.map((p) => {
+    const baseRepo = repoIdMap[p.base.repositoryId];
+    if (baseRepo) {
+      paths.push({
+        params: {
+          userId: baseRepo.creator,
+          repositoryId: baseRepo.name,
+          pullRequestIid: p.iid,
+        },
+      });
+    }
+  });
   return {
-    paths: [],
+    paths,
     fallback: "blocking",
   };
 }
 
 function RepositoryPullView(props) {
-  const { repository } = useRepository();
-  const { pullRequest, refreshPullRequest } = usePullRequest(repository);
-  const [allComments, setAllComments] = useState([]);
+  const { repository } = useRepository(props.repository);
+  const { pullRequest, refreshPullRequest } = usePullRequest(
+    repository,
+    props.pullRequest
+  );
+  const [allComments, setAllComments] = useState(props.comments || []);
 
   const getAllComments = async () => {
     const pr = pullRequest.comments.map((c) => getComment(c));

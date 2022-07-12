@@ -4,8 +4,9 @@ import getRepositoryPull from "../helpers/getRepositoryPull";
 import getBranchSha from "../helpers/getBranchSha";
 import { useRouter } from "next/router";
 import { useErrorStatus } from "./errorHandler";
+import getPullRepoInfo from "../helpers/getPullRepoInfo";
 
-export default function usePullRequest(repository) {
+export default function usePullRequest(repository, initialPullRequest = {}) {
   const router = useRouter();
   const { setErrorStatusCode } = useErrorStatus();
   const [pullRequest, setPullRequest] = useState({
@@ -18,6 +19,7 @@ export default function usePullRequest(repository) {
     labels: [],
     head: { repository: {} },
     base: { repository: {} },
+    ...initialPullRequest,
   });
   const [refreshIndex, setRefreshIndex] = useState(1);
 
@@ -31,46 +33,7 @@ export default function usePullRequest(repository) {
       router.query.pullRequestIid
     );
     if (p) {
-      if (p.base.repositoryId === p.head.repositoryId) {
-        p.head.repository = p.base.repository = repository;
-        if (p.state === "OPEN") {
-          p.head.sha = getBranchSha(
-            p.head.branch,
-            repository.branches,
-            repository.tags
-          );
-          p.base.sha = getBranchSha(
-            p.base.branch,
-            repository.branches,
-            repository.tags
-          );
-        } else {
-          p.base.sha = p.base.commitSha;
-          p.head.sha = p.head.commitSha;
-        }
-      } else {
-        const forkRepo = await getRepository(p.head.repositoryId);
-        if (forkRepo) {
-          p.head.repository = forkRepo;
-          p.base.repository = repository;
-          if (p.state === "OPEN") {
-            p.head.sha = getBranchSha(
-              p.head.branch,
-              forkRepo.branches,
-              forkRepo.tags
-            );
-            p.base.sha = getBranchSha(
-              p.base.branch,
-              repository.branches,
-              repository.tags
-            );
-          } else {
-            p.base.sha = p.base.commitSha;
-            p.head.sha = p.head.commitSha;
-          }
-        }
-      }
-      setPullRequest(p);
+      setPullRequest(await getPullRepoInfo(p, repository));
     } else {
       setErrorStatusCode(404);
     }

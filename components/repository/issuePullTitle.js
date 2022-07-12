@@ -138,7 +138,7 @@ function IssuePullTitle({
               repository.owner.id +
               "/" +
               repository.name +
-              (isPull ? "/pulls/new" : "/issues/new")
+              (isPull ? "/compare" : "/issues/new")
             }
           >
             <button className="btn btn-ghost btn-sm ml-4">

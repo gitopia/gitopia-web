@@ -25,8 +25,7 @@ import getCommitHistory from "../../../helpers/getCommitHistory";
 import pluralize from "../../../helpers/pluralize";
 import useWindowSize from "../../../hooks/useWindowSize";
 import getUserRepository from "../../../helpers/getUserRepository";
-import getUserAll from "../../../helpers/getUserAll";
-import getOrganizationAll from "../../../helpers/getOrganizationAll";
+import getRepositoryAll from "../../../helpers/getRepositoryAll";
 
 const atob = (base64) => {
   return Buffer.from(base64, "base64").toString("binary");
@@ -34,50 +33,47 @@ const atob = (base64) => {
 
 export async function getStaticProps({ params }) {
   const r = await getUserRepository(params.userId, params.repositoryId);
+  if (r) {
+    let branchSha = getBranchSha(r.defaultBranch, r.branches, r.tags);
 
-  let branchSha = getBranchSha(r.defaultBranch, r.branches, r.tags);
+    const entitiesRes = await getContent(r.id, branchSha, null, null);
 
-  const entitiesRes = await getContent(r.id, branchSha, null, null);
+    const commitHistory = await getCommitHistory(r.id, branchSha, null, 1);
 
-  const commitHistory = await getCommitHistory(r.id, branchSha, null, 1);
-
-  const readmeRegex = new RegExp(/^README/gi);
-  let readmeFile = null;
-  for (let i = 0; i < entitiesRes?.content?.length; i++) {
-    if (readmeRegex.test(entitiesRes.content[i].name)) {
-      const readme = await getContent(
-        r.id,
-        branchSha,
-        entitiesRes.content[i].name
-      );
-      if (readme?.content[0]) {
-        readmeFile = atob(readme.content[0].content);
+    const readmeRegex = new RegExp(/^README/gi);
+    let readmeFile = null;
+    for (let i = 0; i < entitiesRes?.content?.length; i++) {
+      if (readmeRegex.test(entitiesRes.content[i].name)) {
+        const readme = await getContent(
+          r.id,
+          branchSha,
+          entitiesRes.content[i].name
+        );
+        if (readme?.content[0]) {
+          readmeFile = atob(readme.content[0].content);
+        }
       }
     }
+    return {
+      props: {
+        repository: r,
+        entitiesRes,
+        commitHistory: { commits: [{}], ...commitHistory },
+        readmeFile,
+      },
+      revalidate: 1,
+    };
   }
-
   return {
-    props: {
-      repository: r,
-      entitiesRes,
-      commitHistory: { commits: [{}], ...commitHistory },
-      readmeFile,
-    },
+    props: {},
   };
 }
 
 export async function getStaticPaths() {
-  const [users, orgs] = await Promise.all([getUserAll(), getOrganizationAll()]);
+  const repos = await getRepositoryAll();
   let paths = [];
-  users?.map((u) => {
-    u.repositories?.map((r) => {
-      paths.push({ params: { userId: u.creator, repositoryId: r.name } });
-    });
-  });
-  orgs?.map((o) => {
-    o.repositories?.map((r) => {
-      paths.push({ params: { userId: o.address, repositoryId: r.name } });
-    });
+  repos?.map((r) => {
+    paths.push({ params: { userId: r.owner.id, repositoryId: r.name } });
   });
   return {
     paths,
