@@ -117,6 +117,32 @@ export default function Partnerships() {
       >
         <img src="/season-of-blockchains/org-1.png"></img>
       </div>
+      <div className={"justify-center items-center " + styles.comingSoon}>
+        <div className="flex justify-center ">
+          <a className={"flex-none rounded " + styles.comingSoonButton}>
+            COMING SOON
+          </a>
+        </div>
+        <div className={"text-center " + styles.comingSoonTitle}>
+          Become a partner
+        </div>
+        <div className="flex justify-center ">
+          <div className={"mt-5 text-center " + styles.comingSoonBody}>
+            Want to onboard fresh web 3.0 talent to your project and get
+            exciting new contributions that matters?
+          </div>
+        </div>
+        <div className="flex justify-center ">
+          <a
+            className={"flex-none btn " + styles.talkToUsButton}
+            href={"https://airtable.com/shrtI4oMi7uPswr9I"}
+            target="_blank"
+          >
+            Talk to us
+          </a>
+        </div>
+      </div>
+      {/*
       <div className={" " + styles.title}>Partnerships</div>
       <div
         className={
@@ -950,6 +976,7 @@ export default function Partnerships() {
           </div>
         </div>
       </div>
+     
       <svg
         className={styles.blob1}
         width="409"
@@ -1042,6 +1069,105 @@ export default function Partnerships() {
             r="1"
             gradientUnits="userSpaceOnUse"
             gradientTransform="translate(953.004 713.112) rotate(-120) scale(425.403)"
+          >
+            <stop offset="0.442708" stop-color="#992D81" />
+            <stop offset="1" stop-color="#6029DB" />
+          </radialGradient>
+        </defs>
+      </svg>
+       */}
+      <svg
+        width="409"
+        height="1275"
+        viewBox="0 0 409 1275"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={styles.blob3}
+      >
+        <g filter="url(#filter0_f_2177_3762)">
+          <path
+            d="M-110.04 154.448C-145.155 614.261 173.935 637.391 113.127 864.329C52.3195 1091.27 -180.945 1225.94 -407.883 1165.13C-634.821 1104.33 -769.496 871.062 -708.688 644.124C-647.88 417.186 -20.1594 -368.682 -110.04 154.448Z"
+            fill="url(#paint0_radial_2177_3762)"
+          />
+        </g>
+        <defs>
+          <filter
+            id="filter0_f_2177_3762"
+            x="-1010.63"
+            y="-309.176"
+            width="1418.82"
+            height="1776.25"
+            filterUnits="userSpaceOnUse"
+            color-interpolation-filters="sRGB"
+          >
+            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feBlend
+              mode="normal"
+              in="SourceGraphic"
+              in2="BackgroundImageFix"
+              result="shape"
+            />
+            <feGaussianBlur
+              stdDeviation="143.669"
+              result="effect1_foregroundBlur_2177_3762"
+            />
+          </filter>
+          <radialGradient
+            id="paint0_radial_2177_3762"
+            cx="0"
+            cy="0"
+            r="1"
+            gradientUnits="userSpaceOnUse"
+            gradientTransform="translate(-297.78 754.227) rotate(15) scale(425.403 425.403)"
+          >
+            <stop offset="0.442708" stop-color="#992D81" />
+            <stop offset="1" stop-color="#6029DB" />
+          </radialGradient>
+        </defs>
+      </svg>
+      <svg
+        width="656"
+        height="855"
+        viewBox="0 0 656 855"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={styles.blob4}
+      >
+        <g filter="url(#filter0_f_2177_3763)">
+          <path
+            d="M396.143 1004.47C746.111 704.16 536.835 462.173 740.302 344.702C943.769 227.23 1203.94 296.943 1321.41 500.41C1438.89 703.877 1369.17 964.05 1165.71 1081.52C962.238 1198.99 -37.3205 1310.82 396.143 1004.47Z"
+            fill="url(#paint0_radial_2177_3763)"
+          />
+        </g>
+        <defs>
+          <filter
+            id="filter0_f_2177_3763"
+            x="0.949066"
+            y="0.299347"
+            width="1664.87"
+            height="1489.23"
+            filterUnits="userSpaceOnUse"
+            color-interpolation-filters="sRGB"
+          >
+            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feBlend
+              mode="normal"
+              in="SourceGraphic"
+              in2="BackgroundImageFix"
+              result="shape"
+            />
+            <feGaussianBlur
+              stdDeviation="143.669"
+              result="effect1_foregroundBlur_2177_3763"
+            />
+          </filter>
+          <radialGradient
+            id="paint0_radial_2177_3763"
+            cx="0"
+            cy="0"
+            r="1"
+            gradientUnits="userSpaceOnUse"
+            gradientTransform="translate(953.004 713.112) rotate(-120) scale(425.403 425.403)"
           >
             <stop offset="0.442708" stop-color="#992D81" />
             <stop offset="1" stop-color="#6029DB" />

@@ -72,7 +72,7 @@ export default function SeasonOfBlockchains() {
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href={"/season-of-blockchains/partnerships"}
+                  href={"/season-of-blockchains/organizationsList"}
                   target="_blank"
                 >
                   Organisations
@@ -162,6 +162,33 @@ export default function SeasonOfBlockchains() {
               <img src="/season-of-blockchains/home-1.svg"></img>
             </div>
           </div>
+          <div className={"flex " + styles.topCardBorder}>
+            <div className={styles.topCardImage}>
+              <img src="/season-of-blockchains/partnerships.svg"></img>
+            </div>
+            <div className={styles.topCardBody}>
+              <div className={styles.topCardTitle}>
+                Interested in partnering with Gitopia? Let us know!
+              </div>
+              <div>
+                <button
+                  onClick={() => {
+                    if (window) {
+                      window.open("https://airtable.com/shrtI4oMi7uPswr9I");
+                    }
+                  }}
+                  type="button"
+                  className={
+                    "lg:px-10 py-4 rounded text-white text-sm font-bold active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 " +
+                    styles.topCardButton
+                  }
+                >
+                  Talk to us
+                </button>
+              </div>
+            </div>
+          </div>
+          {/*
           <div className={styles.orgCardWrapper}>
             <div
               id="organisations"
@@ -227,6 +254,7 @@ export default function SeasonOfBlockchains() {
               </div>
             </div>
           </div>
+          */}
           <div className={"flex " + styles.midScreen}>
             <div className={" " + styles.image2}>
               <img src="/season-of-blockchains/home-2.svg"></img>
@@ -1274,7 +1302,7 @@ export default function SeasonOfBlockchains() {
         <div className={styles.coin19}>
           <img src="/season-of-blockchains/coin19.svg"></img>
         </div>
-        <footer className={styles.footer} id="faqs">
+        <footer className={styles.footer} id="contact">
           <div className={styles.footerLogo}></div>
           <div className={styles.footerLinks}>
             {/* <a href="#">About Us</a> */}

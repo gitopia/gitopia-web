@@ -42,6 +42,23 @@
     border-left: 1px solid #e5e5e5;
     height: 20px;
   }
+	.blob3 {
+		position: absolute;
+		left: 0;
+		top: 7.3vw;
+		pointer-events: none;
+		z-index: -1;
+		opacity: 0.9;
+	}
+	.blob4 {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		pointer-events: none;
+		z-index: -1;
+		opacity: 0.9;
+	}
+	/*
   .blob1 {
 	position: absolute;
 	left: 0;
@@ -57,12 +74,48 @@
 	pointer-events: none;
 	z-index: -1;
 	opacity: 0.9;
-  }
+  }*/
 	.image {
 		position: absolute;
 		top: 0px;
 		z-index: -1;
 	}	
+	.comingSoon {
+		margin-top: 27vw;
+	}
+	.comingSoonTitle {
+		margin-top: 1vw;
+		font-weight: 700;
+		font-size: 64px;
+		line-height: 73px;
+		letter-spacing: -0.02em;
+	}
+	.comingSoonBody {
+		margin-top: 2vw;
+		font-weight: 400;
+		font-size: 28px;
+		line-height: 114.27%;
+		letter-spacing: -0.02em;
+		width: 661px;
+	}
+	.comingSoonButton {
+		background-color: #575E78;
+		font-weight: 700;
+		font-size: 14px;
+		line-height: 150%;
+		width: 160px;
+		height: 40px;
+		text-align: center;
+		padding: 10px;
+	}
+	.talkToUsButton {
+		background-color:  #2F9959;
+		font-weight: 700;
+		font-size: 14px;
+		line-height: 150%;
+		margin-top: 5vw;
+		width:300px;
+	}
 	.title {
 		margin-top: 23vw;
 		align-items: center;
@@ -176,6 +229,14 @@
 }
 
 @media (max-width: 1024px) {
+	.blob3 {
+		display: none;
+	}
+	.blob4 {
+		bottom:0vw;
+		top: 40vw;
+		opacity: 0.3;
+	}
   .headerMenuIcon {
     display: block;
   }
@@ -193,7 +254,7 @@
     width: 100%;
   }
 	.image {
-    top: 4vw;
+    top: 8vw;
   }
 	.orgCard{
     margin-left: 8vw;
@@ -236,7 +297,7 @@
 
 @media (max-width: 640px) {
 	.blob1,
-  .blob2 {
+  .blob2,.blob3,.blob4 {
     display: none;
   }
 	.wrapper {
@@ -245,13 +306,25 @@
 		z-index: 1;
 	}
 	.image {
-    top: 15vw;
+    top: 20vw;
   }
 	.title {
     margin-top: 17vw;
     text-align: left;
     font-size: 40px;
   }
+	.comingSoonTitle {
+		padding-left: 4vw;
+		padding-right: 4vw;
+		font-size: 40px;
+	}
+	.comingSoonBody {
+		padding-left: 4vw;
+		padding-right: 4vw;
+		padding-bottom: 4vw;
+		font-size: 20px;
+		width: 500px;
+	}
 	.orgCard{
     margin-left: 8vw;
   }

@@ -77,7 +77,7 @@
 .blob5 {
   position: absolute;
   right: 0;
-  top: 224.8vw;
+  top: 182.8vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
@@ -85,7 +85,7 @@
 .blob6 {
   position: absolute;
   left: 0;
-  top: 224.5vw;
+  top: 182.5vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
@@ -314,6 +314,39 @@ margin-bottom: 5vw;
   height: 57.66px;
   margin-top: 1vw;
 }
+.topCardBorder{
+  margin-top: 3vw;
+  margin-bottom: 3vw;
+  box-sizing: border-box;
+  width: 1100px;
+  height: 282px;
+  background-color: #2f3c4b;
+  border: 1px solid #ffffff;
+  border-radius: 12px;
+}
+.topCardTitle{
+  margin-left: 2vw;
+  margin-top: 2vw;
+  margin-right: 2vw;
+  font-weight: 700;
+  font-size: 32px;
+}
+.topCardBody{
+  margin-left: 25vw;
+}
+.topCardButton{
+  margin-left: 2vw;
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 2vw;
+  width: 16vw;
+  background-color: #2F9959;
+  ;
+}
+.topCardImage{
+  position: absolute;
+  width: 460px;
+}
 .card2{
   width:270px;
   align-items: left;
@@ -522,6 +555,16 @@ letter-spacing: -0.02em;
   .card {
     margin-top: 1vw;
   }
+  .topCardBody{
+		margin-left: 28vw;
+	}
+	.topCardBorder{
+		width: 960px;
+		height: 250px;
+	}
+	.topCardImage{
+		width: 410px
+	}
   .orgCard{
     margin-top: 5vw;
   }
@@ -544,16 +587,16 @@ letter-spacing: -0.02em;
     width:430px;
   }
   .blob5{
-    top:288vw;
+    top:266vw;
   }
   .blob6{
-    top: 288vw;
+   top:266vw;
   }
   .blob7{
     top:89vw;
   }
   .coin1{
-    top:62vw;
+    top:72vw;
     left: 13vw;
   }
   .coin2{
@@ -744,6 +787,26 @@ letter-spacing: -0.02em;
 		width:70vw;
 		margin-bottom: 3vw;
   }
+  .topCardBorder{
+		margin-top: 9vw;
+		overflow: hidden;
+		margin-left: 13vw;
+		width: 620px;
+		height: 230px;
+	}
+	.topCardTitle{
+		font-size: 24px;
+	}
+	.topCardBody{
+		margin-left: 39vw;
+		margin-top: 1vw;
+	}
+	.topCardImage{
+		width: 370px
+	}
+	.topCardButton{
+		width: 200px;
+	}
 	.card2{
 		display:flex;
 		flex-direction: row;
@@ -868,6 +931,26 @@ letter-spacing: -0.02em;
 		margin-left: 0.5vw;
 		margin-bottom: 4vw;
 		width: 180vw;
+	}
+  .topCardBorder{
+		display: flex;
+		flex-direction: column;
+		height: auto;
+		width: 70vw;
+		margin-left: 16vw;
+		margin-top: 7vw;
+	}
+	.topCardBody{
+		margin-left: 6vw;
+	}
+	.topCardImage{
+		position:relative;
+		width:80vw;
+	}
+	.topCardButton{
+		width: 48vw;
+		height: 14vw;
+		margin-bottom: 4vw;
 	}
 	.card2 {
 		margin-left: 0.5vw;
