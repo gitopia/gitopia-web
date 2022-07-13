@@ -72,14 +72,6 @@ export default function SeasonOfBlockchains() {
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href={"/season-of-blockchains/#applyNow"}
-                >
-                  Apply Now
-                </a>
-              </li>
-              <li className={menuOpen ? "" : "mr-4"}>
-                <a
-                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href={"/season-of-blockchains/partnerships"}
                   target="_blank"
                 >
@@ -94,14 +86,7 @@ export default function SeasonOfBlockchains() {
                   How it works
                 </a>
               </li>
-              <li className={menuOpen ? "" : "mr-4"}>
-                <a
-                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href={"/season-of-blockchains/#contact"}
-                >
-                  Contact
-                </a>
-              </li>
+
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
@@ -118,6 +103,14 @@ export default function SeasonOfBlockchains() {
                   target="_blank"
                 >
                   FAQs
+                </a>
+              </li>
+              <li className={menuOpen ? "" : "mr-4"}>
+                <a
+                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
+                  href={"/season-of-blockchains/#contact"}
+                >
+                  Contact
                 </a>
               </li>
               <div className={menuOpen ? "" : "mr-4 ml-4 " + styles.vl}></div>
@@ -152,7 +145,7 @@ export default function SeasonOfBlockchains() {
                 <button
                   onClick={() => {
                     if (window) {
-                      window.open("https://airtable.com/shr5PEUTXvcCRF717");
+                      window.open("https://airtable.com/shrQ4JO80anchv49Y");
                     }
                   }}
                   type="button"
@@ -243,92 +236,6 @@ export default function SeasonOfBlockchains() {
               <div className={" " + styles.title4}>participants</div>
               <div className="flex">
                 <div className={"mt-1 ml-1 " + styles.cardImage}>
-                  <img src="/season-of-blockchains/inspire.svg" />
-                </div>
-                <div className={"card " + styles.card}>
-                  <div className="card-body py-0 px-1.5">
-                    <div className={"card-title  " + styles.cardTitle}>
-                      Inspire:
-                    </div>
-                    <div className={"  " + styles.cardBody}>
-                      Inspiring developers to contribute to open source
-                      development in the Web3 space
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex">
-                <div className={"mt-1 ml-1 " + styles.cardImage}>
-                  <img src="/season-of-blockchains/technology.svg" />
-                </div>
-                <div className={"card " + styles.card}>
-                  <div className="card-body py-0 px-1.5">
-                    <div className={"card-title  " + styles.cardTitle}>
-                      Technology:
-                    </div>
-                    <div className={"  " + styles.cardBody}>
-                      Helping budding Web3 projects to bring in new developers
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex">
-                <div className={"mt-1 ml-1 " + styles.cardImage}>
-                  <img src="/season-of-blockchains/transition.svg" />
-                </div>
-                <div className={"card " + styles.card}>
-                  <div className="card-body py-0 px-1.5">
-                    <div className={"card-title  " + styles.cardTitle}>
-                      Transition:
-                    </div>
-                    <div className={"  " + styles.cardBody}>
-                      Give exposure to developers<br className={styles.br}></br>{" "}
-                      transitioning into the Web3 space
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex">
-                <div className={"mt-1 ml-1 " + styles.cardImage}>
-                  <img src="/season-of-blockchains/learning.svg" />
-                </div>
-                <div className={"card  " + styles.card}>
-                  <div className="card-body py-0 px-1.5">
-                    <div className={"card-title  " + styles.cardTitle}>
-                      Learning:
-                    </div>
-                    <div className={"  " + styles.cardBody}>
-                      Providing an immersive learning
-                      <br className={styles.br}></br> experience to the
-                      participants
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className={styles.section3}>
-            <div className={styles.section3Content}>
-              The entire web experience as we know it is shifting towards a new
-              framework. This is your chance to get in early and set the stages
-              for what’s to come for the world.
-            </div>
-            <div className={"flex " + styles.section3End}>
-              <div className={styles.section3Name}>Kushagz</div>
-              <div className={"mr-4 ml-4 " + styles.vl}></div>
-              <div className={styles.section3Designation}>
-                Head of Marketing @ Gitopia
-              </div>
-            </div>
-          </div>
-          <div className={"flex " + styles.midScreen}>
-            <div className={"sm:mb-36 " + styles.section4}>
-              <div className={" " + styles.title3}>
-                How GSOB will contribute
-              </div>
-              <div className={" " + styles.title4}>to the Web3 ecosystem</div>
-              <div className="flex">
-                <div className={"mt-1 ml-1 " + styles.cardImage}>
                   <img src="/season-of-blockchains/learning.svg" />
                 </div>
                 <div className={"card mt-3 " + styles.card2}>
@@ -387,6 +294,94 @@ export default function SeasonOfBlockchains() {
                     <div className={"  " + styles.cardBody}>
                       Get access to all participants in the hiring pool to see
                       the best talent.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={styles.section3}>
+            <div className={styles.section3Content}>
+              When decentralized blockchain protocols start displacing the
+              centralized web services that dominate the current Internet, we'll
+              start to see real internet-based sovereignty. The future Internet
+              will be decentralized.
+            </div>
+            <div className={"flex " + styles.section3End}>
+              <div className={styles.section3Name}>Olaf Carlson-Wee</div>
+              <div className={"mr-4 ml-4 " + styles.vl}></div>
+              <div className={styles.section3Designation}>
+                Founder & CEO of Polychain Capital
+              </div>
+            </div>
+          </div>
+          <div className={"flex " + styles.midScreen}>
+            <div className={"sm:mb-36 " + styles.section4}>
+              <div className={" " + styles.title3}>
+                How GSOB will contribute
+              </div>
+              <div className={" " + styles.title4}>to the Web3 ecosystem</div>
+
+              <div className="flex">
+                <div className={"mt-1 ml-1 " + styles.cardImage}>
+                  <img src="/season-of-blockchains/inspire.svg" />
+                </div>
+                <div className={"card " + styles.card}>
+                  <div className="card-body py-0 px-1.5">
+                    <div className={"card-title  " + styles.cardTitle}>
+                      Inspire:
+                    </div>
+                    <div className={"  " + styles.cardBody}>
+                      Inspiring developers to contribute to open source
+                      development in the Web3 space
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex">
+                <div className={"mt-1 ml-1 " + styles.cardImage}>
+                  <img src="/season-of-blockchains/technology.svg" />
+                </div>
+                <div className={"card " + styles.card}>
+                  <div className="card-body py-0 px-1.5">
+                    <div className={"card-title  " + styles.cardTitle}>
+                      Technology:
+                    </div>
+                    <div className={"  " + styles.cardBody}>
+                      Helping budding Web3 projects to bring in new developers
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex">
+                <div className={"mt-1 ml-1 " + styles.cardImage}>
+                  <img src="/season-of-blockchains/transition.svg" />
+                </div>
+                <div className={"card " + styles.card}>
+                  <div className="card-body py-0 px-1.5">
+                    <div className={"card-title  " + styles.cardTitle}>
+                      Transition:
+                    </div>
+                    <div className={"  " + styles.cardBody}>
+                      Give exposure to developers<br className={styles.br}></br>{" "}
+                      transitioning into the Web3 space
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex">
+                <div className={"mt-1 ml-1 " + styles.cardImage}>
+                  <img src="/season-of-blockchains/learning.svg" />
+                </div>
+                <div className={"card  " + styles.card}>
+                  <div className="card-body py-0 px-1.5">
+                    <div className={"card-title  " + styles.cardTitle}>
+                      Learning:
+                    </div>
+                    <div className={"  " + styles.cardBody}>
+                      Providing an immersive learning
+                      <br className={styles.br}></br> experience to the
+                      participants
                     </div>
                   </div>
                 </div>
@@ -556,6 +551,8 @@ export default function SeasonOfBlockchains() {
               </div>
             </div>
           </div>
+          {/*
+				
           <div className={styles.endHeadline} id="about">
             What OGs have to say about GSOB?
           </div>
@@ -666,6 +663,7 @@ export default function SeasonOfBlockchains() {
               </div>
             </a>
           </div>
+						*/}
           <svg
             className={styles.blob1}
             width="916"
