@@ -305,7 +305,7 @@ function RepositoryIssueCreateView(props) {
                         <div className="modal-action">
                           <label
                             htmlFor="my-modal-2"
-                            className="btn btn-wide flex-1 bg-green-900 text-xs"
+                            className="btn w-96 px-56 flex-1 bg-green-900 text-xs ml-1"
                             onClick={(e) => {}}
                             disabled={null}
                           >

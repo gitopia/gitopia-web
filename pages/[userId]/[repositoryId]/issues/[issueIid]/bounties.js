@@ -21,6 +21,11 @@ import IssuePullTitle from "../../../../../components/repository/issuePullTitle"
 import { useErrorStatus } from "../../../../../hooks/errorHandler";
 import pluralize from "../../../../../helpers/pluralize";
 import IssueTabs from "../../../../../components/repository/issueTabs";
+import {
+  createBounty,
+  updateBountyExpiry,
+  closeBounty,
+} from "../../../../../store/actions/bounties";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -46,6 +51,7 @@ function RepositoryIssueView(props) {
     labels: [],
   });
   const [allLabels, setAllLabels] = useState([]);
+  const [expiry, setExpiry] = useState(0);
   const [amount, setAmount] = useState(0);
   const [validateAmountError, setValidateAmountError] = useState("");
 
@@ -298,8 +304,15 @@ function RepositoryIssueView(props) {
                     <div className="modal-action">
                       <label
                         htmlFor="my-modal-2"
-                        className="btn btn-wide flex-1 bg-green-900 text-xs"
-                        onClick={(e) => {}}
+                        className="btn w-96 px-56 flex-1 bg-green-900 text-xs ml-1"
+                        onClick={(e) => {
+                          props.createBounty(
+                            "2",
+                            dayjs("2019-01-25").unix(),
+                            2,
+                            "issue"
+                          );
+                        }}
                         disabled={null}
                       >
                         ADD
@@ -432,11 +445,21 @@ function RepositoryIssueView(props) {
                 </div>
 
                 <div className="flex ml-auto mr-3">
-                  <div className="bg-transparent hover:bg-green py-1 px-3 border border-primary hover:border-transparent rounded text-xs">
+                  <div
+                    className="bg-transparent hover:bg-green py-1 px-3 border border-primary hover:border-transparent rounded text-xs hover:cursor-pointer"
+                    onClick={(e) => {
+                      props.closeBounty(4);
+                    }}
+                  >
                     CLOSE BOUNTY
                   </div>
 
-                  <div className="ml-2 bg-transparent hover:bg-green py-1 px-3 border border-primary hover:border-transparent rounded text-xs">
+                  <div
+                    className="ml-2 bg-transparent hover:bg-green py-1 px-3 border border-primary hover:border-transparent rounded text-xs hover:cursor-pointer"
+                    onClick={(e) => {
+                      props.updateBountyExpiry(4, dayjs("2019-02-25").unix());
+                    }}
+                  >
                     EXTEND EXPIRY
                   </div>
                 </div>
@@ -560,4 +583,7 @@ export default connect(mapStateToProps, {
   deleteComment,
   updateIssueAssignees,
   updateIssueLabels,
+  createBounty,
+  updateBountyExpiry,
+  closeBounty,
 })(RepositoryIssueView);
