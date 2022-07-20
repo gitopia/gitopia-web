@@ -28,8 +28,7 @@ import {
 } from "../../../../../store/actions/bounties";
 import getBalances from "../../../../../helpers/getAllBalances";
 import getBounties from "../../../../../helpers/getBounties";
-import { DayPicker } from "react-day-picker";
-import { format } from "date-fns";
+
 export async function getStaticProps() {
   return { props: {} };
 }
@@ -46,8 +45,8 @@ function RepositoryIssueView(props) {
   var id = router.query.userId;
   const { setErrorStatusCode } = useErrorStatus();
   const { repository } = useRepository();
+  const [counter, setCounter] = useState(1);
   const [balances, setBalances] = useState([]);
-  const [tokenDenom, setTokenDenom] = useState("");
   const [issue, setIssue] = useState({
     iid: router.query.issueIid,
     creator: "",
@@ -59,8 +58,9 @@ function RepositoryIssueView(props) {
   const [allLabels, setAllLabels] = useState([]);
   const [expiry, setExpiry] = useState("");
   const [updatedExpiry, setUpdatedExpiry] = useState("");
-  const [amount, setAmount] = useState(0);
-  const [maxAmount, setMaxAmount] = useState(0);
+  const [amount, setAmount] = useState([]);
+  const [tokenDenom, setTokenDenom] = useState([]);
+  const [maxAmount, setMaxAmount] = useState([]);
   const [validateAmountError, setValidateAmountError] = useState("");
   const [bounties, setBounties] = useState([]);
   const [closeBountyLoading, setCloseBountyLoading] = useState(false);
@@ -70,8 +70,26 @@ function RepositoryIssueView(props) {
 
   useEffect(async () => {
     const b = await getBalances(id);
-    setBalances(b.balances);
-    setMaxAmount(b.balances[0].amount);
+    //setBalances(b.balances);
+    setBalances([
+      {
+        denom: "utlore",
+        amount: "89794159",
+      },
+      {
+        denom: "tlore",
+        amount: "12345",
+      },
+      {
+        denom: "lore",
+        amount: "794159",
+      },
+      {
+        denom: "btc",
+        amount: "97949",
+      },
+    ]);
+    console.log(balances.length);
   }, [id]);
 
   useEffect(async () => {
@@ -83,16 +101,48 @@ function RepositoryIssueView(props) {
     setBounties(bountyArray);
   }, [issue.iid]);
 
+  const handleClick = () => {
+    setCounter(counter + 1);
+    let array = amount.slice();
+    array.push(undefined);
+    setAmount(array);
+    array = tokenDenom.slice();
+    array.push(undefined);
+    setTokenDenom(array);
+    array = maxAmount.slice();
+    array.push(undefined);
+    setMaxAmount(array);
+  };
+
+  const handleAmountOnChange = (value, index) => {
+    const array = amount.slice();
+    array[index] = value;
+    setAmount(array);
+    console.log(amount);
+  };
+
+  const handleTokenDenomOnChange = (value, index) => {
+    const array = tokenDenom.slice();
+    array[index] = value;
+    setTokenDenom(array);
+    console.log(tokenDenom);
+  };
+
+  const handleMaxAmountOnChange = (denom, index) => {
+    const i = balances.map((object) => object.denom).indexOf(denom);
+    const array = maxAmount.slice();
+    array[index] = balances[i].amount;
+    setMaxAmount(array);
+    console.log(maxAmount);
+  };
+
   function isNaturalNumber(n) {
     n = n.toString();
     var n1 = Math.abs(n),
       n2 = parseInt(n, 10);
     return !isNaN(n1) && n2 === n1 && n1.toString() === n;
   }
-  function MaxAmount(denom) {
-    const index = balances.map((object) => object.denom).indexOf(denom);
-    setMaxAmount(balances[index].amount);
-  }
+
   const validateAmount = async (amount) => {
     setValidateAmountError(null);
     let Vamount = Number(amount);
@@ -215,6 +265,13 @@ function RepositoryIssueView(props) {
                     <label
                       htmlFor="my-modal"
                       className="ml-auto hover:opacity-25"
+                      onClick={() => {
+                        setAmount([]);
+                        setCounter(1);
+                        setTokenDenom([]);
+                        setMaxAmount([]);
+                        setExpiry("");
+                      }}
                     >
                       <svg
                         width="14"
@@ -230,68 +287,104 @@ function RepositoryIssueView(props) {
                       </svg>
                     </label>
                   </div>
-
-                  <div class="card w-full bg-grey-900 shadow-xl mt-4">
-                    <div class="card-body p-3">
-                      <div className="mb-2 text-grey-200">AMOUNT</div>
-                      <div className="flex mb-2">
-                        <div>
-                          <input
-                            class="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none text-2xl font-bold"
-                            type="text"
-                            placeholder="Enter Amount"
-                            aria-label="Full name"
-                            onKeyUp={async (e) => {
-                              await validateAmount(e.target.value);
-                            }}
-                            onChange={(e) => {
-                              setAmount(e.target.value);
-                            }}
-                          ></input>
-                          {validateAmountError ? (
-                            <label className="label">
-                              <span className="label-text-alt text-error">
-                                {validateAmountError}
-                              </span>
-                            </label>
-                          ) : (
-                            ""
-                          )}
+                  {Array.from(Array(counter)).map((c, index) => {
+                    return (
+                      <div
+                        className="card w-full bg-grey-900 shadow-xl mt-4"
+                        key={index}
+                      >
+                        <div className="card-body p-3">
+                          <div className="mb-2 text-grey-200">AMOUNT</div>
+                          <div className="flex mb-2">
+                            <div>
+                              <input
+                                className="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 px-2 leading-tight focus:outline-none text-2xl font-bold"
+                                type="text"
+                                placeholder="Enter Amount"
+                                aria-label="Full name"
+                                onKeyUp={async (e) => {
+                                  await validateAmount(e.target.value);
+                                }}
+                                onChange={(e) => {
+                                  handleAmountOnChange(e.target.value, index);
+                                }}
+                              ></input>
+                              {validateAmountError ? (
+                                <label className="label">
+                                  <span className="label-text-alt text-error">
+                                    {validateAmountError}
+                                  </span>
+                                </label>
+                              ) : (
+                                ""
+                              )}
+                            </div>
+                            <select
+                              className="select w-fit max-w-xs ml-auto h-10"
+                              value={tokenDenom[index]}
+                              onChange={(e) => {
+                                handleTokenDenomOnChange(e.target.value, index);
+                                handleMaxAmountOnChange(e.target.value, index);
+                              }}
+                            >
+                              <option selected>Select Token</option>
+                              {balances.map((t, i) => {
+                                return !tokenDenom.includes(t.denom) ? (
+                                  <option key={i} value={t.denom}>
+                                    {t.denom}
+                                  </option>
+                                ) : (
+                                  <option
+                                    key={i}
+                                    value={t.denom}
+                                    disabled={true}
+                                  >
+                                    {t.denom}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                          </div>
+                          <div className="flex ml-auto text-grey-200">
+                            <div className="text-xs mr-1">Balance:</div>
+                            <div className="text-xs mr-2">
+                              {maxAmount[index]}
+                            </div>
+                            <div
+                              className="link link-primary text-xs text-primary font-bold no-underline"
+                              onClick={(e) => {
+                                //setAmount(maxAmount);
+                              }}
+                            >
+                              Max
+                            </div>
+                          </div>
                         </div>
-                        <select
-                          className="select w-fit max-w-xs ml-auto h-10"
-                          value={tokenDenom}
-                          onChange={(e) => {
-                            setTokenDenom(e.target.value);
-                            MaxAmount(e.target.value);
-                          }}
-                        >
-                          <option selected>Select Token</option>
-                          {balances.map((t, i) => {
-                            return (
-                              <option key={i} value={t.denom}>
-                                {t.denom}
-                              </option>
-                            );
-                          })}
-                        </select>
                       </div>
-                      <div className="flex ml-auto text-grey-200">
-                        <div className="text-xs mr-1">Balance:</div>
-                        <div className="text-xs mr-2">{maxAmount}</div>
-                        <div
-                          className="link link-primary text-xs text-primary font-bold no-underline"
-                          onClick={(e) => {
-                            setAmount(maxAmount);
-                          }}
+                    );
+                  })}
+                  {
+                    <div className="mt-6 text-right">
+                      <div className="inline-block w-36">
+                        <button
+                          className={
+                            "btn btn-xs btn-primary btn-block h-5 w-32 "
+                          }
+                          disabled={
+                            !(counter < balances.length) ||
+                            amount.includes(undefined) ||
+                            tokenDenom.includes(undefined)
+                          }
+                          onClick={handleClick}
                         >
-                          Max
-                        </div>
+                          ADD TOKEN
+                        </button>
                       </div>
                     </div>
-                  </div>
-                  <div class="card w-full bg-grey-900 shadow-xl mt-3">
-                    <div class="card-body p-3">
+                  }
+
+                  <div className="card w-full bg-grey-900 shadow-xl mt-3">
+                    <div className="card-body p-3">
                       <div className="flex">
                         <div className="" onClick={() => {}}>
                           <svg
@@ -347,15 +440,39 @@ function RepositoryIssueView(props) {
                         htmlFor="my-modal"
                         className="btn w-96 px-56 flex-1 bg-green-900 text-xs ml-1"
                         onClick={(e) => {
-                          props.createBounty(
-                            amount.toString(),
-                            tokenDenom,
+                          let amountToSend = [];
+                          for (let i = 0; i < amount.length; i++) {
+                            const a = {
+                              amount: amount[i].toString(),
+                              denom: tokenDenom[i],
+                            };
+                            amountToSend.push(a);
+                          }
+                          console.log(
+                            amountToSend,
                             dayjs(expiry.toString()).unix(),
                             issue.iid,
                             "issue"
                           );
+                          props.createBounty(
+                            amountToSend,
+                            dayjs(expiry.toString()).unix(),
+                            issue.iid,
+                            "issue"
+                          );
+                          setAmount([]);
+                          setCounter(1);
+                          setTokenDenom([]);
+                          setMaxAmount([]);
+                          setExpiry("");
                         }}
-                        disabled={null}
+                        disabled={
+                          amount.length == 0 ||
+                          amount.includes(undefined) ||
+                          tokenDenom.includes(undefined) ||
+                          tokenDenom.length == 0 ||
+                          expiry == ""
+                        }
                       >
                         ADD
                       </label>
@@ -530,7 +647,6 @@ function RepositoryIssueView(props) {
                                 type="date"
                                 placeholder="Enter Date"
                                 className="appearance-none bg-transparent border-none leading-tight focus:outline-none ml-auto text-grey-200 text-md mt-2"
-                                onKeyUp={async (e) => {}}
                                 onChange={(e) => {
                                   setUpdatedExpiry(e.target.value);
                                 }}
