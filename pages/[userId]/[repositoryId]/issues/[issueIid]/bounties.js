@@ -26,7 +26,10 @@ import {
   updateBountyExpiry,
   closeBounty,
 } from "../../../../../store/actions/bounties";
-
+import getBalances from "../../../../../helpers/getAllBalances";
+import getBounties from "../../../../../helpers/getBounties";
+import { DayPicker } from "react-day-picker";
+import { format } from "date-fns";
 export async function getStaticProps() {
   return { props: {} };
 }
@@ -40,8 +43,11 @@ export async function getStaticPaths() {
 
 function RepositoryIssueView(props) {
   const router = useRouter();
+  var id = router.query.userId;
   const { setErrorStatusCode } = useErrorStatus();
   const { repository } = useRepository();
+  const [balances, setBalances] = useState([]);
+  const [tokenDenom, setTokenDenom] = useState("");
   const [issue, setIssue] = useState({
     iid: router.query.issueIid,
     creator: "",
@@ -51,9 +57,31 @@ function RepositoryIssueView(props) {
     labels: [],
   });
   const [allLabels, setAllLabels] = useState([]);
-  const [expiry, setExpiry] = useState(0);
+  const [expiry, setExpiry] = useState("");
+  const [updatedExpiry, setUpdatedExpiry] = useState("");
   const [amount, setAmount] = useState(0);
+  const [maxAmount, setMaxAmount] = useState(0);
   const [validateAmountError, setValidateAmountError] = useState("");
+  const [bounties, setBounties] = useState([]);
+  const [closeBountyLoading, setCloseBountyLoading] = useState(false);
+
+  var localizedFormat = require("dayjs/plugin/localizedFormat");
+  dayjs.extend(localizedFormat);
+
+  useEffect(async () => {
+    const b = await getBalances(id);
+    setBalances(b.balances);
+    setMaxAmount(b.balances[0].amount);
+  }, [id]);
+
+  useEffect(async () => {
+    const b = await getBounties();
+    var bountyArray = [];
+    b.map((bounty) => {
+      bounty.parentId == issue.iid ? bountyArray.push(bounty) : "";
+    });
+    setBounties(bountyArray);
+  }, [issue.iid]);
 
   function isNaturalNumber(n) {
     n = n.toString();
@@ -61,7 +89,10 @@ function RepositoryIssueView(props) {
       n2 = parseInt(n, 10);
     return !isNaN(n1) && n2 === n1 && n1.toString() === n;
   }
-
+  function MaxAmount(denom) {
+    const index = balances.map((object) => object.denom).indexOf(denom);
+    setMaxAmount(balances[index].amount);
+  }
   const validateAmount = async (amount) => {
     setValidateAmountError(null);
     let Vamount = Number(amount);
@@ -87,7 +118,6 @@ function RepositoryIssueView(props) {
   };
 
   useEffect(async () => {
-    console.log(router.query.userId);
     const [i] = await Promise.all([
       getRepositoryIssue(
         router.query.userId,
@@ -100,9 +130,7 @@ function RepositoryIssueView(props) {
     } else {
       setErrorStatusCode(404);
     }
-    console.log(repository);
     setAllLabels(repository.labels);
-    console.log(i);
   }, [router.query.issueIid, repository.id]);
 
   const refreshIssue = async () => {
@@ -163,7 +191,6 @@ function RepositoryIssueView(props) {
               </span>
             </span>
           </div>
-          {console.log("issue", issue, issue.iid, issue.id)}
           <IssueTabs
             repository={repository}
             issueId={issue.iid}
@@ -174,19 +201,19 @@ function RepositoryIssueView(props) {
               <div className="">Title goes here</div>
               <label
                 className="ml-auto btn btn-primary text-xs btn-sm modal-button"
-                htmlFor="my-modal-2"
+                htmlFor="my-modal"
               >
                 NEW BOUNTY
               </label>
-              <input type="checkbox" id="my-modal-2" className="modal-toggle" />
-              <label htmlFor="my-modal-2" className="modal cursor-pointer">
+              <input type="checkbox" id="my-modal" className="modal-toggle" />
+              <label htmlFor="my-modal" className="modal cursor-pointer">
                 <label className="modal-box relative">
                   <div className="flex mb-4">
                     <div className="w-11/12 font-bold text-sm text-type">
                       Add bounty
                     </div>
                     <label
-                      htmlFor="my-modal-2"
+                      htmlFor="my-modal"
                       className="ml-auto hover:opacity-25"
                     >
                       <svg
@@ -231,25 +258,33 @@ function RepositoryIssueView(props) {
                             ""
                           )}
                         </div>
-                        <select className="select w-fit max-w-xs ml-auto h-10">
-                          <option disabled selected>
-                            Select Token
-                          </option>
-                          <option>
-                            {props.advanceUser === true
-                              ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
-                              : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
-                          </option>
+                        <select
+                          className="select w-fit max-w-xs ml-auto h-10"
+                          value={tokenDenom}
+                          onChange={(e) => {
+                            setTokenDenom(e.target.value);
+                            MaxAmount(e.target.value);
+                          }}
+                        >
+                          <option selected>Select Token</option>
+                          {balances.map((t, i) => {
+                            return (
+                              <option key={i} value={t.denom}>
+                                {t.denom}
+                              </option>
+                            );
+                          })}
                         </select>
                       </div>
                       <div className="flex ml-auto text-grey-200">
                         <div className="text-xs mr-1">Balance:</div>
-                        <div className="text-xs mr-2">
-                          {props.advanceUser === true
-                            ? props.loreBalance
-                            : props.loreBalance / 1000000}
-                        </div>
-                        <div className="link link-primary text-xs text-primary font-bold no-underline">
+                        <div className="text-xs mr-2">{maxAmount}</div>
+                        <div
+                          className="link link-primary text-xs text-primary font-bold no-underline"
+                          onClick={(e) => {
+                            setAmount(maxAmount);
+                          }}
+                        >
                           Max
                         </div>
                       </div>
@@ -258,7 +293,7 @@ function RepositoryIssueView(props) {
                   <div class="card w-full bg-grey-900 shadow-xl mt-3">
                     <div class="card-body p-3">
                       <div className="flex">
-                        <div className="">
+                        <div className="" onClick={() => {}}>
                           <svg
                             width="24"
                             height="24"
@@ -294,22 +329,29 @@ function RepositoryIssueView(props) {
                         <div className="flex text-xs mt-1 ml-1.5">
                           Expiry date
                         </div>
-                        <div className="flex ml-auto text-grey-200 text-xs">
-                          {dayjs().format("DD MMMM YYYY")}
-                        </div>
+                        <input
+                          type="date"
+                          placeholder="YYYY-MM-DD"
+                          className="appearance-none bg-transparent border-none leading-tight focus:outline-none ml-auto text-grey-200 text-xs"
+                          onKeyUp={async (e) => {}}
+                          onChange={(e) => {
+                            setExpiry(e.target.value);
+                          }}
+                        ></input>
                       </div>
                     </div>
                   </div>
                   <div className="flex ml-auto self-center">
                     <div className="modal-action">
                       <label
-                        htmlFor="my-modal-2"
+                        htmlFor="my-modal"
                         className="btn w-96 px-56 flex-1 bg-green-900 text-xs ml-1"
                         onClick={(e) => {
                           props.createBounty(
-                            "2",
-                            dayjs("2019-01-25").unix(),
-                            2,
+                            amount.toString(),
+                            tokenDenom,
+                            dayjs(expiry.toString()).unix(),
+                            issue.iid,
                             "issue"
                           );
                         }}
@@ -322,247 +364,204 @@ function RepositoryIssueView(props) {
                 </label>
               </label>
             </div>
-            <div className="border border-gray-700 rounded mt-4 text-justify divide-y divide-gray-700">
-              <div className="flex mt-2 mb-2">
-                <div className="w-1/4">
-                  <div className="text-type-secondary text-sm ml-3">Amount</div>
-                </div>
+            {bounties.length > 0 ? (
+              <div className="border border-gray-700 rounded mt-4 text-justify divide-y divide-gray-700">
+                <div className="flex mt-2 mb-2">
+                  <div className="w-1/4">
+                    <div className="text-type-secondary text-sm ml-3">
+                      Amount
+                    </div>
+                  </div>
 
-                <div className="w-1/6">
-                  <div className="text-type-secondary text-sm ">
-                    Wallet Address
+                  <div className="w-1/6">
+                    <div className="text-type-secondary text-sm ">
+                      Wallet Address
+                    </div>
+                  </div>
+                  <div className="w-1/6">
+                    <div className="text-type-secondary text-sm ">
+                      Expiry Date
+                    </div>
+                  </div>
+                  <div className="w-1/6">
+                    <div className="text-type-secondary text-sm ">Status</div>
+                  </div>
+
+                  <div className="text-type-secondary text-sm ml-auto mr-3">
+                    Actions
                   </div>
                 </div>
-                <div className="w-1/6">
-                  <div className="text-type-secondary text-sm ">
-                    Expiry Date
-                  </div>
-                </div>
-                <div className="w-1/6">
-                  <div className="text-type-secondary text-sm ">Status</div>
-                </div>
 
-                <div className="text-type-secondary text-sm ml-auto mr-3">
-                  Actions
-                </div>
+                {bounties.map((b, i) => {
+                  return (
+                    <div className="flex mt-2 mb-3 pt-3" key={i}>
+                      <div className="w-1/5">
+                        {b.amount.map((a) => {
+                          return (
+                            <div className="flex">
+                              {a.denom == "utlore" ? (
+                                <div className="ml-3 mt-0.5 mr-1">
+                                  <svg
+                                    width="8"
+                                    height="14"
+                                    viewBox="0 0 10 17"
+                                    fill="none"
+                                    className="mr-1 mt-px text-purple-50"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      clipRule="evenodd"
+                                      d="M5.00061 8.51845C6.33523 8.51845 7.41715 7.43653 7.41715 6.10192C7.41715 4.7673 6.33523 3.68538 5.00061 3.68538C3.666 3.68538 2.58408 4.7673 2.58408 6.10192C2.58408 7.43653 3.666 8.51845 5.00061 8.51845ZM5.00061 10.2314C7.28128 10.2314 9.13013 8.38259 9.13013 6.10192C9.13013 3.82125 7.28128 1.9724 5.00061 1.9724C2.71994 1.9724 0.871094 3.82125 0.871094 6.10192C0.871094 8.38259 2.71994 10.2314 5.00061 10.2314Z"
+                                      fill="currentColor"
+                                    />
+                                    <path
+                                      fillRule="evenodd"
+                                      clipRule="evenodd"
+                                      d="M2.58408 11.1195C2.58408 11.7593 2.84059 12.3714 3.29468 12.8215C3.74849 13.2713 4.36229 13.5225 5.00061 13.5225C5.63893 13.5225 6.25273 13.2713 6.70655 12.8215C7.16063 12.3714 7.41715 11.7593 7.41715 11.1195H9.13013C9.13013 12.2004 8.69698 13.2386 7.92343 14.0053C7.14962 14.7723 6.09841 15.2046 5.00061 15.2046C3.90281 15.2046 2.8516 14.7723 2.07779 14.0053C1.30425 13.2386 0.871094 12.2004 0.871094 11.1195H2.58408Z"
+                                      fill="currentColor"
+                                    />
+                                    <path
+                                      d="M4.19727 0.743828H5.8455V2.39206H4.19727V0.743828Z"
+                                      fill="currentColor"
+                                    />
+                                    <path
+                                      d="M4.19727 14.7537H5.8455V16.4019H4.19727V14.7537Z"
+                                      fill="currentColor"
+                                    />
+                                  </svg>
+                                </div>
+                              ) : (
+                                <div className="ml-3"></div>
+                              )}
+
+                              <div className="text-sm mr-1">{a.denom}</div>
+                              <div className="text-sm">{a.amount}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="w-1/6">
+                        <div className="text-sm">
+                          {shrinkAddress(b.creator)}
+                        </div>
+                      </div>
+                      <div className="w-1/6">
+                        <div className="text-sm">
+                          {dayjs
+                            .unix(parseInt(b.expireAt))
+                            .format("MMM D, YYYY")}
+                        </div>
+                      </div>
+                      <div className="w-1/6">
+                        {b.state == "BOUNTY_STATE_SRCDEBITTED" &&
+                        b.expireAt > dayjs().unix() ? (
+                          <div>
+                            <div className="flex items-center rounded-full px-8 w-24 py-0.5 bg-purple text-xs uppercase mt-0.5">
+                              Open
+                            </div>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                        {b.state == "BOUNTY_STATE_DESTCREDITED" ? (
+                          <div className="flex items-center rounded-full px-4 w-24 py-0.5 bg-teal text-xs uppercase mt-0.5">
+                            Rewarded
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                        {b.expireAt < dayjs().unix() &&
+                        b.state != "BOUNTY_STATE_REVERTEDBACK" ? (
+                          <div className="flex items-center rounded-full px-7 w-24 py-0.5 bg-pink text-xs uppercase mt-0.5">
+                            Expired
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                        {b.state == "BOUNTY_STATE_REVERTEDBACK" ? (
+                          <div className="flex items-center rounded-full px-5 w-24 py-0.5 bg-grey text-xs uppercase mt-0.5">
+                            Reverted
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                      {b.expireAt < dayjs().unix() &&
+                      b.state != "BOUNTY_STATE_REVERTEDBACK" ? (
+                        <div className="flex ml-auto mr-3">
+                          <div
+                            className={
+                              "btn btn-outline rounded text-xs border-green-900 btn-xs font-normal hover:bg-green hover:border-green-900 hover:text-white px-4 " +
+                              (closeBountyLoading ? "loading" : "")
+                            }
+                            onClick={(e) => {
+                              props.closeBounty(b.id).then((res) => {});
+                            }}
+                          >
+                            CLOSE BOUNTY
+                          </div>
+
+                          <label
+                            htmlFor="my-modal-2"
+                            className={
+                              "ml-2 btn modal-button btn-outline rounded text-xs border-green-900 btn-xs font-normal hover:bg-green hover:border-green-900 hover:text-white px-4 "
+                            }
+                          >
+                            EXTEND EXPIRY
+                          </label>
+                          <input
+                            type="checkbox"
+                            id="my-modal-2"
+                            className="modal-toggle"
+                          />
+                          <div className="modal">
+                            <div className="modal-box relative">
+                              <label
+                                htmlFor="my-modal-2"
+                                className="btn btn-sm btn-circle absolute right-2 top-2"
+                              >
+                                ✕
+                              </label>
+                              <h3 className="text-lg">
+                                Enter Extended Expiry Date
+                              </h3>
+                              <input
+                                type="date"
+                                placeholder="Enter Date"
+                                className="appearance-none bg-transparent border-none leading-tight focus:outline-none ml-auto text-grey-200 text-md mt-2"
+                                onKeyUp={async (e) => {}}
+                                onChange={(e) => {
+                                  setUpdatedExpiry(e.target.value);
+                                }}
+                              ></input>
+                              <div className="modal-action">
+                                <label
+                                  htmlFor="my-modal-2"
+                                  className="btn btn-primary btn-sm"
+                                  onClick={(e) => {
+                                    props.updateBountyExpiry(
+                                      b.id,
+                                      dayjs(updatedExpiry.toString()).unix()
+                                    );
+                                  }}
+                                >
+                                  Extend
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-              <div className="flex mt-2  mb-3 pt-3">
-                <div className="w-1/4 flex">
-                  <div className="ml-3 mt-0.5 mr-1">
-                    <svg
-                      width="8"
-                      height="14"
-                      viewBox="0 0 10 17"
-                      fill="none"
-                      className="mr-1 mt-px text-purple-50"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M5.00061 8.51845C6.33523 8.51845 7.41715 7.43653 7.41715 6.10192C7.41715 4.7673 6.33523 3.68538 5.00061 3.68538C3.666 3.68538 2.58408 4.7673 2.58408 6.10192C2.58408 7.43653 3.666 8.51845 5.00061 8.51845ZM5.00061 10.2314C7.28128 10.2314 9.13013 8.38259 9.13013 6.10192C9.13013 3.82125 7.28128 1.9724 5.00061 1.9724C2.71994 1.9724 0.871094 3.82125 0.871094 6.10192C0.871094 8.38259 2.71994 10.2314 5.00061 10.2314Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M2.58408 11.1195C2.58408 11.7593 2.84059 12.3714 3.29468 12.8215C3.74849 13.2713 4.36229 13.5225 5.00061 13.5225C5.63893 13.5225 6.25273 13.2713 6.70655 12.8215C7.16063 12.3714 7.41715 11.7593 7.41715 11.1195H9.13013C9.13013 12.2004 8.69698 13.2386 7.92343 14.0053C7.14962 14.7723 6.09841 15.2046 5.00061 15.2046C3.90281 15.2046 2.8516 14.7723 2.07779 14.0053C1.30425 13.2386 0.871094 12.2004 0.871094 11.1195H2.58408Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M4.19727 0.743828H5.8455V2.39206H4.19727V0.743828Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M4.19727 14.7537H5.8455V16.4019H4.19727V14.7537Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                  </div>
-                  <div className="text-sm mr-1">Tlore</div>
-                  <div className="text-sm">12.456788</div>
-                </div>
-
-                <div className="w-1/6">
-                  <div className="text-sm">abxasd...12xX...</div>
-                </div>
-                <div className="w-1/6">
-                  <div className="text-sm">07 July 2022</div>
-                </div>
-                <div className="w-1/6">
-                  <div className="flex items-center rounded-full px-8 w-24 py-0.5 bg-purple text-xs uppercase">
-                    Open
-                  </div>
-                </div>
-              </div>
-              <div className="flex mt-2 mb-3 pt-3">
-                <div className="w-1/4 flex">
-                  <div className="ml-3 mt-0.5 mr-1">
-                    <svg
-                      width="8"
-                      height="14"
-                      viewBox="0 0 10 17"
-                      fill="none"
-                      className="mr-1 mt-px text-purple-50"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M5.00061 8.51845C6.33523 8.51845 7.41715 7.43653 7.41715 6.10192C7.41715 4.7673 6.33523 3.68538 5.00061 3.68538C3.666 3.68538 2.58408 4.7673 2.58408 6.10192C2.58408 7.43653 3.666 8.51845 5.00061 8.51845ZM5.00061 10.2314C7.28128 10.2314 9.13013 8.38259 9.13013 6.10192C9.13013 3.82125 7.28128 1.9724 5.00061 1.9724C2.71994 1.9724 0.871094 3.82125 0.871094 6.10192C0.871094 8.38259 2.71994 10.2314 5.00061 10.2314Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M2.58408 11.1195C2.58408 11.7593 2.84059 12.3714 3.29468 12.8215C3.74849 13.2713 4.36229 13.5225 5.00061 13.5225C5.63893 13.5225 6.25273 13.2713 6.70655 12.8215C7.16063 12.3714 7.41715 11.7593 7.41715 11.1195H9.13013C9.13013 12.2004 8.69698 13.2386 7.92343 14.0053C7.14962 14.7723 6.09841 15.2046 5.00061 15.2046C3.90281 15.2046 2.8516 14.7723 2.07779 14.0053C1.30425 13.2386 0.871094 12.2004 0.871094 11.1195H2.58408Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M4.19727 0.743828H5.8455V2.39206H4.19727V0.743828Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M4.19727 14.7537H5.8455V16.4019H4.19727V14.7537Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                  </div>
-                  <div className="text-sm mr-1">Tlore</div>
-                  <div className="text-sm">12.456788</div>
-                </div>
-
-                <div className="w-1/6">
-                  <div className="text-sm">abxasd...12xX...</div>
-                </div>
-                <div className="w-1/6">
-                  <div className="text-sm">07 July 2022</div>
-                </div>
-                <div className="w-1/6">
-                  <div className="flex items-center rounded-full px-7 w-24 py-0.5 bg-pink text-xs uppercase">
-                    Expired
-                  </div>
-                </div>
-
-                <div className="flex ml-auto mr-3">
-                  <div
-                    className="bg-transparent hover:bg-green py-1 px-3 border border-primary hover:border-transparent rounded text-xs hover:cursor-pointer"
-                    onClick={(e) => {
-                      props.closeBounty(4);
-                    }}
-                  >
-                    CLOSE BOUNTY
-                  </div>
-
-                  <div
-                    className="ml-2 bg-transparent hover:bg-green py-1 px-3 border border-primary hover:border-transparent rounded text-xs hover:cursor-pointer"
-                    onClick={(e) => {
-                      props.updateBountyExpiry(4, dayjs("2019-02-25").unix());
-                    }}
-                  >
-                    EXTEND EXPIRY
-                  </div>
-                </div>
-              </div>
-              <div className="flex mt-2 mb-3 pt-3">
-                <div className="w-1/4 flex">
-                  <div className="ml-3 mt-0.5 mr-1">
-                    <svg
-                      width="8"
-                      height="14"
-                      viewBox="0 0 10 17"
-                      fill="none"
-                      className="mr-1 mt-px text-purple-50"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M5.00061 8.51845C6.33523 8.51845 7.41715 7.43653 7.41715 6.10192C7.41715 4.7673 6.33523 3.68538 5.00061 3.68538C3.666 3.68538 2.58408 4.7673 2.58408 6.10192C2.58408 7.43653 3.666 8.51845 5.00061 8.51845ZM5.00061 10.2314C7.28128 10.2314 9.13013 8.38259 9.13013 6.10192C9.13013 3.82125 7.28128 1.9724 5.00061 1.9724C2.71994 1.9724 0.871094 3.82125 0.871094 6.10192C0.871094 8.38259 2.71994 10.2314 5.00061 10.2314Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M2.58408 11.1195C2.58408 11.7593 2.84059 12.3714 3.29468 12.8215C3.74849 13.2713 4.36229 13.5225 5.00061 13.5225C5.63893 13.5225 6.25273 13.2713 6.70655 12.8215C7.16063 12.3714 7.41715 11.7593 7.41715 11.1195H9.13013C9.13013 12.2004 8.69698 13.2386 7.92343 14.0053C7.14962 14.7723 6.09841 15.2046 5.00061 15.2046C3.90281 15.2046 2.8516 14.7723 2.07779 14.0053C1.30425 13.2386 0.871094 12.2004 0.871094 11.1195H2.58408Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M4.19727 0.743828H5.8455V2.39206H4.19727V0.743828Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M4.19727 14.7537H5.8455V16.4019H4.19727V14.7537Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                  </div>
-                  <div className="text-sm mr-1">Tlore</div>
-                  <div className="text-sm">12.456788</div>
-                </div>
-
-                <div className="w-1/6">
-                  <div className="text-sm">abxasd...12xX...</div>
-                </div>
-                <div className="w-1/6">
-                  <div className="text-sm">07 July 2022</div>
-                </div>
-                <div className="w-1/6">
-                  <div className="flex items-center rounded-full px-4 w-24 py-0.5 bg-teal text-xs uppercase">
-                    Rewarded
-                  </div>
-                </div>
-              </div>
-              <div className="flex mt-2 mb-3 pt-3">
-                <div className="w-1/4 flex">
-                  <div className="ml-3 mt-0.5 mr-1">
-                    <svg
-                      width="8"
-                      height="14"
-                      viewBox="0 0 10 17"
-                      fill="none"
-                      className="mr-1 mt-px text-purple-50"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M5.00061 8.51845C6.33523 8.51845 7.41715 7.43653 7.41715 6.10192C7.41715 4.7673 6.33523 3.68538 5.00061 3.68538C3.666 3.68538 2.58408 4.7673 2.58408 6.10192C2.58408 7.43653 3.666 8.51845 5.00061 8.51845ZM5.00061 10.2314C7.28128 10.2314 9.13013 8.38259 9.13013 6.10192C9.13013 3.82125 7.28128 1.9724 5.00061 1.9724C2.71994 1.9724 0.871094 3.82125 0.871094 6.10192C0.871094 8.38259 2.71994 10.2314 5.00061 10.2314Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M2.58408 11.1195C2.58408 11.7593 2.84059 12.3714 3.29468 12.8215C3.74849 13.2713 4.36229 13.5225 5.00061 13.5225C5.63893 13.5225 6.25273 13.2713 6.70655 12.8215C7.16063 12.3714 7.41715 11.7593 7.41715 11.1195H9.13013C9.13013 12.2004 8.69698 13.2386 7.92343 14.0053C7.14962 14.7723 6.09841 15.2046 5.00061 15.2046C3.90281 15.2046 2.8516 14.7723 2.07779 14.0053C1.30425 13.2386 0.871094 12.2004 0.871094 11.1195H2.58408Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M4.19727 0.743828H5.8455V2.39206H4.19727V0.743828Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M4.19727 14.7537H5.8455V16.4019H4.19727V14.7537Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                  </div>
-                  <div className="text-sm mr-1">Tlore</div>
-                  <div className="text-sm">12.456788</div>
-                </div>
-
-                <div className="w-1/6">
-                  <div className="text-sm">abxasd...12xX...</div>
-                </div>
-                <div className="w-1/6">
-                  <div className="text-sm">07 July 2022</div>
-                </div>
-                <div className="w-1/6">
-                  <div className="flex items-center rounded-full px-4 w-24 py-0.5 bg-teal text-xs uppercase">
-                    Rewarded
-                  </div>
-                </div>
-              </div>
-            </div>
+            ) : (
+              ""
+            )}
           </div>
         </main>
       </div>

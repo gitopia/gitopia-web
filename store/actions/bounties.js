@@ -2,7 +2,7 @@ import { notify } from "reapop";
 import { sendTransaction, setupTxClients } from "./env";
 import { updateUserBalance } from "./wallet";
 import { BountyParent } from "@gitopia/gitopia-js/types/gitopia/bounty";
-export const createBounty = (amount, expiry, parentId, parent) => {
+export const createBounty = (amount, tokenDenom, expiry, parentId, parent) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
@@ -17,7 +17,7 @@ export const createBounty = (amount, expiry, parentId, parent) => {
         ];
         const send = {
           creator: wallet.selectedAddress,
-          amount: [{ denom: "utlore", amount: amount }],
+          amount: [{ denom: tokenDenom, amount: amount }],
           expiry: expiry,
           parentId: parentId,
           parent: parent === "issue" ? BountyParent.BOUNTY_PARENT_ISSUE : "",
