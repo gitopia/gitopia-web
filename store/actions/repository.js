@@ -94,6 +94,8 @@ export const createIssue = ({
   labels = [],
   weight = 0,
   assignees = [],
+  bountyAmount = [],
+  bountyExpiry = 0,
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "issue")))
@@ -118,6 +120,9 @@ export const createIssue = ({
     }
     if (weight) {
       issue.weight = weight;
+    }
+    if (bountyAmount.length) {
+      issue.bountyAmount = bountyAmount;
     }
 
     try {
