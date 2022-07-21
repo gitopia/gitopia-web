@@ -35,7 +35,7 @@ function CreateBounty(props) {
         denom: "btc",
         amount: "97949",
       },
-    ]);*/
+    ]); */
   }, [id]);
   const handleClick = () => {
     setCounter(counter + 1);
@@ -50,11 +50,16 @@ function CreateBounty(props) {
     setMaxAmount(array);
   };
 
-  const handleAdd = (data) => {
+  const handleDelete = (index) => {
+    let arr = props.bountyAmount;
+    arr.splice(index, 1);
+    props.setBountyAmount(arr);
+  };
+
+  const handleAdd = (amountToSend = [], expiry = 0) => {
     setClick(true);
-    let array = props.bountiesList.slice();
-    array.push(data);
-    props.setBountiesList(array);
+    props.setBountyExpiry(expiry);
+    props.setBountyAmount(amountToSend);
   };
   const handleAmountOnChange = (value, index) => {
     const array = amount.slice();
@@ -117,25 +122,34 @@ function CreateBounty(props) {
       ) : (
         <div className="flex">
           {click ? (
-            props.bountiesList.map((bounty) => {
-              return (
-                <div className="flex">
-                  {console.log(bounty)}
-                  {bounty.amount.map((a) => {
-                    return (
-                      <div
-                        className={
-                          "flex text-sm box-border bg-grey-500 mr-2 h-11 p-3 rounded-lg uppercase"
-                        }
+            <div className="flex">
+              {props.bountyAmount.map((a, i) => {
+                return (
+                  <div
+                    className={
+                      "flex text-sm box-border bg-grey-500 mr-2 h-11 p-3 rounded-lg uppercase"
+                    }
+                  >
+                    <div className="mr-2">{a.denom}</div>
+                    <div>{a.amount}</div>
+                    <div className="link ml-8 mt-1 no-underline" onClick={""}>
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 14 14"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        <div className="mr-2">{a.denom}</div>
-                        <div>{a.amount}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })
+                        <path
+                          d="M13.5303 1.5304C13.8231 1.23751 13.8231 0.762637 13.5303 0.469744C13.2374 0.176851 12.7625 0.176851 12.4696 0.469744L13.5303 1.5304ZM0.46967 12.4697C0.176777 12.7626 0.176777 13.2374 0.46967 13.5303C0.762563 13.8232 1.23744 13.8232 1.53033 13.5303L0.46967 12.4697ZM12.4696 13.5303C12.7625 13.8231 13.2374 13.8231 13.5303 13.5303C13.8231 13.2374 13.8231 12.7625 13.5303 12.4696L12.4696 13.5303ZM1.53033 0.46967C1.23744 0.176777 0.762563 0.176777 0.46967 0.46967C0.176777 0.762563 0.176777 1.23744 0.46967 1.53033L1.53033 0.46967ZM12.4696 0.469744L0.46967 12.4697L1.53033 13.5303L13.5303 1.5304L12.4696 0.469744ZM13.5303 12.4696L1.53033 0.46967L0.46967 1.53033L12.4696 13.5303L13.5303 12.4696Z"
+                          fill="#E5EDF5"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           ) : (
             <label
               className="link link-primary no-underline modal-button mt-3.5 ml-3"
@@ -347,11 +361,6 @@ function CreateBounty(props) {
                     };
                     amountToSend.push(a);
                   }
-                  console.log(
-                    amountToSend,
-                    dayjs(expiry.toString()).unix(),
-                    "issue"
-                  );
                   {
                     props.issue
                       ? props.createBounty(
@@ -360,11 +369,10 @@ function CreateBounty(props) {
                           props.issue.iid,
                           "issue"
                         )
-                      : handleAdd({
-                          amount: amountToSend,
-                          expiry: dayjs(expiry.toString()).unix(),
-                          parent: "issue",
-                        });
+                      : handleAdd(
+                          amountToSend,
+                          dayjs(expiry.toString()).unix()
+                        );
                   }
                   setAmount([]);
                   setCounter(1);

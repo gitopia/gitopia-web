@@ -48,6 +48,8 @@ function RepositoryIssueCreateView(props) {
   const [amount, setAmount] = useState(0);
   const [validateAmountError, setValidateAmountError] = useState("");
   const [bountiesList, setBountiesList] = useState([]);
+  const [bountyAmount, setBountyAmount] = useState([]);
+  const [bountyExpiry, setBountyExpiry] = useState(0);
 
   function isNaturalNumber(n) {
     n = n.toString();
@@ -86,8 +88,6 @@ function RepositoryIssueCreateView(props) {
 
   const createIssue = async () => {
     setPostingIssue(true);
-    var bountyAmount = bountiesList[0].amount;
-    var bountyExpiry = bountiesList[0].expiry;
     if (validateIssue()) {
       const issue = {
         title,
@@ -162,8 +162,10 @@ function RepositoryIssueCreateView(props) {
                   />
                 </div>
                 <CreateBounty
-                  bountiesList={bountiesList}
-                  setBountiesList={setBountiesList}
+                  setBountyExpiry={setBountyExpiry}
+                  setBountyAmount={setBountyAmount}
+                  bountyAmount={bountyAmount}
+                  bountyExpiry={bountyExpiry}
                 />
                 <MarkdownEditor value={description} setValue={setDescription} />
                 <div className="text-right mt-4">

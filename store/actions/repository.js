@@ -124,7 +124,9 @@ export const createIssue = ({
     if (bountyAmount.length) {
       issue.bountyAmount = bountyAmount;
     }
-
+    if (bountyExpiry) {
+      issue.bountyExpiry = bountyExpiry;
+    }
     try {
       const message = await env.txClient.msgCreateIssue(issue);
       const result = await sendTransaction({ message })(dispatch, getState);
