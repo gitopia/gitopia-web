@@ -360,7 +360,7 @@ export default function Landing() {
               <li>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="https://medium.com/gitopia"
+                  href="https://blog.gitopia.com"
                   target="_blank"
                 >
                   Blog
