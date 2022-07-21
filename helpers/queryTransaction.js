@@ -6,36 +6,26 @@ import { useRouter } from "next/router";
 function QueryTransaction(props) {
   const router = useRouter();
   const QUERY_TRANSACTIONS = gql`
-  query UserContributionsByBlockTime {
-    transaction(
-      limit: 100
-      where: {
-        messagesByTransactionHash: {
-          type: {
-            _in: [
-              "gitopia.gitopia.gitopia.MsgMultiSetRepositoryBranch"
-              "gitopia.gitopia.gitopia.MsgMultiSetRepositoryTag"
-              "gitopia.gitopia.gitopia.MsgCreatePullRequest"
-              "gitopia.gitopia.gitopia.MsgCreateIssue"
-              "gitopia.gitopia.gitopia.MsgCreateComment"
-            ]
-          }
-          involved_accounts_addresses: {
-            _eq: "{${router.query.userId}}"
-          }
-        }
-      }
-      order_by: { block: { timestamp: desc } }
-    ) {
+  query UserContributionsByBlockTime($addresses: _text = "", $types: _text = "") {
+  messages_by_address(args: {limit: "10", offset: "0", addresses: $addresses, types: $types}, order_by: {transaction: {block: {timestamp: desc}}}) {
+    transaction {
       block {
         timestamp
       }
     }
+    value
   }
+}
+
 `;
   var localizedFormat = require("dayjs/plugin/localizedFormat");
   dayjs.extend(localizedFormat);
-  const { loading, error, data } = useQuery(QUERY_TRANSACTIONS);
+  const { loading, error, data } = useQuery(QUERY_TRANSACTIONS, {
+    variables: {
+      addresses: "{" + router.query.userId + "}",
+      types: '{"gitopia.gitopia.gitopia.MsgMultiSetRepositoryBranch","gitopia.gitopia.gitopia.MsgMultiSetRepositoryTag", "gitopia.gitopia.gitopia.MsgCreatePullRequest", "gitopia.gitopia.gitopia.MsgCreateIssue", "gitopia.gitopia.gitopia.MsgCreateComment"}'
+    }
+  });
   let contributionValues = [];
   let count = 0;
   useEffect(() => {
@@ -51,8 +41,8 @@ function QueryTransaction(props) {
     return null;
   }
   let contributions = {};
-  data.transaction.map((tx) => {
-    let date = dayjs(tx.block.timestamp).format("YYYY-MM-DD");
+  data.messages_by_address.map((tx) => {
+    let date = dayjs(tx.transaction.block.timestamp).format("YYYY-MM-DD");
     if (date in contributions) {
       contributions[date]++;
     } else {
