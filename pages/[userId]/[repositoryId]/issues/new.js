@@ -45,42 +45,8 @@ function RepositoryIssueCreateView(props) {
   const [labels, setLabels] = useState([]);
   const [postingIssue, setPostingIssue] = useState(false);
   const [allLabels, setAllLabels] = useState([]);
-  const [amount, setAmount] = useState(0);
-  const [validateAmountError, setValidateAmountError] = useState("");
-  const [bountiesList, setBountiesList] = useState([]);
   const [bountyAmount, setBountyAmount] = useState([]);
   const [bountyExpiry, setBountyExpiry] = useState(0);
-
-  function isNaturalNumber(n) {
-    n = n.toString();
-    var n1 = Math.abs(n),
-      n2 = parseInt(n, 10);
-    return !isNaN(n1) && n2 === n1 && n1.toString() === n;
-  }
-
-  const validateAmount = async (amount) => {
-    setValidateAmountError(null);
-    let Vamount = Number(amount);
-    if (amount == "" || amount == 0) {
-      setValidateAmountError("Enter Valid Amount");
-    }
-
-    let balance = props.loreBalance;
-    if (props.advanceUser === false) {
-      Vamount = Vamount * 1000000;
-    }
-    if (Vamount > 0 && isNaturalNumber(Vamount)) {
-      if (Vamount < 10 || Vamount > 0) {
-        if (Vamount > balance) {
-          setValidateAmountError("Insufficient Balance");
-        }
-      } else {
-        setValidateAmountError("Amount should be in range 1-10");
-      }
-    } else {
-      setValidateAmountError("Enter a Valid Amount");
-    }
-  };
 
   const validateIssue = () => {
     return true;

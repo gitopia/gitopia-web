@@ -96,6 +96,14 @@ function RepositoryIssueView(props) {
     setIssue(i);
   };
 
+  const refreshBounty = async () => {
+    const b = await getBounties();
+    var bountyArray = [];
+    b.map((bounty) => {
+      bounty.parentId == issue.iid ? bountyArray.push(bounty) : "";
+    });
+    setBounties(bountyArray);
+  };
   return (
     <div
       data-theme="dark"
@@ -153,7 +161,7 @@ function RepositoryIssueView(props) {
           <div className="mt-8">
             <div className="flex">
               <div className="">Title goes here</div>
-              <CreateBounty issue={issue} id={id} />
+              <CreateBounty issue={issue} id={id} onUpdate={refreshBounty} />
             </div>
             {bounties.length > 0 ? (
               <div className="border border-gray-700 rounded mt-4 text-justify divide-y divide-gray-700">

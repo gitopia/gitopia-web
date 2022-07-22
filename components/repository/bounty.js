@@ -14,11 +14,13 @@ function CreateBounty(props) {
   const [tokenDenom, setTokenDenom] = useState([]);
   const [maxAmount, setMaxAmount] = useState([]);
   const [validateAmountError, setValidateAmountError] = useState("");
-  const [click, setClick] = useState(false);
   useEffect(async () => {
+    /*
     const b = await getBalances(id);
-    setBalances(b.balances);
-    /* setBalances([
+    if (b) {
+      setBalances(b.balances);
+    } */
+    setBalances([
       {
         denom: "utlore",
         amount: "89794159",
@@ -35,8 +37,9 @@ function CreateBounty(props) {
         denom: "btc",
         amount: "97949",
       },
-    ]); */
+    ]);
   }, [id]);
+
   const handleClick = () => {
     setCounter(counter + 1);
     let array = amount.slice();
@@ -53,11 +56,10 @@ function CreateBounty(props) {
   const handleDelete = (index) => {
     let arr = props.bountyAmount;
     arr.splice(index, 1);
-    props.setBountyAmount(arr);
+    props.setBountyAmount([...arr]);
   };
 
   const handleAdd = (amountToSend = [], expiry = 0) => {
-    setClick(true);
     props.setBountyExpiry(expiry);
     props.setBountyAmount(amountToSend);
   };
@@ -121,7 +123,7 @@ function CreateBounty(props) {
         </label>
       ) : (
         <div className="flex">
-          {click ? (
+          {props.bountyAmount.length > 0 ? (
             <div className="flex">
               {props.bountyAmount.map((a, i) => {
                 return (
@@ -132,7 +134,12 @@ function CreateBounty(props) {
                   >
                     <div className="mr-2">{a.denom}</div>
                     <div>{a.amount}</div>
-                    <div className="link ml-8 mt-1 no-underline" onClick={""}>
+                    <div
+                      className="link ml-8 mt-1 no-underline"
+                      onClick={() => {
+                        handleDelete(i);
+                      }}
+                    >
                       <svg
                         width="14"
                         height="14"
@@ -152,7 +159,7 @@ function CreateBounty(props) {
             </div>
           ) : (
             <label
-              className="link link-primary no-underline modal-button mt-3.5 ml-3"
+              className="link link-primary no-underline modal-button mt-3.5 ml-1"
               htmlFor="my-modal"
             >
               <div className="flex">
@@ -180,7 +187,7 @@ function CreateBounty(props) {
 
       <input type="checkbox" id="my-modal" className="modal-toggle" />
       <label htmlFor="my-modal" className="modal cursor-pointer">
-        <label className="modal-box relative">
+        <label className="modal-box relative bg-grey-500">
           <div className="flex mb-4">
             <div className="w-11/12 font-bold text-sm text-type">
               Add bounty
@@ -363,12 +370,18 @@ function CreateBounty(props) {
                   }
                   {
                     props.issue
-                      ? props.createBounty(
-                          amountToSend,
-                          dayjs(expiry.toString()).unix(),
-                          props.issue.iid,
-                          "issue"
-                        )
+                      ? props
+                          .createBounty(
+                            amountToSend,
+                            dayjs(expiry.toString()).unix(),
+                            props.issue.iid,
+                            "issue"
+                          )
+                          .then((res) => {
+                            if (res && res.code === 0) {
+                              props.onUpdate() ? props.onUpdate() : "";
+                            }
+                          })
                       : handleAdd(
                           amountToSend,
                           dayjs(expiry.toString()).unix()
