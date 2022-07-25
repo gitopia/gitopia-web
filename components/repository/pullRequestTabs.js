@@ -32,6 +32,15 @@ export default function PullRequestTabs({ hrefBase, active }) {
             Files Changed
           
         </Link>
+        <Link href={hrefBase + "/issues"}>
+          <a
+            className={
+              "tab tab-lifted" + (active === "issues" ? " tab-active" : "")
+            }
+          >
+            Issues
+          </a>
+        </Link>
       </div>
       <div
         className="flex-1 border-b"

@@ -18,6 +18,7 @@ export default function usePullRequest(repository) {
     reviewers: [],
     assignees: [],
     labels: [],
+    issues: [],
     head: { repository: {} },
     base: { repository: {} },
   });
