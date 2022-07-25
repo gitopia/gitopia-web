@@ -129,3 +129,63 @@ export const deleteBounty = (id) => {
     }
   };
 };
+
+export const linkPullIssuebyIid = (id, issueIid) => {
+  return async (dispatch, getState) => {
+    const { wallet } = getState();
+    if (wallet.activeWallet) {
+      try {
+        await setupTxClients(dispatch, getState);
+        const { env } = getState();
+        const send = {
+          creator: wallet.selectedAddress,
+          id: id,
+          issueIid: issueIid,
+        };
+        const message = await env.txClient.msgLinkPullRequestIssueByIid(send);
+        const result = await sendTransaction({ message })(dispatch, getState);
+        updateUserBalance()(dispatch, getState);
+        if (result) {
+          if (result.code === 0) {
+            dispatch(notify("Issue Linked to Pull Request", "info"));
+          } else {
+            dispatch(notify(result.rawLog, "error"));
+          }
+        }
+      } catch (e) {
+        console.error(e);
+        dispatch(notify(e.message, "error"));
+      }
+    }
+  };
+};
+
+export const unlinkPullIssuebyIid = (id, issueIid) => {
+  return async (dispatch, getState) => {
+    const { wallet } = getState();
+    if (wallet.activeWallet) {
+      try {
+        await setupTxClients(dispatch, getState);
+        const { env } = getState();
+        const send = {
+          creator: wallet.selectedAddress,
+          id: id,
+          issueIid: issueIid,
+        };
+        const message = await env.txClient.msgUnlinkPullRequestIssueByIid(send);
+        const result = await sendTransaction({ message })(dispatch, getState);
+        updateUserBalance()(dispatch, getState);
+        if (result) {
+          if (result.code === 0) {
+            dispatch(notify("Issue Unlinked to Pull Request", "info"));
+          } else {
+            dispatch(notify(result.rawLog, "error"));
+          }
+        }
+      } catch (e) {
+        console.error(e);
+        dispatch(notify(e.message, "error"));
+      }
+    }
+  };
+};
