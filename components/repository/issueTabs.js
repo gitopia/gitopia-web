@@ -35,6 +35,16 @@ function RepositoryIssuesTabs({ repository, active, issueId, ...props }) {
             <span>Bounties</span>
           </a>
         </Link>
+        <Link href={hrefBase + "/pulls"}>
+          <a
+            className={
+              "tab tab-lifted" +
+              (active === "linked-pulls" ? " tab-active" : "")
+            }
+          >
+            <span>Linked Pull Requests</span>
+          </a>
+        </Link>
       </div>
       <div className="border-b border-grey relative -top-px z-0" />
     </div>

@@ -11,11 +11,6 @@ import shrinkAddress from "../../../../../helpers/shrinkAddress";
 import RepositoryHeader from "../../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
 import Footer from "../../../../../components/footer";
-import {
-  deleteComment,
-  updateIssueLabels,
-  updateIssueAssignees,
-} from "../../../../../store/actions/repository";
 import useRepository from "../../../../../hooks/useRepository";
 import IssuePullTitle from "../../../../../components/repository/issuePullTitle";
 import { useErrorStatus } from "../../../../../hooks/errorHandler";
@@ -377,9 +372,6 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  deleteComment,
-  updateIssueAssignees,
-  updateIssueLabels,
   updateBountyExpiry,
   closeBounty,
 })(RepositoryIssueView);
