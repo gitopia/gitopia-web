@@ -197,20 +197,22 @@ function RepositoryPullIssuesView(props) {
                   <div
                     className="link flex mt-3 mb-3 pt-3 no-underline"
                     key={k}
-                    onClick={() => {
-                      if (window) {
-                        window.open(
-                          "/" +
-                            repository.creator +
-                            "/" +
-                            repository.name +
-                            "/issues/" +
-                            i.iid
-                        );
-                      }
-                    }}
                   >
-                    <div className="w-3/5">
+                    <div
+                      className="w-3/5"
+                      onClick={() => {
+                        if (window) {
+                          window.open(
+                            "/" +
+                              repository.creator +
+                              "/" +
+                              repository.name +
+                              "/issues/" +
+                              i.iid
+                          );
+                        }
+                      }}
+                    >
                       {
                         <div className="flex">
                           <svg

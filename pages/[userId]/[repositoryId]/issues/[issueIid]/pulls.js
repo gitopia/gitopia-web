@@ -203,7 +203,7 @@ function RepositoryIssueLinkedPullsView(props) {
               {pulls.map((p, k) => {
                 return (
                   <div
-                    className="flex mt-3 mb-3 pt-3"
+                    className="flex mt-3 mb-3 pt-3 hover:cursor-pointer"
                     key={k}
                     onClick={() => {
                       if (window) {
@@ -235,7 +235,7 @@ function RepositoryIssueLinkedPullsView(props) {
                         </div>
                       }
                     </div>
-                    <div className="w-1/12 flex mr-4">
+                    <div className="w-1/12 flex ml-4">
                       <div className="avatar flex-none items-center">
                         <div className={"w-8 h-8 rounded-full"}>
                           <img
@@ -247,7 +247,7 @@ function RepositoryIssueLinkedPullsView(props) {
                         </div>
                       </div>
                     </div>
-                    <div className="w-1/12 flex mr-8 mt-1.5">
+                    <div className="w-1/12 flex mr-8 mt-1.5 ml-2">
                       <div className="text-sm mr-3 font-bold text-type-secondary">
                         {p.comments.length}
                       </div>
