@@ -6,69 +6,22 @@ import { updateUserBio, updateUserAvatar } from "../../store/actions/user";
 import { notify } from "reapop";
 import getUser from "../../helpers/getUser";
 import { useEffect } from "react";
-import TextInput from "../textInput";
+import UserAvatar from "./avatar";
+import UserBio from "./bio";
+import UserName from "./name";
+import UserUsername from "./username";
+
 function UserHeader(props) {
-  const [validateImageUrlError, setValidateImageUrlError] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const name = props.user.creator ? props.user.creator : "u";
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [previewLoading, setPreviewLoading] = useState(false);
-  const [previewAvatarUrl, setPreviewAvatarUrl] = useState(
-    "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&name=.&background=2d3845"
-  );
-  const [previewAvatarText, setPreviewAvatarText] =
-    useState("Nothing to Preview");
+
   const [user, setUser] = useState({
     creator: "",
     repositories: [],
     organizations: [],
   });
-  const [isEditing, setIsEditing] = useState(false);
-  const [newBio, setNewBio] = useState("");
-  const [newBioHint, setNewBioHint] = useState({
-    shown: false,
-    type: "info",
-    message: "",
-  });
-  const [savingBio, setSavingBio] = useState(false);
 
-  useEffect(() => {
-    setNewBio(user.bio);
-    setNewBioHint({ shown: false });
-  }, [user]);
+  const [isEditable, setIsEditable] = useState(false);
 
-  const validateBio = (bio) => {
-    setNewBioHint({
-      ...newBioHint,
-      shown: false,
-    });
-
-    if (bio === user.bio) {
-      setNewBioHint({
-        shown: true,
-        type: "error",
-        message: "Bio is same as earlier",
-      });
-      return false;
-    }
-    return true;
-  };
-
-  const updateBio = async () => {
-    setSavingBio(true);
-    if (validateBio(newBio)) {
-      const res = await props.updateUserBio(newBio);
-
-      if (res && res.code === 0) {
-        if (refresh) await refresh();
-        setIsEditing(false);
-      } else {
-        if (onError) console.log("error");
-      }
-    }
-    setSavingBio(false);
-  };
   useEffect(async () => {
     const u = await getUser(router.query.userId);
     if (u) {
@@ -77,40 +30,11 @@ function UserHeader(props) {
       setErrorStatusCode(404);
     }
   }, [router.query.userId]);
-  const validateImageUrl = async (url) => {
-    if (url == "") {
-      setValidateImageUrlError(null);
-      setPreviewAvatarText("Nothing to Preview");
-      setPreviewAvatarUrl(
-        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
-      );
-      return;
-    }
-    setValidateImageUrlError(null);
-    setPreviewLoading(true);
-    setPreviewAvatarText("Loading...");
-    setPreviewAvatarUrl(
-      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
-    );
-    var image = new Image();
-    image.onload = function () {
-      if (this.width > 0) {
-        setPreviewLoading(false);
-        setValidateImageUrlError(null);
-        setPreviewAvatarText("");
-        setPreviewAvatarUrl(imageUrl);
-      }
-    };
-    image.onerror = function () {
-      setPreviewLoading(false);
-      setValidateImageUrlError("image doesn't exist");
-      setPreviewAvatarText("");
-      setPreviewAvatarUrl(
-        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=!&background=2d3845&color=6F7A8F"
-      );
-    };
-    image.src = url;
-  };
+
+  useEffect(() => {
+    setIsEditable(user.creator === props.selectedAddress);
+  }, [user.creator, props.selectedAddress]);
+
   const refresh = async () => {
     const u = await getUser(router.query.userId);
     if (u) {
@@ -121,197 +45,34 @@ function UserHeader(props) {
   };
   return (
     <div className="flex flex-1 mb-8">
-      <div>
-        <div className="indicator">
+      <UserAvatar user={user} isEditable={isEditable} />
+      <div className="flex flex-1 text-md items-start">
+        <div className="pl-12">
+          <UserName user={user} isEditable={isEditable} />
+          <div className="text-type-secondary mb-2">
+            <UserUsername user={user} isEditable={isEditable} />
+            &middot;
+            <span className="ml-2">{user.creator}</span>
+          </div>
+          <UserBio user={user} isEditable={isEditable} />
+        </div>
+      </div>
+      {/* <div className="form-control flex justify-end">
+        <label className="label cursor-pointer">
+          <span className="text-xs text-type-secondary label-text mr-2">
+            Edit Profile
+          </span>
           <input
             type="checkbox"
-            id="avatar-url-modal"
-            className="modal-toggle"
+            className="toggle toggle-sm toggle-primary"
+            checked={isEditable}
+            onClick={(e) => {
+              setIsEditable(e.target.checked);
+            }}
           />
-          <div className="modal">
-            <div className="modal-box relative">
-              <label
-                htmlFor="avatar-url-modal"
-                className="btn btn-sm btn-circle absolute right-2 top-2"
-              >
-                ✕
-              </label>
-
-              <div className="avatar flex-none mr-8 items-center mx-36">
-                <div className={"relative w-40 h-40 rounded-full"}>
-                  <img src={previewAvatarUrl} />
-                  <div className="absolute w-full bottom-16 text-center italic text-grey-300 text-sm">
-                    {previewAvatarText}
-                  </div>
-                </div>
-              </div>
-              <div>
-                <label className="label">
-                  <span className="label-text text-xs font-bold text-gray-400">
-                    IMAGE URL
-                  </span>
-                </label>
-                <div>
-                  <input
-                    name="Image Url"
-                    placeholder="Enter Url"
-                    autoComplete="off"
-                    value={imageUrl}
-                    onKeyUp={async (e) => {
-                      await validateImageUrl(e.target.value);
-                    }}
-                    onChange={(e) => {
-                      setImageUrl(e.target.value);
-                    }}
-                    className="w-full h-11 input input-xs input-ghost input-bordered "
-                  />
-                </div>
-                {validateImageUrlError ? (
-                  <label className="label">
-                    <span className="label-text-alt text-error">
-                      {validateImageUrlError}
-                    </span>
-                  </label>
-                ) : (
-                  ""
-                )}
-                {previewLoading ? (
-                  <label className="label">
-                    <span className="label-text-alt text-amber-300">
-                      checking avatar url...
-                    </span>
-                  </label>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="modal-action ml-auto w-28">
-                <label
-                  htmlFor="avatar-url-modal"
-                  className={
-                    "btn btn-sm btn-primary btn-block " +
-                    (loading ? "loading" : "")
-                  }
-                  onClick={async (e) => {
-                    setLoading(true);
-                    const res = await props.updateUserAvatar(imageUrl);
-                    if (res && res.code === 0) {
-                      props.notify("Your user avatar is updated", "info");
-                      if (refresh) await refresh();
-                    }
-                    setImageUrl("");
-                    setPreviewAvatarText("Nothing to Preview");
-                    setPreviewAvatarUrl(
-                      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
-                    );
-                    setLoading(false);
-                  }}
-                  disabled={
-                    validateImageUrlError !== null ||
-                    previewLoading == true ||
-                    imageUrl == ""
-                  }
-                >
-                  UPDATE
-                </label>
-              </div>
-            </div>
-          </div>
-          {router.query.userId == props.selectedAddress ? (
-            <label htmlFor="avatar-url-modal" className="modal-button">
-              <div className="indicator-item indicator-bottom mr-14 mb-6 h-7.5 w-7.5 bg-grey rounded-full p-1 border border-black">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M19 20V18C19 16.3431 17.6569 15 16 15H8C6.34315 15 5 16.3431 5 18V20"
-                    stroke="#66CE67"
-                    strokeWidth="2"
-                  />
-                  <circle
-                    cx="12"
-                    cy="8"
-                    r="3"
-                    stroke="#66CE67"
-                    strokeWidth="2"
-                  />
-                </svg>
-              </div>
-            </label>
-          ) : (
-            ""
-          )}
-          <div className="avatar flex-none mr-8 items-center">
-            <div className={"w-40 h-40 rounded-full"}>
-              <img
-                src={
-                  user.avatarUrl == ""
-                    ? "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                      name.slice(-1)
-                    : user.avatarUrl
-                }
-              />
-            </div>
-          </div>
-        </div>
-        <div className="mx-9 text-type-secondary text mt-1">
-          <p>{shrinkAddress(user.creator)}</p>
-        </div>
-      </div>
-      <div className="flex flex-1 text-type text-md items-center">
-        <div className="pl-12">
-          <div className="text-2xl pb-3">About</div>
-          {/*<div
-            className={
-              "h-16 w-96 pr-5 pt-4 text-sm" +
-              (user.bio == "" ? " text-grey italic" : " text-grey-100")
-            }
-          >
-            {user.bio == "" ? "No Bio Provided" : user.bio}
-          </div>*/}
-          <div className="flex-1 h-20 w-96 pr-20 mr-10">
-            {isEditing ? (
-              <TextInput
-                type="text"
-                name="bio"
-                placeholder="Bio"
-                multiline={true}
-                value={newBio}
-                setValue={setNewBio}
-                hint={newBioHint}
-                size="sm"
-              />
-            ) : (
-              <div>
-                <span
-                  className={
-                    "h-16 w-96 pr-5 pt-4 text-sm" +
-                    (user.bio == "" ? " text-grey italic" : " text-grey-100")
-                  }
-                >
-                  {user.bio == "" ? "No Bio Provided" : user.bio}
-                </span>
-              </div>
-            )}
-          </div>
-          <div className="flex mt-10">
-            <div className="text-type-secondary text-xs font-semibold flex">
-              {user.followers == undefined ? "0" : user.followers.length}{" "}
-              followers
-            </div>
-            <div className="ml-6 text-type-secondary text-xs font-semibold flex">
-              {user.following == undefined ? "0" : user.following.length}{" "}
-              following
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="mt-5 mr-40">
-        <div className="text-xl">DAOs</div>
+        </label>
+      </div> */}
+      {/* <div className="text-xl">DAOs</div>
         <div className="flex mt-4">
           {user.organizations.length > 0 ? (
             user.organizations.map((dao) => {
@@ -333,54 +94,14 @@ function UserHeader(props) {
           ) : (
             <div className="text-type-secondary text-xs font-semibold">---</div>
           )}
-        </div>
-        {/*router.query.userId == props.selectedAddress ? (
+        </div> */}
+      {/*router.query.userId == props.selectedAddress ? (
           <div className="text-xs font-bold uppercase no-underline text-primary mt-20">
             EDIT PROFILE
           </div>
         ) : (
           ""
         )*/}
-        {isEditing ? (
-          <div className="flex flex-none w-60 btn-group ml-1">
-            <button
-              className="flex-1 btn btn-sm mt-20 text-xs "
-              onClick={() => {
-                setIsEditing(false);
-                setNewBio(user.bio);
-                setNewBioHint({ shown: false });
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              className={
-                "flex-1 btn btn-sm btn-primary mt-20 text-xs " +
-                (savingBio ? "loading" : "")
-              }
-              onClick={updateBio}
-              disabled={savingBio}
-            >
-              Save
-            </button>
-          </div>
-        ) : (
-          <>
-            {user.creator === props.selectedAddress ? (
-              <button
-                className="btn btn-sm btn-ghost text-xs font-bold uppercase no-underline text-primary mt-20"
-                onClick={() => {
-                  setIsEditing(true);
-                }}
-              >
-                EDIT PROFILE
-              </button>
-            ) : (
-              ""
-            )}
-          </>
-        )}
-      </div>
     </div>
   );
 }
