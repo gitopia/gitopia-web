@@ -61,7 +61,7 @@ export default function PublicTabs({
               <rect x="7" y="18" width="10" height="2" fill="#ADBECB" />
             </svg>
           </span>
-          <span>Owned Repositories</span>
+          <span>Repositories</span>
         </a>
       </Link>
       {!showPeople ? (
