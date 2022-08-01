@@ -2,10 +2,12 @@ import shrinkAddress from "../../helpers/shrinkAddress";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { connect } from "react-redux";
-import { updateUserBio, updateUserAvatar } from "../../store/actions/user";
+import {
+  updateUserBio,
+  updateUserAvatar,
+  getUserDetailsForSelectedAddress,
+} from "../../store/actions/user";
 import { notify } from "reapop";
-import { useErrorStatus } from "../../hooks/errorHandler";
-import getUser from "../../helpers/getUser";
 import { useEffect } from "react";
 import UserAvatar from "./avatar";
 import UserBio from "./bio";
@@ -13,38 +15,17 @@ import UserName from "./name";
 import UserUsername from "./username";
 
 function UserHeader(props) {
-  const router = useRouter();
-  const { setErrorStatusCode } = useErrorStatus();
-
-  // const [user, setUser] = useState({
-  //   creator: "",
-  //   repositories: [],
-  //   organizations: [],
-  // });
-
   const [isEditable, setIsEditable] = useState(false);
 
-  // useEffect(async () => {
-  //   const u = await getUser(router.query.userId);
-  //   if (u) {
-  //     setUser(u);
-  //   } else {
-  //     // setErrorStatusCode(404);
-  //   }
-  // }, [router.query.userId]);
+  const refresh = async () => {
+    await props.refresh();
+    await props.getUserDetailsForSelectedAddress();
+  };
 
   useEffect(() => {
     setIsEditable(props.user.creator === props.selectedAddress);
   }, [props.user.creator, props.selectedAddress]);
 
-  const refresh = async () => {
-    const u = await getUser(router.query.userId);
-    if (u) {
-      setUser(u);
-    } else {
-      setErrorStatusCode(404);
-    }
-  };
   return (
     <div className="flex flex-1 mb-8">
       <UserAvatar user={props.user} isEditable={isEditable} refresh={refresh} />
@@ -120,5 +101,6 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   updateUserAvatar,
   updateUserBio,
+  getUserDetailsForSelectedAddress,
   notify,
 })(UserHeader);

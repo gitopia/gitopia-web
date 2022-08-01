@@ -51,13 +51,12 @@ function AccountView(props) {
   const [totalContributions, setTotalContributions] = useState(0);
   const validAddress = new RegExp("gitopia[a-z0-9]{39}");
 
-  useEffect(async () => {
+  const getId = async () => {
     if (validAddress.test(router.query.userId)) {
       const [u, o] = await Promise.all([
         getUser(router.query.userId),
         getOrganization(router.query.userId),
       ]);
-      console.log(u, o);
       if (u) {
         setUser(u);
         setOrg({ name: "", repositories: [] });
@@ -90,7 +89,9 @@ function AccountView(props) {
         setUser({ creator: "", repositories: [] });
       }
     }
-  }, [router.query]);
+  };
+
+  useEffect(getId, [router.query]);
 
   const getAllRepos = async () => {
     let letter = "x";
@@ -98,12 +99,10 @@ function AccountView(props) {
       const pr = user.repositories.map((r) => getRepository(r.id));
       const repos = await Promise.all(pr);
       setAllRepos(repos.reverse());
-      console.log(repos);
     } else if (org.id) {
       const pr = org.repositories.map((r) => getRepository(r.id));
       const repos = await Promise.all(pr);
       setAllRepos(repos.reverse());
-      console.log(repos);
       letter = org.name.slice(0, 1);
     }
     const link =
@@ -114,7 +113,7 @@ function AccountView(props) {
     setAvatarLink(link);
   };
 
-  useEffect(getAllRepos, [user, org]);
+  useEffect(getAllRepos, [user.creator, org.name]);
 
   const hrefBase = "/" + router.query.userId;
 
@@ -145,7 +144,7 @@ function AccountView(props) {
               </div>
             </div>
           ) : (
-            <UserHeader user={user} />
+            <UserHeader user={user} refresh={getId} />
           )}
           <div className="flex flex-1 mt-8 border-b border-grey">
             <PublicTabs

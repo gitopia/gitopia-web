@@ -78,9 +78,17 @@ function Header(props) {
     }
   };
 
-  let addressToShow = "";
+  let addressToShow = "",
+    avatarUrl = "";
   if (props.selectedAddress) {
     addressToShow = shrinkAddress(props.selectedAddress);
+    if (props.avatarUrl) {
+      avatarUrl = props.avatarUrl;
+    } else {
+      avatarUrl =
+        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
+        addressToShow.slice(-1);
+    }
   }
 
   function unreadNotification() {
@@ -401,12 +409,7 @@ function Header(props) {
                   <div className="avatar absolute left-1">
                     <div className="rounded-full w-10 h-10">
                       {props.activeWallet && !props.unlockingWallet ? (
-                        <img
-                          src={
-                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
-                            addressToShow.slice(-1)
-                          }
-                        />
+                        <img src={avatarUrl} />
                       ) : (
                         ""
                       )}
@@ -586,6 +589,7 @@ const mapStateToProps = (state) => {
     advanceUser: state.user.advanceUser,
     unlockingWallet: state.wallet.unlockingWallet,
     userNotification: state.userNotification,
+    avatarUrl: state.user.avatarUrl,
   };
 };
 

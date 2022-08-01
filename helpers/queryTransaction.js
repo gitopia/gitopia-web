@@ -6,25 +6,31 @@ import { useRouter } from "next/router";
 function QueryTransaction(props) {
   const router = useRouter();
   const QUERY_TRANSACTIONS = gql`
-  query UserContributionsByBlockTime($addresses: _text = "", $types: _text = "") {
-  messages_by_address(args: {limit: "10", offset: "0", addresses: $addresses, types: $types}, order_by: {transaction: {block: {timestamp: desc}}}) {
-    transaction {
-      block {
-        timestamp
+    query UserContributionsByBlockTime(
+      $addresses: _text = ""
+      $types: _text = ""
+    ) {
+      messages_by_address(
+        args: { limit: "10", offset: "0", addresses: $addresses, types: $types }
+        order_by: { transaction: { block: { timestamp: desc } } }
+      ) {
+        transaction {
+          block {
+            timestamp
+          }
+        }
+        value
       }
     }
-    value
-  }
-}
-
-`;
+  `;
   var localizedFormat = require("dayjs/plugin/localizedFormat");
   dayjs.extend(localizedFormat);
   const { loading, error, data } = useQuery(QUERY_TRANSACTIONS, {
     variables: {
       addresses: "{" + router.query.userId + "}",
-      types: '{"gitopia.gitopia.gitopia.MsgMultiSetRepositoryBranch","gitopia.gitopia.gitopia.MsgMultiSetRepositoryTag", "gitopia.gitopia.gitopia.MsgCreatePullRequest", "gitopia.gitopia.gitopia.MsgCreateIssue", "gitopia.gitopia.gitopia.MsgCreateComment"}'
-    }
+      types:
+        '{"gitopia.gitopia.gitopia.MsgMultiSetRepositoryBranch","gitopia.gitopia.gitopia.MsgMultiSetRepositoryTag", "gitopia.gitopia.gitopia.MsgCreatePullRequest", "gitopia.gitopia.gitopia.MsgCreateIssue", "gitopia.gitopia.gitopia.MsgCreateComment"}',
+    },
   });
   let contributionValues = [];
   let count = 0;
@@ -37,7 +43,7 @@ function QueryTransaction(props) {
     return null;
   }
   if (error) {
-    console.log(error);
+    console.error(error);
     return null;
   }
   let contributions = {};
