@@ -4,6 +4,7 @@ import { useState } from "react";
 import { connect } from "react-redux";
 import { updateUserBio, updateUserAvatar } from "../../store/actions/user";
 import { notify } from "reapop";
+import { useErrorStatus } from "../../hooks/errorHandler";
 import getUser from "../../helpers/getUser";
 import { useEffect } from "react";
 import UserAvatar from "./avatar";
@@ -13,27 +14,28 @@ import UserUsername from "./username";
 
 function UserHeader(props) {
   const router = useRouter();
+  const { setErrorStatusCode } = useErrorStatus();
 
-  const [user, setUser] = useState({
-    creator: "",
-    repositories: [],
-    organizations: [],
-  });
+  // const [user, setUser] = useState({
+  //   creator: "",
+  //   repositories: [],
+  //   organizations: [],
+  // });
 
   const [isEditable, setIsEditable] = useState(false);
 
-  useEffect(async () => {
-    const u = await getUser(router.query.userId);
-    if (u) {
-      setUser(u);
-    } else {
-      setErrorStatusCode(404);
-    }
-  }, [router.query.userId]);
+  // useEffect(async () => {
+  //   const u = await getUser(router.query.userId);
+  //   if (u) {
+  //     setUser(u);
+  //   } else {
+  //     // setErrorStatusCode(404);
+  //   }
+  // }, [router.query.userId]);
 
   useEffect(() => {
-    setIsEditable(user.creator === props.selectedAddress);
-  }, [user.creator, props.selectedAddress]);
+    setIsEditable(props.user.creator === props.selectedAddress);
+  }, [props.user.creator, props.selectedAddress]);
 
   const refresh = async () => {
     const u = await getUser(router.query.userId);
@@ -45,20 +47,28 @@ function UserHeader(props) {
   };
   return (
     <div className="flex flex-1 mb-8">
-      <UserAvatar user={user} isEditable={isEditable} refresh={refresh} />
+      <UserAvatar user={props.user} isEditable={isEditable} refresh={refresh} />
       <div className="flex flex-1 text-md items-start">
         <div className="pl-12">
-          <UserName user={user} isEditable={isEditable} refresh={refresh} />
+          <UserName
+            user={props.user}
+            isEditable={isEditable}
+            refresh={refresh}
+          />
           <div className="text-type-secondary mb-2">
             <UserUsername
-              user={user}
+              user={props.user}
               isEditable={isEditable}
               refresh={refresh}
             />
             &middot;
-            <span className="ml-2">{user.creator}</span>
+            <span className="ml-2">{props.user.creator}</span>
           </div>
-          <UserBio user={user} isEditable={isEditable} refresh={refresh} />
+          <UserBio
+            user={props.user}
+            isEditable={isEditable}
+            refresh={refresh}
+          />
         </div>
       </div>
       {/* <div className="form-control flex justify-end">
@@ -99,13 +109,6 @@ function UserHeader(props) {
             <div className="text-type-secondary text-xs font-semibold">---</div>
           )}
         </div> */}
-      {/*router.query.userId == props.selectedAddress ? (
-          <div className="text-xs font-bold uppercase no-underline text-primary mt-20">
-            EDIT PROFILE
-          </div>
-        ) : (
-          ""
-        )*/}
     </div>
   );
 }

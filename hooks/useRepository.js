@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import getUserRepository from "../helpers/getUserRepository";
+import getAnyRepository from "../helpers/getAnyRepository";
 import { useRouter } from "next/router";
 import { useErrorStatus } from "./errorHandler";
 
@@ -26,7 +26,7 @@ export default function useRepository() {
   const refreshRepository = () => setRefreshIndex((prevIndex) => prevIndex + 1);
 
   useEffect(async () => {
-    const r = await getUserRepository(
+    const r = await getAnyRepository(
       router.query.userId,
       router.query.repositoryId
     ).then((r) => {
