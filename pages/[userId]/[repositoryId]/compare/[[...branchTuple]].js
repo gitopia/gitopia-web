@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import find from "lodash/find";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
+import getAnyRepository from "../../../../helpers/getAnyRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
@@ -122,9 +122,9 @@ function RepositoryCompareView(props) {
         if (reposlug[0].includes("/")) {
           // forked repo name also given
           const ownerslug = reposlug[0].split("/");
-          sourceRepo = await getUserRepository(ownerslug[0], ownerslug[1]);
+          sourceRepo = await getAnyRepository(ownerslug[0], ownerslug[1]);
         } else {
-          sourceRepo = await getUserRepository(
+          sourceRepo = await getAnyRepository(
             reposlug[0],
             router.query.repositoryId
           );

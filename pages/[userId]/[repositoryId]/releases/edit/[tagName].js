@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 
-import getUserRepository from "../../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
 import MarkdownEditor from "../../../../../components/markdownEditor";

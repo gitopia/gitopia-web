@@ -20,6 +20,7 @@ import client from "../../helpers/apolloClient";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import ReactTooltip from "react-tooltip";
+import getWhois from "../../helpers/getWhois";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -48,21 +49,46 @@ function AccountView(props) {
   const [avatarLink, setAvatarLink] = useState("");
   const [contributions, setContributions] = useState([{}]);
   const [totalContributions, setTotalContributions] = useState(0);
+  const validAddress = new RegExp("gitopia[a-z0-9]{39}");
 
   useEffect(async () => {
-    const [u, o] = await Promise.all([
-      getUser(router.query.userId),
-      getOrganization(router.query.userId),
-    ]);
-    console.log(u, o);
-    if (u) {
-      setUser(u);
-      setOrg({ name: "", repositories: [] });
-    } else if (o) {
-      setOrg(o);
+    if (validAddress.test(router.query.userId)) {
+      const [u, o] = await Promise.all([
+        getUser(router.query.userId),
+        getOrganization(router.query.userId),
+      ]);
+      console.log(u, o);
+      if (u) {
+        setUser(u);
+        setOrg({ name: "", repositories: [] });
+      } else if (o) {
+        setOrg(o);
+      } else {
+        setErrorStatusCode(404);
+        setUser({ creator: "", repositories: [] });
+      }
     } else {
-      setErrorStatusCode(404);
-      setUser({ creator: "", repositories: [] });
+      const data = await getWhois(router.query.userId);
+      if (data?.ownerType === "USER") {
+        const u = await getUser(data.address);
+        if (u) {
+          setUser(u);
+        } else {
+          setErrorStatusCode(404);
+          setUser({ creator: "", repositories: [] });
+        }
+      } else if (data?.ownerType === "ORGANIZATION") {
+        const o = await getOrganization(data.address);
+        if (o) {
+          setOrg(o);
+        } else {
+          setErrorStatusCode(404);
+          setOrg({ name: "", repositories: [] });
+        }
+      } else {
+        setErrorStatusCode(404);
+        setUser({ creator: "", repositories: [] });
+      }
     }
   }, [router.query]);
 

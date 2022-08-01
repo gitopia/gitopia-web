@@ -4,7 +4,7 @@ import classnames from "classnames";
 import styles from "../styles/landing.module.css";
 import RepositoryMainTabs from "../components/repository/mainTabs";
 import getBranchSha from "../helpers/getBranchSha";
-import getUserRepository from "../helpers/getUserRepository";
+import getAnyRepository from "../helpers/getAnyRepository";
 import CommitDetailRow from "../components/repository/commitDetailRow";
 import FileBrowser from "../components/repository/fileBrowser";
 import RepositoryHeader from "../components/repository/header";
@@ -173,7 +173,7 @@ export default function Landing() {
     demoRepoBranch = "master";
 
   const initDemoRepo = async () => {
-    const repo = await getUserRepository(demoAddress, demoRepoName);
+    const repo = await getAnyRepository(demoAddress, demoRepoName);
     if (repo) {
       setRepository(repo);
       let branchSha = getBranchSha(repo.defaultBranch, repo.branches);
