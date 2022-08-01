@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { connect } from "react-redux";
-import { useRouter } from "next/router";
-import { updateUserAvatar } from "../../store/actions/user";
+import { updateUserUsername } from "../../store/actions/user";
 import { notify } from "reapop";
-import getUser from "../../helpers/getUser";
 import TextInput from "../textInput";
 
 function UserUsername(props = { isEditable: false }) {
@@ -18,6 +16,17 @@ function UserUsername(props = { isEditable: false }) {
   const reset = () => {
     setNewUsername(props.user.username);
     setNewUsernameHint({ shown: false });
+  };
+
+  const updateUsername = async () => {
+    setSavingUsername(true);
+    const res = await props.updateUserUsername(newUsername);
+    if (res && res.code === 0) {
+      props.notify("Your username is updated", "info");
+      if (props.refresh) await props.refresh();
+    }
+    setNewUsernameHint({ shown: false });
+    setSavingUsername(false);
   };
 
   return (
@@ -65,6 +74,7 @@ function UserUsername(props = { isEditable: false }) {
                 (savingUsername ? " loading" : "")
               }
               disabled={savingUsername}
+              onClick={updateUsername}
             >
               Update
             </button>
@@ -97,5 +107,6 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
+  updateUserUsername,
   notify,
 })(UserUsername);

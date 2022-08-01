@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import { updateUserAvatar } from "../../store/actions/user";
 import { notify } from "reapop";
-import getUser from "../../helpers/getUser";
 
 function UserAvatar(props = { isEditable: false }) {
   const name = props.user.creator ? props.user.creator : "u";
@@ -53,15 +52,6 @@ function UserAvatar(props = { isEditable: false }) {
       );
     };
     image.src = url;
-  };
-
-  const refresh = async () => {
-    const u = await getUser(router.query.userId);
-    if (u) {
-      setUser(u);
-    } else {
-      setErrorStatusCode(404);
-    }
   };
 
   return (
@@ -137,7 +127,7 @@ function UserAvatar(props = { isEditable: false }) {
                   const res = await props.updateUserAvatar(imageUrl);
                   if (res && res.code === 0) {
                     props.notify("Your user avatar is updated", "info");
-                    if (refresh) await refresh();
+                    if (props.refresh) await props.refresh();
                   }
                   setImageUrl("");
                   setPreviewAvatarText("Nothing to Preview");

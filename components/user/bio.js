@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { updateUserBio } from "../../store/actions/user";
 import { notify } from "reapop";
-import getUser from "../../helpers/getUser";
 import TextInput from "../textInput";
 
 function UserBio(props = { isEditable: false }) {
@@ -14,15 +13,6 @@ function UserBio(props = { isEditable: false }) {
     message: "",
   });
   const [savingBio, setSavingBio] = useState(false);
-
-  const refresh = async () => {
-    const u = await getUser(router.query.userId);
-    if (u) {
-      setUser(u);
-    } else {
-      setErrorStatusCode(404);
-    }
-  };
 
   const validateBio = (bio) => {
     setNewBioHint({
@@ -47,7 +37,7 @@ function UserBio(props = { isEditable: false }) {
       const res = await props.updateUserBio(newBio);
 
       if (res && res.code === 0) {
-        if (refresh) await refresh();
+        if (props.refresh) await props.refresh();
         setIsEditing(false);
       } else {
       }
