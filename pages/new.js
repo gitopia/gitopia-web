@@ -73,14 +73,6 @@ function NewRepository(props) {
       });
       return false;
     }
-    if (description === "") {
-      setDescriptionHint({
-        ...descriptionHint,
-        shown: true,
-        message: "Please enter a description",
-      });
-      return false;
-    }
     return true;
   };
 
