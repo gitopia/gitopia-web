@@ -40,7 +40,7 @@ export default function PullRequestHeader({
       <div className="mt-4 flex items-center">
         <span
           className={
-            "flex items-center rounded-full border pl-4 pr-6 py-2 mr-4 " +
+            "flex items-center rounded-full border pl-4 pr-6 py-1 mr-4 " +
             "border-" +
             pullRequestStateClass(pullRequest.state)
           }
@@ -52,7 +52,9 @@ export default function PullRequestHeader({
               pullRequestStateClass(pullRequest.state)
             }
           />
-          <span className="text-type uppercase">{pullRequest.state}</span>
+          <span className="text-type text-sm uppercase">
+            {pullRequest.state}
+          </span>
         </span>
         <span className="text-xs mr-2 text-type-secondary">
           {shrinkAddress(pullRequest.creator) + " wants to merge "}
