@@ -14,7 +14,7 @@ function GreetUser(props) {
     } else {
       setGreetingName("");
     }
-  }, [props.username]);
+  }, [props.username, props.address]);
 
   return props.address ? (
     <div>

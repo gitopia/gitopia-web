@@ -15,7 +15,7 @@ function TopRepositories({ repositories = [] }) {
         });
       }
       setRepos(newRepos);
-      if (repositories.length > 4) {
+      if (repositories.length > 5) {
         setHasMore(true);
       } else {
         setHasMore(false);

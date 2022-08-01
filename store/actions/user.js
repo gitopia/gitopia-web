@@ -1,18 +1,60 @@
-import { userActions } from "./actionTypes";
+import { userActions, walletActions } from "./actionTypes";
 import { sendTransaction, setupTxClients } from "./env";
 import { updateUserBalance } from "./wallet";
 import { notify } from "reapop";
 
-export const createUser = (username) => {
+export const createUser = ({ username, name, bio, avatarUrl }) => {
   return async (dispatch, getState) => {
     try {
       await setupTxClients(dispatch, getState);
       const { env, wallet } = getState();
       const message = await env.txClient.msgCreateUser({
         creator: wallet.selectedAddress,
+        username,
+        name,
+        bio,
+        avatarUrl,
       });
       const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
+      if (result && result.code === 0) {
+        console.log("User created successfully.. renaming wallet");
+        let oldWalletName = wallet.activeWallet.name;
+        let newWallet = wallet.activeWallet;
+        newWallet.name = username;
+        const CryptoJS = (await import("crypto-js")).default;
+        const encryptedWallet = CryptoJS.AES.encrypt(
+          JSON.stringify(newWallet),
+          newWallet.password
+        ).toString();
+        await dispatch({
+          type: walletActions.REMOVE_WALLET,
+          payload: {
+            name: oldWalletName,
+          },
+        });
+        await dispatch({
+          type: walletActions.ADD_WALLET,
+          payload: {
+            wallet: newWallet,
+            encryptedWallet,
+          },
+        });
+        await dispatch({
+          type: walletActions.STORE_WALLETS,
+        });
+        await dispatch({
+          type: walletActions.SET_ACTIVE_WALLET,
+          payload: { wallet: newWallet },
+        });
+        await dispatch({
+          type: userActions.INIT_DASHBOARDS,
+          payload: {
+            name: newWallet.name,
+            id: newWallet.accounts[0].address,
+          },
+        });
+      }
       return result;
     } catch (e) {
       dispatch(notify(e.message, "error"));
@@ -90,7 +132,6 @@ export const updateUserName = (name) => {
     try {
       await setupTxClients(dispatch, getState);
       const { env, wallet } = getState();
-      console.log(env.txClient);
       const message = await env.txClient.msgUpdateUserName({
         creator: wallet.selectedAddress,
         name,

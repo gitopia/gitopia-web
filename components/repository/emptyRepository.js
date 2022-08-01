@@ -105,22 +105,6 @@ export default function EmptyRepository(props) {
           </div>
         </div>
         <div className="rounded-md py-6 sm:py-8">
-          <div className="mb-4 sm:mb-8 text-type-tertiary">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-              />
-            </svg>
-          </div>
           <div className="py-4">
             <div className="flex mb-4">
               <div className="flex-1 text-xl">
@@ -183,22 +167,6 @@ export default function EmptyRepository(props) {
           </div>
         </div> */}
         <div className="rounded-md sm:py-8">
-          <div className="sm:mb-8 text-type-tertiary">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-              />
-            </svg>
-          </div>
           <div className="flex-none py-4">
             <div className="flex mb-4">
               <div className="flex-1 text-xl">

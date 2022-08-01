@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { connect } from "react-redux";
-import { useRouter } from "next/router";
 import { updateUserAvatar } from "../../store/actions/user";
 import { notify } from "reapop";
 
 function UserAvatar(props = { isEditable: false }) {
-  const name = props.user.creator ? props.user.creator : "u";
+  const name = props.user.creator ? props.user.creator : ".";
   const [validateImageUrlError, setValidateImageUrlError] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,8 +15,6 @@ function UserAvatar(props = { isEditable: false }) {
   const [previewAvatarText, setPreviewAvatarText] = useState(
     "Nothing to Preview"
   );
-
-  const router = useRouter();
 
   const validateImageUrl = async (url) => {
     if (url == "") {
@@ -123,18 +120,22 @@ function UserAvatar(props = { isEditable: false }) {
                   (loading ? "loading" : "")
                 }
                 onClick={async (e) => {
-                  setLoading(true);
-                  const res = await props.updateUserAvatar(imageUrl);
-                  if (res && res.code === 0) {
-                    props.notify("Your user avatar is updated", "info");
-                    if (props.refresh) await props.refresh();
+                  if (props.callback) {
+                    props.callback(imageUrl);
+                  } else {
+                    setLoading(true);
+                    const res = await props.updateUserAvatar(imageUrl);
+                    if (res && res.code === 0) {
+                      props.notify("Your user avatar is updated", "info");
+                      if (props.refresh) await props.refresh();
+                    }
+                    setImageUrl("");
+                    setPreviewAvatarText("Nothing to Preview");
+                    setPreviewAvatarUrl(
+                      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
+                    );
+                    setLoading(false);
                   }
-                  setImageUrl("");
-                  setPreviewAvatarText("Nothing to Preview");
-                  setPreviewAvatarUrl(
-                    "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
-                  );
-                  setLoading(false);
                 }}
                 disabled={
                   validateImageUrlError !== null ||
@@ -149,7 +150,7 @@ function UserAvatar(props = { isEditable: false }) {
         </div>
         {props.isEditable ? (
           <label htmlFor="avatar-url-modal" className="modal-button">
-            <div className="indicator-item indicator-bottom mr-14 mb-6 h-7.5 w-7.5 bg-base-100 rounded-full p-2 border border-grey-300 cursor-pointer hover:text-primary">
+            <div className="indicator-item indicator-bottom mr-6 mb-6 h-7.5 w-7.5 bg-base-100 rounded-full p-2 border border-grey-300 cursor-pointer hover:text-primary">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4"
@@ -169,7 +170,7 @@ function UserAvatar(props = { isEditable: false }) {
         ) : (
           ""
         )}
-        <div className="avatar flex-none mr-8 items-center">
+        <div className="avatar flex-none items-center">
           <div
             className={
               "w-40 h-40 rounded-full border" +
