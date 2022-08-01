@@ -84,3 +84,42 @@ export const updateUserAvatar = (avatarUrl) => {
     }
   };
 };
+
+export const updateUserName = (name) => {
+  return async (dispatch, getState) => {
+    try {
+      await setupTxClients(dispatch, getState);
+      const { env, wallet } = getState();
+      console.log(env.txClient);
+      const message = await env.txClient.msgUpdateUserName({
+        creator: wallet.selectedAddress,
+        name,
+      });
+      const result = await sendTransaction({ message })(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
+      return result;
+    } catch (e) {
+      dispatch(notify(e.message, "error"));
+      console.error(e);
+    }
+  };
+};
+
+export const updateUserUsername = (username) => {
+  return async (dispatch, getState) => {
+    try {
+      await setupTxClients(dispatch, getState);
+      const { env, wallet } = getState();
+      const message = await env.txClient.msgUpdateUserUsername({
+        creator: wallet.selectedAddress,
+        username,
+      });
+      const result = await sendTransaction({ message })(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
+      return result;
+    } catch (e) {
+      dispatch(notify(e.message, "error"));
+      console.error(e);
+    }
+  };
+};

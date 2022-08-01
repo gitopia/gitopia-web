@@ -45,16 +45,20 @@ function UserHeader(props) {
   };
   return (
     <div className="flex flex-1 mb-8">
-      <UserAvatar user={user} isEditable={isEditable} />
+      <UserAvatar user={user} isEditable={isEditable} refresh={refresh} />
       <div className="flex flex-1 text-md items-start">
         <div className="pl-12">
-          <UserName user={user} isEditable={isEditable} />
+          <UserName user={user} isEditable={isEditable} refresh={refresh} />
           <div className="text-type-secondary mb-2">
-            <UserUsername user={user} isEditable={isEditable} />
+            <UserUsername
+              user={user}
+              isEditable={isEditable}
+              refresh={refresh}
+            />
             &middot;
             <span className="ml-2">{user.creator}</span>
           </div>
-          <UserBio user={user} isEditable={isEditable} />
+          <UserBio user={user} isEditable={isEditable} refresh={refresh} />
         </div>
       </div>
       {/* <div className="form-control flex justify-end">
