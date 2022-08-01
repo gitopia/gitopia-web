@@ -68,7 +68,11 @@ function OrgDashboard(props) {
               <DashboardSelector />
               <TopRepositories
                 repositories={props.repositories.map((r) => {
-                  return { owner: props.currentDashboard, ...r };
+                  return {
+                    owner: props.currentDashboard,
+                    username: props.username,
+                    ...r,
+                  };
                 })}
               />
             </div>
@@ -157,6 +161,7 @@ const mapStateToProps = (state) => {
     dashboards: state.user.dashboards,
     repositories: state.organization.repositories,
     organization: state.organization,
+    username: state.organization.name,
   };
 };
 

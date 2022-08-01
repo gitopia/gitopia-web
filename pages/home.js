@@ -77,7 +77,11 @@ function Home(props) {
               <DashboardSelector />
               <TopRepositories
                 repositories={props.repositories.map((r) => {
-                  return { owner: props.selectedAddress, ...r };
+                  return {
+                    owner: props.selectedAddress,
+                    username: props.username,
+                    ...r,
+                  };
                 })}
               />
             </div>
@@ -121,7 +125,11 @@ function Home(props) {
             <DashboardSelector />
             <TopRepositories
               repositories={props.repositories.map((r) => {
-                return { owner: props.selectedAddress, ...r };
+                return {
+                  owner: props.selectedAddress,
+                  username: props.username,
+                  ...r,
+                };
               })}
             />
           </>
@@ -173,6 +181,7 @@ const mapStateToProps = (state) => {
     dashboards: state.user.dashboards,
     selectedAddress: state.wallet.selectedAddress,
     repositories: state.user.repositories,
+    username: state.user.username,
   };
 };
 
