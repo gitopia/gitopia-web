@@ -15,6 +15,7 @@ import PullRequestTabs from "../../../../../components/repository/pullRequestTab
 import PullRequestHeader from "../../../../../components/repository/pullRequestHeader";
 import useRepository from "../../../../../hooks/useRepository";
 import usePullRequest from "../../../../../hooks/usePullRequest";
+import shrinkAddress from "../../../../../helpers/shrinkAddress";
 import dayjs from "dayjs";
 
 export async function getStaticProps() {
@@ -112,7 +113,7 @@ function RepositoryPullIssuesView(props) {
             <button
               className="ml-auto btn btn-primary text-xs btn-sm mt-4"
               onClick={() => {
-                // props.linkPullIssuebyIid(pullRequest.id, issueIid);
+                props.linkPullIssuebyIid(pullRequest.id, 17);
               }}
             >
               Link Issue
@@ -195,7 +196,7 @@ function RepositoryPullIssuesView(props) {
               {issues.map((i, k) => {
                 return (
                   <div
-                    className="link flex mt-3 mb-3 pt-3 no-underline"
+                    className="link flex mt-3 mb-4 pt-3 no-underline"
                     key={k}
                   >
                     <div
@@ -230,26 +231,74 @@ function RepositoryPullIssuesView(props) {
                       }
                     </div>
 
-                    <div className="w-1/12 flex ml-1 mr-4">
-                      {i.assignees.map((a, key) => {
-                        return (
-                          <div
-                            className="avatar flex-none items-center"
-                            key={key}
-                          >
-                            <div className={"w-8 h-8 rounded-full"}>
-                              <img
-                                src={
-                                  "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                                  a.slice(-1)
-                                }
-                              />
+                    <div
+                      className={
+                        "w-1/12 flex " +
+                        (i.assignees.length > 1 ? "mr-7 ml-0" : "mr-4 ml-3")
+                      }
+                    >
+                      {i.assignees.length > 1 ? (
+                        <div className="dropdown">
+                          <div className="">
+                            <div className="text-xs">1+ assignees</div>
+                            <div
+                              className={
+                                "link link-primary no-underline uppercase text-xs"
+                              }
+                              tabIndex="0"
+                            >
+                              See All
                             </div>
                           </div>
-                        );
-                      })}
+                          <div
+                            tabIndex="0"
+                            className="dropdown-content p-4 bg-base-100 rounded-box w-48 grid grid-cols-1 gap-4 bg-grey-500 h-52 overflow-y-scroll"
+                          >
+                            {i.assignees.map((a, key) => {
+                              return (
+                                <div className="flex">
+                                  <div
+                                    className={"avatar flex-none items-center "}
+                                    key={key}
+                                  >
+                                    <div className={"w-8 h-8 rounded-full"}>
+                                      <img
+                                        src={
+                                          "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+                                          a.slice(-1)
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="ml-4 mt-0.5">
+                                    {shrinkAddress(a)}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : (
+                        i.assignees.map((a, key) => {
+                          return (
+                            <div
+                              className={" avatar flex-none items-center "}
+                              key={key}
+                            >
+                              <div className={"w-8 h-8 rounded-full"}>
+                                <img
+                                  src={
+                                    "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+                                    a.slice(-1)
+                                  }
+                                />
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
                     </div>
-                    <div className="w-1/12 flex mr-4 mt-1.5">
+                    <div className="w-1/12 flex mr-4 mt-1">
                       <div className="text-sm mr-3 font-bold text-type-secondary">
                         {i.comments.length}
                       </div>
@@ -259,7 +308,7 @@ function RepositoryPullIssuesView(props) {
                         viewBox="0 0 19 18"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
-                        className=""
+                        className="mt-0.5"
                       >
                         <path
                           d="M8 13H1V1H18V13H15H14V14V16.2768L8.49614 13.1318L8.26556 13H8Z"

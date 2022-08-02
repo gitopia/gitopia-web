@@ -183,7 +183,7 @@ function RepositoryIssueLinkedPullsView(props) {
                     />
                   </svg>
                 </div>
-                <div className="w-1/12 flex ml-auto mr-4">
+                <div className="w-1/12 flex ml-auto mr-2">
                   <div className="text-type-secondary text-sm">Creation</div>
                   <svg
                     width="8"
@@ -235,7 +235,7 @@ function RepositoryIssueLinkedPullsView(props) {
                         </div>
                       }
                     </div>
-                    <div className="w-1/12 flex ml-4">
+                    <div className="w-1/12 flex ml-3">
                       <div className="avatar flex-none items-center">
                         <div className={"w-8 h-8 rounded-full"}>
                           <img
@@ -266,7 +266,7 @@ function RepositoryIssueLinkedPullsView(props) {
                         />
                       </svg>
                     </div>
-                    <div className="text-sm font-bold text-type-secondary mr-4 ml-auto mt-1.5">
+                    <div className="text-sm font-bold text-type-secondary mr-5 ml-auto mt-1.5">
                       {dayjs.unix(parseInt(p.createdAt)).fromNow()}
                     </div>
                   </div>

@@ -217,7 +217,7 @@ function CreateBounty(props) {
                 setMaxAmount([]);
                 props.setBountyAmount([]);
                 setExpiry("dd/mm/yyyy");
-                ref3.current.value = "dd/mm/yyyy";
+                ref3.current.value = "";
               }}
             >
               <svg
