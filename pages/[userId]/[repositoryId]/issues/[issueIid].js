@@ -58,7 +58,6 @@ function RepositoryIssueView(props) {
   const [allLabels, setAllLabels] = useState([]);
 
   useEffect(async () => {
-    console.log(router.query.userId);
     const [i] = await Promise.all([
       getRepositoryIssue(
         router.query.userId,
@@ -71,14 +70,13 @@ function RepositoryIssueView(props) {
     } else {
       setErrorStatusCode(404);
     }
-    console.log(repository);
     setAllLabels(repository.labels);
-    console.log(i);
   }, [router.query.issueIid, repository.id]);
 
   const getAllComments = async () => {
     const pr = issue.comments.map((c) => getComment(c));
     const comments = await Promise.all(pr);
+    console.log(comments);
     setAllComments(comments);
   };
 
@@ -204,7 +202,7 @@ function RepositoryIssueView(props) {
                 <AssigneeSelector
                   assignees={issue.assignees}
                   collaborators={[
-                    { id: repository.owner.id, permission: "CREATOR" },
+                    { id: repository.owner.address, permission: "CREATOR" },
                     ...repository.collaborators,
                   ]}
                   onChange={async (list) => {

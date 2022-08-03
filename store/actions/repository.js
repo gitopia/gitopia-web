@@ -739,7 +739,7 @@ export const isCurrentUserEligibleToUpdate = (repository) => {
   return async (dispatch, getState) => {
     if (repository && repository.owner) {
       let permission = false,
-        repoOwnerAddress = repository.owner.id;
+        repoOwnerAddress = repository.owner.address;
       const { wallet, user } = getState();
       if (wallet.selectedAddress === repoOwnerAddress) {
         permission = true;

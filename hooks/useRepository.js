@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import getAnyRepository from "../helpers/getAnyRepository";
 import { useRouter } from "next/router";
 import { useErrorStatus } from "./errorHandler";
+import getUser from "../helpers/getUser";
+import getOrganization from "../helpers/getOrganization";
 
 export default function useRepository() {
   const { setErrorStatusCode } = useErrorStatus();
@@ -29,14 +31,28 @@ export default function useRepository() {
     const r = await getAnyRepository(
       router.query.userId,
       router.query.repositoryId
-    ).then((r) => {
-      if (r) {
-        setRepository(r);
+    );
+    if (r) {
+      let ownerDetails = {};
+      if (r.owner.type === "USER") {
+        ownerDetails = await getUser(r.owner.id);
       } else {
-        setErrorStatusCode(404);
+        ownerDetails = await getOrganization(r.owner.id);
       }
-      setFirstFetchLoading(false);
-    });
+      setRepository({
+        ...r,
+        owner: {
+          type: r.owner.type,
+          id: ownerDetails.username !== "" ? ownerDetails.username : r.owner.id,
+          address: r.owner.id,
+          username: ownerDetails.username,
+          avatarUrl: ownerDetails.avatarUrl,
+        },
+      });
+    } else {
+      setErrorStatusCode(404);
+    }
+    setFirstFetchLoading(false);
   }, [router.query, refreshIndex]);
 
   return { repository, refreshRepository, firstFetchLoading };

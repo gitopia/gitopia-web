@@ -4,8 +4,10 @@ import { connect } from "react-redux";
 import { isCurrentUserEligibleToUpdate } from "../../store/actions/repository";
 
 function RepositoryMainTabs({ repository, active, ...props }) {
-  const [currentUserEditPermission, setCurrentUserEditPermission] =
-    useState(false);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
+
   const [hrefBase, setHrefBase] = useState(
     "/" + repository.owner.id + "/" + repository.name
   );
