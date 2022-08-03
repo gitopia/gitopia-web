@@ -91,7 +91,7 @@ function RepositoryCompareView(props) {
         setForkedRepos(repos);
         console.log("forked repos", repos);
       }
-      if (r.parent !== "0") {
+      if (r.parent && r.parent !== "0") {
         const repo = await getRepository(r.parent);
         if (repo) {
           setParentRepo(repo);
@@ -419,7 +419,10 @@ function RepositoryCompareView(props) {
                       <AssigneeSelector
                         assignees={reviewers}
                         collaborators={[
-                          { id: repository.owner.id, permission: "CREATOR" },
+                          {
+                            id: repository.owner.address,
+                            permission: "CREATOR",
+                          },
                           ...repository.collaborators,
                         ]}
                         onChange={async (list) => {
@@ -439,7 +442,10 @@ function RepositoryCompareView(props) {
                       <AssigneeSelector
                         assignees={assignees}
                         collaborators={[
-                          { id: repository.owner.id, permission: "CREATOR" },
+                          {
+                            id: repository.owner.address,
+                            permission: "CREATOR",
+                          },
                           ...repository.collaborators,
                         ]}
                         onChange={async (list) => {

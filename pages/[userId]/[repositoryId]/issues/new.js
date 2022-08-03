@@ -135,7 +135,7 @@ function RepositoryIssueCreateView(props) {
                 <AssigneeSelector
                   assignees={assignees}
                   collaborators={[
-                    { id: repository.owner.id, permission: "CREATOR" },
+                    { id: repository.owner.address, permission: "CREATOR" },
                     ...repository.collaborators,
                   ]}
                   onChange={async (list) => {

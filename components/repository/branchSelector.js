@@ -30,22 +30,23 @@ export default function BranchSelector({
   }, [searchText, tab]);
 
   useEffect(() => {
+    let list = tab === "tags" ? tags : branches;
+    setFilteredList(list);
+    setSearchText("");
     if (searchInput) searchInput.current.focus();
-  }, [tab]);
+  }, [tab, tags, branches]);
 
-  useEffect(() => {
-    if (tab === "tags") {
-      setFilteredList(tags);
-      setSearchText("");
-    }
-  }, [tags]);
+  // useEffect(() => {
+  //   if (tab === "tags") {
+  //     setFilteredList(tags);
+  //   }
+  // }, [tags]);
 
-  useEffect(() => {
-    if (tab === "branches") {
-      setFilteredList(branches);
-      setSearchText("");
-    }
-  }, [branches]);
+  // useEffect(() => {
+  //   if (tab === "branches") {
+  //     setFilteredList(branches);
+  //   }
+  // }, [branches]);
 
   return (
     <div
