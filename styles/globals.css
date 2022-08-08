@@ -1118,3 +1118,9 @@ ul.mde-suggestions li[aria-selected="true"] {
 .react-calendar-heatmap .color-gitopia-high {
   fill: #66ce67;
 }
+.react-calendar-heatmap g.react-calendar-heatmap-all-weeks {
+  transform: translate(30px, 18px);
+}
+.react-calendar-heatmap g.react-calendar-heatmap-weekday-labels {
+  transform: translate(0px, 18px);
+}

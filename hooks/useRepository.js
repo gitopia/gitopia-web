@@ -36,19 +36,30 @@ export default function useRepository() {
       let ownerDetails = {};
       if (r.owner.type === "USER") {
         ownerDetails = await getUser(r.owner.id);
+        setRepository({
+          ...r,
+          owner: {
+            type: r.owner.type,
+            id:
+              ownerDetails.username !== "" ? ownerDetails.username : r.owner.id,
+            address: r.owner.id,
+            username: ownerDetails.username,
+            avatarUrl: ownerDetails.avatarUrl,
+          },
+        });
       } else {
         ownerDetails = await getOrganization(r.owner.id);
+        setRepository({
+          ...r,
+          owner: {
+            type: r.owner.type,
+            id: ownerDetails.name,
+            address: r.owner.id,
+            username: ownerDetails.name,
+            avatarUrl: ownerDetails.avatarUrl,
+          },
+        });
       }
-      setRepository({
-        ...r,
-        owner: {
-          type: r.owner.type,
-          id: ownerDetails.username !== "" ? ownerDetails.username : r.owner.id,
-          address: r.owner.id,
-          username: ownerDetails.username,
-          avatarUrl: ownerDetails.avatarUrl,
-        },
-      });
     } else {
       setErrorStatusCode(404);
     }
