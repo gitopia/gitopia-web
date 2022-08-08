@@ -35,7 +35,7 @@ export default function PublicTabs({
         </a>
       </Link>
 
-      <Link href={hrefBase + "/repositories"}>
+      <Link href={hrefBase + "?tab=repositories"}>
         <a
           className={
             "tab tab-md tab-bordered" +
@@ -65,7 +65,7 @@ export default function PublicTabs({
         </a>
       </Link>
       {!showPeople ? (
-        <Link href={hrefBase + "/transactions"}>
+        <Link href={hrefBase + "?tab=transactions"}>
           <a
             className={
               "tab tab-md tab-bordered" +
@@ -100,13 +100,30 @@ export default function PublicTabs({
         ""
       )}
       {showPeople ? (
-        <Link href={hrefBase + "/people"}>
+        <Link href={hrefBase + "?tab=people"}>
           <a
             className={
               "tab  tab-md tab-bordered" +
               (active === "people" ? " tab-active" : "")
             }
           >
+            <span className="icon mr-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height={16}
+                width={16}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="#ADBECB"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                />
+              </svg>
+            </span>
             <span>People</span>
           </a>
         </Link>

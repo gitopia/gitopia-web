@@ -43,7 +43,7 @@ function RepositoryHeader({ repository, ...props }) {
       : repository.owner.avatarUrl !== ""
       ? repository.owner.avatarUrl
       : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-        repository.owner.id.slice(-1);
+        repository.owner?.id?.slice(-1);
 
   const refreshForkingAccess = async () => {
     setForkingAccess(await getGitServerAuthorization(props.selectedAddress));

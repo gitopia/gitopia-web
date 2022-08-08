@@ -374,7 +374,7 @@ function RepositoryView(props) {
                 style={{ maxWidth: "calc(1024px - 18rem)" }}
               >
                 <SupportOwner
-                  ownerAddress={repository.owner.id}
+                  ownerAddress={repository.owner.address}
                   isMobile={isMobile}
                 />
                 <div className="mt-8 sm:flex justify-start">

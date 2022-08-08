@@ -20,7 +20,7 @@ function GreetUser(props) {
     <div>
       <div className="text-xs uppercase">Welcome,</div>
       <div className="text-lg">
-        <Link href={"/" + props.address}>
+        <Link href={"/" + (props.username ? props.username : props.address)}>
           <a className="btn-link">{greetingName}</a>
         </Link>
       </div>
