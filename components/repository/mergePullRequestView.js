@@ -24,6 +24,12 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
   const [isGrantingAccess, setIsGrantingAccess] = useState(false);
 
   const checkMerge = async () => {
+    if (!props.selectedAddress) {
+      setMessage("Please login to check status");
+      setStateClass("warning");
+      setIconType("");
+      return;
+    }
     setIsMerging(true);
     const res = await mergePullRequestCheck(
       pullRequest.iid,
@@ -64,31 +70,6 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
         setIsMerging(false);
         return;
       }
-      // const res = await mergePullRequest(
-      //   pullRequest.iid,
-      //   pullRequest.base.repositoryId,
-      //   pullRequest.head.repositoryId,
-      //   pullRequest.base.branch,
-      //   pullRequest.head.branch,
-      //   "merge",
-      //   props.selectedAddress,
-      //   "<>",
-      //   props.selectedAddress
-      // );
-      // console.log(res);
-      // if (!res.data.merged) {
-      //   props.notify(res.error, "error");
-      // } else {
-      //   const transaction = await props.updatePullRequestState({
-      //     id: pullRequest.id,
-      //     state: "MERGED",
-      //     mergeCommitSha: res.data.merge_commit_sha,
-      //   });
-      //   console.log(transaction);
-      //   if (transaction && transaction.code === 0) {
-      //     refreshPullRequest();
-      //   }
-      // }
       const res = await props.mergePullRequest({ id: pullRequest.id });
       if (res) {
         if (res.TaskState === "TASK_STATE_SUCCESS") refreshPullRequest();
@@ -117,7 +98,7 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
         setMessage("This pull request is closed");
         setIconType("warning");
     }
-  }, [pullRequest]);
+  }, [pullRequest, props.selectedAddress]);
 
   const refreshPullMergeAccess = async (mergeAfter = false) => {
     setPullMergeAccess(await getGitServerAuthorization(props.selectedAddress));
