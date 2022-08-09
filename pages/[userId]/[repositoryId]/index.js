@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
+import MarkdownWrapper from "../../../components/markdownWrapper";
 import { notify } from "reapop";
 
 import RepositoryHeader from "../../../components/repository/header";
@@ -573,7 +573,7 @@ function RepositoryView(props) {
                     id="readme"
                     className="border border-gray-700 rounded overflow-hidden p-4 markdown-body mt-8"
                   >
-                    <ReactMarkdown>{readmeFile}</ReactMarkdown>
+                    <MarkdownWrapper>{readmeFile}</MarkdownWrapper>
                   </div>
                 ) : (
                   <div className="mt-8">No readme file</div>

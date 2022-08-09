@@ -15,7 +15,7 @@ import Footer from "../../../../components/footer";
 import getBranchSha from "../../../../helpers/getBranchSha";
 import useRepository from "../../../../hooks/useRepository";
 import dynamic from "next/dynamic";
-import ReactMarkdown from "react-markdown";
+import MarkdownWrapper from "../../../../components/markdownWrapper";
 import getContent from "../../../../helpers/getContent";
 import getCommitHistory from "../../../../helpers/getCommitHistory";
 import { useErrorStatus } from "../../../../hooks/errorHandler";
@@ -360,7 +360,7 @@ function RepositoryTreeView(props) {
                       </div>
                     ) : showRenderedFile ? (
                       <div className="markdown-body p-4">
-                        <ReactMarkdown>{file}</ReactMarkdown>
+                        <MarkdownWrapper>{file}</MarkdownWrapper>
                       </div>
                     ) : (
                       <SyntaxHighlighter
