@@ -64,10 +64,14 @@ function CreateUser(props) {
           </div>
         </div>
       </div>
-      <div className="flex-none w-60 mr-8 mt-4 sm:mt-0">
+
+      <div className="flex-none w-60 mr-8 mt-4 sm:mt-0" data-test="profile">
         {userCreated ? (
           <Link href={"/" + props.selectedAddress}>
-            <a className={"btn btn-sm btn-primary btn-outline btn-block "}>
+            <a
+              className={"btn btn-sm btn-primary btn-outline btn-block "}
+              data-test="view_profile"
+            >
               View Profile
             </a>
           </Link>
@@ -88,6 +92,7 @@ function CreateUser(props) {
               setLoading(false);
             }}
             disabled={loading}
+            data-test="create_profile"
           >
             Create Profile
           </button>

@@ -39,4 +39,20 @@ describe("Local wallet", () => {
       "1dsu...w86c"
     );
   });
+
+  it("Is able to get tokens", () => {
+    if (!cy.get('[data-test="get-token"]').contains("More")) {
+      cy.get('[data-test="get-token"]').click();
+    }
+  });
+
+  it("Is able to create profile", () => {
+    cy.get("body").then(($body) => {
+      if ($body.find('[data-test="create_profile"]').length > 0) {
+        cy.get('[data-test="create_profile"]').click();
+      } else {
+        cy.get('[data-test="view_profile"]').click();
+      }
+    });
+  });
 });

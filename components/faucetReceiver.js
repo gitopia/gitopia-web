@@ -121,6 +121,7 @@ function FaucetReceiver(props) {
           }
           onClick={() => getTokens(1)}
           disabled={loading}
+          data-test="get-token"
         >
           Get{tokenReceived ? " More " : " "}
           {props.advanceUser === true
