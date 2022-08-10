@@ -179,7 +179,10 @@ function RepositoryIssueView(props) {
                   "/issues/new"
                 }
               >
-                <button className="btn btn-primary btn-sm btn-block">
+                <button
+                  className="btn btn-primary btn-sm btn-block"
+                  data-test="new-issue"
+                >
                   New Issue
                 </button>
               </Link>
