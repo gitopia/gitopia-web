@@ -177,6 +177,7 @@ function CreateUser(props) {
             }
             onClick={createProfile}
             disabled={loading}
+            data-test="create_profile"
           >
             Finish
           </button>
