@@ -90,7 +90,9 @@ function IssuePullTitle({
           />
         ) : (
           <div>
-            <span className="text-3xl mr-2">{issuePullObj.title}</span>
+            <span className="text-3xl mr-2" data-test="issue-pull-title">
+              {issuePullObj.title}
+            </span>
             <span className="text-3xl text-neutral">#{issuePullObj.iid}</span>
           </div>
         )}

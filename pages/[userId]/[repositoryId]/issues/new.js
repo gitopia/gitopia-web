@@ -111,9 +111,14 @@ function RepositoryIssueCreateView(props) {
                     onChange={(e) => {
                       setTitle(e.target.value);
                     }}
+                    data-test="issue_title"
                   />
                 </div>
-                <MarkdownEditor value={description} setValue={setDescription} />
+                <MarkdownEditor
+                  value={description}
+                  setValue={setDescription}
+                  id="issue-description"
+                />
                 <div className="text-right mt-4">
                   <div className="inline-block w-36">
                     <button
@@ -123,6 +128,7 @@ function RepositoryIssueCreateView(props) {
                       }
                       disabled={title.trim().length === 0 || postingIssue}
                       onClick={createIssue}
+                      data-test="create_issue"
                     >
                       Create Issue
                     </button>
