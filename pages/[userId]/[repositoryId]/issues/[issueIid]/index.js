@@ -31,6 +31,7 @@ import IssuePullDescription from "../../../../../components/repository/issuePull
 import { useErrorStatus } from "../../../../../hooks/errorHandler";
 import pluralize from "../../../../../helpers/pluralize";
 import IssueTabs from "../../../../../components/repository/issueTabs";
+import IssuePullRequestView from "../../../../../components/repository/pullRequestView";
 import Link from "next/link";
 
 export async function getStaticProps() {
@@ -55,6 +56,7 @@ function RepositoryIssueView(props) {
     comments: [],
     assignees: [],
     labels: [],
+    pullRequests: [],
   });
   const [allComments, setAllComments] = useState([]);
   const [allLabels, setAllLabels] = useState([]);
@@ -299,6 +301,7 @@ function RepositoryIssueView(props) {
                     : "None yet"}
                 </div>
               </div>
+              <IssuePullRequestView pullRequests={issue.pullRequests} />
               {/* <div className="py-8">
                 <div className="flex-1 text-left px-3 mb-1">
                   Linked Pull Requests

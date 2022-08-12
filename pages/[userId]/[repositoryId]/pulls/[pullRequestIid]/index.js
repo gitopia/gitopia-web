@@ -28,6 +28,7 @@ import useRepository from "../../../../../hooks/useRepository";
 import usePullRequest from "../../../../../hooks/usePullRequest";
 import MergePullRequestView from "../../../../../components/repository/mergePullRequestView";
 import IssuePullDescription from "../../../../../components/repository/issuePullDescription";
+import PullRequestIssueView from "../../../../../components/repository/issuesView";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -283,6 +284,7 @@ function RepositoryPullView(props) {
                     : "None yet"}
                 </div>
               </div>
+              <PullRequestIssueView issues={pullRequest.issues} />
             </div>
           </div>
         </main>
