@@ -20,9 +20,9 @@ import {
   updateBountyExpiry,
   closeBounty,
 } from "../../../../../store/actions/bounties";
-import getBounties from "../../../../../helpers/getBounties";
 import CreateBounty from "../../../../../components/repository/bounty";
 import ExtendExpiry from "../../../../../components/repository/extendExpiry";
+import getBounty from "../../../../../helpers/getBounty";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -60,13 +60,13 @@ function RepositoryIssueView(props) {
   dayjs.extend(localizedFormat);
 
   useEffect(async () => {
-    const b = await getBounties();
-    var bountyArray = [];
-    b.map((bounty) => {
-      bounty.parentId == issue.iid ? bountyArray.push(bounty) : "";
-    });
-    setBounties(bountyArray);
-  }, [issue.iid]);
+    const array = [];
+    for (var i = 0; i < issue.bounties.length; i++) {
+      const res = await getBounty(issue.bounties[i]);
+      array.push(res);
+    }
+    setBounties(array);
+  }, [issue.bounties]);
 
   useEffect(async () => {
     const [i] = await Promise.all([
@@ -94,12 +94,13 @@ function RepositoryIssueView(props) {
   };
 
   const refreshBounty = async () => {
-    const b = await getBounties();
-    var bountyArray = [];
-    b.map((bounty) => {
-      bounty.parentId == issue.iid ? bountyArray.push(bounty) : "";
-    });
-    setBounties(bountyArray);
+    refreshIssue();
+    const array = [];
+    for (var i = 0; i < issue.bounties.length; i++) {
+      const res = await getBounty(issue.bounties[i]);
+      array.push(res);
+    }
+    setBounties(array);
   };
   return (
     <div
