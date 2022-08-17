@@ -33,7 +33,6 @@ import pluralize from "../../../../../helpers/pluralize";
 import IssueTabs from "../../../../../components/repository/issueTabs";
 import IssuePullRequestView from "../../../../../components/repository/pullRequestView";
 import IssueBountyView from "../../../../../components/repository/bountiesView";
-import issues from "..";
 import Link from "next/link";
 
 export async function getStaticProps() {

@@ -24,7 +24,7 @@ function IssuePullRequestView(props) {
           return (
             <div
               tabIndex="0"
-              className="collapse collapse-arrow border rounded-lg border-grey mb-2"
+              className="collapse border rounded-lg border-grey mb-2"
               key={p.id}
             >
               <input type="checkbox" className="peer" />

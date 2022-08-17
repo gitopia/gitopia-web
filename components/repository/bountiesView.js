@@ -29,8 +29,8 @@ function IssueBountyView(props) {
             >
               <input type="checkbox" class="peer" />
               <div className="collapse-title flex text-sm text-type">
-                <div> Bounty</div>
-                <div className="ml-16">
+                <div className=""> Bounty</div>
+                <div className="ml-auto">
                   {b.state == "BOUNTY_STATE_SRCDEBITTED" &&
                   b.expireAt > dayjs().unix() ? (
                     <div>
@@ -72,11 +72,11 @@ function IssueBountyView(props) {
                       return (
                         <div
                           className={
-                            "flex text-sm box-border bg-grey-500 mr-2 h-11 p-3 rounded-lg uppercase"
+                            "flex text-xs box-border bg-grey-900 mr-2 h-11 p-3 rounded-lg uppercase"
                           }
                         >
-                          <div className="mr-2">{a.denom}</div>
-                          <div>{a.amount}</div>
+                          <div className="mr-2 font-bold">{a.denom}</div>
+                          <div className="">{a.amount}</div>
                         </div>
                       );
                     })}
@@ -85,7 +85,7 @@ function IssueBountyView(props) {
                   ""
                 )}
                 <div className="flex mt-4">
-                  <div className="mr-2">
+                  <div className="">
                     <div className="text-type-secondary font-bold text-xs mb-0.5">
                       WALLET ADDRESS
                     </div>
@@ -93,7 +93,7 @@ function IssueBountyView(props) {
                       {shrinkAddress(b.creator)}
                     </div>
                   </div>
-                  <div>
+                  <div className="ml-auto">
                     <div className="text-type-secondary font-bold text-xs mb-0.5">
                       EXPIRY DATE
                     </div>
