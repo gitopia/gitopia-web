@@ -7,6 +7,7 @@ import Head from "next/head";
 import Header from "../../../components/header";
 import TextInput from "../../../components/textInput";
 import Footer from "../../../components/footer";
+import OrgAvatar from "../../../components/organization/avatar";
 
 function NewOrganization(props) {
   const router = useRouter();
@@ -18,6 +19,19 @@ function NewOrganization(props) {
   });
   const [description, setDescription] = useState("");
   const [descriptionHint, setDescriptionHint] = useState({
+    shown: false,
+    type: "error",
+    message: "",
+  });
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [location, setLocation] = useState("");
+  const [locationHint, setLocationHint] = useState({
+    shown: false,
+    type: "error",
+    message: "",
+  });
+  const [website, setWebsite] = useState("");
+  const [websiteHint, setWebsiteHint] = useState({
     shown: false,
     type: "error",
     message: "",
@@ -58,14 +72,14 @@ function NewOrganization(props) {
       });
       return false;
     }
-    if (description === "") {
-      setDescriptionHint({
-        ...descriptionHint,
-        shown: true,
-        message: "Please enter a description",
-      });
-      return false;
-    }
+    // if (description === "") {
+    //   setDescriptionHint({
+    //     ...descriptionHint,
+    //     shown: true,
+    //     message: "Please enter a description",
+    //   });
+    //   return false;
+    // }
     return true;
   };
 
@@ -75,6 +89,9 @@ function NewOrganization(props) {
       let res = await props.createOrganization({
         name: name.replace(sanitizedNameTest, "-"),
         description,
+        avatarUrl,
+        location,
+        website,
       });
       if (res && res.url) {
         router.push(res.url);
@@ -97,9 +114,16 @@ function NewOrganization(props) {
         <main className="container mx-auto max-w-md py-12 px-4 sm:px-0">
           <div className="text-2xl">Create a new DAO</div>
           <div className="mt-4">
+            <OrgAvatar
+              org={{ name, avatarUrl }}
+              isEditable={true}
+              callback={(newAvatarUrl) => setAvatarUrl(newAvatarUrl)}
+            />
+          </div>
+          <div className="mt-4">
             <TextInput
               type="text"
-              label="DAO Name"
+              label="Name"
               name="dao_name"
               placeholder="DAO Name"
               value={name}
@@ -123,13 +147,35 @@ function NewOrganization(props) {
           <div className="mt-4">
             <TextInput
               type="text"
-              label="DAO Description"
+              label="Description"
               name="dao_description"
               placeholder="Description"
               multiline={true}
               value={description}
               setValue={setDescription}
               hint={descriptionHint}
+            />
+          </div>
+          <div className="mt-4">
+            <TextInput
+              type="text"
+              label="Website"
+              name="dao_website"
+              placeholder="Website"
+              value={website}
+              setValue={setWebsite}
+              hint={websiteHint}
+            />
+          </div>
+          <div className="mt-4">
+            <TextInput
+              type="text"
+              label="Location"
+              name="dao_location"
+              placeholder="Location"
+              value={location}
+              setValue={setLocation}
+              hint={locationHint}
             />
           </div>
           <div className="flex justify-end mt-4">

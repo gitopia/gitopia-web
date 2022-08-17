@@ -98,7 +98,7 @@ function AccountView(props) {
       <div className="flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           {org.address ? (
-            <AccountOrgHeader org={org} />
+            <AccountOrgHeader org={org} refresh={getId} />
           ) : (
             <UserHeader user={user} refresh={getId} />
           )}

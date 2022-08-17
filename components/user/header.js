@@ -1,14 +1,7 @@
-import shrinkAddress from "../../helpers/shrinkAddress";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import {
-  updateUserBio,
-  updateUserAvatar,
-  getUserDetailsForSelectedAddress,
-} from "../../store/actions/user";
+import { getUserDetailsForSelectedAddress } from "../../store/actions/user";
 import { notify } from "reapop";
-import { useEffect } from "react";
 import UserAvatar from "./avatar";
 import UserBio from "./bio";
 import UserName from "./name";
@@ -27,30 +20,20 @@ function UserHeader(props) {
   }, [props.user.creator, props.selectedAddress]);
 
   return (
-    <div className="flex flex-1 mb-8">
+    <div className="flex flex-1 mb-8 items-start">
       <UserAvatar user={props.user} isEditable={isEditable} refresh={refresh} />
-      <div className="flex flex-1 text-md items-start">
-        <div className="pl-12">
-          <UserName
+      <div className="flex-1 text-md pl-12 w-full max-w-xl">
+        <UserName user={props.user} isEditable={isEditable} refresh={refresh} />
+        <div className="text-type-secondary mb-2">
+          <UserUsername
             user={props.user}
             isEditable={isEditable}
             refresh={refresh}
           />
-          <div className="text-type-secondary mb-2">
-            <UserUsername
-              user={props.user}
-              isEditable={isEditable}
-              refresh={refresh}
-            />
-            &middot;
-            <span className="ml-2">{props.user.creator}</span>
-          </div>
-          <UserBio
-            user={props.user}
-            isEditable={isEditable}
-            refresh={refresh}
-          />
+          &middot;
+          <span className="ml-2">{props.user.creator}</span>
         </div>
+        <UserBio user={props.user} isEditable={isEditable} refresh={refresh} />
       </div>
       {/* <div className="form-control flex justify-end">
         <label className="label cursor-pointer">
@@ -99,8 +82,6 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  updateUserAvatar,
-  updateUserBio,
   getUserDetailsForSelectedAddress,
   notify,
 })(UserHeader);

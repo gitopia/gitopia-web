@@ -1,11 +1,17 @@
 import { notify } from "reapop";
-import { sendTransaction } from "./env";
+import { sendTransaction, handlePostingTransaction } from "./env";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import { userActions, organizationActions } from "./actionTypes";
 import { validatePostingEligibility } from "./repository";
 import { updateUserBalance } from "./wallet";
 
-export const createOrganization = ({ name = null, description = null }) => {
+export const createOrganization = ({
+  name = null,
+  description = null,
+  avatarUrl = null,
+  location = null,
+  website = null,
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "organization")))
       return null;
@@ -13,8 +19,11 @@ export const createOrganization = ({ name = null, description = null }) => {
     const { wallet, env } = getState();
     const organization = {
       creator: wallet.selectedAddress,
-      name: name,
-      description: description,
+      name,
+      description,
+      avatarUrl,
+      location,
+      website,
     };
 
     try {
@@ -125,5 +134,90 @@ export const removeMember = ({ id = null, user = null }) => {
       dispatch(notify(e.message, "error"));
       return null;
     }
+  };
+};
+
+export const updateOrganizationAvatar = ({ id, url }) => {
+  return async (dispatch, getState) => {
+    if (
+      !(await validatePostingEligibility(dispatch, getState, "update avatar"))
+    )
+      return null;
+    const { env, wallet } = getState();
+    const payload = {
+      creator: wallet.selectedAddress,
+      id,
+      url,
+    };
+    const message = await env.txClient.msgUpdateOrganizationAvatar(payload);
+    return await handlePostingTransaction(dispatch, getState, message);
+  };
+};
+
+export const updateOrganizationDescription = ({ id, description }) => {
+  return async (dispatch, getState) => {
+    if (
+      !(await validatePostingEligibility(dispatch, getState, "update location"))
+    )
+      return null;
+    const { env, wallet } = getState();
+    const payload = {
+      creator: wallet.selectedAddress,
+      id,
+      description,
+    };
+    const message = await env.txClient.msgUpdateOrganizationDescription(
+      payload
+    );
+    return await handlePostingTransaction(dispatch, getState, message);
+  };
+};
+
+export const updateOrganizationLocation = ({ id, location }) => {
+  return async (dispatch, getState) => {
+    if (
+      !(await validatePostingEligibility(dispatch, getState, "update location"))
+    )
+      return null;
+    const { env, wallet } = getState();
+    const payload = {
+      creator: wallet.selectedAddress,
+      id,
+      location,
+    };
+    const message = await env.txClient.msgUpdateOrganizationLocation(payload);
+    return await handlePostingTransaction(dispatch, getState, message);
+  };
+};
+
+export const updateOrganizationWebsite = ({ id, website }) => {
+  return async (dispatch, getState) => {
+    if (
+      !(await validatePostingEligibility(dispatch, getState, "update website"))
+    )
+      return null;
+    const { env, wallet } = getState();
+    const payload = {
+      creator: wallet.selectedAddress,
+      id,
+      website,
+    };
+    const message = await env.txClient.msgUpdateOrganizationWebsite(payload);
+    return await handlePostingTransaction(dispatch, getState, message);
+  };
+};
+
+export const isCurrentUserEligibleToUpdate = (org) => {
+  return async (dispatch, getState) => {
+    let permission = false;
+    const { wallet } = getState();
+    org.members.every((c) => {
+      if (wallet.selectedAddress === c.id && c.role === "OWNER") {
+        permission = true;
+        return false;
+      }
+      return true;
+    });
+    return permission;
   };
 };
