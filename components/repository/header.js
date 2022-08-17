@@ -384,9 +384,7 @@ function RepositoryHeader({ repository, ...props }) {
                         const res = await props.authorizeGitServer();
                         console.log(res);
                         setIsGrantingAccess(false);
-                        if (res.code !== 0) {
-                          props.notify(res.rawLog, "error");
-                        } else {
+                        if (res && res.code === 0) {
                           refreshForkingAccess();
                         }
                       }}

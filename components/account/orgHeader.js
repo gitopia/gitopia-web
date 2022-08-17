@@ -1,38 +1,84 @@
 import { useState, useEffect } from "react";
+import { connect } from "react-redux";
+import {
+  getOrganizationDetailsForDashboard,
+  isCurrentUserEligibleToUpdate,
+} from "../../store/actions/organization";
+import { notify } from "reapop";
+import OrgDescription from "../organization/description";
+import OrgAvatar from "../organization/avatar";
+import OrgLocation from "../organization/location";
+import OrgWebsite from "../organization/website";
 
 function AccountOrgHeader(props) {
-  const [avatarLink, setAvatarLink] = useState("");
+  const [isEditable, setIsEditable] = useState(false);
 
-  const updateAvatar = async () => {
-    let letter = "x";
-    if (props.org.id) {
-      letter = props.org.name.slice(0, 1);
-    }
-    const link =
-      process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === props.org.address
-        ? "/logo-g.svg"
-        : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-          letter;
-    setAvatarLink(link);
+  const refresh = async () => {
+    await props.refresh();
+    await props.getOrganizationDetailsForDashboard();
   };
 
-  useEffect(updateAvatar, [props.org]);
+  useEffect(async () => {
+    setIsEditable(await props.isCurrentUserEligibleToUpdate(props.org));
+  }, [props.org.address, props.selectedAddress]);
 
   return (
-    <div className="flex flex-1 mb-8">
-      <div className="avatar flex-none mr-8 items-center">
-        <div className={"w-40 h-40 rounded-md"}>
-          <img src={avatarLink} />
+    <div className="flex flex-1 mb-8 items-start">
+      <OrgAvatar org={props.org} isEditable={isEditable} refresh={refresh} />
+      <div className="flex-1 max-w-xl pl-12">
+        <div className="text-2xl py-1 mb-1 border-b border-transparent">
+          {props.org.name}
         </div>
-      </div>
-      <div className="flex-1">
-        <div className="text-md">{props.org.name}</div>
-        <div className="text-sm text-type-secondary mt-2">
-          {props.org.description}
+        <OrgDescription
+          org={props.org}
+          isEditable={isEditable}
+          refresh={refresh}
+        />
+        <div className="text-sm text-type-secondary mt-2 flex gap-2">
+          {/* <div className="flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+            <span>{props.org.location}</span>
+          </div> */}
+          <OrgLocation
+            org={props.org}
+            isEditable={isEditable}
+            refresh={refresh}
+          />
+          <OrgWebsite
+            org={props.org}
+            isEditable={isEditable}
+            refresh={refresh}
+          />
         </div>
       </div>
     </div>
   );
 }
 
-export default AccountOrgHeader;
+const mapStateToProps = (state) => {
+  return { selectedAddress: state.wallet.selectedAddress };
+};
+
+export default connect(mapStateToProps, {
+  getOrganizationDetailsForDashboard,
+  isCurrentUserEligibleToUpdate,
+  notify,
+})(AccountOrgHeader);
