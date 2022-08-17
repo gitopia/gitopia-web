@@ -1073,6 +1073,7 @@ ul.mde-suggestions li[aria-selected="true"] {
 /* ----- tailwind + daisyui custom styling ----- */
 .tooltip:before {
   font-size: 0.75rem;
+  max-width: 40rem;
 }
 
 .tab.tab-bordered {
