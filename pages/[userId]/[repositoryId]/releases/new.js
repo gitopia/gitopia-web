@@ -303,8 +303,24 @@ function RepositoryReleaseNewView(props) {
                         </div>
                         <div className="">
                           <div className="text-xs flex items-center">
-                            <div className="mr-2">
-                              {"(" + shrinkSha(a.uploadResponse.data.sha) + ")"}
+                            <div
+                              className="mr-2 tooltip"
+                              data-tip={a.uploadResponse.data.sha}
+                            >
+                              <button
+                                className="btn btn-xs btn-ghost"
+                                onClick={(e) => {
+                                  if (navigator.clipboard) {
+                                    navigator.clipboard.writeText(
+                                      a.uploadResponse.data.sha
+                                    );
+                                  }
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                }}
+                              >
+                                {shrinkSha(a.uploadResponse.data.sha)}
+                              </button>
                             </div>
                             <button
                               className="btn btn-square btn-xs"
