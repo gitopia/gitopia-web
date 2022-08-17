@@ -60,7 +60,6 @@ function AutoLogin(props) {
   useEffect(() => {
     if (props.getPassword) {
       setShowDialog(true);
-      console.log("ASDSAD", props.getPassword);
       if (props.getPassword === "Connect") {
         setExternalWalletMsg("Please open Cosmos app on your ledger");
       } else {
