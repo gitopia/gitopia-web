@@ -206,6 +206,7 @@ function RepositoryHeader({ repository, ...props }) {
           <div className="btn-group">
             <button
               className="btn btn-xs btn-outline border-grey"
+              data-test="fork-repo"
               onClick={() => {
                 setForkTargetShown(true);
               }}
@@ -293,6 +294,7 @@ function RepositoryHeader({ repository, ...props }) {
                               "btn btn-sm btn-primary btn-block btn-outline my-2 justify-start " +
                               (isForking === d.id ? "loading" : "")
                             }
+                            data-test="fork-owner"
                             disabled={isOwner || isForking}
                             onClick={async () => {
                               if (isOwner) return;
@@ -395,6 +397,7 @@ function RepositoryHeader({ repository, ...props }) {
                         }
                       }}
                       disabled={isGrantingAccess}
+                      data-test="grant-access"
                     >
                       Grant Access
                     </button>
@@ -441,6 +444,7 @@ function RepositoryHeader({ repository, ...props }) {
               </button>
               <label
                 className="btn btn-sm btn-primary"
+                data-test="go-to-repo"
                 onClick={() => {
                   router.push(forkingSuccess);
                   setForkingSuccess(false);
