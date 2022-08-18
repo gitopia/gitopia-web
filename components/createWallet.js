@@ -189,7 +189,6 @@ function CreateWallet(props) {
       }
       return true;
     });
-    console.log("highest untitled", highest);
     setName("untitled-wallet-" + (highest + 1));
   }, []);
 
