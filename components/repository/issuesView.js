@@ -19,7 +19,7 @@ function PullRequestIssueView(props) {
       <div className="text-xs font-bold text-type-tertiary uppercase mb-2">
         ISSUES
       </div>
-      <div className="h-48 overflow-y-scroll">
+      <div className="h-48 overflow-y-hidden hover:overflow-y-auto">
         {issues.map((i) => {
           return (
             <div

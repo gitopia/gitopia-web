@@ -19,7 +19,7 @@ function IssuePullRequestView(props) {
       <div className="text-xs font-bold text-type-tertiary uppercase mb-2">
         PULL REQUESTS
       </div>
-      <div className="h-48 overflow-y-scroll">
+      <div className="h-48 overflow-y-hidden hover:overflow-y-auto">
         {pulls.map((p) => {
           return (
             <div

@@ -47,6 +47,7 @@ function RepositoryIssueView(props) {
     comments: [],
     assignees: [],
     labels: [],
+    bounties: [],
   });
   const [allLabels, setAllLabels] = useState([]);
 
