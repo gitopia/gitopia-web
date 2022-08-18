@@ -152,10 +152,17 @@ export const unlockWallet = ({ name, password }) => {
       console.error(e);
       return false;
     }
-    dispatch({
-      type: walletActions.SET_ACTIVE_WALLET,
-      payload: { wallet: { name: wallet.name, accounts: wallet.accounts } },
-    });
+    if (wallet.name.includes("untitled-wallet")) {
+      dispatch({
+        type: walletActions.SET_ACTIVE_WALLET,
+        payload: { wallet },
+      });
+    } else {
+      dispatch({
+        type: walletActions.SET_ACTIVE_WALLET,
+        payload: { wallet: { name: wallet.name, accounts: wallet.accounts } },
+      });
+    }
     if (wallet.accounts.length > 0) {
       const DirectSecp256k1HdWallet = (await import("@cosmjs/proto-signing"))
         .DirectSecp256k1HdWallet;
