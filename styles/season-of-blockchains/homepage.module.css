@@ -77,7 +77,7 @@
 .blob5 {
   position: absolute;
   right: 0;
-  top: 182.8vw;
+ 	top: 210.4vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
@@ -85,7 +85,7 @@
 .blob6 {
   position: absolute;
   left: 0;
-  top: 182.5vw;
+	top: 219.6vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
@@ -284,12 +284,12 @@
   width:220px;
 }
 .topButtons {
-margin-top: 4.5vw;
-text-align: left;
+	margin-top: 4.5vw;
+	text-align: left;
 }
 .orgCard{
-margin-top: 1vw;
-margin-bottom: 5vw;
+	margin-top: 1vw;
+	margin-bottom: 5vw;
 }
 .card {
   width: 311px;
@@ -366,12 +366,12 @@ margin-bottom: 5vw;
   width:82%;
 }
 .section3Content{
-width:569px;
-height:185px;
-font-size: 32px;
-font-weight: 700;
-line-height: 114.27%;
-letter-spacing: -0.02em;
+	width:569px;
+	height:185px;
+	font-size: 32px;
+	font-weight: 700;
+	line-height: 114.27%;
+	letter-spacing: -0.02em;
 }
 .section3End{
   margin-top: 4vw;
@@ -401,10 +401,10 @@ letter-spacing: -0.02em;
   margin-bottom: 0.5vw;
 }
 .box{
- background: linear-gradient(to right, #B5C7F8, #B3C5F4, transparent);
- width: 940px;
- height: 259px;
- opacity: 0.1;
+ 	background: linear-gradient(to right, #B5C7F8, #B3C5F4, transparent);
+ 	width: 940px;
+ 	height: 259px;
+ 	opacity: 0.1;
 }
 .section5Title{
   padding-right :3.5vw;
@@ -485,7 +485,7 @@ letter-spacing: -0.02em;
   letter-spacing: -0.02em;
 }
 .endQuoteContent {
- margin-top: 1vw;
+	margin-top: 1vw;
 }
 .endQuoteName {
   margin-top:0.5vw;

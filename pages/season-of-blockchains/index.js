@@ -578,7 +578,13 @@ export default function SeasonOfBlockchains() {
                   <hr className={styles.vl3}></hr>
                 </div>
                 <div className={styles.section5Body}>
-                  <div className={styles.section5Content}>What’s next?</div>
+                  <div className={styles.section5BodyTitle}>
+                    Results Announced
+                  </div>
+                  <div className={styles.section5Content}>
+                    Contributors are notified of the results and the
+                    <br className={styles.br}></br>stipends are distributed
+                  </div>
                 </div>
               </div>
             </div>
@@ -943,22 +949,22 @@ export default function SeasonOfBlockchains() {
             </defs>
           </svg>
           <svg
-            className={styles.blob6}
             width="858"
-            height="1449"
-            viewBox="0 0 858 1449"
+            height="1269"
+            viewBox="0 0 858 1269"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            className={styles.blob6}
           >
-            <g filter="url(#filter0_f_2447_6936)">
+            <g filter="url(#filter0_f_2770_5904)">
               <path
                 d="M287.846 819.578C-188.412 730.166 -125.107 400 -371.986 400C-618.865 400 -819 600.135 -819 847.014C-819 1093.89 -618.865 1294.03 -371.986 1294.03C-125.107 1294.03 843.266 870.624 287.846 819.578Z"
-                fill="url(#paint0_radial_2447_6936)"
+                fill="url(#paint0_radial_2770_5904)"
               />
             </g>
             <defs>
               <filter
-                id="filter0_f_2447_6936"
+                id="filter0_f_2770_5904"
                 x="-1219"
                 y="0"
                 width="2076.11"
@@ -975,11 +981,11 @@ export default function SeasonOfBlockchains() {
                 />
                 <feGaussianBlur
                   stdDeviation="200"
-                  result="effect1_foregroundBlur_2447_6936"
+                  result="effect1_foregroundBlur_2770_5904"
                 />
               </filter>
               <radialGradient
-                id="paint0_radial_2447_6936"
+                id="paint0_radial_2770_5904"
                 cx="0"
                 cy="0"
                 r="1"
