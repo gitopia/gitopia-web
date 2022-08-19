@@ -4,6 +4,7 @@ import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import { userActions, organizationActions } from "./actionTypes";
 import { validatePostingEligibility } from "./repository";
 import { updateUserBalance } from "./wallet";
+import { MemberRole } from "@gitopia/gitopia-js/types/gitopia/member";
 
 export const createOrganization = ({
   name = null,
@@ -74,22 +75,27 @@ export const getOrganizationDetailsForDashboard = () => {
   };
 };
 
-export const updateMember = ({ id = null, user = null, role = null }) => {
+export const addMember = ({ daoId = null, userId = null, role = null }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
       return null;
     const { env, wallet } = getState();
+    let choice;
+    if (role === "MEMBER") {
+      choice = MemberRole.MEMBER;
+    }
+    if (role === "OWNER") {
+      choice = MemberRole.OWNER;
+    }
     const collaborator = {
       creator: wallet.selectedAddress,
-      id,
-      user,
-      role,
+      daoId: daoId,
+      userId: userId,
+      role: choice,
     };
 
     try {
-      const message = await env.txClient.msgUpdateOrganizationMember(
-        collaborator
-      );
+      const message = await env.txClient.msgAddMember(collaborator);
       const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
@@ -106,21 +112,60 @@ export const updateMember = ({ id = null, user = null, role = null }) => {
   };
 };
 
-export const removeMember = ({ id = null, user = null }) => {
+export const updateMemberRole = ({
+  daoId = null,
+  userId = null,
+  role = null,
+}) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+      return null;
+    const { env, wallet } = getState();
+    let choice;
+    if (role === "MEMBER") {
+      choice = MemberRole.MEMBER;
+    }
+    if (role === "OWNER") {
+      choice = MemberRole.OWNER;
+    }
+    const collaborator = {
+      creator: wallet.selectedAddress,
+      daoId: daoId,
+      userId: userId,
+      role: choice,
+    };
+
+    try {
+      const message = await env.txClient.msgUpdateMemberRole(collaborator);
+      const result = await sendTransaction({ message })(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
+
+export const removeMember = ({ daoId = null, userId = null }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
       return null;
     const { env, wallet } = getState();
     const collaborator = {
       creator: wallet.selectedAddress,
-      id,
-      user,
+      daoId: daoId,
+      userId: userId,
     };
 
     try {
-      const message = await env.txClient.msgRemoveOrganizationMember(
-        collaborator
-      );
+      const message = await env.txClient.msgRemoveMember(collaborator);
       const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {

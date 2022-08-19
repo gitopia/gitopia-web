@@ -1,7 +1,7 @@
 import TextInput from "../textInput";
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { updateMember, removeMember } from "../../store/actions/organization";
+import { addMember, removeMember } from "../../store/actions/organization";
 import getUser from "../../helpers/getUser";
 import shrinkAddress from "../../helpers/shrinkAddress";
 
@@ -37,9 +37,9 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
   const addMember = async () => {
     setIsAdding(true);
     if (await validateMember()) {
-      const res = await props.updateMember({
-        id: orgId,
-        user: collabAddress,
+      const res = await props.addMember({
+        daoId: orgId,
+        userId: collabAddress,
         role: collabRole,
       });
       console.log(res);
@@ -56,7 +56,7 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
 
   const removeMember = async (address, index) => {
     setIsRemoving(index);
-    await props.removeMember({ id: orgId, user: address });
+    await props.removeMember({ daoId: orgId, userId: address });
     if (refreshOrganization) await refreshOrganization();
     setIsRemoving(false);
   };
@@ -159,6 +159,6 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  updateMember,
+  addMember,
   removeMember,
 })(MembersList);
