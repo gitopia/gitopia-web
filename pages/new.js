@@ -7,7 +7,7 @@ import Header from "../components/header";
 import TextInput from "../components/textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
 import Footer from "../components/footer";
-import isRepositoryNameAvailable from "../helpers/isRepositoryNameAvailable";
+import isRepositoryNameTaken from "../helpers/isRepositoryNameTaken";
 
 function NewRepository(props) {
   const router = useRouter();
@@ -59,11 +59,7 @@ function NewRepository(props) {
       });
       return false;
     }
-    const alreadyAvailable = await isRepositoryNameAvailable(
-      name,
-      ownerId,
-      props.dashboards
-    );
+    const alreadyAvailable = await isRepositoryNameTaken(name, ownerId);
 
     if (alreadyAvailable) {
       setNameHint({

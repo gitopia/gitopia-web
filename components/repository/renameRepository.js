@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import TextInput from "../textInput";
 import { connect } from "react-redux";
 import { renameRepository } from "../../store/actions/repository";
-import isRepositoryNameAvailable from "../../helpers/isRepositoryNameAvailable";
+import isRepositoryNameTaken from "../../helpers/isRepositoryNameTaken";
 
 function RenameRepository({
   repoId = null,
@@ -35,11 +35,7 @@ function RenameRepository({
       });
       return false;
     }
-    const alreadyAvailable = await isRepositoryNameAvailable(
-      name,
-      repoOwner,
-      props.dashboards
-    );
+    const alreadyAvailable = await isRepositoryNameTaken(name, repoOwner);
     if (alreadyAvailable) {
       setNameHint({
         type: "error",
