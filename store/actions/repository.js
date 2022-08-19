@@ -60,25 +60,14 @@ export const createRepository = ({
     const { wallet } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
-    let ownerType;
-    const { user } = getState();
-    user.dashboards.every((d) => {
-      if (d.id === ownerId) {
-        ownerType = d.type == "User" ? "USER" : "ORGANIZATION";
-        return false;
-      }
-      return true;
-    });
     const repository = {
       creator: wallet.selectedAddress,
       name: name,
-      ownerId,
-      ownerType: ownerType || "USER",
+      owner: ownerId,
       description: description,
     };
     console.log("repository", repository);
     const { env } = getState();
-
     try {
       const message = await env.txClient.msgCreateRepository(repository);
       const result = await sendTransaction({ message })(dispatch, getState);
