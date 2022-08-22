@@ -56,6 +56,7 @@ export default function BranchSelector({
     >
       <div
         className="btn btn-sm btn-outline items-center"
+        data-test="select-branch"
         onClick={() => {
           if (searchInput) searchInput.current.focus();
         }}
@@ -226,6 +227,7 @@ export default function BranchSelector({
               onClick={() => {
                 onCreateTag(searchText);
               }}
+              data-test="create-tag"
             >
               Create Tag
             </button>

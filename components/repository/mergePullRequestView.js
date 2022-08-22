@@ -183,6 +183,7 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
                 "btn btn-xs sm:btn-sm btn-primary sm:ml-4 m-0.5 h-10" +
                 (isMerging ? " loading" : "")
               }
+              data-test="merge-pr"
               onClick={mergePull}
               disabled={isMerging || stateClass === "warning"}
             >

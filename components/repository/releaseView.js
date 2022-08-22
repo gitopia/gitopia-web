@@ -70,7 +70,7 @@ export default function ReleaseView({
         </div>
         {showEditControls ? (
           <div className="dropdown dropdown-end">
-            <div tabIndex="0" className="m-1 btn btn-square btn-xs btn-ghost">
+            <div tabIndex="0" className="m-1 btn btn-square btn-xs btn-ghost" data-test="release-edits">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -84,7 +84,7 @@ export default function ReleaseView({
               tabIndex="0"
               className="shadow menu compact dropdown-content bg-base-300 rounded-box w-32"
             >
-              <li>
+              <li data-test="release-edit">
                 <Link
                   href={
                     "/" +
@@ -98,7 +98,7 @@ export default function ReleaseView({
                   <a>Edit</a>
                 </Link>
               </li>
-              <li>
+              <li data-test="release-del">
                 <a
                   onClick={() => {
                     setConfirmDelete(true);
@@ -202,6 +202,7 @@ export default function ReleaseView({
                 setConfirmDelete(false);
                 setIsDeleting(false);
               }}
+              data-test="del-release"
             >
               Delete
             </label>
