@@ -6,7 +6,7 @@ import { validatePostingEligibility } from "./repository";
 import { updateUserBalance } from "./wallet";
 import { MemberRole } from "@gitopia/gitopia-js/types/gitopia/member";
 
-export const createOrganization = ({
+export const createDao = ({
   name = null,
   description = null,
   avatarUrl = null,
@@ -14,11 +14,11 @@ export const createOrganization = ({
   website = null,
 }) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "organization")))
+    if (!(await validatePostingEligibility(dispatch, getState, "dao")))
       return null;
 
     const { wallet, env } = getState();
-    const organization = {
+    const dao = {
       creator: wallet.selectedAddress,
       name,
       description,
@@ -28,7 +28,7 @@ export const createOrganization = ({
     };
 
     try {
-      const message = await env.txClient.msgCreateOrganization(organization);
+      const message = await env.txClient.msgCreateDao(dao);
       const result = await sendTransaction({ message })(dispatch, getState);
       console.log(result);
       if (result && result.code === 0) {

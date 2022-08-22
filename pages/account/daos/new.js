@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { connect } from "react-redux";
-import { createOrganization } from "../../../store/actions/organization";
+import { createDao } from "../../../store/actions/organization";
 
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -83,10 +83,10 @@ function NewOrganization(props) {
     return true;
   };
 
-  const createOrganization = async () => {
+  const createDao = async () => {
     setOrganizationCreating(true);
     if (validateOrganization()) {
-      let res = await props.createOrganization({
+      let res = await props.createDao({
         name: name.replace(sanitizedNameTest, "-"),
         description,
         avatarUrl,
@@ -185,7 +185,7 @@ function NewOrganization(props) {
                 (organizationCreating ? "loading " : "")
               }
               disabled={organizationCreating}
-              onClick={createOrganization}
+              onClick={createDao}
             >
               Create DAO
             </button>
@@ -205,5 +205,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  createOrganization,
+  createDao,
 })(NewOrganization);
