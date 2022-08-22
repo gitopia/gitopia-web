@@ -34,7 +34,7 @@ function AccountTransactions(props) {
           ? userTransactions.map((txs) => {
               return (
                 <div key={txs.txhash}>
-                  <div className="card  bordered mb-5 bg-gray-800 h-27 overflow-x-scroll">
+                  <div className="card  bordered mb-5 bg-gray-800 h-27 overflow-x-auto">
                     <div className="flex">
                       {txs.tx.value !== "undefined" ? (
                         txTypes[txs.tx.value.msg[0].type] !== undefined ? (

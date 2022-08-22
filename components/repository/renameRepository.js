@@ -6,6 +6,7 @@ import isRepositoryNameTaken from "../../helpers/isRepositoryNameTaken";
 
 function RenameRepository({
   repoId = null,
+  repoName = null,
   repoOwner = null,
   currentName = "",
   onSuccess,
@@ -51,7 +52,8 @@ function RenameRepository({
     setIsChanging(true);
     if (await validateName()) {
       const res = await props.renameRepository({
-        id: repoId,
+        repoOwner: repoOwner,
+        repoName: repoName,
         name: name.replace(sanitizedNameTest, "-"),
       });
       if (res) {

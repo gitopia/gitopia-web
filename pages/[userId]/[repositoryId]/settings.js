@@ -98,6 +98,7 @@ function RepositorySettingsView(props) {
                   <RenameRepository
                     currentName={repository.name}
                     repoId={repository.id}
+                    repoName={repository.name}
                     repoOwner={repository.owner.id}
                     onSuccess={async (newRepoName) => {
                       const url = [

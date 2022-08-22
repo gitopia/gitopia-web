@@ -264,14 +264,18 @@ export const toggleIssueState = ({ id = null }) => {
   };
 };
 
-export const renameRepository = ({ id = null, name = "" }) => {
+export const renameRepository = ({
+  repoOwner = null,
+  repoName = null,
+  name = "",
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
     const { env, wallet } = getState();
     const repository = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId: { id: repoOwner, name: repoName },
       name,
     };
 
