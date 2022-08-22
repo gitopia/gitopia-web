@@ -10,7 +10,6 @@ import MarkdownEditor from "../../../components/markdownEditor";
 import { communityPoolSpendProposal } from "../../../store/actions/proposals";
 import { paramChangeProposal } from "../../../store/actions/proposals";
 import getOrganization from "../../../helpers/getOrganization";
-import getRepository from "../../../helpers/getRepository";
 import getUser from "../../../helpers/getUser";
 import PublicTabs from "../../../components/dashboard/publicTabs";
 

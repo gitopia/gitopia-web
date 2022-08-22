@@ -47,7 +47,8 @@ function RepositoryIssueCreateView(props) {
       const issue = {
         title,
         description,
-        repositoryId: parseInt(repository.id),
+        repositoryName: repository.name,
+        repositoryOwner: repository.owner.id,
         assignees,
         labels,
       };

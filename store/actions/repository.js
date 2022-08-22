@@ -92,7 +92,8 @@ export const createRepository = ({
 export const createIssue = ({
   title = "",
   description = "",
-  repositoryId = null,
+  repositoryName = "",
+  repositoryOwner = "",
   labels = [],
   weight = 0,
   assignees = [],
@@ -106,7 +107,10 @@ export const createIssue = ({
       creator: wallet.selectedAddress,
       title,
       description,
-      repositoryId: repositoryId.toString(),
+      repositoryId: {
+        id: repositoryOwner,
+        name: repositoryName,
+      },
     };
 
     if (assignees.length) {
