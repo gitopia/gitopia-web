@@ -10,6 +10,8 @@ import { useRouter } from "next/router";
 import { getGitServerAuthorization } from "../../helpers/getGitServerAuthStatus";
 import { notify } from "reapop";
 import pluralize from "../../helpers/pluralize";
+import getAllRepositoryBranch from "../../helpers/getAllRepositoryBranch";
+import getAllRepositoryTag from "../../helpers/getAllRepositoryTag";
 
 function RepositoryHeader({ repository, ...props }) {
   const [forkTargetShown, setForkTargetShown] = useState(false);
@@ -18,6 +20,8 @@ function RepositoryHeader({ repository, ...props }) {
   const [forkingAccess, setForkingAccess] = useState(false);
   const [isGrantingAccess, setIsGrantingAccess] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [branchCount, setBranchCount] = useState(0);
+  const [tagCount, setTagCount] = useState(0);
 
   function detectWindowSize() {
     if (typeof window !== "undefined") {
@@ -48,6 +52,28 @@ function RepositoryHeader({ repository, ...props }) {
   const refreshForkingAccess = async () => {
     setForkingAccess(await getGitServerAuthorization(props.selectedAddress));
   };
+  const getBranches = async () => {
+    if (repository) {
+      const branches = await getAllRepositoryBranch(
+        repository.owner.id,
+        repository.name
+      );
+      console.log(branches);
+      setBranchCount(branches.length);
+    }
+  };
+  const getTags = async () => {
+    if (repository) {
+      const tags = await getAllRepositoryTag(
+        repository.owner.id,
+        repository.name
+      );
+      console.log(tags);
+      setTagCount(tags.length);
+    }
+  };
+  useEffect(getBranches, [repository]);
+  useEffect(getTags, [repository]);
   useEffect(refreshForkingAccess, [props.selectedAddress]);
 
   return (
@@ -126,9 +152,9 @@ function RepositoryHeader({ repository, ...props }) {
                     />
                   </g>
                 </svg>
-                {repository.branches.length}
+                {branchCount}
                 <span className="ml-1 uppercase">
-                  {pluralize("branch", repository.branches.length)}
+                  {pluralize("branch", branchCount)}
                 </span>
               </div>
               <div className="ml-6 text-type-secondary text-xs font-semibold uppercase flex">
@@ -151,9 +177,9 @@ function RepositoryHeader({ repository, ...props }) {
                     strokeWidth="2"
                   />
                 </svg>
-                {repository.tags.length}
+                {tagCount}
                 <span className="ml-1 uppercase">
-                  {pluralize("tag", repository.tags.length)}
+                  {pluralize("tag", tagCount)}
                 </span>
               </div>
             </div>
@@ -202,7 +228,7 @@ function RepositoryHeader({ repository, ...props }) {
               onClick={() => {
                 setForkTargetShown(true);
               }}
-              disabled={!repository.branches.length}
+              disabled={!branchCount}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -234,7 +260,7 @@ function RepositoryHeader({ repository, ...props }) {
                     "/insights"
                 );
               }}
-              disabled={!repository.branches.length}
+              disabled={!branchCount}
             >
               {repository.forks.length}
             </button>
