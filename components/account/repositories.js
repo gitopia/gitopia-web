@@ -3,21 +3,16 @@ import dayjs from "dayjs";
 import Link from "next/link";
 import getRepository from "../../helpers/getRepository";
 import sortBy from "lodash/sortBy";
+import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
 
 function AccountRepositories(props) {
   const [allRepos, setAllRepos] = useState([]);
 
   const getAllRepos = async () => {
-    if (props.user.id) {
-      const pr = props.user.repositories.map((r) => getRepository(r.id));
-      const repos = await Promise.all(pr);
-      const finalRepos = sortBy(repos, (r) => -Number(r.updatedAt));
-      setAllRepos(finalRepos);
-    } else if (props.org.id) {
-      const pr = props.org.repositories.map((r) => getRepository(r.id));
-      const repos = await Promise.all(pr);
-      const finalRepos = sortBy(repos, (r) => -Number(r.updatedAt));
-      setAllRepos(finalRepos);
+    if (props.userId) {
+      const pr = await getAnyRepositoryAll(props.userId);
+      const repos = pr.sort((a, b) => a.updatedAt - b.updatedAt).reverse();
+      setAllRepos(repos);
     } else {
       setAllRepos([]);
     }

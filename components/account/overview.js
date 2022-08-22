@@ -9,6 +9,7 @@ import "react-calendar-heatmap/dist/styles.css";
 import ReactTooltip from "react-tooltip";
 import dayjs from "dayjs";
 import getRepository from "../../helpers/getRepository";
+import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
 
 function AccountOverview(props) {
   const [allRepos, setAllRepos] = useState([]);
@@ -17,21 +18,11 @@ function AccountOverview(props) {
 
   const getAllRepos = async () => {
     let letter = "x";
-    if (props.user.id) {
-      const pr = props.user.repositories
-        .reverse()
-        .slice(0, 4)
-        .map((r) => getRepository(r.id));
-      const repos = await Promise.all(pr);
-      console.log(repos);
-      setAllRepos(repos);
-    } else if (props.org.id) {
-      const pr = props.org.repositories
-        .reverse()
-        .slice(0, 4)
-        .map((r) => getRepository(r.id));
-      const repos = await Promise.all(pr);
-      setAllRepos(repos);
+    const pr = await getAnyRepositoryAll(props.userId);
+    pr.sort((a, b) => a.updatedAt - b.updatedAt).reverse();
+    const repos = pr.slice(0, 4);
+    setAllRepos(repos);
+    if (props.org.id) {
       letter = props.org.name.slice(0, 1);
     }
     // const link =
