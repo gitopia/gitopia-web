@@ -113,7 +113,7 @@ function RepositoryReleasesView(props) {
                   "/releases/new"
                 }
               >
-                <button className="btn btn-primary btn-sm btn-block">
+                <button className="btn btn-primary btn-sm btn-block" data-test="new-release">
                   New Release
                 </button>
               </Link>

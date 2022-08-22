@@ -394,6 +394,7 @@ function RepositoryReleaseEditView(props) {
                       }
                       disabled={title.trim().length === 0 || postingIssue}
                       onClick={createIssue}
+                      data-test="update-release"
                     >
                       Update Release
                     </button>

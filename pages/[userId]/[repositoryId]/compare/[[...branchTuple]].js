@@ -363,6 +363,7 @@ function RepositoryCompareView(props) {
                           type="text"
                           placeholder="Pull Request Title"
                           className="input input-md input-bordered"
+                          data-test="pr-title"
                           value={title}
                           onChange={(e) => {
                             setTitle(e.target.value);
@@ -380,6 +381,7 @@ function RepositoryCompareView(props) {
                               "btn btn-sm btn-primary btn-block " +
                               (creatingPull ? "loading" : "")
                             }
+                            data-test="create-pr"
                             onClick={async () => {
                               setCreatingPull(true);
                               const res = await props.createPullRequest({
@@ -503,6 +505,7 @@ function RepositoryCompareView(props) {
                   className="btn btn-sm btn-primary btn-block"
                   onClick={() => setStartCreatingPull(true)}
                   disabled={!stats.files_changed}
+                  data-test="create-pr"
                 >
                   Create Pull Request
                 </button>

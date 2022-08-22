@@ -177,7 +177,7 @@ function RepositoryPullsView(props) {
                   "/" + repository.owner.id + "/" + repository.name + "/compare"
                 }
               >
-                <button className="btn btn-primary btn-sm btn-block">
+                <button className="btn btn-primary btn-sm btn-block" data-test="new-pull-request">
                   New Pull Request
                 </button>
               </Link>
@@ -594,7 +594,7 @@ function RepositoryPullsView(props) {
                               i.iid
                             }
                           >
-                            <a className="btn-neutral">{i.title}</a>
+                            <a className="btn-neutral" data-test="select-open-pr">{i.title}</a>
                           </Link>
                         </div>
                         <div className="text-xs text-type-secondary">
