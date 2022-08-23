@@ -5,6 +5,7 @@ import { userActions, organizationActions } from "./actionTypes";
 import { validatePostingEligibility } from "./repository";
 import { updateUserBalance } from "./wallet";
 import { MemberRole } from "@gitopia/gitopia-js/types/gitopia/member";
+import getUserDaoAll from "../../helpers/getUserDaoAll";
 
 export const createDao = ({
   name = null,
@@ -33,11 +34,13 @@ export const createDao = ({
       console.log(result);
       if (result && result.code === 0) {
         await getUserDetailsForSelectedAddress()(dispatch, getState);
+        const daos = await getUserDaoAll(wallet.selectedAddress);
         dispatch({
           type: userActions.INIT_DASHBOARDS,
           payload: {
             name: wallet.activeWallet.name,
             id: wallet.selectedAddress,
+            daos: daos,
           },
         });
         updateUserBalance()(dispatch, getState);

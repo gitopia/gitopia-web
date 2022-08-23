@@ -41,7 +41,7 @@ const reducer = (state = initialState, action) => {
     }
 
     case userActions.INIT_DASHBOARDS: {
-      const { name, id } = action.payload;
+      const { name, id, daos } = action.payload;
       const dashboards = [
         {
           type: "User",
@@ -49,11 +49,14 @@ const reducer = (state = initialState, action) => {
           id,
           url: "/home",
         },
-        ...state.organizations.map((o) => {
+        ...daos.map((d) => {
           return {
-            type: "Organization",
-            ...o,
-            url: "/daos/" + o.id + "/dashboard",
+            type: "Dao",
+            id: d.address,
+            name: d.name,
+            description: d.description,
+            avatarUrl: d.avatarUrl,
+            url: "/daos/" + d.name + "/dashboard",
           };
         }),
       ];

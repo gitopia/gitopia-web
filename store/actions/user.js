@@ -2,6 +2,7 @@ import { userActions, walletActions } from "./actionTypes";
 import { sendTransaction, setupTxClients } from "./env";
 import { updateUserBalance } from "./wallet";
 import { notify } from "reapop";
+import getUserDaoAll from "../../helpers/getUserDaoAll";
 
 export const createUser = ({ username, name, bio, avatarUrl }) => {
   return async (dispatch, getState) => {
@@ -47,11 +48,13 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
           type: walletActions.SET_ACTIVE_WALLET,
           payload: { wallet: newWallet },
         });
+        const daos = await getUserDaoAll(newWallet.accounts[0].address);
         await dispatch({
           type: userActions.INIT_DASHBOARDS,
           payload: {
             name: newWallet.name,
             id: newWallet.accounts[0].address,
+            daos: daos,
           },
         });
       }

@@ -10,6 +10,7 @@ import find from "lodash/find";
 import { notify } from "reapop";
 import { setupTxClients } from "./env";
 import getNodeInfo from "../../helpers/getNodeInfo";
+import getUserDaoAll from "../../helpers/getUserDaoAll";
 
 let ledgerTransport;
 
@@ -54,11 +55,13 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
   }
 
   await getUserDetailsForSelectedAddress()(dispatch, getState);
+  const daos = await getUserDaoAll(wallet.activeWallet.accounts[0].address);
   await dispatch({
     type: userActions.INIT_DASHBOARDS,
     payload: {
       name: wallet.activeWallet.name,
       id: wallet.activeWallet.accounts[0].address,
+      daos: daos,
     },
   });
   const { user } = getState();
