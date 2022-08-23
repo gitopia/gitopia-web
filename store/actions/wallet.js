@@ -86,7 +86,7 @@ export const signOut = () => {
       type: userActions.SET_EMPTY_USER,
     });
     dispatch({
-      type: organizationActions.SET_EMPTY_ORGANIZATION,
+      type: organizationActions.SET_EMPTY_DAO,
     });
   };
 };

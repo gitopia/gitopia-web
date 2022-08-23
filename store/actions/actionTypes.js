@@ -25,8 +25,8 @@ export const userActions = {
 };
 
 export const organizationActions = {
-  SET_ORGANIZATION: "SET_ORGANIZATION",
-  SET_EMPTY_ORGANIZATION: "SET_EMPTY_ORGANIZATION",
+  SET_DAO: "SET_DAO",
+  SET_EMPTY_DAO: "SET_EMPTY_DAO",
 };
 
 export const repositoryActions = {

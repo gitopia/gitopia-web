@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import MembersList from "./membersList";
 import { getOrganizationDetailsForDashboard } from "../../store/actions/organization";
 
-function OrgDashboard({ organization = {}, ...props }) {
+function DaoDashboard({ dao = {}, ...props }) {
   return (
     <main className="container mx-auto max-w-screen-lg py-4 sm:py-12">
       <div className="flex">
@@ -67,8 +67,8 @@ function OrgDashboard({ organization = {}, ...props }) {
       </div> */}
       <div className="mt-12 overflow-x-scroll">
         <MembersList
-          members={organization.members}
-          orgId={organization.address}
+          members={dao.members}
+          orgId={dao.address}
           refreshOrganization={props.getOrganizationDetailsForDashboard}
         />
       </div>
@@ -83,5 +83,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, { getOrganizationDetailsForDashboard })(
-  OrgDashboard
+  DaoDashboard
 );

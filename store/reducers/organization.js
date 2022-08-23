@@ -22,10 +22,10 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case organizationActions.SET_ORGANIZATION:
+    case organizationActions.SET_DAO:
       const { organization } = action.payload;
       return { ...state, ...organization };
-    case organizationActions.SET_EMPTY_ORGANIZATION:
+    case organizationActions.SET_EMPTY_DAO:
       return { ...initialState };
     default:
       return { ...state };

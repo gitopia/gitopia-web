@@ -6,6 +6,7 @@ import { validatePostingEligibility } from "./repository";
 import { updateUserBalance } from "./wallet";
 import { MemberRole } from "@gitopia/gitopia-js/types/gitopia/member";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
+import getDaoMember from "../../helpers/getUserDaoMember";
 
 export const createDao = ({
   name = null,
@@ -62,17 +63,20 @@ export const getOrganizationDetailsForDashboard = () => {
   return async (dispatch, getState) => {
     const { env, user } = getState();
     try {
-      const result = await env.queryClient.queryOrganization(
-        user.currentDashboard
-      );
-      console.log(result);
+      const [daoRes, members] = await Promise.all([
+        env.queryClient.queryDao(user.currentDashboard),
+        getDaoMember(user.currentDashboard),
+      ]);
+      let dao = daoRes.data.dao;
       dispatch({
-        type: organizationActions.SET_ORGANIZATION,
-        payload: { organization: result.data.Organization },
+        type: organizationActions.SET_DAO,
+        payload: {
+          organization: { ...dao, members: members },
+        },
       });
     } catch (e) {
       dispatch({
-        type: organizationActions.SET_EMPTY_ORGANIZATION,
+        type: organizationActions.SET_EMPTY_DAO,
       });
     }
   };

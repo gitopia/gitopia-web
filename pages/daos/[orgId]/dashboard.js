@@ -7,7 +7,7 @@ import TopRepositories from "../../../components/topRepositories";
 import getHomeUrl from "../../../helpers/getHomeUrl";
 import { useRouter } from "next/router";
 import { getOrganizationDetailsForDashboard } from "../../../store/actions/organization";
-import Org from "../../../components/dashboard/org";
+import Dao from "../../../components/dashboard/dao";
 import Link from "next/link";
 import getAnyRepositoryAll from "../../../helpers/getAnyRepositoryAll";
 
@@ -116,10 +116,7 @@ function OrgDashboard(props) {
           <DashboardSelector />
         )}
         <div className="flex-1 px-4">
-          <Org
-            organization={props.organization}
-            currentDashboard={props.currentDashboard}
-          />
+          <Dao dao={props.dao} currentDashboard={props.currentDashboard} />
         </div>
         {isMobile ? (
           <div className="border-t border-grey mt-4">
@@ -163,7 +160,7 @@ const mapStateToProps = (state) => {
   return {
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
-    organization: state.organization,
+    dao: state.organization,
     username: state.organization.name,
   };
 };

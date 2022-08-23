@@ -87,11 +87,11 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
                 </div>
                 <div>
                   <a
-                    href={"/" + c.id}
+                    href={"/" + c.address}
                     target="_blank"
                     className="link link-primary text-sm no-underline hover:underline"
                   >
-                    {shrinkAddress(c.id)}
+                    {shrinkAddress(c.address)}
                   </a>
                 </div>
               </div>
