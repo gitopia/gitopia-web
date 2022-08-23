@@ -25,8 +25,6 @@ import getContent from "../../../helpers/getContent";
 import getCommitHistory from "../../../helpers/getCommitHistory";
 import pluralize from "../../../helpers/pluralize";
 import shrinkAddress from "../../../helpers/shrinkAddress";
-import getAllRepositoryBranch from "../../../helpers/getAllRepositoryBranch";
-import getAllRepositoryTag from "../../../helpers/getAllRepositoryTag";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -59,8 +57,6 @@ function RepositoryView(props) {
   const [currentUserEditPermission, setCurrentUserEditPermission] =
     useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [branches, setBranches] = useState([]);
-  const [tags, setTags] = useState([]);
 
   function detectWindowSize() {
     if (typeof window !== "undefined") {
@@ -82,10 +78,14 @@ function RepositoryView(props) {
 
   const loadEntities = async (currentEntities = [], firstTime = false) => {
     setLoadingEntities(true);
-    let branchSha = getBranchSha(selectedBranch, branches, tags);
+    let branchSha = getBranchSha(
+      selectedBranch,
+      repository.branches,
+      repository.tags
+    );
     if (!branchSha) {
       // TODO: can lead to different commit and file browser state
-      branchSha = branches[0].sha;
+      branchSha = repository.branches[0].sha;
     }
     const res = await getContent(
       repository.id,
@@ -132,33 +132,18 @@ function RepositoryView(props) {
     }
     setLoadingEntities(false);
   };
-  const getBranches = async () => {
-    if (repository) {
-      const branches = await getAllRepositoryBranch(
-        repository.owner.id,
-        repository.name
-      );
-      console.log(branches);
-      setBranches(branches);
-    }
-  };
-  const getTags = async () => {
-    if (repository) {
-      const tags = await getAllRepositoryTag(
-        repository.owner.id,
-        repository.name
-      );
-      console.log(tags);
-      setTags(tags);
-    }
-  };
+
   useEffect(async () => {
-    if (typeof window !== "undefined" && branches.length) {
+    if (typeof window !== "undefined" && repository.branches.length) {
       loadEntities([], true);
-      let branchSha = getBranchSha(repository.defaultBranch, branches, tags);
+      let branchSha = getBranchSha(
+        repository.defaultBranch,
+        repository.branches,
+        repository.tags
+      );
       if (!branchSha) {
-        setSelectedBranch(branches[0].name);
-        branchSha = branches[0].sha;
+        setSelectedBranch(repository.branches[0].name);
+        branchSha = repository.branches[0].sha;
       } else {
         setSelectedBranch(repository.defaultBranch);
       }
@@ -186,9 +171,6 @@ function RepositoryView(props) {
     );
   }, [props.user, repository]);
 
-  useEffect(getBranches, [repository]);
-  useEffect(getTags, [repository]);
-
   return (
     <div
       data-theme="dark"
@@ -207,7 +189,7 @@ function RepositoryView(props) {
             <div className="flex mt-8 items-center justify-center">
               <button className="btn btn-square btn-ghost loading" />
             </div>
-          ) : branches.length ? (
+          ) : repository.branches.length ? (
             <div className="flex mt-8 flex-col sm:flex-row">
               <div className="flex-none sm:w-64 sm:pr-8 divide-y divide-grey order-2 sm:order-1 mt-4 sm:mt-0">
                 {!isMobile ? (
@@ -287,9 +269,9 @@ function RepositoryView(props) {
                       }
                     >
                       <span className="ml-2 text-xs text-type-secondary font-semibold">
-                        {tags.length}
+                        {repository.tags.length}
                         <span className="ml-1 uppercase">
-                          {pluralize("tag", tags.length)}
+                          {pluralize("tag", repository.tags.length)}
                         </span>
                       </span>
                     </a>
@@ -398,8 +380,8 @@ function RepositoryView(props) {
                 <div className="mt-8 sm:flex justify-start">
                   <div className="flex mb-2 sm:mb-0">
                     <BranchSelector
-                      branches={branches}
-                      tags={tags}
+                      branches={repository.branches}
+                      tags={repository.tags}
                       baseUrl={
                         "/" +
                         repository.owner.id +
@@ -454,9 +436,9 @@ function RepositoryView(props) {
                             />
                           </g>
                         </svg>
-                        {branches.length}
+                        {repository.branches.length}
                         <span className="ml-1 uppercase">
-                          {pluralize("branch", branches.length)}
+                          {pluralize("branch", repository.branches.length)}
                         </span>
                       </div>
                     </a>
@@ -490,9 +472,9 @@ function RepositoryView(props) {
                             strokeWidth="2"
                           />
                         </svg>
-                        {tags.length}
+                        {repository.tags.length}
                         <span className="ml-1 uppercase">
-                          {pluralize("tag", tags.length)}
+                          {pluralize("tag", repository.tags.length)}
                         </span>
                       </div>
                     </a>

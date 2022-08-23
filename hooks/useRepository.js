@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import { useErrorStatus } from "./errorHandler";
 import getUser from "../helpers/getUser";
 import getOrganization from "../helpers/getOrganization";
+import getAllRepositoryBranch from "../helpers/getAllRepositoryBranch";
+import getAllRepositoryTag from "../helpers/getAllRepositoryTag";
 
 export default function useRepository() {
   const { setErrorStatusCode } = useErrorStatus();
@@ -32,8 +34,15 @@ export default function useRepository() {
       router.query.userId,
       router.query.repositoryId
     );
+
     if (r) {
       let ownerDetails = {};
+
+      const [branches, tags] = await Promise.all([
+        getAllRepositoryBranch(repository.owner.id, repository.name),
+        getAllRepositoryTag(repository.owner.id, repository.name),
+      ]);
+
       if (r.owner.type === "USER") {
         ownerDetails = await getUser(r.owner.id);
         setRepository({
@@ -46,6 +55,8 @@ export default function useRepository() {
             username: ownerDetails.username,
             avatarUrl: ownerDetails.avatarUrl,
           },
+          branches: branches,
+          tags: tags,
         });
       } else {
         ownerDetails = await getOrganization(r.owner.id);
@@ -58,6 +69,8 @@ export default function useRepository() {
             username: ownerDetails.name,
             avatarUrl: ownerDetails.avatarUrl,
           },
+          branches: branches,
+          tags: tags,
         });
       }
     } else {
@@ -65,6 +78,6 @@ export default function useRepository() {
     }
     setFirstFetchLoading(false);
   }, [router.query, refreshIndex]);
-
+  console.log(repository);
   return { repository, refreshRepository, firstFetchLoading };
 }
