@@ -8,10 +8,12 @@ import UserDashboard from "../components/dashboard/user";
 import { useRouter } from "next/router";
 import DashboardSelector from "../components/dashboard/dashboardSelector";
 import getHomeUrl from "../helpers/getHomeUrl";
+import getAnyRepositoryAll from "../helpers/getAnyRepositoryAll";
 
 function Home(props) {
   const router = useRouter();
   const [isMobile, setIsMobile] = useState(false);
+  const [allRepository, setAllRepository] = useState([]);
 
   function detectWindowSize() {
     if (typeof window !== "undefined") {
@@ -30,11 +32,16 @@ function Home(props) {
     };
   });
 
-  useEffect(() => {
+  useEffect(async () => {
     if (props.selectedAddress !== props.currentDashboard) {
       const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
       console.log(newUrl);
       router.push(newUrl);
+    }
+    const repos = await getAnyRepositoryAll(props.currentDashboard);
+    if (repos) {
+      console.log(repos);
+      setAllRepository(repos);
     }
   }, [props.dashboards, props.currentDashboard]);
 
@@ -76,7 +83,7 @@ function Home(props) {
             <div className="flex-1">
               <DashboardSelector />
               <TopRepositories
-                repositories={props.repositories.map((r) => {
+                repositories={allRepository.map((r) => {
                   return {
                     owner: props.selectedAddress,
                     username: props.username,
@@ -180,7 +187,6 @@ const mapStateToProps = (state) => {
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
     selectedAddress: state.wallet.selectedAddress,
-    repositories: state.user.repositories,
     username: state.user.username,
   };
 };

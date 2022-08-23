@@ -700,7 +700,6 @@ const mapStateToProps = (state) => {
     advanceUser: state.user.advanceUser,
     loreBalance: state.wallet.loreBalance,
     dashboards: state.user.dashboards,
-    repositories: state.organization.repositories,
     organization: state.organization,
   };
 };

@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { getOrganizationDetailsForDashboard } from "../../../store/actions/organization";
 import Org from "../../../components/dashboard/org";
 import Link from "next/link";
+import getAnyRepositoryAll from "../../../helpers/getAnyRepositoryAll";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -24,6 +25,7 @@ export async function getStaticPaths() {
 function OrgDashboard(props) {
   const hrefBase = "/daos/" + props.currentDashboard;
   const router = useRouter();
+  const [allRepository, setAllRepository] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
 
   function detectWindowSize() {
@@ -44,11 +46,13 @@ function OrgDashboard(props) {
     };
   });
 
-  useEffect(() => {
+  useEffect(async () => {
     console.log("org dashboard", router.query.orgId, props.currentDashboard);
     if (router.query.orgId !== props.currentDashboard) {
       router.push(getHomeUrl(props.dashboards, props.currentDashboard));
     }
+    const repos = await getAnyRepositoryAll(props.currentDashboard);
+    setAllRepository(repos);
     props.getOrganizationDetailsForDashboard();
   }, [props.currentDashboard]);
   return (
@@ -67,7 +71,7 @@ function OrgDashboard(props) {
             <div className="flex-1">
               <DashboardSelector />
               <TopRepositories
-                repositories={props.repositories.map((r) => {
+                repositories={allRepository.map((r) => {
                   return {
                     owner: props.currentDashboard,
                     username: props.username,
@@ -159,7 +163,6 @@ const mapStateToProps = (state) => {
   return {
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
-    repositories: state.organization.repositories,
     organization: state.organization,
     username: state.organization.name,
   };

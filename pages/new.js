@@ -202,7 +202,6 @@ function NewRepository(props) {
 
 const mapStateToProps = (state) => {
   return {
-    repositories: state.user.repositories,
     dashboards: state.user.dashboards,
     currentDashboard: state.user.currentDashboard,
   };

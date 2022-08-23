@@ -138,7 +138,6 @@ const mapStateToProps = (state) => {
   return {
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
-    repositories: state.organization.repositories,
     organization: state.organization,
   };
 };
