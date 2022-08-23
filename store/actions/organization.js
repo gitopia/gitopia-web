@@ -252,11 +252,11 @@ export const updateOrganizationWebsite = ({ id, website }) => {
   };
 };
 
-export const isCurrentUserEligibleToUpdate = (org) => {
+export const isCurrentUserEligibleToUpdate = (members) => {
   return async (dispatch, getState) => {
     let permission = false;
     const { wallet } = getState();
-    org.members.every((c) => {
+    members.every((c) => {
       if (wallet.selectedAddress === c.id && c.role === "OWNER") {
         permission = true;
         return false;
