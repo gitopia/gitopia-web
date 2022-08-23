@@ -5,7 +5,7 @@ import { addMember, removeMember } from "../../store/actions/organization";
 import getUser from "../../helpers/getUser";
 import shrinkAddress from "../../helpers/shrinkAddress";
 
-function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
+function MembersList({ daoId, members = [], refreshOrganization, ...props }) {
   const [collabAddress, setCollabAddress] = useState("");
   const [collabHint, setCollabHint] = useState({
     shown: false,
@@ -38,7 +38,7 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
     setIsAdding(true);
     if (await validateMember()) {
       const res = await props.addMember({
-        daoId: orgId,
+        daoId: daoId,
         userId: collabAddress,
         role: collabRole,
       });
@@ -56,7 +56,7 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
 
   const removeMember = async (address, index) => {
     setIsRemoving(index);
-    await props.removeMember({ daoId: orgId, userId: address });
+    await props.removeMember({ daoId: daoId, userId: address });
     if (refreshOrganization) await refreshOrganization();
     setIsRemoving(false);
   };
@@ -104,7 +104,7 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
                   (isRemoving === i ? "loading" : "")
                 }
                 disabled={isRemoving === i}
-                onClick={() => removeMember(c.id, i)}
+                onClick={() => removeMember(c.address, i)}
               >
                 Remove
               </button>

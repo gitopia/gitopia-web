@@ -68,7 +68,7 @@ function DaoDashboard({ dao = {}, ...props }) {
       <div className="mt-12 overflow-x-scroll">
         <MembersList
           members={dao.members}
-          orgId={dao.address}
+          daoId={dao.address}
           refreshOrganization={props.getOrganizationDetailsForDashboard}
         />
       </div>
