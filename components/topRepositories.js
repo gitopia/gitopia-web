@@ -35,14 +35,7 @@ function TopRepositories({ repositories = [] }) {
         {repos.map((r) => {
           return (
             <li className="" key={r.id}>
-              <Link
-                href={
-                  "/" +
-                  (r.username !== "" ? r.username : r.owner) +
-                  "/" +
-                  r.name
-                }
-              >
+              <Link href={"/" + r.owner.id + "/" + r.name}>
                 <a className="rounded">{r.name}</a>
               </Link>
             </li>
