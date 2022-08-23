@@ -68,7 +68,7 @@ function AccountView(props) {
           setErrorStatusCode(404);
           setUser({ creator: "", repositories: [] });
         }
-      } else if (data?.ownerType === "ORGANIZATION") {
+      } else if (data?.ownerType === "DAO") {
         const o = await getOrganization(data.address);
         if (o) {
           setOrg(o);
