@@ -9,6 +9,7 @@ import OrgDescription from "../organization/description";
 import OrgAvatar from "../organization/avatar";
 import OrgLocation from "../organization/location";
 import OrgWebsite from "../organization/website";
+import getDaoMember from "../../helpers/getUserDaoMember";
 
 function AccountOrgHeader(props) {
   const [isEditable, setIsEditable] = useState(false);
@@ -19,7 +20,8 @@ function AccountOrgHeader(props) {
   };
 
   useEffect(async () => {
-    setIsEditable(await props.isCurrentUserEligibleToUpdate(props.org));
+    const members = await getDaoMember(props.org.address);
+    setIsEditable(await props.isCurrentUserEligibleToUpdate(members));
   }, [props.org.address, props.selectedAddress]);
 
   return (
