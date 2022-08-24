@@ -227,7 +227,8 @@ function RepositoryReleaseNewView(props) {
                         onClick={async () => {
                           setCreatingTag(true);
                           const res = await props.createTag({
-                            repositoryId: repository.id,
+                            repoOwnerId: repository.owner.id,
+                            repositoryName: repository.name,
                             name: tagName,
                             sha: target.sha,
                           });

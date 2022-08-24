@@ -963,7 +963,12 @@ export const deleteRelease = ({ releaseId }) => {
   };
 };
 
-export const createTag = ({ repositoryId = null, name = null, sha = null }) => {
+export const createTag = ({
+  repoOwnerId = null,
+  repositoryName = null,
+  name = null,
+  sha = null,
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "tag")))
       return null;
@@ -971,13 +976,18 @@ export const createTag = ({ repositoryId = null, name = null, sha = null }) => {
     const { wallet, env } = getState();
     const tag = {
       creator: wallet.selectedAddress,
-      id: repositoryId,
-      name,
-      sha,
+      repositoryId: {
+        id: repoOwnerId,
+        name: repositoryName,
+      },
+      tag: {
+        name: name,
+        sha: sha,
+      },
     };
 
     try {
-      const message = await env.txClient.msgSetRepositoryTag(tag);
+      const message = await env.txClient.msgSetTag(tag);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         return result;
