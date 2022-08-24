@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { connect } from "react-redux";
-import { updateOrganizationAvatar } from "../../store/actions/organization";
+import { updateDaoAvatar } from "../../store/actions/organization";
 import { notify } from "reapop";
 
 function OrgAvatar(props = { isEditable: false }) {
@@ -12,9 +12,8 @@ function OrgAvatar(props = { isEditable: false }) {
   const [previewAvatarUrl, setPreviewAvatarUrl] = useState(
     "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&name=.&background=2d3845"
   );
-  const [previewAvatarText, setPreviewAvatarText] = useState(
-    "Nothing to Preview"
-  );
+  const [previewAvatarText, setPreviewAvatarText] =
+    useState("Nothing to Preview");
 
   const validateImageUrl = async (url) => {
     if (url == "") {
@@ -124,7 +123,7 @@ function OrgAvatar(props = { isEditable: false }) {
                     props.callback(imageUrl);
                   } else {
                     setLoading(true);
-                    const res = await props.updateOrganizationAvatar({
+                    const res = await props.updateDaoAvatar({
                       id: props.org.address,
                       url: imageUrl,
                     });
@@ -200,6 +199,6 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  updateOrganizationAvatar,
+  updateDaoAvatar,
   notify,
 })(OrgAvatar);

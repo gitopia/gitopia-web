@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { connect } from "react-redux";
-import { updateOrganizationLocation } from "../../store/actions/organization";
+import { updateDaoLocation } from "../../store/actions/organization";
 import { notify } from "reapop";
 import TextInput from "../textInput";
 
@@ -20,7 +20,7 @@ function OrgLocation(props = { isEditable: false }) {
 
   const updateLocation = async () => {
     setSavingLocation(true);
-    const res = await props.updateOrganizationLocation({
+    const res = await props.updateDaoLocation({
       id: props.org.address,
       location: newLocation,
     });
@@ -123,6 +123,6 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  updateOrganizationLocation,
+  updateDaoLocation,
   notify,
 })(OrgLocation);

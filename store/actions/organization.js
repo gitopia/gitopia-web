@@ -189,7 +189,7 @@ export const removeMember = ({ daoId = null, userId = null }) => {
   };
 };
 
-export const updateOrganizationAvatar = ({ id, url }) => {
+export const updateDaoAvatar = ({ id, url }) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(dispatch, getState, "update avatar"))
@@ -201,12 +201,12 @@ export const updateOrganizationAvatar = ({ id, url }) => {
       id,
       url,
     };
-    const message = await env.txClient.msgUpdateOrganizationAvatar(payload);
+    const message = await env.txClient.msgUpdateDaoAvatar(payload);
     return await handlePostingTransaction(dispatch, getState, message);
   };
 };
 
-export const updateOrganizationDescription = ({ id, description }) => {
+export const updateDaoDescription = ({ id, description }) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(dispatch, getState, "update location"))
@@ -218,14 +218,12 @@ export const updateOrganizationDescription = ({ id, description }) => {
       id,
       description,
     };
-    const message = await env.txClient.msgUpdateOrganizationDescription(
-      payload
-    );
+    const message = await env.txClient.msgUpdateDaoDescription(payload);
     return await handlePostingTransaction(dispatch, getState, message);
   };
 };
 
-export const updateOrganizationLocation = ({ id, location }) => {
+export const updateDaoLocation = ({ id, location }) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(dispatch, getState, "update location"))
@@ -237,12 +235,12 @@ export const updateOrganizationLocation = ({ id, location }) => {
       id,
       location,
     };
-    const message = await env.txClient.msgUpdateOrganizationLocation(payload);
+    const message = await env.txClient.msgUpdateDaoLocation(payload);
     return await handlePostingTransaction(dispatch, getState, message);
   };
 };
 
-export const updateOrganizationWebsite = ({ id, website }) => {
+export const updateDaoWebsite = ({ id, website }) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(dispatch, getState, "update website"))
@@ -254,7 +252,7 @@ export const updateOrganizationWebsite = ({ id, website }) => {
       id,
       website,
     };
-    const message = await env.txClient.msgUpdateOrganizationWebsite(payload);
+    const message = await env.txClient.msgUpdateDaoWebsite(payload);
     return await handlePostingTransaction(dispatch, getState, message);
   };
 };

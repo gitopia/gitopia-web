@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { updateOrganizationDescription } from "../../store/actions/organization";
+import { updateDaoDescription } from "../../store/actions/organization";
 import { notify } from "reapop";
 import TextInput from "../textInput";
 
@@ -34,7 +34,7 @@ function OrgDescription(props = { isEditable: false }) {
   const updateDescription = async () => {
     setSavingDescription(true);
     if (validateDescription(newDescription)) {
-      const res = await props.updateOrganizationDescription({
+      const res = await props.updateDaoDescription({
         id: props.org.address,
         description: newDescription,
       });
@@ -117,6 +117,6 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  updateOrganizationDescription,
+  updateDaoDescription,
   notify,
 })(OrgDescription);

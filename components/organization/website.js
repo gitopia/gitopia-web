@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { connect } from "react-redux";
-import { updateOrganizationWebsite } from "../../store/actions/organization";
+import { updateDaoWebsite } from "../../store/actions/organization";
 import { notify } from "reapop";
 import TextInput from "../textInput";
 
@@ -20,7 +20,7 @@ function OrgWebsite(props = { isEditable: false }) {
 
   const updateWebsite = async () => {
     setSavingWebsite(true);
-    const res = await props.updateOrganizationWebsite({
+    const res = await props.updateDaoWebsite({
       id: props.org.address,
       website: newWebsite,
     });
@@ -127,6 +127,6 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  updateOrganizationWebsite,
+  updateDaoWebsite,
   notify,
 })(OrgWebsite);
