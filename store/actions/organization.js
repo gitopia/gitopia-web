@@ -250,7 +250,7 @@ export const updateDaoWebsite = ({ id, website }) => {
     const payload = {
       creator: wallet.selectedAddress,
       id,
-      website,
+      url: website,
     };
     const message = await env.txClient.msgUpdateDaoWebsite(payload);
     return await handlePostingTransaction(dispatch, getState, message);
@@ -262,7 +262,7 @@ export const isCurrentUserEligibleToUpdate = (members) => {
     let permission = false;
     const { wallet } = getState();
     members.every((c) => {
-      if (wallet.selectedAddress === c.id && c.role === "OWNER") {
+      if (wallet.selectedAddress === c.address && c.role === "OWNER") {
         permission = true;
         return false;
       }
