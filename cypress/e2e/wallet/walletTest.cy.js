@@ -43,7 +43,13 @@ describe("Test Wallet Workflows", () => {
         cy.get('[data-test="wallet_confirm_password"]').clear().type("Password").should("have.value","Password");
         cy.get('[data-test="create_wallet"]').click();
         cy.get('[data-test="current_wallet_name"]').should("has.text", "Test123");
+    })
+
+    it("Is able to generate 24 word recovery phase", () => {
         cy.get('[data-test="mnemonic"]').should("have.length", 24);
+      });
+    
+    it("Is able to download wallet", () => {
         cy.get('[data-test="current_wallet_name"]').click();
         cy.get('[data-test="download_wallet"]').click();
         cy.get('[data-test="wallet_password"]').type("Password");
@@ -53,6 +59,7 @@ describe("Test Wallet Workflows", () => {
     
 
     it("Test wallet name already exists error", () => {
+        cy.viewport(1280,720);
         cy.visit("/login");
 
         cy.get('[data-test="create-new-local-wallet"]').click();
@@ -64,7 +71,56 @@ describe("Test Wallet Workflows", () => {
         cy.wait(1000);
     })
 
+    it("Test wallet log out", () => {
+        cy.viewport(1280,720);
+        cy.visit("/home");
+        cy.get('[data-test="wallet-menu"]').click();
+        cy.get('[data-test="log-out"]').click();
+        cy.get('[data-test="wallet-menu"]').should("has.text","Connect Wallet");
+    })
+
+    it("Test switch wallet incorrect password error", () => {
+        cy.viewport(1280,720);
+        cy.visit("/home");
+        cy.get('[data-test="wallet-menu"]').click();
+        cy.get('[data-test="log-out"]').click();
+        cy.get('[data-test="wallet-menu"]').should("has.text","Connect Wallet");
+        cy.get('[data-test="wallet-menu"]').click();
+        cy.contains("Test123").click();
+        cy.contains("Unlock").click();
+        cy.get('[class="label-text-alt text-error"]').should("has.text", "Please enter the password");
+        cy.get('[data-test="wallet_password"]').clear().type("Passwo").should("have.value","Passwo");
+        cy.contains("Unlock").click();
+        cy.get('[class="label-text-alt text-error"]').should("has.text", "Wrong password");
+    })
+
+    it("Test switch wallet", () => {
+        cy.viewport(1280,720);
+        cy.visit("/home");
+        cy.get('[data-test="wallet-menu"]').click();
+        cy.get('[data-test="log-out"]').click();
+        cy.get('[data-test="wallet-menu"]').should("has.text","Connect Wallet");
+        cy.get('[data-test="wallet-menu"]').click({ multiple: true });
+        cy.contains("Test123").click();
+        cy.get('[data-test="wallet_password"]').clear().type("Password").should("have.value","Password");
+        cy.contains("Unlock").click();
+        cy.get('[data-test="current_wallet_name"]').should("has.text", "Test123");
+    })
+
+    it("Test recover wallet incorrect mnemonic error", () => {
+        cy.clearLocalStorage();
+        cy.viewport(1280,720);
+        cy.visit("/login");
+
+        cy.get('[data-test="recover-local-wallet"]').click();
+        cy.get('[data-test="mnemonic"]').click().type("lounge degree borrow seven gesture double slide certain stool unhappy auction marriage relax advice tackle bone famous market rice floor wink enemy jungle enemy");
+        cy.get('[data-test="recover_wallet_button"]').click();
+        cy.get('[class="label-text-alt text-error"]').should("has.text", "Please enter 24 valid english words");
+       
+    })
+
     it("Test recover wallet", () => {
+        cy.clearLocalStorage();
         cy.viewport(1280,720);
         cy.visit("/login");
 

@@ -385,6 +385,7 @@ function Header(props) {
               >
                 <button
                   tabIndex="0"
+                  data-test="wallet-menu"
                   className={
                     "btn rounded-full px-4 relative " +
                     (props.activeWallet ? "btn-ghost" : "btn-primary") +
@@ -558,6 +559,7 @@ function Header(props) {
                                 setMenuOpen(false);
                                 props.signOut();
                               }}
+                              data-test="log-out"
                             >
                               Log Out
                             </a>
