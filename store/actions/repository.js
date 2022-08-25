@@ -846,9 +846,11 @@ export const createPullRequest = ({
   title,
   description,
   headBranch,
-  headRepoId,
+  headRepoOwner,
+  headRepoName,
   baseBranch,
-  baseRepoId,
+  baseRepoOwner,
+  baseRepoName,
   reviewers = [],
   assignees = [],
   labelIds = [],
@@ -863,9 +865,9 @@ export const createPullRequest = ({
       title,
       description,
       headBranch,
-      headRepoId,
+      headRepositoryId: { id: headRepoOwner, name: headRepoName },
       baseBranch,
-      baseRepoId,
+      baseRepositoryId: { id: baseRepoOwner, name: baseRepoName },
     };
 
     if (reviewers.length) {
@@ -897,7 +899,8 @@ export const createPullRequest = ({
 
 export const createRelease = (
   {
-    repositoryId = null,
+    repoOwner = null,
+    repoName = null,
     tagName = null,
     target = null,
     name = null,
@@ -917,7 +920,7 @@ export const createRelease = (
     const { wallet, env } = getState();
     const release = {
       creator: wallet.selectedAddress,
-      repositoryId,
+      repositoryId: { id: repoOwner, name: repoName },
       tagName,
       target,
       name,

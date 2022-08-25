@@ -59,7 +59,8 @@ function RepositoryReleaseNewView(props) {
       const issue = {
         name: title,
         description,
-        repositoryId: parseInt(repository.id),
+        repoOwner: repository.owner.id,
+        repoName: repository.name,
         tagName,
         target: target.name,
         isTag: true,

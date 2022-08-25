@@ -385,15 +385,18 @@ function RepositoryCompareView(props) {
                               const res = await props.createPullRequest({
                                 title,
                                 description,
-                                baseRepoId: compare.target.repository.id,
+                                baseRepoOwner:
+                                  compare.target.repository.owner.address,
+                                baseRepoName: compare.target.repository.name,
                                 baseBranch: compare.target.name,
-                                headRepoId: compare.source.repository.id,
+                                headRepoOwner:
+                                  compare.source.repository.owner.address,
+                                headRepoName: compare.source.repository.name,
                                 headBranch: compare.source.name,
                                 reviewers: reviewers,
                                 assignees: assignees,
                                 labelIds: labels,
                               });
-                              console.log(res);
                               if (res && res.code === 0) {
                                 router.push(
                                   "/" +
