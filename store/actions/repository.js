@@ -66,7 +66,6 @@ export const createRepository = ({
       owner: ownerId,
       description: description,
     };
-    console.log("repository", repository);
     const { env } = getState();
     try {
       const message = await env.txClient.msgCreateRepository(repository);
@@ -298,14 +297,19 @@ export const renameRepository = ({
   };
 };
 
-export const updateCollaborator = ({ id = null, user = null, role = null }) => {
+export const updateCollaborator = ({
+  repoOwner = null,
+  repoName = null,
+  user = null,
+  role = null,
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
       return null;
     const { env, wallet } = getState();
     const collaborator = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId: { id: repoOwner, name: repoName },
       user,
       role,
     };
@@ -330,14 +334,21 @@ export const updateCollaborator = ({ id = null, user = null, role = null }) => {
   };
 };
 
-export const removeCollaborator = ({ id = null, user = null }) => {
+export const removeCollaborator = ({
+  repoOwner = null,
+  repoName = null,
+  user = null,
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
       return null;
     const { env, wallet } = getState();
     const collaborator = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId: {
+        id: repoOwner,
+        name: repoName,
+      },
       user,
     };
 
@@ -361,10 +372,10 @@ export const removeCollaborator = ({ id = null, user = null }) => {
   };
 };
 
-export const changeRespositoryOwner = ({
-  repositoryId = null,
-  ownerId = null,
-  ownerType = null,
+export const changeRepositoryOwner = ({
+  repoOwner = null,
+  repoName = null,
+  owner = null,
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
@@ -372,11 +383,12 @@ export const changeRespositoryOwner = ({
     const { env, wallet } = getState();
     const req = {
       creator: wallet.selectedAddress,
-      repositoryId,
-      ownerId,
-      ownerType,
+      repositoryId: {
+        id: repoOwner,
+        name: repoName,
+      },
+      owner: owner,
     };
-
     try {
       const message = await env.txClient.msgChangeOwner(req);
       const result = await sendTransaction({ message })(dispatch, getState);

@@ -9,7 +9,8 @@ import getUser from "../../helpers/getUser";
 import shrinkAddress from "../../helpers/shrinkAddress";
 
 function CollaboratorsList({
-  repoId,
+  repoOwnerId,
+  repoName,
   collaborators = [],
   refreshRepository,
   ...props
@@ -42,7 +43,8 @@ function CollaboratorsList({
     setIsAdding(true);
     if (await validateCollaborator()) {
       const res = await props.updateCollaborator({
-        id: repoId,
+        repoName: repoName,
+        repoOwner: repoOwnerId,
         user: collabAddress,
         role: collabRole,
       });
@@ -55,7 +57,11 @@ function CollaboratorsList({
 
   const removeCollaborator = async (address, index) => {
     setIsRemoving(index);
-    await props.removeCollaborator({ id: repoId, user: address });
+    await props.removeCollaborator({
+      repoName: repoName,
+      repoOwner: repoOwnerId,
+      user: address,
+    });
     if (refreshRepository) await refreshRepository();
     setIsRemoving(false);
   };
