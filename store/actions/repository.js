@@ -758,13 +758,15 @@ export const isCurrentUserEligibleToUpdate = (repository) => {
         permission = true;
       } else if (user) {
         const organizations = await getUserDaoAll(user.creator);
-        organizations.every((o) => {
-          if (o.address === repoOwnerAddress) {
-            permission = true;
-            return false;
-          }
-          return true;
-        });
+        organizations !== null
+          ? organizations.every((o) => {
+              if (o.address === repoOwnerAddress) {
+                permission = true;
+                return false;
+              }
+              return true;
+            })
+          : "";
       }
       if (repository.collaborators.length) {
         repository.collaborators.every((c) => {
@@ -782,9 +784,9 @@ export const isCurrentUserEligibleToUpdate = (repository) => {
 };
 
 export const forkRepository = ({
-  repositoryId = null,
   ownerId = null,
-  repositoryName = "",
+  repoOwner = null,
+  repoName = null,
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
@@ -801,9 +803,8 @@ export const forkRepository = ({
     });
     const repository = {
       creator: wallet.selectedAddress,
-      repositoryId,
+      repositoryId: { id: repoOwner, name: repoName },
       ownerId,
-      ownerType,
       provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
     };
     console.log("fork", repository);
@@ -1263,7 +1264,7 @@ export const mergePullRequest = ({ id }) => {
   };
 };
 
-export const toggleRepositoryForking = ({ id }) => {
+export const toggleRepositoryForking = ({ repoOwner, repoName }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
@@ -1271,7 +1272,7 @@ export const toggleRepositoryForking = ({ id }) => {
     const { wallet, env } = getState();
     const repo = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId: { id: repoOwner, name: repoName },
     };
 
     try {

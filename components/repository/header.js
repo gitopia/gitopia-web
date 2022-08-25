@@ -317,8 +317,8 @@ function RepositoryHeader({ repository, ...props }) {
                               if (isOwner) return;
                               setIsForking(d.id);
                               const res = await props.forkRepository({
-                                repositoryId: repository.id,
-                                repositoryName: repository.name,
+                                repoOwner: repository.owner.id,
+                                repoName: repository.name,
                                 ownerId: d.id,
                               });
                               if (res && res.url) {

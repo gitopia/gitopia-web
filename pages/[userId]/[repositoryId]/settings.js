@@ -209,7 +209,8 @@ function RepositorySettingsView(props) {
                 </div> */}
                 <div className="form-control sm:px-4 py-4 sm:py-6">
                   <ToggleForking
-                    repoId={repository.id}
+                    repoOwner={repository.owner.id}
+                    repoName={repository.name}
                     allowForking={repository.allowForking}
                     onSuccess={refreshRepository}
                   />
