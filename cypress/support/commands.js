@@ -23,3 +23,32 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add("login", (wallet, pass, mnemonic) => {
+
+    cy.visit("/login");
+    cy.url().should('include','/login')
+    cy.get('[data-test="recover-local-wallet"]').click();
+    cy.get('[data-test="mnemonic"]').type(mnemonic).should("have.value",mnemonic);
+    cy.get('[data-test="recover_wallet_button"]').click();
+    cy.get('[data-test="wallet_name"]').type(wallet).should("have.value",wallet);
+    cy.get('[data-test="wallet_password"]').type(pass).should("have.value",pass);
+    cy.get('[data-test="wallet_confirm_password"]').type(pass).should("have.value",pass);
+    cy.get('[data-test="recover_wallet_button"]').click();
+    cy.get('[data-test="current_wallet_name"]').should("has.text", wallet);
+
+})
+
+let LOCAL_STORAGE_MEMORY = {};
+
+Cypress.Commands.add("saveLocalStorage", () => {
+  Object.keys(localStorage).forEach(key => {
+    LOCAL_STORAGE_MEMORY[key] = localStorage[key];
+  });
+});
+
+Cypress.Commands.add("restoreLocalStorage", () => {
+  Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
+    localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
+  });
+});

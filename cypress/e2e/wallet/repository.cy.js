@@ -22,6 +22,7 @@ describe("Repository", () => {
     cy.get('[data-test="repository_name"]').type(`repo${id}`);
     cy.get('[data-test="repository_description"]').type("Testing");
     cy.get('[data-test="create-repo-button"]').click();
+    cy.wait(4000);
     cy.get("body").then(($body) => {
       if ($body.find('[data-test="wallet_password"]').length > 0) {
         cy.get('[data-test="wallet_password"]').type("Password");
@@ -55,6 +56,7 @@ describe("Repository", () => {
     );
     cy.get('[data-test="assignee_save"]').click();
     cy.get('[data-test="create_issue"]').click();
+    cy.wait(4000);
     cy.get("body").then(($body) => {
       if ($body.find('[data-test="wallet_password"]').length > 0) {
         cy.get('[data-test="wallet_password"]').type("Password");

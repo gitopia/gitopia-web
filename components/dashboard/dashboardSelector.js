@@ -46,6 +46,7 @@ function DashboardSelector(props) {
           className={
             "dropdown dropdown-end w-full " + (menuOpen ? "dropdown-open" : "")
           }
+          data-test="select_user_dao"
         >
           <div
             tabIndex="0"
@@ -82,7 +83,7 @@ function DashboardSelector(props) {
               </svg>
             )}
             <div className="flex-1 text-left">
-              <div className="text-md">{selected.name}</div>
+              <div className="text-md" data-test="selected_user">{selected.name}</div>
             </div>
             <svg
               xmlns="http://www.w3.org/2000/svg"

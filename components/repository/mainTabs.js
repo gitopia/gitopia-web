@@ -139,6 +139,7 @@ function RepositoryMainTabs({ repository, active, ...props }) {
                 "tab tab-md tab-bordered" +
                 (active === "settings" ? " tab-active" : "")
               }
+              data-test="settings"
             >
               <span className="icon mr-2">
                 <svg

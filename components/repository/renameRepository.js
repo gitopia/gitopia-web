@@ -98,6 +98,7 @@ function RenameRepository({
           }
           disabled={name === currentName || name.trim() === "" || isChanging}
           onClick={changeName}
+          data-test="rename"
         >
           Rename
         </button>
@@ -116,6 +117,7 @@ function RenameRepository({
         <button
           className="btn btn-sm btn-block btn-accent btn-outline"
           onClick={() => setStartRename(true)}
+          data-test="rename"
         >
           Rename
         </button>
