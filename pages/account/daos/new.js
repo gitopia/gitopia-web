@@ -140,6 +140,7 @@ function NewOrganization(props) {
               }
               disabled={organizationCreating}
               onClick={createOrganization}
+              data-test="create_dao"
             >
               Create DAO
             </button>

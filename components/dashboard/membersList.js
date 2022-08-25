@@ -90,6 +90,7 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
                     href={"/" + c.id}
                     target="_blank"
                     className="link link-primary text-sm no-underline hover:underline"
+                    data-test="mem_address"
                   >
                     {shrinkAddress(c.id)}
                   </a>
@@ -105,6 +106,7 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
                 }
                 disabled={isRemoving === i}
                 onClick={() => removeMember(c.id, i)}
+                data-test="remove"
               >
                 Remove
               </button>
@@ -129,6 +131,7 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
               className="select select-bordered w-full select-sm"
               value={collabRole}
               onChange={(e) => setCollabRole(e.target.value)}
+              data-test="member_role"
             >
               <option value="MEMBER">Member</option>
               <option value="OWNER">Owner</option>
@@ -140,6 +143,7 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
                 "btn btn-sm btn-outline btn-block " +
                 (isAdding ? "loading" : "")
               }
+              data-test="add"
               onClick={addMember}
               disabled={collabAddress.trim() === "" || isAdding}
             >

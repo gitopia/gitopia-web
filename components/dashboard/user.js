@@ -55,7 +55,7 @@ function UserDashboard(props) {
               manage its development securely
             </div>
             <Link href="/account/daos/new">
-              <button className="btn btn-outline btn-sm">Create a DAO</button>
+              <button className="btn btn-outline btn-sm" data-test="create_dao">Create a DAO</button>
             </Link>
           </div>
         </div>
