@@ -641,7 +641,8 @@ export const updateIssueLabels = ({
 };
 
 export const createRepositoryLabel = ({
-  repoId = null,
+  repoOwner = null,
+  repoName = null,
   name = "",
   color = "",
   description = "",
@@ -653,7 +654,7 @@ export const createRepositoryLabel = ({
     const { wallet, env } = getState();
     const label = {
       creator: wallet.selectedAddress,
-      id: repoId,
+      repositoryId: { id: repoOwner, name: repoName },
       name,
       color,
       description,
@@ -679,7 +680,8 @@ export const createRepositoryLabel = ({
 };
 
 export const updateRepositoryLabel = ({
-  repositoryId = null,
+  repoOwner = null,
+  repoName = null,
   labelId = null,
   name = "",
   color = "",
@@ -692,7 +694,7 @@ export const updateRepositoryLabel = ({
     const { wallet, env } = getState();
     const label = {
       creator: wallet.selectedAddress,
-      repositoryId,
+      repositoryId: { id: repoOwner, name: repoName },
       labelId,
       name,
       color,
@@ -719,7 +721,8 @@ export const updateRepositoryLabel = ({
 };
 
 export const deleteRepositoryLabel = ({
-  repositoryId = null,
+  repoOwner = null,
+  repoName = null,
   labelId = null,
 }) => {
   return async (dispatch, getState) => {
@@ -729,7 +732,7 @@ export const deleteRepositoryLabel = ({
     const { wallet, env } = getState();
     const label = {
       creator: wallet.selectedAddress,
-      repositoryId,
+      repositoryId: { id: repoOwner, name: repoName },
       labelId,
     };
     try {
