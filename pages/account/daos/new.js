@@ -8,6 +8,7 @@ import Header from "../../../components/header";
 import TextInput from "../../../components/textInput";
 import Footer from "../../../components/footer";
 import OrgAvatar from "../../../components/organization/avatar";
+import getUserDaoAll from "../../../helpers/getUserDaoAll";
 
 function NewOrganization(props) {
   const router = useRouter();
@@ -45,7 +46,7 @@ function NewOrganization(props) {
     setDescriptionHint({ ...descriptionHint, shown: false });
   };
 
-  const validateOrganization = () => {
+  const validateOrganization = async () => {
     hideHints();
     if (name === "") {
       setNameHint({
@@ -57,7 +58,8 @@ function NewOrganization(props) {
     }
 
     let alreadyAvailable = false;
-    props.organizations.every((o) => {
+    const organizations = await getUserDaoAll(props.selectedAddress);
+    organizations.every((o) => {
       if (o.name === name) {
         alreadyAvailable = true;
         return false;
