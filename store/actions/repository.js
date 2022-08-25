@@ -4,6 +4,7 @@ import { createUser, getUserDetailsForSelectedAddress } from "./user";
 import { updateUserBalance } from "./wallet";
 import dayjs from "dayjs";
 import { watchTask } from "./taskQueue";
+import getUserDaoAll from "../../helpers/getUserDaoAll";
 
 export const validatePostingEligibility = async (
   dispatch,
@@ -756,8 +757,9 @@ export const isCurrentUserEligibleToUpdate = (repository) => {
       if (wallet.selectedAddress === repoOwnerAddress) {
         permission = true;
       } else if (user) {
-        user.organizations.every((o) => {
-          if (o.id === repoOwnerAddress) {
+        const organizations = await getUserDaoAll(user.creator);
+        organizations.every((o) => {
+          if (o.address === repoOwnerAddress) {
             permission = true;
             return false;
           }
