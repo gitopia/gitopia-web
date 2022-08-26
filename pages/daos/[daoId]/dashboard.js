@@ -47,8 +47,7 @@ function OrgDashboard(props) {
   });
 
   useEffect(async () => {
-    console.log("org dashboard", router.query.orgId, props.currentDashboard);
-    if (router.query.orgId !== props.currentDashboard) {
+    if (router.query.daoId !== props.currentDashboard) {
       router.push(getHomeUrl(props.dashboards, props.currentDashboard));
     }
     const repos = await getAnyRepositoryAll(props.currentDashboard);
