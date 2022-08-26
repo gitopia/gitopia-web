@@ -5,13 +5,13 @@ import {
   isCurrentUserEligibleToUpdate,
 } from "../../store/actions/dao";
 import { notify } from "reapop";
-import OrgDescription from "../dao/description";
-import OrgAvatar from "../dao/avatar";
-import OrgLocation from "../dao/location";
-import OrgWebsite from "../dao/website";
+import DaoDescription from "../dao/description";
+import DaoAvatar from "../dao/avatar";
+import DaoLocation from "../dao/location";
+import DaoWebsite from "../dao/website";
 import getDaoMember from "../../helpers/getUserDaoMember";
 
-function AccountOrgHeader(props) {
+function AccountDaoHeader(props) {
   const [isEditable, setIsEditable] = useState(false);
 
   const refresh = async () => {
@@ -20,19 +20,19 @@ function AccountOrgHeader(props) {
   };
 
   useEffect(async () => {
-    const members = await getDaoMember(props.org.address);
+    const members = await getDaoMember(props.dao.address);
     setIsEditable(await props.isCurrentUserEligibleToUpdate(members));
-  }, [props.org.address, props.selectedAddress]);
+  }, [props.dao.address, props.selectedAddress]);
 
   return (
     <div className="flex flex-1 mb-8 items-start">
-      <OrgAvatar org={props.org} isEditable={isEditable} refresh={refresh} />
+      <DaoAvatar dao={props.dao} isEditable={isEditable} refresh={refresh} />
       <div className="flex-1 max-w-xl pl-12">
         <div className="text-2xl py-1 mb-1 border-b border-transparent">
-          {props.org.name}
+          {props.dao.name}
         </div>
-        <OrgDescription
-          org={props.org}
+        <DaoDescription
+          dao={props.dao}
           isEditable={isEditable}
           refresh={refresh}
         />
@@ -57,15 +57,15 @@ function AccountOrgHeader(props) {
                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
               />
             </svg>
-            <span>{props.org.location}</span>
+            <span>{props.dao.location}</span>
           </div> */}
-          <OrgLocation
-            org={props.org}
+          <DaoLocation
+            dao={props.dao}
             isEditable={isEditable}
             refresh={refresh}
           />
-          <OrgWebsite
-            org={props.org}
+          <DaoWebsite
+            dao={props.dao}
             isEditable={isEditable}
             refresh={refresh}
           />
@@ -83,4 +83,4 @@ export default connect(mapStateToProps, {
   getDaoDetailsForDashboard,
   isCurrentUserEligibleToUpdate,
   notify,
-})(AccountOrgHeader);
+})(AccountDaoHeader);

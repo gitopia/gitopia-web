@@ -9,7 +9,7 @@ const initialState = {
   followers: [],
   following: [],
   repositories: [],
-  organizations: [],
+  // organizations: [],
   starred_repos: [],
   subscriptions: "",
   email: "",

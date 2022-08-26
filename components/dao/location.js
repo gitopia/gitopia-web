@@ -4,8 +4,8 @@ import { updateDaoLocation } from "../../store/actions/dao";
 import { notify } from "reapop";
 import TextInput from "../textInput";
 
-function OrgLocation(props = { isEditable: false }) {
-  const [newLocation, setNewLocation] = useState(props.org.location);
+function DaoLocation(props = { isEditable: false }) {
+  const [newLocation, setNewLocation] = useState(props.dao.location);
   const [newLocationHint, setNewLocationHint] = useState({
     shown: false,
     type: "info",
@@ -14,18 +14,18 @@ function OrgLocation(props = { isEditable: false }) {
   const [savingLocation, setSavingLocation] = useState(false);
 
   const reset = () => {
-    setNewLocation(props.org.location);
+    setNewLocation(props.dao.location);
     setNewLocationHint({ shown: false });
   };
 
   const updateLocation = async () => {
     setSavingLocation(true);
     const res = await props.updateDaoLocation({
-      id: props.org.address,
+      id: props.dao.address,
       location: newLocation,
     });
     if (res && res.code === 0) {
-      props.notify(props.org.name + " location is updated", "info");
+      props.notify(props.dao.name + " location is updated", "info");
       if (props.refresh) await props.refresh();
     }
     setNewLocationHint({ shown: false });
@@ -84,7 +84,7 @@ function OrgLocation(props = { isEditable: false }) {
           (props.isEditable
             ? " border-grey-300 hover:text-primary cursor-pointer"
             : " border-transparent") +
-          (props.org.location == "" ? " text-grey italic" : "")
+          (props.dao.location == "" ? " text-grey italic" : "")
         }
       >
         <svg
@@ -108,10 +108,10 @@ function OrgLocation(props = { isEditable: false }) {
         </svg>
         <span>
           {props.isEditable
-            ? props.org.location
-              ? props.org.location
+            ? props.dao.location
+              ? props.dao.location
               : "No Location"
-            : props.org.location}
+            : props.dao.location}
         </span>
       </label>
     </div>
@@ -125,4 +125,4 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   updateDaoLocation,
   notify,
-})(OrgLocation);
+})(DaoLocation);

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import getUser from "../../helpers/getUser";
 import Link from "next/link";
 import getDaoMember from "../../helpers/getUserDaoMember";
 
@@ -7,13 +6,13 @@ function AccountPeople(props) {
   const [allMembers, setAllMembers] = useState([]);
 
   const getAllMembers = async () => {
-    if (props.org.id) {
-      const members = await getDaoMember(props.org.address);
+    if (props.dao.id) {
+      const members = await getDaoMember(props.dao.address);
       setAllMembers(members);
     }
   };
 
-  useEffect(getAllMembers, [props.org]);
+  useEffect(getAllMembers, [props.dao]);
 
   return (
     <>

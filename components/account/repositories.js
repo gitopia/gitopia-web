@@ -11,14 +11,14 @@ function AccountRepositories(props) {
   const getAllRepos = async () => {
     if (props.userId) {
       const pr = await getAnyRepositoryAll(props.userId);
-      const repos = pr.sort((a, b) => a.updatedAt - b.updatedAt).reverse();
+      const repos = sortBy(pr, (r) => -Number(r.updatedAt));
       setAllRepos(repos);
     } else {
       setAllRepos([]);
     }
   };
 
-  useEffect(getAllRepos, [props.user, props.org]);
+  useEffect(getAllRepos, [props.user, props.dao]);
 
   return (
     <>

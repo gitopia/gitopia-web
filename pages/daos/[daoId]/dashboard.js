@@ -22,7 +22,7 @@ export async function getStaticPaths() {
   };
 }
 
-function OrgDashboard(props) {
+function DaoDashboard(props) {
   const hrefBase = "/daos/" + props.currentDashboard;
   const router = useRouter();
   const [allRepository, setAllRepository] = useState([]);
@@ -165,5 +165,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, { getDaoDetailsForDashboard })(
-  OrgDashboard
+  DaoDashboard
 );

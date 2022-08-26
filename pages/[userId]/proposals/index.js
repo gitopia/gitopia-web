@@ -24,7 +24,7 @@ export async function getStaticPaths() {
 
 function GitopiaProposals(props) {
   const router = useRouter();
-  const [org, setOrg] = useState({
+  const [dao, setDao] = useState({
     name: "",
     repositories: [],
   });
@@ -35,15 +35,15 @@ function GitopiaProposals(props) {
   useEffect(async () => {
     const o = await getDao(router.query.userId);
     if (o) {
-      setOrg(o);
+      setDao(o);
     }
   }, [router.query]);
 
   const hrefBase = "/" + router.query.userId;
-  const letter = org.name.slice(0, 1);
+  const letter = dao.name.slice(0, 1);
 
   const avatarLink =
-    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === org.address
+    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === dao.address
       ? "/logo-g.svg"
       : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
         letter;
@@ -62,7 +62,7 @@ function GitopiaProposals(props) {
       className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
-        <title>{org.name}</title>
+        <title>{dao.name}</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
@@ -75,9 +75,9 @@ function GitopiaProposals(props) {
               </div>
             </div>
             <div className="flex-1">
-              <div className="text-md">{org.name}</div>
+              <div className="text-md">{dao.name}</div>
               <div className="text-sm text-type-secondary mt-2">
-                {org.description}
+                {dao.description}
               </div>
             </div>
           </div>
@@ -88,7 +88,7 @@ function GitopiaProposals(props) {
               showPeople={true}
               showProposal={
                 process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
-                  router.query.userId && org.address
+                  router.query.userId && dao.address
               }
             />
           </div>

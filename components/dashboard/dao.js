@@ -9,8 +9,8 @@ function DaoDashboard({ dao = {}, ...props }) {
       <div className="flex">
         {/* <div>
           <div className="text-xs uppercase">Welcome to,</div>
-          <Link href={"/" + organization.address}>
-            <a className="text-lg btn-link">{organization.name}</a>
+          <Link href={"/" + dao.address}>
+            <a className="text-lg btn-link">{dao.name}</a>
           </Link>
         </div>
         <div className="flex-1"></div> */}

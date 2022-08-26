@@ -14,7 +14,7 @@ import getWhois from "../../helpers/getWhois";
 import AccountRepositories from "../../components/account/repositories";
 import AccountTransactions from "../../components/account/transactions";
 import AccountPeople from "../../components/account/people";
-import AccountOrgHeader from "../../components/account/orgHeader";
+import AccountDaoHeader from "../../components/account/daoHeader";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -95,7 +95,7 @@ function AccountView(props) {
       <div className="flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           {dao.address ? (
-            <AccountOrgHeader org={dao} refresh={getId} />
+            <AccountDaoHeader dao={dao} refresh={getId} />
           ) : (
             <UserHeader user={user} refresh={getId} />
           )}
@@ -113,7 +113,7 @@ function AccountView(props) {
           {router.query.tab === "overview" || router.query.tab === undefined ? (
             <AccountOverview
               user={user}
-              org={dao}
+              dao={dao}
               userId={router.query.userId}
             />
           ) : (
@@ -122,7 +122,7 @@ function AccountView(props) {
           {router.query.tab === "repositories" ? (
             <AccountRepositories
               user={user}
-              org={dao}
+              dao={dao}
               userId={router.query.userId}
             />
           ) : (
@@ -135,7 +135,7 @@ function AccountView(props) {
           ) : (
             ""
           )}
-          {router.query.tab === "people" ? <AccountPeople org={dao} /> : ""}
+          {router.query.tab === "people" ? <AccountPeople dao={dao} /> : ""}
         </main>
       </div>
       <Footer />

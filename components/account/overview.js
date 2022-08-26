@@ -8,7 +8,7 @@ import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import ReactTooltip from "react-tooltip";
 import dayjs from "dayjs";
-import getRepository from "../../helpers/getRepository";
+import { sortBy } from "lodash";
 import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
 
 function AccountOverview(props) {
@@ -19,11 +19,11 @@ function AccountOverview(props) {
   const getAllRepos = async () => {
     let letter = "x";
     const pr = await getAnyRepositoryAll(props.userId);
-    pr.sort((a, b) => a.updatedAt - b.updatedAt).reverse();
-    const repos = pr.slice(0, 4);
+    const r = sortBy(pr, (r) => -Number(r.updatedAt));
+    const repos = r.slice(0, 4);
     setAllRepos(repos);
-    if (props.org.id) {
-      letter = props.org.name.slice(0, 1);
+    if (props.dao.id) {
+      letter = props.dao.name.slice(0, 1);
     }
     // const link =
     //   process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === props.org.address
@@ -33,7 +33,7 @@ function AccountOverview(props) {
     // setAvatarLink(link);
   };
 
-  useEffect(getAllRepos, [props.user.creator, props.org.name]);
+  useEffect(getAllRepos, [props.user.creator, props.dao.name]);
 
   const hrefBase = "/" + props.userId;
 
@@ -109,7 +109,7 @@ function AccountOverview(props) {
             })
           : ""}
       </div>
-      {!props.org.address ? (
+      {!props.dao.address ? (
         <div className="">
           <ApolloProvider client={client}>
             <QueryTransaction

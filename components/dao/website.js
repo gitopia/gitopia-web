@@ -4,8 +4,8 @@ import { updateDaoWebsite } from "../../store/actions/dao";
 import { notify } from "reapop";
 import TextInput from "../textInput";
 
-function OrgWebsite(props = { isEditable: false }) {
-  const [newWebsite, setNewWebsite] = useState(props.org.website);
+function DaoWebsite(props = { isEditable: false }) {
+  const [newWebsite, setNewWebsite] = useState(props.dao.website);
   const [newWebsiteHint, setNewWebsiteHint] = useState({
     shown: false,
     type: "info",
@@ -14,18 +14,18 @@ function OrgWebsite(props = { isEditable: false }) {
   const [savingWebsite, setSavingWebsite] = useState(false);
 
   const reset = () => {
-    setNewWebsite(props.org.website);
+    setNewWebsite(props.dao.website);
     setNewWebsiteHint({ shown: false });
   };
 
   const updateWebsite = async () => {
     setSavingWebsite(true);
     const res = await props.updateDaoWebsite({
-      id: props.org.address,
+      id: props.dao.address,
       website: newWebsite,
     });
     if (res && res.code === 0) {
-      props.notify(props.org.name + " website is updated", "info");
+      props.notify(props.dao.name + " website is updated", "info");
       if (props.refresh) await props.refresh();
     }
     setNewWebsiteHint({ shown: false });
@@ -84,7 +84,7 @@ function OrgWebsite(props = { isEditable: false }) {
           (props.isEditable
             ? " border-grey-300 hover:text-primary cursor-pointer"
             : " border-transparent") +
-          (props.org.website == "" ? " text-grey italic" : "")
+          (props.dao.website == "" ? " text-grey italic" : "")
         }
       >
         <svg
@@ -103,18 +103,18 @@ function OrgWebsite(props = { isEditable: false }) {
         </svg>
 
         {props.isEditable ? (
-          props.org.website ? (
-            props.org.website
+          props.dao.website ? (
+            props.dao.website
           ) : (
             "No Website"
           )
         ) : (
           <a
             className="link no-underline hover:underline"
-            href={props.org.website}
+            href={props.dao.website}
             target="_blank"
           >
-            {props.org.website}
+            {props.dao.website}
           </a>
         )}
       </label>
@@ -129,4 +129,4 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   updateDaoWebsite,
   notify,
-})(OrgWebsite);
+})(DaoWebsite);

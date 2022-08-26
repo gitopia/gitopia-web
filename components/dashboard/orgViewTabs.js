@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function OrgViewTabs({ hrefBase, active }) {
+export default function DaoViewTabs({ hrefBase, active }) {
   return (
     <div className="">
       <div className="tabs">

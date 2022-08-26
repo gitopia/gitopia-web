@@ -7,7 +7,7 @@ import Head from "next/head";
 import Header from "../../../components/header";
 import TextInput from "../../../components/textInput";
 import Footer from "../../../components/footer";
-import OrgAvatar from "../../../components/dao/avatar";
+import DaoAvatar from "../../../components/dao/avatar";
 import getUserDaoAll from "../../../helpers/getUserDaoAll";
 
 function NewDao(props) {
@@ -116,8 +116,8 @@ function NewDao(props) {
         <main className="container mx-auto max-w-md py-12 px-4 sm:px-0">
           <div className="text-2xl">Create a new DAO</div>
           <div className="mt-4">
-            <OrgAvatar
-              org={{ name, avatarUrl }}
+            <DaoAvatar
+              dao={{ name, avatarUrl }}
               isEditable={true}
               callback={(newAvatarUrl) => setAvatarUrl(newAvatarUrl)}
             />

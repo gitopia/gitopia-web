@@ -4,7 +4,7 @@ import { updateDaoDescription } from "../../store/actions/dao";
 import { notify } from "reapop";
 import TextInput from "../textInput";
 
-function OrgDescription(props = { isEditable: false }) {
+function DaoDescription(props = { isEditable: false }) {
   const [isEditing, setIsEditing] = useState(false);
   const [newDescription, setNewDescription] = useState("");
   const [newDescriptionHint, setNewDescriptionHint] = useState({
@@ -20,7 +20,7 @@ function OrgDescription(props = { isEditable: false }) {
       shown: false,
     });
 
-    if (description === props.org.description) {
+    if (description === props.dao.description) {
       setNewDescriptionHint({
         shown: true,
         type: "error",
@@ -35,7 +35,7 @@ function OrgDescription(props = { isEditable: false }) {
     setSavingDescription(true);
     if (validateDescription(newDescription)) {
       const res = await props.updateDaoDescription({
-        id: props.org.address,
+        id: props.dao.address,
         description: newDescription,
       });
 
@@ -49,9 +49,9 @@ function OrgDescription(props = { isEditable: false }) {
   };
 
   useEffect(() => {
-    setNewDescription(props.org.description);
+    setNewDescription(props.dao.description);
     setNewDescriptionHint({ shown: false });
-  }, [props.org]);
+  }, [props.dao]);
 
   return (
     <div>
@@ -72,7 +72,7 @@ function OrgDescription(props = { isEditable: false }) {
               className="flex-1 btn btn-sm text-xs "
               onClick={() => {
                 setIsEditing(false);
-                setNewDescription(props.org.description);
+                setNewDescription(props.dao.description);
                 setNewDescriptionHint({ shown: false });
               }}
             >
@@ -97,15 +97,15 @@ function OrgDescription(props = { isEditable: false }) {
             (props.isEditable
               ? " border-grey-300 hover:text-primary cursor-pointer"
               : " border-transparent") +
-            (props.org.description == "" ? " text-grey italic" : "")
+            (props.dao.description == "" ? " text-grey italic" : "")
           }
           onClick={() => {
             if (props.isEditable) setIsEditing(true);
           }}
         >
-          {props.org.description == ""
+          {props.dao.description == ""
             ? "No Description Provided"
-            : props.org.description}
+            : props.dao.description}
         </div>
       )}
     </div>
@@ -119,4 +119,4 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   updateDaoDescription,
   notify,
-})(OrgDescription);
+})(DaoDescription);

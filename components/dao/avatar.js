@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import { updateDaoAvatar } from "../../store/actions/dao";
 import { notify } from "reapop";
 
-function OrgAvatar(props = { isEditable: false }) {
-  const name = props.org.name ? props.org.name : ".";
+function DaoAvatar(props = { isEditable: false }) {
+  const name = props.dao.name ? props.dao.name : ".";
   const [validateImageUrlError, setValidateImageUrlError] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -124,7 +124,7 @@ function OrgAvatar(props = { isEditable: false }) {
                   } else {
                     setLoading(true);
                     const res = await props.updateDaoAvatar({
-                      id: props.org.address,
+                      id: props.dao.address,
                       url: imageUrl,
                     });
                     if (res && res.code === 0) {
@@ -181,10 +181,10 @@ function OrgAvatar(props = { isEditable: false }) {
           >
             <img
               src={
-                props.org.avatarUrl == ""
+                props.dao.avatarUrl == ""
                   ? "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
                     name.slice(-1)
-                  : props.org.avatarUrl
+                  : props.dao.avatarUrl
               }
             />
           </div>
@@ -201,4 +201,4 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   updateDaoAvatar,
   notify,
-})(OrgAvatar);
+})(DaoAvatar);

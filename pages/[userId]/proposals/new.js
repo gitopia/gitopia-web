@@ -35,22 +35,21 @@ function RepositoryProposalCreateView(props) {
   const [menuState, setMenuState] = useState(1);
   const [counter, setCounter] = useState(1);
   const [initialDeposit, setInitialDeposit] = useState(0);
-  const [org, setOrg] = useState({
+  const [dao, setDao] = useState({
     name: "",
     repositories: [],
   });
 
   useEffect(async () => {
-    console.log(router.query.userId);
     const o = await getDao(router.query.userId);
     if (o) {
-      setOrg(o);
+      setDao(o);
     }
   }, [router.query]);
-  const hrefBase = "/" + org.address;
-  const letter = org.id ? org.name.slice(0, 1) : "x";
+  const hrefBase = "/" + dao.address;
+  const letter = dao.id ? dao.name.slice(0, 1) : "x";
   const avatarLink =
-    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === org.address
+    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === dao.address
       ? "/logo-g.svg"
       : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
         letter;
@@ -153,7 +152,6 @@ function RepositoryProposalCreateView(props) {
   const redirectToProposal = async (res) => {
     let result = JSON.parse(res.rawLog);
     if (res && res.code === 0) {
-      console.log(router);
       router.push(
         hrefBase + "/proposals/" + result[0].events[4].attributes[0].value
       );
@@ -179,9 +177,9 @@ function RepositoryProposalCreateView(props) {
               </div>
             </div>
             <div className="flex-1">
-              <div className="text-md">{org.name}</div>
+              <div className="text-md">{dao.name}</div>
               <div className="text-sm text-type-secondary mt-2">
-                {org.description}
+                {dao.description}
               </div>
             </div>
           </div>
@@ -192,7 +190,7 @@ function RepositoryProposalCreateView(props) {
               showPeople={true}
               showProposal={
                 process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
-                  router.query.userId && org.address
+                  router.query.userId && dao.address
               }
             />
           </div>

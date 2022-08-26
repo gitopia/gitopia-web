@@ -52,7 +52,7 @@ function TransferOwnership({
     //   return true;
     // });
     //
-    let [user, org] = await Promise.all([getUser(address), getDao(address)]);
+    let [user, dao] = await Promise.all([getUser(address), getDao(address)]);
     console.log("user tranfer ownership", user);
     if (user) {
       console.log("user exists", user);
@@ -64,8 +64,8 @@ function TransferOwnership({
         }
         return true;
       });
-    } else if (org) {
-      console.log("org exists", org);
+    } else if (dao) {
+      console.log("dao exists", dao);
       const repositories = await getAnyRepositoryAll(address);
       repositories.every((r) => {
         if (r.name === repoName) {
