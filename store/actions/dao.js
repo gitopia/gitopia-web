@@ -1,7 +1,7 @@
 import { notify } from "reapop";
 import { sendTransaction, handlePostingTransaction } from "./env";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
-import { userActions, organizationActions } from "./actionTypes";
+import { userActions, daoActions } from "./actionTypes";
 import { validatePostingEligibility } from "./repository";
 import { updateUserBalance } from "./wallet";
 import { MemberRole } from "@gitopia/gitopia-js/types/gitopia/member";
@@ -59,7 +59,7 @@ export const createDao = ({
   };
 };
 
-export const getOrganizationDetailsForDashboard = () => {
+export const getDaoDetailsForDashboard = () => {
   return async (dispatch, getState) => {
     const { env, user } = getState();
     try {
@@ -69,14 +69,14 @@ export const getOrganizationDetailsForDashboard = () => {
       ]);
       let dao = daoRes.data.dao;
       dispatch({
-        type: organizationActions.SET_DAO,
+        type: daoActions.SET_DAO,
         payload: {
-          organization: { ...dao, members: members },
+          dao: { ...dao, members: members },
         },
       });
     } catch (e) {
       dispatch({
-        type: organizationActions.SET_EMPTY_DAO,
+        type: daoActions.SET_EMPTY_DAO,
       });
     }
   };

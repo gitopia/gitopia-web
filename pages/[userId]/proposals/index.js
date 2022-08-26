@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import PublicTabs from "../../../components/dashboard/publicTabs";
-import getOrganization from "../../../helpers/getOrganization";
+import getDao from "../../../helpers/getDao";
 import Footer from "../../../components/footer";
 import getProposals from "../../../helpers/getProposals";
 import dayjs from "dayjs";
@@ -33,7 +33,7 @@ function GitopiaProposals(props) {
   dayjs.extend(localizedFormat);
 
   useEffect(async () => {
-    const o = await getOrganization(router.query.userId);
+    const o = await getDao(router.query.userId);
     if (o) {
       setOrg(o);
     }
@@ -138,7 +138,6 @@ const mapStateToProps = (state) => {
   return {
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
-    organization: state.organization,
   };
 };
 

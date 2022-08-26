@@ -83,9 +83,7 @@ function RepositoryHeader({ repository, ...props }) {
           <div
             className={
               "w-14 h-14 " +
-              (repository.owner.type === "ORGANIZATION"
-                ? "rounded"
-                : "rounded-full")
+              (repository.owner.type === "DAO" ? "rounded" : "rounded-full")
             }
           >
             <img src={avatarLink} />

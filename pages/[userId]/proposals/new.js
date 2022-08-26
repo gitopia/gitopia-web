@@ -9,7 +9,7 @@ import { chainUpgradeProposal } from "../../../store/actions/proposals";
 import MarkdownEditor from "../../../components/markdownEditor";
 import { communityPoolSpendProposal } from "../../../store/actions/proposals";
 import { paramChangeProposal } from "../../../store/actions/proposals";
-import getOrganization from "../../../helpers/getOrganization";
+import getDao from "../../../helpers/getDao";
 import getUser from "../../../helpers/getUser";
 import PublicTabs from "../../../components/dashboard/publicTabs";
 
@@ -42,7 +42,7 @@ function RepositoryProposalCreateView(props) {
 
   useEffect(async () => {
     console.log(router.query.userId);
-    const o = await getOrganization(router.query.userId);
+    const o = await getDao(router.query.userId);
     if (o) {
       setOrg(o);
     }
@@ -700,7 +700,6 @@ const mapStateToProps = (state) => {
     advanceUser: state.user.advanceUser,
     loreBalance: state.wallet.loreBalance,
     dashboards: state.user.dashboards,
-    organization: state.organization,
   };
 };
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { connect } from "react-redux";
-import { updateDaoAvatar } from "../../store/actions/organization";
+import { updateDaoAvatar } from "../../store/actions/dao";
 import { notify } from "reapop";
 
 function OrgAvatar(props = { isEditable: false }) {

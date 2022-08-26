@@ -6,7 +6,7 @@ import DashboardSelector from "../../../components/dashboard/dashboardSelector";
 import TopRepositories from "../../../components/topRepositories";
 import getHomeUrl from "../../../helpers/getHomeUrl";
 import { useRouter } from "next/router";
-import { getOrganizationDetailsForDashboard } from "../../../store/actions/organization";
+import { getDaoDetailsForDashboard } from "../../../store/actions/dao";
 import Dao from "../../../components/dashboard/dao";
 import Link from "next/link";
 import getAnyRepositoryAll from "../../../helpers/getAnyRepositoryAll";
@@ -53,7 +53,7 @@ function OrgDashboard(props) {
     }
     const repos = await getAnyRepositoryAll(props.currentDashboard);
     setAllRepository(repos);
-    props.getOrganizationDetailsForDashboard();
+    props.getDaoDetailsForDashboard();
   }, [props.currentDashboard]);
   return (
     <div
@@ -160,11 +160,11 @@ const mapStateToProps = (state) => {
   return {
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
-    dao: state.organization,
-    username: state.organization.name,
+    dao: state.dao,
+    username: state.dao.name,
   };
 };
 
-export default connect(mapStateToProps, { getOrganizationDetailsForDashboard })(
+export default connect(mapStateToProps, { getDaoDetailsForDashboard })(
   OrgDashboard
 );

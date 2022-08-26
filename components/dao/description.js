@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { updateDaoDescription } from "../../store/actions/organization";
+import { updateDaoDescription } from "../../store/actions/dao";
 import { notify } from "reapop";
 import TextInput from "../textInput";
 

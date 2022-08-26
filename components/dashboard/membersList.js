@@ -1,11 +1,11 @@
 import TextInput from "../textInput";
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { addMember, removeMember } from "../../store/actions/organization";
+import { addMember, removeMember } from "../../store/actions/dao";
 import getUser from "../../helpers/getUser";
 import shrinkAddress from "../../helpers/shrinkAddress";
 
-function MembersList({ daoId, members = [], refreshOrganization, ...props }) {
+function MembersList({ daoId, members = [], refreshDao, ...props }) {
   const [collabAddress, setCollabAddress] = useState("");
   const [collabHint, setCollabHint] = useState({
     shown: false,
@@ -43,7 +43,7 @@ function MembersList({ daoId, members = [], refreshOrganization, ...props }) {
         role: collabRole,
       });
       console.log(res);
-      if (refreshOrganization) await refreshOrganization();
+      if (refreshDao) await refreshDao();
       setCollabAddress("");
       setCollabHint({
         shown: false,
@@ -57,7 +57,7 @@ function MembersList({ daoId, members = [], refreshOrganization, ...props }) {
   const removeMember = async (address, index) => {
     setIsRemoving(index);
     await props.removeMember({ daoId: daoId, userId: address });
-    if (refreshOrganization) await refreshOrganization();
+    if (refreshDao) await refreshDao();
     setIsRemoving(false);
   };
 

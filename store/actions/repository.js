@@ -757,10 +757,10 @@ export const isCurrentUserEligibleToUpdate = (repository) => {
       if (wallet.selectedAddress === repoOwnerAddress) {
         permission = true;
       } else if (user) {
-        const organizations = await getUserDaoAll(user.creator);
-        organizations !== null
-          ? organizations.every((o) => {
-              if (o.address === repoOwnerAddress) {
+        const daos = await getUserDaoAll(user.creator);
+        daos !== null
+          ? daos.every((d) => {
+              if (d.address === repoOwnerAddress) {
                 permission = true;
                 return false;
               }
@@ -793,14 +793,6 @@ export const forkRepository = ({
       return null;
 
     const { wallet, user } = getState();
-    let ownerType;
-    user.dashboards.every((d) => {
-      if (d.id === ownerId) {
-        ownerType = d.type == "User" ? "USER" : "ORGANIZATION";
-        return false;
-      }
-      return true;
-    });
     const repository = {
       creator: wallet.selectedAddress,
       repositoryId: { id: repoOwner, name: repoName },

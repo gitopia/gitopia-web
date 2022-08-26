@@ -2,7 +2,7 @@ import {
   walletActions,
   envActions,
   userActions,
-  organizationActions,
+  daoActions,
 } from "./actionTypes";
 import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
@@ -86,7 +86,7 @@ export const signOut = () => {
       type: userActions.SET_EMPTY_USER,
     });
     dispatch({
-      type: organizationActions.SET_EMPTY_DAO,
+      type: daoActions.SET_EMPTY_DAO,
     });
   };
 };

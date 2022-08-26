@@ -3,7 +3,7 @@ import TextInput from "../textInput";
 import { connect } from "react-redux";
 import { changeRepositoryOwner } from "../../store/actions/repository";
 import getUser from "../../helpers/getUser";
-import getOrganization from "../../helpers/getOrganization";
+import getDao from "../../helpers/getDao";
 import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
 
 function TransferOwnership({
@@ -52,15 +52,10 @@ function TransferOwnership({
     //   return true;
     // });
     //
-    let ownerType = null;
-    let [user, org] = await Promise.all([
-      getUser(address),
-      getOrganization(address),
-    ]);
+    let [user, org] = await Promise.all([getUser(address), getDao(address)]);
     console.log("user tranfer ownership", user);
     if (user) {
       console.log("user exists", user);
-      ownerType = "USER";
       const repositories = await getAnyRepositoryAll(address);
       repositories.every((r) => {
         if (r.name === repoName) {
@@ -71,7 +66,6 @@ function TransferOwnership({
       });
     } else if (org) {
       console.log("org exists", org);
-      ownerType = "ORGANIZATION";
       const repositories = await getAnyRepositoryAll(address);
       repositories.every((r) => {
         if (r.name === repoName) {
@@ -86,7 +80,7 @@ function TransferOwnership({
         shown: true,
         message: "Address is not registered on chain",
       });
-      return [false, null];
+      return false;
     }
     if (alreadyAvailable) {
       setAddressHint({
@@ -94,14 +88,14 @@ function TransferOwnership({
         shown: true,
         message: "Repository name already taken on this address",
       });
-      return [false, null];
+      return false;
     }
-    return [true, ownerType];
+    return true;
   };
 
   const transferRepository = async () => {
     setIsChanging(true);
-    const [res, ownerType] = await validateAddress();
+    const res = await validateAddress();
     if (res) {
       const res = await props.changeRepositoryOwner({
         repoName: repoName,

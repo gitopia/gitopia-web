@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { connect } from "react-redux";
 import MembersList from "./membersList";
-import { getOrganizationDetailsForDashboard } from "../../store/actions/organization";
+import { getDaoDetailsForDashboard } from "../../store/actions/dao";
 
 function DaoDashboard({ dao = {}, ...props }) {
   return (
@@ -69,7 +69,7 @@ function DaoDashboard({ dao = {}, ...props }) {
         <MembersList
           members={dao.members}
           daoId={dao.address}
-          refreshOrganization={props.getOrganizationDetailsForDashboard}
+          refreshDao={props.getDaoDetailsForDashboard}
         />
       </div>
     </main>
@@ -82,6 +82,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { getOrganizationDetailsForDashboard })(
+export default connect(mapStateToProps, { getDaoDetailsForDashboard })(
   DaoDashboard
 );

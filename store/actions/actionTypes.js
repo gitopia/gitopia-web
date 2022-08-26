@@ -24,7 +24,7 @@ export const userActions = {
   INIT_DASHBOARDS: "INIT_DASHBOARDS",
 };
 
-export const organizationActions = {
+export const daoActions = {
   SET_DAO: "SET_DAO",
   SET_EMPTY_DAO: "SET_EMPTY_DAO",
 };

@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import {
-  getOrganizationDetailsForDashboard,
+  getDaoDetailsForDashboard,
   isCurrentUserEligibleToUpdate,
-} from "../../store/actions/organization";
+} from "../../store/actions/dao";
 import { notify } from "reapop";
-import OrgDescription from "../organization/description";
-import OrgAvatar from "../organization/avatar";
-import OrgLocation from "../organization/location";
-import OrgWebsite from "../organization/website";
+import OrgDescription from "../dao/description";
+import OrgAvatar from "../dao/avatar";
+import OrgLocation from "../dao/location";
+import OrgWebsite from "../dao/website";
 import getDaoMember from "../../helpers/getUserDaoMember";
 
 function AccountOrgHeader(props) {
@@ -16,7 +16,7 @@ function AccountOrgHeader(props) {
 
   const refresh = async () => {
     await props.refresh();
-    await props.getOrganizationDetailsForDashboard();
+    await props.getDaoDetailsForDashboard();
   };
 
   useEffect(async () => {
@@ -80,7 +80,7 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  getOrganizationDetailsForDashboard,
+  getDaoDetailsForDashboard,
   isCurrentUserEligibleToUpdate,
   notify,
 })(AccountOrgHeader);

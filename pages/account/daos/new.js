@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { connect } from "react-redux";
-import { createDao } from "../../../store/actions/organization";
+import { createDao } from "../../../store/actions/dao";
 
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Header from "../../../components/header";
 import TextInput from "../../../components/textInput";
 import Footer from "../../../components/footer";
-import OrgAvatar from "../../../components/organization/avatar";
+import OrgAvatar from "../../../components/dao/avatar";
 import getUserDaoAll from "../../../helpers/getUserDaoAll";
 
-function NewOrganization(props) {
+function NewDao(props) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [nameHint, setNameHint] = useState({
@@ -37,7 +37,7 @@ function NewOrganization(props) {
     type: "error",
     message: "",
   });
-  const [organizationCreating, setOrganizationCreating] = useState(false);
+  const [daoCreating, setDaoCreating] = useState(false);
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
@@ -46,7 +46,7 @@ function NewOrganization(props) {
     setDescriptionHint({ ...descriptionHint, shown: false });
   };
 
-  const validateOrganization = async () => {
+  const validateDao = async () => {
     hideHints();
     if (name === "") {
       setNameHint({
@@ -58,8 +58,8 @@ function NewOrganization(props) {
     }
 
     let alreadyAvailable = false;
-    const organizations = await getUserDaoAll(props.selectedAddress);
-    organizations.every((o) => {
+    const daos = await getUserDaoAll(props.selectedAddress);
+    daos.every((o) => {
       if (o.name === name) {
         alreadyAvailable = true;
         return false;
@@ -86,8 +86,8 @@ function NewOrganization(props) {
   };
 
   const createDao = async () => {
-    setOrganizationCreating(true);
-    if (validateOrganization()) {
+    setDaoCreating(true);
+    if (validateDao()) {
       let res = await props.createDao({
         name: name.replace(sanitizedNameTest, "-"),
         description,
@@ -99,7 +99,7 @@ function NewOrganization(props) {
         router.push(res.url);
       }
     }
-    setOrganizationCreating(false);
+    setDaoCreating(false);
   };
 
   return (
@@ -184,9 +184,9 @@ function NewOrganization(props) {
             <button
               className={
                 "flex-none btn btn-primary btn-wide " +
-                (organizationCreating ? "loading " : "")
+                (daoCreating ? "loading " : "")
               }
-              disabled={organizationCreating}
+              disabled={daoCreating}
               onClick={createDao}
             >
               Create DAO
@@ -202,10 +202,9 @@ function NewOrganization(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
-    organizations: state.user.organizations,
   };
 };
 
 export default connect(mapStateToProps, {
   createDao,
-})(NewOrganization);
+})(NewDao);

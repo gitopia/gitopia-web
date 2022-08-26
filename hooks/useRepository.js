@@ -3,7 +3,7 @@ import getAnyRepository from "../helpers/getAnyRepository";
 import { useRouter } from "next/router";
 import { useErrorStatus } from "./errorHandler";
 import getUser from "../helpers/getUser";
-import getOrganization from "../helpers/getOrganization";
+import getDao from "../helpers/getDao";
 import getAllRepositoryBranch from "../helpers/getAllRepositoryBranch";
 import getAllRepositoryTag from "../helpers/getAllRepositoryTag";
 
@@ -59,7 +59,7 @@ export default function useRepository() {
           tags: tags,
         });
       } else {
-        ownerDetails = await getOrganization(r.owner.id);
+        ownerDetails = await getDao(r.owner.id);
         setRepository({
           ...r,
           owner: {

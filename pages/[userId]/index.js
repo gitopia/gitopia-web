@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Footer from "../../components/footer";
 import getUser from "../../helpers/getUser";
-import getOrganization from "../../helpers/getOrganization";
+import getDao from "../../helpers/getDao";
 import PublicTabs from "../../components/dashboard/publicTabs";
 import UserHeader from "../../components/user/header";
 import AccountOverview from "../../components/account/overview";
@@ -32,12 +32,9 @@ function AccountView(props) {
   const { setErrorStatusCode } = useErrorStatus();
   const [user, setUser] = useState({
     creator: "",
-    repositories: [],
-    organizations: [],
   });
-  const [org, setOrg] = useState({
+  const [dao, setDao] = useState({
     name: "",
-    repositories: [],
   });
 
   const validAddress = new RegExp("gitopia[a-z0-9]{39}");
@@ -47,16 +44,16 @@ function AccountView(props) {
     if (validAddress.test(router.query.userId)) {
       const [u, o] = await Promise.all([
         getUser(router.query.userId),
-        getOrganization(router.query.userId),
+        getDao(router.query.userId),
       ]);
       if (u) {
         setUser(u);
-        setOrg({ name: "", repositories: [] });
+        setDao({ name: "" });
       } else if (o) {
-        setOrg(o);
+        setDao(o);
       } else {
         setErrorStatusCode(404);
-        setUser({ creator: "", repositories: [] });
+        setUser({ creator: "" });
       }
     } else {
       const data = await getWhois(router.query.userId);
@@ -66,19 +63,19 @@ function AccountView(props) {
           setUser(u);
         } else {
           setErrorStatusCode(404);
-          setUser({ creator: "", repositories: [] });
+          setUser({ creator: "" });
         }
       } else if (data?.ownerType === "DAO") {
-        const o = await getOrganization(data.address);
+        const o = await getDao(data.address);
         if (o) {
-          setOrg(o);
+          setDao(o);
         } else {
           setErrorStatusCode(404);
-          setOrg({ name: "", repositories: [] });
+          setDao({ name: "" });
         }
       } else {
         setErrorStatusCode(404);
-        setUser({ creator: "", repositories: [] });
+        setUser({ creator: "" });
       }
     }
   };
@@ -91,14 +88,14 @@ function AccountView(props) {
       className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
-        <title>{user.id ? user.creator : org.name}</title>
+        <title>{user.id ? user.creator : dao.name}</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
       <div className="flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
-          {org.address ? (
-            <AccountOrgHeader org={org} refresh={getId} />
+          {dao.address ? (
+            <AccountOrgHeader org={dao} refresh={getId} />
           ) : (
             <UserHeader user={user} refresh={getId} />
           )}
@@ -106,17 +103,17 @@ function AccountView(props) {
             <PublicTabs
               active={router.query.tab || "overview"}
               hrefBase={hrefBase}
-              showPeople={org.address}
+              showPeople={dao.address}
               showProposal={
                 process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
-                  router.query.userId && org.address
+                  router.query.userId && dao.address
               }
             />
           </div>
           {router.query.tab === "overview" || router.query.tab === undefined ? (
             <AccountOverview
               user={user}
-              org={org}
+              org={dao}
               userId={router.query.userId}
             />
           ) : (
@@ -125,7 +122,7 @@ function AccountView(props) {
           {router.query.tab === "repositories" ? (
             <AccountRepositories
               user={user}
-              org={org}
+              org={dao}
               userId={router.query.userId}
             />
           ) : (
@@ -133,12 +130,12 @@ function AccountView(props) {
           )}
           {router.query.tab === "transactions" ? (
             <AccountTransactions
-              userId={user.creator ? user.creator : org.address}
+              userId={user.creator ? user.creator : dao.address}
             />
           ) : (
             ""
           )}
-          {router.query.tab === "people" ? <AccountPeople org={org} /> : ""}
+          {router.query.tab === "people" ? <AccountPeople org={dao} /> : ""}
         </main>
       </div>
       <Footer />

@@ -1,6 +1,6 @@
 import api from "./getApi";
 
-export default async function getOrganization(orgId) {
+export default async function getDao(orgId) {
   if (!orgId) return null;
   try {
     const res = await api.queryDao(orgId);
