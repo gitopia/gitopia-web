@@ -46,15 +46,38 @@ describe("Test Wallet Workflows", () => {
     })
 
     it("Is able to generate 24 word recovery phase", () => {
+        cy.viewport(1280,720);
         cy.get('[data-test="mnemonic"]').should("have.length", 24);
       });
     
     it("Is able to download wallet", () => {
+        cy.viewport(1280,720);
         cy.get('[data-test="current_wallet_name"]').click();
         cy.get('[data-test="download_wallet"]').click();
         cy.get('[data-test="wallet_password"]').type("Password");
         cy.get('[data-test="Download"]').click();
         cy.readFile("cypress/downloads/Test123.json").should("exist");
+        cy.get('.btn-secondary').click();
+    });
+
+    it("Is able to get tokens", () => {
+        cy.viewport(1280,720);
+        if (cy.get('[data-test="get-token"]').contains("Get TLORE")) {
+          cy.get('[data-test="get-token"]').click();
+          cy.wait(6000);
+        }
+      });
+    
+    it("Is able to create profile", () => {
+        cy.viewport(1280,720);
+        cy.get("body").then(($body) => {
+          if ($body.find('[data-test="create_profile"]').length > 0) {
+            cy.get('[data-test="create_profile"]').click();
+            cy.wait(6000);
+          } else {
+            cy.get('[data-test="view_profile"]').click();
+          }
+        });
     });
     
 
@@ -79,6 +102,21 @@ describe("Test Wallet Workflows", () => {
         cy.get('[data-test="wallet-menu"]').should("has.text","Connect Wallet");
     })
 
+    it("Test wallet log in", () => {
+        cy.viewport(1280,720);
+        cy.visit("/home");
+        cy.get('[data-test="wallet-menu"]').click();
+        cy.get('[data-test="log-out"]').click();
+        
+        cy.visit("/home");
+        cy.get('[data-test="wallet-menu"]').click();
+        cy.contains("Test123").click();
+        cy.get('[data-test="wallet_password"]').clear().type("Password").should("have.value","Password");
+        cy.contains("Unlock").click();
+        cy.get('[data-test="current_wallet_name"]').should("has.text", "Test123");
+        
+    })
+
     it("Test switch wallet incorrect password error", () => {
         cy.viewport(1280,720);
         cy.visit("/home");
@@ -100,7 +138,7 @@ describe("Test Wallet Workflows", () => {
         cy.get('[data-test="wallet-menu"]').click();
         cy.get('[data-test="log-out"]').click();
         cy.get('[data-test="wallet-menu"]').should("has.text","Connect Wallet");
-        cy.get('[data-test="wallet-menu"]').click({ multiple: true });
+        cy.get('[data-test="wallet-menu"]').click();
         cy.contains("Test123").click();
         cy.get('[data-test="wallet_password"]').clear().type("Password").should("have.value","Password");
         cy.contains("Unlock").click();
