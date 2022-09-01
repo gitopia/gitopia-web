@@ -84,7 +84,7 @@ function RepositoryHeader({ repository, ...props }) {
               </div>
               <div className="mr-2 text-type-tertiary">/</div>
               <Link href={"/" + repository.owner.id + "/" + repository.name}>
-                <a className="btn-link">{repository.name}</a>
+                <a className="btn-link" data-test="repo_name">{repository.name}</a>
               </Link>
               {repository.fork ? (
                 <div className="badge badge-outline ml-2 mt-1 text-type-tertiary">

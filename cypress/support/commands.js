@@ -52,3 +52,13 @@ Cypress.Commands.add("restoreLocalStorage", () => {
     localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
   });
 });
+
+Cypress.Commands.add("unlock", (pass) => {
+  cy.wait(500);
+  cy.get("body").then(($body) => {
+    if ($body.find('[data-test="wallet_password"]').length > 0) {
+        cy.get('[data-test="wallet_password"]').type(pass);
+        cy.get('[data-test="Unlock"]').click();
+        }
+    });
+})
