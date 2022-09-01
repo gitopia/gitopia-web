@@ -2,6 +2,7 @@ describe("Test Wallet Workflows", () => {
 
     beforeEach(() => {
         cy.restoreLocalStorage();
+        cy.viewport(1280,720);
       });
       
       afterEach(() => {
@@ -9,7 +10,6 @@ describe("Test Wallet Workflows", () => {
       });
 
     it("Test wallet password format error", () => {
-        cy.viewport(1280,720);
         cy.visit("/login");
 
         cy.get('[data-test="create-new-local-wallet"]').click();
@@ -22,7 +22,6 @@ describe("Test Wallet Workflows", () => {
     })
 
     it("Test wallet password mismatch error", () => {
-        cy.viewport(1280,720);
         cy.visit("/login");
 
         cy.get('[data-test="create-new-local-wallet"]').click();
@@ -34,7 +33,6 @@ describe("Test Wallet Workflows", () => {
     })
 
     it("Test wallet creation", () => {
-        cy.viewport(1280,720);
         cy.visit("/login");
 
         cy.get('[data-test="create-new-local-wallet"]').click();
@@ -46,12 +44,10 @@ describe("Test Wallet Workflows", () => {
     })
 
     it("Is able to generate 24 word recovery phase", () => {
-        cy.viewport(1280,720);
         cy.get('[data-test="mnemonic"]').should("have.length", 24);
       });
     
     it("Is able to download wallet", () => {
-        cy.viewport(1280,720);
         cy.get('[data-test="current_wallet_name"]').click();
         cy.get('[data-test="download_wallet"]').click();
         cy.get('[data-test="wallet_password"]').type("Password");
@@ -61,7 +57,6 @@ describe("Test Wallet Workflows", () => {
     });
 
     it("Is able to get tokens", () => {
-        cy.viewport(1280,720);
         if (cy.get('[data-test="get-token"]').contains("Get TLORE")) {
           cy.get('[data-test="get-token"]').click();
           cy.wait(6000);
@@ -69,7 +64,6 @@ describe("Test Wallet Workflows", () => {
       });
     
     it("Is able to create profile", () => {
-        cy.viewport(1280,720);
         cy.get("body").then(($body) => {
           if ($body.find('[data-test="create_profile"]').length > 0) {
             cy.get('[data-test="create_profile"]').click();
@@ -82,7 +76,6 @@ describe("Test Wallet Workflows", () => {
     
 
     it("Test wallet name already exists error", () => {
-        cy.viewport(1280,720);
         cy.visit("/login");
 
         cy.get('[data-test="create-new-local-wallet"]').click();
@@ -95,7 +88,6 @@ describe("Test Wallet Workflows", () => {
     })
 
     it("Test wallet log out", () => {
-        cy.viewport(1280,720);
         cy.visit("/home");
         cy.get('[data-test="wallet-menu"]').click();
         cy.get('[data-test="log-out"]').click();
@@ -103,7 +95,6 @@ describe("Test Wallet Workflows", () => {
     })
 
     it("Test wallet log in", () => {
-        cy.viewport(1280,720);
         cy.visit("/home");
         cy.get('[data-test="wallet-menu"]').click();
         cy.get('[data-test="log-out"]').click();
@@ -118,7 +109,6 @@ describe("Test Wallet Workflows", () => {
     })
 
     it("Test switch wallet incorrect password error", () => {
-        cy.viewport(1280,720);
         cy.visit("/home");
         cy.get('[data-test="wallet-menu"]').click();
         cy.get('[data-test="log-out"]').click();
@@ -133,7 +123,6 @@ describe("Test Wallet Workflows", () => {
     })
 
     it("Test switch wallet", () => {
-        cy.viewport(1280,720);
         cy.visit("/home");
         cy.get('[data-test="wallet-menu"]').click();
         cy.get('[data-test="log-out"]').click();
@@ -147,7 +136,6 @@ describe("Test Wallet Workflows", () => {
 
     it("Test recover wallet incorrect mnemonic error", () => {
         cy.clearLocalStorage();
-        cy.viewport(1280,720);
         cy.visit("/login");
 
         cy.get('[data-test="recover-local-wallet"]').click();
@@ -159,7 +147,6 @@ describe("Test Wallet Workflows", () => {
 
     it("Test recover wallet", () => {
         cy.clearLocalStorage();
-        cy.viewport(1280,720);
         cy.visit("/login");
 
         cy.readFile("cypress/downloads/Test123.json", (err, data) => {
