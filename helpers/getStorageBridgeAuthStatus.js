@@ -1,11 +1,11 @@
 import api from "./getApi";
 
-export default async function getGitServerAuthStatus(userAddress) {
+export default async function getStorageBridgeAuthStatus(userAddress) {
   if (!userAddress) return null;
   try {
-    const res = await api.queryCheckGitServerAuthorization(
+    const res = await api.queryCheckStorageProviderAuthorization(
       userAddress,
-      process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS
+      process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS
     );
     if (res.ok && res.data.haveAuthorization) {
       return true;

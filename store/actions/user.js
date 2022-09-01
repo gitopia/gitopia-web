@@ -1,5 +1,9 @@
 import { userActions, walletActions } from "./actionTypes";
-import { sendTransaction, setupTxClients } from "./env";
+import {
+  sendTransaction,
+  setupTxClients,
+  handlePostingTransaction,
+} from "./env";
 import { updateUserBalance } from "./wallet";
 import { notify } from "reapop";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
@@ -165,5 +169,56 @@ export const updateUserUsername = (username) => {
       dispatch(notify(e.message, "error"));
       console.error(e);
     }
+  };
+};
+
+// export const updateStorageGrant = (allow) => {
+//   return async (dispatch, getState) => {
+//     await setupTxClients(dispatch, getState);
+//     const { env, wallet } = getState();
+//     let fn = allow ? env.txClient.msgGrant : env.txClient.msgRevoke;
+//     console.log(fn);
+//     const msg1 = await fn(
+//       wallet.selectedAddress,
+//       process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS,
+//       "/gitopia.gitopia.gitopia.MsgAddRepositoryBackupRef",
+//       dayjs().add(1, "year").unix()
+//     );
+//     // const msg2 = await fn({
+//     //   granter: wallet.selectedAddress,
+//     //   grantee: process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS,
+//     //   msgTypeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRepositoryBackupRef",
+//     // });
+//     return await handlePostingTransaction(dispatch, getState, [msg1]);
+//   };
+// };
+
+export const updateStorageGrant = (allow) => {
+  return async (dispatch, getState) => {
+    await setupTxClients(dispatch, getState);
+    const { wallet, env } = getState();
+    let fn = allow
+      ? env.txClient.msgAuthorizeStorageProvider
+      : env.txClient.msgRevokeStorageProviderPermissions;
+    const message = await fn({
+      creator: wallet.selectedAddress,
+      provider: process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS,
+    });
+    return await handlePostingTransaction(dispatch, getState, message);
+  };
+};
+
+export const updateGitServerGrant = (allow) => {
+  return async (dispatch, getState) => {
+    await setupTxClients(dispatch, getState);
+    const { wallet, env } = getState();
+    let fn = allow
+      ? env.txClient.msgAuthorizeGitServer
+      : env.txClient.msgRevokeGitServerPermissions;
+    const message = await fn({
+      creator: wallet.selectedAddress,
+      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+    });
+    return await handlePostingTransaction(dispatch, getState, message);
   };
 };

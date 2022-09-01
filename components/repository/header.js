@@ -7,7 +7,7 @@ import {
   authorizeGitServer,
 } from "../../store/actions/repository";
 import { useRouter } from "next/router";
-import { getGitServerAuthorization } from "../../helpers/getGitServerAuthStatus";
+import getGitServerAuthorization from "../../helpers/getGitServerAuthStatus";
 import { notify } from "reapop";
 import pluralize from "../../helpers/pluralize";
 import getAllRepositoryBranch from "../../helpers/getAllRepositoryBranch";

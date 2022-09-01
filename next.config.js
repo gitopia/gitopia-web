@@ -46,6 +46,7 @@ module.exports = withBundleAnalyzer({
         })
       );
     }
+    config.cache.buildDependencies.mydeps = ["./yarn.lock"];
 
     return config;
   },

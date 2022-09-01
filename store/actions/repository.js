@@ -12,14 +12,14 @@ export const validatePostingEligibility = async (
   msgType,
   numberOfTransactions = 1
 ) => {
-  const { wallet, env, user } = getState();
-
   try {
     await setupTxClients(dispatch, getState);
   } catch (e) {
     console.log(e.message);
     return false;
   }
+  
+  const { wallet, env, user } = getState();
 
   if (!wallet.selectedAddress) {
     dispatch(notify("Please sign in to create " + msgType, "error"));
@@ -31,16 +31,16 @@ export const validatePostingEligibility = async (
       dispatch(notify("Balance low for creating " + msgType, "error"));
       return false;
     } else {
-      console.log("No associated user found for this adddress, creating... ");
-      const res = await createUser(wallet.activeWallet.name)(
-        dispatch,
-        getState
-      );
-      if (res && res.code === 0) {
-        await getUserDetailsForSelectedAddress()(dispatch, getState);
-      } else {
-        return false;
-      }
+      // console.log("No associated user found for this adddress, creating... ");
+      // const res = await createUser(wallet.activeWallet.name)(
+      //   dispatch,
+      //   getState
+      // );
+      // if (res && res.code === 0) {
+      //   await getUserDetailsForSelectedAddress()(dispatch, getState);
+      // } else {
+      //   return false;
+      // }
     }
   }
 
