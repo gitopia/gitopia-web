@@ -14,6 +14,7 @@ import getWhois from "../../helpers/getWhois";
 import AccountRepositories from "../../components/account/repositories";
 import AccountTransactions from "../../components/account/transactions";
 import AccountPeople from "../../components/account/people";
+import AccountGrants from "../../components/account/grants";
 import AccountOrgHeader from "../../components/account/orgHeader";
 
 export async function getStaticProps() {
@@ -111,6 +112,7 @@ function AccountView(props) {
                 process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
                   router.query.userId && org.address
               }
+              showGrants={user.creator}
             />
           </div>
           {router.query.tab === "overview" || router.query.tab === undefined ? (
@@ -139,6 +141,7 @@ function AccountView(props) {
             ""
           )}
           {router.query.tab === "people" ? <AccountPeople org={org} /> : ""}
+          {router.query.tab === "grants" ? <AccountGrants user={user} /> : ""}
         </main>
       </div>
       <Footer />

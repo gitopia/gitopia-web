@@ -1,7 +1,21 @@
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { notify } from "reapop";
 
 function CloneRepoInfo({ remoteUrl, ...props }) {
+  const [tab, setTab] = useState("gitopia");
+  const [cloneCmd, setCloneCmd] = useState("git clone " + remoteUrl);
+
+  useEffect(() => {
+    if (tab === "gitopia") {
+      setCloneCmd("git clone " + remoteUrl);
+    } else if (tab === "ipfs") {
+      setCloneCmd("ipfs_clone " + remoteUrl);
+    } else if (tab === "arweave") {
+      setCloneCmd("arweave_clone " + remoteUrl);
+    }
+  }, [tab]);
+
   return (
     <div className="dropdown dropdown-end outline-none" tabIndex="0">
       <button className="btn btn-sm btn-outline w-26" tabIndex="0">
@@ -20,6 +34,40 @@ function CloneRepoInfo({ remoteUrl, ...props }) {
         </svg>
       </button>
       <div className="shadow-lg dropdown-content bg-base-300 rounded mt-1 overflow-hidden w-max p-4 text-left">
+        <div className="tabs mb-4">
+          <button
+            className={
+              "tab tab-sm tab-bordered" +
+              (tab === "gitopia" ? " tab-active" : "")
+            }
+            onClick={() => {
+              setTab("gitopia");
+            }}
+          >
+            Gitopia Server
+          </button>
+          <button
+            className={
+              "tab tab-sm tab-bordered" + (tab === "ipfs" ? " tab-active" : "")
+            }
+            onClick={() => {
+              setTab("ipfs");
+            }}
+          >
+            IPFS
+          </button>
+          <button
+            className={
+              "tab tab-sm tab-bordered" +
+              (tab === "arweave" ? " tab-active" : "")
+            }
+            onClick={() => {
+              setTab("arweave");
+            }}
+          >
+            Arweave
+          </button>
+        </div>
         <div className="flex items-center py-2 px-4 rounded-lg text-sm alert-warning">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -51,14 +99,14 @@ function CloneRepoInfo({ remoteUrl, ...props }) {
               cols={120}
               name="repository-url"
               type="text"
-              value={"git clone " + remoteUrl}
+              value={cloneCmd}
               readOnly={true}
-              className="w-full input input-ghost input-sm input-bordered py-2 pr-12"
+              className="w-full input input-ghost input-md input-bordered py-2 pr-14"
             />
             <button
-              className="absolute right-0 top-0 btn btn-ghost btn-sm"
+              className="absolute right-0 top-0 btn btn-ghost btn-md"
               onClick={(e) => {
-                navigator.clipboard.writeText("git clone " + remoteUrl);
+                navigator.clipboard.writeText(cloneCmd);
                 props.notify("Copied to clipboard", "info");
               }}
             >

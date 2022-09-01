@@ -24,8 +24,9 @@ export const sendTransaction = ({
       notifId = msg.payload.id;
     }
     try {
-      result = await env.txClient.signAndBroadcast([message], {
-        // fee,
+      const msgArr = Array.isArray(message) ? message : [message];
+      console.log(msgArr);
+      result = await env.txClient.signAndBroadcast(msgArr, {
         fee: "auto",
         memo,
       });
