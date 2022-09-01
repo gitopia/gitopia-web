@@ -17,6 +17,9 @@ import useRepository from "../../../../../hooks/useRepository";
 import usePullRequest from "../../../../../hooks/usePullRequest";
 import shrinkAddress from "../../../../../helpers/shrinkAddress";
 import dayjs from "dayjs";
+import { ApolloProvider } from "@apollo/client";
+import client from "../../../../../helpers/apolloClient";
+import QueryIssues from "../../../../../helpers/queryIssuesByTitleGql";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -33,7 +36,10 @@ function RepositoryPullIssuesView(props) {
   const { repository } = useRepository();
   const { pullRequest } = usePullRequest(repository);
   const [issues, setIssues] = useState([]);
-  const [issueIid, setIssueIid] = useState(0);
+  const [issue, setIssue] = useState({ title: "", iid: "" });
+  const [textEntered, setEnteredText] = useState("");
+  const [issueList, setIssueList] = useState([]);
+
   useEffect(async () => {
     const array = [];
     for (var i = 0; i < pullRequest.issues.length; i++) {
@@ -76,44 +82,130 @@ function RepositoryPullIssuesView(props) {
             />
           </div>
           <div className="flex mt-4">
-            <div className="form-control flex-1 mr-8 mt-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="w-full pr-16 input input-ghost input-sm input-bordered"
-                  value={""}
-                  onChange={(e) => {}}
-                  onKeyUp={(e) => {
-                    if (e.code === "Enter") {
-                    }
+            {issue.title != "" ? (
+              <div className="flex text-sm box-border bg-grey-500 mr-2 h-11 p-3 rounded-lg uppercase mt-2">
+                {issue.title}
+                <div
+                  className="link ml-4 mt-1 no-underline"
+                  onClick={() => {
+                    setIssue({ title: "", iid: "" });
                   }}
-                />
-                <button
-                  className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost"
-                  onClick={() => {}}
                 >
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 14 14"
                     fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      d="M13.5303 1.5304C13.8231 1.23751 13.8231 0.762637 13.5303 0.469744C13.2374 0.176851 12.7625 0.176851 12.4696 0.469744L13.5303 1.5304ZM0.46967 12.4697C0.176777 12.7626 0.176777 13.2374 0.46967 13.5303C0.762563 13.8232 1.23744 13.8232 1.53033 13.5303L0.46967 12.4697ZM12.4696 13.5303C12.7625 13.8231 13.2374 13.8231 13.5303 13.5303C13.8231 13.2374 13.8231 12.7625 13.5303 12.4696L12.4696 13.5303ZM1.53033 0.46967C1.23744 0.176777 0.762563 0.176777 0.46967 0.46967C0.176777 0.762563 0.176777 1.23744 0.46967 1.53033L1.53033 0.46967ZM12.4696 0.469744L0.46967 12.4697L1.53033 13.5303L13.5303 1.5304L12.4696 0.469744ZM13.5303 12.4696L1.53033 0.46967L0.46967 1.53033L12.4696 13.5303L13.5303 12.4696Z"
+                      fill="#E5EDF5"
                     />
                   </svg>
-                </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="form-control flex-1 mr-8 mt-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    className="w-full pr-16 input input-ghost input-sm input-bordered"
+                    value={textEntered}
+                    onChange={(e) => {
+                      setEnteredText(e.target.value);
+                    }}
+                    onKeyUp={(e) => {
+                      if (e.code === "Enter") {
+                        setEnteredText(e.target.value);
+                      }
+                    }}
+                  />
+
+                  <ApolloProvider client={client}>
+                    <QueryIssues
+                      substr={textEntered}
+                      repoId={0}
+                      setIssueList={setIssueList}
+                    />
+                  </ApolloProvider>
+
+                  <button
+                    className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost"
+                    onClick={() => {}}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
+                  </button>
+                  {issueList.length > 0 && issue.title == "" ? (
+                    <div class="card bg-grey-500 p-4">
+                      {issueList.map((i, key) => {
+                        return (
+                          <div
+                            onClick={() => {
+                              setIssue(i);
+                              setEnteredText("");
+                            }}
+                          >
+                            <div
+                              className={
+                                "flex border-grey-300 pb-3 pt-3 hover:cursor-pointer " +
+                                (key < issueList.length - 1 ? "border-b" : "")
+                              }
+                            >
+                              <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M5 20L5 4L19 4L19 20L5 20Z"
+                                  stroke="#ADBECB"
+                                  stroke-width="2"
+                                />
+                                <path
+                                  d="M8 15L16 15M8 9L16 9"
+                                  stroke="#ADBECB"
+                                  stroke-width="2"
+                                />
+                              </svg>
+
+                              <div className="text-type-secondary ml-4 text-sm mt-0.5">
+                                {i.title}
+                              </div>
+                              <div className="font-bold text-xs text-type-secondary ml-auto uppercase mt-1">
+                                opened by {shrinkAddress(i.creator)}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+            )}
             <button
               className="ml-auto btn btn-primary text-xs btn-sm mt-4"
               onClick={() => {
-                props.linkPullIssuebyIid(pullRequest.id, issueIid);
+                props.linkPullIssuebyIid(pullRequest.id, issue.iid);
               }}
             >
               Link Issue
