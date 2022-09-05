@@ -27,6 +27,7 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
         let oldWalletName = wallet.activeWallet.name;
         let newWallet = wallet.activeWallet;
         newWallet.name = username;
+        newWallet.isUsernameSetup = true;
         const CryptoJS = (await import("crypto-js")).default;
         const encryptedWallet = CryptoJS.AES.encrypt(
           JSON.stringify(newWallet),
