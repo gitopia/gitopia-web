@@ -21,6 +21,8 @@ import { ApolloProvider } from "@apollo/client";
 import client from "../../../../../helpers/apolloClient";
 import QueryIssues from "../../../../../helpers/queryIssuesByTitleGql";
 
+// revisit after graphql update
+
 export async function getStaticProps() {
   return { props: {} };
 }

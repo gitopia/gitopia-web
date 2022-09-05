@@ -4,6 +4,9 @@ import { connect } from "react-redux";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
+
+// revisit this file after relayer setup
+
 function CreateBounty(props) {
   const router = useRouter();
   var id = router.query.userId;
