@@ -152,7 +152,7 @@ export const unlockWallet = ({ name, password }) => {
       console.error(e);
       return false;
     }
-    if (wallet.name.includes("untitled-wallet")) {
+    if (wallet.name.includes("untitled-wallet") || !wallet.isUsernameSetup) {
       dispatch({
         type: walletActions.SET_ACTIVE_WALLET,
         payload: { wallet },

@@ -27,6 +27,7 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
         let oldWalletName = wallet.activeWallet.name;
         let newWallet = wallet.activeWallet;
         newWallet.name = username;
+        newWallet.isUsernameSetup = true;
         const CryptoJS = (await import("crypto-js")).default;
         const encryptedWallet = CryptoJS.AES.encrypt(
           JSON.stringify(newWallet),
@@ -195,25 +196,28 @@ export const updateStorageGrant = (allow) => {
   return async (dispatch, getState) => {
     await setupTxClients(dispatch, getState);
     const { wallet, env } = getState();
-    let fn = allow ? env.txClient.msgAuthorizeStorageProvider : env.txClient.msgRevokeStorageProviderPermissions;
-      const message = await fn({
-        creator: wallet.selectedAddress,
-        provider: process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS,
-      });
+    let fn = allow
+      ? env.txClient.msgAuthorizeStorageProvider
+      : env.txClient.msgRevokeStorageProviderPermissions;
+    const message = await fn({
+      creator: wallet.selectedAddress,
+      provider: process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS,
+    });
     return await handlePostingTransaction(dispatch, getState, message);
   };
 };
-
 
 export const updateGitServerGrant = (allow) => {
   return async (dispatch, getState) => {
     await setupTxClients(dispatch, getState);
     const { wallet, env } = getState();
-    let fn = allow ? env.txClient.msgAuthorizeGitServer : env.txClient.msgRevokeGitServerPermissions;
-      const message = await fn({
-        creator: wallet.selectedAddress,
-        provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
-      });
+    let fn = allow
+      ? env.txClient.msgAuthorizeGitServer
+      : env.txClient.msgRevokeGitServerPermissions;
+    const message = await fn({
+      creator: wallet.selectedAddress,
+      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+    });
     return await handlePostingTransaction(dispatch, getState, message);
   };
 };
