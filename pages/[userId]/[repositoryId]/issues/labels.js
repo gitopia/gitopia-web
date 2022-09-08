@@ -59,6 +59,7 @@ function RepositoryIssueLabelsView(props) {
                   onClick={() => {
                     setIsAddingLabel(true);
                   }}
+                  data-test="new_label"
                 >
                   New Label
                 </button>

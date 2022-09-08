@@ -25,7 +25,7 @@ function LabelView({ label, repoId, onDelete, refreshLabels, ...props }) {
           }}
         />
       ) : (
-        <div className="flex items-center">
+        <div className="flex items-center" data-test="label">
           <div className="flex-none mr-2 sm:mr-0 sm:w-64">
             <Label color={label.color} name={label.name} />
           </div>
@@ -36,6 +36,7 @@ function LabelView({ label, repoId, onDelete, refreshLabels, ...props }) {
               onClick={() => {
                 setIsEditing(true);
               }}
+              data-test="edit_label"
             >
               Edit
             </button>
@@ -46,6 +47,7 @@ function LabelView({ label, repoId, onDelete, refreshLabels, ...props }) {
               onClick={() => {
                 setConfirmDelete(true);
               }}
+              data-test="delete_label"
             >
               Delete
             </button>
@@ -80,6 +82,7 @@ function LabelView({ label, repoId, onDelete, refreshLabels, ...props }) {
                 setConfirmDelete(false);
                 setIsDeleting(false);
               }}
+              data-test="del_label"
             >
               Delete
             </label>

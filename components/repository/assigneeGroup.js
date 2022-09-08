@@ -6,6 +6,7 @@ export default function AssigneeGroup({ assignees, ...props }) {
           className="avatar tooltip tooltip-bottom"
           key={"assignee" + i}
           data-tip={a}
+          data-test="selected_assignee"
         >
           <div className="w-8 h-8 rounded-full">
             <a href={"/" + a} target="_blank" className="btn-primary">

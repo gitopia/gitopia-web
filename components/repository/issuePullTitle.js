@@ -115,6 +115,7 @@ function IssuePullTitle({
             }
             onClick={updateTitle}
             disabled={savingTitle}
+            data-test="save_issue"
           >
             Save
           </button>
@@ -127,6 +128,7 @@ function IssuePullTitle({
               onClick={() => {
                 setIsEditing(true);
               }}
+              data-test="edit_issue"
             >
               Edit
             </button>

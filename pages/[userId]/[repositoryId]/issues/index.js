@@ -208,6 +208,7 @@ function RepositoryIssueView(props) {
                         setFilterText(newFilterText);
                         setFilters(parseFilters(newFilterText));
                       }}
+                      data-test="open_issues"
                     >
                       <span
                         className={
@@ -233,6 +234,7 @@ function RepositoryIssueView(props) {
                         setFilterText(newFilterText);
                         setFilters(parseFilters(newFilterText));
                       }}
+                      data-test="closed_issues"
                     >
                       <span
                         className={
