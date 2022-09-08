@@ -51,6 +51,7 @@ function Label({ color, name, onClick, ...props }) {
         "rounded-full px-2 border text-xs leading-5 inline-block " +
         (onClick ? "cursor-pointer" : "")
       }
+      data-test="existing_labels"
       onClick={onClick}
       style={{
         backgroundColor: "hsla(" + c.h + "," + c.s + "%," + c.l + "%, 0.2)",
