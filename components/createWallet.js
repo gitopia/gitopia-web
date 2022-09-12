@@ -159,6 +159,7 @@ function CreateWallet(props) {
             </button>
             <button
               className="btn btn-secondary btn-block"
+              data-test="done_go_home"
               onClick={() => {
                 router.push("/home");
               }}

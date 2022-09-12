@@ -19,7 +19,7 @@ function ToggleForking({ repoId, allowForking, onSuccess, ...props }) {
   }, [allowForking]);
 
   return (
-    <label className="cursor-pointer label" data-test="allow-forking">
+    <label className="cursor-pointer label">
       <div>
         <div className="label-text">Allow Forking</div>
         <div className="label-text-alt text-type-secondary">
@@ -37,6 +37,7 @@ function ToggleForking({ repoId, allowForking, onSuccess, ...props }) {
           checked={currentState}
           onChange={toggleForking}
           disabled={isToggling}
+          data-test="allow-forking"
         />
       </div>
     </label>

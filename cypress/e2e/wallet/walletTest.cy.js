@@ -1,3 +1,4 @@
+
 describe("Test Wallet Workflows", () => {
 
     beforeEach(() => {
@@ -53,23 +54,38 @@ describe("Test Wallet Workflows", () => {
         cy.get('[data-test="wallet_password"]').type("Password");
         cy.get('[data-test="Download"]').click();
         cy.readFile("cypress/downloads/Test123.json").should("exist");
-        cy.get('.btn-secondary').click();
+        cy.get('[data-test="done_go_home"]').click();
     });
 
+    it("Low balance error", () => {
+        const uuid = () => Cypress._.random(0, 1e6);
+        const id = uuid();
+    
+        cy.get('[data-test="create-new-repo"]').click();
+        cy.get('[data-test="repository_name"]').type(`repo${id}`).should("have.value",`repo${id}`);
+        cy.get('[data-test="repository_description"]').type("Testing").should("have.value","Testing");
+        cy.wait(5000);
+        cy.get('[data-test="create-repo-button"]').click();
+        cy.get('p.reapop__notification-message').should("has.text","Balance low for creating repository")
+    })
+
     it("Is able to get tokens", () => {
+        cy.visit("/home");
         if (cy.get('[data-test="get-token"]').contains("Get TLORE")) {
           cy.get('[data-test="get-token"]').click();
           cy.wait(6000);
+          cy.get('p.reapop__notification-message').should("has.text","Balance updated");
         }
       });
     
     it("Is able to create profile", () => {
+        cy.visit("/home");
         cy.get("body").then(($body) => {
           if ($body.find('[data-test="create_profile"]').length > 0) {
             cy.get('[data-test="create_profile"]').click();
+            cy.unlock("Password");
             cy.wait(6000);
-          } else {
-            cy.get('[data-test="view_profile"]').click();
+            cy.get('p.reapop__notification-message').should("has.text","Your profile is created");
           }
         });
     });

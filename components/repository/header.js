@@ -399,7 +399,7 @@ function RepositoryHeader({ repository, ...props }) {
               )
             ) : (
               <>
-                <p>
+                <p data-test="forking_disabled">
                   Forking is disabled on this repository, please contact the
                   owner to allow forking.
                 </p>
