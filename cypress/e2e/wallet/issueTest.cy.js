@@ -16,7 +16,11 @@ describe("Issue Workflows", () => {
         if ($body.find('[data-test="current_wallet_name"]').length == 0){
             cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
         }
-    });
+        });
+        cy.get('[data-test="all_repositories"]').click();
+        cy.wait(500);
+        cy.contains('hello-world').click();
+        cy.get('[data-test="issues"]').click();
     })
     
     afterEach(() => {
@@ -25,9 +29,7 @@ describe("Issue Workflows", () => {
 
 
     it("Is able to create issue", () => {
-
-        cy.contains('hello-world').click();
-        cy.get('[data-test="issues"]').click();
+        
         cy.get('[data-test="new-issue"]').click();
         cy.get('[data-test="issue_title"]').type(`issue${testData.issueid}`).should("have.value",`issue${testData.issueid}`);
         cy.get("textarea").type("Description").should("have.value","Description");;
@@ -51,9 +53,6 @@ describe("Issue Workflows", () => {
 
     it("Is able to add assignees", () => {
 
-        cy.contains('hello-world').click();
-        cy.get('[data-test="issues"]').click();
-
         cy.contains(`issue${testData.issueid}`).click();
         cy.get('[data-test="assignee"]').click();
         cy.get('[data-test="assignee_search"]').type(
@@ -66,9 +65,7 @@ describe("Issue Workflows", () => {
         });
 
     it("Is able to comment", () => {
-        cy.contains('hello-world').click();
-        cy.get('[data-test="issues"]').click();
-
+        
         cy.contains(`issue${testData.issueid}`).click();
         cy.get('[data-testid="text-area"]').type("Initial Comment").should("have.value","Initial Comment");
         cy.get('[data-test="comment"]').click();
@@ -78,9 +75,7 @@ describe("Issue Workflows", () => {
     });
 
     it("Is able to edit comment", () => {
-        cy.contains('hello-world').click();
-        cy.get('[data-test="issues"]').click();
-
+        
         cy.contains(`issue${testData.issueid}`).click();
         cy.get('[data-test="comment_view"]').filter(':contains("Initial Comment")').then(() => {
             cy.get('[data-test="comment_options"]').click();
@@ -94,9 +89,7 @@ describe("Issue Workflows", () => {
     });
 
     it("Is able to delete comment", () => {
-        cy.contains('hello-world').click();
-        cy.get('[data-test="issues"]').click();
-
+        
         cy.contains(`issue${testData.issueid}`).click();
         cy.get('[data-test="comment_view"]').filter(':contains("Initial Comment1")').then(() => {
             cy.get('[data-test="comment_options"]').click();
@@ -110,9 +103,6 @@ describe("Issue Workflows", () => {
 
     it("Is able to rename issue title", () => {
 
-        cy.contains('hello-world').click();
-        cy.get('[data-test="issues"]').click();
-
         cy.contains(`issue${testData.issueid}`).click();
         cy.get('[data-test="edit_issue"]').click();
         cy.get('[name="title"]').click().type("{moveToEnd}1");
@@ -122,9 +112,6 @@ describe("Issue Workflows", () => {
     });
 
     it("Is able to select label", () => {
-
-        cy.contains('hello-world').click();
-        cy.get('[data-test="issues"]').click();
 
         cy.contains(`issue${testData.issueid}`).click();
         cy.get('[data-test="labels"]').click();
@@ -137,9 +124,6 @@ describe("Issue Workflows", () => {
     });
 
     it("Is able to create label", () => {
-
-        cy.contains('hello-world').click();
-        cy.get('[data-test="issues"]').click();
 
         cy.contains(`issue${testData.issueid}`).click();
         cy.get('[data-test="labels"]').click();
@@ -168,9 +152,6 @@ describe("Issue Workflows", () => {
 
     it("Is able to delete label", () => {
 
-        cy.contains('hello-world').click();
-        cy.get('[data-test="issues"]').click();
-
         cy.contains(`issue${testData.issueid}`).click();
         cy.get('[data-test="labels"]').click();
         cy.wait(100);
@@ -195,9 +176,6 @@ describe("Issue Workflows", () => {
 
     it("Is able to close issue", () => {
 
-        cy.contains('hello-world').click();
-        cy.get('[data-test="issues"]').click();
-
         cy.contains(`issue${testData.issueid}`).click();
         cy.wait(1500);
         cy.get('[data-test="close_issue"]').should("has.text","Close Issue").click();
@@ -208,8 +186,6 @@ describe("Issue Workflows", () => {
 
     it("Is able to reopen issue", () => {
 
-        cy.contains('hello-world').click();
-        cy.get('[data-test="issues"]').click();
         cy.get('[data-test="closed_issues"]').click();
         cy.contains(`issue${testData.issueid}`).click();
         cy.wait(1500);

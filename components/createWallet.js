@@ -222,7 +222,12 @@ function CreateWallet(props) {
             >
               Download Backup
             </button>
-            <button className="btn btn-secondary btn-block" onClick={() => {}}>
+            <button
+              className="btn btn-secondary btn-block"
+              onClick={() => {
+                router.push("/home");
+              }}
+            >
               Done
             </button>
           </div>
