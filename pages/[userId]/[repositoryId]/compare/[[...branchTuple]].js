@@ -240,7 +240,7 @@ function RepositoryCompareView(props) {
             </div>
           </div>
           <div className="mt-8 sm:flex items-center">
-            <div className="flex-1 sm:mr-2 border border-grey p-4 rounded-lg">
+            <div className="flex-1 sm:mr-2 border border-grey p-4 rounded-lg" data-test="source_branch">
               <div className="text-xs font-bold uppercase text-type-secondary">
                 Source
               </div>
@@ -297,7 +297,7 @@ function RepositoryCompareView(props) {
                 />
               </svg>
             </div>
-            <div className="flex-1 sm:ml-2 border border-grey p-4 rounded-lg">
+            <div className="flex-1 sm:ml-2 border border-grey p-4 rounded-lg" data-test="target_branch">
               <div className="text-xs font-bold uppercase text-type-secondary">
                 Target
               </div>

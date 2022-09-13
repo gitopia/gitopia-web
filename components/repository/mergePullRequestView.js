@@ -192,7 +192,7 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
               />
             </svg>
           )}
-          <div className="flex-1 text-xs sm:text-base">{message}</div>
+          <div className="flex-1 text-xs sm:text-base" data-test="pr_state">{message}</div>
         </div>
         {pullRequest.state === "OPEN" ? (
           <div className="sm:ml-auto">

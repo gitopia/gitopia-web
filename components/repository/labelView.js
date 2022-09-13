@@ -8,7 +8,7 @@ function LabelView({ label, repoId, onDelete, refreshLabels, ...props }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
-    <div key={"label" + label.id} className="p-4">
+    <div key={"label" + label.id} className="p-4"  data-test="label">
       {isEditing ? (
         <LabelEditor
           isEdit={true}
@@ -25,7 +25,7 @@ function LabelView({ label, repoId, onDelete, refreshLabels, ...props }) {
           }}
         />
       ) : (
-        <div className="flex items-center" data-test="label">
+        <div className="flex items-center">
           <div className="flex-none mr-2 sm:mr-0 sm:w-64">
             <Label color={label.color} name={label.name} />
           </div>

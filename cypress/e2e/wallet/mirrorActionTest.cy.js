@@ -27,8 +27,7 @@ describe('Mirror Action', () => {
     cy.visit('https://gitopia.com/gitopia18gtaqn8g58cxyxyd7wj7vpk790d6wxfk0frfg0/hello-world');
     cy.wait(20000);
     cy.reload();
-    cy.get('[id="readme"]').should("contain",`Test${testData.prid}`);
-    cy.log("Repository mirrored successfully");
+    cy.get('[id="readme"]').find('h2').filter(':contains("Test")').should("contain",`Test${testData.prid}`);
 
     let id = testData.prid + 1;
 
