@@ -157,10 +157,10 @@ describe("Issue Workflows", () => {
         cy.wait(100);
         cy.get('[data-test="edit_labels"]').click();
         cy.wait(100);
-        cy.get('[data-test="label"]').filter(':contains("new")').then(($body) => {
-            $body.find('[data-test="delete_label"]').click();
+        cy.get('[data-test="label"]').filter(':contains("new")').within(() => {
+            cy.get('[data-test="delete_label"]').click();
+            cy.get('[data-test="del_label"]').click();
         });
-        cy.get('[data-test="del_label"]').last().click();
         cy.unlock(testData.walletpass);
         cy.wait(8000);
         cy.get('[data-test="existing_labels"]').should(($labels) => {
