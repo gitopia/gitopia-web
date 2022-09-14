@@ -12,8 +12,9 @@ function DaoAvatar(props = { isEditable: false }) {
   const [previewAvatarUrl, setPreviewAvatarUrl] = useState(
     "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&name=.&background=2d3845"
   );
-  const [previewAvatarText, setPreviewAvatarText] =
-    useState("Nothing to Preview");
+  const [previewAvatarText, setPreviewAvatarText] = useState(
+    "Nothing to Preview"
+  );
 
   const validateImageUrl = async (url) => {
     if (url == "") {
@@ -64,7 +65,7 @@ function DaoAvatar(props = { isEditable: false }) {
             </label>
 
             <div className="avatar flex-none mr-8 items-center mx-36">
-              <div className={"relative w-40 h-40 rounded-full"}>
+              <div className={"relative w-40 h-40 rounded-md"}>
                 <img src={previewAvatarUrl} />
                 <div className="absolute w-full bottom-16 text-center italic text-grey-300 text-sm">
                   {previewAvatarText}

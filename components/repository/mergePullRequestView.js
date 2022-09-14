@@ -10,7 +10,7 @@ import {
 import pullRequestStateClass from "../../helpers/pullRequestStateClass";
 import mergePullRequestCheck from "../../helpers/mergePullRequestCheck";
 import getPullRequestMergePermission from "../../helpers/getPullRequestMergePermission";
-import { getGitServerAuthorization } from "../../helpers/getGitServerAuthStatus";
+import getGitServerAuthorization from "../../helpers/getGitServerAuthStatus";
 
 function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
   const [isMerging, setIsMerging] = useState(false);
@@ -18,8 +18,9 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
   const [iconType, setIconType] = useState("check");
   const [message, setMessage] = useState("");
   const [pullMergeAccess, setPullMergeAccess] = useState(false);
-  const [pullMergeAccessDialogShown, setPullMergeAccessDialogShown] =
-    useState(false);
+  const [pullMergeAccessDialogShown, setPullMergeAccessDialogShown] = useState(
+    false
+  );
   const [isGrantingAccess, setIsGrantingAccess] = useState(false);
 
   const checkMerge = async () => {

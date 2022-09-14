@@ -18,7 +18,7 @@
     "@cosmjs/ledger-amino": "^0.27.1",
     "@cosmjs/proto-signing": "0.27.1",
     "@cosmjs/stargate": "^0.27.1",
-    "@gitopia/gitopia-js": "git+https://github.com/gitopia/gitopia-js#abfa94c21d3a2d838d420a980dca06d738f3be42",
+    "@gitopia/gitopia-js": "git+https://github.com/gitopia/gitopia-js#c82c0b41ba3cd5c3c52fa3bba5575c80b7b79203",
     "@gitopia/stargate": "0.27.1",
     "@ledgerhq/hw-transport-webhid": "^6.20.0",
     "@ledgerhq/hw-transport-webusb": "^6.20.0",

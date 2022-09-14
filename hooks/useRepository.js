@@ -78,6 +78,5 @@ export default function useRepository() {
     }
     setFirstFetchLoading(false);
   }, [router.query, refreshIndex]);
-  console.log(repository);
   return { repository, refreshRepository, firstFetchLoading };
 }

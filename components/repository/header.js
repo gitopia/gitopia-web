@@ -58,7 +58,6 @@ function RepositoryHeader({ repository, ...props }) {
         repository.owner.id,
         repository.name
       );
-      console.log(branches);
       setBranchCount(branches.length);
     }
   };
@@ -68,7 +67,6 @@ function RepositoryHeader({ repository, ...props }) {
         repository.owner.id,
         repository.name
       );
-      console.log(tags);
       setTagCount(tags.length);
     }
   };
@@ -406,7 +404,6 @@ function RepositoryHeader({ repository, ...props }) {
                       onClick={async () => {
                         setIsGrantingAccess(true);
                         const res = await props.authorizeGitServer();
-                        console.log(res);
                         setIsGrantingAccess(false);
                         if (res && res.code === 0) {
                           refreshForkingAccess();
