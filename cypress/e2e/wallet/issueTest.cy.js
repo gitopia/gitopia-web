@@ -62,7 +62,7 @@ describe("Issue Workflows", () => {
         cy.unlock(testData.walletpass);
         cy.wait(6000);
         cy.get('[data-test="selected_assignee"]').invoke('attr','data-tip').should("eq",testData.walletaddress);
-        });
+    });
 
     it("Is able to comment", () => {
         

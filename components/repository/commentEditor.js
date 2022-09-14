@@ -139,6 +139,7 @@ function CommentEditor({
                   }
                   setTogglingIssue(false);
                 }}
+                data-test="close_pr"
               >
                 {"Close Pull Request"}
               </button>
