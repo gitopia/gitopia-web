@@ -69,6 +69,7 @@ function AssigneeSelector({
   return (
     <div
       className={"dropdown dropdown-end w-full"}
+      data-test="assignee"
       tabIndex="0"
       ref={menuDiv}
       onClick={() => {
@@ -79,7 +80,6 @@ function AssigneeSelector({
         className={
           "btn btn-sm btn-block btn-ghost " + (isSaving ? "loading" : "")
         }
-        data-test="assignee"
       >
         <div className="flex-1 text-left">{title}</div>
         <svg
