@@ -3,106 +3,99 @@ import { useState, useEffect } from "react";
 import getBounty from "../../helpers/getBounty";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import dayjs from "dayjs";
+import { debounce } from "lodash";
+
 function IssueBountyView(props) {
   const [bounties, setBounties] = useState([]);
+  const [isHovering, setIsHovering] = useState({ id: null });
   useEffect(async () => {
     const array = [];
     for (var i = 0; i < props.bounties.length; i++) {
       const res = await getBounty(props.bounties[i]);
       array.push(res);
     }
-    console.log(array);
+
     setBounties(array);
   }, [props.bounties.length]);
   return (
-    <div className="pt-8 mb-4 ml-2">
-      <div className="text-xs font-bold text-type-tertiary uppercase mb-2">
-        BOUNTIES
-      </div>
-      <div className="h-48 overflow-y-hidden hover:overflow-y-auto">
-        {bounties.map((b) => {
+    <div
+      className="pt-8 mb-4 ml-2"
+      onMouseLeave={debounce(() => {
+        setIsHovering({ id: null });
+      }, 100)}
+    >
+      <div className="font-semibold mb-2 text-sm">Bounties</div>
+      <div className="">
+        {bounties.map((b, index) => {
           return (
-            <div
-              tabIndex="0"
-              className="collapse border rounded-lg border-grey mb-2"
-              key={b.id}
-            >
-              <input type="checkbox" class="peer" />
-              <div className="collapse-title flex text-sm text-type">
-                <div className=""> Bounty</div>
-                <div className="ml-auto">
-                  {b.state == "BOUNTY_STATE_SRCDEBITTED" &&
-                  b.expireAt > dayjs().unix() ? (
-                    <div>
-                      <div className="flex items-center rounded-full px-6 w-20 py-0.5 bg-purple text-xs uppercase mt-0.5">
-                        Open
+            <div className="mb-2" key={index}>
+              <div className="stroke-type-secondary hover:stroke-teal text-type-secondary hover:text-teal">
+                <div className="flex">
+                  <svg
+                    width="16"
+                    height="14"
+                    viewBox="0 0 16 14"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="mt-1"
+                  >
+                    <path
+                      d="M1.93782 12.5L8 2L14.0622 12.5L1.93782 12.5Z"
+                      stroke-width="2"
+                    />
+                  </svg>
+                  <div>
+                    <div
+                      className={"flex text-xs ml-2 pb-3"}
+                      onMouseOver={debounce(() => {
+                        setIsHovering(b);
+                      }, 500)}
+                    >
+                      {b.id}
+                    </div>
+                  </div>
+                </div>
+                {isHovering.id == b.id ? (
+                  <div className="flex card bg-grey-500 w-64 h-24 p-3">
+                    <div className="flex">
+                      <div className="avatar flex-none items-center w-1/6">
+                        <div className={"w-7 h-7 rounded-full"}>
+                          <img
+                            src={
+                              "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+                              b.creator.slice(-1)
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div className="text-xs text-type mt-1 w-5/6">
+                        {shrinkAddress(b.creator)} created bounty on{" "}
+                        {dayjs.unix(parseInt(b.createdAt)).format("DD/MM/YYYY")}{" "}
                       </div>
                     </div>
-                  ) : (
-                    ""
-                  )}
-                  {b.state == "BOUNTY_STATE_DESTCREDITED" ? (
-                    <div className="flex items-center rounded-full px-4 w-24 py-0.5 bg-teal text-xs uppercase mt-0.5">
-                      Rewarded
+
+                    <div className="flex mt-auto mb-2">
+                      <div className="text-type text-xs font-semibold">
+                        EXPIRY DATE
+                      </div>
+                      <div className="text-type text-xs ml-auto">
+                        {" "}
+                        {dayjs.unix(parseInt(b.createdAt)).fromNow()}
+                      </div>
                     </div>
-                  ) : (
-                    ""
-                  )}
-                  {b.expireAt < dayjs().unix() &&
-                  b.state != "BOUNTY_STATE_REVERTEDBACK" ? (
-                    <div className="flex items-center rounded-full px-7 w-24 py-0.5 bg-pink text-xs uppercase mt-0.5 ml-1">
-                      Expired
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                  {b.state == "BOUNTY_STATE_REVERTEDBACK" ? (
-                    <div className="flex items-center rounded-full px-5 w-24 py-0.5 bg-grey text-xs uppercase mt-0.5">
-                      Reverted
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </div>
-              <div className="collapse-content">
-                {b.amount.length > 0 ? (
-                  <div className="grid grid-cols-2">
-                    {b.amount.map((a, i) => {
-                      return (
-                        <div
-                          className={
-                            "flex text-xs box-border bg-grey-900 mr-2 h-11 p-3 rounded-lg uppercase"
-                          }
-                        >
-                          <div className="mr-2 font-bold">{a.denom}</div>
-                          <div className="">{a.amount}</div>
-                        </div>
-                      );
-                    })}
                   </div>
                 ) : (
-                  ""
+                  <svg
+                    width="22"
+                    height="2"
+                    viewBox="0 0 22 2"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="ml-6 mb-1"
+                  >
+                    <path d="M0 1L22 0.999998" stroke="#3E4051" />
+                  </svg>
                 )}
-                <div className="flex mt-4">
-                  <div className="">
-                    <div className="text-type-secondary font-bold text-xs mb-0.5">
-                      WALLET ADDRESS
-                    </div>
-                    <div className="text-type text-xs">
-                      {shrinkAddress(b.creator)}
-                    </div>
-                  </div>
-                  <div className="ml-auto">
-                    <div className="text-type-secondary font-bold text-xs mb-0.5">
-                      EXPIRY DATE
-                    </div>
-                    <div className="text-type text-xs">
-                      {" "}
-                      {dayjs.unix(parseInt(b.createdAt)).fromNow()}
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           );
