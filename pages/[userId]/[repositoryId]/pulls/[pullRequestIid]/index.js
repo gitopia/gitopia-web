@@ -131,21 +131,7 @@ function RepositoryPullView(props) {
                   pullRequest={pullRequest}
                   refreshPullRequest={refreshPullRequest}
                 />
-                <div className="flex w-full mt-8">
-                  <div className="flex-none mr-4">
-                    <div className="avatar">
-                      <div className="mb-8 rounded-full w-10 h-10">
-                        <img
-                          src={
-                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                            (props.selectedAddress
-                              ? props.selectedAddress.slice(-1)
-                              : "")
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex w-full mt-8 pl-10">
                   <CommentEditor
                     issueId={pullRequest.id}
                     issueState={pullRequest.state}

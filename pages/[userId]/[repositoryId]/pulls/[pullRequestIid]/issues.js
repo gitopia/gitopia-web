@@ -45,7 +45,7 @@ function RepositoryPullIssuesView(props) {
   useEffect(async () => {
     const array = [];
     for (var i = 0; i < pullRequest.issues.length; i++) {
-      const res = await getIssue(pullRequest.issues[i].iid);
+      const res = await getIssue(pullRequest.issues[i].id);
       array.push(res);
     }
     setIssues(array);
