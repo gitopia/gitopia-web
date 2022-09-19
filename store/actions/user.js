@@ -196,7 +196,12 @@ export const updateUserUsername = (username) => {
 
 export const updateStorageGrant = (allow) => {
   return async (dispatch, getState) => {
-    await setupTxClients(dispatch, getState);
+    try {
+      await setupTxClients(dispatch, getState);
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
     const { wallet, env } = getState();
     let fn = allow
       ? env.txClient.msgAuthorizeStorageProvider
@@ -211,7 +216,12 @@ export const updateStorageGrant = (allow) => {
 
 export const updateGitServerGrant = (allow) => {
   return async (dispatch, getState) => {
-    await setupTxClients(dispatch, getState);
+    try {
+      await setupTxClients(dispatch, getState);
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
     const { wallet, env } = getState();
     let fn = allow
       ? env.txClient.msgAuthorizeGitServer

@@ -30,10 +30,11 @@ function ToggleGitServerAuthorization({ onSuccess, ...props }) {
     <label className="cursor-pointer label">
       <div>
         <div className="label-text">
-          Allow forking repositories on you behalf
+          Authorize git server (Required to enable forking of repositories and
+          merging pull requests)
         </div>
         <div className="label-text-alt text-type-secondary">
-          Bridge address: {process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS}
+          Provider address: {process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS}
         </div>
       </div>
       <div

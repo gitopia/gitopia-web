@@ -540,7 +540,6 @@ function Header(props) {
                                 : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                             </a>
                           </li>
-                          <div className="border-b border-grey my-2"></div>
                           <li>
                             <Link
                               href={
@@ -552,6 +551,12 @@ function Header(props) {
                               <a>My Profile</a>
                             </Link>
                           </li>
+                          <li>
+                            <Link href="/settings">
+                              <a>Settings</a>
+                            </Link>
+                          </li>
+                          <div className="border-b border-grey my-2"></div>
                           <li>
                             <a
                               href="#"

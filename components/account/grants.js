@@ -5,16 +5,14 @@ import ToggleGitServerAuthorization from "../repository/toggleGitServerAuthoriza
 
 function AccountGrants({ ...props }) {
   return (
-    <>
-      <div className="mt-8">
-        <div className="form-control sm:px-4 py-4 sm:py-6">
-          <ToggleGitServerAuthorization user={props.user} />
-        </div>
-        <div className="form-control sm:px-4 py-4 sm:py-6">
-          <ToggleStorageBridgeAuthorization user={props.user} />
-        </div>
+    <div className="py-4">
+      <div className="form-control py-4 sm:py-6">
+        <ToggleGitServerAuthorization user={props.user} />
       </div>
-    </>
+      <div className="form-control py-4 sm:py-6">
+        <ToggleStorageBridgeAuthorization user={props.user} />
+      </div>
+    </div>
   );
 }
 

@@ -34,9 +34,11 @@ function ToggleStorageBridgeAuthorization({ onSuccess, ...props }) {
   return (
     <label className="cursor-pointer label">
       <div>
-        <div className="label-text">Backup repositories to IPFS & Arweave</div>
+        <div className="label-text">
+          Backup repositories to Filecoin and pin it to IPFS
+        </div>
         <div className="label-text-alt text-type-secondary">
-          Bridge address:{" "}
+          Storage provider address:{" "}
           {process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS}
         </div>
       </div>

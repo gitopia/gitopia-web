@@ -14,7 +14,6 @@ import getWhois from "../../helpers/getWhois";
 import AccountRepositories from "../../components/account/repositories";
 import AccountTransactions from "../../components/account/transactions";
 import AccountPeople from "../../components/account/people";
-import AccountGrants from "../../components/account/grants";
 import AccountDaoHeader from "../../components/account/daoHeader";
 
 export async function getStaticProps() {
@@ -89,7 +88,9 @@ function AccountView(props) {
       className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
-        <title>{user.id ? user.creator : dao.name}</title>
+        <title>
+          {user.id ? (user.username ? user.username : user.creator) : dao.name}
+        </title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
@@ -109,7 +110,6 @@ function AccountView(props) {
                 process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
                   router.query.userId && dao.address
               }
-              showGrants={user.creator}
             />
           </div>
           {router.query.tab === "overview" || router.query.tab === undefined ? (
@@ -138,7 +138,6 @@ function AccountView(props) {
             ""
           )}
           {router.query.tab === "people" ? <AccountPeople dao={dao} /> : ""}
-          {router.query.tab === "grants" ? <AccountGrants user={user} /> : ""}
         </main>
       </div>
       <Footer />
