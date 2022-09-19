@@ -1,14 +1,14 @@
 import Head from "next/head";
-import Header from "../../../../components/header";
+import Header from "../../../components/header";
 
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 
-import RepositoryHeader from "../../../../components/repository/header";
-import RepositoryMainTabs from "../../../../components/repository/mainTabs";
-import useRepository from "../../../../hooks/useRepository";
+import RepositoryHeader from "../../../components/repository/header";
+import RepositoryMainTabs from "../../../components/repository/mainTabs";
+import useRepository from "../../../hooks/useRepository";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -111,7 +111,7 @@ function RepositoryBranchesView(props) {
                     </button>
                   </a>
                   <div className="text-xs text-type-secondary mt-2">
-                    {"last updated " + dayjs(b.lastUpdatedAt * 1000).fromNow()}
+                    {"last updated " + dayjs(b.updatedAt * 1000).fromNow()}
                   </div>
                 </div>
               );
