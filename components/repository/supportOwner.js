@@ -310,8 +310,6 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
                           : (amount * 1000000).toString()
                       )
                       .then(async (res) => {
-                        props.updateUserBalance();
-                        props.notify("Transaction Successful", "info");
                         const balance = await props.getBalance(ownerAddress);
                         setOwnerBalance(
                           props.advanceUser === true
