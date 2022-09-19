@@ -2,8 +2,9 @@ import api from "./getApi";
 
 export default async function getWhois(id) {
   if (!id) return null;
+  let lId = String(id).toLowerCase();
   try {
-    const res = await api.queryWhois(id);
+    const res = await api.queryWhois(lId);
     if (res.ok) {
       let u = res.data.Whois;
       return u;
