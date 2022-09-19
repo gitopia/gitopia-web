@@ -542,6 +542,17 @@ function Header(props) {
                           </li>
                           <div className="border-b border-grey my-2"></div>
                           <li>
+                            <Link
+                              href={
+                                props.username
+                                  ? "/" + props.username
+                                  : "/" + props.selectedAddress
+                              }
+                            >
+                              <a>My Profile</a>
+                            </Link>
+                          </li>
+                          <li>
                             <a
                               href="#"
                               onClick={(e) => {
@@ -590,6 +601,7 @@ const mapStateToProps = (state) => {
     unlockingWallet: state.wallet.unlockingWallet,
     userNotification: state.userNotification,
     avatarUrl: state.user.avatarUrl,
+    username: state.user.username,
   };
 };
 
