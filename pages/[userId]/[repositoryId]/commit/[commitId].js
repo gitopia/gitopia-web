@@ -22,8 +22,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryCommitDiffView(props) {
@@ -42,10 +42,9 @@ function RepositoryCommitDiffView(props) {
   });
 
   useEffect(async () => {
-    if (repository) {
-      console.log(repository);
+    if (repository.id) {
       const c = await getCommit(repository.id, router.query.commitId);
-      if (c.id) {
+      if (c && c.id) {
         const data = await getDiff(
           Number(repository.id),
           router.query.commitId,

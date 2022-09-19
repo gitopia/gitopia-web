@@ -11,7 +11,7 @@ export default function useRepository() {
   const { setErrorStatusCode } = useErrorStatus();
   const router = useRouter();
   const [repository, setRepository] = useState({
-    id: router.query.repositoryId,
+    id: null,
     name: router.query.repositoryId,
     owner: { id: router.query.userId },
     collaborators: [],

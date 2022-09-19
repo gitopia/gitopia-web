@@ -56,8 +56,9 @@ function RepositoryView(props) {
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
   );
-  const [currentUserEditPermission, setCurrentUserEditPermission] =
-    useState(false);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
   const [isMobile, setIsMobile] = useState(false);
   const [branches, setBranches] = useState([]);
   const [tags, setTags] = useState([]);
@@ -138,7 +139,6 @@ function RepositoryView(props) {
         repository.owner.id,
         repository.name
       );
-      console.log(branches);
       setBranches(branches);
     }
   };
@@ -148,7 +148,6 @@ function RepositoryView(props) {
         repository.owner.id,
         repository.name
       );
-      console.log(tags);
       setTags(tags);
     }
   };
