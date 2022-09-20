@@ -353,6 +353,7 @@ export default function Landing() {
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href="https://gitopia.com/whitepaper.pdf"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   Whitepaper
                 </a>
@@ -362,6 +363,7 @@ export default function Landing() {
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href="https://blog.gitopia.com"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   Blog
                 </a>
@@ -1223,7 +1225,11 @@ export default function Landing() {
           </div>
           <div className={styles.circleSectionLink}>
             Learn more about Gitopia{" "}
-            <a href="https://gitopia.com/whitepaper.pdf" target="_blank">
+            <a
+              href="https://gitopia.com/whitepaper.pdf"
+              target="_blank"
+              rel="noreferrer"
+            >
               here
             </a>
           </div>
@@ -1666,19 +1672,27 @@ export default function Landing() {
 
           <a href="https://gitopia.com/whitepaper.pdf">Whitepaper</a>
 
-          <a href="https://twitter.com/gitopiadao" target="_blank">
+          <a
+            href="https://twitter.com/gitopiadao"
+            target="_blank"
+            rel="noreferrer"
+          >
             Twitter
           </a>
 
-          <a href="https://t.me/Gitopia" target="_blank">
+          <a href="https://t.me/Gitopia" target="_blank" rel="noreferrer">
             Telegram
           </a>
 
-          <a href="https://medium.com/gitopia" target="_blank">
+          <a href="https://medium.com/gitopia" target="_blank" rel="noreferrer">
             Medium
           </a>
 
-          <a href="https://discord.gg/mVpQVW3vKE" target="_blank">
+          <a
+            href="https://discord.gg/mVpQVW3vKE"
+            target="_blank"
+            rel="noreferrer"
+          >
             Discord
           </a>
         </div>

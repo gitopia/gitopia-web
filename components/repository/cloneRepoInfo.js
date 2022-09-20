@@ -87,6 +87,7 @@ function CloneRepoInfo({ remoteUrl, ...props }) {
           <a
             href="https://docs.gitopia.com/git-remote-gitopia"
             target="_blank"
+            rel="noreferrer"
             className="btn btn-outline btn-secondary btn-sm"
           >
             Learn more

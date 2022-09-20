@@ -68,6 +68,7 @@ export default function CommitDetailRow({
                 href={author.link}
                 className="link no-underline hover:underline"
                 target="_blank"
+                rel="noreferrer"
               >
                 {author.name}
               </a>

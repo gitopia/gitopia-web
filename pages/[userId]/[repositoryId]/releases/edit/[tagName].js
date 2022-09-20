@@ -419,6 +419,7 @@ function RepositoryReleaseEditView(props) {
                 <a
                   href="semver.org"
                   target="_blank"
+                  rel="noreferrer"
                   className="link link-primary no-underline hover:underline"
                 >
                   semantic versioning.

@@ -74,6 +74,7 @@ export default function SeasonOfBlockchainsOrgPage() {
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href="https://airtable.com/shrQ4JO80anchv49Y"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   Apply Now
                 </a>
@@ -83,6 +84,7 @@ export default function SeasonOfBlockchainsOrgPage() {
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href="https://gitopia.com/whitepaper.pdf"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   Whitepaper
                 </a>
@@ -92,6 +94,7 @@ export default function SeasonOfBlockchainsOrgPage() {
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href="https://medium.com/gitopia"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   Blog
                 </a>
@@ -102,6 +105,7 @@ export default function SeasonOfBlockchainsOrgPage() {
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href="/home"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   Try Testnet
                 </a>
@@ -119,7 +123,7 @@ export default function SeasonOfBlockchainsOrgPage() {
       </div>
       <div className={" " + styles.title}>52°North GmbH</div>
       <div className={"hover:text-purple-400 " + styles.content}>
-        <a href="https://52north.org/" target="_blank">
+        <a href="https://52north.org/" target="_blank" rel="noreferrer">
           https://52north.org/
         </a>
       </div>
@@ -543,19 +547,27 @@ export default function SeasonOfBlockchainsOrgPage() {
 
           <a href="https://gitopia.com/whitepaper.pdf">Whitepaper</a>
 
-          <a href="https://twitter.com/gitopiaOrg" target="_blank">
+          <a
+            href="https://twitter.com/gitopiaOrg"
+            target="_blank"
+            rel="noreferrer"
+          >
             Twitter
           </a>
 
-          <a href="https://t.me/Gitopia" target="_blank">
+          <a href="https://t.me/Gitopia" target="_blank" rel="noreferrer">
             Telegram
           </a>
 
-          <a href="https://medium.com/gitopia" target="_blank">
+          <a href="https://medium.com/gitopia" target="_blank" rel="noreferrer">
             Medium
           </a>
 
-          <a href="https://discord.gg/mVpQVW3vKE" target="_blank">
+          <a
+            href="https://discord.gg/mVpQVW3vKE"
+            target="_blank"
+            rel="noreferrer"
+          >
             Discord
           </a>
         </div>

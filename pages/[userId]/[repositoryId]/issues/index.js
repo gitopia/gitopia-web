@@ -545,6 +545,7 @@ function RepositoryIssueView(props) {
                               className="link no-underline hover:underline"
                               href={"/" + i.creator}
                               target="_blank"
+                              rel="noreferrer"
                             >
                               {shrinkAddress(i.creator)}
                             </a>
@@ -553,6 +554,7 @@ function RepositoryIssueView(props) {
                               className="link no-underline hover:underline"
                               href={"/" + i.closedBy}
                               target="_blank"
+                              rel="noreferrer"
                             >
                               {shrinkAddress(i.closedBy)}
                             </a>

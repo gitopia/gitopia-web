@@ -84,6 +84,7 @@ export default function EmptyRepository(props) {
                 <a
                   href="https://docs.gitopia.com/git-remote-gitopia"
                   target="_blank"
+                  rel="noreferrer"
                   className="btn btn-secondary btn-outline btn-sm"
                 >
                   Learn more

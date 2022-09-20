@@ -136,7 +136,11 @@ function DaoDashboard(props) {
                       <a className={"btn btn-xs btn-link mt-1"}>Proposals</a>
                     </Link>
                     <Link href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}>
-                      <a className={"btn btn-xs btn-link mt-1"} target="_blank">
+                      <a
+                        className={"btn btn-xs btn-link mt-1"}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         Source code
                       </a>
                     </Link>

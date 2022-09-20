@@ -74,6 +74,7 @@ export default function SeasonOfBlockchains() {
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href={"/season-of-blockchains/organizationsList"}
                   target="_blank"
+                  rel="noreferrer"
                 >
                   Organisations
                 </a>
@@ -92,6 +93,7 @@ export default function SeasonOfBlockchains() {
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href={"https://medium.com/@gitopia"}
                   target="_blank"
+                  rel="noreferrer"
                 >
                   About
                 </a>
@@ -101,6 +103,7 @@ export default function SeasonOfBlockchains() {
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href={"https://docs.gitopia.com/basic-faq"}
                   target="_blank"
+                  rel="noreferrer"
                 >
                   FAQs
                 </a>
@@ -119,6 +122,7 @@ export default function SeasonOfBlockchains() {
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href="/home"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   Try our Testnet
                 </a>
@@ -621,7 +625,7 @@ export default function SeasonOfBlockchains() {
             <a
               className={styles.linksBoxContainer}
               href="https://t.me/Gitopia"
-              target="_blank"
+              target="_blank" rel="noreferrer"
             >
               <div className={"flex " + styles.linksBox}>
                 <div>
@@ -648,7 +652,7 @@ export default function SeasonOfBlockchains() {
             <a
               className={"flex" + styles.linksBoxContainer}
               href="https://t.me/Gitopia"
-              target="_blank"
+              target="_blank" rel="noreferrer"
             >
               <div className={"flex " + styles.linksBox}>
                 <div>
@@ -1309,19 +1313,31 @@ export default function SeasonOfBlockchains() {
 
             <a href="https://gitopia.com/whitepaper.pdf">Whitepaper</a>
 
-            <a href="https://twitter.com/gitopiaOrg" target="_blank">
+            <a
+              href="https://twitter.com/gitopiaOrg"
+              target="_blank"
+              rel="noreferrer"
+            >
               Twitter
             </a>
 
-            <a href="https://t.me/Gitopia" target="_blank">
+            <a href="https://t.me/Gitopia" target="_blank" rel="noreferrer">
               Telegram
             </a>
 
-            <a href="https://medium.com/gitopia" target="_blank">
+            <a
+              href="https://medium.com/gitopia"
+              target="_blank"
+              rel="noreferrer"
+            >
               Medium
             </a>
 
-            <a href="https://discord.gg/mVpQVW3vKE" target="_blank">
+            <a
+              href="https://discord.gg/mVpQVW3vKE"
+              target="_blank"
+              rel="noreferrer"
+            >
               Discord
             </a>
           </div>

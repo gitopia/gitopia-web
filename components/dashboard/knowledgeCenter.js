@@ -14,6 +14,7 @@ export default function KnowledgeCenter() {
               href="https://docs.gitopia.com/"
               className="btn-link"
               target="_blank"
+              rel="noreferrer"
             >
               Knowledge Center
             </a>{" "}
@@ -27,6 +28,7 @@ export default function KnowledgeCenter() {
           href="https://docs.gitopia.com/repository"
           className="btn btn-link btn-xs"
           target="_blank"
+          rel="noreferrer"
         >
           Read More
         </a>
@@ -37,6 +39,7 @@ export default function KnowledgeCenter() {
           href="https://docs.gitopia.com/organizations"
           className="btn btn-link btn-xs"
           target="_blank"
+          rel="noreferrer"
         >
           Read More
         </a>
@@ -47,6 +50,7 @@ export default function KnowledgeCenter() {
           href="https://docs.gitopia.com/git-remote-gitopia"
           className="btn btn-link btn-xs"
           target="_blank"
+          rel="noreferrer"
         >
           Read More
         </a>

@@ -113,6 +113,7 @@ function DaoWebsite(props = { isEditable: false }) {
             className="link no-underline hover:underline"
             href={props.dao.website}
             target="_blank"
+            rel="noreferrer"
           >
             {props.dao.website}
           </a>

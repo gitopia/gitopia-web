@@ -163,6 +163,7 @@ function Header(props) {
               className="btn btn-ghost btn-sm rounded-btn"
               onClick={() => setIsOpen(true)}
               target="_blank"
+              rel="noreferrer"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -238,6 +239,7 @@ function Header(props) {
               className="btn btn-ghost btn-sm rounded-btn"
               href={process.env.NEXT_PUBLIC_EXPLORER_URL}
               target="_blank"
+              rel="noreferrer"
             >
               Explorer
             </a>
@@ -251,6 +253,7 @@ function Header(props) {
               className="btn btn-ghost btn-sm rounded-btn"
               href={process.env.NEXT_PUBLIC_DOCS_URL}
               target="_blank"
+              rel="noreferrer"
             >
               Docs
             </a>
@@ -264,6 +267,7 @@ function Header(props) {
               className="btn btn-ghost btn-sm rounded-btn"
               href={process.env.NEXT_PUBLIC_FORUM_URL}
               target="_blank"
+              rel="noreferrer"
             >
               Forum
             </a>
@@ -327,6 +331,7 @@ function Header(props) {
               <a
                 className="link link-primary no-underline"
                 target="_blank"
+                rel="noreferrer"
                 href={process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES}
               >
                 SEE WHATS NEW

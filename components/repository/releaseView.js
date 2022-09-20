@@ -131,6 +131,7 @@ export default function ReleaseView({
                 <a
                   className="flex py-2 items-center"
                   target="_blank"
+                  rel="noreferrer"
                   href={
                     process.env.NEXT_PUBLIC_OBJECTS_URL +
                     "/releases/" +

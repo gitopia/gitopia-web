@@ -95,6 +95,7 @@ function CollaboratorsList({
                     <a
                       href={"/" + c.id}
                       target="_blank"
+                      rel="noreferrer"
                       className="link link-primary text-sm no-underline hover:underline"
                     >
                       {shrinkAddress(c.id)}
