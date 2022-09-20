@@ -126,19 +126,19 @@ function Design(props) {
   const router = useRouter();
   console.log(router.asPath);
   return (
-    <div class="relative" style={{ backgroundColor: "#19072f" }}>
+    <div className="relative" style={{ backgroundColor: "#19072f" }}>
       <Head>
         <title>Gitopia - BrandBook</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
 
       <div
-        class="relative md:fixed w-full md:w-1/4 min-h-screen inset-0"
+        className="relative md:fixed w-full md:w-1/4 min-h-screen inset-0"
         id="mainNav"
       >
-        <div class="ml-28 mt-60 mr-28 text-lg group">
+        <div className="ml-28 mt-60 mr-28 text-lg group">
           {navHeader.map((header, index) => (
-            <div class="py-3 pl-8" key={"nav" + index}>
+            <div className="py-3 pl-8" key={"nav" + index}>
               <a
                 className={styles.a}
                 key={index + header.headerID}
@@ -152,55 +152,55 @@ function Design(props) {
         </div>
       </div>
 
-      <div class="w-full md:w-3/4 ml-auto">
+      <div className="w-full md:w-3/4 ml-auto">
         <div id="header" className={styles.header}>
           <h1>The Digital BrandBook</h1>
         </div>
-        <div class="h-screen flex justify-center items-center flex-col p-10"></div>
-        <div class="h-screen flex justify-center items-center flex-col p-10">
+        <div className="h-screen flex justify-center items-center flex-col p-10"></div>
+        <div className="h-screen flex justify-center items-center flex-col p-10">
           <img src="/design/1.jpg" />
         </div>
-        <div class="h-screen flex justify-center items-center flex-col p-10">
+        <div className="h-screen flex justify-center items-center flex-col p-10">
           <img src="/design/2.jpg" />
         </div>
-        <div class="h-screen flex justify-center items-center flex-col p-10">
+        <div className="h-screen flex justify-center items-center flex-col p-10">
           <img src="/design/3.jpg" />
         </div>
         <section ref={logoRulesRef} id="logo-rules">
-          <div class="h-screen flex justify-center items-center flex-col p-10">
+          <div className="h-screen flex justify-center items-center flex-col p-10">
             <img src="/design/4.jpg" />
           </div>
-          <div class="h-screen flex justify-center items-center flex-col p-10">
+          <div className="h-screen flex justify-center items-center flex-col p-10">
             <img src="/design/5.jpg" />
           </div>
-          <div class="h-screen flex justify-center items-center flex-col p-10">
+          <div className="h-screen flex justify-center items-center flex-col p-10">
             <img src="/design/6.jpg" />
           </div>
-          <div class="h-screen flex justify-center items-center flex-col p-10">
+          <div className="h-screen flex justify-center items-center flex-col p-10">
             <img src="/design/7.jpg" />
           </div>
-          <div class="h-screen flex justify-center items-center flex-col p-10">
+          <div className="h-screen flex justify-center items-center flex-col p-10">
             <img src="/design/8.jpg" />
           </div>
         </section>
         <section ref={typographyRef} id="typography">
-          <div class="h-screen flex justify-center items-center flex-col p-10">
+          <div className="h-screen flex justify-center items-center flex-col p-10">
             <img src="/design/9.jpg" />
           </div>
-          <div class="h-screen flex justify-center items-center flex-col p-10">
+          <div className="h-screen flex justify-center items-center flex-col p-10">
             <img src="/design/10.jpg" />
           </div>
-          <div class="h-screen flex justify-center items-center flex-col p-10">
+          <div className="h-screen flex justify-center items-center flex-col p-10">
             <img src="/design/11.jpg" />
           </div>
-          <div class="h-screen flex justify-center items-center flex-col p-10">
+          <div className="h-screen flex justify-center items-center flex-col p-10">
             <img src="/design/12.jpg" />
           </div>
         </section>
         <section ref={colorRef} id="color">
-          <div class="h-screen flex justify-center items-center flex-col">
+          <div className="h-screen flex justify-center items-center flex-col">
             <div className={styles.boxed}>
-              <h6 class="text-black ml-20 pt-16 font-medium">
+              <h6 className="text-black ml-20 pt-16 font-medium">
                 DIGITAL COLOR PALETTE
               </h6>
               <div className={styles.container}>
@@ -278,7 +278,7 @@ function Design(props) {
                       <h6></h6>
                     </div>
                     <div className={styles.container}>
-                      <div class="border border-gray-300 rounded-full">
+                      <div className="border border-gray-300 rounded-full">
                         <div className={styles.boxed7a}>
                           <h6></h6>
                         </div>
@@ -299,16 +299,16 @@ function Design(props) {
           </div>
         </section>
         <section ref={illustrationsRef} id="illustrations">
-          <div class="h-screen flex justify-center items-center flex-col p-10">
+          <div className="h-screen flex justify-center items-center flex-col p-10">
             <img src="/design/14.jpg" />
           </div>
-          <div class="h-screen flex justify-center items-center flex-col p-10">
+          <div className="h-screen flex justify-center items-center flex-col p-10">
             <img src="/design/15.jpg" />
           </div>
-          <div class="h-screen flex justify-center items-center flex-col p-10">
+          <div className="h-screen flex justify-center items-center flex-col p-10">
             <img src="/design/16.jpg" />
           </div>
-          <div class="h-screen flex justify-center items-center flex-col p-10">
+          <div className="h-screen flex justify-center items-center flex-col p-10">
             <img src="/design/17.jpg" />
           </div>
         </section>

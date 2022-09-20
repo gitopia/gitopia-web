@@ -362,7 +362,7 @@ function RepositoryReleaseEditView(props) {
                       </div>
                       <div className="flex mt-2">
                         <progress
-                          class="progress progress-primary"
+                          className="progress progress-primary"
                           value={uploadingAttachment.completed}
                           max="100"
                         ></progress>

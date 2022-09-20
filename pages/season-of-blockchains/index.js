@@ -142,8 +142,8 @@ export default function SeasonOfBlockchains() {
               <div className={"mt-5 " + styles.content}>
                 GSOB is the first-ever six-week global blockchain program to
                 bring the budding developers together to work on challenging
-                projects for the most exciting organisations in the Web3
-                space!🚀Know more about the program
+                projects for the most exciting organisations in the Web3 space!
+                🚀
               </div>
               <div className={"flex " + styles.topButtons}>
                 <button
@@ -335,9 +335,9 @@ export default function SeasonOfBlockchains() {
           <div className={styles.section3}>
             <div className={styles.section3Content}>
               When decentralized blockchain protocols start displacing the
-              centralized web services that dominate the current Internet, we'll
-              start to see real internet-based sovereignty. The future Internet
-              will be decentralized.
+              centralized web services that dominate the current Internet,
+              we&apos;ll start to see real internet-based sovereignty. The
+              future Internet will be decentralized.
             </div>
             <div className={"flex " + styles.section3End}>
               <div className={styles.section3Name}>Olaf Carlson-Wee</div>

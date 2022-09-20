@@ -191,7 +191,7 @@ export default function EmptyRepository(props) {
             </div>
             <div className="mockup-code mb-4">
               <pre data-prefix="$">
-                <code>echo "# hello world" >> README.md</code>
+                <code>{'echo "# hello world" >> README.md'}</code>
               </pre>
               <pre data-prefix="$">
                 <code>git init</code>
@@ -200,7 +200,7 @@ export default function EmptyRepository(props) {
                 <code>git add README.md</code>
               </pre>
               <pre data-prefix="$">
-                <code>git commit -m "initial commit"</code>
+                <code>{'git commit -m "initial commit"'}</code>
               </pre>
               <pre data-prefix="$">
                 <code>git remote add origin {remoteUrl}</code>

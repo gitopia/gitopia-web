@@ -231,7 +231,7 @@ function RepositoryCompareView(props) {
           <div className="mt-8">
             <div className="text-lg">Compare revisions</div>
             <div className="mt-2 text-sm text-type-secondary">
-              Choose a branch/tag (e.g. master ) to see what's changed or to
+              Choose a branch/tag (e.g. master) to see what&apos;s changed or to
               create a pull request.
             </div>
             <div className="text-sm text-type-secondary">

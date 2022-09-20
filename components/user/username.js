@@ -83,9 +83,8 @@ function UserUsername(props = { isEditable: false }) {
       </div>
       <label
         htmlFor="username-edit-modal"
-        className="modal-button"
         className={
-          "py-1 border-b mr-2" +
+          "modal-button py-1 border-b mr-2" +
           (props.isEditable
             ? " border-grey-300 hover:text-primary cursor-pointer"
             : " border-transparent") +

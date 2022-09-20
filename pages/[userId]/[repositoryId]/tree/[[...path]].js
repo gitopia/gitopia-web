@@ -331,7 +331,7 @@ function RepositoryTreeView(props) {
                             type="radio"
                             name="options"
                             data-title="Source"
-                            class="btn btn-xs"
+                            className="btn btn-xs"
                             checked={!showRenderedFile}
                             onClick={() => {
                               setShowRenderedFile(!showRenderedFile);
@@ -341,7 +341,7 @@ function RepositoryTreeView(props) {
                             type="radio"
                             name="options"
                             data-title="Rendered"
-                            class="btn btn-xs"
+                            className="btn btn-xs"
                             checked={showRenderedFile}
                             onClick={() => {
                               setShowRenderedFile(!showRenderedFile);

@@ -66,7 +66,7 @@ function NotificationsCard(props) {
 
         {issueNotifications === 0 ? (
           <button
-            class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-grey-300"
+            className="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-grey-300"
             onClick={() => {
               props.setMenuOpen(false);
               props.setMenuState(1);
@@ -76,7 +76,7 @@ function NotificationsCard(props) {
           </button>
         ) : (
           <button
-            class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
+            className="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
             onClick={() => {
               props.setMenuOpen(true);
               props.setMenuState(6);
@@ -119,7 +119,7 @@ function NotificationsCard(props) {
 
         {pullNotifications === 0 ? (
           <button
-            class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-grey-300"
+            className="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-grey-300"
             onClick={() => {
               props.setMenuOpen(false);
               props.setMenuState(1);
@@ -129,7 +129,7 @@ function NotificationsCard(props) {
           </button>
         ) : (
           <button
-            class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
+            className="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
             onClick={() => {
               props.setShowNotificationListState("PULLS");
               props.setMenuOpen(true);
