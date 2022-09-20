@@ -55,7 +55,7 @@ function NotificationsCard(props) {
               <path
                 d="M5.0718 18L12 6L18.9282 18H5.0718Z"
                 stroke="#ADBECB"
-                stroke-width="2"
+                strokeWidth="2"
               />
             </svg>
           </div>
@@ -102,7 +102,7 @@ function NotificationsCard(props) {
               <path
                 d="M2.5 15.5V9M2.5 2.5V9M2.5 9H7C8.10457 9 9 9.89543 9 11V15.5"
                 stroke="#ADBECB"
-                stroke-width="2"
+                strokeWidth="2"
               />
               <circle cx="2.5" cy="15.5" r="2.5" fill="#ADBECB" />
               <circle cx="2.5" cy="2.5" r="2.5" fill="#ADBECB" />

@@ -718,9 +718,9 @@ export default function SeasonOfBlockchains() {
                 width="2034.73"
                 height="1693.61"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -740,8 +740,8 @@ export default function SeasonOfBlockchains() {
                 gradientUnits="userSpaceOnUse"
                 gradientTransform="translate(-272.453 192.863) rotate(74.6229) scale(447.014)"
               >
-                <stop offset="0.442708" stop-color="#992D81" />
-                <stop offset="1" stop-color="#6029DB" />
+                <stop offset="0.442708" stopColor="#992D81" />
+                <stop offset="1" stopColor="#6029DB" />
               </radialGradient>
             </defs>
           </svg>
@@ -767,9 +767,9 @@ export default function SeasonOfBlockchains() {
                 width="1694.03"
                 height="2076.11"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -789,8 +789,8 @@ export default function SeasonOfBlockchains() {
                 gradientUnits="userSpaceOnUse"
                 gradientTransform="translate(847.584 1229.22) rotate(180) scale(447.014 447.014)"
               >
-                <stop offset="0.442708" stop-color="#992D81" />
-                <stop offset="1" stop-color="#6029DB" />
+                <stop offset="0.442708" stopColor="#992D81" />
+                <stop offset="1" stopColor="#6029DB" />
               </radialGradient>
             </defs>
           </svg>
@@ -817,9 +817,9 @@ export default function SeasonOfBlockchains() {
                 width="1694.03"
                 height="2076.11"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -839,8 +839,8 @@ export default function SeasonOfBlockchains() {
                 gradientUnits="userSpaceOnUse"
                 gradientTransform="translate(847.584 1229.22) rotate(180) scale(447.014 447.014)"
               >
-                <stop offset="0.442708" stop-color="#992D81" />
-                <stop offset="1" stop-color="#6029DB" />
+                <stop offset="0.442708" stopColor="#992D81" />
+                <stop offset="1" stopColor="#6029DB" />
               </radialGradient>
             </defs>
           </svg>
@@ -866,9 +866,9 @@ export default function SeasonOfBlockchains() {
                 width="1663.45"
                 height="1997.7"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -888,8 +888,8 @@ export default function SeasonOfBlockchains() {
                 gradientUnits="userSpaceOnUse"
                 gradientTransform="translate(816.671 1151.52) rotate(150) scale(447.014 447.014)"
               >
-                <stop offset="0.442708" stop-color="#992D81" />
-                <stop offset="1" stop-color="#6029DB" />
+                <stop offset="0.442708" stopColor="#992D81" />
+                <stop offset="1" stopColor="#6029DB" />
               </radialGradient>
             </defs>
           </svg>
@@ -915,9 +915,9 @@ export default function SeasonOfBlockchains() {
                 width="2076.11"
                 height="1694.03"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -937,8 +937,8 @@ export default function SeasonOfBlockchains() {
                 gradientUnits="userSpaceOnUse"
                 gradientTransform="translate(847.014 847.014) rotate(90) scale(447.014 447.014)"
               >
-                <stop offset="0.442708" stop-color="#992D81" />
-                <stop offset="1" stop-color="#6029DB" />
+                <stop offset="0.442708" stopColor="#992D81" />
+                <stop offset="1" stopColor="#6029DB" />
               </radialGradient>
             </defs>
           </svg>
@@ -964,9 +964,9 @@ export default function SeasonOfBlockchains() {
                 width="2076.11"
                 height="1694.03"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -986,8 +986,8 @@ export default function SeasonOfBlockchains() {
                 gradientUnits="userSpaceOnUse"
                 gradientTransform="translate(-371.986 847.014) rotate(-90) scale(447.014 447.014)"
               >
-                <stop offset="0.442708" stop-color="#992D81" />
-                <stop offset="1" stop-color="#6029DB" />
+                <stop offset="0.442708" stopColor="#992D81" />
+                <stop offset="1" stopColor="#6029DB" />
               </radialGradient>
             </defs>
           </svg>
@@ -1002,8 +1002,8 @@ export default function SeasonOfBlockchains() {
             <g opacity="0.2">
               <path
                 opacity="0.3"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M1164.03 691.88C1140.42 634.89 1128.27 573.808 1128.27 512.123L1128.3 512.123C1128.28 468.996 1119.77 426.294 1103.27 386.449C1086.74 346.556 1062.52 310.308 1031.99 279.776C1001.46 249.243 965.211 225.023 925.317 208.498C885.424 191.974 842.667 183.469 799.487 183.469C756.308 183.47 713.552 191.975 673.66 208.498C633.767 225.023 597.519 249.243 566.986 279.776C536.453 310.308 512.233 346.556 495.709 386.449C479.185 426.342 470.68 469.099 470.68 512.279L470.64 512.28C470.64 573.965 458.49 635.047 434.884 692.037C411.278 749.027 376.678 800.81 333.06 844.428C289.441 888.046 237.659 922.646 180.669 946.253C123.678 969.859 62.5968 982.009 0.911092 982.009L0.911098 841.09C44.091 841.09 86.8481 832.585 126.741 816.061C166.634 799.536 202.882 775.316 233.415 744.783C263.948 714.251 288.168 678.003 304.692 638.11C321.216 598.217 329.721 555.46 329.721 512.28L329.761 512.28C329.761 450.594 341.911 389.512 365.517 332.522C389.123 275.532 423.723 223.749 467.342 180.131C510.96 136.513 562.743 101.913 619.733 78.3065C676.723 54.7004 737.805 42.5505 799.49 42.5505L799.487 42.5506L1233.46 332.522C1257.07 389.512 1269.22 450.594 1269.22 512.28L1269.19 512.28C1269.21 555.406 1277.72 598.108 1294.22 637.953C1310.75 677.846 1334.97 714.094 1365.5 744.627C1396.03 775.16 1432.28 799.38 1472.17 815.904C1512.06 832.428 1554.82 840.933 1598 840.933L1598 981.852C1536.32 981.852 1475.23 969.702 1418.24 946.096C1361.25 922.49 1309.47 887.89 1265.85 844.271C1222.24 800.653 1187.63 748.87 1164.03 691.88ZM1233.46 332.522C1209.85 275.532 1175.25 223.749 1131.64 180.131C1088.02 136.513 1036.23 101.913 979.245 78.3066C922.255 54.7009 861.175 42.5509 799.49 42.5505L1233.46 332.522Z"
                 fill="url(#paint0_linear_1217_1539)"
               />
@@ -1018,8 +1018,8 @@ export default function SeasonOfBlockchains() {
               >
                 <path
                   opacity="0.3"
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
                   d="M1164.03 691.88C1140.42 634.89 1128.27 573.808 1128.27 512.123L1128.3 512.123C1128.28 468.996 1119.77 426.294 1103.27 386.449C1086.74 346.556 1062.52 310.308 1031.99 279.776C1001.46 249.243 965.211 225.023 925.317 208.498C885.424 191.974 842.667 183.469 799.487 183.469C756.308 183.47 713.552 191.975 673.66 208.498C633.767 225.023 597.519 249.243 566.986 279.776C536.453 310.308 512.233 346.556 495.709 386.449C479.185 426.342 470.68 469.099 470.68 512.279L470.64 512.28C470.64 573.965 458.49 635.047 434.884 692.037C411.278 749.027 376.678 800.81 333.06 844.428C289.441 888.046 237.659 922.646 180.669 946.253C123.678 969.859 62.5968 982.009 0.911092 982.009L0.911098 841.09C44.091 841.09 86.8481 832.585 126.741 816.061C166.634 799.536 202.882 775.316 233.415 744.783C263.948 714.251 288.168 678.003 304.692 638.11C321.216 598.217 329.721 555.46 329.721 512.28L329.761 512.28C329.761 450.594 341.911 389.512 365.517 332.522C389.123 275.532 423.723 223.749 467.342 180.131C510.96 136.513 562.743 101.913 619.733 78.3065C676.723 54.7004 737.805 42.5505 799.49 42.5505L799.487 42.5506L1233.46 332.522C1257.07 389.512 1269.22 450.594 1269.22 512.28L1269.19 512.28C1269.21 555.406 1277.72 598.108 1294.22 637.953C1310.75 677.846 1334.97 714.094 1365.5 744.627C1396.03 775.16 1432.28 799.38 1472.17 815.904C1512.06 832.428 1554.82 840.933 1598 840.933L1598 981.852C1536.32 981.852 1475.23 969.702 1418.24 946.096C1361.25 922.49 1309.47 887.89 1265.85 844.271C1222.24 800.653 1187.63 748.87 1164.03 691.88ZM1233.46 332.522C1209.85 275.532 1175.25 223.749 1131.64 180.131C1088.02 136.513 1036.23 101.913 979.245 78.3066C922.255 54.7009 861.175 42.5509 799.49 42.5505L1233.46 332.522Z"
                   fill="url(#paint1_linear_1217_1539)"
                 />
@@ -1046,8 +1046,8 @@ export default function SeasonOfBlockchains() {
               </g>
               <path
                 opacity="0.3"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M1164.03 691.88C1140.42 634.89 1128.27 573.808 1128.27 512.123L1128.3 512.123C1128.28 468.996 1119.77 426.294 1103.27 386.449C1086.74 346.556 1062.52 310.308 1031.99 279.776C1001.46 249.243 965.211 225.023 925.317 208.498C885.424 191.974 842.667 183.469 799.487 183.469C756.308 183.47 713.552 191.975 673.66 208.498C633.767 225.023 597.519 249.243 566.986 279.776C536.453 310.308 512.233 346.556 495.709 386.449C479.185 426.342 470.68 469.099 470.68 512.279L470.64 512.28C470.64 573.965 458.49 635.047 434.884 692.037C411.278 749.027 376.678 800.81 333.06 844.428C289.441 888.046 237.659 922.646 180.669 946.253C123.678 969.859 62.5968 982.009 0.911092 982.009L0.911098 841.09C44.091 841.09 86.8481 832.585 126.741 816.061C166.634 799.536 202.882 775.316 233.415 744.783C263.948 714.251 288.168 678.003 304.692 638.11C321.216 598.217 329.721 555.46 329.721 512.28L329.761 512.28C329.761 450.594 341.911 389.512 365.517 332.522C389.123 275.532 423.723 223.749 467.342 180.131C510.96 136.513 562.743 101.913 619.733 78.3065C676.723 54.7004 737.805 42.5505 799.49 42.5505L799.487 42.5506L1233.46 332.522C1257.07 389.512 1269.22 450.594 1269.22 512.28L1269.19 512.28C1269.21 555.406 1277.72 598.108 1294.22 637.953C1310.75 677.846 1334.97 714.094 1365.5 744.627C1396.03 775.16 1432.28 799.38 1472.17 815.904C1512.06 832.428 1554.82 840.933 1598 840.933L1598 981.852C1536.32 981.852 1475.23 969.702 1418.24 946.096C1361.25 922.49 1309.47 887.89 1265.85 844.271C1222.24 800.653 1187.63 748.87 1164.03 691.88ZM1233.46 332.522C1209.85 275.532 1175.25 223.749 1131.64 180.131C1088.02 136.513 1036.23 101.913 979.245 78.3066C922.255 54.7009 861.175 42.5509 799.49 42.5505L1233.46 332.522Z"
                 fill="url(#paint2_linear_1217_1539)"
               />
@@ -1062,8 +1062,8 @@ export default function SeasonOfBlockchains() {
               >
                 <path
                   opacity="0.3"
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
                   d="M1164.03 691.88C1140.42 634.89 1128.27 573.808 1128.27 512.123L1128.3 512.123C1128.28 468.996 1119.77 426.294 1103.27 386.449C1086.74 346.556 1062.52 310.308 1031.99 279.776C1001.46 249.243 965.211 225.023 925.317 208.498C885.424 191.974 842.667 183.469 799.487 183.469C756.308 183.47 713.552 191.975 673.66 208.498C633.767 225.023 597.519 249.243 566.986 279.776C536.453 310.308 512.233 346.556 495.709 386.449C479.185 426.342 470.68 469.099 470.68 512.279L470.64 512.28C470.64 573.965 458.49 635.047 434.884 692.037C411.278 749.027 376.678 800.81 333.06 844.428C289.441 888.046 237.659 922.646 180.669 946.253C123.678 969.859 62.5968 982.009 0.911092 982.009L0.911098 841.09C44.091 841.09 86.8481 832.585 126.741 816.061C166.634 799.536 202.882 775.316 233.415 744.783C263.948 714.251 288.168 678.003 304.692 638.11C321.216 598.217 329.721 555.46 329.721 512.28L329.761 512.28C329.761 450.594 341.911 389.512 365.517 332.522C389.123 275.532 423.723 223.749 467.342 180.131C510.96 136.513 562.743 101.913 619.733 78.3065C676.723 54.7004 737.805 42.5505 799.49 42.5505L799.487 42.5506L1233.46 332.522C1257.07 389.512 1269.22 450.594 1269.22 512.28L1269.19 512.28C1269.21 555.406 1277.72 598.108 1294.22 637.953C1310.75 677.846 1334.97 714.094 1365.5 744.627C1396.03 775.16 1432.28 799.38 1472.17 815.904C1512.06 832.428 1554.82 840.933 1598 840.933L1598 981.852C1536.32 981.852 1475.23 969.702 1418.24 946.096C1361.25 922.49 1309.47 887.89 1265.85 844.271C1222.24 800.653 1187.63 748.87 1164.03 691.88ZM1233.46 332.522C1209.85 275.532 1175.25 223.749 1131.64 180.131C1088.02 136.513 1036.23 101.913 979.245 78.3066C922.255 54.7009 861.175 42.5509 799.49 42.5505L1233.46 332.522Z"
                   fill="url(#paint3_linear_1217_1539)"
                 />
@@ -1081,22 +1081,22 @@ export default function SeasonOfBlockchains() {
               </g>
               <path
                 opacity="0.3"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M1164.03 332.676C1140.42 389.666 1128.27 450.748 1128.27 512.434L1128.3 512.434C1128.28 555.561 1119.77 598.263 1103.27 638.107C1086.74 678.001 1062.52 714.248 1031.99 744.781C1001.46 775.314 965.211 799.534 925.318 816.058C885.425 832.582 842.669 841.087 799.49 841.087C756.31 841.087 713.553 832.582 673.66 816.058C633.767 799.534 597.519 775.314 566.986 744.781C536.453 714.248 512.233 678 495.709 638.107C479.185 598.214 470.68 555.457 470.68 512.277L470.64 512.277C470.64 450.591 458.49 389.51 434.884 332.52C411.278 275.529 376.678 223.747 333.06 180.129C289.441 136.51 237.659 101.91 180.669 78.3041C123.679 54.698 62.5968 42.5481 0.911174 42.5481L0.911168 183.467C44.0911 183.467 86.8482 191.972 126.741 208.496C166.634 225.02 202.882 249.24 233.415 279.773C263.948 310.306 288.168 346.554 304.692 386.447C321.216 426.34 329.721 469.097 329.721 512.277L329.761 512.277C329.761 573.963 341.911 635.044 365.517 692.035C389.123 749.025 423.723 800.807 467.342 844.426C510.96 888.044 562.743 922.644 619.733 946.25C676.722 969.856 737.803 982.006 799.487 982.006L1233.46 692.035C1257.07 635.045 1269.22 573.963 1269.22 512.277L1269.19 512.277C1269.21 469.15 1277.72 426.448 1294.22 386.604C1310.75 346.71 1334.97 310.463 1365.5 279.93C1396.03 249.397 1432.28 225.177 1472.17 208.653C1512.06 192.128 1554.82 183.624 1598 183.624L1598 42.7048C1536.32 42.7048 1475.23 54.8547 1418.24 78.4608C1361.25 102.067 1309.47 136.667 1265.85 180.285C1222.24 223.904 1187.64 275.686 1164.03 332.676Z"
                 fill="url(#paint4_linear_1217_1539)"
               />
               <path
                 opacity="0.3"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M434.887 290.374C458.493 347.364 470.643 408.446 470.643 470.131L470.617 470.131C470.638 513.258 479.142 555.96 495.646 595.805C512.17 635.698 536.39 671.946 566.923 702.479C597.456 733.011 633.704 757.231 673.597 773.756C713.49 790.28 756.247 798.785 799.427 798.785C842.606 798.784 885.362 790.28 925.254 773.756C965.147 757.232 1001.39 733.012 1031.93 702.479C1062.46 671.946 1086.68 635.698 1103.2 595.805C1119.73 555.912 1128.23 513.155 1128.23 469.975L1269.15 469.975C1269.15 531.66 1257 592.742 1233.4 649.732C1209.79 706.722 1175.19 758.505 1131.57 802.123C1087.95 845.742 1036.17 880.342 979.181 903.948C922.191 927.554 861.11 939.704 799.424 939.704L799.424 939.704C737.739 939.703 676.659 927.553 619.67 903.948C562.68 880.341 510.897 845.741 467.279 802.123C423.66 758.505 389.06 706.722 365.454 649.732C341.848 592.742 329.698 531.66 329.698 469.975L329.724 469.975C329.704 426.848 321.199 384.146 304.695 344.301C288.171 304.408 263.951 268.16 233.418 237.627C202.885 207.095 166.637 182.875 126.744 166.35C86.8512 149.826 44.0941 141.321 0.914122 141.321L0.914104 0.402405C62.5998 0.402407 123.681 12.5523 180.672 36.1584C237.662 59.7645 289.444 94.3645 333.063 137.983C376.681 181.601 411.281 233.384 434.887 290.374ZM1128.27 469.975C1128.27 408.289 1140.42 347.207 1164.03 290.217C1187.63 233.227 1222.23 181.444 1265.85 137.826C1309.47 94.2077 1361.25 59.6077 1418.24 36.0016C1475.23 12.3955 1536.32 0.245612 1598 0.245614L1598 141.164C1554.82 141.164 1512.06 149.669 1472.17 166.194C1432.28 182.718 1396.03 206.938 1365.5 237.471C1334.96 268.003 1310.74 304.251 1294.22 344.144C1277.7 384.037 1269.19 426.795 1269.19 469.975L1128.27 469.975Z"
                 fill="url(#paint5_linear_1217_1539)"
               />
               <path
                 opacity="0.3"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M434.887 290.374C458.493 347.364 470.643 408.446 470.643 470.131L470.617 470.131C470.638 513.258 479.142 555.96 495.646 595.805C512.17 635.698 536.39 671.946 566.923 702.479C597.456 733.011 633.704 757.231 673.597 773.756C713.49 790.28 756.247 798.785 799.427 798.785C842.606 798.784 885.362 790.28 925.254 773.756C965.147 757.232 1001.39 733.012 1031.93 702.479C1062.46 671.946 1086.68 635.698 1103.2 595.805C1119.73 555.912 1128.23 513.155 1128.23 469.975L1269.15 469.975C1269.15 531.66 1257 592.742 1233.4 649.732C1209.79 706.722 1175.19 758.505 1131.57 802.123C1087.95 845.742 1036.17 880.342 979.181 903.948C922.191 927.554 861.11 939.704 799.424 939.704L799.424 939.704C737.739 939.703 676.659 927.553 619.67 903.948C562.68 880.341 510.897 845.741 467.279 802.123C423.66 758.505 389.06 706.722 365.454 649.732C341.848 592.742 329.698 531.66 329.698 469.975L329.724 469.975C329.704 426.848 321.199 384.146 304.695 344.301C288.171 304.408 263.951 268.16 233.418 237.627C202.885 207.095 166.637 182.875 126.744 166.35C86.8512 149.826 44.0941 141.321 0.914122 141.321L0.914104 0.402405C62.5998 0.402407 123.681 12.5523 180.672 36.1584C237.662 59.7645 289.444 94.3645 333.063 137.983C376.681 181.601 411.281 233.384 434.887 290.374ZM1128.27 469.975C1128.27 408.289 1140.42 347.207 1164.03 290.217C1187.63 233.227 1222.23 181.444 1265.85 137.826C1309.47 94.2077 1361.25 59.6077 1418.24 36.0016C1475.23 12.3955 1536.32 0.245612 1598 0.245614L1598 141.164C1554.82 141.164 1512.06 149.669 1472.17 166.194C1432.28 182.718 1396.03 206.938 1365.5 237.471C1334.96 268.003 1310.74 304.251 1294.22 344.144C1277.7 384.037 1269.19 426.795 1269.19 469.975L1128.27 469.975Z"
                 fill="url(#paint6_linear_1217_1539)"
               />
@@ -1109,9 +1109,9 @@ export default function SeasonOfBlockchains() {
                 width="721.481"
                 height="721.481"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -1130,9 +1130,9 @@ export default function SeasonOfBlockchains() {
                 width="721.481"
                 height="721.481"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -1151,9 +1151,9 @@ export default function SeasonOfBlockchains() {
                 width="721.481"
                 height="721.481"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -1173,8 +1173,8 @@ export default function SeasonOfBlockchains() {
                 y2="411.261"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </linearGradient>
               <linearGradient
                 id="paint1_linear_1217_1539"
@@ -1184,8 +1184,8 @@ export default function SeasonOfBlockchains() {
                 y2="411.261"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </linearGradient>
               <linearGradient
                 id="paint2_linear_1217_1539"
@@ -1195,8 +1195,8 @@ export default function SeasonOfBlockchains() {
                 y2="248.636"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </linearGradient>
               <linearGradient
                 id="paint3_linear_1217_1539"
@@ -1206,8 +1206,8 @@ export default function SeasonOfBlockchains() {
                 y2="248.636"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </linearGradient>
               <linearGradient
                 id="paint4_linear_1217_1539"
@@ -1217,8 +1217,8 @@ export default function SeasonOfBlockchains() {
                 y2="261.033"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </linearGradient>
               <linearGradient
                 id="paint5_linear_1217_1539"
@@ -1228,8 +1228,8 @@ export default function SeasonOfBlockchains() {
                 y2="312.081"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </linearGradient>
               <linearGradient
                 id="paint6_linear_1217_1539"
@@ -1239,9 +1239,9 @@ export default function SeasonOfBlockchains() {
                 y2="702.547"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" stop-opacity="0" />
-                <stop offset="0.489583" stop-color="white" />
-                <stop offset="0.96875" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" stopOpacity="0" />
+                <stop offset="0.489583" stopColor="white" />
+                <stop offset="0.96875" stopColor="white" stopOpacity="0" />
               </linearGradient>
             </defs>
           </svg>

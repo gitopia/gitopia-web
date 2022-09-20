@@ -164,7 +164,7 @@ function ProposalDetailsView(props) {
                   xmlns="http://www.w3.org/2000/svg"
                   stroke="currentColor"
                 >
-                  <path d="M7 1L2 5.5L7 10" stroke-width="2" />
+                  <path d="M7 1L2 5.5L7 10" strokeWidth="2" />
                 </svg>
                 <span className="ml-2">BACK</span>
               </label>

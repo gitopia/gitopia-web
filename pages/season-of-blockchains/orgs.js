@@ -304,7 +304,7 @@ export default function SeasonOfBlockchainsOrgPage() {
                 width="16"
                 height="9"
                 stroke="#ADBECB"
-                stroke-width="2"
+                strokeWidth="2"
               />
               <rect x="7" y="18" width="10" height="2" fill="#ADBECB" />
             </svg>
@@ -322,8 +322,8 @@ export default function SeasonOfBlockchainsOrgPage() {
                 <path
                   d="M0 6H18.5M18.5 6L13.5 1M18.5 6L13.5 11"
                   stroke="#66CE67"
-                  stroke-width="2"
-                  stroke-linejoin="round"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
                 />
               </svg>
             </div>
@@ -342,8 +342,8 @@ export default function SeasonOfBlockchainsOrgPage() {
                 <path
                   d="M1 8.5L8.5 1M8.5 1H3.5M8.5 1V6.5"
                   stroke="#29B7E4"
-                  stroke-width="2"
-                  stroke-linejoin="round"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
                 />
               </svg>
             </div>
@@ -389,7 +389,7 @@ export default function SeasonOfBlockchainsOrgPage() {
                 width="16"
                 height="9"
                 stroke="#ADBECB"
-                stroke-width="2"
+                strokeWidth="2"
               />
               <rect x="7" y="18" width="10" height="2" fill="#ADBECB" />
             </svg>
@@ -407,8 +407,8 @@ export default function SeasonOfBlockchainsOrgPage() {
                 <path
                   d="M0 6H18.5M18.5 6L13.5 1M18.5 6L13.5 11"
                   stroke="#66CE67"
-                  stroke-width="2"
-                  stroke-linejoin="round"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
                 />
               </svg>
             </div>
@@ -427,8 +427,8 @@ export default function SeasonOfBlockchainsOrgPage() {
                 <path
                   d="M1 8.5L8.5 1M8.5 1H3.5M8.5 1V6.5"
                   stroke="#29B7E4"
-                  stroke-width="2"
-                  stroke-linejoin="round"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
                 />
               </svg>
             </div>
@@ -464,9 +464,9 @@ export default function SeasonOfBlockchainsOrgPage() {
             width="1663.45"
             height="1997.7"
             filterUnits="userSpaceOnUse"
-            color-interpolation-filters="sRGB"
+            colorInterpolationFilters="sRGB"
           >
-            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
             <feBlend
               mode="normal"
               in="SourceGraphic"
@@ -486,8 +486,8 @@ export default function SeasonOfBlockchainsOrgPage() {
             gradientUnits="userSpaceOnUse"
             gradientTransform="translate(-231.367 847.633) rotate(-30) scale(447.014)"
           >
-            <stop offset="0.442708" stop-color="#992D81" />
-            <stop offset="1" stop-color="#6029DB" />
+            <stop offset="0.442708" stopColor="#992D81" />
+            <stop offset="1" stopColor="#6029DB" />
           </radialGradient>
         </defs>
       </svg>
@@ -513,9 +513,9 @@ export default function SeasonOfBlockchainsOrgPage() {
             width="1663.45"
             height="1997.7"
             filterUnits="userSpaceOnUse"
-            color-interpolation-filters="sRGB"
+            colorInterpolationFilters="sRGB"
           >
-            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
             <feBlend
               mode="normal"
               in="SourceGraphic"
@@ -535,8 +535,8 @@ export default function SeasonOfBlockchainsOrgPage() {
             gradientUnits="userSpaceOnUse"
             gradientTransform="translate(816.671 1151.52) rotate(150) scale(447.014)"
           >
-            <stop offset="0.442708" stop-color="#992D81" />
-            <stop offset="1" stop-color="#6029DB" />
+            <stop offset="0.442708" stopColor="#992D81" />
+            <stop offset="1" stopColor="#6029DB" />
           </radialGradient>
         </defs>
       </svg>

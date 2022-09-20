@@ -190,9 +190,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -234,9 +234,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -278,9 +278,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -322,9 +322,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -366,9 +366,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -410,9 +410,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -454,9 +454,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -498,9 +498,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -542,9 +542,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -619,9 +619,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -663,9 +663,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -707,9 +707,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -751,9 +751,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -795,9 +795,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -839,9 +839,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -883,9 +883,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -927,9 +927,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -971,9 +971,9 @@ export default function Partnerships() {
                   <path
                     d="M1.23535 6.85165H12.7059M12.7059 6.85165L7.35299 1.50549M12.7059 6.85165L7.35299 12.1978"
                     stroke="#898B8E"
-                    stroke-width="2"
+                    strokeWidth="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </div>
@@ -1004,9 +1004,9 @@ export default function Partnerships() {
             width="1418.82"
             height="1776.25"
             filterUnits="userSpaceOnUse"
-            color-interpolation-filters="sRGB"
+            colorInterpolationFilters="sRGB"
           >
-            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
             <feBlend
               mode="normal"
               in="SourceGraphic"
@@ -1026,8 +1026,8 @@ export default function Partnerships() {
             gradientUnits="userSpaceOnUse"
             gradientTransform="translate(-297.78 1063.8) rotate(15) scale(425.403)"
           >
-            <stop offset="0.442708" stop-color="#992D81" />
-            <stop offset="1" stop-color="#6029DB" />
+            <stop offset="0.442708" stopColor="#992D81" />
+            <stop offset="1" stopColor="#6029DB" />
           </radialGradient>
         </defs>
       </svg>
@@ -1053,9 +1053,9 @@ export default function Partnerships() {
             width="1664.87"
             height="1489.23"
             filterUnits="userSpaceOnUse"
-            color-interpolation-filters="sRGB"
+            colorInterpolationFilters="sRGB"
           >
-            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
             <feBlend
               mode="normal"
               in="SourceGraphic"
@@ -1075,8 +1075,8 @@ export default function Partnerships() {
             gradientUnits="userSpaceOnUse"
             gradientTransform="translate(953.004 713.112) rotate(-120) scale(425.403)"
           >
-            <stop offset="0.442708" stop-color="#992D81" />
-            <stop offset="1" stop-color="#6029DB" />
+            <stop offset="0.442708" stopColor="#992D81" />
+            <stop offset="1" stopColor="#6029DB" />
           </radialGradient>
         </defs>
       </svg>
@@ -1103,9 +1103,9 @@ export default function Partnerships() {
             width="1418.82"
             height="1776.25"
             filterUnits="userSpaceOnUse"
-            color-interpolation-filters="sRGB"
+            colorInterpolationFilters="sRGB"
           >
-            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
             <feBlend
               mode="normal"
               in="SourceGraphic"
@@ -1125,8 +1125,8 @@ export default function Partnerships() {
             gradientUnits="userSpaceOnUse"
             gradientTransform="translate(-297.78 754.227) rotate(15) scale(425.403 425.403)"
           >
-            <stop offset="0.442708" stop-color="#992D81" />
-            <stop offset="1" stop-color="#6029DB" />
+            <stop offset="0.442708" stopColor="#992D81" />
+            <stop offset="1" stopColor="#6029DB" />
           </radialGradient>
         </defs>
       </svg>
@@ -1152,9 +1152,9 @@ export default function Partnerships() {
             width="1664.87"
             height="1489.23"
             filterUnits="userSpaceOnUse"
-            color-interpolation-filters="sRGB"
+            colorInterpolationFilters="sRGB"
           >
-            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
             <feBlend
               mode="normal"
               in="SourceGraphic"
@@ -1174,8 +1174,8 @@ export default function Partnerships() {
             gradientUnits="userSpaceOnUse"
             gradientTransform="translate(953.004 713.112) rotate(-120) scale(425.403 425.403)"
           >
-            <stop offset="0.442708" stop-color="#992D81" />
-            <stop offset="1" stop-color="#6029DB" />
+            <stop offset="0.442708" stopColor="#992D81" />
+            <stop offset="1" stopColor="#6029DB" />
           </radialGradient>
         </defs>
       </svg>
