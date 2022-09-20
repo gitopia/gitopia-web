@@ -57,7 +57,7 @@ function RepositoryTagsView(props) {
             </div>
             {repository.tags.map((t) => {
               return (
-                <div className="mt-8">
+                <div className="mt-8" key={t.name}>
                   <div className="flex">
                     <div>
                       <svg

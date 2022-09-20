@@ -150,7 +150,9 @@ function RepositoryIssueView(props) {
                 />
                 {allComments.map((c, i) => {
                   if (c.system) {
-                    return <SystemCommentView comment={c} />;
+                    return (
+                      <SystemCommentView comment={c} key={"comment" + i} />
+                    );
                   } else {
                     return (
                       <CommentView
@@ -170,6 +172,7 @@ function RepositoryIssueView(props) {
                             setAllComments(newAllComments);
                           }
                         }}
+                        key={"comment" + i}
                       />
                     );
                   }

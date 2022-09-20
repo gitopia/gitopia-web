@@ -41,7 +41,7 @@ function RepositoryBranchesView(props) {
           <div className="mt-14">
             {repository.branches.map((b) => {
               return (
-                <div className="mt-8">
+                <div className="mt-8" key={b.name}>
                   <a
                     className="flex"
                     href={

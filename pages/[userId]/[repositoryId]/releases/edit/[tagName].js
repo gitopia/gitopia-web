@@ -304,7 +304,10 @@ function RepositoryReleaseEditView(props) {
                 <div className="my-4 divide-y divide-grey">
                   {attachments.map((a, i) => {
                     return (
-                      <div className={"flex py-2 items-center"}>
+                      <div
+                        className={"flex py-2 items-center"}
+                        key={"attachment" + i}
+                      >
                         <div className="flex-1 text-sm">
                           {a.file ? a.file.name : a.name}
                         </div>

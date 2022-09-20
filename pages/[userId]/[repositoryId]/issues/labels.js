@@ -103,6 +103,7 @@ function RepositoryIssueLabelsView(props) {
                     }
                   }}
                   refreshLabels={refreshRepository}
+                  key={"labelview" + i}
                 />
               );
             })}

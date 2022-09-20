@@ -24,8 +24,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryReleasesView(props) {
@@ -142,9 +142,9 @@ function RepositoryReleasesView(props) {
             ) : (
               ""
             )}
-            {olderReleases.map((r) => {
+            {olderReleases.map((r, i) => {
               return (
-                <div className="px-4 py-2">
+                <div className="px-4 py-2" key={"release" + i}>
                   <Link
                     href={
                       "/" +

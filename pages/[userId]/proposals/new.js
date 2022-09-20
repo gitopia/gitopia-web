@@ -537,7 +537,7 @@ function RepositoryProposalCreateView(props) {
                   </div>
                   {Array.from(Array(counter)).map((c, index) => {
                     return (
-                      <div className="flex">
+                      <div className="flex" key={"parameter" + index}>
                         <div className="form-control mr-3">
                           <input
                             name="subspace"

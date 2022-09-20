@@ -138,7 +138,7 @@ function Design(props) {
       >
         <div class="ml-28 mt-60 mr-28 text-lg group">
           {navHeader.map((header, index) => (
-            <div class="py-3 pl-8">
+            <div class="py-3 pl-8" key={"nav" + index}>
               <a
                 className={styles.a}
                 key={index + header.headerID}

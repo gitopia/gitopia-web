@@ -318,7 +318,7 @@ function ProposalDetailsView(props) {
                     <div>
                       {proposal.content["changes"].map((change, index) => {
                         return (
-                          <div>
+                          <div key={"parameterchange" + index}>
                             <div>{"Change " + (index + 1)}</div>
                             <div className="ml-5">
                               <div>{"Subspace: " + change.subspace}</div>
