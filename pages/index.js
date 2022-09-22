@@ -17,7 +17,7 @@ import SupportOwner from "../components/repository/supportOwner";
 import getCommitHistory from "../helpers/getCommitHistory";
 import getContent from "../helpers/getContent";
 import pluralize from "../helpers/pluralize";
-import ReactPlayer from "react-player";
+import YoutubeEmbed from "../helpers/youtubeEmbed";
 
 const pCircles = [
   {
@@ -305,7 +305,15 @@ export default function Landing() {
       </Head>
       <header className={(menuOpen ? "bg-purple " : "") + styles.header}>
         <div className="flex">
-          <div className={styles.headerLogo}></div>
+          <div
+            type="button"
+            onClick={() => {
+              if (window) {
+                window.location.reload();
+              }
+            }}
+            className={styles.headerLogo + " cursor-pointer"}
+          ></div>
           {mobile ? (
             <div className="mt-3">
               <Link href="/home" className="">
@@ -377,16 +385,18 @@ export default function Landing() {
           <div className={styles.row}>
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto w-full">
               <li className={menuOpen ? "" : "mr-4"}>
-                <Link href="https://blog.gitopia.com">
-                  <a className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70">
-                    Blog
-                  </a>
-                </Link>
+                <a
+                  href="https://blog.gitopia.com/"
+                  target="_blank"
+                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
+                >
+                  Blog
+                </a>
               </li>
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="https://gitopia.com/whitepaper.pdf"
+                  href="https://docs.gitopia.com/"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -396,7 +406,7 @@ export default function Landing() {
               <li>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href=""
+                  href="https://docs.gitopia.com/lore-token"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -407,11 +417,13 @@ export default function Landing() {
               <div className={menuOpen ? "" : "mr-4 ml-4 " + styles.vl}></div>
               <li className={menuOpen ? "hidden" : "mr-4 ml-4 mt-1"}>
                 <div className="flex flex-col justify-center items-center">
-                  <Link href="/home">
-                    <a className="h-8 px-4 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                      Login
-                    </a>
-                  </Link>
+                  <a
+                    href="/login"
+                    target="_blank"
+                    className="h-8 px-4 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  >
+                    Login
+                  </a>
                 </div>
               </li>
             </ul>
@@ -436,11 +448,13 @@ export default function Landing() {
           </div>
           <div className="flex flex-col justify-center items-center">
             <div className={classnames("mb-8", styles.primaryCTA)}>
-              <Link href="/home">
-                <a className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                  Join now - Push code to Gitopia
-                </a>
-              </Link>
+              <a
+                href="/home"
+                target="_blank"
+                className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              >
+                Join now - Push code to Gitopia
+              </a>
             </div>
           </div>
         </div>
@@ -488,7 +502,7 @@ export default function Landing() {
         <img
           className={
             "absolute pointer-events-none z-1  " +
-            (mobile ? "hidden" : " top-0 left-2/3")
+            (mobile ? "hidden" : " top-0 left-2/3 mt-10")
           }
           src="./star-4.svg"
         />
@@ -505,6 +519,27 @@ export default function Landing() {
             (mobile ? "hidden" : " top-2/3 right-5")
           }
           src="./star-6.svg"
+        />
+        <img
+          className={
+            "absolute pointer-events-none z-1  " +
+            (mobile ? "hidden" : " top-0 right-1/4")
+          }
+          src="./shootingStar.svg"
+        />
+        <img
+          className={
+            "absolute pointer-events-none z-1  " +
+            (mobile ? "hidden" : " top-1/4 left-1/4")
+          }
+          src="./shootingStar2.svg"
+        />
+        <img
+          className={
+            "absolute pointer-events-none z-1  " +
+            (mobile ? "hidden" : " bottom-0 left-1/2")
+          }
+          src="./shootingStar3.svg"
         />
       </section>
 
@@ -803,7 +838,7 @@ export default function Landing() {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 220 220"
-            id="circle1"
+            //id="circle1"
           >
             <g filter="url(#filter0_ii_3088_7412)">
               <circle cx="72" cy="72" r="72" fill="#5957AA" />
@@ -1946,15 +1981,15 @@ export default function Landing() {
         >
           <defs>
             <filter
-              id="filter0_i"
+              id="filter0_i_3088_7405"
               x="-148.084"
-              y="127.923"
+              y="127.906"
               width="1896.17"
               height="657.59"
               filterUnits="userSpaceOnUse"
-              colorInterpolationFilters="sRGB"
+              color-interpolation-filters="sRGB"
             >
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
               <feBlend
                 mode="normal"
                 in="SourceGraphic"
@@ -1979,22 +2014,26 @@ export default function Landing() {
                 type="matrix"
                 values="0 0 0 0 0.533333 0 0 0 0 0.231373 0 0 0 0 0.901961 0 0 0 1 0"
               />
-              <feBlend mode="normal" in2="shape" result="effect1_innerShadow" />
+              <feBlend
+                mode="normal"
+                in2="shape"
+                result="effect1_innerShadow_3088_7405"
+              />
             </filter>
             <linearGradient
-              id="paint0_linear"
+              id="paint0_linear_3088_7405"
               x1="800"
               y1="481.098"
               x2="800"
               y2="180.118"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stopColor="#ffffff" />
-              <stop offset="1" stopColor="#C4C4C4" stopOpacity="0" />
+              <stop stop-color="#C4C4C4" />
+              <stop offset="1" stop-color="#C4C4C4" stop-opacity="0" />
             </linearGradient>
           </defs>
           <mask
-            id="mask0"
+            id="mask0_3088_7405"
             mask-type="alpha"
             maskUnits="userSpaceOnUse"
             x="0"
@@ -2005,14 +2044,14 @@ export default function Landing() {
             <rect
               width="1600"
               height="609"
-              transform="matrix(1 0 0 -1 0 609.021)"
-              fill="#paint0_linear"
+              transform="matrix(1 0 0 -1 0 609.004)"
+              fill="url(#paint0_linear_3088_7405)"
             />
           </mask>
-          <g mask="url(#mask0)">
-            <g filter="url(#filter0_i)">
+          <g mask="url(#mask0_3088_7405)">
+            <g filter="url(#filter0_i_3088_7405)">
               <path
-                d="M-148.084 781.512C-148.084 608.17 -48.197 441.927 129.603 319.355C307.404 196.783 548.553 127.923 800.001 127.923C1051.45 127.923 1292.6 196.783 1470.4 319.355C1648.2 441.926 1748.09 608.169 1748.09 781.512L800.001 781.512L-148.084 781.512Z"
+                d="M-148.084 781.495C-148.084 608.153 -48.197 441.91 129.603 319.338C307.404 196.766 548.553 127.906 800.001 127.906C1051.45 127.906 1292.6 196.766 1470.4 319.338C1648.2 441.909 1748.09 608.152 1748.09 781.495L800.001 781.495L-148.084 781.495Z"
                 fill="#19072F"
               />
             </g>
@@ -2098,7 +2137,10 @@ export default function Landing() {
           </div>
           <div className={styles.circleSectionLink}>
             Learn more about why Gitopia is Building on Cosmos SDK{" "}
-            <a href="https://gitopia.com/whitepaper.pdf" target="_blank">
+            <a
+              href="https://blog.gitopia.com/post/2021/05/why-gitopia-is-building-with-cosmos-sdk/"
+              target="_blank"
+            >
               here
             </a>
           </div>
@@ -2129,11 +2171,13 @@ export default function Landing() {
                   styles.collaborationsBenefitsCard1Button
                 )}
               >
-                <Link href="/home">
-                  <a className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                    Create your On-Chain Profile now!
-                  </a>
-                </Link>
+                <a
+                  href="/home"
+                  target="_blank"
+                  className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                >
+                  Create your On-Chain Profile now!
+                </a>
               </div>
               <div className="flex mb-4">
                 <div className="ml-20 sm:ml-2 mt-2">🚀</div>
@@ -2198,7 +2242,13 @@ export default function Landing() {
           </div>
         </div>
       </section>
-      <section className={classnames([styles.section, styles.storageSection])}>
+      <section
+        className={classnames([
+          styles.section,
+          styles.storageSection,
+          " relative",
+        ])}
+      >
         <div className={styles.row}>
           <h3 className={styles.h3}>Permanent Storage</h3>
           <div className={styles.b16}>
@@ -2258,6 +2308,24 @@ export default function Landing() {
             gitopia storage platforms
           </div>
         </div>
+        <img
+          src="./wave-2.svg"
+          className={
+            "absolute -z-10 opacity-100 pointer-events-none left-0 " +
+            (mobile ? "top-1/3" : "bottom-0")
+          }
+          width={mobile ? 177 : "30%"}
+          height={mobile ? 277 : "30%"}
+        />
+        <img
+          src="./wave-3.svg"
+          className={
+            "absolute -z-10 opacity-100 pointer-events-none right-0 " +
+            (mobile ? "top-1/3" : "bottom-0")
+          }
+          width={mobile ? 177 : "30%"}
+          height={mobile ? 277 : "30%"}
+        />
       </section>
 
       <section className={classnames([styles.section])}>
@@ -2316,7 +2384,7 @@ export default function Landing() {
                 type="button"
                 onClick={() => {
                   if (window) {
-                    window.open("/home");
+                    window.open("/new");
                   }
                 }}
                 className="ml-4 px-16 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -2354,7 +2422,9 @@ export default function Landing() {
                   type="button"
                   onClick={() => {
                     if (window) {
-                      window.open("/home");
+                      window.open(
+                        "/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS
+                      );
                     }
                   }}
                   className="px-10 py-2 w-52 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -2383,7 +2453,9 @@ export default function Landing() {
                   type="button"
                   onClick={() => {
                     if (window) {
-                      window.open("/home");
+                      window.open(
+                        "https://blog.gitopia.com/post/2022/04/game-of-lore/"
+                      );
                     }
                   }}
                   className="px-10 py-4 w-52 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -2396,7 +2468,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className={styles.section + " mb-32 sm:mb-64"}>
+      <section className={styles.section + " relative mb-32 sm:mb-64"}>
         <div className={classnames([styles.topHeading], [styles.getStarted])}>
           Get Started
         </div>
@@ -2404,14 +2476,195 @@ export default function Landing() {
           You can get up and running in just 5 minutes, see how 👇
         </div>
 
-        <ReactPlayer
-          url="https://www.youtube.com/watch?v=ysz5S6PUM-U"
+        <YoutubeEmbed
+          embedId="ewK_0BkF5P8"
           height={mobile ? "200px" : "472px"}
           width={mobile ? "370px" : "840px"}
         />
+        <img
+          src="./gitopia-coin.svg"
+          className={mobile ? "hidden" : "absolute -z-10 right-3/4 bottom-1/2"}
+        />
+        <img
+          src="./gitopia-coin-1.svg"
+          className={mobile ? "hidden" : "absolute -z-10 left-1/2 top-1/3"}
+        />
+        <svg
+          width="726"
+          height="522"
+          viewBox="0 0 726 522"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={
+            mobile
+              ? "hidden"
+              : "absolute -z-10 opacity-100 pointer-events-none top-2/3 left-1/2"
+          }
+        >
+          <g filter="url(#filter0_f_3238_11391)">
+            <rect
+              x="161.238"
+              y="161.876"
+              width="403.296"
+              height="198.851"
+              rx="24"
+              fill="url(#paint0_linear_3238_11391)"
+            />
+          </g>
+          <defs>
+            <filter
+              id="filter0_f_3238_11391"
+              x="0.238037"
+              y="0.876465"
+              width="725.296"
+              height="520.851"
+              filterUnits="userSpaceOnUse"
+              color-interpolation-filters="sRGB"
+            >
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feBlend
+                mode="normal"
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <feGaussianBlur
+                stdDeviation="80.5"
+                result="effect1_foregroundBlur_3238_11391"
+              />
+            </filter>
+            <linearGradient
+              id="paint0_linear_3238_11391"
+              x1="412.823"
+              y1="161.876"
+              x2="562.532"
+              y2="223.152"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="#6D2882" />
+              <stop offset="1" stop-color="#2C4DFF" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <svg
+          width="726"
+          height="522"
+          viewBox="0 0 726 522"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={
+            mobile
+              ? "hidden"
+              : "absolute -z-10 opacity-100 pointer-events-none left-0"
+          }
+        >
+          <g filter="url(#filter0_f_3238_11392)">
+            <rect
+              width="403.296"
+              height="198.851"
+              rx="24"
+              transform="matrix(1 0 0 -1 161.188 360.116)"
+              fill="url(#paint0_linear_3238_11392)"
+            />
+          </g>
+          <defs>
+            <filter
+              id="filter0_f_3238_11392"
+              x="0.187988"
+              y="0.264404"
+              width="725.296"
+              height="520.851"
+              filterUnits="userSpaceOnUse"
+              color-interpolation-filters="sRGB"
+            >
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feBlend
+                mode="normal"
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <feGaussianBlur
+                stdDeviation="80.5"
+                result="effect1_foregroundBlur_3238_11392"
+              />
+            </filter>
+            <linearGradient
+              id="paint0_linear_3238_11392"
+              x1="251.585"
+              y1="-1.089e-05"
+              x2="401.293"
+              y2="61.2758"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="#352882" />
+              <stop offset="1" stop-color="#2C4DFF" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <img
+          src="./wave.svg"
+          className="absolute -z-10 opacity-100 pointer-events-none left-0 top-1/4 w-full"
+        />
+        <img
+          src="./getStartedCoin-1.svg"
+          className={
+            mobile
+              ? "hidden"
+              : "absolute -z-10 opacity-100 pointer-events-none left-0 top-2/3"
+          }
+        />
+        <img
+          src="./getStartedCoin-2.svg"
+          className={
+            mobile
+              ? "hidden"
+              : "absolute -z-10 opacity-100 pointer-events-none left-16 bottom-0"
+          }
+        />
+        <img
+          src="./getStartedCoin-3.svg"
+          className={
+            mobile
+              ? "hidden"
+              : "absolute  opacity-100 pointer-events-none right-3/4 pr-32 top-3/4"
+          }
+        />
+        <img
+          src="./getStartedCoin-4.svg"
+          className={
+            mobile
+              ? "hidden"
+              : "absolute  opacity-100 pointer-events-none right-16 pr-32 top-3/4"
+          }
+        />
+        <img
+          src="./getStartedCoin-5.svg"
+          className={
+            mobile
+              ? "hidden"
+              : "absolute  opacity-100 pointer-events-none right-16 pt-16 top-1/3"
+          }
+        />
+        <img
+          src="./getStartedCoin-6.svg"
+          className={
+            mobile
+              ? "hidden"
+              : "absolute  opacity-100 pointer-events-none right-5 top-2/3"
+          }
+        />
+        <img
+          src="./getStartedCoin-7.svg"
+          className={
+            mobile
+              ? "hidden"
+              : "absolute  opacity-100 pointer-events-none right-0 bottom-0"
+          }
+        />
       </section>
 
-      <section className={styles.section}>
+      <section className={"relative " + styles.section}>
         <div className={styles.topHeading}>Blockchain Technology</div>
         <div className={styles.h3 + " text-center"}>
           Embrace the future of <br /> collaboration
@@ -2437,6 +2690,112 @@ export default function Landing() {
             </div>
           </div>
         </div>
+        <svg
+          width="581"
+          height="559"
+          viewBox="0 0 581 559"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={
+            mobile
+              ? "hidden"
+              : "absolute -z-10 pointer-events-none left-1/4 top-1/3"
+          }
+        >
+          <g filter="url(#filter0_f_3098_5709)">
+            <path
+              d="M191.618 400.542C304.644 323.247 357.964 401.866 407.293 352.537C456.621 303.209 456.621 223.232 407.293 173.903C357.964 124.575 277.987 124.575 228.659 173.903C179.331 223.232 70.4417 501.32 191.618 400.542Z"
+              fill="url(#paint0_radial_3098_5709)"
+            />
+          </g>
+          <defs>
+            <filter
+              id="filter0_f_3098_5709"
+              x="0.181477"
+              y="0.685272"
+              width="580.329"
+              height="557.907"
+              filterUnits="userSpaceOnUse"
+              color-interpolation-filters="sRGB"
+            >
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feBlend
+                mode="normal"
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <feGaussianBlur
+                stdDeviation="68.1109"
+                result="effect1_foregroundBlur_3098_5709"
+              />
+            </filter>
+            <radialGradient
+              id="paint0_radial_3098_5709"
+              cx="0"
+              cy="0"
+              r="1"
+              gradientUnits="userSpaceOnUse"
+              gradientTransform="translate(317.976 263.22) rotate(45) scale(126.313 126.313)"
+            >
+              <stop offset="0.442708" stop-color="#992D81" />
+              <stop offset="1" stop-color="#6029DB" />
+            </radialGradient>
+          </defs>
+        </svg>
+        <svg
+          width="418"
+          height="1024"
+          viewBox="0 0 418 1024"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={
+            mobile
+              ? "hidden"
+              : "absolute z-1 pointer-events-none left-0 top-1/4"
+          }
+        >
+          <g filter="url(#filter0_f_3091_9128)">
+            <path
+              d="M-295.954 733.855C-88.5255 591.999 9.33113 736.284 99.8606 645.754C190.39 555.225 190.39 408.448 99.8606 317.918C9.33109 227.389 -137.446 227.389 -227.976 317.918C-318.505 408.448 -518.343 918.806 -295.954 733.855Z"
+              fill="url(#paint0_radial_3091_9128)"
+            />
+          </g>
+          <defs>
+            <filter
+              id="filter0_f_3091_9128"
+              x="-647.287"
+              y="0.0209961"
+              width="1065.04"
+              height="1023.89"
+              filterUnits="userSpaceOnUse"
+              color-interpolation-filters="sRGB"
+            >
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feBlend
+                mode="normal"
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <feGaussianBlur
+                stdDeviation="125"
+                result="effect1_foregroundBlur_3091_9128"
+              />
+            </filter>
+            <radialGradient
+              id="paint0_radial_3091_9128"
+              cx="0"
+              cy="0"
+              r="1"
+              gradientUnits="userSpaceOnUse"
+              gradientTransform="translate(-64.0576 481.836) rotate(45) scale(231.815 231.815)"
+            >
+              <stop offset="0.442708" stop-color="#992D81" />
+              <stop offset="1" stop-color="#6029DB" />
+            </radialGradient>
+          </defs>
+        </svg>
       </section>
 
       <section
@@ -2464,11 +2823,13 @@ export default function Landing() {
                   styles.collaborationsBenefitsCard1Button
                 )}
               >
-                <Link href="/home">
-                  <a className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                    Create your DAO at Gitopia
-                  </a>
-                </Link>
+                <a
+                  href="/account/daos/new"
+                  target="_blank"
+                  className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                >
+                  Create your DAO at Gitopia
+                </a>
               </div>
             </div>
           </div>
@@ -2527,6 +2888,261 @@ export default function Landing() {
             </div>
           </div>
         </div>
+        <svg
+          width="808"
+          height="982"
+          viewBox="0 0 808 982"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={
+            mobile ? "hidden" : "absolute z-1 pointer-events-none left-0"
+          }
+        >
+          <mask
+            id="mask0_3110_5715"
+            mask-type="alpha"
+            maskUnits="userSpaceOnUse"
+            x="0"
+            y="17"
+            width="808"
+            height="965"
+          >
+            <rect
+              y="17"
+              width="808"
+              height="965"
+              fill="url(#paint0_linear_3110_5715)"
+            />
+          </mask>
+          <g mask="url(#mask0_3110_5715)">
+            <g opacity="0.2">
+              <path
+                opacity="0.3"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M1161.12 691.634C1137.51 634.644 1125.36 573.562 1125.36 511.877L1125.39 511.877C1125.37 468.75 1116.86 426.048 1100.36 386.204C1083.83 346.31 1059.61 310.063 1029.08 279.53C998.547 248.997 962.299 224.777 922.406 208.253C882.513 191.728 839.756 183.224 796.576 183.224C753.397 183.224 710.641 191.729 670.749 208.253C630.856 224.777 594.608 248.997 564.075 279.53C533.542 310.063 509.322 346.31 492.798 386.204C476.274 426.097 467.769 468.854 467.769 512.034L467.729 512.034C467.729 573.719 455.579 634.801 431.973 691.791C408.367 748.781 373.767 800.564 330.149 844.182C286.53 887.801 234.748 922.401 177.757 946.007C120.767 969.613 59.6856 981.763 -2.00004 981.763L-2.00003 840.844C41.1799 840.844 83.9371 832.339 123.83 815.815C163.723 799.291 199.971 775.071 230.504 744.538C261.037 714.005 285.257 677.757 301.781 637.864C318.305 597.971 326.81 555.214 326.81 512.034L326.85 512.034C326.85 450.348 339 389.266 362.606 332.276C386.212 275.286 420.812 223.504 464.431 179.885C508.049 136.267 559.831 101.667 616.822 78.0608C673.812 54.4547 734.893 42.3048 796.579 42.3048L796.576 42.3048L1230.55 332.276C1254.16 389.266 1266.3 450.348 1266.3 512.034L1266.28 512.034C1266.3 555.16 1274.81 597.862 1291.31 637.707C1307.83 677.6 1332.05 713.848 1362.59 744.381C1393.12 774.913 1429.37 799.133 1469.26 815.658C1509.15 832.182 1551.91 840.687 1595.09 840.687L1595.09 981.606C1533.41 981.606 1472.32 969.456 1415.33 945.85C1358.34 922.243 1306.56 887.643 1262.94 844.025C1219.32 800.407 1184.72 748.624 1161.12 691.634ZM1230.55 332.276C1206.94 275.286 1172.34 223.504 1128.72 179.885C1085.11 136.267 1033.32 101.667 976.334 78.0608C919.344 54.4551 858.264 42.3052 796.579 42.3048L1230.55 332.276Z"
+                fill="url(#paint1_linear_3110_5715)"
+              />
+              <mask
+                id="mask1_3110_5715"
+                mask-type="alpha"
+                maskUnits="userSpaceOnUse"
+                x="-2"
+                y="42"
+                width="1598"
+                height="940"
+              >
+                <path
+                  opacity="0.3"
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M1161.12 691.634C1137.51 634.644 1125.36 573.562 1125.36 511.877L1125.39 511.877C1125.37 468.75 1116.86 426.048 1100.36 386.204C1083.83 346.31 1059.61 310.063 1029.08 279.53C998.547 248.997 962.299 224.777 922.406 208.253C882.513 191.728 839.756 183.224 796.576 183.224C753.397 183.224 710.641 191.729 670.749 208.253C630.856 224.777 594.608 248.997 564.075 279.53C533.542 310.063 509.322 346.31 492.798 386.204C476.274 426.097 467.769 468.854 467.769 512.034L467.729 512.034C467.729 573.719 455.579 634.801 431.973 691.791C408.367 748.781 373.767 800.564 330.149 844.182C286.53 887.801 234.748 922.401 177.757 946.007C120.767 969.613 59.6856 981.763 -2.00004 981.763L-2.00003 840.844C41.1799 840.844 83.9371 832.339 123.83 815.815C163.723 799.291 199.971 775.071 230.504 744.538C261.037 714.005 285.257 677.757 301.781 637.864C318.305 597.971 326.81 555.214 326.81 512.034L326.85 512.034C326.85 450.348 339 389.266 362.606 332.276C386.212 275.286 420.812 223.504 464.431 179.885C508.049 136.267 559.831 101.667 616.822 78.0608C673.812 54.4547 734.893 42.3048 796.579 42.3048L796.576 42.3048L1230.55 332.276C1254.16 389.266 1266.3 450.348 1266.3 512.034L1266.28 512.034C1266.3 555.16 1274.81 597.862 1291.31 637.707C1307.83 677.6 1332.05 713.848 1362.59 744.381C1393.12 774.913 1429.37 799.133 1469.26 815.658C1509.15 832.182 1551.91 840.687 1595.09 840.687L1595.09 981.606C1533.41 981.606 1472.32 969.456 1415.33 945.85C1358.34 922.243 1306.56 887.643 1262.94 844.025C1219.32 800.407 1184.72 748.624 1161.12 691.634ZM1230.55 332.276C1206.94 275.286 1172.34 223.504 1128.72 179.885C1085.11 136.267 1033.32 101.667 976.334 78.0608C919.344 54.4551 858.264 42.3052 796.579 42.3048L1230.55 332.276Z"
+                  fill="url(#paint2_linear_3110_5715)"
+                />
+              </mask>
+              <g mask="url(#mask1_3110_5715)">
+                <g filter="url(#filter0_f_3110_5715)">
+                  <circle
+                    cx="1107.59"
+                    cy="337.726"
+                    r="193.34"
+                    transform="rotate(90 1107.59 337.726)"
+                    fill="#2EDDE9"
+                  />
+                </g>
+              </g>
+              <path
+                opacity="0.3"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M1161.12 691.634C1137.51 634.644 1125.36 573.562 1125.36 511.877L1125.39 511.877C1125.37 468.75 1116.86 426.048 1100.36 386.204C1083.83 346.31 1059.61 310.063 1029.08 279.53C998.547 248.997 962.299 224.777 922.406 208.253C882.513 191.728 839.756 183.224 796.576 183.224C753.397 183.224 710.641 191.729 670.749 208.253C630.856 224.777 594.608 248.997 564.075 279.53C533.542 310.063 509.322 346.31 492.798 386.204C476.274 426.097 467.769 468.854 467.769 512.034L467.729 512.034C467.729 573.719 455.579 634.801 431.973 691.791C408.367 748.781 373.767 800.564 330.149 844.182C286.53 887.801 234.748 922.401 177.757 946.007C120.767 969.613 59.6856 981.763 -2.00004 981.763L-2.00003 840.844C41.1799 840.844 83.9371 832.339 123.83 815.815C163.723 799.291 199.971 775.071 230.504 744.538C261.037 714.005 285.257 677.757 301.781 637.864C318.305 597.971 326.81 555.214 326.81 512.034L326.85 512.034C326.85 450.348 339 389.266 362.606 332.276C386.212 275.286 420.812 223.504 464.431 179.885C508.049 136.267 559.831 101.667 616.822 78.0608C673.812 54.4547 734.893 42.3048 796.579 42.3048L796.576 42.3048L1230.55 332.276C1254.16 389.266 1266.3 450.348 1266.3 512.034L1266.28 512.034C1266.3 555.16 1274.81 597.862 1291.31 637.707C1307.83 677.6 1332.05 713.848 1362.59 744.381C1393.12 774.913 1429.37 799.133 1469.26 815.658C1509.15 832.182 1551.91 840.687 1595.09 840.687L1595.09 981.606C1533.41 981.606 1472.32 969.456 1415.33 945.85C1358.34 922.243 1306.56 887.643 1262.94 844.025C1219.32 800.407 1184.72 748.624 1161.12 691.634ZM1230.55 332.276C1206.94 275.286 1172.34 223.504 1128.72 179.885C1085.11 136.267 1033.32 101.667 976.334 78.0608C919.344 54.4551 858.264 42.3052 796.579 42.3048L1230.55 332.276Z"
+                fill="url(#paint3_linear_3110_5715)"
+              />
+              <mask
+                id="mask2_3110_5715"
+                mask-type="alpha"
+                maskUnits="userSpaceOnUse"
+                x="-2"
+                y="42"
+                width="1598"
+                height="940"
+              >
+                <path
+                  opacity="0.3"
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M1161.12 691.634C1137.51 634.644 1125.36 573.562 1125.36 511.877L1125.39 511.877C1125.37 468.75 1116.86 426.048 1100.36 386.204C1083.83 346.31 1059.61 310.063 1029.08 279.53C998.547 248.997 962.299 224.777 922.406 208.253C882.513 191.728 839.756 183.224 796.576 183.224C753.397 183.224 710.641 191.729 670.749 208.253C630.856 224.777 594.608 248.997 564.075 279.53C533.542 310.063 509.322 346.31 492.798 386.204C476.274 426.097 467.769 468.854 467.769 512.034L467.729 512.034C467.729 573.719 455.579 634.801 431.973 691.791C408.367 748.781 373.767 800.564 330.149 844.182C286.53 887.801 234.748 922.401 177.757 946.007C120.767 969.613 59.6856 981.763 -2.00004 981.763L-2.00003 840.844C41.1799 840.844 83.9371 832.339 123.83 815.815C163.723 799.291 199.971 775.071 230.504 744.538C261.037 714.005 285.257 677.757 301.781 637.864C318.305 597.971 326.81 555.214 326.81 512.034L326.85 512.034C326.85 450.348 339 389.266 362.606 332.276C386.212 275.286 420.812 223.504 464.431 179.885C508.049 136.267 559.831 101.667 616.822 78.0608C673.812 54.4547 734.893 42.3048 796.579 42.3048L796.576 42.3048L1230.55 332.276C1254.16 389.266 1266.3 450.348 1266.3 512.034L1266.28 512.034C1266.3 555.16 1274.81 597.862 1291.31 637.707C1307.83 677.6 1332.05 713.848 1362.59 744.381C1393.12 774.913 1429.37 799.133 1469.26 815.658C1509.15 832.182 1551.91 840.687 1595.09 840.687L1595.09 981.606C1533.41 981.606 1472.32 969.456 1415.33 945.85C1358.34 922.243 1306.56 887.643 1262.94 844.025C1219.32 800.407 1184.72 748.624 1161.12 691.634ZM1230.55 332.276C1206.94 275.286 1172.34 223.504 1128.72 179.885C1085.11 136.267 1033.32 101.667 976.334 78.0608C919.344 54.4551 858.264 42.3052 796.579 42.3048L1230.55 332.276Z"
+                  fill="url(#paint4_linear_3110_5715)"
+                />
+              </mask>
+              <g mask="url(#mask2_3110_5715)">
+                <g filter="url(#filter1_f_3110_5715)">
+                  <circle
+                    cx="318.593"
+                    cy="727.59"
+                    r="193.34"
+                    transform="rotate(90 318.593 727.59)"
+                    fill="#49B4E1"
+                  />
+                </g>
+              </g>
+              <path
+                opacity="0.3"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M1161.12 332.43C1137.51 389.421 1125.36 450.502 1125.36 512.188L1125.39 512.188C1125.37 555.315 1116.86 598.017 1100.36 637.862C1083.83 677.755 1059.61 714.003 1029.08 744.536C998.547 775.069 962.299 799.289 922.406 815.813C882.514 832.337 839.758 840.842 796.579 840.842C753.399 840.842 710.642 832.337 670.749 815.813C630.856 799.288 594.608 775.068 564.075 744.536C533.542 714.003 509.322 677.755 492.798 637.862C476.274 597.969 467.769 555.212 467.769 512.032L467.729 512.032C467.729 450.346 455.579 389.264 431.973 332.274C408.367 275.284 373.767 223.501 330.149 179.883C286.53 136.265 234.748 101.665 177.757 78.0586C120.767 54.4525 59.6857 42.3026 -1.99996 42.3026L-1.99997 183.221C41.18 183.221 83.9372 191.726 123.83 208.251C163.723 224.775 199.971 248.995 230.504 279.528C261.037 310.06 285.257 346.308 301.781 386.201C318.305 426.094 326.81 468.852 326.81 512.032L326.85 512.032C326.85 573.717 339 634.799 362.606 691.789C386.212 748.779 420.812 800.562 464.431 844.18C508.049 887.799 559.831 922.399 616.822 946.005C673.811 969.61 734.891 981.76 796.576 981.761L1230.55 691.789C1254.16 634.799 1266.31 573.717 1266.31 512.032L1266.28 512.032C1266.3 468.905 1274.81 426.203 1291.31 386.358C1307.83 346.465 1332.05 310.217 1362.59 279.684C1393.12 249.151 1429.37 224.931 1469.26 208.407C1509.15 191.883 1551.91 183.378 1595.09 183.378L1595.09 42.4589C1533.41 42.4589 1472.32 54.6088 1415.33 78.2149C1358.34 101.821 1306.56 136.421 1262.94 180.039C1219.32 223.658 1184.72 275.44 1161.12 332.43Z"
+                fill="url(#paint5_linear_3110_5715)"
+              />
+              <path
+                opacity="0.3"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M431.976 290.129C455.582 347.119 467.732 408.201 467.732 469.886L467.706 469.886C467.727 513.013 476.231 555.715 492.736 595.559C509.26 635.452 533.48 671.7 564.013 702.233C594.545 732.766 630.793 756.986 670.686 773.51C710.579 790.034 753.337 798.539 796.517 798.539C839.694 798.538 882.449 790.034 922.34 773.51C962.233 756.986 998.481 732.766 1029.01 702.233C1059.55 671.7 1083.77 635.453 1100.29 595.559C1116.82 555.666 1125.32 512.909 1125.32 469.729L1266.24 469.729C1266.24 531.415 1254.09 592.497 1230.48 649.487C1206.88 706.477 1172.28 758.259 1128.66 801.878C1085.04 845.496 1033.26 880.096 976.267 903.702C919.277 927.308 858.195 939.458 796.51 939.458L796.51 939.458C734.826 939.457 673.747 927.307 616.759 903.702C559.769 880.096 507.986 845.496 464.368 801.878C420.75 758.259 386.15 706.477 362.544 649.487C338.938 592.496 326.788 531.415 326.788 469.729L326.814 469.729C326.793 426.603 318.289 383.901 301.784 344.056C285.26 304.163 261.04 267.915 230.507 237.382C199.975 206.85 163.727 182.63 123.834 166.105C83.9405 149.581 41.1834 141.076 -1.99661 141.076L-1.9966 0.15741C59.6891 0.157412 120.771 12.3073 177.761 35.9134C234.751 59.5195 286.534 94.1195 330.152 137.738C373.77 181.356 408.37 233.139 431.976 290.129ZM1125.36 469.729C1125.36 408.043 1137.51 346.962 1161.12 289.972C1184.72 232.981 1219.32 181.199 1262.94 137.581C1306.56 93.9622 1358.34 59.3622 1415.33 35.7561C1472.32 12.15 1533.41 0.00012815 1595.09 0.000130846L1595.09 140.919C1551.91 140.919 1509.15 149.424 1469.26 165.948C1429.37 182.472 1393.12 206.692 1362.59 237.225C1332.05 267.758 1307.83 304.006 1291.31 343.899C1274.79 383.792 1266.28 426.549 1266.28 469.729L1125.36 469.729Z"
+                fill="url(#paint6_linear_3110_5715)"
+              />
+              <path
+                opacity="0.3"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M431.976 290.129C455.582 347.119 467.732 408.201 467.732 469.886L467.706 469.886C467.727 513.013 476.231 555.715 492.736 595.559C509.26 635.452 533.48 671.7 564.013 702.233C594.545 732.766 630.793 756.986 670.686 773.51C710.579 790.034 753.337 798.539 796.517 798.539C839.694 798.538 882.449 790.034 922.34 773.51C962.233 756.986 998.481 732.766 1029.01 702.233C1059.55 671.7 1083.77 635.453 1100.29 595.559C1116.82 555.666 1125.32 512.909 1125.32 469.729L1266.24 469.729C1266.24 531.415 1254.09 592.497 1230.48 649.487C1206.88 706.477 1172.28 758.259 1128.66 801.878C1085.04 845.496 1033.26 880.096 976.267 903.702C919.277 927.308 858.195 939.458 796.51 939.458L796.51 939.458C734.826 939.457 673.747 927.307 616.759 903.702C559.769 880.096 507.986 845.496 464.368 801.878C420.75 758.259 386.15 706.477 362.544 649.487C338.938 592.496 326.788 531.415 326.788 469.729L326.814 469.729C326.793 426.603 318.289 383.901 301.784 344.056C285.26 304.163 261.04 267.915 230.507 237.382C199.975 206.85 163.727 182.63 123.834 166.105C83.9405 149.581 41.1834 141.076 -1.99661 141.076L-1.9966 0.15741C59.6891 0.157412 120.771 12.3073 177.761 35.9134C234.751 59.5195 286.534 94.1195 330.152 137.738C373.77 181.356 408.37 233.139 431.976 290.129ZM1125.36 469.729C1125.36 408.043 1137.51 346.962 1161.12 289.972C1184.72 232.981 1219.32 181.199 1262.94 137.581C1306.56 93.9622 1358.34 59.3622 1415.33 35.7561C1472.32 12.15 1533.41 0.00012815 1595.09 0.000130846L1595.09 140.919C1551.91 140.919 1509.15 149.424 1469.26 165.948C1429.37 182.472 1393.12 206.692 1362.59 237.225C1332.05 267.758 1307.83 304.006 1291.31 343.899C1274.79 383.792 1266.28 426.549 1266.28 469.729L1125.36 469.729Z"
+                fill="url(#paint7_linear_3110_5715)"
+              />
+            </g>
+          </g>
+          <defs>
+            <filter
+              id="filter0_f_3110_5715"
+              x="746.845"
+              y="-23.0147"
+              width="721.481"
+              height="721.481"
+              filterUnits="userSpaceOnUse"
+              color-interpolation-filters="sRGB"
+            >
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feBlend
+                mode="normal"
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <feGaussianBlur
+                stdDeviation="83.7003"
+                result="effect1_foregroundBlur_3110_5715"
+              />
+            </filter>
+            <filter
+              id="filter1_f_3110_5715"
+              x="-42.1473"
+              y="366.85"
+              width="721.481"
+              height="721.481"
+              filterUnits="userSpaceOnUse"
+              color-interpolation-filters="sRGB"
+            >
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feBlend
+                mode="normal"
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <feGaussianBlur
+                stdDeviation="83.7003"
+                result="effect1_foregroundBlur_3110_5715"
+              />
+            </filter>
+            <linearGradient
+              id="paint0_linear_3110_5715"
+              x1="-3.79886e-06"
+              y1="461.5"
+              x2="808"
+              y2="461.5"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop offset="0.635417" stop-color="#D9D9D9" />
+              <stop offset="1" stop-color="#D9D9D9" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient
+              id="paint1_linear_3110_5715"
+              x1="1643.99"
+              y1="912.524"
+              x2="796.547"
+              y2="411.015"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="white" />
+              <stop offset="1" stop-color="white" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient
+              id="paint2_linear_3110_5715"
+              x1="1643.99"
+              y1="912.524"
+              x2="796.547"
+              y2="411.015"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="white" />
+              <stop offset="1" stop-color="white" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient
+              id="paint3_linear_3110_5715"
+              x1="-2.00011"
+              y1="1088.71"
+              x2="714.47"
+              y2="248.39"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="white" />
+              <stop offset="1" stop-color="white" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient
+              id="paint4_linear_3110_5715"
+              x1="-2.00011"
+              y1="1088.71"
+              x2="714.47"
+              y2="248.39"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="white" />
+              <stop offset="1" stop-color="white" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient
+              id="paint5_linear_3110_5715"
+              x1="68.0883"
+              y1="96.3848"
+              x2="359.217"
+              y2="260.787"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="white" />
+              <stop offset="1" stop-color="white" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient
+              id="paint6_linear_3110_5715"
+              x1="1427.19"
+              y1="-59.616"
+              x2="1223.22"
+              y2="311.835"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="white" />
+              <stop offset="1" stop-color="white" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient
+              id="paint7_linear_3110_5715"
+              x1="440.399"
+              y1="723.466"
+              x2="1146.76"
+              y2="702.301"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="white" stop-opacity="0" />
+              <stop offset="0.489583" stop-color="white" />
+              <stop offset="0.96875" stop-color="white" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+        </svg>
       </section>
 
       <section className={styles.section}>
@@ -2612,6 +3228,7 @@ export default function Landing() {
               <div className={styles.backers2Title}>Title Goes here</div>
             </div>
           </div>
+
           <div className={styles.backers2 + " flex"}>
             <img src="./tushar.svg" className="mr-2" />
             <div>
@@ -2619,6 +3236,17 @@ export default function Landing() {
               <div className={styles.backers2Title}>Title Goes here</div>
             </div>
           </div>
+          {mobile ? (
+            <div className={styles.backers2 + " flex"}>
+              <img src="./zhi.svg" className="mr-2" />
+              <div>
+                <div className={styles.backers2Name}>Zhi Hao Loy</div>
+                <div className={styles.backers2Title}>Title Goes here</div>
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
         <div
           className={classnames(
@@ -2634,17 +3262,21 @@ export default function Landing() {
               <div className={styles.backers2Title}>Title Goes here</div>
             </div>
           </div>
-          <div className={styles.backers2 + " flex"}>
-            <img src="./zhi.svg" className="mr-2" />
-            <div>
-              <div className={styles.backers2Name}>Zhi Hao Loy</div>
-              <div className={styles.backers2Title}>Title Goes here</div>
+          {mobile ? (
+            ""
+          ) : (
+            <div className={styles.backers2 + " flex"}>
+              <img src="./zhi.svg" className="mr-2" />
+              <div>
+                <div className={styles.backers2Name}>Zhi Hao Loy</div>
+                <div className={styles.backers2Title}>Title Goes here</div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
-      <section className={styles.section}>
+      <section className={styles.section + " relative"}>
         <h3 className={styles.h3}>Meet the Team</h3>
         <div
           className={
@@ -2768,6 +3400,108 @@ export default function Landing() {
             </button>
           </div>
         </div>
+        <svg
+          width="418"
+          height="1024"
+          viewBox="0 0 418 1024"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={
+            mobile ? "hidden" : "absolute z-1 pointer-events-none left-0 top-0"
+          }
+        >
+          <g filter="url(#filter0_f_3129_8187)">
+            <path
+              d="M-295.954 733.855C-88.5255 591.999 9.33113 736.284 99.8606 645.754C190.39 555.225 190.39 408.448 99.8606 317.918C9.33109 227.389 -137.446 227.389 -227.976 317.918C-318.505 408.448 -518.343 918.806 -295.954 733.855Z"
+              fill="url(#paint0_radial_3129_8187)"
+            />
+          </g>
+          <defs>
+            <filter
+              id="filter0_f_3129_8187"
+              x="-647.287"
+              y="0.021019"
+              width="1065.04"
+              height="1023.89"
+              filterUnits="userSpaceOnUse"
+              color-interpolation-filters="sRGB"
+            >
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feBlend
+                mode="normal"
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <feGaussianBlur
+                stdDeviation="125"
+                result="effect1_foregroundBlur_3129_8187"
+              />
+            </filter>
+            <radialGradient
+              id="paint0_radial_3129_8187"
+              cx="0"
+              cy="0"
+              r="1"
+              gradientUnits="userSpaceOnUse"
+              gradientTransform="translate(-64.0576 481.836) rotate(45) scale(231.815 231.815)"
+            >
+              <stop offset="0.442708" stop-color="#992D81" />
+              <stop offset="1" stop-color="#6029DB" />
+            </radialGradient>
+          </defs>
+        </svg>
+        <svg
+          width="431"
+          height="1652"
+          viewBox="0 0 431 1652"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={
+            mobile ? "hidden" : "absolute z-1 pointer-events-none right-0"
+          }
+        >
+          <g filter="url(#filter0_f_3129_8188)">
+            <path
+              d="M471.459 1232.8C505.102 792.263 199.39 770.103 257.649 552.68C315.907 335.257 539.391 206.228 756.814 264.487C974.238 322.745 1103.27 546.229 1045.01 763.652C986.749 981.075 385.347 1733.99 471.459 1232.8Z"
+              fill="url(#paint0_radial_3129_8188)"
+            />
+          </g>
+          <defs>
+            <filter
+              id="filter0_f_3129_8188"
+              x="0.244629"
+              y="0.497864"
+              width="1308.75"
+              height="1651.19"
+              filterUnits="userSpaceOnUse"
+              color-interpolation-filters="sRGB"
+            >
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feBlend
+                mode="normal"
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <feGaussianBlur
+                stdDeviation="125"
+                result="effect1_foregroundBlur_3129_8188"
+              />
+            </filter>
+            <radialGradient
+              id="paint0_radial_3129_8188"
+              cx="0"
+              cy="0"
+              r="1"
+              gradientUnits="userSpaceOnUse"
+              gradientTransform="translate(651.328 658.166) rotate(-165) scale(407.567 407.567)"
+            >
+              <stop offset="0.442708" stop-color="#992D81" />
+              <stop offset="1" stop-color="#6029DB" />
+            </radialGradient>
+          </defs>
+        </svg>
       </section>
 
       <footer
@@ -2778,25 +3512,105 @@ export default function Landing() {
           <div className={styles.footerSection}>
             <div className={styles.footerTitle}>Learn more about Gitopia</div>
             <div className="flex sm:flex-col">
-              <div className={styles.footerLinks}>About Gitopia</div>
-              <div className={styles.footerLinks}>LORE tokeneconomics </div>
-              <div className={styles.footerLinks}>Whitepaper</div>
+              <div
+                onClick={() => {
+                  if (window) {
+                    window.open("https://gitopia.com/whitepaper.pdf");
+                  }
+                }}
+                target="_blank"
+                className={styles.footerLinks + " cursor-pointer"}
+              >
+                Whitepaper
+              </div>
+              <div className={styles.footerLinks + " invisible"}>
+                About Gitopia
+              </div>
+              <div className={styles.footerLinks + " invisible"}>
+                LORE tokeneconomics{" "}
+              </div>
             </div>
           </div>
           <div className={styles.footerSection + (mobile ? " pr-14" : "")}>
             <div className={styles.footerTitle}>Guide to Gitopia</div>
             <div className="flex sm:flex-col">
-              <div className={styles.footerLinks}>Documentation</div>
-              <div className={styles.footerLinks}>Videos</div>
-              <div className={styles.footerLinks}>Blog</div>
+              <div
+                onClick={() => {
+                  if (window) {
+                    window.open("https://docs.gitopia.com/");
+                  }
+                }}
+                target="_blank"
+                className={styles.footerLinks + " cursor-pointer"}
+              >
+                Documentation
+              </div>
+              <div
+                onClick={() => {
+                  if (window) {
+                    window.open(
+                      "https://www.youtube.com/channel/UCsAVjkAUnT5krP_e8HyFRHg"
+                    );
+                  }
+                }}
+                target="_blank"
+                className={styles.footerLinks + " cursor-pointer"}
+              >
+                Videos
+              </div>
+              <div
+                onClick={() => {
+                  if (window) {
+                    window.open("https://blog.gitopia.com/");
+                  }
+                }}
+                target="_blank"
+                className={styles.footerLinks + " cursor-pointer"}
+              >
+                Blog
+              </div>
             </div>
           </div>
           <div className={styles.footerSection}>
             <div className={styles.footerTitle}>Quick links</div>
             <div className="flex sm:flex-col">
-              <div className={styles.footerLinks}>Git Commands</div>
-              <div className={styles.footerLinks}>The Game of $LORE</div>
-              <div className={styles.footerLinks}>Season of Blockchains</div>
+              <div
+                onClick={() => {
+                  if (window) {
+                    window.open(
+                      "https://docs.gitopia.com/gitguides/basic-commands/index.html"
+                    );
+                  }
+                }}
+                target="_blank"
+                className={styles.footerLinks + " cursor-pointer"}
+              >
+                Git Commands
+              </div>
+              <div
+                onClick={() => {
+                  if (window) {
+                    window.open(
+                      "https://blog.gitopia.com/post/2022/04/game-of-lore/"
+                    );
+                  }
+                }}
+                target="_blank"
+                className={styles.footerLinks + " cursor-pointer"}
+              >
+                The Game of $LORE
+              </div>
+              <div
+                onClick={() => {
+                  if (window) {
+                    window.open("https://gitopia.com/season-of-blockchains");
+                  }
+                }}
+                target="_blank"
+                className={styles.footerLinks + " cursor-pointer"}
+              >
+                Season of Blockchains
+              </div>
             </div>
           </div>
           <div className={styles.footerSection + (mobile ? " pr-20" : "")}>
@@ -2808,6 +3622,13 @@ export default function Landing() {
                 viewBox="0 0 40 41"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                onClick={() => {
+                  if (window) {
+                    window.open("https://discord.gg/95SQmmWC");
+                  }
+                }}
+                target="_blank"
+                className="cursor-pointer"
               >
                 <rect
                   y="0.818115"
@@ -2844,6 +3665,13 @@ export default function Landing() {
                 viewBox="0 0 41 41"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                onClick={() => {
+                  if (window) {
+                    window.open("https://t.me/Gitopia");
+                  }
+                }}
+                target="_blank"
+                className="cursor-pointer"
               >
                 <rect
                   x="0.697662"
@@ -2876,6 +3704,13 @@ export default function Landing() {
                 viewBox="0 0 41 41"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                onClick={() => {
+                  if (window) {
+                    window.open("https://twitter.com/gitopiaDAO");
+                  }
+                }}
+                target="_blank"
+                className="cursor-pointer"
               >
                 <rect
                   x="0.395325"
@@ -2903,47 +3738,18 @@ export default function Landing() {
                 </defs>
               </svg>
               <svg
-                width="41"
-                height="41"
-                viewBox="0 0 41 41"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="0.0930176"
-                  y="0.818115"
-                  width="40"
-                  height="40"
-                  rx="20"
-                  fill="#222933"
-                />
-                <g clip-path="url(#clip0_3129_6359)">
-                  <path
-                    d="M20.0931 23.5323C21.5922 23.5323 22.8074 22.3171 22.8074 20.818C22.8074 19.319 21.5922 18.1038 20.0931 18.1038C18.5941 18.1038 17.3788 19.319 17.3788 20.818C17.3788 22.3171 18.5941 23.5323 20.0931 23.5323Z"
-                    fill="white"
-                  />
-                  <path
-                    d="M23.4852 12.6752H16.6995C14.0808 12.6752 11.9501 14.8066 11.9501 17.4258V24.2116C11.9501 26.8302 14.0815 28.9609 16.7008 28.9609H23.4865C26.1051 28.9609 28.2358 26.8295 28.2358 24.2102V17.4245C28.2358 14.8059 26.1045 12.6752 23.4852 12.6752ZM20.093 24.8895C17.8476 24.8895 16.0216 23.0634 16.0216 20.818C16.0216 18.5726 17.8476 16.7466 20.093 16.7466C22.3384 16.7466 24.1644 18.5726 24.1644 20.818C24.1644 23.0634 22.3384 24.8895 20.093 24.8895ZM24.843 16.7466C24.4684 16.7466 24.1644 16.4426 24.1644 16.068C24.1644 15.6935 24.4684 15.3895 24.843 15.3895C25.2176 15.3895 25.5216 15.6935 25.5216 16.068C25.5216 16.4426 25.2176 16.7466 24.843 16.7466Z"
-                    fill="white"
-                  />
-                </g>
-                <defs>
-                  <clipPath id="clip0_3129_6359">
-                    <rect
-                      width="17.1429"
-                      height="17.1429"
-                      fill="white"
-                      transform="translate(11.5216 12.2466)"
-                    />
-                  </clipPath>
-                </defs>
-              </svg>
-              <svg
                 width="40"
                 height="40"
                 viewBox="0 0 40 40"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                onClick={() => {
+                  if (window) {
+                    window.open("https://www.reddit.com/r/Gitopia/");
+                  }
+                }}
+                target="_blank"
+                className="cursor-pointer"
               >
                 <rect width="40" height="40" rx="20" fill="#222933" />
                 <path
@@ -2957,6 +3763,15 @@ export default function Landing() {
                 viewBox="0 0 40 40"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                onClick={() => {
+                  if (window) {
+                    window.open(
+                      "https://www.youtube.com/channel/UCsAVjkAUnT5krP_e8HyFRHg"
+                    );
+                  }
+                }}
+                target="_blank"
+                className="cursor-pointer"
               >
                 <rect width="40" height="40" rx="20" fill="#222933" />
                 <g clip-path="url(#clip0_3235_6604)">
@@ -2980,7 +3795,16 @@ export default function Landing() {
                   </clipPath>
                 </defs>
               </svg>
-              <div className="relative">
+              <div
+                className="relative"
+                onClick={() => {
+                  if (window) {
+                    window.open("https://www.linkedin.com/company/gitopia/");
+                  }
+                }}
+                target="_blank"
+                className="cursor-pointer"
+              >
                 <svg
                   width="40"
                   height="40"
@@ -3026,6 +3850,13 @@ export default function Landing() {
                 viewBox="0 0 40 40"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                onClick={() => {
+                  if (window) {
+                    window.open("https://forum.gitopia.com/");
+                  }
+                }}
+                target="_blank"
+                className="cursor-pointer"
               >
                 <rect width="40" height="40" rx="20" fill="#222933" />
                 <path
@@ -3048,54 +3879,16 @@ export default function Landing() {
               </svg>
             </div>
           </div>
-          {/* 
-        <div className={styles.footerLinks}>
-           <a href="#">About Us</a> 
-          
-
-          <a href="https://gitopia.com/whitepaper.pdf">Whitepaper</a>
-
-          <a
-            href="https://twitter.com/gitopiadao"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Twitter
-          </a>
-
-          <a href="https://t.me/Gitopia" target="_blank" rel="noreferrer">
-            Telegram
-          </a>
-
-          <a href="https://medium.com/gitopia" target="_blank" rel="noreferrer">
-            Medium
-          </a>
-
-          <a
-            href="https://discord.gg/mVpQVW3vKE"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Discord
-          </a>
-        </div>
-        <div>
-          <button
-            onClick={() => {
-              if (window) {
-                window.open("https://t.me/Gitopia");
-              }
-            }}
-            type="button"
-            className="px-16 lg:px-28 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-          >
-            Contact Us
-          </button>
-
-        </div>
-*/}{" "}
         </div>
         <hr className={styles.divider}></hr>
+        <div className={"flex flex-col sm:flex-row " + styles.footerEnd}>
+          <div className="">Copyright © 2021 Gitopia | All Rights Reserved</div>
+          <div className="flex ">
+            <div className="mr-4">Privacy policy</div>
+            <div className="mr-4">Terms of services</div>
+            <div className="">Blockchain Disclaimer</div>
+          </div>
+        </div>
       </footer>
     </div>
   );

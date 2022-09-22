@@ -497,14 +497,13 @@
   justify-content: center;
   background-image: url("/logo-g.svg");
   background-repeat: no-repeat;
-  background-size: 70px;
+  
   background-position: 50%;
   background-color:rgba(255, 233, 253, 0.05) ;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   position: relative;
-  top: 5px;
-  border-bottom: none;
+
 }
 
 .midLogo:before,
@@ -513,11 +512,12 @@
   position: absolute;
   width: 20px;
   height: 20px;
-  bottom: 0px;
+  bottom: -5px;
 }
 
 .midLogo:after {
   right: -15px;
+
   background: #13181E
     radial-gradient(
       circle at right top,
@@ -616,10 +616,26 @@
 .getStarted {
   margin-top:100px;
 }
+
 .getStartedDes {
   text-align: center;
   width: 800px;
   margin-bottom: 50px;
+}
+
+.video-responsive {
+  overflow: hidden;
+  padding-bottom: 56.25%;
+  position: relative;
+  height: 0;
+}
+
+.video-responsive iframe {
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
 }
 
 .censorship {
@@ -830,11 +846,21 @@
 }
 
 .divider {
-  margin-left: 70px;
   margin-top: 35px;
   opacity: 0.1;
   border-left: 1px solid #222933;
-  width: 1030px;
+  width: 70%;
+}
+
+.footerEnd {
+  margin-top: 5px;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 20px;
+  color: #5C6A77;
+  justify-content: space-between;
+  width: 70%;
+  flex-direction: row;
 }
 
 @media (max-width: 1024px) {
@@ -1234,6 +1260,14 @@
   .footerLinks {
     padding-right: 20px;
     width: auto;
+    flex-direction: column;
+  }
+  .divider {
+    width: 100%;
+  }
+  .footerEnd {
+    align-items: center;
+    width: 100%;
     flex-direction: column;
   }
 }
