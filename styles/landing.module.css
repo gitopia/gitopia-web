@@ -2,7 +2,7 @@
 
 .wrapper {
   font-family: "Oxygen";
-  background: #19072f;
+  background: #13181E;
   position: relative;
   z-index: 1;
   overflow-x: hidden;
@@ -24,7 +24,7 @@
 }
 
 .headerMenu {
-  border-bottom: 2px solid rgb(255 255 255 / 10%);
+  border-bottom: 1px solid rgba(255,255,255,0.5);
   height: 40px;
 }
 
@@ -43,6 +43,13 @@
   display: none;
 }
 
+.vl {
+  margin-top: 10px;
+  opacity: 0.3;
+  border-left: 1px solid #e5e5e5;
+  height: 20px;
+}
+
 .section {
   display: flex;
   justify-content: center;
@@ -51,70 +58,53 @@
 }
 
 .heroSection {
-  min-height: 600px;
+  min-height: 800px;
   position: relative;
   z-index: 2;
+  margin-bottom: 120px;
 }
 
-.wings {
-  position: relative;
-  z-index: 1;
-}
-
-.wings:after,
-.wings:before {
-  content: "";
-  position: absolute;
-  width: 350px;
-  height: 350px;
-  top: -25px;
-  background-repeat: no-repeat;
-  background-size: contain;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.wings:after {
-  background-image: url("/landing-hero.svg");
-  left: 75%;
-}
-
-.wings:before {
-  transform: scaleX(-1);
-  right: 75%;
-  background-image: url("/landing-hero.svg");
+.topHeading {
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 150%;
+  color: #66CE67;
+  margin-bottom: 20px;
 }
 
 .row {
   max-width: 900px;
   text-align: center;
+  margin-bottom: 20px;
 }
 
 .rowLeftAligned {
-  width: 800px;
+  width: 950px;
   text-align: left;
-  align-items: flex-start;
+  align-items: center;
   position: relative;
   z-index: 1;
 }
 
 .h1 {
-  font-size: 64px;
+  font-size: 56px;
   line-height: 1.142em;
   font-weight: 700;
+  color: #FFFFFF;
 }
 
 .h3 {
   font-size: 48px;
   line-height: 1.142em;
   font-weight: 700;
+  color: #ffffff
 }
 
 .b16 {
   font-size: 16px;
-  line-height: 1.5em;
-  margin: 36px auto;
-  max-width: 512px;
+  line-height: 150%;
+  margin: 0px auto;
+  width: 396px;
 }
 
 .b18 {
@@ -131,13 +121,15 @@
 }
 
 .byline {
-  margin: 34px auto 54px;
+  margin-top: 34px ;
+  margin-bottom: 80px;
   font-size: 22px;
-  line-height: 1.5em;
-  font-weight: 700;
-  max-width: 612px;
+  line-height: 150%;
+  font-weight: 400;
+  max-width: 696px;
   position: relative;
   z-index: 1;
+  color: #FFFFFF;
 }
 
 .primaryCTA {
@@ -154,21 +146,6 @@
   font-weight: 700;
 }
 
-.blob1 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.blob2 {
-  position: absolute;
-  top: 400px;
-  right: 0;
-  pointer-events: none;
-  z-index: 1;
-}
 
 .hlHorizontal {
   position: relative;
@@ -221,7 +198,7 @@
 
 .circleSectionLink {
   font-size: 12px;
-  line-height: 1.5em;
+  line-height: 150%;
   margin-top: 36px;
   font-weight: 700;
   text-transform: uppercase;
@@ -245,6 +222,73 @@
   display: inline;
 }
 
+.collaborationBenefitsSection {
+  margin-top: 170px;
+  margin-bottom: 160px;
+}
+
+.collaborationsBenefitsCard1 {
+  margin-top: 50px;
+  margin-right: 80px;
+}
+
+.collaborationsBenefitsCard1Title {
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 100.27%;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  width: 327px;
+}
+
+.benefitsCard1Title {
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 113.27%;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  width: 278px;
+}
+
+.collaborationsBenefitsCard1Body {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  color: #FFFFFF;
+  width: 418px;
+  margin-top: 25px;
+  margin-bottom: 35px;
+}
+
+.collaborationsBenefitsCard1Button {
+  width: 318px;
+  display: flex;
+  justify-content: left;
+  text-align: center;
+}
+
+.collaborationsBenefitsCard2Title {
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 100.27%;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  margin-top: 30px;
+}
+
+.collaborationsBenefitsCard2Image {
+  
+}
+
+.collaborationsBenefitsCard2Body {
+  margin-top: 8px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 139%;
+  color:#ffffff;
+  width: 215px;
+}
+
 .storageSection {
   min-height: 800px;
 }
@@ -266,7 +310,7 @@
     rgba(0, 0, 0, 1) 50%,
     rgba(0, 0, 0, 0) 100%
   );
-  border-right: 2px solid #cbd4dd;
+  border-right: 2px solid #613AC2;
 }
 
 .storageCircle {
@@ -274,7 +318,7 @@
   height: 72px;
   border-radius: 50%;
   border: 2px solid #37264c;
-  background: #19072f;
+  background: #13181E;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -290,7 +334,7 @@
 .storageCircleContent2 {
   width: 12px;
   height: 12px;
-  background: #883be6;
+  background: #13181E;
 }
 .storageCircleContent3 {
   width: 0px;
@@ -321,8 +365,8 @@
   top: 80px;
   left: -90px;
   border-radius: 50%;
-  border: 2px solid #cbd4dd;
-  background: url("/logo-g.svg") no-repeat, #19072f;
+  border: 2px solid #613AC2;
+  background: url("/logo-g.svg") no-repeat, #13181E;
   background-size: 120px;
   background-position: 50% 50%;
 }
@@ -353,6 +397,42 @@
   animation: flash 2s ease-in-out 2s infinite;
 }
 
+.storageSectionDecentralization {
+  margin-top: 12px;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 114.27%;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #91A3B4;
+}
+
+.storageSectionMessage {
+  background:rgba(255, 233, 253, 0.05);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 114.27%;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.storagePlatforms {
+  width: 190px;
+  height: 65px;
+  background: #222933;
+  border-radius: 17px;
+  font-size: 28px;
+}
+.storagePlatformsImage {
+  width: 45.46px;
+  height: 44px;
+}
+
+.storagePlatformsImg {
+  width: 152.5px;
+  height: 65.5px;
+}
+
 @keyframes flash {
   from {
     transform: translateX(-350px);
@@ -380,17 +460,20 @@
 
 .decentralizedImage {
   position: absolute;
-  right: 0;
-  bottom: -100px;
-  width: 670px;
-  height: 480px;
+  bottom: -150px;
+  width: 800px;
+  height: 536px;
   z-index: -1;
+  right: 25px;
 }
 
 .decentralizedDesc {
-  width: 320px;
+  width: 383px;
   margin-left: 16px;
-  line-height: 1.5em;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 160.06%;
+  letter-spacing: 0.07em;
 }
 
 .mb36 {
@@ -403,6 +486,7 @@
 
 .mb72 {
   margin-bottom: 72px;
+  width: 400px;
 }
 
 .midLogo {
@@ -415,12 +499,11 @@
   background-repeat: no-repeat;
   background-size: 70px;
   background-position: 50%;
-  background-color: rgb(37 19 57);
+  background-color:rgba(255, 233, 253, 0.05) ;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   position: relative;
   top: 5px;
-  border: 5px solid rgba(136, 59, 230, 1);
   border-bottom: none;
 }
 
@@ -434,29 +517,29 @@
 }
 
 .midLogo:after {
-  right: -20px;
-  background: #19072f
+  right: -15px;
+  background: #13181E
     radial-gradient(
       circle at right top,
       rgba(0, 0, 0, 0) calc(55% - 1px),
-      rgb(136, 59, 230) calc(55% - 1px + 0.3px),
-      rgb(136, 59, 230) calc(55% - 1px + 5px),
-      rgb(37, 19, 57) calc(55% - 1px + 5px + 0.3px),
-      rgb(37, 19, 57) 100%
+      rgba(255, 233, 253, 0.05) calc(55% - 1px + 0.3px),
+      rgba(255, 233, 253, 0.05) calc(55% - 1px + 5px),
+      rgba(255, 233, 253, 0.05) calc(55% - 1px + 5px + 0.3px),
+      rgba(255, 233, 253, 0.05) 100%
     )
     repeat scroll 0% 0% / auto padding-box border-box;
 }
 
 .midLogo::before {
-  left: -20px;
-  background: #19072f
+  left: -15px;
+  background: #13181E
     radial-gradient(
       circle at left top,
       rgba(0, 0, 0, 0) calc(55% - 1px),
-      rgb(136, 59, 230) calc(55% - 1px + 0.3px),
-      rgb(136, 59, 230) calc(55% - 1px + 5px),
-      rgb(37, 19, 57) calc(55% - 1px + 5px + 0.3px),
-      rgb(37, 19, 57) 100%
+      rgba(255, 233, 253, 0.05) calc(55% - 1px + 0.3px),
+      rgba(255, 233, 253, 0.05) calc(55% - 1px + 5px),
+      rgba(255, 233, 253, 0.05) calc(55% - 1px + 5px + 0.3px),
+      rgba(255, 233, 253, 0.05) 100%
     )
     repeat scroll 0% 0% / auto padding-box border-box;
 }
@@ -496,125 +579,157 @@
   border-left: 2px solid #66ce67;
 }
 
-.censorshipSection {
-  margin-top: 120px;
+.openSource {
+  margin-top: 150px;
+  width: 460px;
+  height: 621px;
+  background: #222933;
+  border-radius: 31px;
+  align-items: left;
+  padding: 30px;
 }
 
-.governanceSection {
-  margin-top: 180px;
+.openSourceTitle {
+  font-weight: 700;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  width: 366px;
 }
+
+.openSourceDescription {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  width: 387px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 154.27%;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+}
+
 
 .ml16 {
   margin-left: 16px;
 }
 
-.cgHeadline {
-  width: 300px;
+.getStarted {
+  margin-top:100px;
 }
-
-.cgRow {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
+.getStartedDes {
+  text-align: center;
   width: 800px;
+  margin-bottom: 50px;
 }
 
-.cgMidCol {
-  width: 120px;
+.censorship {
+   margin-right: 450px;
+   margin-top: 60px;
 }
 
-.cgEndCol {
-  width: 380px;
-  padding-top: 16px;
+.censorshipResistant {
+  width: 241px;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 113.27%;
+  letter-spacing: -0.02em;
 }
 
-.roadmapSection {
-  margin-top: 200px;
-  margin-bottom: 300px;
+.censorshipDescription {
+  width: 269px;
+  font-size: 16px;
+  line-height: 154.27%;
+  letter-spacing: -0.02em;
 }
 
-.roadmapText {
-  width: 450px;
-}
-
-.roadmapImage {
+.embrace {
   position: absolute;
-  right: 0;
-  top: -30px;
-  width: 650px;
-  z-index: -1;
+  margin-left: 270px;
+  margin-top: 60px;
 }
 
-@media only screen and (-webkit-device-pixel-ratio: 2) {
-  .roadmapActionItem {
-    height: 99.5px;
-  }
+.secure {
+  margin-right: 20px;
+  margin-top: 340px;
 }
 
-.roadmapGraph {
-  position: absolute;
-  left: calc(45% - 200px);
-  width: 390px;
+.secureLogin {
+  width: 241px;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 113.27%;
+  letter-spacing: -0.02em;
 }
 
-.roadmapYearStart {
-  transform: rotate(90deg);
-  position: absolute;
-  left: calc(45% - 124px);
-  font-size: 18px;
-  top: 50px;
+.secureDescription {
+  width: 280px;
+  font-size: 16px;
+  line-height: 154.27%;
+  letter-spacing: -0.02em;
 }
 
-.roadmapYearEnd {
-  transform: rotate(90deg);
-  position: absolute;
-  left: calc(45% - 124px);
-  font-size: 18px;
-  bottom: -50px;
+.backers {
+  width: 220px;
+  height: 136px;
+  background: #222933;
+  border-radius: 17px;
+  padding: 20px;
+  position: relative;
+  margin-top: 60px;
 }
 
-.roadmapQtr {
-  width: 70%;
-  margin-bottom: 8px;
-  display: flex;
+.backersImg {
   align-items: center;
-  justify-content: flex-start;
 }
 
-.roadmapQtr:nth-child(odd) {
-  background: linear-gradient(
-    90deg,
-    rgba(248, 197, 181, 0.1) 0%,
-    rgba(179, 197, 244, 0) 100%
-  );
+.backersTitle {
+  top: 85%;
+  font-size: 10px;
+  line-height: 100.27%;
+  letter-spacing: -0.02em;
+  opacity: 0.5;
+  position: absolute;
 }
 
-.roadmapQtr:nth-child(even) {
-  background: linear-gradient(
-    90deg,
-    rgba(181, 199, 248, 0.1) 0%,
-    rgba(179, 197, 244, 0) 100%
-  );
+.backers2Section {
+  margin-top: 24px;
 }
 
-.roadmapQtrSize5 {
-  height: calc(78px * 5 - 8px);
+.backersSectionEnd{
+  margin-bottom: 180px;
 }
 
-.roadmapQtrSize4 {
-  height: calc(78px * 4 - 8px);
+.backers2 {
+  width: 220px;
+  height: 99px;
+  background: #222933;
+  border-radius: 17px;
+  position: relative;
+  padding: 25.5px 20px;
 }
 
-.roadmapQtrSize3 {
-  height: calc(78px * 3 - 8px);
+.backers2Name {
+  position: absolute;
+  width: 118px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 100.27%;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  top: 30px;
 }
 
-.roadmapQtrDisplay {
-  display: inline-block;
-  transform: rotate(90deg);
-  font-size: 100px;
-  opacity: 0.3;
-  margin-left: 100px;
+.backers2Title {
+  position: absolute;
+  width: 91px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 100.27%;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  opacity: 0.5;
+  top: 50px;
+
 }
 
 .teamCard {
@@ -644,7 +759,7 @@
 }
 
 .teamLabel {
-  background: #19072f;
+  background: #13181E;
   position: absolute;
   padding-left: 20px;
   padding-right: 20px;
@@ -653,8 +768,8 @@
 
 .teamName {
   text-align: center;
-  font-size: 26px;
-  line-height: 1.5em;
+  font-size: 24px;
+  line-height: 140%;
 }
 
 .teamDesig {
@@ -667,41 +782,17 @@
   width: 1000px;
 }
 
-.joinTeamContainer {
-  display: flex;
-  justify-content: center;
-  margin-top: 80px;
-  width: 800px;
-  height: 300px;
-}
-.joinTeamCard {
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-  padding: 5px;
-  height: 300px;
-  width: 800px;
+.joining {
+  margin-top: 310px;
+  margin-right: 40px;
 }
 
-.joinTeamBody {
-  margin-top: 30px;
-  width: 800px;
-}
-
-.joinTeamLogo {
-  margin: 20px 20px;
-  height: 380px;
-  width: 440px;
-}
-
-.joinTeamButton {
-  height: 50px;
-  width: 200px;
+.footerContainer {
+  margin-bottom: 200px;
 }
 
 .footer {
-  margin-top: 150px;
-  padding-bottom: 200px;
+  margin-top: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -715,16 +806,35 @@
   width: 240px;
 }
 
-.footerLinks {
-  display: flex;
-  justify-content: space-around;
+.footerSection {
+  margin-left: 50px;
 }
 
-.footerLinks a {
-  border-left: 2px solid #91a3b4;
-  color: white;
-  padding: 0 16px;
-  margin-right: 16px;
+.footerTitle {
+  margin-top: 60px;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 24px;
+  font-feature-settings: 'calt' off;
+  color: #FFFFFF;
+  opacity: 0.5;
+}
+
+.footerLinks {
+  margin-top: 10px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  font-feature-settings: 'calt' off;
+  color: #FFFFFF;
+}
+
+.divider {
+  margin-left: 70px;
+  margin-top: 35px;
+  opacity: 0.1;
+  border-left: 1px solid #222933;
+  width: 1030px;
 }
 
 @media (max-width: 1024px) {
@@ -766,6 +876,7 @@
   }
   .b16 {
     max-width: none;
+    width: auto;
   }
   .transitionRow {
     width: auto;
@@ -864,7 +975,7 @@
   }
 
   .teamLabel {
-    background: #19072f;
+    background: #13181E;
     height: 40px;
     width: 300px;
   }
@@ -886,52 +997,172 @@
     margin-bottom: 50px;
     flex-direction: row;
   }
-  .blob1,
-  .blob2 {
-    opacity: 0.3;
-  }
   .decentralizedDesc {
     width: 320px;
   }
 
-  .joinTeamContainer {
-    margin-top: 40px;
-    width: 700px;
-    height: 300px;
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-  }
-  .joinTeamCard {
-    padding: 30px;
-    width: 600px;
-    height: 300px;
-
-    overflow: hidden;
-  }
-  .joinTeamLogo {
-    margin: 30px 10px;
-    height: 100px;
-    width: 180px;
-  }
-  .joinTeamBody {
-    margin-top: 3px;
-    width: 100px;
-  }
-  .joinTeamTitle {
-    font-size: 18px;
-  }
-  .joinTeamContent {
-    font-size: 15px;
-  }
-  .joinTeamButton {
-    height: 40px;
-    width: 130px;
-    font-size: 14px;
-  }
 }
 
 @media (max-width: 640px) {
+  .headerLogo {
+    background-size: 120px;
+    width: 120px;
+    height: 50px;
+    margin-right: 20px;
+  }
+  .heroSection {
+    margin-bottom: 10px;
+  }
+  .collaborationBenefitsSection {
+    margin-top: 20px;
+    margin-bottom: 60px;
+  }
+  .collaborationsBenefitsCard1{
+  margin-right: 10px;
+  }
+  .collaborationsBenefitsCard1Title {
+    margin-left: 40px;
+    text-align: center;
+    align-items: center;
+  }
+
+  .benefitsCard1Title {
+    margin-left: 40px;
+    text-align: center;
+    align-items: center;
+  }
+
+  .collaborationsBenefitsCard1Body {
+    width:340px;
+    margin-left: 20px;
+  }
+
+  .collaborationsBenefitsCard1Button {
+    width: 318px;
+    margin-left: 30px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .collaborationsBenefitsCard2Title {
+    font-size: 28px;
+    text-align: center;
+    margin-right: 10px;
+  }
+  
+  .collaborationsBenefitsCard2Image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+  }
+  
+  .collaborationsBenefitsCard2Body {
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 160px;
+    text-align: center;
+  }
+
+  .storagePlatforms {
+    width: 90px;
+    height: 45px;
+    font-size: 10px;
+  }
+  .storagePlatformsImage {
+    width: 35px;
+    height: 34px;
+  }
+  
+  .storagePlatformsImg {
+    width: 122.5px;
+    height: 35.5px;
+  }
+
+  .storageSectionMessage {
+    width: 40px;
+  }
+
+  .rowLeftAligned {
+    width: auto;
+    text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow-wrap: break-word;
+  }
+  .mb72 {
+    width: auto;
+  }
+  .decentralizedImage {
+    display: none;
+  }
+  .openSource {
+    margin-top: 30px;
+    width: 330px;
+    padding: 30px;
+  }
+  
+  .openSourceTitle {
+    font-size: 28px;
+    width: 310px;
+  }
+  
+  .openSourceDescription {
+    width: 300px;
+    font-weight: 400;
+    font-size: 14px;
+  }
+  .getStartedDes {
+    width: 310px;
+  }
+  .censorship {
+    margin-right: 10px;
+    margin-top: 50px;
+  }
+ 
+ .censorshipDescription {
+   margin-top: 10px;
+  }
+ 
+ .embrace {
+   width: 300px;
+   height: 300px;
+   position: absolute;
+   margin-left: 0px;
+   margin-top: 30px;
+  }
+ .secure {
+   margin-top: 350px;
+  }
+  .backers {
+    width: 180px;
+    height: 106px;
+    padding: 10px;
+    margin-top: 0px;
+  }
+
+  .backers2Section {
+    margin-top: 8px;
+  }
+  
+  .backersSectionEnd{
+    margin-bottom: 90px;
+  }
+  .backers2 {
+    width: 180px;
+    height: 106px;
+    padding: 25.5px 5px;
+  }
+  .backers2Name {
+    top: 35px;
+  }
+  .backers2Title {
+    top: 55px; 
+  }
+  .joining {
+    margin-left: 50px;
+  }  
   .teamWrapper {
     display: flex;
     flex-direction: column;
@@ -944,7 +1175,7 @@
   }
 
   .teamLabel {
-    background: #19072f;
+    background: #13181E;
     height: 40px;
     width: 300px;
   }
@@ -958,10 +1189,8 @@
   .bufferCard {
     height: 60px;
   }
-  .blob1,
-  .blob2 {
-    display: none;
-  }
+
+
   .h1 {
     font-size: 44px;
   }
@@ -983,52 +1212,29 @@
     flex-direction: column;
   }
 
-  .footerLinks {
-    margin-bottom: 24px;
-    flex-direction: column;
+  .footerContainer {
+    margin-bottom: 50px;
   }
-
-  .footerLinks a {
-    margin-bottom: 24px;
-  }
-  .joinTeamContainer {
-    display: flex;
-    align-items: flex-end;
+  
+  .footer {
     margin-top: 30px;
-    width: 300px;
-    height: 400px;
-  }
-  .joinTeamCard {
-    padding: 5px;
-    height: 400px;
-    width: 400px;
-    overflow: hidden;
+    justify-content: left;
+    align-items: left;
   }
 
-  .joinTeamLogo {
-    position: absolute;
+  .footerSection {
+    margin-left: 0px;
+    margin-right: 30px;
+  }
+  
+  .footerTitle {
     margin-top: 10px;
-    height: 200px;
-    width: 150px;
   }
-  .joinTeamBody {
-    margin-top: 130px;
-    width: 30px;
-    justify-content: center;
-    align-items: center;
-  }
-  .joinTeamTitle {
-    font-size: 18px;
-    font-weight: bold;
-  }
-  .joinTeamContent {
-    font-size: 15px;
-    text-align: center;
-  }
-  .joinTeamButton {
-    font-size: 12px;
-    height: 30px;
-    width: 120px;
+  
+  .footerLinks {
+    padding-right: 20px;
+    width: auto;
+    flex-direction: column;
   }
 }
 
