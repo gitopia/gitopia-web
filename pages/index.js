@@ -434,9 +434,6 @@ export default function Landing() {
 
       <section className={classnames([styles.section, styles.heroSection])}>
         <div className={styles.row}>
-          <div className={styles.topHeading}>
-            Blockchain Development Platform
-          </div>
           <h1 className={classnames([styles.h1])}>
             Code Collaboration <br /> for Web3
           </h1>
