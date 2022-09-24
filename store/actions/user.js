@@ -25,43 +25,52 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
       if (result && result.code === 0) {
         console.log("User created successfully.. renaming wallet");
         let oldWalletName = wallet.activeWallet.name;
-        let newWallet = wallet.activeWallet;
+        let newWallet = { ...wallet.activeWallet };
         newWallet.name = username;
         newWallet.isUsernameSetup = true;
-        const CryptoJS = (await import("crypto-js")).default;
-        const encryptedWallet = CryptoJS.AES.encrypt(
-          JSON.stringify(newWallet),
-          newWallet.password
-        ).toString();
-        await dispatch({
-          type: walletActions.REMOVE_WALLET,
-          payload: {
-            name: oldWalletName,
-          },
-        });
-        await dispatch({
-          type: walletActions.ADD_WALLET,
-          payload: {
-            wallet: newWallet,
-            encryptedWallet,
-          },
-        });
-        await dispatch({
-          type: walletActions.STORE_WALLETS,
-        });
-        await dispatch({
-          type: walletActions.SET_ACTIVE_WALLET,
-          payload: { wallet: newWallet },
-        });
-        const daos = await getUserDaoAll(newWallet.accounts[0].address);
-        await dispatch({
-          type: userActions.INIT_DASHBOARDS,
-          payload: {
-            name: newWallet.name,
-            id: newWallet.accounts[0].address,
-            daos: daos,
-          },
-        });
+        if (newWallet.password) {
+          const CryptoJS = (await import("crypto-js")).default;
+          const encryptedWallet = CryptoJS.AES.encrypt(
+            JSON.stringify(newWallet),
+            newWallet.password
+          ).toString();
+          await dispatch({
+            type: walletActions.REMOVE_WALLET,
+            payload: {
+              name: oldWalletName,
+            },
+          });
+          await dispatch({
+            type: walletActions.ADD_WALLET,
+            payload: {
+              wallet: newWallet,
+              encryptedWallet,
+            },
+          });
+          await dispatch({
+            type: walletActions.STORE_WALLETS,
+          });
+          await dispatch({
+            type: walletActions.SET_ACTIVE_WALLET,
+            payload: { wallet: newWallet },
+          });
+          const daos = await getUserDaoAll(newWallet.accounts[0].address);
+          await dispatch({
+            type: userActions.INIT_DASHBOARDS,
+            payload: {
+              name: newWallet.name,
+              id: newWallet.accounts[0].address,
+              daos: daos,
+            },
+          });
+        } else {
+          dispatch(
+            notify(
+              "Unable to update wallet name, please refresh page to see changes",
+              "error"
+            )
+          );
+        }
       }
       return result;
     } catch (e) {

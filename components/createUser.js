@@ -85,6 +85,7 @@ function CreateUser(props) {
   };
 
   const createProfile = async () => {
+    setLoading(true);
     if (await validateProfile()) {
       let res = await props.createUser({
         username,
@@ -97,6 +98,7 @@ function CreateUser(props) {
         router.push("/home");
       }
     }
+    setLoading(false);
   };
 
   return (
@@ -151,8 +153,11 @@ function CreateUser(props) {
         </div>
         <div className="">
           <button
-            className="btn btn-secondary btn-block"
+            className={
+              "btn btn-secondary btn-block" + (loading ? " loading" : "")
+            }
             onClick={createProfile}
+            disabled={loading}
           >
             Finish
           </button>
