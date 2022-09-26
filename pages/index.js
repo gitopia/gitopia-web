@@ -3,21 +3,13 @@ import { useState, useEffect } from "react";
 import React from "react";
 import classnames from "classnames";
 import styles from "../styles/landing.module.css";
-import RepositoryMainTabs from "../components/repository/mainTabs";
 import getBranchSha from "../helpers/getBranchSha";
 import getAnyRepository from "../helpers/getAnyRepository";
-import CommitDetailRow from "../components/repository/commitDetailRow";
-import FileBrowser from "../components/repository/fileBrowser";
-import RepositoryHeader from "../components/repository/header";
-import AssigneeGroup from "../components/repository/assigneeGroup";
 import Link from "next/link";
-import BranchSelector from "../components/repository/branchSelector";
-import CloneRepoInfo from "../components/repository/cloneRepoInfo";
-import SupportOwner from "../components/repository/supportOwner";
 import getCommitHistory from "../helpers/getCommitHistory";
 import getContent from "../helpers/getContent";
-import pluralize from "../helpers/pluralize";
 import YoutubeEmbed from "../helpers/youtubeEmbed";
+import GitopiaLive from "../helpers/gitopiaLive";
 
 const pCircles = [
   {
@@ -444,7 +436,7 @@ export default function Landing() {
             through collaboration, transparency, and incentivization.
           </div>
           <div className="flex flex-col justify-center items-center">
-            <div className={classnames("mb-8", styles.primaryCTA)}>
+            <div className={classnames("mb-8 px-6 sm:px-0", styles.primaryCTA)}>
               <a
                 href="/home"
                 target="_blank"
@@ -457,7 +449,8 @@ export default function Landing() {
         </div>
         <img
           className={
-            "absolute pointer-events-none z-1 " + (mobile ? "hidden" : "top-5")
+            "absolute pointer-events-none z-1 w-full " +
+            (mobile ? "hidden" : "top-0")
           }
           src="./stars.svg"
         />
@@ -539,211 +532,24 @@ export default function Landing() {
           src="./shootingStar3.svg"
         />
       </section>
-
       {repository.id ? (
         <section className={classnames([styles.section, styles.codeSection])}>
           <div className="text-2xl mb-8">Try Gitopia Live, click around 👇</div>
-          <div className="z-5 text-left bg-base-100 bg-repo-grad-v p-8 rounded-md border border-grey container mx-auto max-w-screen-lg">
-            <RepositoryHeader repository={repository} />
-            <RepositoryMainTabs repository={repository} active="code" />
-            <div className="flex mt-8">
-              <div className="flex-none mt-4 w-64 pr-8 divide-y divide-grey">
-                <div className="pb-8">
-                  <div className="flex-1 text-left">About</div>
-
-                  <div className="text-xs mt-3">{repository.description}</div>
-                </div>
-
-                <div className="py-8">
-                  <Link
-                    href={"/" + demoAddress + "/" + demoRepoName + "/releases"}
-                  >
-                    <a className="flex items-center">
-                      <div className="flex-1 text-left">
-                        <span>Releases</span>
-                      </div>
-                      <span className="text-xs text-type-secondary font-semibold">
-                        {repository.releases.length + " TAGS"}
-                      </span>
-                    </a>
-                  </Link>
-
-                  {repository.releases.length ? (
-                    <div className="text-xs mt-3">
-                      <Link
-                        href={
-                          "/" +
-                          repository.owner.id +
-                          "/" +
-                          repository.name +
-                          "/releases/tag/" +
-                          repository.releases[repository.releases.length - 1]
-                            .tagName
-                        }
-                      >
-                        <a className="link link-primary no-underline hover:underline">
-                          {repository.name +
-                            " " +
-                            repository.releases[repository.releases.length - 1]
-                              .tagName}
-                        </a>
-                      </Link>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-
-                <div className="py-8">
-                  <div className="flex items-center pb-2">
-                    <div className="flex-1 text-left">
-                      <span>Collaborators</span>
-                    </div>
-                    <span className="text-xs text-type-secondary font-semibold">
-                      {repository.collaborators.length + 1}
-                      <span className="ml-1 uppercase">
-                        {pluralize(
-                          "person",
-                          repository.collaborators.length + 1
-                        )}
-                      </span>
-                    </span>
-                  </div>
-
-                  <div className="text-xs mt-3">
-                    <AssigneeGroup
-                      assignees={[
-                        repository.owner.id,
-                        ...repository.collaborators.map((c) => c.id),
-                      ]}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="flex-1 mt-4 max-w-3xl">
-                <SupportOwner ownerAddress={demoAddress} />
-                <div className="mt-8 flex justify-start">
-                  <div className="">
-                    <BranchSelector
-                      branches={repository.branches}
-                      tags={repository.tags}
-                      baseUrl={
-                        "/" +
-                        repository.owner.id +
-                        "/" +
-                        repository.name +
-                        "/tree"
-                      }
-                      branchName={demoRepoBranch}
-                    />
-                  </div>
-                  <div className="ml-4">
-                    <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        stroke="currentColor"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-1"
-                      >
-                        <g transform="scale(0.8)">
-                          <path
-                            d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            fill="none"
-                          />
-                          <circle
-                            cx="8.5"
-                            cy="18.5"
-                            r="2.5"
-                            fill="currentColor"
-                          />
-                          <circle
-                            cx="8.5"
-                            cy="5.5"
-                            r="2.5"
-                            fill="currentColor"
-                          />
-                          <path
-                            d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
-                            fill="currentColor"
-                          />
-                        </g>
-                      </svg>
-                      {repository.branches.length}
-                      <span className="ml-1 uppercase">
-                        {pluralize("branch", repository.branches.length)}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="ml-4">
-                    <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 mr-2"
-                      >
-                        <path
-                          d="M7.04297 19.0293V9.36084L12.043 4.4333L17.043 9.36084V19.0293H7.04297Z"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                        <path
-                          d="M12.043 11.5293V9.5293"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                      </svg>
-                      {repository.tags.length}
-                      <span className="ml-1 uppercase">
-                        {pluralize("tag", repository.tags.length)}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex-1 text-right">
-                    <CloneRepoInfo
-                      remoteUrl={
-                        "gitopia://" +
-                        repository.owner.id +
-                        "/" +
-                        repository.name
-                      }
-                    />
-                  </div>
-                </div>
-                <div className="mt-4 border border-gray-700 rounded overflow-hidden">
-                  <CommitDetailRow
-                    commitDetail={commitDetail}
-                    commitLink={
-                      "/" +
-                      demoAddress +
-                      "/" +
-                      demoRepoName +
-                      "/commits/" +
-                      demoRepoBranch
-                    }
-                  />
-                  <FileBrowser
-                    entityList={entityList}
-                    branchName={demoRepoBranch}
-                    baseUrl={"/" + demoAddress + "/" + demoRepoName}
-                    repoPath={[]}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          <GitopiaLive
+            repository={repository}
+            demoAddress={demoAddress}
+            demoRepoName={demoRepoName}
+            commitDetail={commitDetail}
+            entityList={entityList}
+            demoRepoBranch={demoRepoBranch}
+          />
           <svg
             width="1600"
             height="1255"
             viewBox="0 0 1600 1255"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="pointer-events-none absolute opacity-90 -z-10"
+            className="pointer-events-none absolute opacity-90 -z-10 left-0"
           >
             <g filter="url(#filter0_f_3088_7350)">
               <path
@@ -3214,23 +3020,27 @@ export default function Landing() {
             <img src="./sandeep.svg" className="mr-2" />
 
             <div>
-              <div className={styles.backers2Name}>Sandeep Nainwal</div>
-              <div className={styles.backers2Title}>Title Goes here</div>
+              <div className={styles.backers2Name}>Sandeep Nailwal</div>
+              <div className={styles.backers2Title}>Co-founder polygon</div>
             </div>
           </div>
           <div className={styles.backers2 + " flex"}>
             <img src="./tanmay.svg" className="mr-2" />
             <div>
               <div className={styles.backers2Name}>Tanmay Bhat</div>
-              <div className={styles.backers2Title}>Title Goes here</div>
+              <div className={styles.backers2Title}>
+                Superteam DAO, comedian, investor, YouTube influencer
+              </div>
             </div>
           </div>
 
           <div className={styles.backers2 + " flex"}>
             <img src="./tushar.svg" className="mr-2" />
             <div>
-              <div className={styles.backers2Name}>Tushar Agrawal</div>
-              <div className={styles.backers2Title}>Title Goes here</div>
+              <div className={styles.backers2Name}>Tushar Aggarwal</div>
+              <div className={styles.backers2Title}>
+                Founder and CEO, Persistence
+              </div>
             </div>
           </div>
           {mobile ? (
@@ -3238,7 +3048,9 @@ export default function Landing() {
               <img src="./zhi.svg" className="mr-2" />
               <div>
                 <div className={styles.backers2Name}>Zhi Hao Loy</div>
-                <div className={styles.backers2Title}>Title Goes here</div>
+                <div className={styles.backers2Title}>
+                  General Counsel, Persistence
+                </div>
               </div>
             </div>
           ) : (
@@ -3247,7 +3059,7 @@ export default function Landing() {
         </div>
         <div
           className={classnames(
-            "grid grid-cols-2 grid-rows-1 gap-6 ",
+            "grid grid-cols-2 grid-rows-1 sm:gap-6 gap-2 ",
             [styles.backers2Section],
             [styles.backersSectionEnd]
           )}
@@ -3256,7 +3068,9 @@ export default function Landing() {
             <img src="./akshay.svg" className="mr-2" />
             <div>
               <div className={styles.backers2Name}>Akshay BD</div>
-              <div className={styles.backers2Title}>Title Goes here</div>
+              <div className={styles.backers2Title}>
+                Investor and Co-creator Superteam DAO
+              </div>
             </div>
           </div>
           {mobile ? (
@@ -3266,7 +3080,9 @@ export default function Landing() {
               <img src="./zhi.svg" className="mr-2" />
               <div>
                 <div className={styles.backers2Name}>Zhi Hao Loy</div>
-                <div className={styles.backers2Title}>Title Goes here</div>
+                <div className={styles.backers2Title}>
+                  General Counsel, Persistence
+                </div>
               </div>
             </div>
           )}

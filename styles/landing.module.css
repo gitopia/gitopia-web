@@ -716,12 +716,12 @@
 }
 
 .backers2 {
-  width: 220px;
+  width: 250px;
   height: 99px;
   background: #222933;
   border-radius: 17px;
   position: relative;
-  padding: 25.5px 20px;
+  padding: 15px 15px;
 }
 
 .backers2Name {
@@ -737,7 +737,6 @@
 
 .backers2Title {
   position: absolute;
-  width: 91px;
   font-size: 12px;
   font-weight: 400;
   line-height: 100.27%;
@@ -745,6 +744,7 @@
   color: #FFFFFF;
   opacity: 0.5;
   top: 50px;
+  padding-right: 10px;
 
 }
 
@@ -879,12 +879,11 @@
     padding: 40px 44px;
   }
   .row {
-    text-align: left;
-    padding: 0 44px;
-    width: 100%;
+    padding: 0px;
+    width: 370px;
   }
   .h1 {
-    font-size: 48px;
+    font-size: 40px;
   }
 
   .h3 {
@@ -1037,7 +1036,8 @@
     margin-right: 20px;
   }
   .heroSection {
-    margin-bottom: 10px;
+    min-height: 450px;
+    margin-bottom: 0px;
   }
   .collaborationBenefitsSection {
     margin-top: 20px;
@@ -1178,13 +1178,13 @@
   .backers2 {
     width: 180px;
     height: 106px;
-    padding: 25.5px 5px;
+    padding: 25px 5px;
   }
   .backers2Name {
-    top: 35px;
+    top: 30px;
   }
   .backers2Title {
-    top: 55px; 
+    top: 47px; 
   }
   .joining {
     margin-left: 50px;
@@ -1226,7 +1226,8 @@
   }
 
   .byline {
-    font-size: 18px;
+    font-size: 14px;
+    width: 370px;
   }
 
   .decentralizedDesc {
