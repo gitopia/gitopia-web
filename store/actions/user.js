@@ -54,7 +54,9 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
             type: walletActions.SET_ACTIVE_WALLET,
             payload: { wallet: newWallet },
           });
+          await getUserDetailsForSelectedAddress()(dispatch, getState);
           const daos = await getUserDaoAll(newWallet.accounts[0].address);
+          console.log("got daos", daos);
           await dispatch({
             type: userActions.INIT_DASHBOARDS,
             payload: {
@@ -63,6 +65,10 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
               daos: daos,
             },
           });
+          await setCurrentDashboard(newWallet.accounts[0].address)(
+            dispatch,
+            getState
+          );
         } else {
           dispatch(
             notify(
