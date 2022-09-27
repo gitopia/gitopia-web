@@ -1911,7 +1911,7 @@ export default function Landing() {
         </svg>
         <div className={styles.row}>
           <h3 className={classnames([styles.h3, styles.hlHorizontal])}>
-            Built on Cosmos with ❤️
+            Built on {mobile ? <br /> : ""} Cosmos with ❤️
           </h3>
           <div className={classnames([styles.b16, styles.circleSectionDesc])}>
             Gitopia is an application specific blockchain built using Cosmos SDK
@@ -1968,31 +1968,37 @@ export default function Landing() {
                 without worrying about censorship or losing access to their
                 code.
               </div>
-              <div
-                className={classnames(
-                  "mb-3",
-                  styles.collaborationsBenefitsCard1Button
-                )}
-              >
-                <a
-                  href="/home"
-                  target="_blank"
-                  className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                >
-                  Create your On-Chain Profile now!
-                </a>
-              </div>
-              <div className="flex mb-4">
-                <div className="ml-20 sm:ml-2 mt-2">🚀</div>
-                <div className="ml-4 leading-5">
-                  Reserve your username
-                  <br /> before others take it! 👆
-                </div>
-              </div>
+              {!mobile ? (
+                <>
+                  <div
+                    className={classnames(
+                      "mb-3 ",
+                      styles.collaborationsBenefitsCard1Button
+                    )}
+                  >
+                    <a
+                      href="/home"
+                      target="_blank"
+                      className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                    >
+                      Create your On-Chain Profile now!
+                    </a>
+                  </div>
+                  <div className="flex mb-4">
+                    <div className="ml-20 sm:ml-2 mt-2">🚀</div>
+                    <div className="ml-4 leading-5">
+                      Reserve your username
+                      <br /> before others take it! 👆
+                    </div>
+                  </div>
+                </>
+              ) : (
+                ""
+              )}
             </div>
           </div>
           <div className="">
-            <div className="grid grid-rows-2 grid-cols-2 gap-x-8 gap-y-10">
+            <div className="grid grid-rows-2 grid-cols-2 sm:gap-x-8 sm:gap-y-10">
               <div className="items-left text-left">
                 <figure className={styles.collaborationsBenefitsCard2Image}>
                   <img src="/Issue.svg" />
@@ -2043,6 +2049,33 @@ export default function Landing() {
               </div>
             </div>
           </div>
+          {mobile ? (
+            <div className="flex flex-col items-center">
+              <div
+                className={classnames(
+                  "mb-3 ",
+                  styles.collaborationsBenefitsCard1Button
+                )}
+              >
+                <a
+                  href="/home"
+                  target="_blank"
+                  className="h-12 py-3 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                >
+                  Create your On-Chain Profile now!
+                </a>
+              </div>
+              <div className="flex mb-4">
+                <div className="sm:ml-2 mt-2">🚀</div>
+                <div className="ml-4 leading-5">
+                  Reserve your username
+                  <br /> before others take it! 👆
+                </div>
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       </section>
       <section
@@ -2053,7 +2086,7 @@ export default function Landing() {
         ])}
       >
         <div className={styles.row}>
-          <h3 className={styles.h3}>Permanent Storage</h3>
+          <h3 className={styles.h3 + " mb-5"}>Permanent Storage</h3>
           <div className={styles.b16}>
             A global, permanent, and unalterable record of every single revision
             ever made.
@@ -2167,9 +2200,14 @@ export default function Landing() {
             <h3 className={classnames([styles.h3, styles.mb72])}>
               No single point of failure
             </h3>
-            <div className={classnames([styles.hlVertical, styles.mb36])}>
+            <div
+              className={classnames([
+                mobile ? "" : styles.hlVertical,
+                styles.mb36,
+              ])}
+            >
               <span>
-                <div className={styles.b18}>
+                <div className={styles.b18 + " text-center sm:text-left"}>
                   Decentralized Network of Gitopia provides high availability
                   and stable network.
                 </div>
@@ -2210,7 +2248,7 @@ export default function Landing() {
             <div>
               <img src="/opensource.svg"></img>
             </div>
-            <div className="absolute bottom-10">
+            <div className="absolute bottom-5 sm:bottom-10">
               <div className={styles.openSourceTitle}>
                 Open Source and community governed
               </div>
@@ -2241,7 +2279,7 @@ export default function Landing() {
             <div>
               <img src="/incentivization.svg"></img>
             </div>
-            <div className="absolute bottom-10">
+            <div className="absolute bottom-5 sm:bottom-10">
               <div className={styles.openSourceTitle}>
                 Incentivization for contributions using LORE token
               </div>
@@ -2282,7 +2320,7 @@ export default function Landing() {
         <YoutubeEmbed
           embedId="ewK_0BkF5P8"
           height={mobile ? "200px" : "472px"}
-          width={mobile ? "370px" : "840px"}
+          width={mobile ? "350px" : "840px"}
         />
         <img
           src="./gitopia-coin.svg"
@@ -2483,7 +2521,7 @@ export default function Landing() {
               services
             </div>
           </div>
-
+          <div className={styles.line}></div>
           <img src="/embrace.svg" className={styles.embrace} />
           <div className={styles.secure}>
             <div className={styles.secureLogin}>Secure login with wallets</div>
@@ -2620,24 +2658,28 @@ export default function Landing() {
                 of tailor-made workflows for better development of projects and
                 engaging with the contributors.
               </div>
-              <div
-                className={classnames(
-                  "mb-3",
-                  styles.collaborationsBenefitsCard1Button
-                )}
-              >
-                <a
-                  href="/account/daos/new"
-                  target="_blank"
-                  className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              {!mobile ? (
+                <div
+                  className={classnames(
+                    "mb-3",
+                    styles.collaborationsBenefitsCard1Button
+                  )}
                 >
-                  Create your DAO at Gitopia
-                </a>
-              </div>
+                  <a
+                    href="/account/daos/new"
+                    target="_blank"
+                    className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  >
+                    Create your DAO at Gitopia
+                  </a>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
           </div>
           <div className="">
-            <div className="grid grid-rows-2 grid-cols-2 gap-x-8 gap-y-10">
+            <div className="grid grid-rows-2 grid-cols-2 sm:gap-x-8 sm:gap-y-10">
               <div className="items-left text-left">
                 <figure className={styles.collaborationsBenefitsCard2Image}>
                   <img src="/Proposal.svg" />
@@ -2690,6 +2732,26 @@ export default function Landing() {
               </div>
             </div>
           </div>
+          {mobile ? (
+            <div className="flex flex-col items-center">
+              <div
+                className={classnames(
+                  "mb-3",
+                  styles.collaborationsBenefitsCard1Button
+                )}
+              >
+                <a
+                  href="/account/daos/new"
+                  target="_blank"
+                  className="h-12 py-3 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                >
+                  Create your DAO at Gitopia
+                </a>
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
         <svg
           width="808"
@@ -2949,7 +3011,15 @@ export default function Landing() {
       </section>
 
       <section className={styles.section}>
-        <div className={styles.h3 + " mb-12 sm:mb-0"}>Our Trusted Backers</div>
+        <div className={styles.h3 + " mb-6 sm:mb-0"}>Our Backers</div>
+        {mobile ? (
+          <div className="flex text-center mb-12">
+            This wouldn’t have been possible without our incredible investors on
+            the team.
+          </div>
+        ) : (
+          ""
+        )}
         <div className="grid sm:grid-cols-4 sm:grid-rows-1 grid-rows-2 grid-cols-2 gap-2 sm:gap-6">
           <div
             className={
@@ -3093,31 +3163,45 @@ export default function Landing() {
         <h3 className={styles.h3}>Meet the Team</h3>
         <div
           className={
-            "grid grid-rows-4 grid-cols-3 gap-2 justify-center " +
+            "grid sm:grid-rows-4 sm:grid-cols-3 grid-cols-2 grid-rows-5 sm:gap-2 sm:justify-center " +
             styles.teamWrapper
           }
         >
-          <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/parth.png" loading="lazy" />
+          <div className={"sm:row-span-4 " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/parth.svg"
+              loading="lazy"
+              height={mobile ? 180 : 540}
+              width={mobile ? 180 : 540}
+            />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
                 <div className={styles.teamName}>Parth Oberoi</div>
               </div>
             </div>
           </div>
-          <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/faza.png" loading="lazy" />
+          <div className={"sm:row-span-4 " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/faza.svg"
+              loading="lazy"
+              height={mobile ? 180 : 540}
+              width={mobile ? 180 : 540}
+            />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
                 <div className={styles.teamName}>Faza Mahamood</div>
               </div>
             </div>
           </div>
-          <div className={"row-span-4 " + styles.teamCard}>
+          <div className={"sm:row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
-              src="/snehil.png"
+              src="/snehil.svg"
               loading="lazy"
+              height={mobile ? 180 : 540}
+              width={mobile ? 180 : 540}
             />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
@@ -3125,11 +3209,13 @@ export default function Landing() {
               </div>
             </div>
           </div>
-          <div className={"row-span-4 " + styles.teamCard}>
+          <div className={"sm:row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
-              src="/janani.png"
+              src="/janani.svg"
               loading="lazy"
+              height={mobile ? 180 : 540}
+              width={mobile ? 180 : 540}
             />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
@@ -3137,19 +3223,27 @@ export default function Landing() {
               </div>
             </div>
           </div>
-          <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/stian.png" loading="lazy" />
+          <div className={"sm:row-span-4 " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/stian.svg"
+              loading="lazy"
+              height={mobile ? 180 : 540}
+              width={mobile ? 180 : 540}
+            />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
                 <div className={styles.teamName}>Stian Sandsgaard</div>
               </div>
             </div>
           </div>
-          <div className={"row-span-4 " + styles.teamCard}>
+          <div className={"sm:row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
-              src="/hariom.png"
+              src="/hariom.svg"
               loading="lazy"
+              height={mobile ? 180 : 540}
+              width={mobile ? 180 : 540}
             />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
@@ -3158,11 +3252,13 @@ export default function Landing() {
             </div>
           </div>
 
-          <div className={"row-span-4 " + styles.teamCard}>
+          <div className={"sm:row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
-              src="/kushagra.png"
+              src="/kushagra.svg"
               loading="lazy"
+              height={mobile ? 180 : 540}
+              width={mobile ? 180 : 540}
             />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
@@ -3170,11 +3266,13 @@ export default function Landing() {
               </div>
             </div>
           </div>
-          <div className={"row-span-4 " + styles.teamCard}>
+          <div className={"sm:row-span-4 " + styles.teamCard}>
             <img
               className={styles.teamImage}
-              src="/abhiti.png"
+              src="/abhiti.svg"
               loading="lazy"
+              height={mobile ? 160 : 520}
+              width={mobile ? 160 : 520}
             />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
@@ -3182,37 +3280,88 @@ export default function Landing() {
               </div>
             </div>
           </div>
-          <div className={"row-span-4 " + styles.teamCard}>
-            <img className={styles.teamImage} src="/ejaaz.png" loading="lazy" />
+          <div className={"sm:row-span-4 " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/ejaaz.svg"
+              loading="lazy"
+              height={mobile ? 180 : 540}
+              width={mobile ? 180 : 540}
+            />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
                 <div className={styles.teamName}>Ejaaz Mahamood</div>
               </div>
             </div>
           </div>
+          {mobile ? (
+            <div className={"relative " + styles.teamCard}>
+              <img
+                className={" top-16 absolute"}
+                src="/avatar.svg"
+                loading="lazy"
+                height={170}
+                width={170}
+              />
+              <div className={styles.teamLabelContainer + " "}>
+                <div
+                  className={classnames([styles.teamName], [styles.joining])}
+                >
+                  Interested in joining?
+                </div>
+              </div>
+              <div className={classnames("mt-0 ml-1 absolute")}>
+                <button
+                  className={
+                    "btn btn-sm w-full h-5 py-0.5 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 "
+                  }
+                  onClick={() => {
+                    if (window) {
+                      window.open("https://angel.co/company/gitopia");
+                    }
+                  }}
+                >
+                  Apply to work with us
+                </button>
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
-        <div className={"sm:ml-16  " + styles.teamCard}>
-          <img className={styles.teamImage} src="/avatar.svg" loading="lazy" />
-          <div className={styles.teamLabelContainer}>
-            <div className={classnames([styles.teamName], [styles.joining])}>
-              Interested in joining?
+        {!mobile ? (
+          <div className={"sm:ml-16  " + styles.teamCard}>
+            <img
+              className={styles.teamImage}
+              src="/avatar.svg"
+              loading="lazy"
+              height={mobile ? 180 : 540}
+              width={mobile ? 180 : 540}
+            />
+            <div className={styles.teamLabelContainer}>
+              <div className={classnames([styles.teamName], [styles.joining])}>
+                Interested in joining?
+              </div>
+            </div>
+            <div className={classnames("sm:mb-3 sm:ml-20 sm:mt-3")}>
+              <button
+                className={
+                  "btn w-60 h-12 py-3 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 "
+                }
+                onClick={() => {
+                  if (window) {
+                    window.open("https://angel.co/company/gitopia");
+                  }
+                }}
+              >
+                Apply to work with us
+              </button>
             </div>
           </div>
-          <div className={classnames("mb-3 ml-9 mt-3")}>
-            <button
-              className={
-                "btn w-60 h-12 py-3 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 "
-              }
-              onClick={() => {
-                if (window) {
-                  window.open("https://angel.co/company/gitopia");
-                }
-              }}
-            >
-              Apply to work with us
-            </button>
-          </div>
-        </div>
+        ) : (
+          ""
+        )}
+
         <svg
           width="418"
           height="1024"
@@ -3324,7 +3473,7 @@ export default function Landing() {
           <div className={styles.footerLogo}></div>
           <div className={styles.footerSection}>
             <div className={styles.footerTitle}>Learn more about Gitopia</div>
-            <div className="flex sm:flex-col">
+            <div className="flex justify-between  sm:flex-col">
               <div
                 onClick={() => {
                   if (window) {
@@ -3346,7 +3495,7 @@ export default function Landing() {
           </div>
           <div className={styles.footerSection + (mobile ? " pr-14" : "")}>
             <div className={styles.footerTitle}>Guide to Gitopia</div>
-            <div className="flex sm:flex-col">
+            <div className="flex justify-between sm:flex-col">
               <div
                 onClick={() => {
                   if (window) {
@@ -3386,7 +3535,7 @@ export default function Landing() {
           </div>
           <div className={styles.footerSection}>
             <div className={styles.footerTitle}>Quick links</div>
-            <div className="flex sm:flex-col">
+            <div className="flex  justify-between sm:flex-col">
               <div
                 onClick={() => {
                   if (window) {
@@ -3422,7 +3571,7 @@ export default function Landing() {
                 target="_blank"
                 className={styles.footerLinks + " cursor-pointer"}
               >
-                Season of Blockchains
+                {mobile ? "GSoB" : "Season of Blockchains"}
               </div>
             </div>
           </div>
@@ -3430,8 +3579,8 @@ export default function Landing() {
             <div className={styles.footerTitle}>Socials</div>
             <div className="grid grid-cols-4 grid-rows-2 gap-4 mt-3">
               <svg
-                width="40"
-                height="41"
+                width={mobile ? "70" : "40"}
+                height={mobile ? "71" : "41"}
                 viewBox="0 0 40 41"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -3473,8 +3622,8 @@ export default function Landing() {
               </svg>
 
               <svg
-                width="41"
-                height="41"
+                width={mobile ? "70" : "40"}
+                height={mobile ? "71" : "41"}
                 viewBox="0 0 41 41"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -3512,8 +3661,8 @@ export default function Landing() {
                 </defs>
               </svg>
               <svg
-                width="41"
-                height="41"
+                width={mobile ? "70" : "40"}
+                height={mobile ? "71" : "41"}
                 viewBox="0 0 41 41"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -3551,8 +3700,8 @@ export default function Landing() {
                 </defs>
               </svg>
               <svg
-                width="40"
-                height="40"
+                width={mobile ? "70" : "40"}
+                height={mobile ? "71" : "41"}
                 viewBox="0 0 40 40"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -3571,8 +3720,8 @@ export default function Landing() {
                 />
               </svg>
               <svg
-                width="40"
-                height="40"
+                width={mobile ? "70" : "40"}
+                height={mobile ? "71" : "41"}
                 viewBox="0 0 40 40"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -3619,8 +3768,8 @@ export default function Landing() {
                 className="cursor-pointer"
               >
                 <svg
-                  width="40"
-                  height="40"
+                  width={mobile ? "70" : "40"}
+                  height={mobile ? "71" : "41"}
                   viewBox="0 0 40 40"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -3629,12 +3778,12 @@ export default function Landing() {
                   <rect width="40" height="40" rx="20" fill="#222933" />
                 </svg>
                 <svg
-                  width="19"
-                  height="17"
+                  width={mobile ? "31" : "19"}
+                  height={mobile ? "25" : "17"}
                   viewBox="0 0 19 17"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="absolute mt-3 ml-3"
+                  className="absolute mt-6 ml-5 sm:mt-3 sm:ml-3"
                 >
                   <g clip-path="url(#clip0_3235_6618)">
                     <path
@@ -3658,8 +3807,8 @@ export default function Landing() {
                 </svg>
               </div>
               <svg
-                width="40"
-                height="40"
+                width={mobile ? "70" : "40"}
+                height={mobile ? "71" : "41"}
                 viewBox="0 0 40 40"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
