@@ -519,6 +519,7 @@ function RepositoryView(props) {
                           "/" +
                           repository.name
                         }
+                        backups={repository.backups}
                       />
                     </div>
                   ) : (
