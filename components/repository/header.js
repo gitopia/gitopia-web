@@ -10,8 +10,6 @@ import { useRouter } from "next/router";
 import getGitServerAuthorization from "../../helpers/getGitServerAuthStatus";
 import { notify } from "reapop";
 import pluralize from "../../helpers/pluralize";
-import getAllRepositoryBranch from "../../helpers/getAllRepositoryBranch";
-import getAllRepositoryTag from "../../helpers/getAllRepositoryTag";
 
 function RepositoryHeader({ repository, ...props }) {
   const [forkTargetShown, setForkTargetShown] = useState(false);
@@ -52,26 +50,13 @@ function RepositoryHeader({ repository, ...props }) {
   const refreshForkingAccess = async () => {
     setForkingAccess(await getGitServerAuthorization(props.selectedAddress));
   };
-  const getBranches = async () => {
-    if (repository) {
-      const branches = await getAllRepositoryBranch(
-        repository.owner.id,
-        repository.name
-      );
-      setBranchCount(branches.length);
+  const setCounts = () => {
+    if (repository.id) {
+      setBranchCount(repository.branches.length);
+      setTagCount(repository.tags.length);
     }
   };
-  const getTags = async () => {
-    if (repository) {
-      const tags = await getAllRepositoryTag(
-        repository.owner.id,
-        repository.name
-      );
-      setTagCount(tags.length);
-    }
-  };
-  useEffect(getBranches, [repository]);
-  useEffect(getTags, [repository]);
+  useEffect(setCounts, [repository.id]);
   useEffect(refreshForkingAccess, [props.selectedAddress]);
 
   return (

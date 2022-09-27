@@ -31,16 +31,8 @@ export const validatePostingEligibility = async (
       dispatch(notify("Balance low for creating " + msgType, "error"));
       return false;
     } else {
-      // console.log("No associated user found for this adddress, creating... ");
-      // const res = await createUser(wallet.activeWallet.name)(
-      //   dispatch,
-      //   getState
-      // );
-      // if (res && res.code === 0) {
-      //   await getUserDetailsForSelectedAddress()(dispatch, getState);
-      // } else {
-      //   return false;
-      // }
+      dispatch(notify("User not found", "error"));
+      return false;
     }
   }
 
@@ -754,19 +746,14 @@ export const isCurrentUserEligibleToUpdate = (repository) => {
       let permission = false,
         repoOwnerAddress = repository.owner.address;
       const { wallet, user } = getState();
-      if (wallet.selectedAddress === repoOwnerAddress) {
-        permission = true;
-      } else if (user) {
-        const daos = await getUserDaoAll(user.creator);
-        daos !== null
-          ? daos.every((d) => {
-              if (d.address === repoOwnerAddress) {
-                permission = true;
-                return false;
-              }
-              return true;
-            })
-          : "";
+      if (user.dashboards?.length) {
+        user.dashboards.every((d) => {
+          if (d.id === repoOwnerAddress) {
+            permission = true;
+            return false;
+          }
+          return true;
+        });
       }
       if (repository.collaborators.length) {
         repository.collaborators.every((c) => {

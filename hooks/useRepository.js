@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import getAnyRepository from "../helpers/getAnyRepository";
 import { useRouter } from "next/router";
 import { useErrorStatus } from "./errorHandler";
@@ -29,54 +29,59 @@ export default function useRepository() {
 
   const refreshRepository = () => setRefreshIndex((prevIndex) => prevIndex + 1);
 
-  useEffect(async () => {
-    const r = await getAnyRepository(
-      router.query.userId,
-      router.query.repositoryId
-    );
+  useMemo(() => {
+    const fetch = async () => {
+      const r = await getAnyRepository(
+        router.query.userId,
+        router.query.repositoryId
+      );
 
-    if (r) {
-      let ownerDetails = {};
+      if (r) {
+        let ownerDetails = {};
 
-      const [branches, tags] = await Promise.all([
-        getAllRepositoryBranch(repository.owner.id, repository.name),
-        getAllRepositoryTag(repository.owner.id, repository.name),
-      ]);
+        const [branches, tags] = await Promise.all([
+          getAllRepositoryBranch(repository.owner.id, repository.name),
+          getAllRepositoryTag(repository.owner.id, repository.name),
+        ]);
 
-      if (r.owner.type === "USER") {
-        ownerDetails = await getUser(r.owner.id);
-        setRepository({
-          ...r,
-          owner: {
-            type: r.owner.type,
-            id:
-              ownerDetails.username !== "" ? ownerDetails.username : r.owner.id,
-            address: r.owner.id,
-            username: ownerDetails.username,
-            avatarUrl: ownerDetails.avatarUrl,
-          },
-          branches: branches,
-          tags: tags,
-        });
+        if (r.owner.type === "USER") {
+          ownerDetails = await getUser(r.owner.id);
+          setRepository({
+            ...r,
+            owner: {
+              type: r.owner.type,
+              id:
+                ownerDetails.username !== ""
+                  ? ownerDetails.username
+                  : r.owner.id,
+              address: r.owner.id,
+              username: ownerDetails.username,
+              avatarUrl: ownerDetails.avatarUrl,
+            },
+            branches: branches,
+            tags: tags,
+          });
+        } else {
+          ownerDetails = await getDao(r.owner.id);
+          setRepository({
+            ...r,
+            owner: {
+              type: r.owner.type,
+              id: ownerDetails.name,
+              address: r.owner.id,
+              username: ownerDetails.name,
+              avatarUrl: ownerDetails.avatarUrl,
+            },
+            branches: branches,
+            tags: tags,
+          });
+        }
       } else {
-        ownerDetails = await getDao(r.owner.id);
-        setRepository({
-          ...r,
-          owner: {
-            type: r.owner.type,
-            id: ownerDetails.name,
-            address: r.owner.id,
-            username: ownerDetails.name,
-            avatarUrl: ownerDetails.avatarUrl,
-          },
-          branches: branches,
-          tags: tags,
-        });
+        setErrorStatusCode(404);
       }
-    } else {
-      setErrorStatusCode(404);
-    }
-    setFirstFetchLoading(false);
-  }, [router.query, refreshIndex]);
+      setFirstFetchLoading(false);
+    };
+    fetch();
+  }, [router.query.userId, router.query.repositoryId, refreshIndex]);
   return { repository, refreshRepository, firstFetchLoading };
 }
