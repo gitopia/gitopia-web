@@ -871,17 +871,18 @@
   }
   .headerMenuIcon {
     display: block;
+    right: 10px;
   }
   .headerMenu {
-    height: auto;
+    height: 570px;
     border-bottom: none;
   }
   .header {
     display: block;
-    padding: 40px 44px;
+    padding: 40px 20px;
   }
   .row {
-    padding: 0px;
+    padding-left: 0px;
     width: 370px;
   }
   .h1 {
@@ -1014,15 +1015,7 @@
   .teamDesig {
     font-size: 12px;
   }
-  .footer {
-    margin-top: 50px;
-    padding: 50px;
-    flex-direction: column;
-  }
-  .footerLinks {
-    margin-bottom: 50px;
-    flex-direction: row;
-  }
+
   .decentralizedDesc {
     width: 320px;
   }
@@ -1306,7 +1299,8 @@
   
   .footer {
     margin-top: 0px;
-    
+    margin-bottom: 50px;
+    flex-direction: column;
   }
 
   .footerSection {

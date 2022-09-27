@@ -295,7 +295,7 @@ export default function Landing() {
           content="https://gitopia.com/og-gitopia.jpg"
         />
       </Head>
-      <header className={(menuOpen ? "bg-purple " : "") + styles.header}>
+      <header className={(menuOpen ? "bg-[#13181E] " : "") + styles.header}>
         <div className="flex">
           <div
             type="button"
@@ -306,8 +306,8 @@ export default function Landing() {
             }}
             className={styles.headerLogo + " cursor-pointer"}
           ></div>
-          {mobile ? (
-            <div className="mt-3">
+          {mobile && !menuOpen ? (
+            <div className="mt-2 ml-auto mr-10">
               <Link href="/home" className="">
                 <a className="h-8 px-7 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
                   Login
@@ -328,17 +328,15 @@ export default function Landing() {
             onClick={() => setMenuOpen(!menuOpen)}
           >
             <svg
-              fill="white"
+              width="21"
+              height="15"
+              viewBox="0 0 21 15"
+              fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 92 92"
-              width={24}
-              height={24}
             >
-              <path
-                d="M78,23.5H14c-3.6,0-6.5-2.9-6.5-6.5s2.9-6.5,6.5-6.5h64c3.6,0,6.5,2.9,6.5,6.5S81.6,23.5,78,23.5z M84.5,46
-	c0-3.6-2.9-6.5-6.5-6.5H14c-3.6,0-6.5,2.9-6.5,6.5s2.9,6.5,6.5,6.5h64C81.6,52.5,84.5,49.6,84.5,46z M84.5,75c0-3.6-2.9-6.5-6.5-6.5
-	H14c-3.6,0-6.5,2.9-6.5,6.5s2.9,6.5,6.5,6.5h64C81.6,81.5,84.5,78.6,84.5,75z"
-              />
+              <path d="M0.5 1.5H20.5" stroke="white" stroke-width="2" />
+              <path d="M0.5 8H20.5" stroke="white" stroke-width="2" />
+              <path d="M0.5 14H20.5" stroke="white" stroke-width="2" />
             </svg>
           </button>
 
@@ -351,16 +349,21 @@ export default function Landing() {
             onClick={() => setMenuOpen(!menuOpen)}
           >
             <svg
-              fill="white"
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              width={26}
-              height={26}
-              viewBox="0 0 92 92"
             >
               <path
-                d="M70.7,64.3c1.8,1.8,1.8,4.6,0,6.4c-0.9,0.9-2,1.3-3.2,1.3c-1.2,0-2.3-0.4-3.2-1.3L46,52.4L27.7,70.7
-         c-0.9,0.9-2,1.3-3.2,1.3s-2.3-0.4-3.2-1.3c-1.8-1.8-1.8-4.6,0-6.4L39.6,46L21.3,27.7c-1.8-1.8-1.8-4.6,0-6.4c1.8-1.8,4.6-1.8,6.4,0
-         L46,39.6l18.3-18.3c1.8-1.8,4.6-1.8,6.4,0c1.8,1.8,1.8,4.6,0,6.4L52.4,46L70.7,64.3z"
+                d="M0.928955 0.928711L15.0711 15.0708"
+                stroke="white"
+                stroke-width="2"
+              />
+              <path
+                d="M0.928955 15.0713L15.0711 0.929154"
+                stroke="white"
+                stroke-width="2"
               />
             </svg>
           </button>
@@ -369,7 +372,7 @@ export default function Landing() {
           className={
             "lg:flex flex-grow items-center justify-end " +
             (menuOpen
-              ? " flex justify-center absolute left-0 right-0 bg-purple pt-4 pb-4 z-10 shadow-2xl "
+              ? " flex justify-center absolute left-0 right-0 bg-[#13181E] pt-4 pb-4 z-10 shadow-2xl "
               : " hidden ") +
             styles.headerMenu
           }
@@ -380,14 +383,14 @@ export default function Landing() {
                 <a
                   href="https://blog.gitopia.com/"
                   target="_blank"
-                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
+                  className="px-3 py-4 md:py-2 flex items-center text-3xl lg:text-sm text-white font-bold transition-all focus:text-primary"
                 >
                   Blog
                 </a>
               </li>
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
-                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
+                  className="px-3 py-4 md:py-2 flex items-center text-3xl lg:text-sm text-white font-bold transition-all hover:text-primary"
                   href="https://docs.gitopia.com/"
                   target="_blank"
                   rel="noreferrer"
@@ -397,7 +400,7 @@ export default function Landing() {
               </li>
               <li>
                 <a
-                  className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
+                  className="px-3 py-4 md:py-2 flex items-center text-3xl lg:text-sm text-white font-bold transition-all hover:text-primary"
                   href="https://docs.gitopia.com/lore-token"
                   target="_blank"
                   rel="noreferrer"
@@ -419,8 +422,33 @@ export default function Landing() {
                 </div>
               </li>
             </ul>
+            {menuOpen ? (
+              <div className="absolute bottom-0 ">
+                <div className={classnames("mb-2 px-4", styles.primaryCTA)}>
+                  <a
+                    href="/home"
+                    target="_blank"
+                    className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  >
+                    Get Started
+                  </a>
+                </div>
+                <div className={classnames("mb-4 px-4", styles.primaryCTA)}>
+                  <a
+                    href="/login"
+                    target="_blank"
+                    className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-tranparent btn btn-outline btn-grey active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  >
+                    Login
+                  </a>
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         </div>
+
         <div className={styles.headerLine}></div>
       </header>
 
@@ -442,7 +470,7 @@ export default function Landing() {
                 target="_blank"
                 className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               >
-                Join now - Push code to Gitopia
+                {mobile ? " Get Started" : "Join now - Push code to Gitopia"}
               </a>
             </div>
           </div>
@@ -3271,8 +3299,8 @@ export default function Landing() {
               className={styles.teamImage}
               src="/abhiti.svg"
               loading="lazy"
-              height={mobile ? 160 : 520}
-              width={mobile ? 160 : 520}
+              height={mobile ? 160 : 470}
+              width={mobile ? 160 : 470}
             />
             <div className={styles.teamLabelContainer}>
               <div className={styles.teamLabel}>
@@ -3758,14 +3786,13 @@ export default function Landing() {
                 </defs>
               </svg>
               <div
-                className="relative"
+                className="relative cursor-pointer"
                 onClick={() => {
                   if (window) {
                     window.open("https://www.linkedin.com/company/gitopia/");
                   }
                 }}
                 target="_blank"
-                className="cursor-pointer"
               >
                 <svg
                   width={mobile ? "70" : "40"}
