@@ -25,12 +25,12 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
     setIsArweaveEnabled(false);
     if (backups) {
       backups.map((b) => {
-        if (b.Store === "IPFS" && b.Refs?.length) {
+        if (b.store === "IPFS" && b.refs?.length) {
           setIsIpfsEnabled(true);
-          setIpfsLatestCid(b.Refs[b.Refs.length - 1]);
-        } else if (b.Store === "Arweave" && b.Refs?.length) {
+          setIpfsLatestCid(b.refs[b.refs.length - 1]);
+        } else if (b.store === "ARWEAVE" && b.refs?.length) {
           setIsArweaveEnabled(true);
-          setArweaveLatestCid(b.Refs[b.Refs.length - 1]);
+          setArweaveLatestCid(b.refs[b.refs.length - 1]);
         }
       });
     }
@@ -134,12 +134,12 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
           </a>
         </div>
         {tab === "ipfs" ? (
-          <div className="mt-4">Latest CID: {ipfsLatestCid}</div>
+          <div className="mt-4">Latest Ref: {ipfsLatestCid}</div>
         ) : (
           ""
         )}
         {tab === "arweave" ? (
-          <div className="mt-4">Latest CID: {arweaveLatestCid}</div>
+          <div className="mt-4">Latest Ref: {arweaveLatestCid}</div>
         ) : (
           ""
         )}
