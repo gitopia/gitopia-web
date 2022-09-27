@@ -26,12 +26,7 @@ dayjs.extend(relativeTime);
 function MyApp({ Component, pageProps }) {
   return (
     <>
-      {
-        //uncomment this component for implementing notifications
-        /*  
-      <Notifications /> 
-      */
-      }
+      <Notifications />
       <ErrorHandler>
         <Component {...pageProps} />
       </ErrorHandler>
