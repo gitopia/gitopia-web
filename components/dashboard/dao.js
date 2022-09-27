@@ -2,6 +2,7 @@ import Link from "next/link";
 import { connect } from "react-redux";
 import MembersList from "./membersList";
 import { getDaoDetailsForDashboard } from "../../store/actions/dao";
+import AccountGrants from "../account/grants";
 
 function DaoDashboard({ dao = {}, ...props }) {
   return (
@@ -37,6 +38,15 @@ function DaoDashboard({ dao = {}, ...props }) {
           daoId={dao.address}
           refreshDao={props.getDaoDetailsForDashboard}
         />
+      </div>
+      <div className="flex-1 px-6">
+        <div className="divide-y divide-grey">
+          <div className="text-lg sm:text-2xl py-4 sm:py-6" id="authorizations">
+            Authorizations
+          </div>
+
+          <AccountGrants address={dao.address} />
+        </div>
       </div>
     </main>
   );

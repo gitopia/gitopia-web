@@ -69,7 +69,7 @@ function AccountView(props) {
                   Authorizations
                 </div>
 
-                <AccountGrants user={props.user} />
+                <AccountGrants address={props.selectedAddress} />
               </div>
             </div>
           </div>

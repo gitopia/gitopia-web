@@ -1,17 +1,15 @@
-import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { updateGitServerGrant } from "../../store/actions/user";
+import { updateAddressGrant } from "../../store/actions/user";
 import getGitServerAuthStatus from "../../helpers/getGitServerAuthStatus";
-import { Api } from "../../store/cosmos.authz.v1beta1/module/rest";
 
-function ToggleGitServerAuthorization({ onSuccess, ...props }) {
+function ToggleGitServerAuthorization({ address, onSuccess, ...props }) {
   const [currentState, setCurrentState] = useState(false);
   const [isToggling, setIsToggling] = useState(true);
 
   const toggleGrant = async () => {
     setIsToggling(true);
-    const res = await props.updateGitServerGrant(!currentState);
+    const res = await props.updateAddressGrant(address, 0, !currentState);
     if (res && res.code === 0) {
       if (onSuccess) await onSuccess(!currentState);
       setCurrentState(!currentState);
@@ -22,9 +20,9 @@ function ToggleGitServerAuthorization({ onSuccess, ...props }) {
 
   useEffect(async () => {
     setIsToggling(true);
-    setCurrentState(await getGitServerAuthStatus(props.selectedAddress));
+    setCurrentState(await getGitServerAuthStatus(address));
     setIsToggling(false);
-  }, [props.selectedAddress]);
+  }, [address]);
 
   return (
     <label className="cursor-pointer label">
@@ -60,6 +58,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { updateGitServerGrant })(
+export default connect(mapStateToProps, { updateAddressGrant })(
   ToggleGitServerAuthorization
 );

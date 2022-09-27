@@ -324,7 +324,7 @@ function RepositoryPullsView(props) {
                         {[
                           { id: repository.owner.id, permission: "CREATOR" },
                           ...repository.collaborators,
-                        ].map((c) => {
+                        ].map((c, i) => {
                           return (
                             <li
                               className="normal-case font-normal"
@@ -445,7 +445,7 @@ function RepositoryPullsView(props) {
                         {[
                           { id: repository.owner.id, permission: "CREATOR" },
                           ...repository.collaborators,
-                        ].map((c) => {
+                        ].map((c, i) => {
                           return (
                             <li
                               className="normal-case font-normal"

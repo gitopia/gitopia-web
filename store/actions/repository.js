@@ -18,7 +18,7 @@ export const validatePostingEligibility = async (
     console.log(e.message);
     return false;
   }
-  
+
   const { wallet, env, user } = getState();
 
   if (!wallet.selectedAddress) {
@@ -796,7 +796,7 @@ export const forkRepository = ({
     const repository = {
       creator: wallet.selectedAddress,
       repositoryId: { id: repoOwner, name: repoName },
-      ownerId,
+      owner: ownerId,
       provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
     };
     console.log("fork", repository);
@@ -1293,11 +1293,12 @@ export const authorizeGitServer = () => {
 
     const { wallet, env } = getState();
     try {
-      const message = await env.txClient.msgAuthorizeGitServer({
+      const message = await env.txClient.msgAuthorizeProvider({
         creator: wallet.selectedAddress,
+        granter: wallet.selectedAddress,
         provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+        permission: 0,
       });
-      console.log("Grant", message);
       const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       console.log(result);

@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { updateStorageGrant } from "../../store/actions/user";
+import { updateAddressGrant } from "../../store/actions/user";
 import getStorageBridgeAuthStatus from "../../helpers/getStorageBridgeAuthStatus";
-import { Api } from "../../store/cosmos.authz.v1beta1/module/rest";
 
-function ToggleStorageBridgeAuthorization({ onSuccess, ...props }) {
+function ToggleStorageBridgeAuthorization({ address, onSuccess, ...props }) {
   const [currentState, setCurrentState] = useState(false);
   const [isToggling, setIsToggling] = useState(true);
 
   const toggleGrant = async () => {
     setIsToggling(true);
-    const res = await props.updateStorageGrant(!currentState);
+    const res = await props.updateAddressGrant(address, 1, !currentState);
     if (res && res.code === 0) {
       if (onSuccess) await onSuccess(!currentState);
       setCurrentState(!currentState);
@@ -20,16 +19,10 @@ function ToggleStorageBridgeAuthorization({ onSuccess, ...props }) {
   };
 
   useEffect(async () => {
-    // const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
-    // const res = await api.queryGrants({
-    //   granter: props.selectedAddress,
-    //   grantee: process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS,
-    // });
-    // if (res?.data?.grants) console.log("Storage Grants", res.data.grants);
     setIsToggling(true);
-    setCurrentState(await getStorageBridgeAuthStatus(props.selectedAddress));
+    setCurrentState(await getStorageBridgeAuthStatus(address));
     setIsToggling(false);
-  }, [props.selectedAddress]);
+  }, [address]);
 
   return (
     <label className="cursor-pointer label">
@@ -65,6 +58,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { updateStorageGrant })(
+export default connect(mapStateToProps, { updateAddressGrant })(
   ToggleStorageBridgeAuthorization
 );

@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { notify } from "reapop";
 
-function CloneRepoInfo({ remoteUrl, ...props }) {
+function CloneRepoInfo({ remoteUrl, backups, ...props }) {
   const [tab, setTab] = useState("gitopia");
   const [cloneCmd, setCloneCmd] = useState("git clone " + remoteUrl);
+  const [isIpfsEnabled, setIsIpfsEnabled] = useState(false);
+  const [ipfsLatestCid, setIpfsLatestCid] = useState("");
+  const [isArweaveEnabled, setIsArweaveEnabled] = useState(false);
+  const [arweaveLatestCid, setArweaveLatestCid] = useState("");
 
   useEffect(() => {
     if (tab === "gitopia") {
@@ -15,6 +19,22 @@ function CloneRepoInfo({ remoteUrl, ...props }) {
       setCloneCmd("arweave_clone " + remoteUrl);
     }
   }, [tab]);
+
+  useEffect(() => {
+    setIsIpfsEnabled(false);
+    setIsArweaveEnabled(false);
+    if (backups) {
+      backups.map((b) => {
+        if (b.Store === "IPFS" && b.Refs?.length) {
+          setIsIpfsEnabled(true);
+          setIpfsLatestCid(b.Refs[b.Refs.length - 1]);
+        } else if (b.Store === "Arweave" && b.Refs?.length) {
+          setIsArweaveEnabled(true);
+          setArweaveLatestCid(b.Refs[b.Refs.length - 1]);
+        }
+      });
+    }
+  }, [backups]);
 
   return (
     <div className="dropdown dropdown-end outline-none" tabIndex="0">
@@ -46,27 +66,36 @@ function CloneRepoInfo({ remoteUrl, ...props }) {
           >
             Gitopia Server
           </button>
-          <button
-            className={
-              "tab tab-sm tab-bordered" + (tab === "ipfs" ? " tab-active" : "")
-            }
-            onClick={() => {
-              setTab("ipfs");
-            }}
-          >
-            IPFS
-          </button>
-          <button
-            className={
-              "tab tab-sm tab-bordered" +
-              (tab === "arweave" ? " tab-active" : "")
-            }
-            onClick={() => {
-              setTab("arweave");
-            }}
-          >
-            Arweave
-          </button>
+          {isIpfsEnabled ? (
+            <button
+              className={
+                "tab tab-sm tab-bordered" +
+                (tab === "ipfs" ? " tab-active" : "")
+              }
+              onClick={() => {
+                setTab("ipfs");
+              }}
+            >
+              IPFS
+            </button>
+          ) : (
+            ""
+          )}
+          {isArweaveEnabled ? (
+            <button
+              className={
+                "tab tab-sm tab-bordered" +
+                (tab === "arweave" ? " tab-active" : "")
+              }
+              onClick={() => {
+                setTab("arweave");
+              }}
+            >
+              Arweave
+            </button>
+          ) : (
+            ""
+          )}
         </div>
         <div className="flex items-center py-2 px-4 rounded-lg text-sm alert-warning">
           <svg
@@ -83,7 +112,18 @@ function CloneRepoInfo({ remoteUrl, ...props }) {
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
             />
           </svg>
-          <span className="mr-2">Install gitopia remote helper first</span>
+          <span className="mr-2">
+            {(() => {
+              switch (tab) {
+                case "gitopia":
+                  return "Install git remote helper first";
+                case "ipfs":
+                  return "Install ipfs clone helper first";
+                case "arweave":
+                  return "Install arweave clone helper first";
+              }
+            })()}
+          </span>
           <a
             href="https://docs.gitopia.com/git-remote-gitopia"
             target="_blank"
@@ -93,6 +133,16 @@ function CloneRepoInfo({ remoteUrl, ...props }) {
             Learn more
           </a>
         </div>
+        {tab === "ipfs" ? (
+          <div className="mt-4">Latest CID: {ipfsLatestCid}</div>
+        ) : (
+          ""
+        )}
+        {tab === "arweave" ? (
+          <div className="mt-4">Latest CID: {arweaveLatestCid}</div>
+        ) : (
+          ""
+        )}
         <div className="mt-4">
           <div className="relative w-full mt-4">
             <input

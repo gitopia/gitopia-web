@@ -3,14 +3,14 @@ import { connect } from "react-redux";
 import ToggleStorageBridgeAuthorization from "../repository/toggleStorageBridgeAuthorization";
 import ToggleGitServerAuthorization from "../repository/toggleGitServerAuthorization";
 
-function AccountGrants({ ...props }) {
+function AccountGrants({ address, ...props }) {
   return (
     <div className="py-4">
       <div className="form-control py-4 sm:py-6">
-        <ToggleGitServerAuthorization user={props.user} />
+        <ToggleGitServerAuthorization address={address} />
       </div>
       <div className="form-control py-4 sm:py-6">
-        <ToggleStorageBridgeAuthorization user={props.user} />
+        <ToggleStorageBridgeAuthorization address={address} />
       </div>
     </div>
   );

@@ -203,7 +203,7 @@ export const updateUserUsername = (username) => {
 //   };
 // };
 
-export const updateStorageGrant = (allow) => {
+export const updateAddressGrant = (address, permission, allow) => {
   return async (dispatch, getState) => {
     try {
       await setupTxClients(dispatch, getState);
@@ -213,31 +213,17 @@ export const updateStorageGrant = (allow) => {
     }
     const { wallet, env } = getState();
     let fn = allow
-      ? env.txClient.msgAuthorizeStorageProvider
-      : env.txClient.msgRevokeStorageProviderPermissions;
+      ? env.txClient.msgAuthorizeProvider
+      : env.txClient.msgRevokeProviderPermission;
+    let provider =
+      permission === 1
+        ? process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS
+        : process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS;
     const message = await fn({
       creator: wallet.selectedAddress,
-      provider: process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS,
-    });
-    return await handlePostingTransaction(dispatch, getState, message);
-  };
-};
-
-export const updateGitServerGrant = (allow) => {
-  return async (dispatch, getState) => {
-    try {
-      await setupTxClients(dispatch, getState);
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
-    const { wallet, env } = getState();
-    let fn = allow
-      ? env.txClient.msgAuthorizeGitServer
-      : env.txClient.msgRevokeGitServerPermissions;
-    const message = await fn({
-      creator: wallet.selectedAddress,
-      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+      granter: address,
+      provider,
+      permission,
     });
     return await handlePostingTransaction(dispatch, getState, message);
   };
