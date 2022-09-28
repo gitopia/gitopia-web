@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import shrinkAddress from "../helpers/shrinkAddress";
 import Link from "next/link";
 
 function GreetUser(props) {

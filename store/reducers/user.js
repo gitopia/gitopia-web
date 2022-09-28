@@ -63,6 +63,24 @@ const reducer = (state = initialState, action) => {
       return { ...state, dashboards };
     }
 
+    case userActions.UPDATE_DASHBOARD_ENTRY: {
+      const { id, name, description, avatarUrl } = action.payload;
+      let newDashboards = [...state.dashboards];
+      newDashboards.every((d) => {
+        if (d.id === id) {
+          d.name = name;
+          d.description = description;
+          d.avatarUrl = avatarUrl;
+          if (d.type === "Dao") {
+            d.url = "/daos/" + name + "/dashboard";
+          }
+          return false;
+        }
+        return true;
+      });
+      return { ...state, dashboards: newDashboards };
+    }
+
     default:
       return { ...state };
   }

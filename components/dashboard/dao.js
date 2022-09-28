@@ -3,18 +3,13 @@ import { connect } from "react-redux";
 import MembersList from "./membersList";
 import { getDaoDetailsForDashboard } from "../../store/actions/dao";
 import AccountGrants from "../account/grants";
+import GreetDao from "../greetDao";
 
 function DaoDashboard({ dao = {}, ...props }) {
   return (
     <main className="container mx-auto max-w-screen-lg py-4 sm:py-12">
-      <div className="flex mb-8">
-        <div>
-          <div className="text-xs uppercase">Welcome to</div>
-          <Link href={"/" + dao.name}>
-            <a className="text-lg btn-link">{dao.name}</a>
-          </Link>
-        </div>
-        <div className="flex-1"></div>
+      <div className="mb-8">
+        <GreetDao dao={dao} />
       </div>
       <div className="flex">
         <div className="flex flex-1 bg-box-grad-tl bg-base-200 p-4 rounded-md">

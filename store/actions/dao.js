@@ -74,7 +74,12 @@ export const getDaoDetailsForDashboard = () => {
           dao: { ...dao, members: members },
         },
       });
+      await dispatch({
+        type: userActions.UPDATE_DASHBOARD_ENTRY,
+        payload: { ...dao, id: dao.address },
+      });
     } catch (e) {
+      console.error(e);
       dispatch({
         type: daoActions.SET_EMPTY_DAO,
       });
@@ -253,6 +258,21 @@ export const updateDaoWebsite = ({ id, website }) => {
       url: website,
     };
     const message = await env.txClient.msgUpdateDaoWebsite(payload);
+    return await handlePostingTransaction(dispatch, getState, message);
+  };
+};
+
+export const renameDao = ({ id, name }) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "update name")))
+      return null;
+    const { env, wallet } = getState();
+    const payload = {
+      creator: wallet.selectedAddress,
+      id,
+      name,
+    };
+    const message = await env.txClient.msgRenameDao(payload);
     return await handlePostingTransaction(dispatch, getState, message);
   };
 };

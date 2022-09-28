@@ -40,7 +40,11 @@ function AccountView(props) {
   const validAddress = new RegExp("gitopia[a-z0-9]{39}");
   const hrefBase = "/" + router.query.userId;
 
-  const getId = async () => {
+  const getId = async (updatedName) => {
+    if (updatedName) {
+      router.push("/" + updatedName);
+      return;
+    }
     if (validAddress.test(router.query.userId)) {
       const [u, o] = await Promise.all([
         getUser(router.query.userId),

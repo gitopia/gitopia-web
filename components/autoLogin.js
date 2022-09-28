@@ -83,7 +83,6 @@ function AutoLogin(props) {
   }, [props.activeWallet]);
 
   const unlockLocalWallet = async () => {
-    console.log("getPassworad", props.getPassword);
     let res;
     if (props.getPassword === "Unlock")
       res = await props.unlockWallet({

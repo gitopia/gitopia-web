@@ -10,8 +10,8 @@ import UserUsername from "./username";
 function UserHeader(props) {
   const [isEditable, setIsEditable] = useState(false);
 
-  const refresh = async () => {
-    await props.refresh();
+  const refresh = async (updatedUserName) => {
+    await props.refresh(updatedUserName);
     await props.getUserDetailsForSelectedAddress();
   };
 
