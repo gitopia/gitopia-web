@@ -5,9 +5,9 @@ import { notify } from "reapop";
 function CloneRepoInfo({ remoteUrl, backups, ...props }) {
   const [tab, setTab] = useState("gitopia");
   const [cloneCmd, setCloneCmd] = useState("git clone " + remoteUrl);
-  const [isIpfsEnabled, setIsIpfsEnabled] = useState(true);
+  const [isIpfsEnabled, setIsIpfsEnabled] = useState(false);
   const [ipfsLatestCid, setIpfsLatestCid] = useState("");
-  const [isArweaveEnabled, setIsArweaveEnabled] = useState(true);
+  const [isArweaveEnabled, setIsArweaveEnabled] = useState(false);
   const [arweaveLatestCid, setArweaveLatestCid] = useState("");
 
   useEffect(() => {
@@ -21,8 +21,8 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
   }, [tab]);
 
   useEffect(() => {
-    // setIsIpfsEnabled(false);
-    // setIsArweaveEnabled(false);
+    setIsIpfsEnabled(false);
+    setIsArweaveEnabled(false);
     if (backups) {
       backups.map((b) => {
         if (b.store === "IPFS" && b.refs?.length) {

@@ -138,7 +138,7 @@ function Home(props) {
           <>
             <DashboardSelector />
             <TopRepositories
-              repositories={props.repositories.map((r) => {
+              repositories={allRepository.map((r) => {
                 return {
                   owner: props.selectedAddress,
                   username: props.username,
