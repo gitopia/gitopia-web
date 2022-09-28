@@ -400,7 +400,7 @@ function RepositoryView(props) {
                         repository.owner.id +
                         "/" +
                         repository.name +
-                        "/tree/branches"
+                        "/branches"
                       }
                     >
                       <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
@@ -449,7 +449,7 @@ function RepositoryView(props) {
                         repository.owner.id +
                         "/" +
                         repository.name +
-                        "/releases/tags"
+                        "/tags"
                       }
                     >
                       <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">

@@ -19,7 +19,7 @@ export async function getStaticPaths() {
   };
 }
 
-function RepositoryBranchesView(props) {
+function RepositoryTagsView(props) {
   const router = useRouter();
   const { repository, refreshRepository } = useRepository();
   return (
@@ -45,7 +45,7 @@ function RepositoryBranchesView(props) {
                 "branches",
               ].join("/")}
             >
-              <a className="btn btn-sm btn-active">Branches</a>
+              <a className="btn btn-sm">Branches</a>
             </Link>
             <Link
               href={[
@@ -55,11 +55,11 @@ function RepositoryBranchesView(props) {
                 "tags",
               ].join("/")}
             >
-              <a className="btn btn-sm">Tags</a>
+              <a className="btn btn-sm btn-active">Tags</a>
             </Link>
           </div>
           <div className="mt-14">
-            {repository.branches.map((b) => {
+            {repository.tags.map((b) => {
               return (
                 <div className="mt-8" key={b.name}>
                   <a
@@ -149,4 +149,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryBranchesView);
+export default connect(mapStateToProps, {})(RepositoryTagsView);
