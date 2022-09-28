@@ -12,10 +12,10 @@ import { paramChangeProposal } from "../../../store/actions/proposals";
 import getDao from "../../../helpers/getDao";
 import getUser from "../../../helpers/getUser";
 import PublicTabs from "../../../components/dashboard/publicTabs";
+import validAddress from "../../../helpers/validAddress";
 
 function RepositoryProposalCreateView(props) {
   const [validateAddressError, setValidateAddressError] = useState("");
-  const validAddress = new RegExp("gitopia[a-z0-9]{39}");
   const [validateAmountError, setValidateAmountError] = useState("");
   const [validateInitialAmountError, setValidateInitialAmountError] = useState(
     ""

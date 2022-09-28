@@ -5,6 +5,7 @@ import { changeRepositoryOwner } from "../../store/actions/repository";
 import getUser from "../../helpers/getUser";
 import getDao from "../../helpers/getDao";
 import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
+import validAddress from "../../helpers/validAddress";
 
 function TransferOwnership({
   repoId = null,
@@ -21,7 +22,6 @@ function TransferOwnership({
   });
   const [isChanging, setIsChanging] = useState(false);
   const [startTransfer, setStartTransfer] = useState(false);
-  const validAddress = new RegExp("gitopia[a-z0-9]{39}");
 
   useEffect(() => {
     setAddress("");

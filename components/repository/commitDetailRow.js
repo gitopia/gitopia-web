@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import shrinkAddress from "../../helpers/shrinkAddress";
+import validAddress from "../../helpers/validAddress";
 
 export default function CommitDetailRow({
   commitDetail,
@@ -16,7 +17,6 @@ export default function CommitDetailRow({
   let [title, setTitle] = useState("");
   let [hasMore, setHasMore] = useState(false);
   let [fullMessageShown, setFullMessageShown] = useState(false);
-  const validAddress = new RegExp("gitopia[a-z0-9]{39}");
 
   useEffect(() => {
     if (commitDetail && commitDetail.author) {

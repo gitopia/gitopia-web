@@ -30,6 +30,7 @@ function AccountDaoHeader(props) {
       <DaoAvatar dao={props.dao} isEditable={isEditable} refresh={refresh} />
       <div className="flex-1 max-w-xl pl-12">
         <DaoName dao={props.dao} isEditable={isEditable} refresh={refresh} />
+        <div className="mb-2 text-type-secondary">{props.dao.address}</div>
         <DaoDescription
           dao={props.dao}
           isEditable={isEditable}

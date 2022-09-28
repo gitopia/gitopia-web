@@ -15,6 +15,7 @@ import AccountRepositories from "../../components/account/repositories";
 import AccountTransactions from "../../components/account/transactions";
 import AccountPeople from "../../components/account/people";
 import AccountDaoHeader from "../../components/account/daoHeader";
+import validAddress from "../../helpers/validAddress";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -37,7 +38,6 @@ function AccountView(props) {
     name: "",
   });
 
-  const validAddress = new RegExp("gitopia[a-z0-9]{39}");
   const hrefBase = "/" + router.query.userId;
 
   const getId = async (updatedName) => {
