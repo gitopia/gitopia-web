@@ -5,9 +5,9 @@ import { notify } from "reapop";
 function CloneRepoInfo({ remoteUrl, backups, ...props }) {
   const [tab, setTab] = useState("gitopia");
   const [cloneCmd, setCloneCmd] = useState("git clone " + remoteUrl);
-  const [isIpfsEnabled, setIsIpfsEnabled] = useState(false);
+  const [isIpfsEnabled, setIsIpfsEnabled] = useState(true);
   const [ipfsLatestCid, setIpfsLatestCid] = useState("");
-  const [isArweaveEnabled, setIsArweaveEnabled] = useState(false);
+  const [isArweaveEnabled, setIsArweaveEnabled] = useState(true);
   const [arweaveLatestCid, setArweaveLatestCid] = useState("");
 
   useEffect(() => {
@@ -21,8 +21,8 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
   }, [tab]);
 
   useEffect(() => {
-    setIsIpfsEnabled(false);
-    setIsArweaveEnabled(false);
+    // setIsIpfsEnabled(false);
+    // setIsArweaveEnabled(false);
     if (backups) {
       backups.map((b) => {
         if (b.store === "IPFS" && b.refs?.length) {
@@ -97,7 +97,7 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
             ""
           )}
         </div>
-        <div className="flex items-center py-2 text-sm text-bold text-accent-focus">
+        <div className="flex items-center p-2 text-sm text-bold text-accent-focus">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5 mr-2 mt-px"
@@ -114,7 +114,7 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
           </svg>
           <span className="">Please Note</span>
         </div>
-        <div className="">
+        <div className="px-2">
           <span className="text-sm mr-2">
             {(() => {
               switch (tab) {
@@ -136,7 +136,7 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
             Learn more
           </a>
         </div>
-        <div className="mt-4">
+        <div className="mt-6">
           {tab === "ipfs" || tab === "arweave" ? (
             <div className="relative w-full mt-4">
               <div className="absolute left-0 top-0 btn btn-disabled btn-md">

@@ -119,7 +119,7 @@ export default function BranchSelector({
       </div>
       <div className="shadow-lg dropdown-content bg-base-300 rounded mt-1 overflow-hidden w-64">
         {!(showTagsOnly || showBranchesOnly) ? (
-          <div className="tabs px-6 pt-4">
+          <div className="tabs px-4 pt-4">
             <a
               className={
                 "tab tab-sm tab-bordered " +

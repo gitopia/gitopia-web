@@ -1101,6 +1101,11 @@ ul.mde-suggestions li[aria-selected="true"] {
   padding-bottom: calc(var(--tab-padding, 1rem) / 2);
 }
 
+.tab-sm {
+  --tab-padding: 0;
+  margin-right: 1rem;
+}
+
 .tab-lifted.tab-active:last-child:after {
   background-image: var(--tab-corner-bg);
 }
