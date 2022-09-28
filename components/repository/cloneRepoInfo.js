@@ -53,7 +53,7 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
           />
         </svg>
       </button>
-      <div className="shadow-lg dropdown-content bg-base-300 rounded mt-1 overflow-hidden w-max p-4 text-left">
+      <div className="shadow-lg dropdown-content bg-base-300 rounded mt-1 overflow-hidden p-4 text-left w-96">
         <div className="tabs mb-4">
           <button
             className={
@@ -97,7 +97,7 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
             ""
           )}
         </div>
-        <div className="flex items-center py-2 px-4 rounded-lg text-sm alert-warning">
+        <div className="flex items-center py-2 text-sm text-bold text-accent-focus">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5 mr-2 mt-px"
@@ -112,15 +112,18 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
             />
           </svg>
-          <span className="mr-2">
+          <span className="">Please Note</span>
+        </div>
+        <div className="">
+          <span className="text-sm mr-2">
             {(() => {
               switch (tab) {
                 case "gitopia":
-                  return "Install git remote helper first";
+                  return "In order to use gitopia protocol, you need to install git remote helper first";
                 case "ipfs":
-                  return "Install ipfs clone helper first";
+                  return "In order to use ipfs clone, you need to install the helper first";
                 case "arweave":
-                  return "Install arweave clone helper first";
+                  return "In order to use arweave clone, you need to install the helper first";
               }
             })()}
           </span>
@@ -128,22 +131,58 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
             href="https://docs.gitopia.com/git-remote-gitopia"
             target="_blank"
             rel="noreferrer"
-            className="btn btn-outline btn-secondary btn-sm"
+            className="text-sm text-teal"
           >
             Learn more
           </a>
         </div>
-        {tab === "ipfs" ? (
-          <div className="mt-4">Latest Ref: {ipfsLatestCid}</div>
-        ) : (
-          ""
-        )}
-        {tab === "arweave" ? (
-          <div className="mt-4">Latest Ref: {arweaveLatestCid}</div>
-        ) : (
-          ""
-        )}
         <div className="mt-4">
+          {tab === "ipfs" || tab === "arweave" ? (
+            <div className="relative w-full mt-4">
+              <div className="absolute left-0 top-0 btn btn-disabled btn-md">
+                {tab === "ipfs" ? (
+                  <img src="/ipfs-logo.png" />
+                ) : (
+                  <img src="/arweave-logo.png" />
+                )}
+              </div>
+              <input
+                rows={2}
+                cols={120}
+                name="repository-url"
+                type="text"
+                value={tab === "ipfs" ? ipfsLatestCid : arweaveLatestCid}
+                readOnly={true}
+                className="w-full input input-ghost input-md input-bordered py-2 pl-14 pr-14"
+              />
+              <button
+                className="absolute right-0 top-0 btn btn-ghost btn-md"
+                onClick={(e) => {
+                  navigator.clipboard.writeText(
+                    tab === "ipfs" ? ipfsLatestCid : arweaveLatestCid
+                  );
+                  props.notify("Copied to clipboard", "info");
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+              </button>
+            </div>
+          ) : (
+            ""
+          )}
           <div className="relative w-full mt-4">
             <input
               rows={2}

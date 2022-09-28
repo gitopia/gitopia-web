@@ -38,12 +38,18 @@ function Home(props) {
       console.log(newUrl);
       router.push(newUrl);
     }
-    const repos = await getAnyRepositoryAll(props.currentDashboard);
-    if (repos) {
-      console.log(repos);
-      setAllRepository(repos);
+    if (props.selectedAddress) {
+      const repos = await getAnyRepositoryAll(props.currentDashboard);
+      if (repos) {
+        console.log(repos);
+        setAllRepository(repos);
+      } else {
+        setAllRepository([]);
+      }
+    } else {
+      setAllRepository([]);
     }
-  }, [props.dashboards, props.currentDashboard]);
+  }, [props.dashboards, props.currentDashboard, props.selectedAddress]);
 
   return (
     <div
