@@ -2344,15 +2344,20 @@ export default function Landing() {
         <div className={classnames([styles.h3], [styles.getStartedDes])}>
           You can get up and running in just 5 minutes, see how 👇
         </div>
-
         <YoutubeEmbed
           embedId="ewK_0BkF5P8"
           height={mobile ? "200px" : "472px"}
           width={mobile ? "350px" : "840px"}
         />
         <img
+          src="./gitopia-coin-mobile.svg"
+          className={!mobile ? "hidden" : "absolute right-0 top-96 pt-20"}
+        />
+        <img
           src="./gitopia-coin.svg"
-          className={mobile ? "hidden" : "absolute -z-10 right-3/4 bottom-1/2"}
+          className={
+            "absolute -z-10 " + (mobile ? " hidden" : " right-3/4 bottom-1/2")
+          }
         />
         <img
           src="./gitopia-coin-1.svg"
@@ -2473,7 +2478,17 @@ export default function Landing() {
         </svg>
         <img
           src="./wave.svg"
-          className="absolute -z-10 opacity-100 pointer-events-none left-0 top-1/4 w-full"
+          className={
+            "absolute -z-10 opacity-100 pointer-events-none " +
+            (mobile ? " hidden" : " left-0 -top-24 w-full")
+          }
+        />
+        <img
+          src="./mobile-wave.svg"
+          className={
+            "absolute -z-10 opacity-100 pointer-events-none " +
+            (mobile ? " top-1/3 pt-10" : " hidden")
+          }
         />
         <img
           src="./getStartedCoin-1.svg"
@@ -2486,18 +2501,18 @@ export default function Landing() {
         <img
           src="./getStartedCoin-2.svg"
           className={
-            mobile
-              ? "hidden"
-              : "absolute -z-10 opacity-100 pointer-events-none left-16 bottom-0"
+            "absolute -z-10 opacity-100 pointer-events-none" +
+            (mobile ? " left-1/4 -bottom-5" : " left-16 bottom-0")
           }
         />
         <img
           src="./getStartedCoin-3.svg"
           className={
-            mobile
-              ? "hidden"
-              : "absolute  opacity-100 pointer-events-none right-3/4 pr-32 top-3/4"
+            "absolute -z-10 opacity-100 pointer-events-none" +
+            (mobile ? " bottom-1/3 pb-2 right-10" : " right-3/4 pr-32 top-3/4")
           }
+          width={mobile ? "43" : ""}
+          height={mobile ? "43" : ""}
         />
         <img
           src="./getStartedCoin-4.svg"
@@ -2510,10 +2525,11 @@ export default function Landing() {
         <img
           src="./getStartedCoin-5.svg"
           className={
-            mobile
-              ? "hidden"
-              : "absolute  opacity-100 pointer-events-none right-16 pt-16 top-1/3"
+            "absolute z-10  opacity-100 pointer-events-none " +
+            (mobile ? "-left-3 pt-5 top-1/2" : "right-16 pt-16 top-1/3")
           }
+          width={mobile ? "56" : "88"}
+          height={mobile ? "56" : "88"}
         />
         <img
           src="./getStartedCoin-6.svg"
@@ -2531,6 +2547,63 @@ export default function Landing() {
               : "absolute  opacity-100 pointer-events-none right-0 bottom-0"
           }
         />
+        {mobile ? (
+          <svg
+            width="273"
+            height="315"
+            viewBox="0 0 273 315"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="absolute -z-10 opacity-100 pointer-events-none top-2/3 right-0"
+          >
+            <g filter="url(#filter0_f_3325_6939)">
+              <rect
+                x="97"
+                y="97.5908"
+                width="242.704"
+                height="119.669"
+                rx="14.4433"
+                fill="url(#paint0_linear_3325_6939)"
+              />
+            </g>
+            <defs>
+              <filter
+                id="filter0_f_3325_6939"
+                x="0.109695"
+                y="0.700516"
+                width="436.485"
+                height="313.45"
+                filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB"
+              >
+                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feBlend
+                  mode="normal"
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                />
+                <feGaussianBlur
+                  stdDeviation="48.4452"
+                  result="effect1_foregroundBlur_3325_6939"
+                />
+              </filter>
+              <linearGradient
+                id="paint0_linear_3325_6939"
+                x1="248.405"
+                y1="97.5908"
+                x2="338.5"
+                y2="134.467"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="#6D2882" />
+                <stop offset="1" stop-color="#2C4DFF" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
+        ) : (
+          ""
+        )}
       </section>
 
       <section className={"relative " + styles.section}>
@@ -2567,7 +2640,7 @@ export default function Landing() {
           xmlns="http://www.w3.org/2000/svg"
           className={
             mobile
-              ? "hidden"
+              ? "absolute -z-10 pointer-events-none top-16"
               : "absolute -z-10 pointer-events-none left-1/4 top-1/3"
           }
         >
@@ -2620,7 +2693,7 @@ export default function Landing() {
           xmlns="http://www.w3.org/2000/svg"
           className={
             mobile
-              ? "hidden"
+              ? "absolute -z-10 pointer-events-none top-3/4 pb-60"
               : "absolute z-1 pointer-events-none left-0 top-1/4"
           }
         >
