@@ -384,14 +384,14 @@ export default function Landing() {
                   href="https://blog.gitopia.com/"
                   target="_blank"
                   rel="noreferrer"
-                  className="px-3 py-4 md:py-2 flex items-center text-3xl lg:text-sm text-white font-bold transition-all focus:text-primary"
+                  className="px-12 sm:px-3 py-4 md:py-2 flex items-center text-3xl lg:text-sm text-white font-bold transition-all focus:text-primary"
                 >
                   Blog
                 </a>
               </li>
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
-                  className="px-3 py-4 md:py-2 flex items-center text-3xl lg:text-sm text-white font-bold transition-all hover:text-primary"
+                  className="px-12 sm:px-3 py-4 md:py-2 flex items-center text-3xl lg:text-sm text-white font-bold transition-all hover:text-primary"
                   href="https://docs.gitopia.com/"
                   target="_blank"
                   rel="noreferrer"
@@ -401,12 +401,12 @@ export default function Landing() {
               </li>
               <li>
                 <a
-                  className="px-3 py-4 md:py-2 flex items-center text-3xl lg:text-sm text-white font-bold transition-all hover:text-primary"
+                  className="px-12 sm:px-3 py-4 md:py-2 flex items-center text-3xl lg:text-sm text-white font-bold transition-all hover:text-primary"
                   href="https://docs.gitopia.com/lore-token"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Lore Token
+                  LORE Token
                 </a>
               </li>
               {/* <li className="border-b-2 lg:border-r-2 lg:border-b-0 border-white border-opacity-10 w-full h-2 mb-4 lg:h-6 lg:w-1 lg:mr-4 lg:mb-0 mt-2"></li> */}
@@ -425,7 +425,7 @@ export default function Landing() {
             </ul>
             {menuOpen ? (
               <div className="absolute bottom-0 ">
-                <div className={classnames("mb-2 px-4", styles.primaryCTA)}>
+                <div className={classnames("mb-2 px-6", styles.primaryCTA)}>
                   <a
                     href="/home"
                     target="_blank"
@@ -434,7 +434,7 @@ export default function Landing() {
                     Get Started
                   </a>
                 </div>
-                <div className={classnames("mb-4 px-4", styles.primaryCTA)}>
+                <div className={classnames("mb-4 px-6", styles.primaryCTA)}>
                   <a
                     href="/login"
                     target="_blank"
@@ -443,6 +443,44 @@ export default function Landing() {
                     Login
                   </a>
                 </div>
+              </div>
+            ) : (
+              ""
+            )}
+            {menuOpen ? (
+              <div>
+                <img
+                  className={"absolute pointer-events-none z-1 w-full -top-24"}
+                  src="./mobile-stars.svg"
+                />
+                <img
+                  className={"absolute pointer-events-none z-1 left-10 top-0"}
+                  src="./shootingStar.svg"
+                />
+                <img
+                  className={
+                    "absolute pointer-events-none z-1 -right-10 top-1/2"
+                  }
+                  src="./shootingStar3.svg"
+                />
+                <img
+                  className={
+                    "absolute pointer-events-none z-1 bottom-1/4 right-8 mr-10"
+                  }
+                  src="./star-2.svg"
+                  width="100"
+                  height="100"
+                />
+                <img
+                  className={"absolute pointer-events-none z-1 top-4 right-1/4"}
+                  src="./star-6.svg"
+                />
+                <img
+                  className={
+                    "absolute pointer-events-none z-1 top-20 -right-1/3"
+                  }
+                  src="./star-1.svg"
+                />
               </div>
             ) : (
               ""
