@@ -465,7 +465,12 @@ export default function Landing() {
             through collaboration, transparency, and incentivization.
           </div>
           <div className="flex flex-col justify-center items-center">
-            <div className={classnames("mb-8 px-6 sm:px-0", styles.primaryCTA)}>
+            <div
+              className={classnames(
+                "mb-8 px-6 mt-64 sm:mt-0 sm:px-0",
+                styles.primaryCTA
+              )}
+            >
               <a
                 href="/home"
                 target="_blank"
@@ -483,12 +488,22 @@ export default function Landing() {
           }
           src="./stars.svg"
         />
+        {mobile ? (
+          <img
+            className={"absolute pointer-events-none z-1 w-full -top-24"}
+            src="./mobile-stars.svg"
+          />
+        ) : (
+          ""
+        )}
         <img
           className={
             "absolute pointer-events-none z-1 " +
-            (mobile ? "hidden" : "top-1/4 left-10")
+            (mobile ? "-right-14" : "top-1/4 left-10")
           }
           src="./star-1.svg"
+          width={mobile ? "130" : "244"}
+          height={mobile ? "101" : "189"}
         />
         <img
           className={
@@ -500,9 +515,13 @@ export default function Landing() {
         <img
           className={
             "absolute pointer-events-none z-1  " +
-            (mobile ? "hidden" : " top-3/4 left-10 mr-10")
+            (mobile
+              ? " -left-8 blur-[1px] opacity-70 top-1/2 pt-5"
+              : " top-3/4 left-10 mr-10")
           }
           src="./car.svg"
+          width={mobile ? "175" : "487"}
+          height={mobile ? "70" : "194"}
         />
         <img
           className={
@@ -514,23 +533,31 @@ export default function Landing() {
         <img
           className={
             "absolute pointer-events-none z-1  " +
-            (mobile ? "hidden" : "top-1/2 left-2/3")
+            (mobile ? "top-1/3 mt-20" : "top-1/2 left-2/3")
           }
           src="./moon.svg"
+          width={mobile ? "239" : "423"}
+          height={mobile ? "271" : "480"}
         />
         <img
           className={
-            "absolute pointer-events-none z-1  " +
-            (mobile ? "hidden" : " top-0 left-2/3 mt-10")
+            "absolute pointer-events-none -z-10  " +
+            (mobile
+              ? " -right-16 top-2/3 opacity-90 "
+              : " top-0 left-2/3 mt-10")
           }
           src="./star-4.svg"
+          width={mobile ? "243" : "431"}
+          height={mobile ? "168" : "297"}
         />
         <img
           className={
-            "absolute pointer-events-none z-1 " +
-            (mobile ? "hidden" : " top-full right-10")
+            "absolute pointer-events-none -z-10 " +
+            (mobile ? " top-0 -right-12" : " top-full right-10")
           }
           src="./star-5.svg"
+          width={mobile ? "111" : "215"}
+          height={mobile ? "83" : "184"}
         />
         <img
           className={
@@ -541,8 +568,8 @@ export default function Landing() {
         />
         <img
           className={
-            "absolute pointer-events-none z-1  " +
-            (mobile ? "hidden" : " top-0 right-1/4")
+            "absolute pointer-events-none z-1 top-0  " +
+            (mobile ? " left-3" : " right-1/4")
           }
           src="./shootingStar.svg"
         />
@@ -556,7 +583,7 @@ export default function Landing() {
         <img
           className={
             "absolute pointer-events-none z-1  " +
-            (mobile ? "hidden" : " bottom-0 left-1/2")
+            (mobile ? " -left-10 top-1/3" : " bottom-0 left-1/2")
           }
           src="./shootingStar3.svg"
         />
