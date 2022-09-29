@@ -499,7 +499,7 @@ export default function Landing() {
           <div className={styles.byline}>
             Gitopia is the next-generation Code Collaboration Platform fuelled
             by a decentralized network and interactive token economy. It is
-            designed to optimize the opensource software development process
+            designed to optimize the open-source software development process
             through collaboration, transparency, and incentivization.
           </div>
           <div className="flex flex-col justify-center items-center">
@@ -514,7 +514,7 @@ export default function Landing() {
                 target="_blank"
                 className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               >
-                {mobile ? " Get Started" : "Join now - Push code to Gitopia"}
+                {mobile ? " Get Started" : "Push code to Gitopia"}
               </a>
             </div>
           </div>
@@ -2076,7 +2076,7 @@ export default function Landing() {
                       target="_blank"
                       className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                     >
-                      Create your On-Chain Profile now!
+                      Create your Gitopia Profile
                     </a>
                   </div>
                   <div className="flex mb-4">
@@ -2099,7 +2099,7 @@ export default function Landing() {
                   <img src="/Issue.svg" />
                 </figure>
                 <div className={styles.collaborationsBenefitsCard2Title}>
-                  Issues
+                  Issue
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   Helps keep track of tasks, enhancements, and bugs for your
@@ -2114,7 +2114,7 @@ export default function Landing() {
                   Pull-Request
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
-                  Helps you submit changes to a decentralized repositroy hosted
+                  Helps you submit changes to a decentralized repository hosted
                   on Gitopia
                 </div>
               </div>
@@ -2126,7 +2126,7 @@ export default function Landing() {
                   Fork
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
-                  Helps you create a copy of the repo hosted on Gitopia to
+                  Helps you create a copy of the repository hosted on Gitopia to
                   experiment with changes or use as a basis.
                 </div>
               </div>
@@ -2135,7 +2135,7 @@ export default function Landing() {
                   <img src="/on chain profile.svg" />
                 </figure>
                 <div className={styles.collaborationsBenefitsCard2Title}>
-                  On-Chain Profile
+                  Gitopia Profile
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   Users can now set usernames for their wallet addresses on
@@ -2157,7 +2157,7 @@ export default function Landing() {
                   target="_blank"
                   className="h-12 py-3 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
-                  Create your On-Chain Profile now!
+                  Create your Gitopia Profile
                 </a>
               </div>
               <div className="flex mb-4">
@@ -2274,7 +2274,7 @@ export default function Landing() {
           <div className={styles.midLogo}></div>
         </div>
       </section>
-      <div
+      {/* <div
         className={
           mobile
             ? "hidden"
@@ -2285,7 +2285,7 @@ export default function Landing() {
         <div className="mt-4">
           Decentrlization is the only plausible future, get in early.
         </div>
-      </div>
+      </div> */}
       <section
         className={classnames([styles.section, styles.decentralizedSection])}
       >
@@ -2325,7 +2325,7 @@ export default function Landing() {
                 }}
                 className="ml-4 px-16 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               >
-                Create your repository now!
+                Create a Repository
               </button>
             </div>
           </div>
@@ -2363,9 +2363,9 @@ export default function Landing() {
                       );
                     }
                   }}
-                  className="px-10 py-2 w-52 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  className="px-4 py-4 w-52 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
-                  Checkout Gitopia Repositories
+                  View Source Code
                 </button>
               </div>
             </div>
@@ -2409,7 +2409,7 @@ export default function Landing() {
           Get Started
         </div>
         <div className={classnames([styles.h3], [styles.getStartedDes])}>
-          You can get up and running in just 5 minutes, see how 👇
+          Contribute to open-source with Gitopia, see how 👇
         </div>
         <YoutubeEmbed
           embedId="ewK_0BkF5P8"
@@ -2817,7 +2817,7 @@ export default function Landing() {
           <div className={styles.collaborationsBenefitsCard1}>
             <div className="">
               <div className={" " + styles.benefitsCard1Title}>
-                Discover the incredible benefits of Web 3.0 specific Workflow
+                Discover the incredible benefits of Web3 specific Workflows
               </div>
               <div className={" " + styles.collaborationsBenefitsCard1Body}>
                 Gitopia is a decentralized and community-controlled alternative
@@ -2838,7 +2838,7 @@ export default function Landing() {
                     target="_blank"
                     className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                   >
-                    Create your DAO at Gitopia
+                    Create DAO
                   </a>
                 </div>
               ) : (
@@ -2913,7 +2913,7 @@ export default function Landing() {
                   target="_blank"
                   className="h-12 py-3 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
-                  Create your DAO at Gitopia
+                  Create DAO
                 </a>
               </div>
             </div>
@@ -3267,7 +3267,7 @@ export default function Landing() {
             <div>
               <div className={styles.backers2Name}>Tanmay Bhat</div>
               <div className={styles.backers2Title}>
-                Superteam DAO, comedian, investor, YouTube influencer
+                Comedian, Investor, YouTube influencer
               </div>
             </div>
           </div>
@@ -3489,7 +3489,7 @@ export default function Landing() {
                     }
                   }}
                 >
-                  Apply to work with us
+                  Apply Now
                 </button>
               </div>
             </div>
@@ -3522,7 +3522,7 @@ export default function Landing() {
                   }
                 }}
               >
-                Apply to work with us
+                Apply Now
               </button>
             </div>
           </div>
