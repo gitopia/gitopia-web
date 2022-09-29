@@ -450,7 +450,7 @@ export default function Landing() {
             {menuOpen ? (
               <div>
                 <img
-                  className={"absolute pointer-events-none z-1 w-full -top-24"}
+                  className={"absolute pointer-events-none z-1 w-full -top-24 "}
                   src="./mobile-stars.svg"
                 />
                 <img
@@ -477,7 +477,7 @@ export default function Landing() {
                 />
                 <img
                   className={
-                    "absolute pointer-events-none z-1 top-20 -right-1/3"
+                    "absolute pointer-events-none z-1 top-20 -right-1/3 sm:left-0 sm:top-1/3"
                   }
                   src="./star-1.svg"
                 />
@@ -2093,7 +2093,7 @@ export default function Landing() {
             </div>
           </div>
           <div className="">
-            <div className="grid grid-rows-2 grid-cols-2 sm:gap-x-8 sm:gap-y-10">
+            <div className="grid grid-rows-2 grid-cols-2 lg:gap-x-8 lg:gap-y-10">
               <div className="items-left text-left">
                 <figure className={styles.collaborationsBenefitsCard2Image}>
                   <img src="/Issue.svg" />
@@ -2418,7 +2418,7 @@ export default function Landing() {
         />
         <img
           src="./gitopia-coin-mobile.svg"
-          className={!mobile ? "hidden" : "absolute right-0 top-96 pt-20"}
+          className={!mobile ? "hidden" : " absolute right-0 top-96 pt-20"}
         />
         <img
           src="./gitopia-coin.svg"
@@ -2586,14 +2586,16 @@ export default function Landing() {
           className={
             mobile
               ? "hidden"
-              : "absolute  opacity-100 pointer-events-none right-16 pr-32 top-3/4"
+              : "absolute -z-10 opacity-100 pointer-events-none right-16 pr-32 top-3/4"
           }
         />
         <img
           src="./getStartedCoin-5.svg"
           className={
-            "absolute z-10  opacity-100 pointer-events-none " +
-            (mobile ? "-left-3 pt-5 top-1/2" : "right-16 pt-16 top-1/3")
+            "absolute opacity-100 pointer-events-none " +
+            (mobile
+              ? "-left-3 pt-5 top-1/2 z-10"
+              : "right-16 pt-16 top-1/3 -z-10 ")
           }
           width={mobile ? "56" : "88"}
           height={mobile ? "56" : "88"}
@@ -2603,7 +2605,7 @@ export default function Landing() {
           className={
             mobile
               ? "hidden"
-              : "absolute  opacity-100 pointer-events-none right-5 top-2/3"
+              : "absolute -z-10  opacity-100 pointer-events-none right-5 top-2/3"
           }
         />
         <img
@@ -2611,7 +2613,7 @@ export default function Landing() {
           className={
             mobile
               ? "hidden"
-              : "absolute  opacity-100 pointer-events-none right-0 bottom-0"
+              : "absolute -z-10  opacity-100 pointer-events-none right-0 bottom-0"
           }
         />
         {mobile ? (
@@ -2678,7 +2680,7 @@ export default function Landing() {
         <div className={styles.h3 + " text-center"}>
           Embrace the future of <br /> collaboration
         </div>
-        <div className="sm:flex">
+        <div className="lg:flex">
           <div className={styles.censorship}>
             <div className={styles.censorshipResistant}>
               Censorship Resistant and Unstoppable
@@ -2847,7 +2849,7 @@ export default function Landing() {
             </div>
           </div>
           <div className="">
-            <div className="grid grid-rows-2 grid-cols-2 sm:gap-x-8 sm:gap-y-10">
+            <div className="grid grid-rows-2 grid-cols-2 lg:gap-x-8 lg:gap-y-10">
               <div className="items-left text-left">
                 <figure className={styles.collaborationsBenefitsCard2Image}>
                   <img src="/Proposal.svg" />
@@ -3478,7 +3480,7 @@ export default function Landing() {
                   Interested in joining?
                 </div>
               </div>
-              <div className={classnames("mt-0 ml-1 absolute")}>
+              <div className={classnames("mt-0 ml-10 absolute")}>
                 <button
                   className={
                     "btn btn-sm w-full h-5 py-0.5 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 "
@@ -3511,7 +3513,7 @@ export default function Landing() {
                 Interested in joining?
               </div>
             </div>
-            <div className={classnames("sm:mb-3 sm:ml-20 sm:mt-3")}>
+            <div className={classnames("sm:mb-3 ml-12 lg:ml-20 sm:mt-3")}>
               <button
                 className={
                   "btn w-60 h-12 py-3 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 "
@@ -3743,7 +3745,7 @@ export default function Landing() {
               </div>
             </div>
           </div>
-          <div className={styles.footerSection + (mobile ? " pr-20" : "")}>
+          <div className={styles.footerSection + " pr-20 sm:pr-5 lg:pr-0"}>
             <div className={styles.footerTitle}>Socials</div>
             <div className="grid grid-cols-4 grid-rows-2 gap-4 mt-3">
               <svg

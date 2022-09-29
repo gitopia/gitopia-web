@@ -276,10 +276,6 @@
   margin-top: 30px;
 }
 
-.collaborationsBenefitsCard2Image {
-  
-}
-
 .collaborationsBenefitsCard2Body {
   margin-top: 8px;
   font-weight: 400;
@@ -947,41 +943,52 @@
   .censorshipSection {
     margin-top: 100px;
   }
-  .cgRow {
-    flex-direction: column;
-    width: auto;
-    padding: 0 44px;
-  }
-  .cgHeadline,
-  .cgEndCol {
-    width: auto;
-  }
-  .roadmapSection {
-    text-align: left;
-  }
-  .roadmapYearStart,
-  .roadmapYearEnd {
-    left: 64px;
-  }
-  .roadmapGraph {
-    left: -300px;
-  }
-  .roadmapActions {
-    left: 120px;
-    right: 64px;
-  }
-  .roadmapQtr {
-    width: 100%;
-  }
-  .roadmapQtrDisplay {
-    margin-left: 10px;
-    font-size: 64px;
-    opacity: 0.1;
+
+  .collaborationsBenefitsCard1 {
+    margin-right: 20px;
+    margin-left: 20px;
   }
 
-  .bufferCard {
-    height: 95px;
+  .collaborationsBenefitsCard1Body {
+    width: 360px;
   }
+  .collaborationsBenefitsCard2Title{
+    width: 200px;
+  }
+  .collaborationsBenefitsCard2Body {
+    width: 180px;
+    margin-right: 10px;
+  }
+  .openSource {
+    width: 360px;
+  }
+  
+  .openSourceTitle {
+    width: 300px;
+  }
+  
+  .openSourceDescription {
+    width: 300px;
+  }
+  .censorship {
+    margin-right: 350px;
+  }
+
+ .embrace {
+   height: 400px;
+   width: 400px;
+   margin-left: 130px;
+   margin-top: 10px;
+ }
+ 
+ .secure {
+   margin-left: 380px;
+   margin-top: 480px;
+ }
+ 
+.backers {
+  width: 180px;
+}
   .teamWrapper {
     gap: 10px;
     width: 800px;
@@ -1002,7 +1009,7 @@
   }
  
   .teamLabel {
-    background: #13181E;
+    background: transparent;
     height: 40px;
     width: 300px;
   }
@@ -1015,11 +1022,24 @@
   .teamDesig {
     font-size: 12px;
   }
-
+  .joining {
+    margin-top: 280px;
+  } 
   .decentralizedDesc {
     width: 320px;
   }
-
+  .footer {
+    align-items: start;
+  }
+  .footerSection {
+    margin-left: 30px;
+  }
+  .divider {
+    width: 90%;
+  }
+  .footerEnd {
+    width: 90%;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1048,22 +1068,21 @@
     margin-right: 10px;
   }
   .collaborationsBenefitsCard1Title {
-    margin-left: 40px;
+    margin-left: 10px;
     text-align: center;
     align-items: center;
   }
 
   .benefitsCard1Title {
     margin-top: 120px;
-    margin-left: 10px;
-    width: 383px;
+    margin-left: 0px;
+    width: 343px;
     text-align: center;
     align-items: center;
   }
 
   .collaborationsBenefitsCard1Body {
-    width: 373px;
-    margin-left: 20px;
+    width: 353px;
     text-align: center;
     align-items: center;
   }
@@ -1164,7 +1183,8 @@
     width: 310px;
   }
   .censorship {
-    margin-right: 10px;
+    margin-left: 0;
+    margin-right: 0;
     margin-top: 400px;
     text-align: center;
   }
@@ -1193,6 +1213,8 @@
  .secure {
     margin-top: 40px;
     text-align: center;
+    margin-left: 0;
+    margin-right: 0;
   }
   .secureLogin {
     width: 70%;
