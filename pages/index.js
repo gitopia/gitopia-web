@@ -11,7 +11,7 @@ import getContent from "../helpers/getContent";
 import YoutubeEmbed from "../helpers/youtubeEmbed";
 import GitopiaLive from "../helpers/gitopiaLive";
 import getAllRepositoryBranch from "../helpers/getAllRepositoryBranch";
-
+import getAllRepositoryTag from "../helpers/getAllRepositoryTag";
 const pCircles = [
   {
     url: "#circle1",
@@ -115,36 +115,40 @@ function animateCircles() {
   }
 }
 
+function newGlob() {
+  const glob = document.createElement("div"),
+    globContent = document.createElement("span"),
+    style = Math.floor(Math.random() * 3),
+    overallTiming = Math.random() < 0.6 ? 4 : 8;
+  let animTiming =
+    overallTiming == 4
+      ? 2 * (0.75 + Math.random() / 4)
+      : 4 * (0.75 + Math.random() / 4);
+  animTiming = animTiming.toFixed(1);
+  let delayTiming = overallTiming - animTiming;
+  glob.className = styles.storageCircle;
+  glob.style =
+    "transition: transform " +
+    animTiming +
+    "s cubic-bezier(" +
+    (0.25 + Math.random() / 2) +
+    ", 0, " +
+    (0.25 + Math.random() / 2) +
+    ", 1.0) " +
+    delayTiming +
+    "s; transform: translateX(-80px);";
+  globContent.className = globContentStyles[style];
+  glob.appendChild(globContent);
+  glob.addEventListener("transitionend", () => {
+    glob.remove();
+  });
+  return glob;
+}
+
 function addOrUpdateGlobs() {
   for (let currentLane of storageLanes) {
-    if (currentLane.children.length < 5) {
-      const glob = document.createElement("div"),
-        globContent = document.createElement("span"),
-        style = Math.floor(Math.random() * 3),
-        overallTiming = Math.random() < 0.3 ? 4 : 8;
-      let animTiming =
-        overallTiming == 4
-          ? 2 * (0.75 + Math.random() / 4)
-          : 4 * (0.75 + Math.random() / 4);
-      animTiming = animTiming.toFixed(1);
-      let delayTiming = overallTiming - animTiming;
-      glob.className = styles.storageCircle;
-      glob.style =
-        "transition: transform " +
-        animTiming +
-        "s cubic-bezier(" +
-        (0.25 + Math.random() / 2) +
-        ", 0, " +
-        (0.25 + Math.random() / 2) +
-        ", 1.0) " +
-        delayTiming +
-        "s; transform: translateX(-80px);";
-      globContent.className = globContentStyles[style];
-      glob.appendChild(globContent);
-      currentLane.appendChild(glob);
-      glob.addEventListener("transitionend", () => {
-        glob.remove();
-      });
+    for (let i = currentLane.children.length; i < 8; i++) {
+      currentLane.appendChild(newGlob());
     }
   }
 }
@@ -189,8 +193,9 @@ export default function Landing() {
   const initDemoRepo = async () => {
     const repo = await getAnyRepository(demoAddress, demoRepoName);
     let branches = await getAllRepositoryBranch(demoAddress, demoRepoName);
+    let tags = await getAllRepositoryTag(demoAddress, demoRepoName);
     if (repo) {
-      setRepository(repo);
+      setRepository({ ...repo, branches, tags });
       let branchSha = getBranchSha(repo.defaultBranch, branches);
       const commitHistory = await getCommitHistory(repo.id, branchSha, null, 1);
 
@@ -241,8 +246,8 @@ export default function Landing() {
       storageAnimSinkFlash.addEventListener("animationiteration", () => {
         window.requestAnimationFrame(() => {
           for (let currentLane of storageLanes) {
-            const flip1 = Math.random() < 0.8,
-              flip2 = Math.random() < 0.5;
+            const flip1 = Math.random() < 0.9,
+              flip2 = Math.random() < 0.7;
             if (flip1 && currentLane.children[0]) {
               currentLane.children[0].style.transform = "translateX(500px)";
             }
@@ -386,7 +391,7 @@ export default function Landing() {
                   href="https://blog.gitopia.com/"
                   target="_blank"
                   rel="noreferrer"
-                  className="px-12 sm:px-3 py-4 md:py-2 flex items-center text-3xl lg:text-sm text-white font-bold transition-all focus:text-primary"
+                  className="px-12 sm:px-3 py-4 md:py-2 flex items-center text-3xl lg:text-sm text-white font-bold transition-all hover:text-primary"
                 >
                   Blog
                 </a>
@@ -2218,7 +2223,8 @@ export default function Landing() {
             </div>
             <div
               className={
-                "flex items-center px-3 sm:px-12 " + styles.storagePlatforms
+                "flex items-center justify-center px-3 sm:px-12 " +
+                styles.storagePlatforms
               }
             >
               <img
