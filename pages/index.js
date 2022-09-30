@@ -10,6 +10,7 @@ import getCommitHistory from "../helpers/getCommitHistory";
 import getContent from "../helpers/getContent";
 import YoutubeEmbed from "../helpers/youtubeEmbed";
 import GitopiaLive from "../helpers/gitopiaLive";
+import getAllRepositoryBranch from "../helpers/getAllRepositoryBranch";
 
 const pCircles = [
   {
@@ -187,9 +188,10 @@ export default function Landing() {
 
   const initDemoRepo = async () => {
     const repo = await getAnyRepository(demoAddress, demoRepoName);
+    let branches = await getAllRepositoryBranch(demoAddress, demoRepoName);
     if (repo) {
       setRepository(repo);
-      let branchSha = getBranchSha(repo.defaultBranch, repo.branches);
+      let branchSha = getBranchSha(repo.defaultBranch, branches);
       const commitHistory = await getCommitHistory(repo.id, branchSha, null, 1);
 
       if (
