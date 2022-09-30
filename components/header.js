@@ -190,10 +190,7 @@ function Header(props) {
           chainId={chainId}
         ></Drawer>
         <div
-          className={
-            "flex-none px-6 transition-all ease-out delay-150" +
-            (router.pathname === "/home" ? " sm:w-64" : " sm:w-42")
-          }
+          className={"flex-none px-6 transition-all ease-out delay-150 sm:w-42"}
         >
           <Link href={homeUrl}>
             <a>

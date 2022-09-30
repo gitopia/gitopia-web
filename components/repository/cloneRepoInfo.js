@@ -54,7 +54,7 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
         </svg>
       </button>
       <div className="shadow-lg dropdown-content bg-base-300 rounded mt-1 overflow-hidden p-4 text-left w-96">
-        <div className="tabs mb-4">
+        <div className="tabs px-2 mb-4">
           <button
             className={
               "tab tab-sm tab-bordered" +
