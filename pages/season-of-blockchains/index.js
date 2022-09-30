@@ -98,7 +98,7 @@ export default function SeasonOfBlockchains() {
                   About
                 </a>
               </li>
-              <li>
+              {/* <li>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href={"https://docs.gitopia.com/basic-faq"}
@@ -107,7 +107,7 @@ export default function SeasonOfBlockchains() {
                 >
                   FAQs
                 </a>
-              </li>
+              </li> */}
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
@@ -140,7 +140,7 @@ export default function SeasonOfBlockchains() {
               <div className={" " + styles.title}>Season of</div>
               <div className={" " + styles.title2}>Blockchains is here!</div>
               <div className={"mt-5 " + styles.content}>
-                GSOB is the first-ever six-week global blockchain program to
+                GSoB is the first-ever six-week global blockchain program to
                 bring the budding developers together to work on challenging
                 projects for the most exciting organisations in the Web3 space!
                 🚀
@@ -350,7 +350,7 @@ export default function SeasonOfBlockchains() {
           <div className={"flex " + styles.midScreen}>
             <div className={"sm:mb-36 " + styles.section4}>
               <div className={" " + styles.title3}>
-                How GSOB will contribute
+                How GSoB will contribute
               </div>
               <div className={" " + styles.title4}>to the Web3 ecosystem</div>
 
@@ -438,13 +438,13 @@ export default function SeasonOfBlockchains() {
                 </div>
                 <div className={styles.section5Body}>
                   <div className={styles.section5BodyTitle}>
-                    Announcing GSOB
+                    Announcing GSoB
                   </div>
                   <div className={styles.section5Content}>
-                    User visits the GSOB site Sign up for Gitopia Join discord
-                    <br className={styles.br}></br> and Register for GSOB (can
+                    User visits the GSoB site Sign up for Gitopia Join discord
+                    <br className={styles.br}></br> and Register for GSoB (can
                     be a voluntary step to receive
-                    <br className={styles.br}></br> updates regarding GSOB)
+                    <br className={styles.br}></br> updates regarding GSoB)
                   </div>
                 </div>
               </div>
@@ -476,7 +476,7 @@ export default function SeasonOfBlockchains() {
                     <br className={styles.br}></br> initial insights into the
                     project (This can be done on our
                     <br className={styles.br}></br> discord. We can make a
-                    specific category for GSOB on{" "}
+                    specific category for GSoB on{" "}
                     <br className={styles.br}></br> discord and channels will be
                     named after participating orgs)
                   </div>
@@ -497,7 +497,7 @@ export default function SeasonOfBlockchains() {
                 </div>
                 <div className={styles.section5Body}>
                   <div className={styles.section5BodyTitle}>
-                    GSOB Participant applications out
+                    GSoB Participant applications out
                   </div>
                   <div className={styles.section5Content}>
                     Contributors can share their proposals to the organization
@@ -592,7 +592,7 @@ export default function SeasonOfBlockchains() {
           {/*
 				
           <div className={styles.endHeadline} id="about">
-            What OGs have to say about GSOB?
+            What OGs have to say about GSoB?
           </div>
           <div className="flex flex-row items-center justify-center">
             <div className={styles.endCircle}>
