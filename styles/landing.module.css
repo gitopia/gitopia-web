@@ -773,7 +773,7 @@
 }
 
 .teamLabel {
-  background: #13181E;
+  background: transparent;
   position: absolute;
   padding-left: 20px;
   padding-right: 20px;
@@ -1009,7 +1009,6 @@
   }
  
   .teamLabel {
-    background: transparent;
     height: 40px;
     width: 300px;
   }
@@ -1271,7 +1270,6 @@
   }
 
   .teamLabel {
-    background: #13181E;
     height: 23px;
     width: 168px;
     top: 90%;
