@@ -77,7 +77,7 @@ function CommentEditor({
   };
 
   return (
-    <div className="border border-grey rounded flex-1 p-4">
+    <div className="border border-grey rounded flex-1 max-w-2xl p-4">
       <MarkdownEditor
         value={comment}
         setValue={setComment}

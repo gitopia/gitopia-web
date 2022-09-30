@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import TextInput from "../textInput";
 import { connect } from "react-redux";
-import { changeRespositoryOwner } from "../../store/actions/repository";
+import { changeRepositoryOwner } from "../../store/actions/repository";
 import getUser from "../../helpers/getUser";
-import getOrganization from "../../helpers/getOrganization";
+import getDao from "../../helpers/getDao";
+import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
+import validAddress from "../../helpers/validAddress";
 
 function TransferOwnership({
   repoId = null,
@@ -20,7 +22,6 @@ function TransferOwnership({
   });
   const [isChanging, setIsChanging] = useState(false);
   const [startTransfer, setStartTransfer] = useState(false);
-  const validAddress = new RegExp("gitopia[a-z0-9]{39}");
 
   useEffect(() => {
     setAddress("");
@@ -31,7 +32,8 @@ function TransferOwnership({
     setAddressHint({
       shown: false,
     });
-    if (!validAddress.test(address)) {
+    /*
+      if (!validAddress.test(address)) {
       setAddressHint({
         type: "error",
         shown: true,
@@ -39,6 +41,7 @@ function TransferOwnership({
       });
       return [false, null];
     }
+    */
     let alreadyAvailable = false;
     //   sanitizedName = name.replace(sanitizedNameTest, "-");
     // props.repositories.every((r) => {
@@ -49,25 +52,22 @@ function TransferOwnership({
     //   return true;
     // });
     //
-    let ownerType = null;
-    let [user, org] = await Promise.all([
-      getUser(address),
-      getOrganization(address),
-    ]);
+    let [user, dao] = await Promise.all([getUser(address), getDao(address)]);
+    console.log("user tranfer ownership", user);
     if (user) {
       console.log("user exists", user);
-      ownerType = "USER";
-      user.repositories.every((r) => {
+      const repositories = await getAnyRepositoryAll(address);
+      repositories.every((r) => {
         if (r.name === repoName) {
           alreadyAvailable = true;
           return false;
         }
         return true;
       });
-    } else if (org) {
-      console.log("org exists", org);
-      ownerType = "ORGANIZATION";
-      org.repositories.every((r) => {
+    } else if (dao) {
+      console.log("dao exists", dao);
+      const repositories = await getAnyRepositoryAll(address);
+      repositories.every((r) => {
         if (r.name === repoName) {
           alreadyAvailable = true;
           return false;
@@ -80,7 +80,7 @@ function TransferOwnership({
         shown: true,
         message: "Address is not registered on chain",
       });
-      return [false, null];
+      return false;
     }
     if (alreadyAvailable) {
       setAddressHint({
@@ -88,19 +88,19 @@ function TransferOwnership({
         shown: true,
         message: "Repository name already taken on this address",
       });
-      return [false, null];
+      return false;
     }
-    return [true, ownerType];
+    return true;
   };
 
   const transferRepository = async () => {
     setIsChanging(true);
-    const [res, ownerType] = await validateAddress();
+    const res = await validateAddress();
     if (res) {
-      const res = await props.changeRespositoryOwner({
-        repositoryId: repoId,
-        ownerId: address,
-        ownerType,
+      const res = await props.changeRepositoryOwner({
+        repoName: repoName,
+        repoOwner: currentOwnerId,
+        owner: address,
       });
       if (res) {
         if (onSuccess) await onSuccess(address);
@@ -165,5 +165,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  changeRespositoryOwner,
+  changeRepositoryOwner,
 })(TransferOwnership);

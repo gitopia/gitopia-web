@@ -58,7 +58,6 @@ function RepositoryIssueView(props) {
   const [allLabels, setAllLabels] = useState([]);
 
   useEffect(async () => {
-    console.log(router.query.userId);
     const [i] = await Promise.all([
       getRepositoryIssue(
         router.query.userId,
@@ -71,9 +70,7 @@ function RepositoryIssueView(props) {
     } else {
       setErrorStatusCode(404);
     }
-    console.log(repository);
     setAllLabels(repository.labels);
-    console.log(i);
   }, [router.query.issueIid, repository.id]);
 
   const getAllComments = async () => {
@@ -152,7 +149,9 @@ function RepositoryIssueView(props) {
                 />
                 {allComments.map((c, i) => {
                   if (c.system) {
-                    return <SystemCommentView comment={c} />;
+                    return (
+                      <SystemCommentView comment={c} key={"comment" + i} />
+                    );
                   } else {
                     return (
                       <CommentView
@@ -172,6 +171,7 @@ function RepositoryIssueView(props) {
                             setAllComments(newAllComments);
                           }
                         }}
+                        key={"comment" + i}
                       />
                     );
                   }
@@ -204,7 +204,7 @@ function RepositoryIssueView(props) {
                 <AssigneeSelector
                   assignees={issue.assignees}
                   collaborators={[
-                    { id: repository.owner.id, permission: "CREATOR" },
+                    { id: repository.owner.address, permission: "CREATOR" },
                     ...repository.collaborators,
                   ]}
                   onChange={async (list) => {

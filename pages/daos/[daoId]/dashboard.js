@@ -6,9 +6,10 @@ import DashboardSelector from "../../../components/dashboard/dashboardSelector";
 import TopRepositories from "../../../components/topRepositories";
 import getHomeUrl from "../../../helpers/getHomeUrl";
 import { useRouter } from "next/router";
-import { getOrganizationDetailsForDashboard } from "../../../store/actions/organization";
-import Org from "../../../components/dashboard/org";
+import { getDaoDetailsForDashboard } from "../../../store/actions/dao";
+import Dao from "../../../components/dashboard/dao";
 import Link from "next/link";
+import getAnyRepositoryAll from "../../../helpers/getAnyRepositoryAll";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -21,9 +22,10 @@ export async function getStaticPaths() {
   };
 }
 
-function OrgDashboard(props) {
+function DaoDashboard(props) {
   const hrefBase = "/daos/" + props.currentDashboard;
   const router = useRouter();
+  const [allRepository, setAllRepository] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
 
   function detectWindowSize() {
@@ -44,12 +46,13 @@ function OrgDashboard(props) {
     };
   });
 
-  useEffect(() => {
-    console.log("org dashboard", router.query.orgId, props.currentDashboard);
-    if (router.query.orgId !== props.currentDashboard) {
+  useEffect(async () => {
+    if (router.query.daoId !== props.currentDashboard) {
       router.push(getHomeUrl(props.dashboards, props.currentDashboard));
     }
-    props.getOrganizationDetailsForDashboard();
+    const repos = await getAnyRepositoryAll(props.currentDashboard);
+    setAllRepository(repos);
+    props.getDaoDetailsForDashboard();
   }, [props.currentDashboard]);
   return (
     <div
@@ -67,8 +70,12 @@ function OrgDashboard(props) {
             <div className="flex-1">
               <DashboardSelector />
               <TopRepositories
-                repositories={props.repositories.map((r) => {
-                  return { owner: props.currentDashboard, ...r };
+                repositories={allRepository.map((r) => {
+                  return {
+                    owner: props.currentDashboard,
+                    username: props.username,
+                    ...r,
+                  };
                 })}
               />
             </div>
@@ -108,10 +115,7 @@ function OrgDashboard(props) {
           <DashboardSelector />
         )}
         <div className="flex-1 px-4">
-          <Org
-            organization={props.organization}
-            currentDashboard={props.currentDashboard}
-          />
+          <Dao dao={props.dao} currentDashboard={props.currentDashboard} />
         </div>
         {isMobile ? (
           <div className="border-t border-grey mt-4">
@@ -132,7 +136,11 @@ function OrgDashboard(props) {
                       <a className={"btn btn-xs btn-link mt-1"}>Proposals</a>
                     </Link>
                     <Link href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}>
-                      <a className={"btn btn-xs btn-link mt-1"} target="_blank">
+                      <a
+                        className={"btn btn-xs btn-link mt-1"}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         Source code
                       </a>
                     </Link>
@@ -155,11 +163,11 @@ const mapStateToProps = (state) => {
   return {
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
-    repositories: state.organization.repositories,
-    organization: state.organization,
+    dao: state.dao,
+    username: state.dao.name,
   };
 };
 
-export default connect(mapStateToProps, { getOrganizationDetailsForDashboard })(
-  OrgDashboard
+export default connect(mapStateToProps, { getDaoDetailsForDashboard })(
+  DaoDashboard
 );

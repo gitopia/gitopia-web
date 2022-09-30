@@ -2,11 +2,11 @@ import { useState } from "react";
 import { notify } from "reapop";
 import { connect } from "react-redux";
 import { updateUserBalance } from "../../store/actions/wallet";
+import validAddress from "../../helpers/validAddress";
 
 function SendTlore(props) {
   const [validateAddressError, setValidateAddressError] = useState(null);
   const [validateAmountError, setValidateAmountError] = useState(null);
-  const validAddress = new RegExp("gitopia[a-z0-9]{39}");
   const [receiverAddress, setReceiverAddress] = useState("");
   const [amount, setAmount] = useState(0);
   const [loading, setLoading] = useState(false);

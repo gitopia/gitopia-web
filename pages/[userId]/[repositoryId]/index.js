@@ -24,7 +24,6 @@ import SupportOwner from "../../../components/repository/supportOwner";
 import getContent from "../../../helpers/getContent";
 import getCommitHistory from "../../../helpers/getCommitHistory";
 import pluralize from "../../../helpers/pluralize";
-import shrinkAddress from "../../../helpers/shrinkAddress";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -54,8 +53,9 @@ function RepositoryView(props) {
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
   );
-  const [currentUserEditPermission, setCurrentUserEditPermission] =
-    useState(false);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
   const [isMobile, setIsMobile] = useState(false);
 
   function detectWindowSize() {
@@ -374,7 +374,7 @@ function RepositoryView(props) {
                 style={{ maxWidth: "calc(1024px - 18rem)" }}
               >
                 <SupportOwner
-                  ownerAddress={repository.owner.id}
+                  ownerAddress={repository.owner.address}
                   isMobile={isMobile}
                 />
                 <div className="mt-8 sm:flex justify-start">
@@ -400,7 +400,7 @@ function RepositoryView(props) {
                         repository.owner.id +
                         "/" +
                         repository.name +
-                        "/tree/branches"
+                        "/branches"
                       }
                     >
                       <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
@@ -449,7 +449,7 @@ function RepositoryView(props) {
                         repository.owner.id +
                         "/" +
                         repository.name +
-                        "/releases/tags"
+                        "/tags"
                       }
                     >
                       <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
@@ -519,6 +519,7 @@ function RepositoryView(props) {
                           "/" +
                           repository.name
                         }
+                        backups={repository.backups}
                       />
                     </div>
                   ) : (

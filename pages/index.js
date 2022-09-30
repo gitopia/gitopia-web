@@ -4,7 +4,7 @@ import classnames from "classnames";
 import styles from "../styles/landing.module.css";
 import RepositoryMainTabs from "../components/repository/mainTabs";
 import getBranchSha from "../helpers/getBranchSha";
-import getUserRepository from "../helpers/getUserRepository";
+import getAnyRepository from "../helpers/getAnyRepository";
 import CommitDetailRow from "../components/repository/commitDetailRow";
 import FileBrowser from "../components/repository/fileBrowser";
 import RepositoryHeader from "../components/repository/header";
@@ -173,7 +173,7 @@ export default function Landing() {
     demoRepoBranch = "master";
 
   const initDemoRepo = async () => {
-    const repo = await getUserRepository(demoAddress, demoRepoName);
+    const repo = await getAnyRepository(demoAddress, demoRepoName);
     if (repo) {
       setRepository(repo);
       let branchSha = getBranchSha(repo.defaultBranch, repo.branches);
@@ -353,6 +353,7 @@ export default function Landing() {
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href="https://gitopia.com/whitepaper.pdf"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   Whitepaper
                 </a>
@@ -362,6 +363,7 @@ export default function Landing() {
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href="https://blog.gitopia.com"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   Blog
                 </a>
@@ -1223,7 +1225,11 @@ export default function Landing() {
           </div>
           <div className={styles.circleSectionLink}>
             Learn more about Gitopia{" "}
-            <a href="https://gitopia.com/whitepaper.pdf" target="_blank">
+            <a
+              href="https://gitopia.com/whitepaper.pdf"
+              target="_blank"
+              rel="noreferrer"
+            >
               here
             </a>
           </div>
@@ -1666,19 +1672,27 @@ export default function Landing() {
 
           <a href="https://gitopia.com/whitepaper.pdf">Whitepaper</a>
 
-          <a href="https://twitter.com/gitopiadao" target="_blank">
+          <a
+            href="https://twitter.com/gitopiadao"
+            target="_blank"
+            rel="noreferrer"
+          >
             Twitter
           </a>
 
-          <a href="https://t.me/Gitopia" target="_blank">
+          <a href="https://t.me/Gitopia" target="_blank" rel="noreferrer">
             Telegram
           </a>
 
-          <a href="https://medium.com/gitopia" target="_blank">
+          <a href="https://medium.com/gitopia" target="_blank" rel="noreferrer">
             Medium
           </a>
 
-          <a href="https://discord.gg/mVpQVW3vKE" target="_blank">
+          <a
+            href="https://discord.gg/mVpQVW3vKE"
+            target="_blank"
+            rel="noreferrer"
+          >
             Discord
           </a>
         </div>

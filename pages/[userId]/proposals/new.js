@@ -9,17 +9,17 @@ import { chainUpgradeProposal } from "../../../store/actions/proposals";
 import MarkdownEditor from "../../../components/markdownEditor";
 import { communityPoolSpendProposal } from "../../../store/actions/proposals";
 import { paramChangeProposal } from "../../../store/actions/proposals";
-import getOrganization from "../../../helpers/getOrganization";
-import getRepository from "../../../helpers/getRepository";
+import getDao from "../../../helpers/getDao";
 import getUser from "../../../helpers/getUser";
 import PublicTabs from "../../../components/dashboard/publicTabs";
+import validAddress from "../../../helpers/validAddress";
 
 function RepositoryProposalCreateView(props) {
   const [validateAddressError, setValidateAddressError] = useState("");
-  const validAddress = new RegExp("gitopia[a-z0-9]{39}");
   const [validateAmountError, setValidateAmountError] = useState("");
-  const [validateInitialAmountError, setValidateInitialAmountError] =
-    useState("");
+  const [validateInitialAmountError, setValidateInitialAmountError] = useState(
+    ""
+  );
   const [validateTitleError, setValidateTitleError] = useState("");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -36,22 +36,21 @@ function RepositoryProposalCreateView(props) {
   const [menuState, setMenuState] = useState(1);
   const [counter, setCounter] = useState(1);
   const [initialDeposit, setInitialDeposit] = useState(0);
-  const [org, setOrg] = useState({
+  const [dao, setDao] = useState({
     name: "",
     repositories: [],
   });
 
   useEffect(async () => {
-    console.log(router.query.userId);
-    const o = await getOrganization(router.query.userId);
+    const o = await getDao(router.query.userId);
     if (o) {
-      setOrg(o);
+      setDao(o);
     }
   }, [router.query]);
-  const hrefBase = "/" + org.address;
-  const letter = org.id ? org.name.slice(0, 1) : "x";
+  const hrefBase = "/" + dao.address;
+  const letter = dao.id ? dao.name.slice(0, 1) : "x";
   const avatarLink =
-    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === org.address
+    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === dao.address
       ? "/logo-g.svg"
       : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
         letter;
@@ -154,7 +153,6 @@ function RepositoryProposalCreateView(props) {
   const redirectToProposal = async (res) => {
     let result = JSON.parse(res.rawLog);
     if (res && res.code === 0) {
-      console.log(router);
       router.push(
         hrefBase + "/proposals/" + result[0].events[4].attributes[0].value
       );
@@ -180,9 +178,9 @@ function RepositoryProposalCreateView(props) {
               </div>
             </div>
             <div className="flex-1">
-              <div className="text-md">{org.name}</div>
+              <div className="text-md">{dao.name}</div>
               <div className="text-sm text-type-secondary mt-2">
-                {org.description}
+                {dao.description}
               </div>
             </div>
           </div>
@@ -193,7 +191,7 @@ function RepositoryProposalCreateView(props) {
               showPeople={true}
               showProposal={
                 process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
-                  router.query.userId && org.address
+                  router.query.userId && dao.address
               }
             />
           </div>
@@ -210,7 +208,7 @@ function RepositoryProposalCreateView(props) {
                     xmlns="http://www.w3.org/2000/svg"
                     stroke="currentColor"
                   >
-                    <path d="M7 1L2 5.5L7 10" stroke-width="2" />
+                    <path d="M7 1L2 5.5L7 10" strokeWidth="2" />
                   </svg>
                   <span className="ml-2">BACK</span>
                 </label>
@@ -539,7 +537,7 @@ function RepositoryProposalCreateView(props) {
                   </div>
                   {Array.from(Array(counter)).map((c, index) => {
                     return (
-                      <div className="flex">
+                      <div className="flex" key={"parameter" + index}>
                         <div className="form-control mr-3">
                           <input
                             name="subspace"
@@ -701,8 +699,6 @@ const mapStateToProps = (state) => {
     advanceUser: state.user.advanceUser,
     loreBalance: state.wallet.loreBalance,
     dashboards: state.user.dashboards,
-    repositories: state.organization.repositories,
-    organization: state.organization,
   };
 };
 

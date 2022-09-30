@@ -8,10 +8,12 @@ import UserDashboard from "../components/dashboard/user";
 import { useRouter } from "next/router";
 import DashboardSelector from "../components/dashboard/dashboardSelector";
 import getHomeUrl from "../helpers/getHomeUrl";
+import getAnyRepositoryAll from "../helpers/getAnyRepositoryAll";
 
 function Home(props) {
   const router = useRouter();
   const [isMobile, setIsMobile] = useState(false);
+  const [allRepository, setAllRepository] = useState([]);
 
   function detectWindowSize() {
     if (typeof window !== "undefined") {
@@ -30,13 +32,24 @@ function Home(props) {
     };
   });
 
-  useEffect(() => {
+  useEffect(async () => {
     if (props.selectedAddress !== props.currentDashboard) {
       const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
       console.log(newUrl);
       router.push(newUrl);
     }
-  }, [props.dashboards, props.currentDashboard]);
+    if (props.selectedAddress) {
+      const repos = await getAnyRepositoryAll(props.currentDashboard);
+      if (repos) {
+        console.log(repos);
+        setAllRepository(repos);
+      } else {
+        setAllRepository([]);
+      }
+    } else {
+      setAllRepository([]);
+    }
+  }, [props.dashboards, props.currentDashboard, props.selectedAddress]);
 
   return (
     <div
@@ -76,8 +89,12 @@ function Home(props) {
             <div className="flex-1">
               <DashboardSelector />
               <TopRepositories
-                repositories={props.repositories.map((r) => {
-                  return { owner: props.selectedAddress, ...r };
+                repositories={allRepository.map((r) => {
+                  return {
+                    owner: props.selectedAddress,
+                    username: props.username,
+                    ...r,
+                  };
                 })}
               />
             </div>
@@ -104,6 +121,7 @@ function Home(props) {
                         <a
                           className={"btn btn-xs btn-link mt-2"}
                           target="_blank"
+                          rel="noreferrer"
                         >
                           Source code
                         </a>
@@ -120,8 +138,12 @@ function Home(props) {
           <>
             <DashboardSelector />
             <TopRepositories
-              repositories={props.repositories.map((r) => {
-                return { owner: props.selectedAddress, ...r };
+              repositories={allRepository.map((r) => {
+                return {
+                  owner: props.selectedAddress,
+                  username: props.username,
+                  ...r,
+                };
               })}
             />
           </>
@@ -148,7 +170,11 @@ function Home(props) {
                       <a className={"btn btn-xs btn-link mt-1"}>Proposals</a>
                     </Link>
                     <Link href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}>
-                      <a className={"btn btn-xs btn-link mt-1"} target="_blank">
+                      <a
+                        className={"btn btn-xs btn-link mt-1"}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         Source code
                       </a>
                     </Link>
@@ -172,7 +198,7 @@ const mapStateToProps = (state) => {
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
     selectedAddress: state.wallet.selectedAddress,
-    repositories: state.user.repositories,
+    username: state.user.username,
   };
 };
 

@@ -55,7 +55,7 @@ function NotificationsCard(props) {
               <path
                 d="M5.0718 18L12 6L18.9282 18H5.0718Z"
                 stroke="#ADBECB"
-                stroke-width="2"
+                strokeWidth="2"
               />
             </svg>
           </div>
@@ -66,7 +66,7 @@ function NotificationsCard(props) {
 
         {issueNotifications === 0 ? (
           <button
-            class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-grey-300"
+            className="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-grey-300"
             onClick={() => {
               props.setMenuOpen(false);
               props.setMenuState(1);
@@ -76,7 +76,7 @@ function NotificationsCard(props) {
           </button>
         ) : (
           <button
-            class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
+            className="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
             onClick={() => {
               props.setMenuOpen(true);
               props.setMenuState(6);
@@ -102,7 +102,7 @@ function NotificationsCard(props) {
               <path
                 d="M2.5 15.5V9M2.5 2.5V9M2.5 9H7C8.10457 9 9 9.89543 9 11V15.5"
                 stroke="#ADBECB"
-                stroke-width="2"
+                strokeWidth="2"
               />
               <circle cx="2.5" cy="15.5" r="2.5" fill="#ADBECB" />
               <circle cx="2.5" cy="2.5" r="2.5" fill="#ADBECB" />
@@ -119,7 +119,7 @@ function NotificationsCard(props) {
 
         {pullNotifications === 0 ? (
           <button
-            class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-grey-300"
+            className="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-grey-300"
             onClick={() => {
               props.setMenuOpen(false);
               props.setMenuState(1);
@@ -129,7 +129,7 @@ function NotificationsCard(props) {
           </button>
         ) : (
           <button
-            class="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
+            className="btn btn-ghost btn-sm ml-auto text-xs font-bold flex items-center text-green"
             onClick={() => {
               props.setShowNotificationListState("PULLS");
               props.setMenuOpen(true);

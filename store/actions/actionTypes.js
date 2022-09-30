@@ -22,11 +22,12 @@ export const userActions = {
   SET_EMPTY_USER: "SET_EMPTY_USER",
   SET_CURRENT_DASHBOARD: "SET_CURRENT_DASHBOARD",
   INIT_DASHBOARDS: "INIT_DASHBOARDS",
+  UPDATE_DASHBOARD_ENTRY: "UPDATE_DASHBOARD_ENTRY",
 };
 
-export const organizationActions = {
-  SET_ORGANIZATION: "SET_ORGANIZATION",
-  SET_EMPTY_ORGANIZATION: "SET_EMPTY_ORGANIZATION",
+export const daoActions = {
+  SET_DAO: "SET_DAO",
+  SET_EMPTY_DAO: "SET_EMPTY_DAO",
 };
 
 export const repositoryActions = {

@@ -7,7 +7,7 @@ import {
   authorizeGitServer,
 } from "../../store/actions/repository";
 import { useRouter } from "next/router";
-import { getGitServerAuthorization } from "../../helpers/getGitServerAuthStatus";
+import getGitServerAuthorization from "../../helpers/getGitServerAuthStatus";
 import { notify } from "reapop";
 import pluralize from "../../helpers/pluralize";
 
@@ -18,6 +18,8 @@ function RepositoryHeader({ repository, ...props }) {
   const [forkingAccess, setForkingAccess] = useState(false);
   const [isGrantingAccess, setIsGrantingAccess] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [branchCount, setBranchCount] = useState(0);
+  const [tagCount, setTagCount] = useState(0);
 
   function detectWindowSize() {
     if (typeof window !== "undefined") {
@@ -36,15 +38,25 @@ function RepositoryHeader({ repository, ...props }) {
     };
   });
   const router = useRouter();
+
   const avatarLink =
     process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === repository.owner.id
       ? "/logo-g.svg"
+      : repository.owner.avatarUrl !== ""
+      ? repository.owner.avatarUrl
       : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-        repository.owner.id.slice(-1);
+        repository.owner?.id?.slice(-1);
 
   const refreshForkingAccess = async () => {
     setForkingAccess(await getGitServerAuthorization(props.selectedAddress));
   };
+  const setCounts = () => {
+    if (repository.id) {
+      setBranchCount(repository.branches.length);
+      setTagCount(repository.tags.length);
+    }
+  };
+  useEffect(setCounts, [repository.id]);
   useEffect(refreshForkingAccess, [props.selectedAddress]);
 
   return (
@@ -54,9 +66,7 @@ function RepositoryHeader({ repository, ...props }) {
           <div
             className={
               "w-14 h-14 " +
-              (repository.owner.type === "ORGANIZATION"
-                ? "rounded"
-                : "rounded-full")
+              (repository.owner.type === "DAO" ? "rounded" : "rounded-full")
             }
           >
             <img src={avatarLink} />
@@ -123,9 +133,9 @@ function RepositoryHeader({ repository, ...props }) {
                     />
                   </g>
                 </svg>
-                {repository.branches.length}
+                {branchCount}
                 <span className="ml-1 uppercase">
-                  {pluralize("branch", repository.branches.length)}
+                  {pluralize("branch", branchCount)}
                 </span>
               </div>
               <div className="ml-6 text-type-secondary text-xs font-semibold uppercase flex">
@@ -148,9 +158,9 @@ function RepositoryHeader({ repository, ...props }) {
                     strokeWidth="2"
                   />
                 </svg>
-                {repository.tags.length}
+                {tagCount}
                 <span className="ml-1 uppercase">
-                  {pluralize("tag", repository.tags.length)}
+                  {pluralize("tag", tagCount)}
                 </span>
               </div>
             </div>
@@ -199,7 +209,7 @@ function RepositoryHeader({ repository, ...props }) {
               onClick={() => {
                 setForkTargetShown(true);
               }}
-              disabled={!repository.branches.length}
+              disabled={!branchCount}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -231,7 +241,7 @@ function RepositoryHeader({ repository, ...props }) {
                     "/insights"
                 );
               }}
-              disabled={!repository.branches.length}
+              disabled={!branchCount}
             >
               {repository.forks.length}
             </button>
@@ -288,8 +298,8 @@ function RepositoryHeader({ repository, ...props }) {
                               if (isOwner) return;
                               setIsForking(d.id);
                               const res = await props.forkRepository({
-                                repositoryId: repository.id,
-                                repositoryName: repository.name,
+                                repoOwner: repository.owner.id,
+                                repoName: repository.name,
                                 ownerId: d.id,
                               });
                               if (res && res.url) {
@@ -379,11 +389,8 @@ function RepositoryHeader({ repository, ...props }) {
                       onClick={async () => {
                         setIsGrantingAccess(true);
                         const res = await props.authorizeGitServer();
-                        console.log(res);
                         setIsGrantingAccess(false);
-                        if (res.code !== 0) {
-                          props.notify(res.rawLog, "error");
-                        } else {
+                        if (res && res.code === 0) {
                           refreshForkingAccess();
                         }
                       }}

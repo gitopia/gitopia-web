@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import find from "lodash/find";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
+import getAnyRepository from "../../../../helpers/getAnyRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
@@ -91,7 +91,7 @@ function RepositoryCompareView(props) {
         setForkedRepos(repos);
         console.log("forked repos", repos);
       }
-      if (r.parent !== "0") {
+      if (r.parent && r.parent !== "0") {
         const repo = await getRepository(r.parent);
         if (repo) {
           setParentRepo(repo);
@@ -122,9 +122,9 @@ function RepositoryCompareView(props) {
         if (reposlug[0].includes("/")) {
           // forked repo name also given
           const ownerslug = reposlug[0].split("/");
-          sourceRepo = await getUserRepository(ownerslug[0], ownerslug[1]);
+          sourceRepo = await getAnyRepository(ownerslug[0], ownerslug[1]);
         } else {
-          sourceRepo = await getUserRepository(
+          sourceRepo = await getAnyRepository(
             reposlug[0],
             router.query.repositoryId
           );
@@ -231,7 +231,7 @@ function RepositoryCompareView(props) {
           <div className="mt-8">
             <div className="text-lg">Compare revisions</div>
             <div className="mt-2 text-sm text-type-secondary">
-              Choose a branch/tag (e.g. master ) to see what's changed or to
+              Choose a branch/tag (e.g. master) to see what&apos;s changed or to
               create a pull request.
             </div>
             <div className="text-sm text-type-secondary">
@@ -385,15 +385,18 @@ function RepositoryCompareView(props) {
                               const res = await props.createPullRequest({
                                 title,
                                 description,
-                                baseRepoId: compare.target.repository.id,
+                                baseRepoOwner:
+                                  compare.target.repository.owner.address,
+                                baseRepoName: compare.target.repository.name,
                                 baseBranch: compare.target.name,
-                                headRepoId: compare.source.repository.id,
+                                headRepoOwner:
+                                  compare.source.repository.owner.address,
+                                headRepoName: compare.source.repository.name,
                                 headBranch: compare.source.name,
                                 reviewers: reviewers,
                                 assignees: assignees,
                                 labelIds: labels,
                               });
-                              console.log(res);
                               if (res && res.code === 0) {
                                 router.push(
                                   "/" +
@@ -419,7 +422,10 @@ function RepositoryCompareView(props) {
                       <AssigneeSelector
                         assignees={reviewers}
                         collaborators={[
-                          { id: repository.owner.id, permission: "CREATOR" },
+                          {
+                            id: repository.owner.address,
+                            permission: "CREATOR",
+                          },
                           ...repository.collaborators,
                         ]}
                         onChange={async (list) => {
@@ -439,7 +445,10 @@ function RepositoryCompareView(props) {
                       <AssigneeSelector
                         assignees={assignees}
                         collaborators={[
-                          { id: repository.owner.id, permission: "CREATOR" },
+                          {
+                            id: repository.owner.address,
+                            permission: "CREATOR",
+                          },
                           ...repository.collaborators,
                         ]}
                         onChange={async (list) => {

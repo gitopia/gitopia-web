@@ -1,14 +1,12 @@
 import Head from "next/head";
-import Header from "../../../../components/header";
-
-import { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import Header from "../../../components/header";
 import { useRouter } from "next/router";
+import Link from "next/link";
+import { connect } from "react-redux";
 import dayjs from "dayjs";
-
-import RepositoryHeader from "../../../../components/repository/header";
-import RepositoryMainTabs from "../../../../components/repository/mainTabs";
-import useRepository from "../../../../hooks/useRepository";
+import RepositoryHeader from "../../../components/repository/header";
+import RepositoryMainTabs from "../../../components/repository/mainTabs";
+import useRepository from "../../../hooks/useRepository";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -38,10 +36,32 @@ function RepositoryBranchesView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs repository={repository} active="code" />
+          <div className="btn-group mt-14">
+            <Link
+              href={[
+                "",
+                router.query.userId,
+                router.query.repositoryId,
+                "branches",
+              ].join("/")}
+            >
+              <a className="btn btn-sm btn-active">Branches</a>
+            </Link>
+            <Link
+              href={[
+                "",
+                router.query.userId,
+                router.query.repositoryId,
+                "tags",
+              ].join("/")}
+            >
+              <a className="btn btn-sm">Tags</a>
+            </Link>
+          </div>
           <div className="mt-14">
             {repository.branches.map((b) => {
               return (
-                <div className="mt-8">
+                <div className="mt-8" key={b.name}>
                   <a
                     className="flex"
                     href={
@@ -111,7 +131,7 @@ function RepositoryBranchesView(props) {
                     </button>
                   </a>
                   <div className="text-xs text-type-secondary mt-2">
-                    {"last updated " + dayjs(b.lastUpdatedAt * 1000).fromNow()}
+                    {"last updated " + dayjs(b.updatedAt * 1000).fromNow()}
                   </div>
                 </div>
               );

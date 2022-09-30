@@ -5,7 +5,7 @@ import envReducer from "./env";
 // import hydrateReducer from "./hydrate";
 import { reducer as notificationsReducer } from "reapop";
 import userReducer from "./user";
-import organizationReducer from "./organization";
+import daoReducer from "./dao";
 import userNotificationReducer from "./userNotification";
 import taskQueueReducer from "./taskQueue";
 
@@ -16,7 +16,7 @@ const rootReducer = combineReducers({
   // starport: starportReducer,
   user: userReducer,
   notifications: notificationsReducer(),
-  organization: organizationReducer,
+  dao: daoReducer,
   userNotification: userNotificationReducer,
   taskQueue: taskQueueReducer,
 });

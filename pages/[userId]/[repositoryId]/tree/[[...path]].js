@@ -19,6 +19,7 @@ import ReactMarkdown from "react-markdown";
 import getContent from "../../../../helpers/getContent";
 import getCommitHistory from "../../../../helpers/getCommitHistory";
 import { useErrorStatus } from "../../../../hooks/errorHandler";
+import formatBytes from "../../../../helpers/formatBytes";
 
 // let vscdarkplus;
 import vscdarkplus from "react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus";
@@ -51,6 +52,10 @@ function RepositoryTreeView(props) {
   const [loadingEntities, setLoadingEntities] = useState(false);
   const [file, setFile] = useState(null);
   const [fileSyntax, setFileSyntax] = useState("");
+  const [fileSize, setFileSize] = useState(0);
+  const [showRenderedFile, setShowRenderedFile] = useState(false);
+  const [showRenderedFileOption, setShowRenderedFileOption] = useState(false);
+  const [isImageFile, setIsImageFile] = useState(false);
   const [commitDetail, setCommitDetail] = useState({
     author: {},
     message: "",
@@ -121,49 +126,41 @@ function RepositoryTreeView(props) {
       console.log(res);
       if (res) {
         if (res.content) {
-          const readmeRegex = new RegExp(/^README/gi);
-          let readmeFileFound = false;
-          for (let i = 0; i < res.content.length; i++) {
-            if (readmeRegex.test(res.content[i].name)) {
-              const readme = await getContent(
-                repository.id,
-                getBranchSha(branchName, repository.branches, repository.tags),
-                res.content[i].name
-              );
-
-              if (readme) {
-                if (readme.content && readme.content[0]) {
-                  try {
-                    let file = window.atob(readme.content[0].content);
-                    setReadmeFile(file);
-                    readmeFileFound = true;
-                    break;
-                  } catch (e) {
-                    console.error(e);
-                    setReadmeFile(null);
-                  }
-                } else {
-                  console.log("Entity Not found");
-                }
-              }
-            }
-          }
-          if (!readmeFileFound) {
-            setReadmeFile(null);
-          }
           if (res.content[0].type === "BLOB" && res.content[0].content) {
             // display file contents
             setEntityList([]);
+            setReadmeFile(null);
             try {
-              let file = window.atob(res.content[0].content);
-              setFile(file);
               let filename = repoPath[repoPath.length - 1] || "";
               let extension = filename.split(".").pop() || "";
               setFileSyntax(extension);
+              setFileSize(res.content[0].size);
+
+              if (
+                ["jpg", "jpeg", "png", "gif"].includes(extension.toLowerCase())
+              ) {
+                setIsImageFile(true);
+                setFile(res.content[0].content);
+              } else {
+                setIsImageFile(false);
+                setFile(window.atob(res.content[0].content));
+              }
+
+              if (extension.toLowerCase() === "md") {
+                setShowRenderedFileOption(true);
+                setShowRenderedFile(true);
+              } else {
+                setShowRenderedFileOption(false);
+                setShowRenderedFile(false);
+              }
             } catch (e) {
               // TODO: show error to user
               console.error(e);
               setFile(null);
+              setFileSize(0);
+              setShowRenderedFile(false);
+              setIsImageFile(false);
+              setShowRenderedFileOption(false);
             }
           } else {
             // display folder tree
@@ -171,6 +168,41 @@ function RepositoryTreeView(props) {
               ? setEntityList(res.content)
               : setEntityList([...currentEntities, ...res.content]);
             setFile(null);
+
+            const readmeRegex = new RegExp(/^README/gi);
+            let readmeFileFound = false;
+            for (let i = 0; i < res.content.length; i++) {
+              if (readmeRegex.test(res.content[i].name)) {
+                const readme = await getContent(
+                  repository.id,
+                  getBranchSha(
+                    branchName,
+                    repository.branches,
+                    repository.tags
+                  ),
+                  res.content[i].name
+                );
+
+                if (readme) {
+                  if (readme.content && readme.content[0]) {
+                    try {
+                      let file = window.atob(readme.content[0].content);
+                      setReadmeFile(file);
+                      readmeFileFound = true;
+                      break;
+                    } catch (e) {
+                      console.error(e);
+                      setReadmeFile(null);
+                    }
+                  } else {
+                    console.log("Entity Not found");
+                  }
+                }
+              }
+            }
+            if (!readmeFileFound) {
+              setReadmeFile(null);
+            }
           }
         } else {
           setErrorStatusCode(404);
@@ -290,20 +322,57 @@ function RepositoryTreeView(props) {
                   ""
                 )}
                 {file !== null ? (
-                  fileSyntax === "md" ? (
-                    <div className="markdown-body p-4">
-                      <ReactMarkdown>{file}</ReactMarkdown>
+                  <div>
+                    <div className="flex bg-base-200 p-2">
+                      <div className="flex-1">{formatBytes(fileSize)} </div>
+                      {showRenderedFileOption ? (
+                        <div className="btn-group">
+                          <input
+                            type="radio"
+                            name="options"
+                            data-title="Source"
+                            className="btn btn-xs"
+                            checked={!showRenderedFile}
+                            onClick={() => {
+                              setShowRenderedFile(!showRenderedFile);
+                            }}
+                          />
+                          <input
+                            type="radio"
+                            name="options"
+                            data-title="Rendered"
+                            className="btn btn-xs"
+                            checked={showRenderedFile}
+                            onClick={() => {
+                              setShowRenderedFile(!showRenderedFile);
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        ""
+                      )}
                     </div>
-                  ) : (
-                    <SyntaxHighlighter
-                      style={vscdarkplus}
-                      language={fileSyntax}
-                      showLineNumbers
-                      customStyle={{ margin: 0, background: "transparent" }}
-                    >
-                      {file}
-                    </SyntaxHighlighter>
-                  )
+                    {isImageFile ? (
+                      <div className="flex justify-center align-center">
+                        <img
+                          src={"data:image/" + fileSyntax + ";base64, " + file}
+                        />
+                      </div>
+                    ) : showRenderedFile ? (
+                      <div className="markdown-body p-4">
+                        <ReactMarkdown>{file}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      <SyntaxHighlighter
+                        style={vscdarkplus}
+                        language={fileSyntax}
+                        showLineNumbers
+                        customStyle={{ margin: 0, background: "transparent" }}
+                      >
+                        {file}
+                      </SyntaxHighlighter>
+                    )}
+                  </div>
                 ) : (
                   ""
                 )}

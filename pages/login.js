@@ -1,10 +1,12 @@
 import Head from "next/head";
 import Header from "../components/header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateWallet from "../components/createWallet";
 import RecoverWallet from "../components/recoverWallet";
 import Footer from "../components/footer";
 import ConnectLedger from "../components/connectLedger";
+import CreateUser from "../components/createUser";
+import { useRouter } from "next/router";
 
 /*
 Wizard Steps
@@ -15,7 +17,12 @@ Wizard Steps
 */
 
 export default function Login(props) {
-  const [step, setStep] = useState(1);
+  const { query } = useRouter();
+  const [step, setStep] = useState(Number(query.step) || 1);
+
+  useEffect(() => {
+    setStep(Number(query.step) || 1);
+  }, [query.step]);
   return (
     <div
       data-theme="dark"
@@ -104,6 +111,7 @@ export default function Login(props) {
         {step === 2 && <ConnectLedger />}
         {step === 3 && <CreateWallet />}
         {step === 4 && <RecoverWallet />}
+        {step === 5 && <CreateUser />}
       </div>
       <Footer />
     </div>

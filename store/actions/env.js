@@ -1,6 +1,6 @@
 import { walletActions, envActions } from "./actionTypes";
 import { notify, dismissNotification } from "reapop";
-import { initLedgerTransport } from "./wallet";
+import { initLedgerTransport, updateUserBalance } from "./wallet";
 
 export const sendTransaction = ({
   message,
@@ -24,8 +24,9 @@ export const sendTransaction = ({
       notifId = msg.payload.id;
     }
     try {
-      result = await env.txClient.signAndBroadcast([message], {
-        // fee,
+      const msgArr = Array.isArray(message) ? message : [message];
+      console.log(msgArr);
+      result = await env.txClient.signAndBroadcast(msgArr, {
         fee: "auto",
         memo,
       });
@@ -76,6 +77,23 @@ export const setupTxClients = async (dispatch, getState) => {
       });
     }
   } else {
+    return null;
+  }
+};
+
+export const handlePostingTransaction = async (dispatch, getState, message) => {
+  try {
+    const result = await sendTransaction({ message })(dispatch, getState);
+    updateUserBalance()(dispatch, getState);
+    if (result?.code === 0) {
+      return result;
+    } else {
+      dispatch(notify(result?.rawLog, "error"));
+      return null;
+    }
+  } catch (e) {
+    console.error(e);
+    dispatch(notify(e.message, "error"));
     return null;
   }
 };

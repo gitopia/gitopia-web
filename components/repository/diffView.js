@@ -94,7 +94,6 @@ export default function DiffView({
 
   const loadDiffs = async (oldFiles = [], repoId) => {
     setLoadingMore(true);
-    console.log("repoId", repoId, "hasMore", hasMore);
     let data;
     if (baseRepoId === repoId) {
       data = await getDiff(repoId, currentSha, hasMore, previousSha);
@@ -126,7 +125,6 @@ export default function DiffView({
     } else {
       setHasMore(null);
     }
-    console.log(newFiles);
     setFiles([...oldFiles, ...newFiles]);
     setLoadingMore(false);
   };

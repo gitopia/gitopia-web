@@ -1,6 +1,6 @@
 import api from "./getApi";
 
-export async function getGitServerAuthorization(userAddress) {
+export default async function getGitServerAuthStatus(userAddress) {
   if (!userAddress) return null;
   try {
     const res = await api.queryCheckGitServerAuthorization(
@@ -13,7 +13,7 @@ export async function getGitServerAuthorization(userAddress) {
       return false;
     }
   } catch (e) {
-    // console.error(e);
+    console.error(e);
     return null;
   }
 }

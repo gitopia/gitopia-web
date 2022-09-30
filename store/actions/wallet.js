@@ -2,7 +2,7 @@ import {
   walletActions,
   envActions,
   userActions,
-  organizationActions,
+  daoActions,
 } from "./actionTypes";
 import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
@@ -10,6 +10,7 @@ import find from "lodash/find";
 import { notify } from "reapop";
 import { setupTxClients } from "./env";
 import getNodeInfo from "../../helpers/getNodeInfo";
+import getUserDaoAll from "../../helpers/getUserDaoAll";
 
 let ledgerTransport;
 
@@ -54,11 +55,13 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
   }
 
   await getUserDetailsForSelectedAddress()(dispatch, getState);
+  const daos = await getUserDaoAll(wallet.activeWallet.accounts[0].address);
   await dispatch({
     type: userActions.INIT_DASHBOARDS,
     payload: {
       name: wallet.activeWallet.name,
       id: wallet.activeWallet.accounts[0].address,
+      daos: daos,
     },
   });
   const { user } = getState();
@@ -83,7 +86,7 @@ export const signOut = () => {
       type: userActions.SET_EMPTY_USER,
     });
     dispatch({
-      type: organizationActions.SET_EMPTY_ORGANIZATION,
+      type: daoActions.SET_EMPTY_DAO,
     });
   };
 };
@@ -152,10 +155,17 @@ export const unlockWallet = ({ name, password }) => {
       console.error(e);
       return false;
     }
-    dispatch({
-      type: walletActions.SET_ACTIVE_WALLET,
-      payload: { wallet: { name: wallet.name, accounts: wallet.accounts } },
-    });
+    if (wallet.name.includes("untitled-wallet") || !wallet.isUsernameSetup) {
+      dispatch({
+        type: walletActions.SET_ACTIVE_WALLET,
+        payload: { wallet },
+      });
+    } else {
+      dispatch({
+        type: walletActions.SET_ACTIVE_WALLET,
+        payload: { wallet: { name: wallet.name, accounts: wallet.accounts } },
+      });
+    }
     if (wallet.accounts.length > 0) {
       const DirectSecp256k1HdWallet = (await import("@cosmjs/proto-signing"))
         .DirectSecp256k1HdWallet;

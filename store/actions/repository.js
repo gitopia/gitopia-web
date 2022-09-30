@@ -4,6 +4,7 @@ import { createUser, getUserDetailsForSelectedAddress } from "./user";
 import { updateUserBalance } from "./wallet";
 import dayjs from "dayjs";
 import { watchTask } from "./taskQueue";
+import getUserDaoAll from "../../helpers/getUserDaoAll";
 
 export const validatePostingEligibility = async (
   dispatch,
@@ -11,14 +12,14 @@ export const validatePostingEligibility = async (
   msgType,
   numberOfTransactions = 1
 ) => {
-  const { wallet, env, user } = getState();
-
   try {
     await setupTxClients(dispatch, getState);
   } catch (e) {
     console.log(e.message);
     return false;
   }
+
+  const { wallet, env, user } = getState();
 
   if (!wallet.selectedAddress) {
     dispatch(notify("Please sign in to create " + msgType, "error"));
@@ -30,16 +31,8 @@ export const validatePostingEligibility = async (
       dispatch(notify("Balance low for creating " + msgType, "error"));
       return false;
     } else {
-      console.log("No associated user found for this adddress, creating... ");
-      const res = await createUser(wallet.activeWallet.name)(
-        dispatch,
-        getState
-      );
-      if (res && res.code === 0) {
-        await getUserDetailsForSelectedAddress()(dispatch, getState);
-      } else {
-        return false;
-      }
+      dispatch(notify("User not found", "error"));
+      return false;
     }
   }
 
@@ -60,25 +53,13 @@ export const createRepository = ({
     const { wallet } = getState();
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
-    let ownerType;
-    const { user } = getState();
-    user.dashboards.every((d) => {
-      if (d.id === ownerId) {
-        ownerType = d.type == "User" ? "USER" : "ORGANIZATION";
-        return false;
-      }
-      return true;
-    });
     const repository = {
       creator: wallet.selectedAddress,
       name: name,
-      ownerId,
-      ownerType: ownerType || "USER",
+      owner: ownerId,
       description: description,
     };
-    console.log("repository", repository);
     const { env } = getState();
-
     try {
       const message = await env.txClient.msgCreateRepository(repository);
       const result = await sendTransaction({ message })(dispatch, getState);
@@ -103,7 +84,8 @@ export const createRepository = ({
 export const createIssue = ({
   title = "",
   description = "",
-  repositoryId = null,
+  repositoryName = "",
+  repositoryOwner = "",
   labels = [],
   weight = 0,
   assignees = [],
@@ -117,7 +99,10 @@ export const createIssue = ({
       creator: wallet.selectedAddress,
       title,
       description,
-      repositoryId: repositoryId.toString(),
+      repositoryId: {
+        id: repositoryOwner,
+        name: repositoryName,
+      },
     };
 
     if (assignees.length) {
@@ -271,14 +256,18 @@ export const toggleIssueState = ({ id = null }) => {
   };
 };
 
-export const renameRepository = ({ id = null, name = "" }) => {
+export const renameRepository = ({
+  repoOwner = null,
+  repoName = null,
+  name = "",
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
     const { env, wallet } = getState();
     const repository = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId: { id: repoOwner, name: repoName },
       name,
     };
 
@@ -301,14 +290,19 @@ export const renameRepository = ({ id = null, name = "" }) => {
   };
 };
 
-export const updateCollaborator = ({ id = null, user = null, role = null }) => {
+export const updateCollaborator = ({
+  repoOwner = null,
+  repoName = null,
+  user = null,
+  role = null,
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
       return null;
     const { env, wallet } = getState();
     const collaborator = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId: { id: repoOwner, name: repoName },
       user,
       role,
     };
@@ -333,14 +327,21 @@ export const updateCollaborator = ({ id = null, user = null, role = null }) => {
   };
 };
 
-export const removeCollaborator = ({ id = null, user = null }) => {
+export const removeCollaborator = ({
+  repoOwner = null,
+  repoName = null,
+  user = null,
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
       return null;
     const { env, wallet } = getState();
     const collaborator = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId: {
+        id: repoOwner,
+        name: repoName,
+      },
       user,
     };
 
@@ -364,10 +365,10 @@ export const removeCollaborator = ({ id = null, user = null }) => {
   };
 };
 
-export const changeRespositoryOwner = ({
-  repositoryId = null,
-  ownerId = null,
-  ownerType = null,
+export const changeRepositoryOwner = ({
+  repoOwner = null,
+  repoName = null,
+  owner = null,
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
@@ -375,11 +376,12 @@ export const changeRespositoryOwner = ({
     const { env, wallet } = getState();
     const req = {
       creator: wallet.selectedAddress,
-      repositoryId,
-      ownerId,
-      ownerType,
+      repositoryId: {
+        id: repoOwner,
+        name: repoName,
+      },
+      owner: owner,
     };
-
     try {
       const message = await env.txClient.msgChangeOwner(req);
       const result = await sendTransaction({ message })(dispatch, getState);
@@ -632,7 +634,8 @@ export const updateIssueLabels = ({
 };
 
 export const createRepositoryLabel = ({
-  repoId = null,
+  repoOwner = null,
+  repoName = null,
   name = "",
   color = "",
   description = "",
@@ -644,7 +647,7 @@ export const createRepositoryLabel = ({
     const { wallet, env } = getState();
     const label = {
       creator: wallet.selectedAddress,
-      id: repoId,
+      repositoryId: { id: repoOwner, name: repoName },
       name,
       color,
       description,
@@ -670,7 +673,8 @@ export const createRepositoryLabel = ({
 };
 
 export const updateRepositoryLabel = ({
-  repositoryId = null,
+  repoOwner = null,
+  repoName = null,
   labelId = null,
   name = "",
   color = "",
@@ -683,7 +687,7 @@ export const updateRepositoryLabel = ({
     const { wallet, env } = getState();
     const label = {
       creator: wallet.selectedAddress,
-      repositoryId,
+      repositoryId: { id: repoOwner, name: repoName },
       labelId,
       name,
       color,
@@ -710,7 +714,8 @@ export const updateRepositoryLabel = ({
 };
 
 export const deleteRepositoryLabel = ({
-  repositoryId = null,
+  repoOwner = null,
+  repoName = null,
   labelId = null,
 }) => {
   return async (dispatch, getState) => {
@@ -720,7 +725,7 @@ export const deleteRepositoryLabel = ({
     const { wallet, env } = getState();
     const label = {
       creator: wallet.selectedAddress,
-      repositoryId,
+      repositoryId: { id: repoOwner, name: repoName },
       labelId,
     };
     try {
@@ -739,13 +744,11 @@ export const isCurrentUserEligibleToUpdate = (repository) => {
   return async (dispatch, getState) => {
     if (repository && repository.owner) {
       let permission = false,
-        repoOwnerAddress = repository.owner.id;
+        repoOwnerAddress = repository.owner.address;
       const { wallet, user } = getState();
-      if (wallet.selectedAddress === repoOwnerAddress) {
-        permission = true;
-      } else if (user) {
-        user.organizations.every((o) => {
-          if (o.id === repoOwnerAddress) {
+      if (user.dashboards?.length) {
+        user.dashboards.every((d) => {
+          if (d.id === repoOwnerAddress) {
             permission = true;
             return false;
           }
@@ -768,28 +771,19 @@ export const isCurrentUserEligibleToUpdate = (repository) => {
 };
 
 export const forkRepository = ({
-  repositoryId = null,
   ownerId = null,
-  repositoryName = "",
+  repoOwner = null,
+  repoName = null,
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
 
     const { wallet, user } = getState();
-    let ownerType;
-    user.dashboards.every((d) => {
-      if (d.id === ownerId) {
-        ownerType = d.type == "User" ? "USER" : "ORGANIZATION";
-        return false;
-      }
-      return true;
-    });
     const repository = {
       creator: wallet.selectedAddress,
-      repositoryId,
-      ownerId,
-      ownerType,
+      repositoryId: { id: repoOwner, name: repoName },
+      owner: ownerId,
       provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
     };
     console.log("fork", repository);
@@ -831,9 +825,11 @@ export const createPullRequest = ({
   title,
   description,
   headBranch,
-  headRepoId,
+  headRepoOwner,
+  headRepoName,
   baseBranch,
-  baseRepoId,
+  baseRepoOwner,
+  baseRepoName,
   reviewers = [],
   assignees = [],
   labelIds = [],
@@ -848,9 +844,9 @@ export const createPullRequest = ({
       title,
       description,
       headBranch,
-      headRepoId,
+      headRepositoryId: { id: headRepoOwner, name: headRepoName },
       baseBranch,
-      baseRepoId,
+      baseRepositoryId: { id: baseRepoOwner, name: baseRepoName },
     };
 
     if (reviewers.length) {
@@ -882,7 +878,8 @@ export const createPullRequest = ({
 
 export const createRelease = (
   {
-    repositoryId = null,
+    repoOwner = null,
+    repoName = null,
     tagName = null,
     target = null,
     name = null,
@@ -902,7 +899,7 @@ export const createRelease = (
     const { wallet, env } = getState();
     const release = {
       creator: wallet.selectedAddress,
-      repositoryId,
+      repositoryId: { id: repoOwner, name: repoName },
       tagName,
       target,
       name,
@@ -966,7 +963,12 @@ export const deleteRelease = ({ releaseId }) => {
   };
 };
 
-export const createTag = ({ repositoryId = null, name = null, sha = null }) => {
+export const createTag = ({
+  repoOwnerId = null,
+  repositoryName = null,
+  name = null,
+  sha = null,
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "tag")))
       return null;
@@ -974,13 +976,18 @@ export const createTag = ({ repositoryId = null, name = null, sha = null }) => {
     const { wallet, env } = getState();
     const tag = {
       creator: wallet.selectedAddress,
-      id: repositoryId,
-      name,
-      sha,
+      repositoryId: {
+        id: repoOwnerId,
+        name: repositoryName,
+      },
+      tag: {
+        name: name,
+        sha: sha,
+      },
     };
 
     try {
-      const message = await env.txClient.msgSetRepositoryTag(tag);
+      const message = await env.txClient.msgSetTag(tag);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         return result;
@@ -1239,7 +1246,7 @@ export const mergePullRequest = ({ id }) => {
   };
 };
 
-export const toggleRepositoryForking = ({ id }) => {
+export const toggleRepositoryForking = ({ repoOwner, repoName }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
@@ -1247,7 +1254,7 @@ export const toggleRepositoryForking = ({ id }) => {
     const { wallet, env } = getState();
     const repo = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId: { id: repoOwner, name: repoName },
     };
 
     try {
@@ -1273,11 +1280,12 @@ export const authorizeGitServer = () => {
 
     const { wallet, env } = getState();
     try {
-      const message = await env.txClient.msgAuthorizeGitServer({
+      const message = await env.txClient.msgAuthorizeProvider({
         creator: wallet.selectedAddress,
+        granter: wallet.selectedAddress,
         provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+        permission: 0,
       });
-      console.log("Grant", message);
       const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       console.log(result);

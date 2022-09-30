@@ -131,6 +131,7 @@ export default function ReleaseView({
                 <a
                   className="flex py-2 items-center"
                   target="_blank"
+                  rel="noreferrer"
                   href={
                     process.env.NEXT_PUBLIC_OBJECTS_URL +
                     "/releases/" +
@@ -146,8 +147,22 @@ export default function ReleaseView({
                   <div className="flex-1 text-sm">{a.name}</div>
                   <div className="text-xs mr-2">{formatBytes(a.size)}</div>
                   <div className="">
-                    <div className="text-xs flex items-center">
-                      <div className="mr-2">{"(" + shrinkSha(a.sha) + ")"}</div>
+                    <div
+                      className="text-xs flex items-center tooltip"
+                      data-tip={a.sha}
+                    >
+                      <button
+                        className="btn btn-xs btn-ghost"
+                        onClick={(e) => {
+                          if (navigator.clipboard) {
+                            navigator.clipboard.writeText(a.sha);
+                          }
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
+                      >
+                        {shrinkSha(a.sha)}
+                      </button>
                     </div>
                   </div>
                 </a>

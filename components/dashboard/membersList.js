@@ -1,11 +1,11 @@
 import TextInput from "../textInput";
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { updateMember, removeMember } from "../../store/actions/organization";
+import { addMember, removeMember } from "../../store/actions/dao";
 import getUser from "../../helpers/getUser";
 import shrinkAddress from "../../helpers/shrinkAddress";
 
-function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
+function MembersList({ daoId, members = [], refreshDao, ...props }) {
   const [collabAddress, setCollabAddress] = useState("");
   const [collabHint, setCollabHint] = useState({
     shown: false,
@@ -37,13 +37,13 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
   const addMember = async () => {
     setIsAdding(true);
     if (await validateMember()) {
-      const res = await props.updateMember({
-        id: orgId,
-        user: collabAddress,
+      const res = await props.addMember({
+        daoId: daoId,
+        userId: collabAddress,
         role: collabRole,
       });
       console.log(res);
-      if (refreshOrganization) await refreshOrganization();
+      if (refreshDao) await refreshDao();
       setCollabAddress("");
       setCollabHint({
         shown: false,
@@ -56,8 +56,8 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
 
   const removeMember = async (address, index) => {
     setIsRemoving(index);
-    await props.removeMember({ id: orgId, user: address });
-    if (refreshOrganization) await refreshOrganization();
+    await props.removeMember({ daoId: daoId, userId: address });
+    if (refreshDao) await refreshDao();
     setIsRemoving(false);
   };
 
@@ -87,11 +87,12 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
                 </div>
                 <div>
                   <a
-                    href={"/" + c.id}
+                    href={"/" + c.address}
                     target="_blank"
+                    rel="noreferrer"
                     className="link link-primary text-sm no-underline hover:underline"
                   >
-                    {shrinkAddress(c.id)}
+                    {shrinkAddress(c.address)}
                   </a>
                 </div>
               </div>
@@ -104,7 +105,7 @@ function MembersList({ orgId, members = [], refreshOrganization, ...props }) {
                   (isRemoving === i ? "loading" : "")
                 }
                 disabled={isRemoving === i}
-                onClick={() => removeMember(c.id, i)}
+                onClick={() => removeMember(c.address, i)}
               >
                 Remove
               </button>
@@ -159,6 +160,6 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  updateMember,
+  addMember,
   removeMember,
 })(MembersList);

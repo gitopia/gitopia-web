@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
@@ -71,7 +70,8 @@ function RepositoryIssueLabelsView(props) {
           {isAddingLabel ? (
             <div className="border border-grey rounded p-4 my-4">
               <LabelEditor
-                repoId={repository.id}
+                repoOwner={repository.owner.id}
+                repoName={repository.name}
                 onSuccess={async (label) => {
                   console.log(label);
                   refreshRepository();
@@ -90,10 +90,12 @@ function RepositoryIssueLabelsView(props) {
               return (
                 <LabelView
                   label={l}
-                  repoId={repository.id}
+                  repoOwner={repository.owner.id}
+                  repoName={repository.name}
                   onDelete={async (id) => {
                     const res = await props.deleteRepositoryLabel({
-                      repositoryId: repository.id,
+                      repoOwner: repository.owner.id,
+                      repoName: repository.name,
                       labelId: l.id,
                     });
                     if (res && res.code === 0) {
@@ -101,6 +103,7 @@ function RepositoryIssueLabelsView(props) {
                     }
                   }}
                   refreshLabels={refreshRepository}
+                  key={"labelview" + i}
                 />
               );
             })}
