@@ -76,16 +76,12 @@
 }
 .blob5 {
   position: absolute;
-  right: 0;
- 	top: 210.4vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
 }
 .blob6 {
   position: absolute;
-  left: 0;
-	top: 219.6vw;
   pointer-events: none;
   z-index: -1;
   opacity: 0.9;
@@ -586,12 +582,6 @@
   .section5Content2 {
     width:430px;
   }
-  .blob5{
-    top:266vw;
-  }
-  .blob6{
-   top:266vw;
-  }
   .blob7{
     top:89vw;
   }
@@ -684,7 +674,7 @@
     opacity:0.3;
   }
   .blob5,.blob6{
-   display:none;
+    opacity:0.3
   }
 	.coin1,.coin2,.coin3,.coin4,.coin5,.coin6,.coin7,.coin8,.coin9,.coin10,.coin11,.coin11b,.coin12,.coin13,.coin14,.coin15,.coin16,.coin17,.coin18,.coin19{
 		opacity:0.3

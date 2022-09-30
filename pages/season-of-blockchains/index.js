@@ -900,104 +900,6 @@ export default function SeasonOfBlockchains() {
             </defs>
           </svg>
           <svg
-            className={styles.blob5}
-            width="584"
-            height="1449"
-            viewBox="0 0 584 1449"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g filter="url(#filter0_f_2447_7021)">
-              <path
-                d="M1506.85 874.45C1030.59 963.862 1093.89 1294.03 847.014 1294.03C600.135 1294.03 400 1093.89 400 847.014C400 600.135 600.135 400 847.014 400C1093.89 400 2062.27 823.404 1506.85 874.45Z"
-                fill="url(#paint0_radial_2447_7021)"
-              />
-            </g>
-            <defs>
-              <filter
-                id="filter0_f_2447_7021"
-                x="0"
-                y="0"
-                width="2076.11"
-                height="1694.03"
-                filterUnits="userSpaceOnUse"
-                colorInterpolationFilters="sRGB"
-              >
-                <feFlood floodOpacity="0" result="BackgroundImageFix" />
-                <feBlend
-                  mode="normal"
-                  in="SourceGraphic"
-                  in2="BackgroundImageFix"
-                  result="shape"
-                />
-                <feGaussianBlur
-                  stdDeviation="200"
-                  result="effect1_foregroundBlur_2447_7021"
-                />
-              </filter>
-              <radialGradient
-                id="paint0_radial_2447_7021"
-                cx="0"
-                cy="0"
-                r="1"
-                gradientUnits="userSpaceOnUse"
-                gradientTransform="translate(847.014 847.014) rotate(90) scale(447.014 447.014)"
-              >
-                <stop offset="0.442708" stopColor="#992D81" />
-                <stop offset="1" stopColor="#6029DB" />
-              </radialGradient>
-            </defs>
-          </svg>
-          <svg
-            width="858"
-            height="1269"
-            viewBox="0 0 858 1269"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className={styles.blob6}
-          >
-            <g filter="url(#filter0_f_2770_5904)">
-              <path
-                d="M287.846 819.578C-188.412 730.166 -125.107 400 -371.986 400C-618.865 400 -819 600.135 -819 847.014C-819 1093.89 -618.865 1294.03 -371.986 1294.03C-125.107 1294.03 843.266 870.624 287.846 819.578Z"
-                fill="url(#paint0_radial_2770_5904)"
-              />
-            </g>
-            <defs>
-              <filter
-                id="filter0_f_2770_5904"
-                x="-1219"
-                y="0"
-                width="2076.11"
-                height="1694.03"
-                filterUnits="userSpaceOnUse"
-                colorInterpolationFilters="sRGB"
-              >
-                <feFlood floodOpacity="0" result="BackgroundImageFix" />
-                <feBlend
-                  mode="normal"
-                  in="SourceGraphic"
-                  in2="BackgroundImageFix"
-                  result="shape"
-                />
-                <feGaussianBlur
-                  stdDeviation="200"
-                  result="effect1_foregroundBlur_2770_5904"
-                />
-              </filter>
-              <radialGradient
-                id="paint0_radial_2770_5904"
-                cx="0"
-                cy="0"
-                r="1"
-                gradientUnits="userSpaceOnUse"
-                gradientTransform="translate(-371.986 847.014) rotate(-90) scale(447.014 447.014)"
-              >
-                <stop offset="0.442708" stopColor="#992D81" />
-                <stop offset="1" stopColor="#6029DB" />
-              </radialGradient>
-            </defs>
-          </svg>
-          <svg
             className={styles.blob7}
             width="1597"
             height="981"
@@ -1312,7 +1214,7 @@ export default function SeasonOfBlockchains() {
         <div className={styles.coin19}>
           <img src="/season-of-blockchains/coin19.svg"></img>
         </div>
-        <footer className={styles.footer} id="contact">
+        <footer className={styles.footer + " relative"} id="contact">
           <div className={styles.footerLogo}></div>
           <div className={styles.footerLinks}>
             {/* <a href="#">About Us</a> */}
@@ -1360,6 +1262,104 @@ export default function SeasonOfBlockchains() {
               Contact us
             </button>
           </div>
+          <svg
+            className={styles.blob5 + " bottom-0 right-0"}
+            width="584"
+            height="1449"
+            viewBox="0 0 584 1449"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g filter="url(#filter0_f_2447_7021)">
+              <path
+                d="M1506.85 874.45C1030.59 963.862 1093.89 1294.03 847.014 1294.03C600.135 1294.03 400 1093.89 400 847.014C400 600.135 600.135 400 847.014 400C1093.89 400 2062.27 823.404 1506.85 874.45Z"
+                fill="url(#paint0_radial_2447_7021)"
+              />
+            </g>
+            <defs>
+              <filter
+                id="filter0_f_2447_7021"
+                x="0"
+                y="0"
+                width="2076.11"
+                height="1694.03"
+                filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB"
+              >
+                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feBlend
+                  mode="normal"
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                />
+                <feGaussianBlur
+                  stdDeviation="200"
+                  result="effect1_foregroundBlur_2447_7021"
+                />
+              </filter>
+              <radialGradient
+                id="paint0_radial_2447_7021"
+                cx="0"
+                cy="0"
+                r="1"
+                gradientUnits="userSpaceOnUse"
+                gradientTransform="translate(847.014 847.014) rotate(90) scale(447.014 447.014)"
+              >
+                <stop offset="0.442708" stop-color="#992D81" />
+                <stop offset="1" stop-color="#6029DB" />
+              </radialGradient>
+            </defs>
+          </svg>
+          <svg
+            width="858"
+            height="1269"
+            viewBox="0 0 858 1269"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={styles.blob6 + " bottom-0 left-0"}
+          >
+            <g filter="url(#filter0_f_2770_5904)">
+              <path
+                d="M287.846 819.578C-188.412 730.166 -125.107 400 -371.986 400C-618.865 400 -819 600.135 -819 847.014C-819 1093.89 -618.865 1294.03 -371.986 1294.03C-125.107 1294.03 843.266 870.624 287.846 819.578Z"
+                fill="url(#paint0_radial_2770_5904)"
+              />
+            </g>
+            <defs>
+              <filter
+                id="filter0_f_2770_5904"
+                x="-1219"
+                y="0"
+                width="2076.11"
+                height="1694.03"
+                filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB"
+              >
+                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feBlend
+                  mode="normal"
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                />
+                <feGaussianBlur
+                  stdDeviation="200"
+                  result="effect1_foregroundBlur_2770_5904"
+                />
+              </filter>
+              <radialGradient
+                id="paint0_radial_2770_5904"
+                cx="0"
+                cy="0"
+                r="1"
+                gradientUnits="userSpaceOnUse"
+                gradientTransform="translate(-371.986 847.014) rotate(-90) scale(447.014 447.014)"
+              >
+                <stop offset="0.442708" stop-color="#992D81" />
+                <stop offset="1" stop-color="#6029DB" />
+              </radialGradient>
+            </defs>
+          </svg>
         </footer>
       </div>
     </div>
