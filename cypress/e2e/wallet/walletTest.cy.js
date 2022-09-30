@@ -14,7 +14,7 @@ describe("Test Wallet Workflows", () => {
         cy.visit("/login");
 
         cy.get('[data-test="create-new-local-wallet"]').click();
-        cy.get('[data-test="wallet_name"]').clear().type("Test123");
+        // cy.get('[data-test="wallet_name"]').clear().type("Test123");
         cy.get('[data-test="wallet_password"]').clear().type("Passwor");
         cy.get('[data-test="wallet_confirm_password"]').clear().type("Password");
         cy.get('[data-test="create_wallet"]').click();
@@ -26,7 +26,7 @@ describe("Test Wallet Workflows", () => {
         cy.visit("/login");
 
         cy.get('[data-test="create-new-local-wallet"]').click();
-        cy.get('[data-test="wallet_name"]').clear().type("Test123");
+        // cy.get('[data-test="wallet_name"]').clear().type("Test123");
         cy.get('[data-test="wallet_password"]').clear().type("Password");
         cy.get('[data-test="wallet_confirm_password"]').clear().type("Password1");
         cy.get('[data-test="create_wallet"]').click();
@@ -37,11 +37,17 @@ describe("Test Wallet Workflows", () => {
         cy.visit("/login");
 
         cy.get('[data-test="create-new-local-wallet"]').click();
-        cy.get('[data-test="wallet_name"]').clear().type("Test123");
+        // cy.get('[data-test="wallet_name"]').clear().type("Test123");
         cy.get('[data-test="wallet_password"]').clear().type("Password").should("have.value","Password");
         cy.get('[data-test="wallet_confirm_password"]').clear().type("Password").should("have.value","Password");
         cy.get('[data-test="create_wallet"]').click();
-        cy.get('[data-test="current_wallet_name"]').should("has.text", "Test123");
+        // cy.get('[data-test="current_wallet_name"]').should("has.text", "Test123");
+        cy.wait(500);
+        cy.get('[data-test="username"]').clear().type("Test1234").should("have.value","Test1234");
+        cy.get('[data-test="full name"]').clear().type("Test1234").should("have.value","Test1234");
+        cy.get('[data-test="bio"]').clear().type("Test1234").should("have.value","Test1234");
+        cy.get('[data-test="create_profile"]').click();
+
     })
 
     it("Is able to generate 24 word recovery phase", () => {
@@ -95,7 +101,7 @@ describe("Test Wallet Workflows", () => {
         cy.visit("/login");
 
         cy.get('[data-test="create-new-local-wallet"]').click();
-        cy.get('[data-test="wallet_name"]').clear().type("Test123");
+        // cy.get('[data-test="wallet_name"]').clear().type("Test123");
         cy.get('[data-test="wallet_password"]').clear().type("Password").should("have.value","Password");
         cy.get('[data-test="wallet_confirm_password"]').clear().type("Password").should("have.value","Password");
         cy.get('[data-test="create_wallet"]').click();

@@ -27,7 +27,9 @@ describe("Repository Workflows", () => {
         const id = uuid();
     
         cy.visit("/home");
+        cy.wait(500);
         cy.get('[data-test="create-new-repo"]').click();
+        cy.wait(500);
         cy.get('[data-test="repository_name"]').type(`repo${id}`).should("have.value",`repo${id}`);
         cy.get('[data-test="repository_description"]').type("Testing").should("have.value","Testing");
         cy.get('[data-test="create-repo-button"]').click();
@@ -46,19 +48,19 @@ describe("Repository Workflows", () => {
         cy.visit("/home");
         cy.get('[data-test="create-new-repo"]').click();
         cy.get('[data-test="repository_name"]').type("[]]").should("have.value","[]]");
-        cy.get('.label-text-alt').should("has.text","Your repository would be named as -----");
+        cy.get('.label-text-alt').should("has.text","Your repository would be named as ---");
     });
 
-    it("Check create repository - missing description error", () => {
-        const uuid = () => Cypress._.random(0, 1e6);
-        const id = uuid();
+    // it("Check create repository - missing description error", () => {
+    //     const uuid = () => Cypress._.random(0, 1e6);
+    //     const id = uuid();
     
-        cy.visit("/home");
-        cy.get('[data-test="create-new-repo"]').click();
-        cy.get('[data-test="repository_name"]').type(`repo${id}`).should("have.value",`repo${id}`);
-        cy.get('[data-test="create-repo-button"]').click();
-        cy.get('.label-text-alt').should("has.text","Please enter a description");
-    });
+    //     cy.visit("/home");
+    //     cy.get('[data-test="create-new-repo"]').click();
+    //     cy.get('[data-test="repository_name"]').type(`repo${id}`).should("have.value",`repo${id}`);
+    //     cy.get('[data-test="create-repo-button"]').click();
+    //     cy.get('.label-text-alt').should("has.text","Please enter a description");
+    // });
 
     it("Check create repository - name already taken error", () => {
         cy.visit("/home");
@@ -72,7 +74,7 @@ describe("Repository Workflows", () => {
         cy.contains("Test-repo").click();
         cy.get('[data-test="settings"]').click();
         cy.wait(500);
-        cy.get('[data-test="allow-forking"]').click();
+        cy.get('[data-test="allow-forking"]').click({force: true});
         cy.unlock(testData.walletpass);
         cy.wait(6000);
     });
@@ -99,7 +101,7 @@ describe("Repository Workflows", () => {
         cy.contains("Test-repo").click();
         cy.get('[data-test="settings"]').click();
         cy.wait(500);
-        cy.get('.input').type("gitopia1g245p7dg3sdsd6vty3ky8rrh26uu2g6njqdstw");
+        cy.get('.input').type("gitopia1mwucxa2mwjdymmg5kdwl9wnjvmkcrvzj28l35s");
         cy.get('[data-test="permissions"]').select("Maintain");
         cy.get('[data-test="add"]').click();
         cy.unlock(testData.walletpass);

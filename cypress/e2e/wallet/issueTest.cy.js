@@ -17,7 +17,7 @@ describe("Issue Workflows", () => {
             cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
         }
         });
-        cy.get('[data-test="all_repositories"]').click();
+        //cy.get('[data-test="all_repositories"]').click();
         cy.wait(500);
         cy.contains('hello-world').click();
         cy.get('[data-test="issues"]').click();
