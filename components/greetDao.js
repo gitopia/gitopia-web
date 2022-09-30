@@ -39,7 +39,7 @@ function GreetDao({ dao, ...props }) {
               </div>
             </div>
             <div className="flex-none w-60 mr-8 mt-4 sm:mt-0">
-              <Link href={"/" + dao.name}>
+              <Link href={"/" + dao.address}>
                 <a className="btn btn-accent btn-block btn-sm">
                   Update DAO Name
                 </a>

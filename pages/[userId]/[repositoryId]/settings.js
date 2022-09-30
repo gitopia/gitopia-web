@@ -111,25 +111,23 @@ function RepositorySettingsView(props) {
                       router.push(url);
                     }}
                   />
-                  {
-                    <div className="mt-6">
-                      <TransferOwnership
-                        currentOwnerId={repository.owner.id}
-                        repoName={repository.name}
-                        repoId={repository.id}
-                        onSuccess={async (newOwnerId) => {
-                          const url = [
-                            "",
-                            newOwnerId,
-                            repository.name,
-                            "settings",
-                          ].join("/");
-                          console.log("goto", url);
-                          router.push(url);
-                        }}
-                      />
-                    </div>
-                  }
+                  <div className="mt-6">
+                    <TransferOwnership
+                      currentOwnerId={repository.owner.id}
+                      repoName={repository.name}
+                      repoId={repository.id}
+                      onSuccess={async (newOwnerId) => {
+                        const url = [
+                          "",
+                          newOwnerId,
+                          repository.name,
+                          "settings",
+                        ].join("/");
+                        console.log("goto", url);
+                        router.push(url);
+                      }}
+                    />
+                  </div>
                 </div>
                 {/* <div className="flex py-6 items-center">
                   <div className="flex-1 mr-8">

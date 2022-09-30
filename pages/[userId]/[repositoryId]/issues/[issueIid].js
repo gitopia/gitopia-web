@@ -76,7 +76,6 @@ function RepositoryIssueView(props) {
   const getAllComments = async () => {
     const pr = issue.comments.map((c) => getComment(c));
     const comments = await Promise.all(pr);
-    console.log(comments);
     setAllComments(comments);
   };
 
