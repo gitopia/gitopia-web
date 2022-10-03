@@ -74,7 +74,7 @@ function RepositoryView(props) {
         window.removeEventListener("resize", detectWindowSize);
       }
     };
-  });
+  }, []);
 
   const loadEntities = async (currentEntities = [], firstTime = false) => {
     setLoadingEntities(true);
@@ -531,6 +531,14 @@ function RepositoryView(props) {
                   <CommitDetailRow
                     commitDetail={commitDetail}
                     commitLink={
+                      "/" +
+                      repository.owner.id +
+                      "/" +
+                      repository.name +
+                      "/commit/" +
+                      commitDetail.id
+                    }
+                    commitHistoryLink={
                       "/" +
                       repository.owner.id +
                       "/" +

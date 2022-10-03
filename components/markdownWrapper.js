@@ -13,7 +13,6 @@ export default function MarkdownWrapper(props) {
           let elem = document.querySelector(
             "#user-content-" + parsedHref + " a[href='#" + parsedHref + "']"
           );
-          console.log(parsedHref, elem);
           if (elem) {
             elem.scrollIntoView({
               behavior: "smooth",
