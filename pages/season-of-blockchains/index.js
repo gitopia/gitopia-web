@@ -98,7 +98,7 @@ export default function SeasonOfBlockchains() {
                   About
                 </a>
               </li>
-              <li>
+              {/* <li>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
                   href={"https://docs.gitopia.com/basic-faq"}
@@ -107,7 +107,7 @@ export default function SeasonOfBlockchains() {
                 >
                   FAQs
                 </a>
-              </li>
+              </li> */}
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
@@ -140,7 +140,7 @@ export default function SeasonOfBlockchains() {
               <div className={" " + styles.title}>Season of</div>
               <div className={" " + styles.title2}>Blockchains is here!</div>
               <div className={"mt-5 " + styles.content}>
-                GSOB is the first-ever six-week global blockchain program to
+                GSoB is the first-ever six-week global blockchain program to
                 bring the budding developers together to work on challenging
                 projects for the most exciting organisations in the Web3 space!
                 🚀
@@ -350,7 +350,7 @@ export default function SeasonOfBlockchains() {
           <div className={"flex " + styles.midScreen}>
             <div className={"sm:mb-36 " + styles.section4}>
               <div className={" " + styles.title3}>
-                How GSOB will contribute
+                How GSoB will contribute
               </div>
               <div className={" " + styles.title4}>to the Web3 ecosystem</div>
 
@@ -438,13 +438,13 @@ export default function SeasonOfBlockchains() {
                 </div>
                 <div className={styles.section5Body}>
                   <div className={styles.section5BodyTitle}>
-                    Announcing GSOB
+                    Announcing GSoB
                   </div>
                   <div className={styles.section5Content}>
-                    User visits the GSOB site Sign up for Gitopia Join discord
-                    <br className={styles.br}></br> and Register for GSOB (can
+                    User visits the GSoB site Sign up for Gitopia Join discord
+                    <br className={styles.br}></br> and Register for GSoB (can
                     be a voluntary step to receive
-                    <br className={styles.br}></br> updates regarding GSOB)
+                    <br className={styles.br}></br> updates regarding GSoB)
                   </div>
                 </div>
               </div>
@@ -476,7 +476,7 @@ export default function SeasonOfBlockchains() {
                     <br className={styles.br}></br> initial insights into the
                     project (This can be done on our
                     <br className={styles.br}></br> discord. We can make a
-                    specific category for GSOB on{" "}
+                    specific category for GSoB on{" "}
                     <br className={styles.br}></br> discord and channels will be
                     named after participating orgs)
                   </div>
@@ -497,7 +497,7 @@ export default function SeasonOfBlockchains() {
                 </div>
                 <div className={styles.section5Body}>
                   <div className={styles.section5BodyTitle}>
-                    GSOB Participant applications out
+                    GSoB Participant applications out
                   </div>
                   <div className={styles.section5Content}>
                     Contributors can share their proposals to the organization
@@ -578,7 +578,13 @@ export default function SeasonOfBlockchains() {
                   <hr className={styles.vl3}></hr>
                 </div>
                 <div className={styles.section5Body}>
-                  <div className={styles.section5Content}>What’s next?</div>
+                  <div className={styles.section5BodyTitle}>
+                    Results Announced
+                  </div>
+                  <div className={styles.section5Content}>
+                    Contributors are notified of the results and the
+                    <br className={styles.br}></br>stipends are distributed
+                  </div>
                 </div>
               </div>
             </div>
@@ -586,7 +592,7 @@ export default function SeasonOfBlockchains() {
           {/*
 				
           <div className={styles.endHeadline} id="about">
-            What OGs have to say about GSOB?
+            What OGs have to say about GSoB?
           </div>
           <div className="flex flex-row items-center justify-center">
             <div className={styles.endCircle}>
@@ -887,104 +893,6 @@ export default function SeasonOfBlockchains() {
                 r="1"
                 gradientUnits="userSpaceOnUse"
                 gradientTransform="translate(816.671 1151.52) rotate(150) scale(447.014 447.014)"
-              >
-                <stop offset="0.442708" stopColor="#992D81" />
-                <stop offset="1" stopColor="#6029DB" />
-              </radialGradient>
-            </defs>
-          </svg>
-          <svg
-            className={styles.blob5}
-            width="584"
-            height="1449"
-            viewBox="0 0 584 1449"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g filter="url(#filter0_f_2447_7021)">
-              <path
-                d="M1506.85 874.45C1030.59 963.862 1093.89 1294.03 847.014 1294.03C600.135 1294.03 400 1093.89 400 847.014C400 600.135 600.135 400 847.014 400C1093.89 400 2062.27 823.404 1506.85 874.45Z"
-                fill="url(#paint0_radial_2447_7021)"
-              />
-            </g>
-            <defs>
-              <filter
-                id="filter0_f_2447_7021"
-                x="0"
-                y="0"
-                width="2076.11"
-                height="1694.03"
-                filterUnits="userSpaceOnUse"
-                colorInterpolationFilters="sRGB"
-              >
-                <feFlood floodOpacity="0" result="BackgroundImageFix" />
-                <feBlend
-                  mode="normal"
-                  in="SourceGraphic"
-                  in2="BackgroundImageFix"
-                  result="shape"
-                />
-                <feGaussianBlur
-                  stdDeviation="200"
-                  result="effect1_foregroundBlur_2447_7021"
-                />
-              </filter>
-              <radialGradient
-                id="paint0_radial_2447_7021"
-                cx="0"
-                cy="0"
-                r="1"
-                gradientUnits="userSpaceOnUse"
-                gradientTransform="translate(847.014 847.014) rotate(90) scale(447.014 447.014)"
-              >
-                <stop offset="0.442708" stopColor="#992D81" />
-                <stop offset="1" stopColor="#6029DB" />
-              </radialGradient>
-            </defs>
-          </svg>
-          <svg
-            className={styles.blob6}
-            width="858"
-            height="1449"
-            viewBox="0 0 858 1449"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g filter="url(#filter0_f_2447_6936)">
-              <path
-                d="M287.846 819.578C-188.412 730.166 -125.107 400 -371.986 400C-618.865 400 -819 600.135 -819 847.014C-819 1093.89 -618.865 1294.03 -371.986 1294.03C-125.107 1294.03 843.266 870.624 287.846 819.578Z"
-                fill="url(#paint0_radial_2447_6936)"
-              />
-            </g>
-            <defs>
-              <filter
-                id="filter0_f_2447_6936"
-                x="-1219"
-                y="0"
-                width="2076.11"
-                height="1694.03"
-                filterUnits="userSpaceOnUse"
-                colorInterpolationFilters="sRGB"
-              >
-                <feFlood floodOpacity="0" result="BackgroundImageFix" />
-                <feBlend
-                  mode="normal"
-                  in="SourceGraphic"
-                  in2="BackgroundImageFix"
-                  result="shape"
-                />
-                <feGaussianBlur
-                  stdDeviation="200"
-                  result="effect1_foregroundBlur_2447_6936"
-                />
-              </filter>
-              <radialGradient
-                id="paint0_radial_2447_6936"
-                cx="0"
-                cy="0"
-                r="1"
-                gradientUnits="userSpaceOnUse"
-                gradientTransform="translate(-371.986 847.014) rotate(-90) scale(447.014 447.014)"
               >
                 <stop offset="0.442708" stopColor="#992D81" />
                 <stop offset="1" stopColor="#6029DB" />
@@ -1306,7 +1214,7 @@ export default function SeasonOfBlockchains() {
         <div className={styles.coin19}>
           <img src="/season-of-blockchains/coin19.svg"></img>
         </div>
-        <footer className={styles.footer} id="contact">
+        <footer className={styles.footer + " relative"} id="contact">
           <div className={styles.footerLogo}></div>
           <div className={styles.footerLinks}>
             {/* <a href="#">About Us</a> */}
@@ -1354,6 +1262,104 @@ export default function SeasonOfBlockchains() {
               Contact us
             </button>
           </div>
+          <svg
+            className={styles.blob5 + " bottom-0 right-0"}
+            width="584"
+            height="1449"
+            viewBox="0 0 584 1449"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g filter="url(#filter0_f_2447_7021)">
+              <path
+                d="M1506.85 874.45C1030.59 963.862 1093.89 1294.03 847.014 1294.03C600.135 1294.03 400 1093.89 400 847.014C400 600.135 600.135 400 847.014 400C1093.89 400 2062.27 823.404 1506.85 874.45Z"
+                fill="url(#paint0_radial_2447_7021)"
+              />
+            </g>
+            <defs>
+              <filter
+                id="filter0_f_2447_7021"
+                x="0"
+                y="0"
+                width="2076.11"
+                height="1694.03"
+                filterUnits="userSpaceOnUse"
+                colorInterpolationFilters="sRGB"
+              >
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
+                <feBlend
+                  mode="normal"
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                />
+                <feGaussianBlur
+                  stdDeviation="200"
+                  result="effect1_foregroundBlur_2447_7021"
+                />
+              </filter>
+              <radialGradient
+                id="paint0_radial_2447_7021"
+                cx="0"
+                cy="0"
+                r="1"
+                gradientUnits="userSpaceOnUse"
+                gradientTransform="translate(847.014 847.014) rotate(90) scale(447.014 447.014)"
+              >
+                <stop offset="0.442708" stopColor="#992D81" />
+                <stop offset="1" stopColor="#6029DB" />
+              </radialGradient>
+            </defs>
+          </svg>
+          <svg
+            width="858"
+            height="1269"
+            viewBox="0 0 858 1269"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={styles.blob6 + " bottom-0 left-0"}
+          >
+            <g filter="url(#filter0_f_2770_5904)">
+              <path
+                d="M287.846 819.578C-188.412 730.166 -125.107 400 -371.986 400C-618.865 400 -819 600.135 -819 847.014C-819 1093.89 -618.865 1294.03 -371.986 1294.03C-125.107 1294.03 843.266 870.624 287.846 819.578Z"
+                fill="url(#paint0_radial_2770_5904)"
+              />
+            </g>
+            <defs>
+              <filter
+                id="filter0_f_2770_5904"
+                x="-1219"
+                y="0"
+                width="2076.11"
+                height="1694.03"
+                filterUnits="userSpaceOnUse"
+                colorInterpolationFilters="sRGB"
+              >
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
+                <feBlend
+                  mode="normal"
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                />
+                <feGaussianBlur
+                  stdDeviation="200"
+                  result="effect1_foregroundBlur_2770_5904"
+                />
+              </filter>
+              <radialGradient
+                id="paint0_radial_2770_5904"
+                cx="0"
+                cy="0"
+                r="1"
+                gradientUnits="userSpaceOnUse"
+                gradientTransform="translate(-371.986 847.014) rotate(-90) scale(447.014 447.014)"
+              >
+                <stop offset="0.442708" stopColor="#992D81" />
+                <stop offset="1" stopColor="#6029DB" />
+              </radialGradient>
+            </defs>
+          </svg>
         </footer>
       </div>
     </div>

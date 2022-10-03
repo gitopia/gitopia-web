@@ -2904,8 +2904,8 @@ export default function Landing() {
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   At Gitopia, all the platform-related decisions will be taken
-                  with the community's involvement transparently to help shape
-                  future of Gitopia
+                  with the community&apos;s involvement transparently to help
+                  shape future of Gitopia
                 </div>
               </div>
             </div>
