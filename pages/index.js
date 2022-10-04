@@ -3743,7 +3743,7 @@ export default function Landing() {
               <div
                 onClick={() => {
                   if (window) {
-                    window.open("https://gitopia.com/season-of-blockchains");
+                    window.open("/season-of-blockchains");
                   }
                 }}
                 target="_blank"
