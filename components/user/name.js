@@ -1,21 +1,34 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { updateUserName } from "../../store/actions/user";
 import { notify } from "reapop";
 import TextInput from "../textInput";
 
 function UserName(props = { isEditable: false }) {
-  const [newName, setNewName] = useState(props.user.name);
+  const [newName, setNewName] = useState(props.user?.name || "");
   const [newNameHint, setNewNameHint] = useState({
     shown: false,
     type: "info",
     message: "",
   });
   const [savingName, setSavingName] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const input = useRef();
+
+  useEffect(() => {
+    setNewName(props.user?.name || "");
+  }, [props.user?.name]);
+
+  useEffect(() => {
+    if (modalOpen && input?.current) {
+      input.current.focus();
+    }
+  }, [modalOpen]);
 
   const reset = () => {
     setNewName(props.user.name);
     setNewNameHint({ shown: false });
+    setModalOpen(false);
   };
 
   const updateName = async () => {
@@ -24,6 +37,7 @@ function UserName(props = { isEditable: false }) {
     if (res && res.code === 0) {
       props.notify("Your name is updated", "info");
       if (props.refresh) await props.refresh();
+      setModalOpen(false);
     }
     setNewNameHint({ shown: false });
     setSavingName(false);
@@ -35,6 +49,7 @@ function UserName(props = { isEditable: false }) {
         type="checkbox"
         id="name-edit-modal"
         className="modal-toggle"
+        checked={modalOpen}
         disabled={!props.isEditable}
       />
       <div className="modal">
@@ -59,15 +74,9 @@ function UserName(props = { isEditable: false }) {
             setValue={setNewName}
             hint={newNameHint}
             size="lg"
+            ref={input}
           />
           <div className="modal-action">
-            {/* <label
-              htmlFor="name-edit-modal"
-              className="w-36 btn btn-sm"
-              onClick={reset}
-            >
-              Cancel
-            </label> */}
             <button
               className={
                 "w-36 btn btn-sm btn-primary" + (savingName ? " loading" : "")
@@ -82,6 +91,9 @@ function UserName(props = { isEditable: false }) {
       </div>
       <label
         htmlFor="name-edit-modal"
+        onClick={() => {
+          setModalOpen(true);
+        }}
         className={
           "modal-button text-2xl py-1 inline-block border-b mb-2" +
           (props.isEditable

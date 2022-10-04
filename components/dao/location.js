@@ -1,21 +1,34 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { updateDaoLocation } from "../../store/actions/dao";
 import { notify } from "reapop";
 import TextInput from "../textInput";
 
 function DaoLocation(props = { isEditable: false }) {
-  const [newLocation, setNewLocation] = useState(props.dao.location);
+  const [newLocation, setNewLocation] = useState(props.dao?.location || "");
   const [newLocationHint, setNewLocationHint] = useState({
     shown: false,
     type: "info",
     message: "",
   });
   const [savingLocation, setSavingLocation] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const input = useRef();
+
+  useEffect(() => {
+    setNewLocation(props.dao?.location || "");
+  }, [props.dao?.location]);
+
+  useEffect(() => {
+    if (modalOpen && input?.current) {
+      input.current.focus();
+    }
+  }, [modalOpen]);
 
   const reset = () => {
     setNewLocation(props.dao.location);
     setNewLocationHint({ shown: false });
+    setModalOpen(false);
   };
 
   const updateLocation = async () => {
@@ -27,6 +40,7 @@ function DaoLocation(props = { isEditable: false }) {
     if (res && res.code === 0) {
       props.notify(props.dao.name + " location is updated", "info");
       if (props.refresh) await props.refresh();
+      setModalOpen(false);
     }
     setNewLocationHint({ shown: false });
     setSavingLocation(false);
@@ -38,6 +52,7 @@ function DaoLocation(props = { isEditable: false }) {
         type="checkbox"
         id="location-edit-modal"
         className="modal-toggle"
+        checked={modalOpen}
         disabled={!props.isEditable}
       />
       <div className="modal">
@@ -62,6 +77,7 @@ function DaoLocation(props = { isEditable: false }) {
             setValue={setNewLocation}
             hint={newLocationHint}
             size="lg"
+            ref={input}
           />
           <div className="modal-action">
             <button
@@ -79,6 +95,9 @@ function DaoLocation(props = { isEditable: false }) {
       </div>
       <label
         htmlFor="location-edit-modal"
+        onClick={() => {
+          setModalOpen(true);
+        }}
         className={
           "py-1 border-b mr-2 flex items-center" +
           (props.isEditable

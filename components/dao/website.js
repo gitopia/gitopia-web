@@ -1,21 +1,34 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { updateDaoWebsite } from "../../store/actions/dao";
 import { notify } from "reapop";
 import TextInput from "../textInput";
 
 function DaoWebsite(props = { isEditable: false }) {
-  const [newWebsite, setNewWebsite] = useState(props.dao.website);
+  const [newWebsite, setNewWebsite] = useState(props.dao?.website || "");
   const [newWebsiteHint, setNewWebsiteHint] = useState({
     shown: false,
     type: "info",
     message: "",
   });
   const [savingWebsite, setSavingWebsite] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const input = useRef();
+
+  useEffect(() => {
+    setNewWebsite(props.dao?.website || "");
+  }, [props.dao?.website]);
+
+  useEffect(() => {
+    if (modalOpen && input?.current) {
+      input.current.focus();
+    }
+  }, [modalOpen]);
 
   const reset = () => {
     setNewWebsite(props.dao.website);
     setNewWebsiteHint({ shown: false });
+    setModalOpen(false);
   };
 
   const updateWebsite = async () => {
@@ -27,6 +40,7 @@ function DaoWebsite(props = { isEditable: false }) {
     if (res && res.code === 0) {
       props.notify(props.dao.name + " website is updated", "info");
       if (props.refresh) await props.refresh();
+      setModalOpen(false);
     }
     setNewWebsiteHint({ shown: false });
     setSavingWebsite(false);
@@ -38,6 +52,7 @@ function DaoWebsite(props = { isEditable: false }) {
         type="checkbox"
         id="website-edit-modal"
         className="modal-toggle"
+        checked={modalOpen}
         disabled={!props.isEditable}
       />
       <div className="modal">
@@ -62,6 +77,7 @@ function DaoWebsite(props = { isEditable: false }) {
             setValue={setNewWebsite}
             hint={newWebsiteHint}
             size="lg"
+            ref={input}
           />
           <div className="modal-action">
             <button
@@ -79,6 +95,9 @@ function DaoWebsite(props = { isEditable: false }) {
       </div>
       <label
         htmlFor="website-edit-modal"
+        onClick={() => {
+          setModalOpen(true);
+        }}
         className={
           "py-1 border-b mr-2 flex items-center" +
           (props.isEditable
