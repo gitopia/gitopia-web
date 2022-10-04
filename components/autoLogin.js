@@ -162,7 +162,9 @@ function AutoLogin(props) {
                   setPassword("");
                   setPasswordHint({ shown: false });
                   if (props.getPasswordPromise.reject) {
-                    props.getPasswordPromise.reject("Unlock rejected");
+                    props.getPasswordPromise.reject(
+                      "Please unlock your wallet"
+                    );
                   }
                 }}
               >

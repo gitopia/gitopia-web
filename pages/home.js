@@ -109,7 +109,7 @@ function Home(props) {
                         href={
                           "/" +
                           process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
-                          "/proposals"
+                          "?tab=proposals"
                         }
                       >
                         <a className={"btn btn-xs btn-link mt-2"}>Proposals</a>
@@ -117,11 +117,7 @@ function Home(props) {
                       <Link
                         href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
                       >
-                        <a
-                          className={"btn btn-xs btn-link mt-2"}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
+                        <a className={"btn btn-xs btn-link mt-2"}>
                           Source code
                         </a>
                       </Link>
@@ -163,19 +159,13 @@ function Home(props) {
                       href={
                         "/" +
                         process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
-                        "/proposals"
+                        "?tab=proposals"
                       }
                     >
                       <a className={"btn btn-xs btn-link mt-1"}>Proposals</a>
                     </Link>
                     <Link href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}>
-                      <a
-                        className={"btn btn-xs btn-link mt-1"}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Source code
-                      </a>
+                      <a className={"btn btn-xs btn-link mt-1"}>Source code</a>
                     </Link>
                   </>
                 ) : (
