@@ -149,7 +149,7 @@ export default function SeasonOfBlockchains() {
                 <button
                   onClick={() => {
                     if (window) {
-                      window.open("https://airtable.com/shrQ4JO80anchv49Y");
+                      window.open("https://airtable.com/shr5PEUTXvcCRF717");
                     }
                   }}
                   type="button"

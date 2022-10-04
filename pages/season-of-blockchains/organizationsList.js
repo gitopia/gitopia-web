@@ -72,7 +72,7 @@ export default function Partnerships() {
               <li className={menuOpen ? "" : "mr-4"}>
                 <a
                   className="px-3 py-4 md:py-2 flex items-center text-sm text-white font-bold border-b-2 border-white border-opacity-0 transition-all hover:border-opacity-70"
-                  href="https://airtable.com/shrQ4JO80anchv49Y"
+                  href="https://airtable.com/shr5PEUTXvcCRF717"
                   target="_blank"
                   rel="noreferrer"
                 >
