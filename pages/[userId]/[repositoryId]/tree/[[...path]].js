@@ -15,7 +15,7 @@ import Footer from "../../../../components/footer";
 import getBranchSha from "../../../../helpers/getBranchSha";
 import useRepository from "../../../../hooks/useRepository";
 import dynamic from "next/dynamic";
-import ReactMarkdown from "react-markdown";
+import MarkdownWrapper from "../../../../components/markdownWrapper";
 import getContent from "../../../../helpers/getContent";
 import getCommitHistory from "../../../../helpers/getCommitHistory";
 import { useErrorStatus } from "../../../../hooks/errorHandler";
@@ -67,6 +67,25 @@ function RepositoryTreeView(props) {
   const [branchName, setBranchName] = useState("");
   const [isTag, setIsTag] = useState(false);
   const [readmeFile, setReadmeFile] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  function detectWindowSize() {
+    if (typeof window !== "undefined") {
+      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
+    }
+  }
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", detectWindowSize);
+    }
+    detectWindowSize();
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", detectWindowSize);
+      }
+    };
+  }, []);
 
   useEffect(async () => {
     console.log("query", router.query);
@@ -226,7 +245,6 @@ function RepositoryTreeView(props) {
         repoPath.join("/"),
         1
       );
-      console.log(commitHistory);
       if (
         commitHistory &&
         commitHistory.commits &&
@@ -253,8 +271,8 @@ function RepositoryTreeView(props) {
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs repository={repository} active="code" />
           <div className="">
-            <div className="flex justify-start mt-8">
-              <div className="">
+            <div className="flex justify-start mt-8 flex-wrap gap-4">
+              <div>
                 <BranchSelector
                   branches={repository.branches}
                   tags={repository.tags}
@@ -265,7 +283,7 @@ function RepositoryTreeView(props) {
                   }
                 />
               </div>
-              <div className="ml-4">
+              <div>
                 <Breadcrumbs
                   branchName={branchName}
                   baseUrl={"/" + repository.owner.id + "/" + repository.name}
@@ -295,7 +313,8 @@ function RepositoryTreeView(props) {
                     branchName
                   }
                   commitsLength={commitsLength}
-                  maxMessageLength={90}
+                  maxMessageLength={isMobile ? 0 : 90}
+                  isMobile={isMobile}
                 />
                 <FileBrowser
                   entityList={entityList}
@@ -303,6 +322,7 @@ function RepositoryTreeView(props) {
                   baseUrl={"/" + repository.owner.id + "/" + repository.name}
                   repoPath={repoPath}
                   repoName={repository.name}
+                  isMobile={isMobile}
                 />
                 {hasMoreEntities ? (
                   <div className="pb-2">
@@ -360,7 +380,7 @@ function RepositoryTreeView(props) {
                       </div>
                     ) : showRenderedFile ? (
                       <div className="markdown-body p-4">
-                        <ReactMarkdown>{file}</ReactMarkdown>
+                        <MarkdownWrapper>{file}</MarkdownWrapper>
                       </div>
                     ) : (
                       <SyntaxHighlighter
@@ -384,7 +404,7 @@ function RepositoryTreeView(props) {
               id="readme"
               className="border border-gray-700 rounded overflow-hidden p-4 markdown-body mt-8"
             >
-              <ReactMarkdown>{readmeFile}</ReactMarkdown>
+              <MarkdownWrapper>{readmeFile}</MarkdownWrapper>
             </div>
           ) : (
             ""

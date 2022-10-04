@@ -56,6 +56,9 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.7",
+    "rehype-autolink-headings": "^6.1.1",
+    "rehype-sanitize": "^5.0.1",
+    "rehype-slug": "^5.0.1",
     "websocket": "^1.0.34"
   },
   "devDependencies": {

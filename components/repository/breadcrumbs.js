@@ -9,7 +9,7 @@ export default function Breadcrumbs({
   const path = [...repoPath];
   return (
     <div className="text-sm breadcrumbs">
-      <ul>
+      <ul className="flex-wrap">
         <li>
           <Link href={[baseUrl, "tree", branchName].join("/")}>
             <a>{repoName}</a>
