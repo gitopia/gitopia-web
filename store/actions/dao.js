@@ -32,7 +32,6 @@ export const createDao = ({
     try {
       const message = await env.txClient.msgCreateDao(dao);
       const result = await sendTransaction({ message })(dispatch, getState);
-      console.log(result);
       if (result && result.code === 0) {
         await getUserDetailsForSelectedAddress()(dispatch, getState);
         const daos = await getUserDaoAll(wallet.selectedAddress);
@@ -45,8 +44,16 @@ export const createDao = ({
           },
         });
         updateUserBalance()(dispatch, getState);
-        setCurrentDashboard(wallet.selectedAddress)(dispatch, getState);
-        return { url: "/home" };
+        let newDaoAddress;
+        daos.every((d) => {
+          if (d.name === name) {
+            newDaoAddress = d.address;
+            return false;
+          }
+          return true;
+        });
+        setCurrentDashboard(newDaoAddress)(dispatch, getState);
+        return { url: "/daos/" + name + "/dashboard" };
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
