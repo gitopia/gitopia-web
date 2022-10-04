@@ -33,18 +33,17 @@ function Home(props) {
   });
 
   useEffect(async () => {
-    if (props.selectedAddress !== props.currentDashboard) {
-      const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
-      console.log(newUrl);
-      router.push(newUrl);
-    }
     if (props.selectedAddress) {
-      const repos = await getAnyRepositoryAll(props.currentDashboard);
-      if (repos) {
-        console.log(repos);
-        setAllRepository(repos);
+      if (props.selectedAddress !== props.currentDashboard) {
+        const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
+        router.push(newUrl);
       } else {
-        setAllRepository([]);
+        const repos = await getAnyRepositoryAll(props.currentDashboard);
+        if (repos) {
+          setAllRepository(repos);
+        } else {
+          setAllRepository([]);
+        }
       }
     } else {
       setAllRepository([]);
