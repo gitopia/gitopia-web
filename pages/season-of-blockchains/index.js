@@ -1626,9 +1626,9 @@ export default function SeasonOfBlockchains() {
                 width="2076.11"
                 height="1694.03"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -1648,8 +1648,8 @@ export default function SeasonOfBlockchains() {
                 gradientUnits="userSpaceOnUse"
                 gradientTransform="translate(847.014 847.014) rotate(90) scale(447.014 447.014)"
               >
-                <stop offset="0.442708" stop-color="#992D81" />
-                <stop offset="1" stop-color="#6029DB" />
+                <stop offset="0.442708" stopColor="#992D81" />
+                <stop offset="1" stopColor="#6029DB" />
               </radialGradient>
             </defs>
           </svg>
@@ -1676,9 +1676,9 @@ export default function SeasonOfBlockchains() {
                 width="2076.11"
                 height="1694.03"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -1698,8 +1698,8 @@ export default function SeasonOfBlockchains() {
                 gradientUnits="userSpaceOnUse"
                 gradientTransform="translate(-371.986 847.014) rotate(-90) scale(447.014 447.014)"
               >
-                <stop offset="0.442708" stop-color="#992D81" />
-                <stop offset="1" stop-color="#6029DB" />
+                <stop offset="0.442708" stopColor="#992D81" />
+                <stop offset="1" stopColor="#6029DB" />
               </radialGradient>
             </defs>
           </svg>
