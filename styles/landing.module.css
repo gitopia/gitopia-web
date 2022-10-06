@@ -1060,7 +1060,7 @@
     margin-bottom: 60px;
   }
   .collaborationsBenefitsCard1 {
-    margin-right: 10px;
+   
   }
   .collaborationsBenefitsCard1Title {
     margin-left: 10px;
@@ -1077,7 +1077,7 @@
   }
 
   .collaborationsBenefitsCard1Body {
-    width: 353px;
+    width: auto;
     text-align: center;
     align-items: center;
   }
@@ -1092,7 +1092,7 @@
   .collaborationsBenefitsCard2Title {
     font-size: 28px;
     text-align: center;
-    margin-right: 10px;
+    padding-right: 18px;
     margin-top: 20px;
   }
 
@@ -1113,7 +1113,9 @@
     width: 400px;
   }
   .smallRow {
+    width: 380px;
     text-align: center;
+    align-items: center;
   }
   .storagePlatforms {
     width: 90px;
@@ -1142,7 +1144,7 @@
     overflow-wrap: break-word;
   }
   .mb72 {
-    width: 339px;
+    width: 376px;
     margin-bottom: 40px;
   }
   .mb36 {
@@ -1153,6 +1155,9 @@
   }
   .decentralizedSection {
     min-height: 700px;
+  }
+  .midLogo {
+    background-size: 100px 216px;
   }
   .openSource {
     margin-top: 0px;
@@ -1249,7 +1254,7 @@
 
   .joining {
     margin-left: 0px;
-    margin-top: 220px;
+    margin-top: 240px;
   }
 
   .teamWrapper {
@@ -1292,7 +1297,7 @@
   }
 
   .decentralizedDesc {
-    width: auto;
+    width: 350px;
   }
 
   .primaryCTA {
@@ -1303,7 +1308,8 @@
   .footerLogo {
     width: 203.02px;
     height: 68.72px;
-    margin-bottom: 50px;
+    margin-bottom: 70px;
+    margin-left: 20%;
   }
 
   .footerContainer {

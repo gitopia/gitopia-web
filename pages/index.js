@@ -316,7 +316,7 @@ export default function Landing() {
           {mobile && !menuOpen ? (
             <div className="mt-2 ml-auto mr-10">
               <Link href="/home" className="">
-                <a className="h-8 px-7 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
+                <a className="h-8 px-7 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
                   Login
                 </a>
               </Link>
@@ -423,7 +423,7 @@ export default function Landing() {
                   <a
                     href="/login"
                     target="_blank"
-                    className="h-8 px-4 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                    className="h-8 px-4 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                   >
                     Login
                   </a>
@@ -436,7 +436,7 @@ export default function Landing() {
                   <a
                     href="/home"
                     target="_blank"
-                    className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                    className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                   >
                     Get Started
                   </a>
@@ -445,7 +445,7 @@ export default function Landing() {
                   <a
                     href="/login"
                     target="_blank"
-                    className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-tranparent btn btn-outline btn-grey active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                    className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-tranparent btn btn-outline btn-grey active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                   >
                     Login
                   </a>
@@ -519,7 +519,7 @@ export default function Landing() {
               <a
                 href="/home"
                 target="_blank"
-                className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               >
                 {mobile ? " Get Started" : "Push code to Gitopia"}
               </a>
@@ -587,9 +587,7 @@ export default function Landing() {
         <img
           className={
             "absolute pointer-events-none -z-10  " +
-            (mobile
-              ? " -right-16 top-2/3 opacity-90 "
-              : " top-0 left-2/3 mt-10")
+            (mobile ? " -right-16 top-2/3 " : " top-0 left-2/3 mt-10")
           }
           src="./star-4.svg"
           width={mobile ? "243" : "431"}
@@ -2018,9 +2016,11 @@ export default function Landing() {
             Gitopia is an application specific blockchain built using Cosmos SDK
             framework. The use of Cosmos SDK has enabled us to leverage the
             Tendermint BFT consensus engine and build the blockchain that is
-            optimized for Gitopia’s use case. Along with the high throughput and
-            fast finality, Cosmos IBC also enables other IBC compatible chains
-            to integrate directly with Gitopia.
+            optimized for Gitopia’s use case.
+            {mobile ? <div className="mt-5"> </div> : ""}
+            Along with the high throughput and fast finality, Cosmos IBC also
+            enables other IBC compatible chains to integrate directly with
+            Gitopia.
           </div>
           <div className={styles.platformCirclesWrapper}>
             {pCircles.map((circle) => {
@@ -2040,13 +2040,14 @@ export default function Landing() {
             })}
           </div>
           <div className={styles.circleSectionLink}>
-            Learn more about why Gitopia is Building on Cosmos SDK{" "}
+            Learn more about{" "}
+            {mobile ? "our" : "why Gitopia is Building on Cosmos SDK"}{" "}
             <a
               href="https://blog.gitopia.com/post/2021/05/why-gitopia-is-building-with-cosmos-sdk/"
               target="_blank"
               rel="noreferrer"
             >
-              here
+              {mobile ? "integration here" : "here"}
             </a>
           </div>
         </div>
@@ -2081,7 +2082,7 @@ export default function Landing() {
                     <a
                       href="/home"
                       target="_blank"
-                      className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                      className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                     >
                       Create your Gitopia Profile
                     </a>
@@ -2162,7 +2163,7 @@ export default function Landing() {
                 <a
                   href="/home"
                   target="_blank"
-                  className="h-12 py-3 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  className="h-12 py-3 w-full rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
                   Create your Gitopia Profile
                 </a>
@@ -2310,7 +2311,7 @@ export default function Landing() {
               ])}
             >
               <span>
-                <div className={styles.b18 + " text-center sm:text-left"}>
+                <div className={styles.b18 + " ml-6 text-center sm:text-left"}>
                   Decentralized Network of Gitopia provides high availability
                   and stable network.
                 </div>
@@ -2331,7 +2332,7 @@ export default function Landing() {
                     window.open("/new");
                   }
                 }}
-                className="ml-4 px-16 py-4 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                className="ml-4 px-16 py-4 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               >
                 Create a Repository
               </button>
@@ -2346,7 +2347,7 @@ export default function Landing() {
       </section>
 
       <section className={classnames([styles.section])}>
-        <div className="grid sm:grid-cols-2 sm:grid-row-1 grid-cols-1 grid-row-2 sm:gap-6 gap-2">
+        <div className="grid sm:grid-cols-2 sm:grid-row-1 grid-cols-1 grid-row-2 sm:gap-6 gap-4">
           <div className={styles.openSource + " relative"}>
             <div>
               <img src="/opensource.svg"></img>
@@ -2371,7 +2372,11 @@ export default function Landing() {
                       );
                     }
                   }}
-                  className="px-4 py-4 w-52 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  className={
+                    mobile
+                      ? "hidden"
+                      : "px-4 py-4 w-52 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  }
                 >
                   View Source Code
                 </button>
@@ -2402,7 +2407,11 @@ export default function Landing() {
                       );
                     }
                   }}
-                  className="px-10 py-4 w-52 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  className={
+                    mobile
+                      ? "hidden"
+                      : "px-10 py-4 w-52 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  }
                 >
                   Read Article
                 </button>
@@ -2832,9 +2841,10 @@ export default function Landing() {
               <div className={" " + styles.collaborationsBenefitsCard1Body}>
                 Gitopia is a decentralized and community-controlled alternative
                 to code collaboration platforms like GitHub, GitLab, and
-                Bitbucket. Gitopia offers Open Source and Web3 with wide variety
-                of tailor-made workflows for better development of projects and
-                engaging with the contributors.
+                Bitbucket. {mobile ? <div className="mt-5"> </div> : ""} Gitopia
+                offers Open Source and Web3 with wide variety of tailor-made
+                workflows for better development of projects and engaging with
+                the contributors.
               </div>
               {!mobile ? (
                 <div
@@ -2846,7 +2856,7 @@ export default function Landing() {
                   <a
                     href="/account/daos/new"
                     target="_blank"
-                    className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                    className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                   >
                     Create DAO
                   </a>
@@ -2921,7 +2931,7 @@ export default function Landing() {
                 <a
                   href="/account/daos/new"
                   target="_blank"
-                  className="h-12 py-3 w-full rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  className="h-12 py-3 w-full rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
                   Create DAO
                 </a>
@@ -3472,74 +3482,56 @@ export default function Landing() {
               </div>
             </div>
           </div>
-          {mobile ? (
-            <div className={"relative " + styles.teamCard}>
-              <img
-                className={" top-16 absolute"}
-                src="/avatar.svg"
-                loading="lazy"
-                height={170}
-                width={170}
-              />
-              <div className={styles.teamLabelContainer + " "}>
-                <div
-                  className={classnames([styles.teamName], [styles.joining])}
-                >
-                  Interested in joining?
-                </div>
-              </div>
-              <div className={classnames("mt-0 ml-10 absolute")}>
-                <button
-                  className={
-                    "btn btn-sm w-full h-5 py-0.5 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 "
-                  }
-                  onClick={() => {
-                    if (window) {
-                      window.open("https://angel.co/company/gitopia");
-                    }
-                  }}
-                >
-                  Apply Now
-                </button>
-              </div>
-            </div>
-          ) : (
-            ""
-          )}
         </div>
-        {!mobile ? (
-          <div className={"sm:ml-16  " + styles.teamCard}>
-            <img
-              className={styles.teamImage}
-              src="/avatar.svg"
-              loading="lazy"
-              height={mobile ? 180 : 540}
-              width={mobile ? 180 : 540}
-            />
-            <div className={styles.teamLabelContainer}>
-              <div className={classnames([styles.teamName], [styles.joining])}>
-                Interested in joining?
-              </div>
+
+        <div className={"mt-16 sm:mt-0 sm:ml-16  " + styles.teamCard}>
+          <img
+            className={styles.teamImage}
+            src="/avatar.svg"
+            loading="lazy"
+            height={mobile ? 180 : 540}
+            width={mobile ? 180 : 540}
+          />
+          <div className={styles.teamLabelContainer}>
+            <div className={classnames([styles.teamName], [styles.joining])}>
+              Interested in joining?
             </div>
-            <div className={classnames("sm:mb-3 ml-12 lg:ml-20 sm:mt-3")}>
-              <button
-                className={
-                  "btn w-60 h-12 py-3 rounded text-white text-sm font-bold bg-green active:bg-green-900 hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 "
+          </div>
+          <div className={classnames("sm:mb-3 ml-12 lg:ml-20 sm:mt-3")}>
+            <button
+              className={
+                mobile
+                  ? "hidden"
+                  : "btn w-60 h-12 py-3 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 "
+              }
+              onClick={() => {
+                if (window) {
+                  window.open("https://angel.co/company/gitopia");
                 }
-                onClick={() => {
-                  if (window) {
-                    window.open("https://angel.co/company/gitopia");
-                  }
-                }}
-              >
-                Apply Now
-              </button>
-            </div>
+              }}
+            >
+              Apply Now
+            </button>
+          </div>
+        </div>
+        {mobile ? (
+          <div className={classnames("")}>
+            <button
+              className={
+                "btn w-60 h-12 py-3 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 "
+              }
+              onClick={() => {
+                if (window) {
+                  window.open("https://angel.co/company/gitopia");
+                }
+              }}
+            >
+              Apply Now
+            </button>
           </div>
         ) : (
           ""
         )}
-
         <svg
           width="418"
           height="1024"
