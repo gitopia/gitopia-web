@@ -2269,7 +2269,7 @@ export default function Landing() {
       </section>
 
       <section className={classnames([styles.section])}>
-        <div className={styles.transitionRow}>
+        <div className={styles.transitionRow + " lg:mt-28"}>
           <div className={classnames([styles.hlVertical, styles.mr100])}>
             <span>
               <div className={styles.b18}>Linus Torvalds</div>
