@@ -40,15 +40,15 @@ function AccountOverview(props) {
   return (
     <>
       <div className="mt-8 text-lg">Latest repositories</div>
-      <div className="mt-4 mb-8 grid gap-4 grid-cols-2">
+      <div className="mt-4 mb-8 grid gap-4 sm:grid-cols-2">
         {allRepos !== null
           ? allRepos.map((r) => {
               return (
                 <div
-                  className="flex border border-grey rounded-md p-4"
+                  className="flex flex-col sm:flex-row border border-grey rounded-md p-4"
                   key={r.id}
                 >
-                  <div className="flex-1">
+                  <div className="flex-1 mb-4 sm:mb-0">
                     <Link href={hrefBase + "/" + r.name}>
                       <a className="text-base btn-link">{r.name}</a>
                     </Link>
@@ -63,7 +63,7 @@ function AccountOverview(props) {
                       {r.description || "No Description"}
                     </div>
                   </div>
-                  <div className="flex items-end text-type-secondary text-sm mr-4">
+                  <div className="flex items-end text-type-secondary text-sm sm:mr-4">
                     <svg
                       viewBox="0 0 24 24"
                       xmlns="http://www.w3.org/2000/svg"

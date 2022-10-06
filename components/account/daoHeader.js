@@ -26,17 +26,34 @@ function AccountDaoHeader(props) {
   }, [props.dao.address, props.selectedAddress]);
 
   return (
-    <div className="flex flex-1 mb-8 items-start">
+    <div className="flex flex-col sm:flex-row mb-8 items-start">
       <DaoAvatar dao={props.dao} isEditable={isEditable} refresh={refresh} />
-      <div className="flex-1 max-w-xl pl-12">
+      <div className="flex-1 max-w-2xl sm:pl-12">
         <DaoName dao={props.dao} isEditable={isEditable} refresh={refresh} />
-        <div className="mb-2 text-type-secondary">{props.dao.address}</div>
+        <div className="text-type-secondary mb-4">
+          <span className="inline-block">
+            {"@" + props.dao.name.toLowerCase()}
+          </span>
+          <span className="mx-2 hidden sm:inline">&middot;</span>
+          <a
+            href={
+              process.env.NEXT_PUBLIC_EXPLORER_URL +
+              "/accounts/" +
+              props.dao.address
+            }
+            target="_blank"
+            rel="noreferrer"
+            className="inline-block sm:inline link no-underline hover:link-primary text-type-secondary w-80 sm:w-full overflow-hidden break-words"
+          >
+            {props.dao.address}
+          </a>
+        </div>
         <DaoDescription
           dao={props.dao}
           isEditable={isEditable}
           refresh={refresh}
         />
-        <div className="text-sm text-type-secondary mt-2 flex gap-2">
+        <div className="text-sm text-type-secondary mt-2 flex flex-col sm:flex-row gap-2">
           <DaoLocation
             dao={props.dao}
             isEditable={isEditable}
