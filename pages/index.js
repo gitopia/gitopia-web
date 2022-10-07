@@ -543,8 +543,9 @@ export default function Landing() {
         )}
         <img
           className={
-            "absolute pointer-events-none z-1 " +
-            (mobile ? "-right-14" : "top-1/4 left-10")
+            styles.planet +
+            " absolute pointer-events-none z-1 " +
+            (mobile ? "-right-14" : "top-14 left-20")
           }
           src="./star-1.svg"
           width={mobile ? "130" : "244"}
@@ -559,7 +560,8 @@ export default function Landing() {
         />
         <img
           className={
-            "absolute pointer-events-none z-1  " +
+            styles.car +
+            " absolute pointer-events-none z-1  " +
             (mobile
               ? " -left-8 blur-[1px] opacity-70 top-1/2 pt-5"
               : " top-3/4 left-10 mr-10")
@@ -577,7 +579,8 @@ export default function Landing() {
         />
         <img
           className={
-            "absolute pointer-events-none z-1  " +
+            styles.moon +
+            " absolute pointer-events-none z-1  " +
             (mobile ? "top-1/3 mt-20" : "top-1/2 left-2/3")
           }
           src="./moon.svg"
@@ -586,7 +589,8 @@ export default function Landing() {
         />
         <img
           className={
-            "absolute pointer-events-none -z-10  " +
+            styles.people +
+            " absolute pointer-events-none -z-10  " +
             (mobile ? " -right-16 top-2/3 " : " top-0 left-2/3 mt-10")
           }
           src="./star-4.svg"

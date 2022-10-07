@@ -1,5 +1,69 @@
 @import url("https://fonts.googleapis.com/css2?family=Oxygen:wght@400;700&display=swap");
 
+@keyframes float-planet {
+  0% {
+    transform: translate(0%, 0%);
+  }
+   50% {
+    transform: translate(30%, 30%);
+  } 
+   100% {
+    transform: translate(0%, 0%);
+  } 
+}
+
+@keyframes float-car {
+  0% {
+    transform: translate(0%, 0%);
+  }
+   50% {
+    transform: translate(30%, -30%);
+  } 
+   100% {
+    transform: translate(0%, 0%);
+  } 
+}
+
+@keyframes float-people {
+  0% {
+    transform: translate(0%, 0%) rotate(360deg);
+  }
+  50% {
+    transform: translate(-20%, 20%) rotate(-360deg);
+  } 
+   100% {
+    transform: translate(0%, 0%);
+  } 
+}
+
+@keyframes float-moon {
+  0% {
+    transform: translate(0%, 0%);
+  }
+   50% {
+    transform: translate(-10%, -10%);
+  } 
+   100% {
+    transform: translate(0%, 0%);
+  } 
+}
+
+.planet {
+  animation: float-planet 20s infinite;
+}
+
+.car {
+  animation: float-car 20s infinite;
+}
+
+.people {
+  animation: float-people 200s infinite;
+}
+
+.moon {
+  animation: float-moon 18s infinite;
+}
+
 .wrapper {
   font-family: "Oxygen";
   background: #13181e;
