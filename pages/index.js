@@ -2435,7 +2435,13 @@ export default function Landing() {
         />
         <img
           src="./gitopia-coin-mobile.svg"
-          className={!mobile ? "hidden" : " absolute right-0 top-96 pt-20"}
+          className={
+            !mobile
+              ? "absolute left-2/3 top-3/4 pt-20 ml-20"
+              : " absolute -right-5 top-96 pt-20"
+          }
+          height={mobile ? "74" : "227"}
+          width={mobile ? "88" : "210"}
         />
         <img
           src="./gitopia-coin.svg"
