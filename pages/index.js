@@ -593,7 +593,7 @@ export default function Landing() {
             " absolute pointer-events-none -z-10  " +
             (mobile ? " -right-16 top-2/3 " : " top-0 left-2/3 mt-10")
           }
-          src="./star-4.svg"
+          src="./star-4.png"
           width={mobile ? "243" : "431"}
           height={mobile ? "168" : "297"}
         />
