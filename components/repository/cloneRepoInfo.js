@@ -18,7 +18,7 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
     } else if (tab === "arweave") {
       setCloneCmd("arweave_clone " + remoteUrl);
     }
-  }, [tab]);
+  }, [tab, remoteUrl]);
 
   useEffect(() => {
     setIsIpfsEnabled(false);
