@@ -154,7 +154,7 @@ export default function SeasonOfBlockchains() {
                   }}
                   type="button"
                   className={
-                    "btn-sm sm:py-1.5 btn-primary rounded " +
+                    "btn-sm sm:py-1.5 btn-primary rounded active:bg-green-900 hover:bg-green-400 " +
                     styles.registerButton
                   }
                 >
@@ -263,14 +263,14 @@ export default function SeasonOfBlockchains() {
             <div className={" " + styles.image2}>
               <img src="/season-of-blockchains/home-2.svg"></img>
             </div>
-            <div className="">
+            <div className={"sm:mb-36 " + styles.section4}>
               <div className={" " + styles.title3}>Benefits for the</div>
               <div className={" " + styles.title4}>participants</div>
               <div className="flex">
-                <div className={"mt-1 ml-1 " + styles.cardImage}>
+                <div className={"mt-0 ml-1 " + styles.cardImage}>
                   <img src="/season-of-blockchains/learning.svg" />
                 </div>
-                <div className={"card mt-3 " + styles.card2}>
+                <div className={"card pt-2 " + styles.card2}>
                   <div className="card-body py-0 px-1.5">
                     <div className={"card-title  " + styles.cardTitle}>
                       Learning:
@@ -283,10 +283,10 @@ export default function SeasonOfBlockchains() {
                 </div>
               </div>
               <div className="flex">
-                <div className={"mt-1 ml-1 " + styles.cardImage}>
+                <div className={"mt-0 ml-1 " + styles.cardImage}>
                   <img src="/season-of-blockchains/exposure.svg" />
                 </div>
-                <div className={"card " + styles.card2}>
+                <div className={"card pt-2 " + styles.card2}>
                   <div className="card-body py-0 px-1.5">
                     <div className={"card-title  " + styles.cardTitle}>
                       Exposure:
@@ -299,10 +299,10 @@ export default function SeasonOfBlockchains() {
                 </div>
               </div>
               <div className="flex">
-                <div className={"mt-1 ml-1 " + styles.cardImage}>
+                <div className={"mt-0 ml-1 " + styles.cardImage}>
                   <img src="/season-of-blockchains/coolstipend.svg" />
                 </div>
-                <div className={"card e " + styles.card2}>
+                <div className={"card pt-2 " + styles.card2}>
                   <div className="card-body py-0 px-1.5">
                     <div className={"card-title  " + styles.cardTitle}>
                       Cool stipend:
@@ -314,11 +314,12 @@ export default function SeasonOfBlockchains() {
                   </div>
                 </div>
               </div>
+
               <div className="flex">
-                <div className={"mt-1 ml-1 " + styles.cardImage}>
+                <div className={"mt-0 ml-1 " + styles.cardImage}>
                   <img src="/season-of-blockchains/hiring.svg" />
                 </div>
-                <div className={"card " + styles.card2}>
+                <div className={"card pt-1.5 " + styles.card2}>
                   <div className={"card-body py-0 px-1.5"}>
                     <div className={"card-title  " + styles.cardTitle}>
                       Hiring:
@@ -329,6 +330,21 @@ export default function SeasonOfBlockchains() {
                     </div>
                   </div>
                 </div>
+              </div>
+
+              <div className={"flex text-center "} id="fa">
+                <button
+                  id="fas"
+                  onClick={() => {
+                    window.open("https://blog.gitopia.com/");
+                  }}
+                  type="button1"
+                  className={
+                    "btn-sm btn-primary rounded mt-6 h-10 w-80 bg-green active:bg-green-900 hover:bg-green-400"
+                  }
+                >
+                  Read More
+                </button>
               </div>
             </div>
           </div>
@@ -417,6 +433,21 @@ export default function SeasonOfBlockchains() {
                     </div>
                   </div>
                 </div>
+              </div>
+              <div className={"flex text-center "}>
+                <button
+                  onClick={() => {
+                    if (window) {
+                      window.open("/season-of-blockchains/organizations-list");
+                    }
+                  }}
+                  type="button"
+                  className={
+                    "btn-sm btn-primary rounded mt-6 h-10 w-80 bg-green active:bg-green-900 hover:bg-green-400"
+                  }
+                >
+                  Become a partner
+                </button>
               </div>
             </div>
             <div className={styles.midScreenImage}>

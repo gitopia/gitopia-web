@@ -88,7 +88,7 @@
 }
 .blob7{
   position: absolute;
-  z-index: 1;
+  z-index: -1;
   left:0;
   top: 1210px;
   width: 100%;
@@ -263,7 +263,7 @@
   display: flex;
   font-size: 32px;
   font-weight: 700;
-  margin-bottom: 1.5vw;
+  margin-bottom: 0.5vw;
   line-height: 114.27%;
   letter-spacing: -0.02em;
 }
@@ -275,7 +275,7 @@
   width:421px;
 }
 .registerButton{
-  background-color:  #2F995A;
+  background-color:  #66CE67;
   height: 40px;
   width:220px;
 }
@@ -292,10 +292,10 @@
   align-items: left;
   margin-top: 0.5vw;
   margin-left: 0.7vw;
-  margin-bottom: 1vw;
+  margin-bottom: 0.5vw;
 }
 .cardTitle {
-  font-size: 18px;
+  font-size: 16px;
   letter-spacing: 0.368571px;
   line-height: 25.2px;
   font-weight:700;
@@ -336,7 +336,7 @@
   font-weight: 700;
   margin-top: 2vw;
   width: 16vw;
-  background-color: #2F9959;
+  background-color: #66ce67;
   ;
 }
 .topCardImage{
@@ -348,7 +348,7 @@
   align-items: left;
   margin-top: 0.5vw;
   margin-left: 0.7vw;
-  margin-bottom: 1vw;
+  margin-bottom: 0.5vw;
 }
 .image2 {
   margin-top: 4.2vw;
@@ -356,7 +356,7 @@
   width: 940px;
 }
 .section3{
-  margin-top:16vw;
+  margin-top:4vw;
   margin-bottom:16vw;
   margin-left: auto;
   width:82%;
@@ -584,7 +584,12 @@
 
 @media (max-width: 1800px) {
   .card {
-    margin-top: 1vw;
+    margin-top: 0.5vw;
+    margin-bottom: 0vw;
+  }
+  .card2 {
+    margin-top: 0.5vw;
+    margin-bottom: 0vw;
   }
   .topCardBody{
 		margin-left: 28vw;
