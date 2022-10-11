@@ -173,10 +173,21 @@ export default function Landing() {
       window.innerWidth <= 760 ? setMobile(true) : setMobile(false);
     }
   }
+  function parallax(event) {
+    document.querySelectorAll("#parallax").forEach((shift) => {
+      console.log(shift);
+      const position = shift.getAttribute("value");
+      const x = (window.innerWidth - event.pageX * position) / 90;
+      const y = 0;
 
+      shift.style.transform = `translateX(${x}px) translateY(${y}px)`;
+    });
+  }
   useEffect(() => {
     if (typeof window !== "undefined") {
       window.addEventListener("resize", detectWindowSize);
+      window.addEventListener("mousemove", parallax);
+      console.log("parallas");
     }
     detectWindowSize();
     return () => {
@@ -2425,7 +2436,9 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className={styles.section + " relative mb-32 sm:mb-64"}>
+      <section
+        className={classnames([styles.section], " relative mb-32 sm:mb-64")}
+      >
         <div className={classnames([styles.topHeading], [styles.getStarted])}>
           Get Started
         </div>
@@ -2446,16 +2459,22 @@ export default function Landing() {
           }
           height={mobile ? "74" : "227"}
           width={mobile ? "88" : "210"}
+          id="parallax"
+          value="10"
         />
         <img
           src="./gitopia-coin.svg"
           className={
             "absolute -z-10 " + (mobile ? " hidden" : " right-3/4 bottom-1/2")
           }
+          id="parallax"
+          value="5"
         />
         <img
           src="./gitopia-coin-1.svg"
           className={mobile ? "hidden" : "absolute -z-10 left-1/2 top-1/3"}
+          id="parallax"
+          value="2"
         />
         <svg
           width="726"
@@ -2585,12 +2604,16 @@ export default function Landing() {
           }
         />
         <img
-          src="./getStartedCoin-1.svg"
+          src="./getStartedCoin-5.svg"
           className={
             mobile
               ? "hidden"
-              : "absolute -z-10 opacity-100 pointer-events-none left-0 top-2/3"
+              : "absolute -z-10 opacity-100 pointer-events-none -left-5 top-2/3"
           }
+          width={"56"}
+          height={"56"}
+          id="parallax"
+          value="5"
         />
         <img
           src="./getStartedCoin-2.svg"
@@ -2598,6 +2621,8 @@ export default function Landing() {
             "absolute -z-10 opacity-100 pointer-events-none" +
             (mobile ? " left-1/4 -bottom-5" : " left-16 bottom-0")
           }
+          id="parallax"
+          value="2"
         />
         <img
           src="./getStartedCoin-3.svg"
@@ -2607,6 +2632,8 @@ export default function Landing() {
           }
           width={mobile ? "43" : ""}
           height={mobile ? "43" : ""}
+          id="parallax"
+          value="5"
         />
         <img
           src="./getStartedCoin-4.svg"
@@ -2615,6 +2642,8 @@ export default function Landing() {
               ? "hidden"
               : "absolute -z-10 opacity-100 pointer-events-none right-16 pr-32 top-3/4"
           }
+          id="parallax"
+          value="2"
         />
         <img
           src="./getStartedCoin-5.svg"
@@ -2626,6 +2655,8 @@ export default function Landing() {
           }
           width={mobile ? "56" : "88"}
           height={mobile ? "56" : "88"}
+          id="parallax"
+          value="5"
         />
         <img
           src="./getStartedCoin-6.svg"
@@ -2634,14 +2665,18 @@ export default function Landing() {
               ? "hidden"
               : "absolute -z-10  opacity-100 pointer-events-none right-5 top-2/3"
           }
+          id="parallax"
+          value="5"
         />
         <img
-          src="./getStartedCoin-7.svg"
+          src="./getStartedCoin-4.svg"
           className={
             mobile
               ? "hidden"
-              : "absolute -z-10  opacity-100 pointer-events-none right-0 bottom-0"
+              : "absolute -z-10  opacity-100 pointer-events-none -right-5 bottom-0"
           }
+          id="parallax"
+          value="2"
         />
         {mobile ? (
           <svg
