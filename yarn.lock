@@ -304,9 +304,10 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@gitopia/gitopia-js@git+https://github.com/gitopia/gitopia-js#078070f1b30467234775c246adf97b14a1c5eedd":
-  version "0.14.0"
-  resolved "git+https://github.com/gitopia/gitopia-js#078070f1b30467234775c246adf97b14a1c5eedd"
+"@gitopia/gitopia-js@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@gitopia/gitopia-js/-/gitopia-js-1.0.0.tgz#84aa587de3a4b21611195936f2173b06f62a9ee6"
+  integrity sha512-h42uDkot5kal31YN4fL1XIgdxz1XOJNnucEFpW9qz7rDPAPQpXnlSdLjDAo/rsBz/PJq+h1YTRFBznVMCp1Peg==
 
 "@gitopia/stargate@0.27.1":
   version "0.27.1"
