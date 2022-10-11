@@ -26,10 +26,10 @@
 
 @keyframes float-people {
   0% {
-    transform: translate(0%, 0%) rotate(360deg);
+    transform: translate(0%, 0%);
   }
   50% {
-    transform: translate(-20%, 20%) rotate(-360deg);
+    transform: translate(-20%, 20%);
   } 
    100% {
     transform: translate(0%, 0%);
@@ -49,7 +49,7 @@
 }
 
 .planet {
-  animation: float-planet 20s infinite;
+  animation: float-planet 40s infinite;
 }
 
 .car {
@@ -57,7 +57,7 @@
 }
 
 .people {
-  animation: float-people 200s infinite;
+  animation: float-people 50s infinite;
 }
 
 .moon {
