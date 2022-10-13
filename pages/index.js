@@ -417,7 +417,7 @@ export default function Landing() {
                   Documentation
                 </a>
               </li>
-              <li>
+              {/* <li>
                 <a
                   className="px-12 sm:px-3 py-4 md:py-2 flex items-center text-3xl lg:text-sm text-white font-bold transition-all hover:text-primary"
                   href="https://docs.gitopia.com/lore-token"
@@ -426,7 +426,7 @@ export default function Landing() {
                 >
                   LORE Token
                 </a>
-              </li>
+              </li> */}
               {/* <li className="border-b-2 lg:border-r-2 lg:border-b-0 border-white border-opacity-10 w-full h-2 mb-4 lg:h-6 lg:w-1 lg:mr-4 lg:mb-0 mt-2"></li> */}
               <div className={menuOpen ? "" : "mr-4 ml-4 " + styles.vl}></div>
               <li className={menuOpen ? "hidden" : "mr-4 ml-4 mt-1"}>
