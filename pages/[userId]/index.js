@@ -15,6 +15,9 @@ import AccountRepositories from "../../components/account/repositories";
 import AccountTransactions from "../../components/account/transactions";
 import AccountPeople from "../../components/account/people";
 import AccountDaoHeader from "../../components/account/daoHeader";
+import DaoProposalList from "../../components/account/daoProposalList";
+import DaoProposalCreate from "../../components/account/daoProposalCreate";
+import DaoProposalDetails from "../../components/account/daoProposalDetails";
 import validAddress from "../../helpers/validAddress";
 
 export async function getStaticProps() {
@@ -138,6 +141,19 @@ function AccountView(props) {
             <AccountTransactions
               userId={user.creator ? user.creator : dao.address}
             />
+          ) : (
+            ""
+          )}
+          {router.query.tab === "proposals" ? (
+            router.query.id ? (
+              router.query.id === "new" ? (
+                <DaoProposalCreate dao={dao} />
+              ) : (
+                <DaoProposalDetails id={router.query.id} />
+              )
+            ) : (
+              <DaoProposalList dao={dao} />
+            )
           ) : (
             ""
           )}

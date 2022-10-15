@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { connect } from "react-redux";
 import { updateDaoDescription } from "../../store/actions/dao";
 import { notify } from "reapop";
@@ -13,6 +13,7 @@ function DaoDescription(props = { isEditable: false }) {
     message: "",
   });
   const [savingDescription, setSavingDescription] = useState(false);
+  const input = useRef();
 
   const validateDescription = (description) => {
     setNewDescriptionHint({
@@ -53,6 +54,12 @@ function DaoDescription(props = { isEditable: false }) {
     setNewDescriptionHint({ shown: false });
   }, [props.dao]);
 
+  useEffect(() => {
+    if (isEditing && input?.current) {
+      input.current.focus();
+    }
+  }, [isEditing]);
+
   return (
     <div>
       {isEditing ? (
@@ -66,6 +73,7 @@ function DaoDescription(props = { isEditable: false }) {
             setValue={setNewDescription}
             hint={newDescriptionHint}
             size="sm"
+            ref={input}
           />
           <div className="flex flex-none w-60 btn-group mt-2">
             <button

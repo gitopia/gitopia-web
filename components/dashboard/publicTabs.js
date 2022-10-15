@@ -7,7 +7,7 @@ export default function PublicTabs({
   ...props
 }) {
   return (
-    <div className="tabs relative">
+    <div className="tabs relative overflow-x-auto overflow-y-hidden flex-nowrap">
       <Link href={hrefBase}>
         <a
           className={
@@ -17,18 +17,19 @@ export default function PublicTabs({
         >
           <span className="icon mr-2">
             <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
               xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              height={16}
+              width={16}
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+              stroke="#ADBECB"
             >
               <path
-                d="M19 20V18C19 16.3431 17.6569 15 16 15H8C6.34315 15 5 16.3431 5 18V20"
-                stroke="#ADBECB"
-                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819"
               />
-              <circle cx="12" cy="8" r="3" stroke="#ADBECB" strokeWidth="2" />
             </svg>
           </span>
           <span>Overview</span>
@@ -74,8 +75,8 @@ export default function PublicTabs({
           >
             <span className="icon mr-2">
               <svg
-                width="20"
-                height="20"
+                height={16}
+                width={16}
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -131,13 +132,30 @@ export default function PublicTabs({
         ""
       )}
       {showProposal ? (
-        <Link href={hrefBase + "/proposals"}>
+        <Link href={hrefBase + "?tab=proposals"}>
           <a
             className={
               "tab  tab-md tab-bordered" +
               (active === "proposals" ? " tab-active" : "")
             }
           >
+            <span className="icon mr-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height={16}
+                width={16}
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="#ADBECB"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 019 9v.375M10.125 2.25A3.375 3.375 0 0113.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 013.375 3.375M9 15l2.25 2.25L15 12"
+                />
+              </svg>
+            </span>
             <span>Proposals</span>
           </a>
         </Link>

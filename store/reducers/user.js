@@ -41,7 +41,7 @@ const reducer = (state = initialState, action) => {
     }
 
     case userActions.INIT_DASHBOARDS: {
-      const { name, id, daos } = action.payload;
+      const { name, id, daos = [] } = action.payload;
       const dashboards = [
         {
           type: "User",

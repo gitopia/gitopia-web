@@ -17,7 +17,7 @@ export default async function initKeplr() {
         // If the same chain id is already registered, it will resolve and not require the user interactions.
         const suggestChain = await window.keplr.experimentalSuggestChain({
           // Chain-id of the Cosmos SDK chain.
-          chainId: info.node_info.network,
+          chainId: info.default_node_info.network,
           // The name of the chain to be displayed to the user.
           chainName: info.application_version.name,
           // RPC endpoint of the chain.
@@ -118,7 +118,7 @@ export default async function initKeplr() {
     // Enabling before using the Keplr is recommended.
     // This method will ask the user whether or not to allow access if they haven't visited this website.
     // Also, it will request user to unlock the wallet if the wallet is locked.
-    await window.keplr.enable(info.node_info.network);
+    await window.keplr.enable(info.default_node_info.network);
 
     // const offlineSigner = window.getOfflineSigner(chainId);
     // console.log(offlineSigner);

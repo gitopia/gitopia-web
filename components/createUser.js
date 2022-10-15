@@ -81,6 +81,25 @@ function CreateUser(props) {
       });
       return false;
     }
+    if (props.wallets?.length) {
+      let foundName = false;
+      props.wallets.every((w) => {
+        if (w.name.toLowerCase() === username.toLowerCase()) {
+          foundName = true;
+          return false;
+        }
+        return true;
+      });
+      if (foundName) {
+        setUsernameHint({
+          shown: true,
+          type: "error",
+          message:
+            "Same named local wallet already present, either delete other wallet or choose a different name",
+        });
+        return false;
+      }
+    }
     return true;
   };
 
@@ -171,6 +190,7 @@ const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
     user: state.user,
+    wallets: state.wallet.wallets,
   };
 };
 

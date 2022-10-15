@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { updateUserBio } from "../../store/actions/user";
 import { notify } from "reapop";
@@ -13,6 +13,7 @@ function UserBio(props = { isEditable: false }) {
     message: "",
   });
   const [savingBio, setSavingBio] = useState(false);
+  const input = useRef();
 
   const validateBio = (bio) => {
     setNewBioHint({
@@ -50,6 +51,12 @@ function UserBio(props = { isEditable: false }) {
     setNewBioHint({ shown: false });
   }, [props.user]);
 
+  useEffect(() => {
+    if (isEditing && input?.current) {
+      input.current.focus();
+    }
+  }, [isEditing]);
+
   return (
     <div className="mb-2">
       {isEditing ? (
@@ -63,6 +70,7 @@ function UserBio(props = { isEditable: false }) {
             setValue={setNewBio}
             hint={newBioHint}
             size="sm"
+            ref={input}
           />
           <div className="flex flex-none w-60 btn-group mt-2">
             <button

@@ -127,7 +127,7 @@ function Header(props) {
   const updateNetworkName = async () => {
     if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
       const info = await getNodeInfo();
-      setChainId(info.node_info.network);
+      setChainId(info.default_node_info.network);
     }
   };
 
