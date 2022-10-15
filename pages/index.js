@@ -175,7 +175,6 @@ export default function Landing() {
   }
   function parallax(event) {
     document.querySelectorAll("#parallax").forEach((shift) => {
-      console.log(shift);
       const position = shift.getAttribute("value");
       const x = (window.innerWidth - event.pageX * position) / 90;
       const y = 0;
@@ -187,7 +186,6 @@ export default function Landing() {
     if (typeof window !== "undefined") {
       window.addEventListener("resize", detectWindowSize);
       window.addEventListener("mousemove", parallax);
-      console.log("parallas");
     }
     detectWindowSize();
     return () => {
