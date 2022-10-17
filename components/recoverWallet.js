@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import * as bip39 from "bip39";
 import { createWalletWithMnemonic } from "../store/actions/wallet";
@@ -12,7 +12,7 @@ function RecoverWallet(props) {
     type: "error",
     message: "",
   });
-  const [name, setName] = useState("");
+  const [name, setName] = useState("untitled-wallet-1");
   const [nameHint, setNameHint] = useState({
     shown: false,
     type: "error",
@@ -127,14 +127,26 @@ function RecoverWallet(props) {
     }
   };
 
-  const newCreateWallet = () => {
-    hideHints();
-    setName("");
-    setPassword("");
-    setConfirmPassword("");
-    setMnemonic(bip39.generateMnemonic(256));
-    setMnemonicValidated(false);
-  };
+  // const newCreateWallet = () => {
+  //   hideHints();
+  //   setName("");
+  //   setPassword("");
+  //   setConfirmPassword("");
+  //   setMnemonic(bip39.generateMnemonic(256));
+  //   setMnemonicValidated(false);
+  // };
+
+  useEffect(() => {
+    let highest = 0;
+    props.wallets.every((wallet) => {
+      if (wallet.name.includes("untitled-wallet")) {
+        let n = Number(wallet.name.split("-")[2]) || 0;
+        highest = Math.max(highest, n);
+      }
+      return true;
+    });
+    setName("untitled-wallet-" + (highest + 1));
+  }, []);
 
   return (
     <>
@@ -146,7 +158,7 @@ function RecoverWallet(props) {
           </div>
 
           <div className="max-w-md w-full p-4">
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <TextInput
                 type="text"
                 name="wallet_name"
@@ -155,7 +167,7 @@ function RecoverWallet(props) {
                 setValue={setName}
                 hint={nameHint}
               />
-            </div>
+            </div> */}
             <div className="mb-4">
               <TextInput
                 type="password"
