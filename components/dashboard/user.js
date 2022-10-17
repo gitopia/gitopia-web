@@ -2,7 +2,6 @@ import Link from "next/link";
 import FaucetReceiver from "../faucetReceiver";
 import GreetUser from "../greetUser";
 import KnowledgeCenter from "./knowledgeCenter";
-import CreateUser from "../createUser";
 
 function UserDashboard(props) {
   return (

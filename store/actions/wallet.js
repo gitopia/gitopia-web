@@ -11,6 +11,7 @@ import { notify } from "reapop";
 import { setupTxClients } from "./env";
 import getNodeInfo from "../../helpers/getNodeInfo";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
+import getUser from "../../helpers/getUser";
 
 let ledgerTransport;
 
@@ -217,6 +218,10 @@ export const createWalletWithMnemonic = ({
     });
     const [firstAccount] = await accountSigner.getAccounts();
     const account = { address: firstAccount.address, pathIncrement: 0 };
+    const user = await getUser(firstAccount.address);
+    if (user?.username) {
+      wallet.name = user.username;
+    }
     wallet.accounts.push(account);
 
     const CryptoJS = (await import("crypto-js")).default;
