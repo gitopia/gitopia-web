@@ -429,13 +429,11 @@ export default function Landing() {
               <div className={menuOpen ? "" : "mr-4 ml-4 " + styles.vl}></div>
               <li className={menuOpen ? "hidden" : "mr-4 ml-4 mt-1"}>
                 <div className="flex flex-col justify-center items-center">
-                  <a
-                    href="/login"
-                    target="_blank"
-                    className="h-8 px-4 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                  >
-                    Login
-                  </a>
+                  <Link href="/login">
+                    <a className="h-8 px-4 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
+                      Login
+                    </a>
+                  </Link>
                 </div>
               </li>
             </ul>
@@ -525,13 +523,11 @@ export default function Landing() {
                 styles.primaryCTA
               )}
             >
-              <a
-                href="/home"
-                target="_blank"
-                className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-              >
-                {mobile ? " Get Started" : "Push code to Gitopia"}
-              </a>
+              <Link href="/home">
+                <a className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
+                  {mobile ? " Get Started" : "Push code to Gitopia"}
+                </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -2499,13 +2495,11 @@ export default function Landing() {
                       styles.collaborationsBenefitsCard1Button
                     )}
                   >
-                    <a
-                      href="/home"
-                      target="_blank"
-                      className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                    >
-                      Create your Gitopia Profile
-                    </a>
+                    <Link href="/home">
+                      <a className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
+                        Create your Gitopia Profile
+                      </a>
+                    </Link>
                   </div>
                   <div className="flex mb-4">
                     <div className="ml-20 sm:ml-2 mt-2">🚀</div>
@@ -2744,19 +2738,11 @@ export default function Landing() {
               nodes that are incentivised for high availability and good
               behaviour.
             </div>
-            <div>
-              <button
-                type="button"
-                onClick={() => {
-                  if (window) {
-                    window.open("/new");
-                  }
-                }}
-                className="ml-4 px-16 py-4 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-              >
+            <Link href="/new">
+              <a className="ml-4 px-16 py-4 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
                 Create a Repository
-              </button>
-            </div>
+              </a>
+            </Link>
           </div>
           <img
             className={styles.decentralizedImage}
@@ -3303,13 +3289,11 @@ export default function Landing() {
                     styles.collaborationsBenefitsCard1Button
                   )}
                 >
-                  <a
-                    href="/account/daos/new"
-                    target="_blank"
-                    className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                  >
-                    Create DAO
-                  </a>
+                  <Link href="/account/daos/new">
+                    <a className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
+                      Create DAO
+                    </a>
+                  </Link>
                 </div>
               ) : (
                 ""
