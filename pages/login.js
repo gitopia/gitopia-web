@@ -7,6 +7,9 @@ import Footer from "../components/footer";
 import ConnectLedger from "../components/connectLedger";
 import CreateUser from "../components/createUser";
 import { useRouter } from "next/router";
+import initKeplr from "../helpers/keplr";
+import { unlockKeplrWallet } from "../store/actions/wallet";
+import { connect } from "react-redux";
 
 /*
 Wizard Steps
@@ -16,8 +19,8 @@ Wizard Steps
 4 - Recover existing wallet
 */
 
-export default function Login(props) {
-  const { query } = useRouter();
+function Login(props) {
+  const { query, push } = useRouter();
   const [step, setStep] = useState(Number(query.step) || 1);
 
   useEffect(() => {
@@ -76,6 +79,19 @@ export default function Login(props) {
                   <img src="/existing-wallet.svg" className="w-20 h-20" />
                   <div className="ml-8">Recover exisiting wallet</div>
                 </button>
+                <button
+                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
+                  onClick={async (e) => {
+                    await initKeplr();
+                    const acc = await props.unlockKeplrWallet();
+                    if (acc) {
+                      push("/home");
+                    }
+                  }}
+                >
+                  <img src="/keplr-logo.svg" className="w-20 h-20 p-2" />
+                  <div className="ml-8">Connect Keplr</div>
+                </button>
               </div>
             </div>
             <div className="text-sm mt-2 mb-16 max-w-md text-center">
@@ -117,3 +133,11 @@ export default function Login(props) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {};
+};
+
+export default connect(mapStateToProps, {
+  unlockKeplrWallet,
+})(Login);

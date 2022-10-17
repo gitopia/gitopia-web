@@ -1,5 +1,69 @@
 @import url("https://fonts.googleapis.com/css2?family=Oxygen:wght@400;700&display=swap");
 
+@keyframes float-planet {
+  0% {
+    transform: translate(0%, 0%);
+  }
+   50% {
+    transform: translate(30%, 30%);
+  } 
+   100% {
+    transform: translate(0%, 0%);
+  } 
+}
+
+@keyframes float-car {
+  0% {
+    transform: translate(0%, 0%);
+  }
+   50% {
+    transform: translate(30%, -30%);
+  } 
+   100% {
+    transform: translate(0%, 0%);
+  } 
+}
+
+@keyframes float-people {
+  0% {
+    transform: translate(0%, 0%);
+  }
+  50% {
+    transform: translate(-20%, 20%);
+  } 
+   100% {
+    transform: translate(0%, 0%);
+  } 
+}
+
+@keyframes float-moon {
+  0% {
+    transform: translate(0%, 0%);
+  }
+   50% {
+    transform: translate(-10%, -10%);
+  } 
+   100% {
+    transform: translate(0%, 0%);
+  } 
+}
+
+.planet {
+  animation: float-planet 40s infinite;
+}
+
+.car {
+  animation: float-car 20s infinite;
+}
+
+.people {
+  animation: float-people 50s infinite;
+}
+
+.moon {
+  animation: float-moon 18s infinite;
+}
+
 .wrapper {
   font-family: "Oxygen";
   background: #13181e;
@@ -104,7 +168,7 @@
   font-size: 16px;
   line-height: 150%;
   margin: 0px auto;
-  width: 396px;
+  width:606px;
 }
 
 .b18 {
@@ -1060,7 +1124,7 @@
     margin-bottom: 60px;
   }
   .collaborationsBenefitsCard1 {
-    margin-right: 10px;
+   
   }
   .collaborationsBenefitsCard1Title {
     margin-left: 10px;
@@ -1077,7 +1141,7 @@
   }
 
   .collaborationsBenefitsCard1Body {
-    width: 353px;
+    width: auto;
     text-align: center;
     align-items: center;
   }
@@ -1092,7 +1156,7 @@
   .collaborationsBenefitsCard2Title {
     font-size: 28px;
     text-align: center;
-    margin-right: 10px;
+    padding-right: 18px;
     margin-top: 20px;
   }
 
@@ -1113,7 +1177,9 @@
     width: 400px;
   }
   .smallRow {
+    width: 380px;
     text-align: center;
+    align-items: center;
   }
   .storagePlatforms {
     width: 90px;
@@ -1142,7 +1208,7 @@
     overflow-wrap: break-word;
   }
   .mb72 {
-    width: 339px;
+    width: 376px;
     margin-bottom: 40px;
   }
   .mb36 {
@@ -1153,6 +1219,9 @@
   }
   .decentralizedSection {
     min-height: 700px;
+  }
+  .midLogo {
+    background-size: 100px 216px;
   }
   .openSource {
     margin-top: 0px;
@@ -1249,7 +1318,7 @@
 
   .joining {
     margin-left: 0px;
-    margin-top: 220px;
+    margin-top: 240px;
   }
 
   .teamWrapper {
@@ -1292,7 +1361,7 @@
   }
 
   .decentralizedDesc {
-    width: auto;
+    width: 350px;
   }
 
   .primaryCTA {
@@ -1303,7 +1372,8 @@
   .footerLogo {
     width: 203.02px;
     height: 68.72px;
-    margin-bottom: 50px;
+    margin-bottom: 70px;
+    margin-left: 20%;
   }
 
   .footerContainer {

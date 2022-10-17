@@ -263,7 +263,7 @@
   display: flex;
   font-size: 32px;
   font-weight: 700;
-  margin-bottom: 1.5vw;
+  margin-bottom: 0.5vw;
   line-height: 114.27%;
   letter-spacing: -0.02em;
 }
@@ -275,7 +275,7 @@
   width:421px;
 }
 .registerButton{
-  background-color:  #2F995A;
+  background-color:  #66CE67;
   height: 40px;
   width:220px;
 }
@@ -292,10 +292,10 @@
   align-items: left;
   margin-top: 0.5vw;
   margin-left: 0.7vw;
-  margin-bottom: 1vw;
+  margin-bottom: 0.5vw;
 }
 .cardTitle {
-  font-size: 18px;
+  font-size: 16px;
   letter-spacing: 0.368571px;
   line-height: 25.2px;
   font-weight:700;
@@ -336,7 +336,7 @@
   font-weight: 700;
   margin-top: 2vw;
   width: 16vw;
-  background-color: #2F9959;
+  background-color: #66ce67;
   ;
 }
 .topCardImage{
@@ -348,7 +348,7 @@
   align-items: left;
   margin-top: 0.5vw;
   margin-left: 0.7vw;
-  margin-bottom: 1vw;
+  margin-bottom: 0.5vw;
 }
 .image2 {
   margin-top: 4.2vw;
@@ -356,7 +356,7 @@
   width: 940px;
 }
 .section3{
-  margin-top:16vw;
+  margin-top:4vw;
   margin-bottom:16vw;
   margin-left: auto;
   width:82%;
@@ -522,13 +522,17 @@
 .links{
   margin: 5px 30px;
 }
+.footerContainer {
+  padding-bottom: 50px;
+}
+
 .footer {
-  margin-top: 150px;
-  padding-bottom: 200px;
+  margin-top: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .footerLogo {
   background: url("/logo-white.svg") no-repeat;
   background-position: 50%;
@@ -536,20 +540,56 @@
   height: 160px;
   width: 240px;
 }
-.footerLinks {
-  display: flex;
-  justify-content: space-around;
+
+.footerSection {
+  margin-left: 50px;
 }
-.footerLinks a {
-  border-left: 2px solid #91a3b4;
-  color: white;
-  padding: 0 16px;
-  margin-right: 16px;
+
+.footerTitle {
+  margin-top: 60px;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 24px;
+  font-feature-settings: "calt" off;
+  color: #ffffff;
+  opacity: 0.5;
+}
+
+.footerLinks {
+  margin-top: 10px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  font-feature-settings: "calt" off;
+  color: #ffffff;
+}
+
+.divider {
+  margin-top: 35px;
+  opacity: 0.1;
+  border-left: 1px solid #222933;
+  width: 70%;
+}
+
+.footerEnd {
+  margin-top: 5px;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 20px;
+  color: #5c6a77;
+  justify-content: space-between;
+  width: 70%;
+  flex-direction: row;
 }
 
 @media (max-width: 1800px) {
   .card {
-    margin-top: 1vw;
+    margin-top: 0.5vw;
+    margin-bottom: 0vw;
+  }
+  .card2 {
+    margin-top: 0.5vw;
+    margin-bottom: 0vw;
   }
   .topCardBody{
 		margin-left: 28vw;
@@ -864,13 +904,16 @@
 		margin: 2vw;
 	}
   .footer {
-    margin-top: 40px;
-    padding: 50px;
-    flex-direction: column;
+    align-items: start;
   }
-  .footerLinks {
-    margin-bottom: 50px;
-    flex-direction: row;
+  .footerSection {
+    margin-left: 30px;
+  }
+  .divider {
+    width: 90%;
+  }
+  .footerEnd {
+    width: 90%;
   }
 }
 
@@ -1053,17 +1096,43 @@
 	.coin19 {
     display: none;
   }
+  .footerLogo {
+    width: 203.02px;
+    height: 68.72px;
+    margin-bottom: 50px;
+  }
+
+  .footerContainer {
+    margin-bottom: 50px;
+    margin-top: 70px;
+  }
 
   .footer {
     margin-top: 0px;
-    margin-bottom: 0px;
+    margin-bottom: 50px;
     flex-direction: column;
   }
-  .footerLinks {
-    margin-bottom: 24px;
-    flex-direction: column;
+
+  .footerSection {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding: 0;
+    height: 90px;
+    width: 340px;
   }
-  .footerLinks a {
-    margin-bottom: 24px;
+
+  .footerTitle {
+    font-size: 14px;
+    margin-top: 0px;
+  }
+
+  .divider {
+    margin-top: 90px;
+    width: 100%;
+  }
+  .footerEnd {
+    align-items: center;
+    width: 100%;
+    flex-direction: column;
   }
 }

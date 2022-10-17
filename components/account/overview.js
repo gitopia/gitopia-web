@@ -115,6 +115,7 @@ function AccountOverview(props) {
             <QueryTransaction
               setContributions={setContributions}
               setTotalContributions={setTotalContributions}
+              address={props.user.creator}
             />
           </ApolloProvider>
           <div className="my-8">

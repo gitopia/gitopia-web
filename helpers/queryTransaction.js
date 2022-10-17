@@ -27,7 +27,7 @@ function QueryTransaction(props) {
   dayjs.extend(localizedFormat);
   const { loading, error, data } = useQuery(QUERY_TRANSACTIONS, {
     variables: {
-      addresses: "{" + router.query.userId + "}",
+      addresses: "{" + props.address + "}",
       types:
         '{"gitopia.gitopia.gitopia.MsgMultiSetRepositoryBranch","gitopia.gitopia.gitopia.MsgMultiSetRepositoryTag", "gitopia.gitopia.gitopia.MsgCreatePullRequest", "gitopia.gitopia.gitopia.MsgCreateIssue", "gitopia.gitopia.gitopia.MsgCreateComment"}',
     },
