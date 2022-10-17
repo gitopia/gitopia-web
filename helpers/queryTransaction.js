@@ -29,7 +29,7 @@ function QueryTransaction(props) {
     variables: {
       addresses: "{" + props.address + "}",
       types:
-        '{"gitopia.gitopia.gitopia.MsgMultiSetRepositoryBranch","gitopia.gitopia.gitopia.MsgMultiSetRepositoryTag", "gitopia.gitopia.gitopia.MsgCreatePullRequest", "gitopia.gitopia.gitopia.MsgCreateIssue", "gitopia.gitopia.gitopia.MsgCreateComment"}',
+        '{"gitopia.gitopia.gitopia.MsgMultiSetBranch","gitopia.gitopia.gitopia.MsgMultiSetTag", "gitopia.gitopia.gitopia.MsgCreatePullRequest", "gitopia.gitopia.gitopia.MsgCreateIssue", "gitopia.gitopia.gitopia.MsgCreateComment"}',
     },
   });
   let contributionValues = [];
