@@ -3,6 +3,14 @@ module.exports = {
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    {
+      pattern: /(bg|text)-(red)-(800)/,
+    },
+    {
+      pattern: /(bg|text)-(yellow)/,
+    },
+  ],
   darkMode: "media", // or 'media' or 'class'
   theme: {
     fontFamily: {
