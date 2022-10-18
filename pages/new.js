@@ -23,7 +23,7 @@ function NewRepository(props) {
     type: "error",
     message: "",
   });
-  const [ownerId, setOwnerId] = useState(props.currentDashboard);
+  const [ownerId, setOwnerId] = useState(props.name);
   const [repositoryCreating, setRepositoryCreating] = useState(false);
   const [accountsList, setAccountsList] = useState([
     { value: "", display: "" },
@@ -33,8 +33,8 @@ function NewRepository(props) {
 
   useEffect(() => {
     setAccountsList([...props.dashboards]);
-    setOwnerId(props.currentDashboard);
-  }, [props.dashboards, props.currentDashboard]);
+    setOwnerId(props.name);
+  }, [props.dashboards, props.name]);
 
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });
@@ -136,7 +136,7 @@ function NewRepository(props) {
                 >
                   {accountsList.map((a, i) => {
                     return (
-                      <option value={a.id} key={i}>
+                      <option value={a.name} key={i}>
                         {a.name + " - " + shrinkAddress(a.id)}
                       </option>
                     );
@@ -203,7 +203,7 @@ function NewRepository(props) {
 const mapStateToProps = (state) => {
   return {
     dashboards: state.user.dashboards,
-    currentDashboard: state.user.currentDashboard,
+    name: state.wallet.activeWallet?.name,
   };
 };
 
