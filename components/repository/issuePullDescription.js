@@ -137,7 +137,7 @@ function IssuePullDescription({
             </div>
           </div>
         ) : (
-          <>
+          <div className="pl-4">
             <div className="border border-grey rounded-lg flex-1">
               <div className="flex text-xs px-4 py-2 rounded-t">
                 <div className="flex-none ml-auto">
@@ -197,7 +197,7 @@ function IssuePullDescription({
                 </div>
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>
