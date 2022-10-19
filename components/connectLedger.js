@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import {
   initLedgerTransport,
@@ -10,7 +10,7 @@ import TextInput from "./textInput";
 import { useRouter } from "next/router";
 
 function ConnectLedger(props) {
-  const [name, setName] = useState("");
+  const [name, setName] = useState("untitled-ledger-1");
   const [nameHint, setNameHint] = useState({
     shown: false,
     type: "error",
@@ -26,82 +26,46 @@ function ConnectLedger(props) {
   const [verifyError, setVerifyError] = useState(null);
 
   const router = useRouter();
-
-  const hideHints = () => {
-    setNameHint({ ...nameHint, shown: false });
-    setConnectPermission(false);
-    setConnectError(null);
-    setAppOpen(false);
-    setAppError(null);
-    setAddressVerified(false);
-    setVerifyError(null);
-  };
-
-  const validateWallet = () => {
-    hideHints();
-    if (name.trim() === "") {
-      setNameHint({ ...nameHint, shown: true, message: "Please enter a name" });
-      return false;
-    }
-    if (name.trim().length > 39) {
-      setNameHint({
-        ...nameHint,
-        shown: true,
-        message: "Name can be maximum 39 characters",
-      });
-      return false;
-    }
-    let alreadyAvailable = false;
+  useEffect(() => {
+    let highest = 0;
     props.wallets.every((wallet) => {
-      console.log(wallet.name, name === wallet.name);
-      if (wallet.name === name) {
-        alreadyAvailable = true;
-        return false;
+      if (wallet.name.includes("untitled-ledger")) {
+        let n = Number(wallet.name.split("-")[2]) || 0;
+        highest = Math.max(highest, n);
       }
       return true;
     });
-    console.log(props.wallets, name);
-    if (alreadyAvailable) {
-      setNameHint({
-        ...nameHint,
-        shown: true,
-        message: "Wallet name already taken",
-      });
-      return false;
-    }
-    return true;
-  };
-
+    setName("untitled-ledger-" + (highest + 1));
+  }, []);
   const createWallet = async () => {
     setCreatingWallet(true);
-    if (validateWallet()) {
-      let res = await props.initLedgerTransport();
-      console.log(res);
-      if (res.transport) {
-        setConnectPermission(true);
-        let s = await props.getLedgerSigner(res.transport);
-        console.log(s);
-        if (s.signer) {
-          setAppOpen(true);
-          setLedgerAddress(s.addr);
-          let v = await props.showLedgerAddress(s.signer);
-          console.log(v);
-          if (v.pubkey) {
-            setAddressVerified(true);
-            const a = await props.addLedgerWallet(name, s.addr, s.signer);
-            if (a) {
-              router.push("/home");
-            }
-          } else {
-            setVerifyError("Unable to confirm on ledger");
+    let res = await props.initLedgerTransport();
+    console.log(res);
+    if (res.transport) {
+      setConnectPermission(true);
+      let s = await props.getLedgerSigner(res.transport);
+      console.log(s);
+      if (s.signer) {
+        setAppOpen(true);
+        setLedgerAddress(s.addr);
+        let v = await props.showLedgerAddress(s.signer);
+        console.log(v);
+        if (v.pubkey) {
+          setAddressVerified(true);
+          const a = await props.addLedgerWallet(name, s.addr, s.signer);
+          if (a) {
+            router.push("/home");
           }
         } else {
-          setAppError(s.message);
+          setVerifyError("Unable to confirm on ledger");
         }
       } else {
-        setConnectError(res.message);
+        setAppError(s.message);
       }
+    } else {
+      setConnectError(res.message);
     }
+
     setCreatingWallet(false);
   };
 
@@ -112,18 +76,6 @@ function ConnectLedger(props) {
       </div>
       <div className="text-xs mb-8">
         Your wallet is your login information to access the app
-      </div>
-      <div className="max-w-md w-full p-4">
-        <div className="">
-          <TextInput
-            type="text"
-            name="wallet_name"
-            placeholder="Wallet Name"
-            value={name}
-            setValue={setName}
-            hint={nameHint}
-          />
-        </div>
       </div>
       <div className="max-w-md w-full px-4">
         <div className="flex py-2 justify-between items-center rounded-md">
