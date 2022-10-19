@@ -94,7 +94,7 @@ function IssuePullDescription({
       </div>
       <div className="flex-1">
         {isEditing ? (
-          <div className="p-4">
+          <div className="">
             <MarkdownEditor
               value={newDescription}
               setValue={setNewDescription}
@@ -137,7 +137,7 @@ function IssuePullDescription({
             </div>
           </div>
         ) : (
-          <div className="pl-4">
+          <div className="">
             <div className="border border-grey rounded-lg flex-1">
               <div className="flex text-xs px-4 py-2 rounded-t">
                 <div className="flex-none ml-auto">

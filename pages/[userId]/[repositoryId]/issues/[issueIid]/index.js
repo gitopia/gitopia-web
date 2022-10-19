@@ -194,7 +194,7 @@ function RepositoryIssueView(props) {
                   }
                 })}
                 <div className="flex w-full mt-8">
-                  <div className="flex-none mr-4">
+                  <div className="flex-none">
                     <div className="avatar">
                       <div className="mb-8 rounded-full w-10 h-10">
                         <img
