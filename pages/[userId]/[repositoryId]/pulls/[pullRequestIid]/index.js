@@ -270,7 +270,11 @@ function RepositoryPullView(props) {
                     : "None yet"}
                 </div>
               </div>
-              <PullRequestIssueView issues={pullRequest.issues} />
+              {pullRequest.issues.length > 0 ? (
+                <PullRequestIssueView issues={pullRequest.issues} />
+              ) : (
+                ""
+              )}
             </div>
           </div>
         </main>

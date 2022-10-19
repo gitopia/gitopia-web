@@ -303,8 +303,16 @@ function RepositoryIssueView(props) {
                     : "None yet"}
                 </div>
               </div>
-              <IssuePullRequestView pullRequests={issue.pullRequests} />
-              <IssueBountyView bounties={issue.bounties} />
+              {issue.pullRequests.length > 0 ? (
+                <IssuePullRequestView pullRequests={issue.pullRequests} />
+              ) : (
+                ""
+              )}
+              {issue.bounties.length > 0 ? (
+                <IssueBountyView bounties={issue.bounties} />
+              ) : (
+                ""
+              )}
               {/* <div className="py-8">
                 <div className="flex-1 text-left px-3 mb-1">
                   Linked Pull Requests
