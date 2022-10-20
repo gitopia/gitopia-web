@@ -7,7 +7,6 @@ import {
 import { getLedgerSigner, updateUserBalance } from "./wallet";
 import { notify } from "reapop";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
-import { isConditionalExpression } from "typescript";
 
 export const createUser = ({ username, name, bio, avatarUrl }) => {
   return async (dispatch, getState) => {
