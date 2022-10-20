@@ -1,5 +1,4 @@
 
-
 describe("Create Pull Request", () => {
 
   let testData;
@@ -11,27 +10,6 @@ describe("Create Pull Request", () => {
       testData = data;
       return testData;
     })
-  });
-    
-  afterEach(() => {
-    cy.saveLocalStorage();
-  });
-
-  it("Is able to push changes", () => {
-    cy.visit('https://github.com/login');
-    cy.get('[id="login_field"]').type(testData.login);
-    cy.get('[id="password"]').type(testData.password);
-    cy.get('[name="commit"]').click();
-    cy.visit('https://github.com/zajedm/hello-world/tree/dev');
-    cy.get('[aria-label="Edit this file"]').click();
-    cy.get('[id="code-editor"]').type("{enter}## Test");
-    cy.get('[id="code-editor"]').type(`${testData.prid}`);
-    cy.get('[id="submit-file"]').click();
-    cy.get('[id="actions-tab"]').click();
-  });
-  
-  it("Is able to create a PR", () => {
-
     cy.visit("/home");
     cy.wait(500);
     cy.get("body").then(($body) => {
@@ -39,20 +17,22 @@ describe("Create Pull Request", () => {
         cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
       }
     });
+  });
+    
+  afterEach(() => {
+    cy.saveLocalStorage();
+  });
+  
+  it("Is able to create a PR", () => {
+
+    const branchSelector = `:contains("test${testData.branchid}")`
 
     cy.get('[data-test="all_repositories"]').click();
     cy.wait(1000);
-    cy.contains('hello-world').click();
-      
-    cy.wait(16000);
-    cy.reload();
-
-    cy.get('[data-test="select-branch"]').click();
-    cy.wait(500);
-    cy.get('[data-test="branch_selector"]').find('li').filter(':contains("dev")').click();
+    cy.get('[data-test="repositories_tab"]').click();
     cy.wait(1000);
-    cy.url().should("include","/hello-world/tree/dev");
-    cy.get('[id="readme"]').find('h2').filter(':contains("Test")').should("contain",`Test${testData.prid}`);
+    cy.contains('Test-PR').click();
+    cy.wait(500);
 
     cy.get('[data-test="pull-requests"]').click();
     cy.get('[data-test="new-pull-request"]').click();
@@ -60,33 +40,44 @@ describe("Create Pull Request", () => {
     cy.get('[data-test="source_branch"]').within(() => {
       cy.get('[data-test="select-branch"]').click();
       cy.wait(500);
-      cy.get('[data-test="branch_selector"]').filter(':contains("dev")').click();
+      cy.get('[data-test="branch_selector"]').find('li').filter(branchSelector).should("contain",`test${testData.branchid}`).click();
+      cy.wait(500);
     })
     cy.get('[data-test="create-pr"]').click();
     cy.wait(1000);
-    cy.get('[data-test="create-pr"]').click();
     cy.get('[data-test="pr-title"]').click().type(`Test PR${testData.prid}`).should("have.value",`Test PR${testData.prid}`);
     cy.get('[data-test="create-pr"]').click();
     cy.unlock(testData.walletpass);
     cy.wait(7000);
     cy.get('[data-test="pr_state"]').should("has.text","This branch has no conflicts with base branch");
     cy.get('[data-test="merge-pr"]').should('be.visible');
+
+    let id;
+
+    if(testData.branchid == 1){
+      id = 2;
+    }
+    else{
+      id = 1;
+    };
+    
+    cy.readFile("cypress/fixtures/userData.json", (err, data) => {
+      if (err) {
+          return console.error(err);
+      };
+      }).then((data) => {
+      data.branchid = id;
+      cy.writeFile("cypress/fixtures/userData.json", JSON.stringify(data))
+    })
   });
 
   it("Is able to add assignees", () => {
 
     const filterSelector = `:contains("${testData.prid}")`
-    cy.visit("/home");
-    cy.wait(500);
-    cy.get("body").then(($body) => {
-      if ($body.find('[data-test="current_wallet_name"]').length == 0){
-        cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
-      }
-    });
 
     cy.get('[data-test="all_repositories"]').click();
     cy.wait(1000);
-    cy.contains('hello-world').click();
+    cy.contains('Test-PR').click();
 
     cy.get('[data-test="pull-requests"]').click();
     cy.get('[data-test="select-open-pr"]').filter(filterSelector).click();
@@ -107,17 +98,10 @@ describe("Create Pull Request", () => {
   it("Is able to add reviewers", () => {
 
     const filterSelector = `:contains("${testData.prid}")`
-    cy.visit("/home");
-    cy.wait(500);
-    cy.get("body").then(($body) => {
-      if ($body.find('[data-test="current_wallet_name"]').length == 0){
-        cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
-      }
-    });
 
     cy.get('[data-test="all_repositories"]').click();
     cy.wait(1000);
-    cy.contains('hello-world').click();
+    cy.contains('Test-PR').click();
 
     cy.get('[data-test="pull-requests"]').click();
     cy.get('[data-test="select-open-pr"]').filter(filterSelector).click();
@@ -138,17 +122,10 @@ describe("Create Pull Request", () => {
   it("Is able to comment", () => {
   
     const filterSelector = `:contains("${testData.prid}")`
-    cy.visit("/home");
-    cy.wait(500);
-    cy.get("body").then(($body) => {
-      if ($body.find('[data-test="current_wallet_name"]').length == 0){
-        cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
-      }
-    });
 
     cy.get('[data-test="all_repositories"]').click();
     cy.wait(1000);
-    cy.contains('hello-world').click();
+    cy.contains('Test-PR').click();
 
     cy.get('[data-test="pull-requests"]').click();
     cy.get('[data-test="select-open-pr"]').filter(filterSelector).click();
@@ -163,17 +140,10 @@ describe("Create Pull Request", () => {
   it("Is able to edit comment", () => {
     
     const filterSelector = `:contains("${testData.prid}")`
-    cy.visit("/home");
-    cy.wait(500);
-    cy.get("body").then(($body) => {
-      if ($body.find('[data-test="current_wallet_name"]').length == 0){
-        cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
-      }
-    });
 
     cy.get('[data-test="all_repositories"]').click();
     cy.wait(1000);
-    cy.contains('hello-world').click();
+    cy.contains('Test-PR').click();
 
     cy.get('[data-test="pull-requests"]').click();
     cy.get('[data-test="select-open-pr"]').filter(filterSelector).click();
@@ -192,17 +162,10 @@ describe("Create Pull Request", () => {
   it("Is able to delete comment", () => {
     
     const filterSelector = `:contains("${testData.prid}")`
-    cy.visit("/home");
-    cy.wait(500);
-    cy.get("body").then(($body) => {
-      if ($body.find('[data-test="current_wallet_name"]').length == 0){
-        cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
-      }
-    });
 
     cy.get('[data-test="all_repositories"]').click();
     cy.wait(1000);
-    cy.contains('hello-world').click();
+    cy.contains('Test-PR').click();
 
     cy.get('[data-test="pull-requests"]').click();
     cy.get('[data-test="select-open-pr"]').filter(filterSelector).click();
@@ -220,17 +183,10 @@ describe("Create Pull Request", () => {
   it("Is able to rename PR title", () => {
     
     const filterSelector = `:contains("${testData.prid}")`
-    cy.visit("/home");
-    cy.wait(500);
-    cy.get("body").then(($body) => {
-      if ($body.find('[data-test="current_wallet_name"]').length == 0){
-        cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
-      }
-    });
 
     cy.get('[data-test="all_repositories"]').click();
     cy.wait(1000);
-    cy.contains('hello-world').click();
+    cy.contains('Test-PR').click();
 
     cy.get('[data-test="pull-requests"]').click();
     cy.get('[data-test="select-open-pr"]').filter(filterSelector).click();
@@ -245,17 +201,10 @@ describe("Create Pull Request", () => {
   it("Is able to select label", () => {
 
     const filterSelector = `:contains("${testData.prid}")`
-    cy.visit("/home");
-    cy.wait(500);
-    cy.get("body").then(($body) => {
-      if ($body.find('[data-test="current_wallet_name"]').length == 0){
-        cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
-      }
-    });
 
     cy.get('[data-test="all_repositories"]').click();
     cy.wait(1000);
-    cy.contains('hello-world').click();
+    cy.contains('Test-PR').click();
 
     cy.get('[data-test="pull-requests"]').click();
     cy.get('[data-test="select-open-pr"]').filter(filterSelector).click();
@@ -272,17 +221,10 @@ describe("Create Pull Request", () => {
   it("Is able to create label", () => {
 
     const filterSelector = `:contains("${testData.prid}")`
-    cy.visit("/home");
-    cy.wait(500);
-    cy.get("body").then(($body) => {
-      if ($body.find('[data-test="current_wallet_name"]').length == 0){
-        cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
-      }
-    });
 
     cy.get('[data-test="all_repositories"]').click();
     cy.wait(1000);
-    cy.contains('hello-world').click();
+    cy.contains('Test-PR').click();
 
     cy.get('[data-test="pull-requests"]').click();
     cy.get('[data-test="select-open-pr"]').filter(filterSelector).click();
@@ -314,17 +256,10 @@ describe("Create Pull Request", () => {
   it("Is able to delete label", () => {
 
     const filterSelector = `:contains("${testData.prid}")`
-    cy.visit("/home");
-    cy.wait(500);
-    cy.get("body").then(($body) => {
-      if ($body.find('[data-test="current_wallet_name"]').length == 0){
-        cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
-      }
-    });
 
     cy.get('[data-test="all_repositories"]').click();
     cy.wait(1000);
-    cy.contains('hello-world').click();
+    cy.contains('Test-PR').click();
 
     cy.get('[data-test="pull-requests"]').click();
     cy.get('[data-test="select-open-pr"]').filter(filterSelector).click();
@@ -353,17 +288,10 @@ describe("Create Pull Request", () => {
   it("Is able to merge a PR", () => {
 
     const filterSelector = `:contains("${testData.prid}")`
-    cy.visit("/home");
-    cy.wait(500);
-    cy.get("body").then(($body) => {
-      if ($body.find('[data-test="current_wallet_name"]').length == 0){
-        cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
-      }
-    });
 
     cy.get('[data-test="all_repositories"]').click();
     cy.wait(1000);
-    cy.contains('hello-world').click();
+    cy.contains('Test-PR').click();
 
     cy.get('[data-test="pull-requests"]').click();
     cy.get('[data-test="select-open-pr"]').filter(filterSelector).click();
@@ -374,10 +302,6 @@ describe("Create Pull Request", () => {
     cy.unlock(testData.walletpass);
     cy.wait(8000);
     cy.get('[data-test="pr_state"]').should("has.text","This pull request is merged");
-    cy.get('[data-test="code"]').click();
-    cy.get('[id="readme"]').scrollIntoView();
-    cy.get('[id="readme"]').find('h2').filter(':contains("Test")').should("contain",`Test${testData.prid}`)
-    cy.log("PR merged successfully");
     
     let id = testData.prid + 1;
 
@@ -392,16 +316,9 @@ describe("Create Pull Request", () => {
   });
 
   it("Is able to merge a PR - unauthorized user error", () => {
-    
-    cy.visit("/home");
-    cy.wait(500);
-    cy.get("body").then(($body) => {
-      if ($body.find('[data-test="current_wallet_name"]').length == 0){
-        cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
-      }
-    });
+  
 
-    cy.visit("/gitopia1dsud9wjd6z90c6wclxyu0yam3805w3wxavw86c/awesome-cosmos/pulls/3");
+    cy.visit("/Test-dao/test/pulls/1");
     cy.wait(1000);
     cy.get('[data-test="pr_state"]').should("has.text","This branch has no conflicts with base branch");
     cy.get('[data-test="merge-pr"]').click();
@@ -410,21 +327,14 @@ describe("Create Pull Request", () => {
   });
 
   it("Is able to close a PR - unauthorized user error", () => {
-  
-    cy.visit("/home");
-    cy.wait(500);
-    cy.get("body").then(($body) => {
-      if ($body.find('[data-test="current_wallet_name"]').length == 0){
-        cy.login(testData.walletname, testData.walletpass, testData.mnemonic);
-      }
-    });
 
-    cy.visit("/gitopia1dsud9wjd6z90c6wclxyu0yam3805w3wxavw86c/awesome-cosmos/pulls/3");
+
+    cy.visit("/Test-dao/test/pulls/1");
     cy.wait(1000);
     cy.get('[data-test="close_pr"]').click();
     cy.unlock(testData.walletpass);
     cy.wait(1000);
-    cy.get('p.reapop__notification-message').should("has.text","Query failed with (18): failed to execute message; message index: 0: user (gitopia18gtaqn8g58cxyxyd7wj7vpk790d6wxfk0frfg0) doesn't have permission to perform this operation: unauthorized: invalid request");
+    cy.get('p.reapop__notification-message').should("has.text","Query failed with (6): failed to execute message; message index: 0: user (gitopia18gtaqn8g58cxyxyd7wj7vpk790d6wxfk0frfg0) doesn't have permission to perform this operation: unauthorized: unknown request");
     });
 
 });

@@ -1,9 +1,15 @@
 
 describe("Test Wallet Workflows", () => {
 
+    let testData;
+
     beforeEach(() => {
         cy.restoreLocalStorage();
         cy.viewport(1280,720);
+        cy.fixture('userData').then((data) => {
+            testData = data;
+            return testData;
+        })
       });
       
       afterEach(() => {
@@ -36,78 +42,49 @@ describe("Test Wallet Workflows", () => {
     it("Test wallet creation", () => {
         cy.visit("/login");
 
+        let id = testData.repoid + 1;
+
+        cy.readFile("cypress/fixtures/userData.json", (err, data) => {
+        if (err) {
+            return console.error(err);
+        };
+        }).then((data) => {
+        data.repoid = id;
+        cy.writeFile("cypress/fixtures/userData.json", JSON.stringify(data))
+        })
+
         cy.get('[data-test="create-new-local-wallet"]').click();
-        // cy.get('[data-test="wallet_name"]').clear().type("Test123");
         cy.get('[data-test="wallet_password"]').clear().type("Password").should("have.value","Password");
         cy.get('[data-test="wallet_confirm_password"]').clear().type("Password").should("have.value","Password");
         cy.get('[data-test="create_wallet"]').click();
-        // cy.get('[data-test="current_wallet_name"]').should("has.text", "Test123");
-        cy.wait(3000);
-        cy.get('[data-test="username"]').clear().type("Test1234").should("have.value","Test1234");
-        cy.get('[data-test="full name"]').clear().type("Test1234").should("have.value","Test1234");
-        cy.get('[data-test="bio"]').clear().type("Test1234").should("have.value","Test1234");
+        cy.wait(6000);
+        cy.get('p.reapop__notification-message').should("has.text","Balance updated")
+        cy.get('[data-test="username"]').clear().type("Test123").should("have.value","Test123");
+        cy.get('[data-test="full name"]').clear().type("Test").should("have.value","Test");
+        cy.get('[data-test="bio"]').clear().type("Test").should("have.value","Test");
+        cy.wait(5000);
         cy.get('[data-test="create_profile"]').click();
-
-    })
-
-    // it("Is able to generate 24 word recovery phase", () => {
-    //     cy.get('[data-test="mnemonic"]').should("have.length", 24);
-    //   });
-    
-    // it("Is able to download wallet", () => {
-    //     cy.get('[data-test="current_wallet_name"]').click();
-    //     cy.get('[data-test="download_wallet"]').click();
-    //     cy.get('[data-test="wallet_password"]').type("Password");
-    //     cy.get('[data-test="Download"]').click();
-    //     cy.readFile("cypress/downloads/Test123.json").should("exist");
-    //     cy.get('[data-test="done_go_home"]').click();
-    // });
-
-    // it("Low balance error", () => {
-    //     const uuid = () => Cypress._.random(0, 1e6);
-    //     const id = uuid();
-    
-    //     cy.get('[data-test="create-new-repo"]').click();
-    //     cy.get('[data-test="repository_name"]').type(`repo${id}`).should("have.value",`repo${id}`);
-    //     cy.get('[data-test="repository_description"]').type("Testing").should("have.value","Testing");
-    //     cy.wait(5000);
-    //     cy.get('[data-test="create-repo-button"]').click();
-    //     cy.get('p.reapop__notification-message').should("has.text","Balance low for creating repository")
-    // })
-
-    // it("Is able to get tokens", () => {
-    //     cy.visit("/home");
-    //     if (cy.get('[data-test="get-token"]').contains("Get TLORE")) {
-    //       cy.get('[data-test="get-token"]').click();
-    //       cy.wait(6000);
-    //       cy.get('p.reapop__notification-message').should("has.text","Balance updated");
-    //     }
-    //   });
-    
-    // it("Is able to create profile", () => {
-    //     cy.visit("/home");
-    //     cy.get("body").then(($body) => {
-    //       if ($body.find('[data-test="create_profile"]').length > 0) {
-    //         cy.get('[data-test="create_profile"]').click();
-    //         cy.unlock("Password");
-    //         cy.wait(6000);
-    //         cy.get('p.reapop__notification-message').should("has.text","Your profile is created");
-    //       }
-    //     });
-    // });
-    
-
-    it("Test wallet name already exists error", () => {
-        cy.visit("/login");
-
-        cy.get('[data-test="create-new-local-wallet"]').click();
-        // cy.get('[data-test="wallet_name"]').clear().type("Test123");
-        cy.get('[data-test="wallet_password"]').clear().type("Password").should("have.value","Password");
-        cy.get('[data-test="wallet_confirm_password"]').clear().type("Password").should("have.value","Password");
-        cy.get('[data-test="create_wallet"]').click();
-        cy.get('.label-text-alt').should("has.text", "Wallet name already taken");
+        cy.get('p.reapop__notification-message').should("has.text","Query failed with (6): failed to execute message; message index: 0: username is already taken: (Test123): invalid request: unknown request")
         cy.wait(1000);
+        cy.get('[data-test="username"]').clear().type(`Test00${testData.repoid}`).should("have.value",`Test00${testData.repoid}`);
+        cy.get('[data-test="create_profile"]').click();
+        cy.wait(6000);
+        cy.get('[data-test="current_wallet_name"]').should("has.text", `Test00${testData.repoid}`);
+
     })
+
+    it("Is able to download wallet", () => {
+        cy.visit("/home");
+        cy.wait(2000);
+
+        const download = `cypress/downloads/Test00${testData.repoid}.json`
+
+        cy.get('[data-test="current_wallet_name"]').click();
+        cy.get('[data-test="download_wallet"]').click();
+        cy.get('[data-test="wallet_password"]').type("Password");
+        cy.get('[data-test="Download"]').click();
+        cy.readFile(download).should("exist");
+    });
 
     it("Test wallet log out", () => {
         cy.visit("/home");
@@ -123,10 +100,10 @@ describe("Test Wallet Workflows", () => {
         
         cy.visit("/home");
         cy.get('[data-test="wallet-menu"]').click();
-        cy.contains("Test123").click();
+        cy.contains(`Test00${testData.repoid}`).click();
         cy.get('[data-test="wallet_password"]').clear().type("Password").should("have.value","Password");
         cy.contains("Unlock").click();
-        cy.get('[data-test="current_wallet_name"]').should("has.text", "Test123");
+        cy.get('[data-test="current_wallet_name"]').should("has.text", `Test00${testData.repoid}`);
         
     })
 
@@ -136,7 +113,7 @@ describe("Test Wallet Workflows", () => {
         cy.get('[data-test="log-out"]').click();
         cy.get('[data-test="wallet-menu"]').should("has.text","Connect Wallet");
         cy.get('[data-test="wallet-menu"]').click();
-        cy.contains("Test123").click();
+        cy.contains(`Test00${testData.repoid}`).click();
         cy.contains("Unlock").click();
         cy.get('[class="label-text-alt text-error"]').should("has.text", "Please enter the password");
         cy.get('[data-test="wallet_password"]').clear().type("Passwo").should("have.value","Passwo");
@@ -150,10 +127,10 @@ describe("Test Wallet Workflows", () => {
         cy.get('[data-test="log-out"]').click();
         cy.get('[data-test="wallet-menu"]').should("has.text","Connect Wallet");
         cy.get('[data-test="wallet-menu"]').click();
-        cy.contains("Test123").click();
+        cy.contains(`Test00${testData.repoid}`).click();
         cy.get('[data-test="wallet_password"]').clear().type("Password").should("have.value","Password");
         cy.contains("Unlock").click();
-        cy.get('[data-test="current_wallet_name"]').should("has.text", "Test123");
+        cy.get('[data-test="current_wallet_name"]').should("has.text", `Test00${testData.repoid}`);
     })
 
     it("Test recover wallet incorrect mnemonic error", () => {
@@ -171,7 +148,9 @@ describe("Test Wallet Workflows", () => {
         cy.clearLocalStorage();
         cy.visit("/login");
 
-        cy.readFile("cypress/downloads/Test123.json", (err, data) => {
+        const download = `cypress/downloads/Test00${testData.repoid}.json`
+
+        cy.readFile(download, (err, data) => {
             if (err) {
                 return console.error(err);
             };

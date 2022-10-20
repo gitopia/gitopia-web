@@ -20,6 +20,8 @@ describe("Create Releases", () => {
     cy.wait(500);
     cy.get('[data-test="all_repositories"]').click();
     cy.wait(1000);
+    cy.get('[data-test="repositories_tab"]').click();
+    cy.wait(1000);
     cy.contains('hello-world').click();
   });
     
