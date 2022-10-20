@@ -231,6 +231,11 @@ export const createWalletWithMnemonic = ({
     ).toString();
 
     await dispatch({
+      type: walletActions.REMOVE_WALLET,
+      payload: { name: wallet.name },
+    });
+
+    await dispatch({
       type: walletActions.ADD_WALLET,
       payload: { wallet, encryptedWallet },
     });
