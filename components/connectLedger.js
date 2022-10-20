@@ -5,9 +5,11 @@ import {
   getLedgerSigner,
   showLedgerAddress,
   addLedgerWallet,
+  updateUserBalance,
 } from "../store/actions/wallet";
-import TextInput from "./textInput";
+import axios from "../helpers/axiosFetch";
 import { useRouter } from "next/router";
+import { notify } from "reapop";
 
 function ConnectLedger(props) {
   const [name, setName] = useState("untitled-ledger-1");
@@ -24,6 +26,7 @@ function ConnectLedger(props) {
   const [ledgerAddress, setLedgerAddress] = useState("");
   const [addressVerified, setAddressVerified] = useState(false);
   const [verifyError, setVerifyError] = useState(null);
+  const [walletCreated, setWalletCreated] = useState(false);
 
   const router = useRouter();
   useEffect(() => {
@@ -54,7 +57,7 @@ function ConnectLedger(props) {
           setAddressVerified(true);
           const a = await props.addLedgerWallet(name, s.addr, s.signer);
           if (a) {
-            router.push("/home");
+            setWalletCreated(true);
           }
         } else {
           setVerifyError("Unable to confirm on ledger");
@@ -68,7 +71,54 @@ function ConnectLedger(props) {
 
     setCreatingWallet(false);
   };
+  useEffect(() => {
+    if (walletCreated) {
+      setTimeout(getTokens, 2000);
+      router.push("/login?step=5");
+    }
+  }, [walletCreated]);
+  const getTokens = () => {
+    if (!props.selectedAddress) {
+      props.notify("Please sign in before claiming tokens", "error");
+      return;
+    }
+    // setLoading(amount);
 
+    axios
+      .post(
+        process.env.NODE_ENV === "development"
+          ? "/api/faucet"
+          : process.env.NEXT_PUBLIC_FAUCET_URL,
+        {
+          address: props.selectedAddress,
+        },
+        { timeout: 10000 }
+      )
+      .then((res) => {
+        if (
+          res?.data?.transfers &&
+          res?.data?.transfers.length &&
+          res.data.transfers[0].status === "error"
+        ) {
+          props.notify(res.data.transfers[0].error, "error");
+          // setLoading(0);
+        } else {
+          setTimeout(() => {
+            props.updateUserBalance(true);
+            // setLoading(0);
+          }, 2000);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        if (err?.response?.data?.error) {
+          props.notify(err.response.data.error, "error");
+        } else {
+          props.notify("Unable to reach faucet", "error");
+        }
+        // setLoading(0);
+      });
+  };
   return (
     <>
       <div className="text-4xl mt-16 sm:mt-0 sm:text-6xl mb-6">
@@ -216,6 +266,7 @@ function ConnectLedger(props) {
 const mapStateToProps = (state) => {
   return {
     wallets: state.wallet.wallets,
+    selectedAddress: state.wallet.selectedAddress,
   };
 };
 
@@ -224,4 +275,6 @@ export default connect(mapStateToProps, {
   getLedgerSigner,
   showLedgerAddress,
   addLedgerWallet,
+  updateUserBalance,
+  notify,
 })(ConnectLedger);
