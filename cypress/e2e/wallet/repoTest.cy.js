@@ -71,6 +71,11 @@ describe("Repository Workflows", () => {
     });
 
     it("Is able to toggle forking", () => {
+
+        cy.get('[data-test="all_repositories"]').click();
+        cy.wait(1000);
+        cy.get('[data-test="repositories_tab"]').click();
+        cy.wait(1000);
         cy.contains("Test-repo").click();
         cy.get('[data-test="settings"]').click();
         cy.wait(500);
@@ -80,6 +85,11 @@ describe("Repository Workflows", () => {
     });
 
     it("Is able to rename repository", () => {
+
+        cy.get('[data-test="all_repositories"]').click();
+        cy.wait(1000);
+        cy.get('[data-test="repositories_tab"]').click();
+        cy.wait(1000);
         cy.contains("Test-repo").click();
         cy.get('[data-test="settings"]').click();
         cy.wait(500);
@@ -98,10 +108,15 @@ describe("Repository Workflows", () => {
     })
 
     it("Is able to add collaborators", () => {
+
+        cy.get('[data-test="all_repositories"]').click();
+        cy.wait(1000);
+        cy.get('[data-test="repositories_tab"]').click();
+        cy.wait(1000);
         cy.contains("Test-repo").click();
         cy.get('[data-test="settings"]').click();
         cy.wait(500);
-        cy.get('.input').type("gitopia1mwucxa2mwjdymmg5kdwl9wnjvmkcrvzj28l35s");
+        cy.get('.input').type("gitopia1wum35ycsalxu584c7gnc7udfrhncjulg8ssjhk");
         cy.get('[data-test="permissions"]').select("Maintain");
         cy.get('[data-test="add"]').click();
         cy.unlock(testData.walletpass);
@@ -109,6 +124,11 @@ describe("Repository Workflows", () => {
     })
 
     it("Is able to remove collaborators", () => {
+
+        cy.get('[data-test="all_repositories"]').click();
+        cy.wait(1000);
+        cy.get('[data-test="repositories_tab"]').click();
+        cy.wait(1000);
         cy.contains("Test-repo").click();
         cy.get('[data-test="settings"]').click();
         cy.wait(500);

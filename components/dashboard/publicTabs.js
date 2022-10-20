@@ -42,6 +42,7 @@ export default function PublicTabs({
             "tab tab-md tab-bordered" +
             (active === "repositories" ? " tab-active" : "")
           }
+          data-test="repositories_tab"
         >
           <span className="icon mr-2">
             <svg
