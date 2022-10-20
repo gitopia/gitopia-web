@@ -84,7 +84,8 @@ function DashboardSelector(props) {
             )}
             <div className="flex-1 text-left">
               <div className="text-md">
-                {selected.name?.includes("untitled-wallet")
+                {selected.name?.includes("untitled-wallet") ||
+                selected.name?.includes("untitled-ledger")
                   ? shrinkAddress(selected.id)
                   : selected.name}
               </div>
@@ -146,7 +147,8 @@ function DashboardSelector(props) {
                     )}
                     <div className="flex-1 text-left">
                       <div className="text-sm">
-                        {a.name?.includes("untitled-wallet")
+                        {a.name?.includes("untitled-wallet") ||
+                        a.name?.includes("untitled-ledger")
                           ? shrinkAddress(a.id)
                           : a.name}
                       </div>

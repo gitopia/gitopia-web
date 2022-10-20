@@ -4,9 +4,10 @@ import {
   setupTxClients,
   handlePostingTransaction,
 } from "./env";
-import { updateUserBalance } from "./wallet";
+import { getLedgerSigner, updateUserBalance } from "./wallet";
 import { notify } from "reapop";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
+import { isConditionalExpression } from "typescript";
 
 export const createUser = ({ username, name, bio, avatarUrl }) => {
   return async (dispatch, getState) => {
@@ -69,6 +70,55 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
             dispatch,
             getState
           );
+        } else if (newWallet.isLedger) {
+          const ledgerSigner = getLedgerSigner();
+          if (!ledgerSigner) return { message: "No connection available" };
+          const CryptoJS = (await import("crypto-js")).default;
+          try {
+            const password = "STRONG_LEDGER";
+            const encryptedWallet = CryptoJS.AES.encrypt(
+              JSON.stringify(newWallet),
+              password
+            ).toString();
+            console.log(oldWalletName, newWallet);
+            await dispatch({
+              type: walletActions.REMOVE_WALLET,
+              payload: {
+                name: oldWalletName,
+              },
+            });
+            await dispatch({
+              type: walletActions.ADD_EXTERNAL_WALLET,
+              payload: {
+                isLedger: true,
+                wallet: newWallet,
+                encryptedWallet,
+              },
+            });
+            await dispatch({ type: walletActions.STORE_WALLETS });
+            await dispatch({
+              type: walletActions.SET_ACTIVE_WALLET,
+              payload: { wallet: newWallet },
+            });
+            await getUserDetailsForSelectedAddress()(dispatch, getState);
+            const daos = await getUserDaoAll(newWallet.accounts[0].address);
+            console.log("got daos", daos);
+            await dispatch({
+              type: userActions.INIT_DASHBOARDS,
+              payload: {
+                name: newWallet.name,
+                id: newWallet.accounts[0].address,
+                daos: daos,
+              },
+            });
+            await setCurrentDashboard(newWallet.accounts[0].address)(
+              dispatch,
+              getState
+            );
+          } catch (e) {
+            console.error(e);
+            return null;
+          }
         } else {
           dispatch(
             notify(
