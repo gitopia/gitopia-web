@@ -24,6 +24,8 @@ import getPullDiff from "../../../../helpers/getPullDiff";
 import getRepository from "../../../../helpers/getRepository";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import useRepository from "../../../../hooks/useRepository";
+import getAllRepositoryBranch from "../../../../helpers/getAllRepositoryBranch";
+import getAllRepositoryTag from "../../../../helpers/getAllRepositoryTag";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -132,6 +134,13 @@ function RepositoryCompareView(props) {
         if (!sourceRepo) {
           sourceRepo = r;
         }
+        const [branches, tags] = await Promise.all([
+          getAllRepositoryBranch(sourceRepo.owner.id, sourceRepo.name),
+          getAllRepositoryTag(sourceRepo.owner.id, sourceRepo.name),
+        ]);
+        if (branches) sourceRepo.branches = branches;
+        if (tags) sourceRepo.tags = tags;
+
         sourceBranch = reposlug[1];
       } else {
         sourceRepo = r;
