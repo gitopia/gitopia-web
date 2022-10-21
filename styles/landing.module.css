@@ -871,8 +871,9 @@
 .footer {
   margin-top: 60px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  width: 70%;
 }
 
 .footerLogo {
@@ -883,9 +884,6 @@
   width: 240px;
 }
 
-.footerSection {
-  margin-left: 50px;
-}
 
 .footerTitle {
   margin-top: 60px;
