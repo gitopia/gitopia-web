@@ -552,14 +552,14 @@
 }
 
 .midLogo {
-  width: 150px;
-  height: 100px;
+  width: 180px;
+  height: 130px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background-image: url("/logo-g.svg");
   background-repeat: no-repeat;
-
+  background-size: 120px 216px;
   background-position: 50%;
   background-color: rgba(255, 233, 253, 0.05);
   border-top-left-radius: 20px;
