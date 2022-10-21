@@ -59,7 +59,7 @@ function NewDao(props) {
 
     let alreadyAvailable = false;
     const daos = await getUserDaoAll(props.selectedAddress);
-    daos.every((o) => {
+    daos?.every((o) => {
       if (o.name === name) {
         alreadyAvailable = true;
         return false;

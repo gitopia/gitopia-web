@@ -4,7 +4,7 @@ import {
   setupTxClients,
   handlePostingTransaction,
 } from "./env";
-import { updateUserBalance } from "./wallet";
+import { getLedgerSigner, updateUserBalance } from "./wallet";
 import { notify } from "reapop";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 
@@ -28,47 +28,72 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
         let newWallet = { ...wallet.activeWallet };
         newWallet.name = username;
         newWallet.isUsernameSetup = true;
-        if (newWallet.password) {
-          const CryptoJS = (await import("crypto-js")).default;
-          const encryptedWallet = CryptoJS.AES.encrypt(
-            JSON.stringify(newWallet),
-            newWallet.password
-          ).toString();
-          await dispatch({
-            type: walletActions.REMOVE_WALLET,
-            payload: {
-              name: oldWalletName,
-            },
-          });
-          await dispatch({
-            type: walletActions.ADD_WALLET,
-            payload: {
-              wallet: newWallet,
-              encryptedWallet,
-            },
-          });
-          await dispatch({
-            type: walletActions.STORE_WALLETS,
-          });
-          await dispatch({
-            type: walletActions.SET_ACTIVE_WALLET,
-            payload: { wallet: newWallet },
-          });
-          await getUserDetailsForSelectedAddress()(dispatch, getState);
-          const daos = await getUserDaoAll(newWallet.accounts[0].address);
-          console.log("got daos", daos);
-          await dispatch({
-            type: userActions.INIT_DASHBOARDS,
-            payload: {
-              name: newWallet.name,
-              id: newWallet.accounts[0].address,
-              daos: daos,
-            },
-          });
-          await setCurrentDashboard(newWallet.accounts[0].address)(
-            dispatch,
-            getState
-          );
+
+        if (newWallet.password || newWallet.isLedger) {
+          if (newWallet.isLedger) {
+            const ledgerSigner = getLedgerSigner();
+            if (!ledgerSigner) return { message: "No connection available" };
+          }
+          try {
+            let password;
+            newWallet.isLedger
+              ? (password = "STRONG_LEDGER")
+              : (password = newWallet.password);
+            const CryptoJS = (await import("crypto-js")).default;
+            const encryptedWallet = CryptoJS.AES.encrypt(
+              JSON.stringify(newWallet),
+              password
+            ).toString();
+            await dispatch({
+              type: walletActions.REMOVE_WALLET,
+              payload: {
+                name: oldWalletName,
+              },
+            });
+            if (newWallet.isLedger) {
+              await dispatch({
+                type: walletActions.ADD_EXTERNAL_WALLET,
+                payload: {
+                  isLedger: true,
+                  wallet: newWallet,
+                  encryptedWallet,
+                },
+              });
+            } else {
+              await dispatch({
+                type: walletActions.ADD_WALLET,
+                payload: {
+                  wallet: newWallet,
+                  encryptedWallet,
+                },
+              });
+            }
+            await dispatch({
+              type: walletActions.STORE_WALLETS,
+            });
+            await dispatch({
+              type: walletActions.SET_ACTIVE_WALLET,
+              payload: { wallet: newWallet },
+            });
+            await getUserDetailsForSelectedAddress()(dispatch, getState);
+            const daos = await getUserDaoAll(newWallet.accounts[0].address);
+            console.log("got daos", daos);
+            await dispatch({
+              type: userActions.INIT_DASHBOARDS,
+              payload: {
+                name: newWallet.name,
+                id: newWallet.accounts[0].address,
+                daos: daos,
+              },
+            });
+            await setCurrentDashboard(newWallet.accounts[0].address)(
+              dispatch,
+              getState
+            );
+          } catch (e) {
+            console.error(e);
+            return null;
+          }
         } else {
           dispatch(
             notify(
