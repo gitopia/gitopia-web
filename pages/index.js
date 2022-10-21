@@ -3975,7 +3975,7 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className={"mt-16 sm:mt-0 sm:ml-16  " + styles.teamCard}>
+        <div className={"mt-16 sm:mt-0 " + styles.teamCard}>
           <img
             className={styles.teamImage}
             src="/avatar.svg"
