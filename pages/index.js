@@ -2906,7 +2906,7 @@ export default function Landing() {
           height={mobile ? "74" : "227"}
           width={mobile ? "88" : "210"}
           id="parallax"
-          value="10"
+          value="2"
         />
         <img
           src="./gitopia-coin.svg"
@@ -2914,13 +2914,13 @@ export default function Landing() {
             "absolute -z-10 " + (mobile ? " hidden" : " right-3/4 bottom-1/2")
           }
           id="parallax"
-          value="5"
+          value="3"
         />
         <img
           src="./gitopia-coin-1.svg"
           className={mobile ? "hidden" : "absolute -z-10 left-1/2 top-1/3"}
           id="parallax"
-          value="2"
+          value="10"
         />
         <svg
           width="726"
@@ -3059,7 +3059,7 @@ export default function Landing() {
           width={"56"}
           height={"56"}
           id="parallax"
-          value="5"
+          value="4"
         />
         <img
           src="./getStartedCoin-2.svg"
@@ -3068,7 +3068,7 @@ export default function Landing() {
             (mobile ? " left-1/4 -bottom-5" : " left-16 bottom-0")
           }
           id="parallax"
-          value="2"
+          value="18"
         />
         <img
           src="./getStartedCoin-3.svg"
@@ -3079,7 +3079,7 @@ export default function Landing() {
           width={mobile ? "43" : ""}
           height={mobile ? "43" : ""}
           id="parallax"
-          value="5"
+          value="8"
         />
         <img
           src="./getStartedCoin-4.svg"
@@ -3089,7 +3089,7 @@ export default function Landing() {
               : "absolute -z-10 opacity-100 pointer-events-none right-16 pr-32 top-3/4"
           }
           id="parallax"
-          value="2"
+          value="14"
         />
         <img
           src="./getStartedCoin-5.svg"
@@ -3112,7 +3112,7 @@ export default function Landing() {
               : "absolute -z-10  opacity-100 pointer-events-none right-5 top-2/3"
           }
           id="parallax"
-          value="5"
+          value="3"
         />
         <img
           src="./getStartedCoin-4.svg"
@@ -3122,7 +3122,7 @@ export default function Landing() {
               : "absolute -z-10  opacity-100 pointer-events-none -right-5 bottom-0"
           }
           id="parallax"
-          value="2"
+          value="16"
         />
         {mobile ? (
           <svg
