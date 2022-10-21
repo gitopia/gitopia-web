@@ -2558,7 +2558,7 @@ export default function Landing() {
                   </div>
                   <div className="flex mb-4">
                     <div className="ml-20 sm:ml-2 mt-2">🚀</div>
-                    <div className="ml-4 leading-5">
+                    <div className="ml-4 leading-5 text-[#aaacae]">
                       Reserve your username
                       <br /> before others take it! 👆
                     </div>

@@ -321,6 +321,7 @@
   width: 418px;
   margin-top: 25px;
   margin-bottom: 35px;
+  opacity: 0.9;
 }
 
 .collaborationsBenefitsCard1Button {
@@ -346,6 +347,7 @@
   font-size: 14px;
   line-height: 139%;
   color: #ffffff;
+  opacity: 0.9;
   width: 215px;
 }
 
