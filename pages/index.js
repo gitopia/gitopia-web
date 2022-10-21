@@ -550,7 +550,7 @@ export default function Landing() {
           className={
             styles.planet +
             " absolute pointer-events-none z-1 " +
-            (mobile ? "-right-14" : "top-14 left-20")
+            (mobile ? "-right-14" : "top-18 lg:top-14 -left-5 lg:left-20")
           }
           src="./star-1.svg"
           width={mobile ? "130" : "244"}
@@ -569,7 +569,7 @@ export default function Landing() {
             " absolute pointer-events-none z-1  " +
             (mobile
               ? " -left-8 blur-[1px] opacity-70 top-1/2 pt-5"
-              : " top-3/4 left-10 mr-10")
+              : " top-3/4 left-0 lg:top-3/4 lg:left-10 mr-10")
           }
           src="./car.svg"
           width={mobile ? "175" : "487"}
@@ -578,7 +578,7 @@ export default function Landing() {
         <img
           className={
             "absolute pointer-events-none z-1  " +
-            (mobile ? "hidden" : "top-0 left-2/3 top-2/3")
+            (mobile ? "hidden" : " left-3/4 lg:left-2/3 top-2/3")
           }
           src="./star-3.svg"
         />
@@ -586,7 +586,9 @@ export default function Landing() {
           className={
             styles.moon +
             " absolute pointer-events-none z-1  " +
-            (mobile ? "top-1/3 mt-20" : "top-1/2 left-2/3")
+            (mobile
+              ? "top-1/3 mt-20"
+              : "  top-3/4 lg:top-1/2 right-0 lg:left-2/3")
           }
           src="./moon.svg"
           width={mobile ? "239" : "423"}
@@ -635,7 +637,7 @@ export default function Landing() {
         <img
           className={
             "absolute pointer-events-none z-1  " +
-            (mobile ? " -left-10 top-1/3" : " bottom-0 left-1/2")
+            (mobile ? " -left-10 top-1/3" : " bottom-1/2 lg:bottom-0 left-1/2")
           }
           src="./shootingStar3.svg"
         />

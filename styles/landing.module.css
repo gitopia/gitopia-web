@@ -923,6 +923,21 @@
 }
 
 @media (max-width: 1024px) {
+  .planet {
+    animation: 0s;
+  }
+  
+  .car {
+  animation: 0s;
+  }
+  
+  .people {
+    animation: 0s;
+  }
+  
+  .moon {
+    animation: 0s;
+  }
   .headerLine {
     display: none;
   }
@@ -1090,6 +1105,7 @@
   }
   .footer {
     align-items: start;
+    width: 100%;
   }
   .footerSection {
     margin-left: 30px;
@@ -1386,6 +1402,7 @@
     margin-top: 0px;
     margin-bottom: 50px;
     flex-direction: column;
+    width: 90%;
   }
 
   .footerSection {
