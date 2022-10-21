@@ -2381,7 +2381,11 @@ export default function Landing() {
           viewBox="0 0 453 1024"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className={mobile ? "hidden" : "pointer-events-none absolute right-0"}
+          className={
+            mobile
+              ? "hidden"
+              : "pointer-events-none absolute right-0 opacity-90"
+          }
         >
           <g filter="url(#filter0_f_3091_9106)">
             <path
@@ -2421,6 +2425,57 @@ export default function Landing() {
             >
               <stop offset="0.442708" stopColor="#992D81" />
               <stop offset="1" stopColor="#6029DB" />
+            </radialGradient>
+          </defs>
+        </svg>
+        <svg
+          width="537"
+          height="1183"
+          viewBox="0 0 537 1183"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={
+            mobile ? "hidden" : "pointer-events-none absolute opacity-90 left-0"
+          }
+        >
+          <g opacity="0.34" filter="url(#filter0_f_3716_10789)">
+            <path
+              d="M-317.424 880.571C-47.1374 695.728 80.3732 883.736 198.336 765.773C316.299 647.81 316.299 456.554 198.336 338.591C80.3731 220.628 -110.883 220.628 -228.846 338.591C-346.809 456.554 -607.204 1121.57 -317.424 880.571Z"
+              fill="url(#paint0_radial_3716_10789)"
+            />
+          </g>
+          <defs>
+            <filter
+              id="filter0_f_3716_10789"
+              x="-699.465"
+              y="0.118652"
+              width="1236.27"
+              height="1182.65"
+              filterUnits="userSpaceOnUse"
+              color-interpolation-filters="sRGB"
+            >
+              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feBlend
+                mode="normal"
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <feGaussianBlur
+                stdDeviation="125"
+                result="effect1_foregroundBlur_3716_10789"
+              />
+            </filter>
+            <radialGradient
+              id="paint0_radial_3716_10789"
+              cx="0"
+              cy="0"
+              r="1"
+              gradientUnits="userSpaceOnUse"
+              gradientTransform="translate(-15.2548 552.182) rotate(45) scale(302.063 302.063)"
+            >
+              <stop offset="0.442708" stop-color="#992D81" />
+              <stop offset="1" stop-color="#6029DB" />
             </radialGradient>
           </defs>
         </svg>
