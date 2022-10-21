@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import React from "react";
 import classnames from "classnames";
 import styles from "../styles/landing.module.css";
@@ -26,7 +26,7 @@ const pCircles = [
     url: "#circle2",
     x: -350,
     y: -100,
-    z: 10,
+    z: 14,
     mx: -600,
     my: -220,
     r: 211,
@@ -53,7 +53,7 @@ const pCircles = [
     url: "#circle5",
     x: -500,
     y: 150,
-    z: 15,
+    z: 12,
     mx: -500,
     my: -400,
     r: 74,
@@ -62,7 +62,7 @@ const pCircles = [
     url: "#circle6",
     x: -120,
     y: -100,
-    z: 12,
+    z: 10,
     mx: -700,
     my: -100,
     r: 84,
@@ -71,7 +71,7 @@ const pCircles = [
     url: "#circle7",
     x: 30,
     y: -340,
-    z: 18,
+    z: 16,
     mx: -700,
     my: 0,
     r: 106,
@@ -167,6 +167,15 @@ export default function Landing() {
   });
   const [entityList, setEntityList] = useState([]);
   const [mobile, setMobile] = useState(false);
+  const [isVisible, setVisible] = useState(true);
+  const domRef = useRef();
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => setVisible(entry.isIntersecting));
+    });
+    observer.observe(domRef.current);
+    return () => observer.unobserve(domRef.current);
+  }, []);
 
   function detectWindowSize() {
     if (typeof window !== "undefined") {
@@ -2454,9 +2463,9 @@ export default function Landing() {
               width="1236.27"
               height="1182.65"
               filterUnits="userSpaceOnUse"
-              color-interpolation-filters="sRGB"
+              colorInterpolationFilters="sRGB"
             >
-              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feFlood floodOpacity="0" result="BackgroundImageFix" />
               <feBlend
                 mode="normal"
                 in="SourceGraphic"
@@ -2476,8 +2485,8 @@ export default function Landing() {
               gradientUnits="userSpaceOnUse"
               gradientTransform="translate(-15.2548 552.182) rotate(45) scale(302.063 302.063)"
             >
-              <stop offset="0.442708" stop-color="#992D81" />
-              <stop offset="1" stop-color="#6029DB" />
+              <stop offset="0.442708" stopColor="#992D81" />
+              <stop offset="1" stopColor="#6029DB" />
             </radialGradient>
           </defs>
         </svg>
@@ -2811,7 +2820,15 @@ export default function Landing() {
 
       <section className={classnames([styles.section])}>
         <div className="grid sm:grid-cols-2 sm:grid-row-1 grid-cols-1 grid-row-2 sm:gap-6 gap-4">
-          <div className={styles.openSource + " relative"}>
+          <div
+            className={classnames(
+              styles.openSource,
+              styles.fadeInDown,
+              "relative",
+              isVisible ? styles.isVisible : ""
+            )}
+            ref={domRef}
+          >
             <div>
               <img src="/opensource.svg"></img>
             </div>
@@ -2846,7 +2863,14 @@ export default function Landing() {
               </div>
             </div>
           </div>
-          <div className={styles.openSource + " relative"}>
+          <div
+            className={classnames(
+              styles.openSource,
+              styles.fadeInDown2,
+              "relative",
+              isVisible ? styles.isVisible : ""
+            )}
+          >
             <div>
               <img src="/incentivization.svg"></img>
             </div>
