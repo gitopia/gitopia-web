@@ -291,7 +291,7 @@
 }
 
 .collaborationsBenefitsCard1 {
-  margin-top: 50px;
+  margin-top: 30px;
   margin-right: 80px;
 }
 
@@ -324,6 +324,7 @@
 }
 
 .collaborationsBenefitsCard1Button {
+  margin-top: 80px;
   width: 318px;
   display: flex;
   justify-content: left;
