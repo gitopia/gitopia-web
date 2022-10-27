@@ -59,6 +59,12 @@ Start a development server
 yarn dev
 ```
 
+Test your code for linting errors
+
+```bash
+yarn lint
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## License
