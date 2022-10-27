@@ -1,4 +1,8 @@
-Frontend app for interacting with Gitopia chain.
+# Gitopia Web
+
+![Gitopia](https://github.com/gitopia/gitopia-web/blob/master/public/og-gitopia.jpg)
+
+Web frontend app for interacting with Gitopia chain.
 
 ## Local setup
 
@@ -57,6 +61,12 @@ Start a development server
 
 ```bash
 yarn dev
+```
+
+Test your code for linting errors
+
+```bash
+yarn lint
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

@@ -1,5 +1,25 @@
 ## Changelog
 
+### v1.0.0 - 27th Oct 2022
+
+User and Dao profile overhaul
+
+- Support revamed Gitopia APIs
+- Username creation now mandatory for all other interactions
+- User and Dao profile have expanded fields and support updation
+- GraphQL query integrated for profile's commit history timeline
+- Most pages have a basic mobile view
+- File viewer now supports images and markdown rendering
+- Landing page updated
+
+### v0.3.0 - 5th Apr 2022
+
+Framework updates and Task queue implementation
+
+- Upgrade Next.js and DaisyUI packages
+- New invoke flow for forking and pull request merging
+- Git server authorizations
+
 ### v0.2.0 - 5th Feb 2022
 
 Collaborative and pull request features
