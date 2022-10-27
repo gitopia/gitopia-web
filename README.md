@@ -1,4 +1,8 @@
-Frontend app for interacting with Gitopia chain.
+# Gitopia Web
+
+![Gitopia](https://github.com/gitopia/gitopia-web/blob/master/public/og-gitopia.jpg)
+
+Web frontend app for interacting with Gitopia chain.
 
 ## Local setup
 
