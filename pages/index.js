@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import React from "react";
 import classnames from "classnames";
 import styles from "../styles/landing.module.css";
@@ -17,7 +17,7 @@ const pCircles = [
     url: "#circle1",
     x: 800,
     y: -50,
-    z: 5,
+    z: 8,
     mx: 440,
     my: -280,
     r: 166,
@@ -26,7 +26,7 @@ const pCircles = [
     url: "#circle2",
     x: -350,
     y: -100,
-    z: 9,
+    z: 14,
     mx: -600,
     my: -220,
     r: 211,
@@ -35,7 +35,7 @@ const pCircles = [
     url: "#circle3",
     x: 470,
     y: 180,
-    z: 7,
+    z: 5,
     mx: 800,
     my: 0,
     r: 134,
@@ -44,7 +44,7 @@ const pCircles = [
     url: "#circle4",
     x: 130,
     y: 200,
-    z: 9,
+    z: 12,
     mx: 450,
     my: 100,
     r: 64,
@@ -53,7 +53,7 @@ const pCircles = [
     url: "#circle5",
     x: -500,
     y: 150,
-    z: 15,
+    z: 12,
     mx: -500,
     my: -400,
     r: 74,
@@ -62,7 +62,7 @@ const pCircles = [
     url: "#circle6",
     x: -120,
     y: -100,
-    z: 13,
+    z: 10,
     mx: -700,
     my: -100,
     r: 84,
@@ -71,7 +71,7 @@ const pCircles = [
     url: "#circle7",
     x: 30,
     y: -340,
-    z: 13,
+    z: 16,
     mx: -700,
     my: 0,
     r: 106,
@@ -167,6 +167,15 @@ export default function Landing() {
   });
   const [entityList, setEntityList] = useState([]);
   const [mobile, setMobile] = useState(false);
+  const [isVisible, setVisible] = useState(true);
+  const domRef = useRef();
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => setVisible(entry.isIntersecting));
+    });
+    observer.observe(domRef.current);
+    return () => observer.unobserve(domRef.current);
+  }, []);
 
   function detectWindowSize() {
     if (typeof window !== "undefined") {
@@ -550,7 +559,7 @@ export default function Landing() {
           className={
             styles.planet +
             " absolute pointer-events-none z-1 " +
-            (mobile ? "-right-14" : "top-14 left-20")
+            (mobile ? "-right-14" : "top-18 lg:top-14 -left-5 lg:left-20")
           }
           src="./star-1.svg"
           width={mobile ? "130" : "244"}
@@ -569,7 +578,7 @@ export default function Landing() {
             " absolute pointer-events-none z-1  " +
             (mobile
               ? " -left-8 blur-[1px] opacity-70 top-1/2 pt-5"
-              : " top-3/4 left-10 mr-10")
+              : " top-3/4 left-0 lg:top-3/4 lg:left-10 mr-10")
           }
           src="./car.svg"
           width={mobile ? "175" : "487"}
@@ -578,7 +587,7 @@ export default function Landing() {
         <img
           className={
             "absolute pointer-events-none z-1  " +
-            (mobile ? "hidden" : "top-0 left-2/3 top-2/3")
+            (mobile ? "hidden" : " left-3/4 lg:left-2/3 top-2/3")
           }
           src="./star-3.svg"
         />
@@ -586,7 +595,9 @@ export default function Landing() {
           className={
             styles.moon +
             " absolute pointer-events-none z-1  " +
-            (mobile ? "top-1/3 mt-20" : "top-1/2 left-2/3")
+            (mobile
+              ? "top-1/3 mt-20"
+              : "  top-3/4 lg:top-1/2 right-0 lg:left-2/3")
           }
           src="./moon.svg"
           width={mobile ? "239" : "423"}
@@ -635,7 +646,7 @@ export default function Landing() {
         <img
           className={
             "absolute pointer-events-none z-1  " +
-            (mobile ? " -left-10 top-1/3" : " bottom-0 left-1/2")
+            (mobile ? " -left-10 top-1/3" : " bottom-1/2 lg:bottom-0 left-1/2")
           }
           src="./shootingStar3.svg"
         />
@@ -2381,7 +2392,11 @@ export default function Landing() {
           viewBox="0 0 453 1024"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className={mobile ? "hidden" : "pointer-events-none absolute right-0"}
+          className={
+            mobile
+              ? "hidden"
+              : "pointer-events-none absolute right-0 opacity-90"
+          }
         >
           <g filter="url(#filter0_f_3091_9106)">
             <path
@@ -2418,6 +2433,57 @@ export default function Landing() {
               r="1"
               gradientUnits="userSpaceOnUse"
               gradientTransform="translate(481.836 481.836) rotate(135) scale(231.815 231.815)"
+            >
+              <stop offset="0.442708" stopColor="#992D81" />
+              <stop offset="1" stopColor="#6029DB" />
+            </radialGradient>
+          </defs>
+        </svg>
+        <svg
+          width="537"
+          height="1183"
+          viewBox="0 0 537 1183"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={
+            mobile ? "hidden" : "pointer-events-none absolute opacity-90 left-0"
+          }
+        >
+          <g opacity="0.34" filter="url(#filter0_f_3716_10789)">
+            <path
+              d="M-317.424 880.571C-47.1374 695.728 80.3732 883.736 198.336 765.773C316.299 647.81 316.299 456.554 198.336 338.591C80.3731 220.628 -110.883 220.628 -228.846 338.591C-346.809 456.554 -607.204 1121.57 -317.424 880.571Z"
+              fill="url(#paint0_radial_3716_10789)"
+            />
+          </g>
+          <defs>
+            <filter
+              id="filter0_f_3716_10789"
+              x="-699.465"
+              y="0.118652"
+              width="1236.27"
+              height="1182.65"
+              filterUnits="userSpaceOnUse"
+              colorInterpolationFilters="sRGB"
+            >
+              <feFlood floodOpacity="0" result="BackgroundImageFix" />
+              <feBlend
+                mode="normal"
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <feGaussianBlur
+                stdDeviation="125"
+                result="effect1_foregroundBlur_3716_10789"
+              />
+            </filter>
+            <radialGradient
+              id="paint0_radial_3716_10789"
+              cx="0"
+              cy="0"
+              r="1"
+              gradientUnits="userSpaceOnUse"
+              gradientTransform="translate(-15.2548 552.182) rotate(45) scale(302.063 302.063)"
             >
               <stop offset="0.442708" stopColor="#992D81" />
               <stop offset="1" stopColor="#6029DB" />
@@ -2503,7 +2569,7 @@ export default function Landing() {
                   </div>
                   <div className="flex mb-4">
                     <div className="ml-20 sm:ml-2 mt-2">🚀</div>
-                    <div className="ml-4 leading-5">
+                    <div className="ml-4 leading-5 text-[#aaacae]">
                       Reserve your username
                       <br /> before others take it! 👆
                     </div>
@@ -2754,7 +2820,15 @@ export default function Landing() {
 
       <section className={classnames([styles.section])}>
         <div className="grid sm:grid-cols-2 sm:grid-row-1 grid-cols-1 grid-row-2 sm:gap-6 gap-4">
-          <div className={styles.openSource + " relative"}>
+          <div
+            className={classnames(
+              styles.openSource,
+              styles.fadeInDown,
+              "relative",
+              isVisible ? styles.isVisible : ""
+            )}
+            ref={domRef}
+          >
             <div>
               <img src="/opensource.svg"></img>
             </div>
@@ -2789,7 +2863,14 @@ export default function Landing() {
               </div>
             </div>
           </div>
-          <div className={styles.openSource + " relative"}>
+          <div
+            className={classnames(
+              styles.openSource,
+              styles.fadeInDown2,
+              "relative",
+              isVisible ? styles.isVisible : ""
+            )}
+          >
             <div>
               <img src="/incentivization.svg"></img>
             </div>
@@ -2851,7 +2932,7 @@ export default function Landing() {
           height={mobile ? "74" : "227"}
           width={mobile ? "88" : "210"}
           id="parallax"
-          value="10"
+          value="2"
         />
         <img
           src="./gitopia-coin.svg"
@@ -2859,13 +2940,13 @@ export default function Landing() {
             "absolute -z-10 " + (mobile ? " hidden" : " right-3/4 bottom-1/2")
           }
           id="parallax"
-          value="5"
+          value="3"
         />
         <img
           src="./gitopia-coin-1.svg"
           className={mobile ? "hidden" : "absolute -z-10 left-1/2 top-1/3"}
           id="parallax"
-          value="2"
+          value="10"
         />
         <svg
           width="726"
@@ -3004,7 +3085,7 @@ export default function Landing() {
           width={"56"}
           height={"56"}
           id="parallax"
-          value="5"
+          value="4"
         />
         <img
           src="./getStartedCoin-2.svg"
@@ -3013,7 +3094,7 @@ export default function Landing() {
             (mobile ? " left-1/4 -bottom-5" : " left-16 bottom-0")
           }
           id="parallax"
-          value="2"
+          value="18"
         />
         <img
           src="./getStartedCoin-3.svg"
@@ -3024,7 +3105,7 @@ export default function Landing() {
           width={mobile ? "43" : ""}
           height={mobile ? "43" : ""}
           id="parallax"
-          value="5"
+          value="8"
         />
         <img
           src="./getStartedCoin-4.svg"
@@ -3034,7 +3115,7 @@ export default function Landing() {
               : "absolute -z-10 opacity-100 pointer-events-none right-16 pr-32 top-3/4"
           }
           id="parallax"
-          value="2"
+          value="14"
         />
         <img
           src="./getStartedCoin-5.svg"
@@ -3057,7 +3138,7 @@ export default function Landing() {
               : "absolute -z-10  opacity-100 pointer-events-none right-5 top-2/3"
           }
           id="parallax"
-          value="5"
+          value="3"
         />
         <img
           src="./getStartedCoin-4.svg"
@@ -3067,7 +3148,7 @@ export default function Landing() {
               : "absolute -z-10  opacity-100 pointer-events-none -right-5 bottom-0"
           }
           id="parallax"
-          value="2"
+          value="16"
         />
         {mobile ? (
           <svg
@@ -3918,7 +3999,7 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className={"mt-16 sm:mt-0 sm:ml-16  " + styles.teamCard}>
+        <div className={"mt-16 sm:mt-0 " + styles.teamCard}>
           <img
             className={styles.teamImage}
             src="/avatar.svg"
