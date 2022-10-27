@@ -47,8 +47,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Contributing
 
-We welcome any bugfixes or optimizations from communinty. For requesting any feature please create an issue first.
-Detailed guidelines for creating pull requests will be updated soon.
+Gitopia Web is an open source project and contributions from community are always welcome. Discussion and development majorly take place on the Gitopia via issues and proposals -- everyone is welcome to post bugs, feature requests, comments and pull requests to Gitopia. (read [Contribution Guidelines](CONTRIBUTING.md) and [Coding Guidelines](CodingGuidelines.md).
 
 Setup your local environment variables
 
