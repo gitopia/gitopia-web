@@ -3800,7 +3800,7 @@ export default function Landing() {
 
             <div>
               <div className={styles.backers2Name}>Sandeep Nailwal</div>
-              <div className={styles.backers2Title}>Co-founder polygon</div>
+              <div className={styles.backers2Title}>Co-founder Polygon</div>
             </div>
           </div>
           <div className={styles.backers2 + " flex"}>
