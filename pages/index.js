@@ -170,11 +170,17 @@ export default function Landing() {
   const [isVisible, setVisible] = useState(true);
   const domRef = useRef();
   useEffect(() => {
+    let domRefValue = null;
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => setVisible(entry.isIntersecting));
     });
-    observer.observe(domRef.current);
-    return () => observer.unobserve(domRef.current);
+
+    if (domRef.current) {
+      observer.observe(domRef.current);
+      domRefValue = domRef.current;
+    }
+
+    return () => observer.unobserve(domRefValue);
   }, []);
 
   function detectWindowSize() {
