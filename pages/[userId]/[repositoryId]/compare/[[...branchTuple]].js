@@ -22,6 +22,8 @@ import Label from "../../../../components/repository/label";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import getPullDiff from "../../../../helpers/getPullDiff";
 import getRepository from "../../../../helpers/getRepository";
+import getUser from "../../../../helpers/getUser";
+import getDao from "../../../../helpers/getDao";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import useRepository from "../../../../hooks/useRepository";
 import getAllRepositoryBranch from "../../../../helpers/getAllRepositoryBranch";
@@ -84,20 +86,56 @@ function RepositoryCompareView(props) {
     }
   };
 
+  const getOwnerDetails = async (repo) => {
+    if (repo) {
+      if (repo.owner.type === "USER") {
+        let ownerDetails = await getUser(repo.owner.id);
+        if (ownerDetails)
+          return {
+            type: repo.owner.type,
+            id:
+              ownerDetails.username !== ""
+                ? ownerDetails.username
+                : repo.owner.id,
+            address: repo.owner.id,
+            username: ownerDetails.username,
+            avatarUrl: ownerDetails.avatarUrl,
+          };
+        else return repo.owner;
+      } else {
+        let ownerDetails = await getDao(repo.owner.id);
+        if (ownerDetails)
+          return {
+            type: repo.owner.type,
+            id: ownerDetails.name,
+            address: repo.owner.id,
+            username: ownerDetails.name,
+            avatarUrl: ownerDetails.avatarUrl,
+          };
+        else return repo.owner;
+      }
+    }
+  };
+
   const refreshRepositoryForks = async () => {
     const r = repository;
     if (r.id) {
       if (r.forks.length) {
         const pr = r.forks.map((r) => getRepository(r));
         const repos = await Promise.all(pr);
-        setForkedRepos(repos);
+        for (let i = 0; i < repos.length; i++) {
+          repos[i].owner = await getOwnerDetails(repos[i]);
+        }
         console.log("forked repos", repos);
+        setForkedRepos(repos);
       }
       if (r.parent && r.parent !== "0") {
         const repo = await getRepository(r.parent);
-        if (repo) {
-          setParentRepo(repo);
-        }
+        const ownerDetails = await getOwnerDetails(repo);
+        setParentRepo({
+          ...repo,
+          owner: ownerDetails,
+        });
       }
     }
   };
@@ -152,6 +190,8 @@ function RepositoryCompareView(props) {
         sourceRepo.branches,
         sourceRepo.tags
       );
+
+      sourceRepo.owner = await getOwnerDetails(sourceRepo);
 
       if (sourceSha && targetSha) {
         console.log(
