@@ -52,8 +52,8 @@ export default function usePullRequest(repository) {
         }
       } else {
         const forkRepo = await getRepository(p.head.repositoryId);
-        forkRepo.branches = await getAllRepositoryBranch(forkRepo.owner.id, forkRepo.name)
-        forkRepo.tags = await getAllRepositoryTag(forkRepo.owner.id, forkRepo.name)
+        forkRepo.branches = await getAllRepositoryBranch(forkRepo.owner.id, forkRepo.name);
+        forkRepo.tags = await getAllRepositoryTag(forkRepo.owner.id, forkRepo.name);
         if (forkRepo) {
           p.head.repository = forkRepo;
           p.base.repository = repository;
