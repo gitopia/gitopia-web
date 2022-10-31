@@ -9,6 +9,15 @@ export default async function getPullRequestCommits(
   headCommitSha = null
 ) {
   let obj = {};
+
+  // invalid sha and branch
+  if (
+    (!validSha.test(baseCommitSha) || !validSha.test(headCommitSha)) &&
+    (!baseBranch || !headBranch)
+  ) {
+    return obj;
+  }
+
   const baseUrl =
     process.env.NODE_ENV === "development"
       ? "/api/pull/commits"
