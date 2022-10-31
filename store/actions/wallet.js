@@ -101,9 +101,16 @@ export const unlockKeplrWallet = () => {
         const offlineSigner = await window.getOfflineSignerAuto(chainId);
         const accounts = await offlineSigner.getAccounts();
         const key = await window.keplr.getKey(chainId);
+        let name = await getUser(accounts[0].address);
         await dispatch({
           type: walletActions.SET_ACTIVE_WALLET,
-          payload: { wallet: { name: key.name, accounts, isKeplr: true } },
+          payload: {
+            wallet: {
+              name: name ? name.username : key.name,
+              accounts,
+              isKeplr: true,
+            },
+          },
         });
         await postWalletUnlocked(offlineSigner, dispatch, getState);
         return accounts[0];

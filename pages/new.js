@@ -203,9 +203,7 @@ function NewRepository(props) {
 const mapStateToProps = (state) => {
   return {
     dashboards: state.user.dashboards,
-    name: state.wallet.activeWallet.isKeplr
-      ? state.wallet.activeWallet?.accounts[0].address
-      : state.wallet.activeWallet?.name,
+    name: state.wallet.activeWallet?.name,
   };
 };
 
