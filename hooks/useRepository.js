@@ -40,8 +40,8 @@ export default function useRepository() {
         let ownerDetails = {};
 
         const [branches, tags] = await Promise.all([
-          getAllRepositoryBranch(repository.owner.id, repository.name),
-          getAllRepositoryTag(repository.owner.id, repository.name),
+          getAllRepositoryBranch(r.owner.id, r.name),
+          getAllRepositoryTag(r.owner.id, r.name),
         ]);
 
         if (r.owner.type === "USER") {
