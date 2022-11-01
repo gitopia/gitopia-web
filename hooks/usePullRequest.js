@@ -4,6 +4,8 @@ import getRepositoryPull from "../helpers/getRepositoryPull";
 import getBranchSha from "../helpers/getBranchSha";
 import { useRouter } from "next/router";
 import { useErrorStatus } from "./errorHandler";
+import getAllRepositoryBranch from "../helpers/getAllRepositoryBranch";
+import getAllRepositoryTag from "../helpers/getAllRepositoryTag";
 
 export default function usePullRequest(repository) {
   const router = useRouter();
@@ -50,6 +52,8 @@ export default function usePullRequest(repository) {
         }
       } else {
         const forkRepo = await getRepository(p.head.repositoryId);
+        forkRepo.branches = await getAllRepositoryBranch(forkRepo.owner.id, forkRepo.name);
+        forkRepo.tags = await getAllRepositoryTag(forkRepo.owner.id, forkRepo.name);
         if (forkRepo) {
           p.head.repository = forkRepo;
           p.base.repository = repository;
