@@ -7,6 +7,7 @@ import {
 import { getLedgerSigner, updateUserBalance } from "./wallet";
 import { notify } from "reapop";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
+import getNodeInfo from "../../helpers/getNodeInfo";
 
 export const createUser = ({ username, name, bio, avatarUrl }) => {
   return async (dispatch, getState) => {
@@ -77,7 +78,6 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
             });
             await getUserDetailsForSelectedAddress()(dispatch, getState);
             const daos = await getUserDaoAll(newWallet.accounts[0].address);
-            console.log("got daos", daos);
             await dispatch({
               type: userActions.INIT_DASHBOARDS,
               payload: {
@@ -93,6 +93,44 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
           } catch (e) {
             console.error(e);
             return null;
+          }
+        } else if (newWallet.isKeplr) {
+          if (window.keplr && window.getOfflineSigner) {
+            try {
+              const info = await getNodeInfo();
+              const chainId = info.default_node_info.network;
+              const offlineSigner = await window.getOfflineSignerAuto(chainId);
+              const accounts = await offlineSigner.getAccounts();
+              const key = await window.keplr.getKey(chainId);
+              await dispatch({
+                type: walletActions.SET_ACTIVE_WALLET,
+                payload: {
+                  wallet: {
+                    name: username,
+                    accounts,
+                    isKeplr: true,
+                  },
+                },
+              });
+              await getUserDetailsForSelectedAddress()(dispatch, getState);
+              const daos = await getUserDaoAll(newWallet.accounts[0].address);
+              await dispatch({
+                type: userActions.INIT_DASHBOARDS,
+                payload: {
+                  name: newWallet.name,
+                  id: newWallet.accounts[0].address,
+                  daos: daos,
+                },
+              });
+              await setCurrentDashboard(newWallet.accounts[0].address)(
+                dispatch,
+                getState
+              );
+              await postWalletUnlocked(offlineSigner, dispatch, getState);
+              return accounts[0];
+            } catch (e) {
+              console.error(e);
+            }
           }
         } else {
           dispatch(
