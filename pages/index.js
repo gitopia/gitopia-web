@@ -2505,7 +2505,7 @@ export default function Landing() {
             framework. The use of Cosmos SDK has enabled us to leverage the
             Tendermint BFT consensus engine and build the blockchain that is
             optimized for Gitopia’s use case.
-            {mobile ? <div className="mt-5"> </div> : ""}
+            {mobile ? <div className="mt-5"> </div> : " "}
             Along with the high throughput and fast finality, Cosmos IBC also
             enables other IBC compatible chains to integrate directly with
             Gitopia.
@@ -2621,7 +2621,7 @@ export default function Landing() {
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   Helps you create a copy of the repository hosted on Gitopia to
-                  experiment with changes or use as a basis.
+                  experiment with changes or use as a basis
                 </div>
               </div>
               <div className="items-left text-left">
@@ -2633,7 +2633,7 @@ export default function Landing() {
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   Users can now set usernames for their wallet addresses on
-                  Gitopia.
+                  Gitopia
                 </div>
               </div>
             </div>
@@ -3362,12 +3362,12 @@ export default function Landing() {
                 Discover the incredible benefits of Web3 specific Workflows
               </div>
               <div className={" " + styles.collaborationsBenefitsCard1Body}>
-                Gitopia is a decentralized and community-controlled alternative
-                to code collaboration platforms like GitHub, GitLab, and
-                Bitbucket. {mobile ? <div className="mt-5"> </div> : ""} Gitopia
-                offers Open Source and Web3 with wide variety of tailor-made
-                workflows for better development of projects and engaging with
-                the contributors.
+                Gitopia is a decentralized and community-governed alternative to
+                code collaboration platforms like GitHub, GitLab, and Bitbucket.{" "}
+                {mobile ? <div className="mt-5"> </div> : ""} Gitopia offers
+                Open Source and Web3 with wide variety of tailor-made workflows
+                for better development of projects and engaging with the
+                contributors.
               </div>
               {!mobile ? (
                 <div
@@ -3378,7 +3378,7 @@ export default function Landing() {
                 >
                   <Link href="/account/daos/new">
                     <a className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                      Create DAO
+                      Create a DAO
                     </a>
                   </Link>
                 </div>
@@ -3398,7 +3398,7 @@ export default function Landing() {
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   Community can raise or vote on proposals to help shape the
-                  future of Gitopia.
+                  future of Gitopia
                 </div>
               </div>
               <div className="items-left text-left">
@@ -3410,8 +3410,8 @@ export default function Landing() {
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   DAOs at Gitopia would provide a decentralized code management
-                  tool for people and institutions that do not know nor trust
-                  each other.
+                  tool for people and institutions that don't know or trust each
+                  other
                 </div>
               </div>
               <div className="items-left text-left">
@@ -3423,7 +3423,7 @@ export default function Landing() {
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   Create bounties for the issues you wish to get built with
-                  community and reward contributors on their code submissions.
+                  community and reward contributors on their code submissions
                 </div>
               </div>
               <div className="items-left text-left">
