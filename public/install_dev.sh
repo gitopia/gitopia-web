@@ -16,7 +16,7 @@ function install {
 	PROG="git-remote-gitopia"
 	PROG2="git-gitopia"
 	MOVE="true"
-	VERSION="1.1.0"
+	VERSION="1.2.0"
 	INSECURE="false"
 	OUT_DIR="/usr/local/bin"
 	OBJECTS_URL="https://server.gitopia.dev"
