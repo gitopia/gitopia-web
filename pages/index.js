@@ -3424,8 +3424,8 @@ export default function Landing() {
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   DAOs at Gitopia would provide a decentralized code management
-                  tool for people and institutions that don't know or trust each
-                  other
+                  tool for people and institutions that don`&apos;`t know or
+                  trust each other
                 </div>
               </div>
               <div className="items-left text-left">
