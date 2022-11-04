@@ -40,9 +40,7 @@ function RepositoryHeader({ repository, ...props }) {
   const router = useRouter();
 
   const avatarLink =
-    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === repository.owner.id
-      ? "/logo-g.svg"
-      : repository.owner.avatarUrl !== ""
+    repository.owner.avatarUrl !== ""
       ? repository.owner.avatarUrl
       : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
         repository.owner?.id?.slice(-1);

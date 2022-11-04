@@ -214,7 +214,10 @@ function GitopiaLive(props) {
           </div>
         </div>
         <div className="flex-1 order-1 sm:order-2 mt-4 max-w-3xl">
-          <SupportOwner ownerAddress={props.demoAddress} isMobile={isMobile} />
+          <SupportOwner
+            ownerAddress={props.repository.owner.address}
+            isMobile={isMobile}
+          />
           <div className="mt-8 flex justify-start">
             <div className="">
               <BranchSelector
