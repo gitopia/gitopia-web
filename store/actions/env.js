@@ -58,6 +58,52 @@ export const sendTransaction = ({
   };
 };
 
+export const signMessage = ({ data = {} }) => {
+  return async (dispatch, getState) => {
+    try {
+      await setupTxClients(dispatch, getState);
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+    const { wallet, env } = getState();
+    let notifId;
+    if (wallet.activeWallet && wallet.activeWallet.isLedger) {
+      const msg = dispatch(
+        notify("Please sign the message on your ledger", "loading", {
+          dismissible: false,
+          dismissAfter: 0,
+        })
+      );
+      notifId = msg.payload.id;
+    }
+    try {
+      const msg = await env.txClient.msgSignData({
+        signer: wallet.selectedAddress,
+        data,
+      });
+      const res = await env.txClient.sign([msg], JSON.stringify(data));
+      dispatch(dismissNotification(notifId));
+      return res;
+    } catch (e) {
+      switch (e.message) {
+        case "Ledger Native Error: DisconnectedDeviceDuringOperation: The device was disconnected.":
+          initLedgerTransport({ force: true })(dispatch, getState);
+          dispatch({
+            type: envActions.SET_CLIENTS,
+            payload: {
+              txClient: null,
+              queryClient: env.queryClient,
+            },
+          });
+          setupTxClients(dispatch, getState);
+      }
+      dispatch(dismissNotification(notifId));
+      throw new Error(e.message);
+    }
+  };
+};
+
 export const setupTxClients = async (dispatch, getState) => {
   const { env, wallet } = getState();
   if (wallet.activeWallet) {

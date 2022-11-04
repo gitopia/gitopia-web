@@ -3,6 +3,7 @@ import {
   sendTransaction,
   setupTxClients,
   handlePostingTransaction,
+  signMessage,
 } from "./env";
 import { updateUserBalance, refreshCurrentDashboard } from "./wallet";
 import { notify } from "reapop";
@@ -303,5 +304,20 @@ export const updateAddressGrant = (address, permission, allow) => {
       permission,
     });
     return await handlePostingTransaction(dispatch, getState, message);
+  };
+};
+
+export const calculateGithubRewards = () => {
+  return async (dispatch, getState) => {
+    const data = {
+      // Any arbitrary object
+      access_token: "ASDASD",
+    };
+    try {
+      return await signMessage({ data })(dispatch, getState);
+    } catch (e) {
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
   };
 };

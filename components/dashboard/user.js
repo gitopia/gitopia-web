@@ -1,5 +1,6 @@
 import Link from "next/link";
 import FaucetReceiver from "../faucetReceiver";
+import GithubRewards from "../githubRewards";
 import GreetUser from "../greetUser";
 import KnowledgeCenter from "./knowledgeCenter";
 
@@ -25,6 +26,7 @@ function UserDashboard(props) {
       <div className="mb-8">
         <GreetUser />
       </div>
+      <GithubRewards />
       <div className="sm:flex mt-4">
         <div className="flex flex-1 sm:mr-2 bg-box-grad-tl bg-base-200 p-4 rounded-md">
           <div className="flex-none bg-box-grad-v w-28 sm:w-40 h-full rounded-md flex items-center">
