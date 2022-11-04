@@ -15,7 +15,7 @@ import getUser from "../../helpers/getUser";
 
 let ledgerTransport;
 
-const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
+export const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
   const { env, wallet } = getState();
 
   dispatch({
@@ -101,12 +101,12 @@ export const unlockKeplrWallet = () => {
         const offlineSigner = await window.getOfflineSignerAuto(chainId);
         const accounts = await offlineSigner.getAccounts();
         const key = await window.keplr.getKey(chainId);
-        let name = await getUser(accounts[0].address);
+        let user = await getUser(accounts[0].address);
         await dispatch({
           type: walletActions.SET_ACTIVE_WALLET,
           payload: {
             wallet: {
-              name: name ? name.username : key.name,
+              name: user?.username ? user.username : key.name,
               accounts,
               isKeplr: true,
             },
@@ -163,17 +163,7 @@ export const unlockWallet = ({ name, password }) => {
       console.error(e);
       return false;
     }
-    if (wallet.name.includes("untitled-wallet") || !wallet.isUsernameSetup) {
-      dispatch({
-        type: walletActions.SET_ACTIVE_WALLET,
-        payload: { wallet },
-      });
-    } else {
-      dispatch({
-        type: walletActions.SET_ACTIVE_WALLET,
-        payload: { wallet: { name: wallet.name, accounts: wallet.accounts } },
-      });
-    }
+
     if (wallet.accounts.length > 0) {
       const DirectSecp256k1HdWallet = (await import("@cosmjs/proto-signing"))
         .DirectSecp256k1HdWallet;
@@ -183,6 +173,50 @@ export const unlockWallet = ({ name, password }) => {
           prefix: "gitopia",
         }
       );
+
+      // Check if user exists, rename the old wallet to correct username
+      let user = await getUser(wallet.accounts[0].address),
+        oldWalletName,
+        oldWalletIndex = state.wallets.findIndex((x) => x.name === name);
+
+      if (user?.username) {
+        const CryptoJS = (await import("crypto-js")).default;
+        oldWalletName = name;
+        wallet.name = user.username;
+        encryptedWallet = CryptoJS.AES.encrypt(
+          JSON.stringify(wallet),
+          password
+        ).toString();
+
+        if (name !== user.username) {
+          await dispatch({
+            type: walletActions.REMOVE_WALLET,
+            payload: { name: oldWalletName },
+          });
+
+          await dispatch({
+            type: walletActions.ADD_WALLET,
+            payload: { wallet, encryptedWallet, index: oldWalletIndex },
+          });
+
+          dispatch({
+            type: walletActions.STORE_WALLETS,
+          });
+        } else {
+          dispatch({
+            type: walletActions.SET_ACTIVE_WALLET,
+            payload: {
+              wallet,
+            },
+          });
+        }
+      } else {
+        dispatch({
+          type: walletActions.SET_ACTIVE_WALLET,
+          payload: { wallet },
+        });
+      }
+
       try {
         await postWalletUnlocked(accountSigner, dispatch, getState);
       } catch (e) {
@@ -226,6 +260,7 @@ export const createWalletWithMnemonic = ({
     const [firstAccount] = await accountSigner.getAccounts();
     const account = { address: firstAccount.address, pathIncrement: 0 };
     const user = await getUser(firstAccount.address);
+    let oldWalletName = wallet.name;
     if (user?.username) {
       wallet.name = user.username;
     }
@@ -239,7 +274,7 @@ export const createWalletWithMnemonic = ({
 
     await dispatch({
       type: walletActions.REMOVE_WALLET,
-      payload: { name: wallet.name },
+      payload: { name: oldWalletName },
     });
 
     await dispatch({
@@ -252,49 +287,6 @@ export const createWalletWithMnemonic = ({
     } catch (e) {
       console.error(e);
     }
-    dispatch({ type: walletActions.STORE_WALLETS });
-  };
-};
-
-export const restoreWallet = ({ encrypted, password }) => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    const CryptoJS = (await import("crypto-js")).default;
-    const wallet = JSON.parse(
-      CryptoJS.AES.decrypt(encrypted, password).toString(CryptoJS.enc.Utf8)
-    );
-    let newName = wallet.name;
-    let incr = 1;
-    while (state.wallets.findIndex((x) => x.name == newName) != -1) {
-      newName = wallet.name + "_" + incr;
-      incr++;
-    }
-    wallet.name = newName;
-    const DirectSecp256k1HdWallet = (await import("@cosmjs/proto-signing"))
-      .DirectSecp256k1HdWallet;
-    const accountSigner = await DirectSecp256k1HdWallet.fromMnemonic(
-      wallet.mnemonic,
-      {
-        prefix: wallet.prefix,
-      }
-    );
-
-    const encryptedWallet = CryptoJS.AES.encrypt(
-      JSON.stringify(wallet),
-      password
-    ).toString();
-
-    await dispatch({
-      type: walletActions.ADD_WALLET,
-      payload: { wallet, encryptedWallet },
-    });
-
-    try {
-      await postWalletUnlocked(accountSigner, dispatch, getState);
-    } catch (e) {
-      console.error(e);
-    }
-
     dispatch({ type: walletActions.STORE_WALLETS });
   };
 };
@@ -461,7 +453,7 @@ export const unlockLedgerWallet = ({ name }) => {
     const stringToPath = (await import("@cosmjs/crypto")).stringToPath;
     const { wallet } = getState();
     let accountSigner;
-    const encryptedWallet =
+    let encryptedWallet =
       wallet.wallets[wallet.wallets.findIndex((x) => x.name === name)].wallet;
 
     dispatch({ type: walletActions.START_UNLOCKING_WALLET });
@@ -482,7 +474,7 @@ export const unlockLedgerWallet = ({ name }) => {
       const addr = await accountSigner.ledger.getCosmosAddress();
 
       const CryptoJS = (await import("crypto-js")).default;
-      const wallet = JSON.parse(
+      let wallet = JSON.parse(
         CryptoJS.AES.decrypt(encryptedWallet, "STRONG_LEDGER").toString(
           CryptoJS.enc.Utf8
         )
@@ -499,29 +491,56 @@ export const unlockLedgerWallet = ({ name }) => {
         return null;
       }
 
+      // Check if user exists, rename the old wallet to correct username
+
+      let user = await getUser(addr),
+        oldWalletName,
+        oldWalletIndex = getState().wallet.wallets.findIndex(
+          (x) => x.name === wallet.name
+        );
+      if (user?.username) {
+        const CryptoJS = (await import("crypto-js")).default;
+        oldWalletName = wallet.name;
+        wallet.name = user.username;
+        encryptedWallet = CryptoJS.AES.encrypt(
+          JSON.stringify(wallet),
+          "STRONG_LEDGER"
+        ).toString();
+      }
+
       await dispatch({
-        type: walletActions.SET_ACTIVE_WALLET,
+        type: walletActions.REMOVE_WALLET,
+        payload: { name: oldWalletName },
+      });
+
+      await dispatch({
+        type: walletActions.ADD_EXTERNAL_WALLET,
         payload: {
-          wallet: {
-            name: wallet.name,
-            accounts: [
-              {
-                address: addr,
-                pubkey: pubkey,
-                algo: "secp256k1",
-              },
-            ],
-            isLedger: true,
-          },
+          wallet,
+          encryptedWallet,
+          isLedger: true,
+          index: oldWalletIndex,
         },
       });
+
       await postWalletUnlocked(accountSigner, dispatch, getState);
+
+      dispatch({ type: walletActions.STOP_UNLOCKING_WALLET });
+      dispatch({
+        type: walletActions.STORE_WALLETS,
+      });
 
       return true;
     } catch (e) {
+      let error = e;
       switch (e.message) {
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: The device was disconnected.":
+        case "Ledger Native Error: DisconnectedDeviceDuringOperation: Failed to execute 'transferOut' on 'USBDevice': The device was disconnected.":
           ledgerTransport = null;
+        case "Please close BOLOS and open the Cosmos Ledger app on your Ledger device.":
+          error = {
+            message: "Please open Cosmos Ledger app on your Ledger device.",
+          };
       }
       dispatch(notify(e.message, "error"));
       const { wallet } = getState();
@@ -565,16 +584,17 @@ export const getLedgerSigner = () => {
       const addr = await accountSigner.ledger.getCosmosAddress();
       return { signer: accountSigner, addr: addr };
     } catch (e) {
+      let error = e;
       switch (e.message) {
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: The device was disconnected.":
+        case "Ledger Native Error: DisconnectedDeviceDuringOperation: Failed to execute 'transferOut' on 'USBDevice': The device was disconnected.":
           ledgerTransport = null;
-          return e;
         case "Please close BOLOS and open the Cosmos Ledger app on your Ledger device.":
-          return {
+          error = {
             message: "Please open Cosmos Ledger app on your Ledger device.",
           };
       }
-      return e;
+      return error;
     }
   };
 };
@@ -601,7 +621,12 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
 
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
-      const wallet = { name, accounts: [{ address, path }], isLedger: true };
+      const user = await getUser(address);
+      const wallet = {
+        name: user ? user.username : name,
+        accounts: [{ address, path }],
+        isLedger: true,
+      };
       const password = "STRONG_LEDGER";
       const encryptedWallet = CryptoJS.AES.encrypt(
         JSON.stringify(wallet),
@@ -617,7 +642,7 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
       });
       dispatch({ type: walletActions.STORE_WALLETS });
       await postWalletUnlocked(ledgerSigner, dispatch, getState);
-      return true;
+      return user?.username ? "USER_CREATED" : "WALLET_ADDED";
     } catch (e) {
       console.error(e);
       return null;

@@ -33,8 +33,10 @@ export const sendTransaction = ({
       dispatch(dismissNotification(notifId));
       return result;
     } catch (e) {
+      console.log("SEND", e);
       switch (e.message) {
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: The device was disconnected.":
+        case "Ledger Native Error: DisconnectedDeviceDuringOperation: Failed to execute 'transferOut' on 'USBDevice': The device was disconnected.":
           initLedgerTransport({ force: true })(dispatch, getState);
           dispatch({
             type: envActions.SET_CLIENTS,
@@ -44,6 +46,12 @@ export const sendTransaction = ({
             },
           });
           setupTxClients(dispatch, getState);
+          return e;
+        case "Please close BOLOS and open the Cosmos Ledger app on your Ledger device.":
+          dispatch(dismissNotification(notifId));
+          return {
+            message: "Please open Cosmos Ledger app on your Ledger device.",
+          };
       }
       dispatch(dismissNotification(notifId));
       throw new Error(e.message);

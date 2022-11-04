@@ -26,13 +26,20 @@ const reducer = (state = initialState, action) => {
     }
 
     case walletActions.ADD_WALLET: {
-      let { wallet, encryptedWallet } = action.payload;
+      let { wallet, encryptedWallet, index } = action.payload;
       let wallets = state.wallets;
       if (wallet.name && encryptedWallet) {
-        wallets.push({
-          name: wallet.name,
-          wallet: encryptedWallet,
-        });
+        if (index >= 0 && index <= wallets.length) {
+          wallets.splice(index, 0, {
+            name: wallet.name,
+            wallet: encryptedWallet,
+          });
+        } else {
+          wallets.push({
+            name: wallet.name,
+            wallet: encryptedWallet,
+          });
+        }
         set("lastWallet", wallet);
         return {
           ...state,
@@ -44,7 +51,13 @@ const reducer = (state = initialState, action) => {
     }
 
     case walletActions.ADD_EXTERNAL_WALLET: {
-      let { wallet, isKeplr, isLedger, encryptedWallet } = action.payload;
+      let {
+        wallet,
+        isKeplr,
+        isLedger,
+        encryptedWallet,
+        index,
+      } = action.payload;
       let wallets = state.wallets;
       const item = {
         name: wallet.name,
@@ -54,7 +67,11 @@ const reducer = (state = initialState, action) => {
         item.isLedger = true;
       }
       set("lastWallet", wallet);
-      wallets.push(item);
+      if (index >= 0 && index <= wallets.length) {
+        wallets.splice(index, 0, item);
+      } else {
+        wallets.push(item);
+      }
       return {
         ...state,
         activeWallet: wallet,
