@@ -4,11 +4,7 @@ import {
   setupTxClients,
   handlePostingTransaction,
 } from "./env";
-import {
-  getLedgerSigner,
-  updateUserBalance,
-  postWalletUnlocked,
-} from "./wallet";
+import { updateUserBalance, refreshCurrentDashboard } from "./wallet";
 import { notify } from "reapop";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getNodeInfo from "../../helpers/getNodeInfo";
@@ -36,12 +32,11 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
         let newWallet = { ...wallet.activeWallet };
         newWallet.name = username;
 
-        console.log("newWallet", newWallet);
-        if (newWallet.password) {
+        if (newWallet.password || newWallet.isLedger) {
           const CryptoJS = (await import("crypto-js")).default;
           const encryptedWallet = CryptoJS.AES.encrypt(
             JSON.stringify(newWallet),
-            newWallet.password
+            newWallet.isLedger ? "STRONG_LEDGER" : newWallet.password
           ).toString();
           await dispatch({
             type: walletActions.REMOVE_WALLET,
@@ -55,118 +50,33 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
               wallet: newWallet,
               encryptedWallet,
               index: oldWalletIndex,
+              isLedger: newWallet.isLedger,
             },
           });
           await dispatch({
             type: walletActions.STORE_WALLETS,
           });
-          await dispatch({
-            type: walletActions.SET_ACTIVE_WALLET,
-            payload: { wallet: newWallet },
-          });
-          await getUserDetailsForSelectedAddress()(dispatch, getState);
-          const daos = await getUserDaoAll(newWallet.accounts[0].address);
-          await dispatch({
-            type: userActions.INIT_DASHBOARDS,
-            payload: {
-              name: newWallet.name,
-              id: newWallet.accounts[0].address,
-              daos: daos,
-            },
-          });
           await setCurrentDashboard(newWallet.accounts[0].address)(
             dispatch,
             getState
           );
-        } else if (newWallet.isLedger) {
-          const ledgerSigner = getLedgerSigner();
-          if (!ledgerSigner) return { message: "No connection available" };
-          const CryptoJS = (await import("crypto-js")).default;
-          const encryptedWallet = CryptoJS.AES.encrypt(
-            JSON.stringify(newWallet),
-            "STRONG_LEDGER"
-          ).toString();
-          await dispatch({
-            type: walletActions.REMOVE_WALLET,
-            payload: {
-              name: oldWalletName,
-            },
-          });
-          await dispatch({
-            type: walletActions.ADD_EXTERNAL_WALLET,
-            payload: {
-              isLedger: true,
-              wallet: newWallet,
-              encryptedWallet,
-              index: oldWalletIndex,
-            },
-          });
-          await dispatch({
-            type: walletActions.STORE_WALLETS,
-          });
-          await dispatch({
-            type: walletActions.SET_ACTIVE_WALLET,
-            payload: { wallet: newWallet },
-          });
-          await getUserDetailsForSelectedAddress()(dispatch, getState);
-          const daos = await getUserDaoAll(newWallet.accounts[0].address);
-          await dispatch({
-            type: userActions.INIT_DASHBOARDS,
-            payload: {
-              name: newWallet.name,
-              id: newWallet.accounts[0].address,
-              daos: daos,
-            },
-          });
-          await setCurrentDashboard(newWallet.accounts[0].address)(
-            dispatch,
-            getState
-          );
+          await refreshCurrentDashboard(dispatch, getState);
         } else if (newWallet.isKeplr) {
-          if (window.keplr && window.getOfflineSigner) {
-            try {
-              const info = await getNodeInfo();
-              const chainId = info.default_node_info.network;
-              const offlineSigner = await window.getOfflineSignerAuto(chainId);
-              const accounts = await offlineSigner.getAccounts();
-              const key = await window.keplr.getKey(chainId);
-              await dispatch({
-                type: walletActions.SET_ACTIVE_WALLET,
-                payload: {
-                  wallet: {
-                    name: username,
-                    accounts,
-                    isKeplr: true,
-                  },
-                },
-              });
-              await getUserDetailsForSelectedAddress()(dispatch, getState);
-              const daos = await getUserDaoAll(newWallet.accounts[0].address);
-              await dispatch({
-                type: userActions.INIT_DASHBOARDS,
-                payload: {
-                  name: newWallet.name,
-                  id: newWallet.accounts[0].address,
-                  daos: daos,
-                },
-              });
-              await setCurrentDashboard(newWallet.accounts[0].address)(
-                dispatch,
-                getState
-              );
-              await postWalletUnlocked(offlineSigner, dispatch, getState);
-              return result;
-            } catch (e) {
-              console.error(e);
-            }
-          }
-        } else {
-          dispatch(
-            notify(
-              "Unable to update wallet name, please refresh page to see changes",
-              "error"
-            )
+          await dispatch({
+            type: walletActions.SET_ACTIVE_WALLET,
+            payload: {
+              wallet: {
+                name: username,
+                accounts: newWallet.accounts,
+                isKeplr: true,
+              },
+            },
+          });
+          await setCurrentDashboard(newWallet.accounts[0].address)(
+            dispatch,
+            getState
           );
+          await refreshCurrentDashboard(dispatch, getState);
         }
       }
       return result;
@@ -316,26 +226,15 @@ export const updateUserUsername = (username) => {
             payload: { name: oldWalletName },
           });
 
-          if (newWallet.isLedger) {
-            await dispatch({
-              type: walletActions.ADD_EXTERNAL_WALLET,
-              payload: {
-                wallet: newWallet,
-                encryptedWallet,
-                isLedger: true,
-                index: oldWalletIndex,
-              },
-            });
-          } else {
-            await dispatch({
-              type: walletActions.ADD_WALLET,
-              payload: {
-                wallet: newWallet,
-                encryptedWallet,
-                index: oldWalletIndex,
-              },
-            });
-          }
+          await dispatch({
+            type: walletActions.ADD_WALLET,
+            payload: {
+              wallet: newWallet,
+              encryptedWallet,
+              isLedger: newWallet.isLedger,
+              index: oldWalletIndex,
+            },
+          });
         }
 
         dispatch({

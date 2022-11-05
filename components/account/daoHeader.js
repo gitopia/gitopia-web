@@ -28,7 +28,7 @@ function AccountDaoHeader(props) {
   return (
     <div className="flex flex-col sm:flex-row mb-8 items-start">
       <DaoAvatar dao={props.dao} isEditable={isEditable} refresh={refresh} />
-      <div className="flex-1 max-w-2xl sm:pl-12">
+      <div className="flex-1 max-w-3xl sm:pl-12">
         <DaoName dao={props.dao} isEditable={isEditable} refresh={refresh} />
         <div className="text-type-secondary mb-4">
           <span className="inline-block">

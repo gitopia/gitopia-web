@@ -96,6 +96,9 @@ function AutoLogin(props) {
       res = await props.unlockLedgerWallet({ name: walletName });
       if (res?.message) {
         props.notify(res.message, "error");
+        if (props.getPasswordPromise.reject) {
+          props.getPasswordPromise.reject("Please try again.");
+        }
       }
     }
     if (res) {

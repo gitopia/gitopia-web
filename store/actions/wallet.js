@@ -15,7 +15,7 @@ import getUser from "../../helpers/getUser";
 
 let ledgerTransport;
 
-export const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
+const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
   const { env, wallet } = getState();
 
   dispatch({
@@ -55,16 +55,7 @@ export const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
     });
   }
 
-  await getUserDetailsForSelectedAddress()(dispatch, getState);
-  const daos = await getUserDaoAll(wallet.activeWallet.accounts[0].address);
-  await dispatch({
-    type: userActions.INIT_DASHBOARDS,
-    payload: {
-      name: wallet.activeWallet.name,
-      id: wallet.activeWallet.accounts[0].address,
-      daos: daos,
-    },
-  });
+  await refreshCurrentDashboard(dispatch, getState);
   const { user } = getState();
   const dashboard = find(
     user.dashboards,
@@ -474,12 +465,12 @@ export const unlockLedgerWallet = ({ name }) => {
       const addr = await accountSigner.ledger.getCosmosAddress();
 
       const CryptoJS = (await import("crypto-js")).default;
-      let wallet = JSON.parse(
+      let newWallet = JSON.parse(
         CryptoJS.AES.decrypt(encryptedWallet, "STRONG_LEDGER").toString(
           CryptoJS.enc.Utf8
         )
       );
-      if (addr !== wallet.accounts[0].address) {
+      if (addr !== newWallet.accounts[0].address) {
         dispatch(
           notify("Wallet address not matching Ledger's address", "error")
         );
@@ -495,15 +486,15 @@ export const unlockLedgerWallet = ({ name }) => {
 
       let user = await getUser(addr),
         oldWalletName,
-        oldWalletIndex = getState().wallet.wallets.findIndex(
-          (x) => x.name === wallet.name
+        oldWalletIndex = wallet.wallets.findIndex(
+          (x) => x.name === newWallet.name
         );
       if (user?.username) {
         const CryptoJS = (await import("crypto-js")).default;
-        oldWalletName = wallet.name;
-        wallet.name = user.username;
+        oldWalletName = newWallet.name;
+        newWallet.name = user.username;
         encryptedWallet = CryptoJS.AES.encrypt(
-          JSON.stringify(wallet),
+          JSON.stringify(newWallet),
           "STRONG_LEDGER"
         ).toString();
       }
@@ -514,9 +505,9 @@ export const unlockLedgerWallet = ({ name }) => {
       });
 
       await dispatch({
-        type: walletActions.ADD_EXTERNAL_WALLET,
+        type: walletActions.ADD_WALLET,
         payload: {
-          wallet,
+          wallet: newWallet,
           encryptedWallet,
           isLedger: true,
           index: oldWalletIndex,
@@ -537,19 +528,23 @@ export const unlockLedgerWallet = ({ name }) => {
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: The device was disconnected.":
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: Failed to execute 'transferOut' on 'USBDevice': The device was disconnected.":
           ledgerTransport = null;
+          error = {
+            message:
+              "Ledger was disconneced during operation, please try again",
+          };
+          break;
         case "Please close BOLOS and open the Cosmos Ledger app on your Ledger device.":
           error = {
-            message: "Please open Cosmos Ledger app on your Ledger device.",
+            message: "Please open Cosmos app on your Ledger",
           };
       }
-      dispatch(notify(e.message, "error"));
       const { wallet } = getState();
       if (!wallet.selectedAddress) {
         dispatch({ type: walletActions.SIGN_OUT });
       } else {
         dispatch({ type: walletActions.STOP_UNLOCKING_WALLET });
       }
-      return null;
+      return error;
     }
   };
 };
@@ -589,9 +584,14 @@ export const getLedgerSigner = () => {
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: The device was disconnected.":
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: Failed to execute 'transferOut' on 'USBDevice': The device was disconnected.":
           ledgerTransport = null;
+          error = {
+            message:
+              "Ledger was disconneced during operation, please try again",
+          };
+          break;
         case "Please close BOLOS and open the Cosmos Ledger app on your Ledger device.":
           error = {
-            message: "Please open Cosmos Ledger app on your Ledger device.",
+            message: "Please open Cosmos app on your Ledger",
           };
       }
       return error;
@@ -632,20 +632,47 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
         JSON.stringify(wallet),
         password
       ).toString();
-      dispatch({
-        type: walletActions.ADD_EXTERNAL_WALLET,
+
+      let oldWalletIndex = getState().wallet.wallets.findIndex(
+        (x) => x.name === wallet.name
+      );
+
+      await dispatch({
+        type: walletActions.REMOVE_WALLET,
+        payload: { name: wallet.name },
+      });
+
+      await dispatch({
+        type: walletActions.ADD_WALLET,
         payload: {
           isLedger: true,
           wallet,
           encryptedWallet,
+          index: oldWalletIndex,
         },
       });
-      dispatch({ type: walletActions.STORE_WALLETS });
+
       await postWalletUnlocked(ledgerSigner, dispatch, getState);
+      dispatch({ type: walletActions.STORE_WALLETS });
+
       return user?.username ? "USER_CREATED" : "WALLET_ADDED";
     } catch (e) {
       console.error(e);
       return null;
     }
   };
+};
+
+export const refreshCurrentDashboard = async (dispatch, getState) => {
+  const { wallet } = getState();
+  await getUserDetailsForSelectedAddress()(dispatch, getState);
+  const daos = await getUserDaoAll(wallet.activeWallet.accounts[0].address);
+  await dispatch({
+    type: userActions.INIT_DASHBOARDS,
+    payload: {
+      name: wallet.activeWallet.name,
+      id: wallet.activeWallet.accounts[0].address,
+      daos: daos,
+    },
+  });
 };

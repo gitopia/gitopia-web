@@ -23,7 +23,7 @@ function NewRepository(props) {
     type: "error",
     message: "",
   });
-  const [ownerId, setOwnerId] = useState(props.name);
+  const [ownerId, setOwnerId] = useState(props.currentDashboard);
   const [repositoryCreating, setRepositoryCreating] = useState(false);
   const [accountsList, setAccountsList] = useState([
     { value: "", display: "" },
@@ -33,8 +33,8 @@ function NewRepository(props) {
 
   useEffect(() => {
     setAccountsList([...props.dashboards]);
-    setOwnerId(props.name);
-  }, [props.dashboards, props.name]);
+    setOwnerId(props.currentDashboard);
+  }, [props.dashboards, props.currentDashboard]);
 
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });
@@ -75,15 +75,23 @@ function NewRepository(props) {
   const createRepository = async () => {
     setRepositoryCreating(true);
     if (await validateRepository()) {
+      let ownerName = ownerId;
+      accountsList.every((a) => {
+        if (a.id === ownerId) {
+          ownerName = a.name;
+          return false;
+        }
+        return true;
+      });
       console.log("create Repo", {
         name: name.replace(sanitizedNameTest, "-"),
         description,
-        ownerId,
+        ownerName,
       });
       let res = await props.createRepository({
         name: name.replace(sanitizedNameTest, "-"),
         description,
-        ownerId,
+        ownerId: ownerName,
       });
       if (res && res.url) {
         router.push(res.url);
@@ -136,7 +144,7 @@ function NewRepository(props) {
                 >
                   {accountsList.map((a, i) => {
                     return (
-                      <option value={a.name} key={i}>
+                      <option value={a.id} key={i}>
                         {a.name + " - " + shrinkAddress(a.id)}
                       </option>
                     );
@@ -203,7 +211,7 @@ function NewRepository(props) {
 const mapStateToProps = (state) => {
   return {
     dashboards: state.user.dashboards,
-    name: state.wallet.activeWallet?.name,
+    currentDashboard: state.user.currentDashboard,
   };
 };
 
