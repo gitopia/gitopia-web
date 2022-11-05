@@ -12,6 +12,7 @@ import YoutubeEmbed from "../helpers/youtubeEmbed";
 import GitopiaLive from "../helpers/gitopiaLive";
 import getAllRepositoryBranch from "../helpers/getAllRepositoryBranch";
 import getAllRepositoryTag from "../helpers/getAllRepositoryTag";
+import getDao from "../helpers/getDao";
 const pCircles = [
   {
     url: "#circle1",
@@ -218,8 +219,21 @@ export default function Landing() {
     const repo = await getAnyRepository(demoAddress, demoRepoName);
     let branches = await getAllRepositoryBranch(demoAddress, demoRepoName);
     let tags = await getAllRepositoryTag(demoAddress, demoRepoName);
+    let ownerDetails = {};
     if (repo) {
-      setRepository({ ...repo, branches, tags });
+      ownerDetails = await getDao(repo.owner.id);
+      setRepository({
+        ...repo,
+        owner: {
+          type: repo.owner.type,
+          id: ownerDetails.name !== "" ? ownerDetails.name : repo.owner.id,
+          address: repo.owner.id,
+          username: ownerDetails.name,
+          avatarUrl: ownerDetails.avatarUrl,
+        },
+        branches: branches,
+        tags: tags,
+      });
       let branchSha = getBranchSha(repo.defaultBranch, branches);
       const commitHistory = await getCommitHistory(repo.id, branchSha, null, 1);
 
@@ -3410,8 +3424,8 @@ export default function Landing() {
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   DAOs at Gitopia would provide a decentralized code management
-                  tool for people and institutions that don't know or trust each
-                  other
+                  tool for people and institutions that don`&apos;`t know or
+                  trust each other
                 </div>
               </div>
               <div className="items-left text-left">
