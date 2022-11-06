@@ -154,7 +154,7 @@ function RecoverWallet(props) {
         <>
           <div className="text-6xl mb-6">Recover Wallet</div>
           <div className="text-sm mb-8">
-            Enter a name and password for your recovered wallet
+            Enter a password for your recovered wallet
           </div>
 
           <div className="max-w-md w-full p-4">

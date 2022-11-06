@@ -10,6 +10,7 @@ import {
 import initKeplr from "../helpers/keplr";
 import TextInput from "./textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
+import { notify } from "reapop";
 
 function AutoLogin(props) {
   const [password, setPassword] = useState("");
@@ -93,7 +94,12 @@ function AutoLogin(props) {
       res = await props.downloadWallet(password);
     } else if (props.getPassword === "Connect") {
       res = await props.unlockLedgerWallet({ name: walletName });
-      console.log(res);
+      if (res?.message) {
+        props.notify(res.message, "error");
+        if (props.getPasswordPromise.reject) {
+          props.getPasswordPromise.reject("Please try again.");
+        }
+      }
     }
     if (res) {
       console.log("Sign in success");
@@ -205,4 +211,5 @@ export default connect(mapStateToProps, {
   downloadWallet,
   unlockKeplrWallet,
   unlockLedgerWallet,
+  notify,
 })(AutoLogin);

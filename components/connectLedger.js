@@ -56,8 +56,11 @@ function ConnectLedger(props) {
         if (v.pubkey) {
           setAddressVerified(true);
           const a = await props.addLedgerWallet(name, s.addr, s.signer);
-          if (a) {
-            setWalletCreated(true);
+          if (a === "USER_CREATED") {
+            router.push("/home");
+          } else if (a === "WALLET_ADDED") {
+            setTimeout(getTokens, 2000);
+            router.push("/login?step=5");
           }
         } else {
           setVerifyError("Unable to confirm on ledger");
@@ -71,12 +74,6 @@ function ConnectLedger(props) {
 
     setCreatingWallet(false);
   };
-  useEffect(() => {
-    if (walletCreated) {
-      setTimeout(getTokens, 2000);
-      router.push("/login?step=5");
-    }
-  }, [walletCreated]);
   const getTokens = () => {
     if (!props.selectedAddress) {
       props.notify("Please sign in before claiming tokens", "error");
