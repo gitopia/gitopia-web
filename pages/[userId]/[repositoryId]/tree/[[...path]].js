@@ -353,7 +353,7 @@ function RepositoryTreeView(props) {
                             data-title="Source"
                             className="btn btn-xs"
                             checked={!showRenderedFile}
-                            onClick={() => {
+                            onChange={() => {
                               setShowRenderedFile(!showRenderedFile);
                             }}
                           />
@@ -363,7 +363,7 @@ function RepositoryTreeView(props) {
                             data-title="Rendered"
                             className="btn btn-xs"
                             checked={showRenderedFile}
-                            onClick={() => {
+                            onChange={() => {
                               setShowRenderedFile(!showRenderedFile);
                             }}
                           />
@@ -380,7 +380,17 @@ function RepositoryTreeView(props) {
                       </div>
                     ) : showRenderedFile ? (
                       <div className="markdown-body p-4">
-                        <MarkdownWrapper>{file}</MarkdownWrapper>
+                        <MarkdownWrapper
+                          hrefBase={[
+                            "",
+                            repository.owner.id,
+                            repository.name,
+                            "tree",
+                            branchName,
+                          ].join("/")}
+                        >
+                          {file}
+                        </MarkdownWrapper>
                       </div>
                     ) : (
                       <SyntaxHighlighter
@@ -404,7 +414,17 @@ function RepositoryTreeView(props) {
               id="readme"
               className="border border-gray-700 rounded overflow-hidden p-4 markdown-body mt-8"
             >
-              <MarkdownWrapper>{readmeFile}</MarkdownWrapper>
+              <MarkdownWrapper
+                hrefBase={[
+                  "",
+                  repository.owner.id,
+                  repository.name,
+                  "tree",
+                  branchName,
+                ].join("/")}
+              >
+                {readmeFile}
+              </MarkdownWrapper>
             </div>
           ) : (
             ""
