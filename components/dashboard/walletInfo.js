@@ -8,10 +8,12 @@ function WalletInfo(props) {
   const [loading, setLoading] = useState(false);
 
   return (
-    <div className="w-96 p-4 flex flex-col">
-      <div>Account</div>
-      <div className="mt-4 box-content p-4 h-56 w-80 bg-white bg-opacity-5 rounded-xl">
-        <div className="mt-1 box-content p-4 h-5 w-72 bg-white bg-opacity-10 rounded-xl flex">
+    <div className="w-96 p-4 flex flex-col bg-[#28313C]">
+      <div className="px-2 flex">
+        <div className="text-type-primary text-xs font-bold uppercase">
+          Account
+        </div>
+        <div className="ml-auto flex">
           <div>
             <svg
               width="24"
@@ -24,7 +26,7 @@ function WalletInfo(props) {
             </svg>
           </div>
           <div className="text-xs mt-1 ml-2">0xa36d...26a4</div>
-          <div className="ml-auto">
+          <div className="ml-2 mt-1">
             <svg
               width="16"
               height="17"
@@ -53,8 +55,54 @@ function WalletInfo(props) {
             </svg>
           </div>
         </div>
-        <div className="ml-36 mt-6 text-sm">Balance</div>
-        <div className="text-2xl ml-24 pl-2 font-bold">$20,500.45</div>
+      </div>
+      <div className="mt-2 box-content px-2 h-[31.56rem] rounded-xl">
+        <div className="mt-1 box-content h-24 w-full border border-[#404450] rounded-xl flex items-center">
+          <svg
+            width="36"
+            height="37"
+            viewBox="0 0 36 37"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="ml-6"
+          >
+            <path
+              opacity="0.4"
+              d="M0 18.3461C0 28.1227 7.92552 36.0482 17.7021 36.0482V18.3461H0Z"
+              fill="#BFC4F0"
+            />
+            <path
+              opacity="0.2"
+              d="M0 18.3461C0 8.56944 7.92552 0.643921 17.7021 0.643921V18.3461H0Z"
+              fill="#BFC4F0"
+            />
+            <path
+              opacity="0.2"
+              d="M35.4043 18.3461C35.4043 28.1227 27.4788 36.0482 17.7021 36.0482V18.3461H35.4043Z"
+              fill="#BFC4F0"
+            />
+            <path
+              opacity="0.4"
+              d="M35.4043 18.3461C35.4043 8.56944 27.4788 0.643921 17.7021 0.643921V18.3461H35.4043Z"
+              fill="#BFC4F0"
+            />
+          </svg>
+          <div className="text-sm text-type-primary ml-4">Total Balance</div>
+          <div className="text-type-primary text-2xl font-bold ml-6">
+            $20,500.45
+          </div>
+        </div>
+        <div className="text-type-primary text-xs font-bold uppercase mt-6 mb-4">
+          Tokens
+        </div>
+        <div className="mt-1 p-4 box-content h-5 bg-white bg-opacity-10 rounded-xl flex"></div>
+        <div className="mt-2 p-4 box-content h-5 bg-white bg-opacity-10 rounded-xl flex"></div>
+        <div className="mt-2 p-4 box-content h-5 bg-white bg-opacity-10 rounded-xl flex"></div>
+        <div className="mt-2 p-4 box-content h-5 bg-white bg-opacity-10 rounded-xl flex"></div>
+        <div className="mt-10 border-b border-[#3E4051] w-[21rem]"></div>
+        <div className="text-type-primary text-xs font-bold uppercase mt-2 mb-2">
+          LORE REWARDS
+        </div>
         <div className="flex ml-10 mt-8">
           <div className="ml-8">
             <svg
