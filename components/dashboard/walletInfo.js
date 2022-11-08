@@ -2,13 +2,14 @@ import { useState } from "react";
 import { notify } from "reapop";
 import { connect } from "react-redux";
 import { updateUserBalance } from "../../store/actions/wallet";
+import Link from "next/link";
 
 function WalletInfo(props) {
   const [amount, setAmount] = useState(0);
   const [loading, setLoading] = useState(false);
 
   return (
-    <div className="w-96 p-4 flex flex-col bg-[#28313C]">
+    <div className="w-96 p-4 flex flex-col bg-[#28313C] rounded-2xl">
       <div className="px-2 flex">
         <div className="text-type-primary text-xs font-bold uppercase">
           Account
@@ -37,26 +38,26 @@ function WalletInfo(props) {
               <path
                 d="M7.22705 8.5625L13.2271 8.5625"
                 stroke="white"
-                stroke-linecap="square"
-                stroke-linejoin="round"
+                strokeLinecap="square"
+                strokeLinejoin="round"
               />
               <path
                 d="M10.9544 11.267L13.6816 8.53977L10.9544 5.8125"
                 stroke="white"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
               <path
                 d="M8.31787 3.0625H2.31787V14.0625H8.31787"
                 stroke="white"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </div>
         </div>
       </div>
-      <div className="mt-2 box-content px-2 h-[31.56rem] rounded-xl">
+      <div className="mt-2 box-content px-2 h-[35.56rem]">
         <div className="mt-1 box-content h-24 w-full border border-[#404450] rounded-xl flex items-center">
           <svg
             width="36"
@@ -103,121 +104,44 @@ function WalletInfo(props) {
         <div className="text-type-primary text-xs font-bold uppercase mt-2 mb-2">
           LORE REWARDS
         </div>
-        <div className="flex ml-10 mt-8">
-          <div className="ml-8">
+        <div className="mt-1 p-4 bg-grey box-content h-14 rounded-lg flex">
+          <div className="mt-1 border border-[#747D96] h-8 w-8 rounded-full">
             <svg
-              width="40"
-              height="40"
-              viewBox="0 0 40 40"
+              width="11"
+              height="21"
+              viewBox="0 0 11 21"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
+              className="mx-2.5 my-1"
             >
               <path
-                d="M20 12.5V24.375"
-                stroke="white"
-                stroke-width="1.2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M14.375 18.75L20 24.375L25.625 18.75"
-                stroke="white"
-                stroke-width="1.2"
-                stroke-linecap="square"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M13.125 26.875H26.875"
-                stroke="white"
-                stroke-width="1.2"
-                stroke-linecap="square"
-                stroke-linejoin="round"
-              />
-              <rect
-                x="0.5"
-                y="0.5"
-                width="39"
-                height="39"
-                rx="19.5"
-                stroke="white"
-                stroke-opacity="0.2"
-              />
-            </svg>
-            <div className="text-xs text-grey-300">Recieve</div>
-          </div>
-          <div className="ml-8">
-            <svg
-              width="40"
-              height="40"
-              viewBox="0 0 40 40"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M14.5757 24.5757L14.1515 25L15 25.8485L15.4243 25.4243L14.5757 24.5757ZM25.4243 15.4243C25.6586 15.1899 25.6586 14.8101 25.4243 14.5757C25.1899 14.3414 24.8101 14.3414 24.5757 14.5757L25.4243 15.4243ZM15.4243 25.4243L25.4243 15.4243L24.5757 14.5757L14.5757 24.5757L15.4243 25.4243Z"
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M5.22377 10.0112C6.86119 10.0112 8.18862 8.68819 8.18862 7.05609C8.18862 5.42399 6.86119 4.10092 5.22377 4.10092C3.58633 4.10092 2.25893 5.42399 2.25893 7.05609C2.25893 8.68819 3.58633 10.0112 5.22377 10.0112ZM5.22377 12.2628C8.10878 12.2628 10.4476 9.9317 10.4476 7.05609C10.4476 4.18049 8.10878 1.84937 5.22377 1.84937C2.33876 1.84937 0 4.18049 0 7.05609C0 9.9317 2.33876 12.2628 5.22377 12.2628Z"
                 fill="white"
               />
               <path
-                d="M16.875 15H25V23.125"
-                stroke="white"
-                stroke-width="1.2"
-                stroke-linecap="square"
-                stroke-linejoin="round"
-              />
-              <rect
-                x="0.5"
-                y="0.5"
-                width="39"
-                height="39"
-                rx="19.5"
-                stroke="white"
-                stroke-opacity="0.2"
-              />
-            </svg>
-            <div className="text-xs text-grey-300">Send</div>
-          </div>
-          <div className="ml-8">
-            <svg
-              width="40"
-              height="40"
-              viewBox="0 0 40 40"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M23.75 21.25L26.25 23.75L23.75 26.25"
-                stroke="white"
-                stroke-width="1.2"
-                stroke-linecap="square"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M13.75 23.15H13.15V24.35H13.75V23.15ZM26.25 24.35C26.5814 24.35 26.85 24.0814 26.85 23.75C26.85 23.4186 26.5814 23.15 26.25 23.15V24.35ZM13.75 24.35H26.25V23.15H13.75V24.35Z"
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M5.2815 16.4299C6.11454 16.4299 6.91351 16.1001 7.50258 15.513C8.09165 14.9258 8.42254 14.1294 8.42254 13.2991H10.5166C10.5166 14.683 9.96502 16.0103 8.9833 16.9888C8.00152 17.9674 6.66991 18.5171 5.2815 18.5171C3.89306 18.5171 2.56148 17.9674 1.57971 16.9888C0.59794 16.0103 0.0463867 14.683 0.0463867 13.2991H2.14043C2.14043 14.1294 2.47136 14.9258 3.06043 15.513C3.64949 16.1001 4.44843 16.4299 5.2815 16.4299Z"
                 fill="white"
               />
+              <path d="M4.07129 0H6.43047V2.71324H4.07129V0Z" fill="white" />
               <path
-                d="M16.25 18.75L13.75 16.25L16.25 13.75"
-                stroke="white"
-                stroke-width="1.2"
-                stroke-linecap="square"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M26.25 16.85H26.85V15.65H26.25V16.85ZM13.75 15.65C13.4186 15.65 13.15 15.9186 13.15 16.25C13.15 16.5814 13.4186 16.85 13.75 16.85V15.65ZM26.25 15.65H13.75V16.85H26.25V15.65Z"
+                d="M4.07129 17.9075H6.43047V20.3796H4.07129V17.9075Z"
                 fill="white"
               />
-              <rect
-                x="0.5"
-                y="0.5"
-                width="39"
-                height="39"
-                rx="19.5"
-                stroke="white"
-                stroke-opacity="0.2"
-              />
             </svg>
-            <div className="text-xs text-grey-300">SWAP</div>
           </div>
+          <div className="ml-2">
+            <div className="font-semibold text-3xl">41,030</div>
+            <div className="font-bold text-xs">≈$12,400.00</div>
+          </div>
+          <Link href="/home">
+            <a className="mt-4 ml-auto h-8 px-3.5 py-2 w-32 rounded text-white text-xs font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 uppercase">
+              claim rewards
+            </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -378,7 +378,7 @@ function Header(props) {
               <div className="mt-2">
                 <div className="indicator flex-none mr-4">
                   <a
-                    class="btn btn-primary btn-circle btn-base btn-outline btn-sm w-10 h-10"
+                    className="btn btn-primary btn-circle btn-base btn-outline btn-sm w-10 h-10"
                     href="#"
                     onClick={(e) => {
                       setUnread(false);
@@ -389,19 +389,16 @@ function Header(props) {
                   >
                     <svg
                       width="24"
-                      height="19"
-                      viewBox="0 0 24 19"
+                      height="24"
+                      viewBox="0 0 24 24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      <rect
-                        x="1"
-                        y="1"
-                        width="22"
-                        height="17"
-                        rx="3"
-                        stroke="#ADBECB"
-                        stroke-width="2"
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M4 5H20C21.1046 5 22 5.89543 22 7V9H14V16H22V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V7C2 5.89543 2.89543 5 4 5ZM22 14V11H16V14H22ZM24 16V18C24 20.2091 22.2091 22 20 22H4C1.79086 22 0 20.2091 0 18V7C0 4.79086 1.79086 3 4 3H20C22.2091 3 24 4.79086 24 7V9V16Z"
+                        fill="#ADBECB"
                       />
                     </svg>
                   </a>
