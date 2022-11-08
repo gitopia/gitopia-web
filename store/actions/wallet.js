@@ -680,3 +680,61 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
     },
   });
 };
+
+export const ibcTransfer = (
+  sourcePort,
+  sourceChannel,
+  amount,
+  denom,
+  sender,
+  receiver,
+  revision_number,
+  revision_height,
+  timeoutTimestamp = 0
+) => {
+  return async (dispatch, getState) => {
+    const { wallet } = getState();
+    if (wallet.activeWallet) {
+      try {
+        await setupTxClients(dispatch, getState);
+        const { env } = getState();
+        const send = {
+          sourcePort: sourcePort,
+          sourceChannel: sourceChannel,
+          sender: sender,
+          receiver: receiver,
+          timeoutHeight: {
+            revision_number: revision_number,
+            revision_height: revision_height,
+          },
+          timeoutTimestamp: timeoutTimestamp,
+          token: [
+            {
+              amount: amount,
+              denom: denom,
+            },
+          ],
+        };
+        const msg = await env.txClient.msgTransfer(send);
+        const fee = "auto";
+        const memo = "";
+        const result = await env.txClient.signAndBroadcast([msg], {
+          fee,
+          memo,
+        });
+        if (result && result.code === 0) {
+          updateUserBalance()(dispatch, getState);
+          dispatch(notify("Transaction Successful", "info"));
+          return true;
+        } else {
+          dispatch(notify(result.rawLog, "error"));
+          return null;
+        }
+      } catch (e) {
+        console.error(e);
+        dispatch(notify(e.message, "error"));
+        return null;
+      }
+    }
+  };
+};
