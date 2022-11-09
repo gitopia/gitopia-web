@@ -1,28 +1,33 @@
+import Link from "next/link";
+import { useEffect } from "react";
 import { connect } from "react-redux";
 
 // revisit this file after relayer setup
 
-function DepositIbcAsset(props) {
+function WithdrawIbcAsset(props) {
+  useEffect(() => {
+    document.getElementById("my-modal").checked = true;
+  }, []);
   return (
     <div>
-      <label for="my-modal-2" class="btn modal-button">
-        Deposit
+      <label for="my-modal" class="btn modal-button hidden">
+        Withdraw
       </label>
 
-      <input type="checkbox" id="my-modal-2" class="modal-toggle" />
+      <input type="checkbox" id="my-modal" class="modal-toggle" />
       <div
         class="modal modal-bottom sm:modal-middle cursor-pointer"
-        htmlFor="my-modal-2"
+        htmlFor="my-modal"
       >
         <div class="modal-box relative bg-grey-500">
           <div className="flex mb-4">
             <div className="w-11/12 font-bold text-sm text-type">
-              Deposit IBC Asset
+              Withdraw IBC Asset
             </div>
-            <label
-              htmlFor="my-modal-2"
+            <Link
+              htmlFor="my-modal"
               className="ml-auto hover:opacity-25"
-              onClick={() => {}}
+              href="/home"
             >
               <svg
                 width="14"
@@ -36,7 +41,7 @@ function DepositIbcAsset(props) {
                   fill="#E5EDF5"
                 />
               </svg>
-            </label>
+            </Link>
           </div>
           <div className="text-white">IBC Transfer</div>
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-3">
@@ -77,7 +82,7 @@ function DepositIbcAsset(props) {
               cosmos903y12987t1rbfu2iyvf8rf9723fe239e23v97sd92eh9b93
             </div>
           </div>
-          <div className="text-white mt-5">Amount to Deposit</div>
+          <div className="text-white mt-5">Amount to Withdraw</div>
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-2">
             <div className="font-bold">Available Balance : 0 ATOM</div>
             <div className="border border-gray-700 rounded-xl p-3 bg-grey-900 mt-2">
@@ -96,12 +101,12 @@ function DepositIbcAsset(props) {
           <div className="flex ml-auto self-center">
             <div className="modal-action">
               <label
-                htmlFor="my-modal-2"
+                htmlFor="my-modal"
                 className="btn w-96 px-56 flex-1 bg-green-900 text-xs ml-1"
                 onClick={(e) => {}}
                 disabled={false}
               >
-                DEPOSIT
+                WITHDRAW
               </label>
             </div>
           </div>
@@ -114,4 +119,4 @@ const mapStateToProps = (state) => {
   return {};
 };
 
-export default connect(mapStateToProps, {})(DepositIbcAsset);
+export default connect(mapStateToProps, {})(WithdrawIbcAsset);

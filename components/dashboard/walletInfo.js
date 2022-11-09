@@ -3,11 +3,10 @@ import { notify } from "reapop";
 import { connect } from "react-redux";
 import { updateUserBalance } from "../../store/actions/wallet";
 import Link from "next/link";
+import shrinkAddress from "../../helpers/shrinkAddress";
+import { signOut } from "../../store/actions/wallet";
 
 function WalletInfo(props) {
-  const [amount, setAmount] = useState(0);
-  const [loading, setLoading] = useState(false);
-
   return (
     <div className="w-96 p-4 flex flex-col bg-[#28313C] rounded-2xl">
       <div className="px-2 flex">
@@ -15,19 +14,21 @@ function WalletInfo(props) {
           Account
         </div>
         <div className="ml-auto flex">
-          <div>
-            <svg
-              width="24"
-              height="25"
-              viewBox="0 0 24 25"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="12" cy="12.5625" r="12" fill="#66CE67" />
-            </svg>
+          <div className="avatar">
+            <div className="rounded-full w-6 h-6">
+              <img src={props.avatarUrl}></img>
+            </div>
           </div>
-          <div className="text-xs mt-1 ml-2">0xa36d...26a4</div>
-          <div className="ml-2 mt-1">
+          <div className="text-xs mt-1 ml-2">
+            {shrinkAddress(props.selectedAddress)}
+          </div>
+          <div
+            className="ml-2 mt-1 hover:cursor-pointer"
+            onClick={() => {
+              props.setMenuOpen(false);
+              props.signOut();
+            }}
+          >
             <svg
               width="16"
               height="17"
@@ -96,7 +97,162 @@ function WalletInfo(props) {
         <div className="text-type-primary text-xs font-bold uppercase mt-6 mb-4">
           Tokens
         </div>
-        <div className="mt-1 p-4 box-content h-5 bg-white bg-opacity-10 rounded-xl flex"></div>
+        <div className="flex p-3 box-content h-7 bg-white bg-opacity-10 rounded-xl flex">
+          <div className="">
+            <svg
+              width="24"
+              height="25"
+              viewBox="0 0 24 25"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g clip-path="url(#clip0_22_289)">
+                <rect
+                  y="0.692383"
+                  width="24"
+                  height="24"
+                  rx="12"
+                  fill="#505D7D"
+                />
+                <g clip-path="url(#clip1_22_289)">
+                  <path
+                    d="M15.6551 16.5495L11.9999 8.19446L8.34473 16.5495H11.5714V17.8352H12.4285V16.5495H15.6551Z"
+                    fill="#FCFCFC"
+                  />
+                  <path
+                    d="M15.2783 13.5495H16.9792L14.1428 7.87677L13.4248 9.31287L15.2783 13.5495Z"
+                    fill="#FCFCFC"
+                  />
+                  <path
+                    d="M10.5749 9.31287L9.85686 7.87677L7.02051 13.5495H8.72137L10.5749 9.31287Z"
+                    fill="#FCFCFC"
+                  />
+                </g>
+              </g>
+              <defs>
+                <clipPath id="clip0_22_289">
+                  <rect
+                    y="0.692383"
+                    width="24"
+                    height="24"
+                    rx="12"
+                    fill="white"
+                  />
+                </clipPath>
+                <clipPath id="clip1_22_289">
+                  <rect
+                    width="10.2857"
+                    height="10.2857"
+                    fill="white"
+                    transform="translate(6.85693 7.5495)"
+                  />
+                </clipPath>
+              </defs>
+            </svg>
+          </div>
+          <div className="ml-3">Treecoin</div>
+          <div className="ml-auto flex mr-4">
+            <div className="text-type-primary text-xs mr-3 mt-1.5">Recieve</div>
+            <Link className="hover:cursor-pointer" href="/assets/withdraw">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g clip-path="url(#clip0_22_357)">
+                  <path
+                    d="M16 8.5V20.375"
+                    stroke="white"
+                    stroke-width="1.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M10.375 14.75L16 20.375L21.625 14.75"
+                    stroke="white"
+                    stroke-width="1.2"
+                    stroke-linecap="square"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M9.125 22.875H22.875"
+                    stroke="white"
+                    stroke-width="1.2"
+                    stroke-linecap="square"
+                    stroke-linejoin="round"
+                  />
+                </g>
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="31"
+                  height="31"
+                  rx="15.5"
+                  stroke="white"
+                  stroke-opacity="0.2"
+                />
+                <defs>
+                  <clipPath id="clip0_22_357">
+                    <rect
+                      width="20"
+                      height="20"
+                      fill="white"
+                      transform="translate(6 6)"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
+            </Link>
+          </div>
+          <div className="border-l-2 border-[#5A6068] h-8"></div>
+          <div className="ml-4 flex">
+            <div className="text-type-primary text-xs mr-3 mt-1.5">Send</div>
+            <Link className="mr-1" href="/assets/deposit">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g clip-path="url(#clip0_22_365)">
+                  <path
+                    d="M10.5757 20.5757L10.1515 21L11 21.8485L11.4243 21.4243L10.5757 20.5757ZM21.4243 11.4243C21.6586 11.1899 21.6586 10.8101 21.4243 10.5757C21.1899 10.3414 20.8101 10.3414 20.5757 10.5757L21.4243 11.4243ZM11.4243 21.4243L21.4243 11.4243L20.5757 10.5757L10.5757 20.5757L11.4243 21.4243Z"
+                    fill="white"
+                  />
+                  <path
+                    d="M12.875 11H21V19.125"
+                    stroke="white"
+                    stroke-width="1.2"
+                    stroke-linecap="square"
+                    stroke-linejoin="round"
+                  />
+                </g>
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="31"
+                  height="31"
+                  rx="15.5"
+                  stroke="white"
+                  stroke-opacity="0.2"
+                />
+                <defs>
+                  <clipPath id="clip0_22_365">
+                    <rect
+                      width="20"
+                      height="20"
+                      fill="white"
+                      transform="translate(6 6)"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
+            </Link>
+          </div>
+        </div>
         <div className="mt-2 p-4 box-content h-5 bg-white bg-opacity-10 rounded-xl flex"></div>
         <div className="mt-2 p-4 box-content h-5 bg-white bg-opacity-10 rounded-xl flex"></div>
         <div className="mt-2 p-4 box-content h-5 bg-white bg-opacity-10 rounded-xl flex"></div>
@@ -134,10 +290,10 @@ function WalletInfo(props) {
             </svg>
           </div>
           <div className="ml-2">
-            <div className="font-semibold text-3xl">41,030</div>
-            <div className="font-bold text-xs">≈$12,400.00</div>
+            <div className="font-semibold text-3xl">0</div>
+            <div className="font-bold text-xs">≈$0.0</div>
           </div>
-          <Link href="/home">
+          <Link href="">
             <a className="mt-4 ml-auto h-8 px-3.5 py-2 w-32 rounded text-white text-xs font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 uppercase">
               claim rewards
             </a>
@@ -153,10 +309,12 @@ const mapStateToProps = (state) => {
     selectedAddress: state.wallet.selectedAddress,
     loreBalance: state.wallet.loreBalance,
     advanceUser: state.user.advanceUser,
+    avatarUrl: state.user.avatarUrl,
   };
 };
 
 export default connect(mapStateToProps, {
   updateUserBalance,
   notify,
+  signOut,
 })(WalletInfo);
