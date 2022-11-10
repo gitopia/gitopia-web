@@ -566,7 +566,7 @@ export default function SeasonOfBlockchainsOrgPage() {
   //         </a>
 
   //         <a
-  //           href="https://discord.gg/mVpQVW3vKE"
+  //           href="https://discord.gg/aqsKW3hUHD"
   //           target="_blank"
   //           rel="noreferrer"
   //         >
