@@ -1,5 +1,14 @@
 ## Changelog
 
+### v1.1.0 - 11th Nov 2022
+
+- Fix keplr wallet integration
+- Fix mardown rendering in release description
+- Only include necessary fields in the download wallet
+- Support for relative links and images in markdown
+- Show file too big message when loading files larger than 1Mb
+- Raw button to download files
+
 ### v1.0.0 - 27th Oct 2022
 
 User and Dao profile overhaul
