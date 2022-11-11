@@ -6,7 +6,8 @@ export default async function getContent(
   commitSha = null,
   path = null,
   nextKey = null,
-  limit = 100
+  limit = 100,
+  noRestriction = false
 ) {
   let obj = {};
   if (!validSha.test(commitSha)) {
@@ -26,6 +27,9 @@ export default async function getContent(
   }
   if (path) {
     params.path = path;
+  }
+  if (noRestriction) {
+    params.no_restriction = true;
   }
   await axios
     .post(baseUrl, params, {})
