@@ -145,7 +145,7 @@ function RepositoryTreeView(props) {
       console.log(res);
       if (res) {
         if (res.content) {
-          if (res.content[0].type === "BLOB" && res.content[0].content) {
+          if (res.content[0].type === "BLOB" && res.content[0].size) {
             // display file contents
             setEntityList([]);
             setReadmeFile(null);
@@ -155,22 +155,28 @@ function RepositoryTreeView(props) {
               setFileSyntax(extension);
               setFileSize(res.content[0].size);
 
-              if (
-                ["jpg", "jpeg", "png", "gif"].includes(extension.toLowerCase())
-              ) {
-                setIsImageFile(true);
-                setFile(res.content[0].content);
-              } else {
-                setIsImageFile(false);
-                setFile(window.atob(res.content[0].content));
-              }
+              if (res.content[0].content) {
+                if (
+                  ["jpg", "jpeg", "png", "gif"].includes(
+                    extension.toLowerCase()
+                  )
+                ) {
+                  setIsImageFile(true);
+                  setFile(res.content[0].content);
+                } else {
+                  setIsImageFile(false);
+                  setFile(window.atob(res.content[0].content));
+                }
 
-              if (extension.toLowerCase() === "md") {
-                setShowRenderedFileOption(true);
-                setShowRenderedFile(true);
+                if (extension.toLowerCase() === "md") {
+                  setShowRenderedFileOption(true);
+                  setShowRenderedFile(true);
+                } else {
+                  setShowRenderedFileOption(false);
+                  setShowRenderedFile(false);
+                }
               } else {
-                setShowRenderedFileOption(false);
-                setShowRenderedFile(false);
+                setFile("File size is too big to show (> 1MB)");
               }
             } catch (e) {
               // TODO: show error to user
