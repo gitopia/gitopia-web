@@ -4,6 +4,7 @@ import shrinkAddress from "../../helpers/shrinkAddress";
 import formatBytes from "../../helpers/formatBytes";
 import shrinkSha from "../../helpers/shrinkSha";
 import { useState } from "react";
+import MarkdownWrapper from "../markdownWrapper";
 
 export default function ReleaseView({
   release,
@@ -115,7 +116,7 @@ export default function ReleaseView({
       </div>
       <div className="text-xs mt-4 text-type-secondary">{release.name}</div>
       <div className="text-xs mt-2 text-type-secondary">
-        {release.description}
+        <MarkdownWrapper>{release.description}</MarkdownWrapper>
       </div>
       <div className="text-sm mt-4">
         <span>Assets</span>

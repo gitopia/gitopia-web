@@ -145,7 +145,7 @@ function RepositoryTreeView(props) {
       console.log(res);
       if (res) {
         if (res.content) {
-          if (res.content[0].type === "BLOB" && res.content[0].content) {
+          if (res.content[0].type === "BLOB" && res.content[0].size) {
             // display file contents
             setEntityList([]);
             setReadmeFile(null);
@@ -155,22 +155,28 @@ function RepositoryTreeView(props) {
               setFileSyntax(extension);
               setFileSize(res.content[0].size);
 
-              if (
-                ["jpg", "jpeg", "png", "gif"].includes(extension.toLowerCase())
-              ) {
-                setIsImageFile(true);
-                setFile(res.content[0].content);
-              } else {
-                setIsImageFile(false);
-                setFile(window.atob(res.content[0].content));
-              }
+              if (res.content[0].content) {
+                if (
+                  ["jpg", "jpeg", "png", "gif"].includes(
+                    extension.toLowerCase()
+                  )
+                ) {
+                  setIsImageFile(true);
+                  setFile(res.content[0].content);
+                } else {
+                  setIsImageFile(false);
+                  setFile(window.atob(res.content[0].content));
+                }
 
-              if (extension.toLowerCase() === "md") {
-                setShowRenderedFileOption(true);
-                setShowRenderedFile(true);
+                if (extension.toLowerCase() === "md") {
+                  setShowRenderedFileOption(true);
+                  setShowRenderedFile(true);
+                } else {
+                  setShowRenderedFileOption(false);
+                  setShowRenderedFile(false);
+                }
               } else {
-                setShowRenderedFileOption(false);
-                setShowRenderedFile(false);
+                setFile("File size is too big to show (> 1MB)");
               }
             } catch (e) {
               // TODO: show error to user
@@ -353,7 +359,7 @@ function RepositoryTreeView(props) {
                             data-title="Source"
                             className="btn btn-xs"
                             checked={!showRenderedFile}
-                            onClick={() => {
+                            onChange={() => {
                               setShowRenderedFile(!showRenderedFile);
                             }}
                           />
@@ -363,7 +369,7 @@ function RepositoryTreeView(props) {
                             data-title="Rendered"
                             className="btn btn-xs"
                             checked={showRenderedFile}
-                            onClick={() => {
+                            onChange={() => {
                               setShowRenderedFile(!showRenderedFile);
                             }}
                           />
@@ -380,7 +386,17 @@ function RepositoryTreeView(props) {
                       </div>
                     ) : showRenderedFile ? (
                       <div className="markdown-body p-4">
-                        <MarkdownWrapper>{file}</MarkdownWrapper>
+                        <MarkdownWrapper
+                          hrefBase={[
+                            "",
+                            repository.owner.id,
+                            repository.name,
+                            "tree",
+                            branchName,
+                          ].join("/")}
+                        >
+                          {file}
+                        </MarkdownWrapper>
                       </div>
                     ) : (
                       <SyntaxHighlighter
@@ -404,7 +420,17 @@ function RepositoryTreeView(props) {
               id="readme"
               className="border border-gray-700 rounded overflow-hidden p-4 markdown-body mt-8"
             >
-              <MarkdownWrapper>{readmeFile}</MarkdownWrapper>
+              <MarkdownWrapper
+                hrefBase={[
+                  "",
+                  repository.owner.id,
+                  repository.name,
+                  "tree",
+                  branchName,
+                ].join("/")}
+              >
+                {readmeFile}
+              </MarkdownWrapper>
             </div>
           ) : (
             ""
