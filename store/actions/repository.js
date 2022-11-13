@@ -33,7 +33,7 @@ export const validatePostingEligibility = async (
     } else {
       dispatch(
         notify(
-          "You need to create a profile before being able to create a repository, please go back to the dashboard and setup your profile first",
+          "You need to create a profile before performing any action, please go back to the dashboard and setup your profile first",
           "error"
         )
       );
