@@ -86,7 +86,7 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
           >
             Owner Address
           </div>
-          <div className="text-xs">{ownerAddress}</div>
+          <div className="text-xs">{shrinkAddress(ownerAddress)}</div>
         </div>
       </div>
       <div className="flex">
