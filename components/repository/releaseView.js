@@ -25,7 +25,7 @@ export default function ReleaseView({
             {repository.name + " " + release.tagName}
           </div>
         ) : (
-          <Link
+          (<Link
             href={
               "/" +
               repository.owner.id +
@@ -34,11 +34,11 @@ export default function ReleaseView({
               "/releases/tag/" +
               release.tagName
             }
-          >
-            <a className="text-3xl link link-primary no-underline hover:underline">
-              {repository.name + " " + release.tagName}
-            </a>
-          </Link>
+            className="text-3xl link link-primary no-underline hover:underline">
+
+            {repository.name + " " + release.tagName}
+
+          </Link>)
         )}
         {latest ? (
           <span className="ml-4 mt-1 badge badge-primary badge-outline">
@@ -59,10 +59,12 @@ export default function ReleaseView({
             />
           </div>
         </div>
-        <Link href={"/" + release.creator}>
-          <a className="text-sm link no-underline hover:underline text-type-secondary">
-            {shrinkAddress(release.creator)}
-          </a>
+        <Link
+          href={"/" + release.creator}
+          className="text-sm link no-underline hover:underline text-type-secondary">
+
+          {shrinkAddress(release.creator)}
+
         </Link>
         <div className="ml-1 text-sm text-type-secondary">
           {"released this on " +
@@ -95,7 +97,7 @@ export default function ReleaseView({
                     release.tagName
                   }
                 >
-                  <a>Edit</a>
+                  Edit
                 </Link>
               </li>
               <li>

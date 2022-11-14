@@ -198,45 +198,45 @@ function RepositoryView(props) {
 
                     <div className="text-xs mt-3">{repository.description}</div>
                     {readmeFile ? (
-                      <Link
-                        href={
-                          "/" +
-                          repository.owner.id +
-                          "/" +
-                          repository.name +
-                          "#readme"
-                        }
-                      >
-                        <a className="mt-6 flex items-center text-xs text-type-secondary font-semibold hover:text-green">
-                          <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 mr-2"
-                          >
-                            <rect
-                              x="4"
-                              y="5"
-                              width="8"
-                              height="14"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            />
-                            <rect
-                              x="12"
-                              y="5"
-                              width="8"
-                              height="14"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            />
-                          </svg>
+                      (<Link
+                      href={
+                        "/" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name +
+                        "#readme"
+                      }
+                      className="mt-6 flex items-center text-xs text-type-secondary font-semibold hover:text-green"
+                      legacyBehavior>
 
-                          <span>README</span>
-                        </a>
-                      </Link>
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 mr-2"
+                        >
+                          <rect
+                            x="4"
+                            y="5"
+                            width="8"
+                            height="14"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <rect
+                            x="12"
+                            y="5"
+                            width="8"
+                            height="14"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                        </svg>
+                        <span>README</span>
+
+                      </Link>)
                     ) : (
                       ""
                     )}
@@ -289,57 +289,58 @@ function RepositoryView(props) {
                             repository.releases[repository.releases.length - 1]
                               .tagName
                           }
-                        >
-                          <a className="link link-primary no-underline hover:underline">
-                            {repository.name +
-                              " " +
-                              repository.releases[
-                                repository.releases.length - 1
-                              ].tagName}
-                          </a>
+                          className="link link-primary no-underline hover:underline"
+                          legacyBehavior>
+
+                          {repository.name +
+                            " " +
+                            repository.releases[
+                              repository.releases.length - 1
+                            ].tagName}
+
                         </Link>
                       </div>
                     ) : (
-                      <Link
-                        href={
-                          "/" +
-                          repository.owner.id +
-                          "/" +
-                          repository.name +
-                          "/releases/new"
-                        }
-                      >
-                        <a className="mt-6 flex items-center text-xs text-type-secondary font-semibold uppercase hover:text-green">
-                          <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="transparent"
-                            className="w-4 h-4 mr-2"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M12 7V17"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            />
-                            <path
-                              d="M17 12H7"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            />
-                            <circle
-                              cx="12"
-                              cy="12"
-                              r="11"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            />
-                          </svg>
+                      (<Link
+                      href={
+                        "/" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name +
+                        "/releases/new"
+                      }
+                      className="mt-6 flex items-center text-xs text-type-secondary font-semibold uppercase hover:text-green"
+                      legacyBehavior>
 
-                          <span>Create a release</span>
-                        </a>
-                      </Link>
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="transparent"
+                          className="w-4 h-4 mr-2"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12 7V17"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <path
+                            d="M17 12H7"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="11"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                        </svg>
+                        <span>Create a release</span>
+
+                      </Link>)
                     )}
                   </div>
                 </div>

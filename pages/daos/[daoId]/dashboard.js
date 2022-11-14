@@ -93,15 +93,15 @@ function DaoDashboard(props) {
                           process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
                           "?tab=proposals"
                         }
-                      >
-                        <a className={"btn btn-xs btn-link mt-2"}>Proposals</a>
+                        className={"btn btn-xs btn-link mt-2"}>
+                        Proposals
                       </Link>
                       <Link
                         href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
-                      >
-                        <a className={"btn btn-xs btn-link mt-2"}>
+                        className={"btn btn-xs btn-link mt-2"}>
+                        
                           Source code
-                        </a>
+                        
                       </Link>
                     </>
                   ) : (
@@ -132,11 +132,13 @@ function DaoDashboard(props) {
                         process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
                         "?tab=proposals"
                       }
-                    >
-                      <a className={"btn btn-xs btn-link mt-1"}>Proposals</a>
+                      className={"btn btn-xs btn-link mt-1"}>
+                      Proposals
                     </Link>
-                    <Link href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}>
-                      <a className={"btn btn-xs btn-link mt-1"}>Source code</a>
+                    <Link
+                      href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
+                      className={"btn btn-xs btn-link mt-1"}>
+                      Source code
                     </Link>
                   </>
                 ) : (

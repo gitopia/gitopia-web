@@ -8,10 +8,10 @@ function GreetUser(props) {
         <div>
           <div className="text-xs uppercase">Welcome</div>
           <div className="text-lg">
-            <Link href={"/" + props.user.username}>
-              <a className="btn-link">
-                {props.user.name ? props.user.name : props.user.username}
-              </a>
+            <Link href={"/" + props.user.username} className="btn-link">
+
+              {props.user.name ? props.user.name : props.user.username}
+
             </Link>
           </div>
         </div>
@@ -51,10 +51,12 @@ function GreetUser(props) {
                   </div>
                 </div>
                 <div className="flex-none w-60 mr-8 mt-4 sm:mt-0">
-                  <Link href={"/" + props.selectedAddress}>
-                    <a className="btn btn-accent btn-block btn-sm">
+                  <Link
+                    href={"/" + props.selectedAddress}
+                    className="btn btn-accent btn-block btn-sm">
+                    
                       Edit Profile
-                    </a>
+                    
                   </Link>
                 </div>
               </div>
@@ -93,10 +95,10 @@ function GreetUser(props) {
                   </div>
                 </div>
                 <div className="flex-none w-60 mr-8 mt-4 sm:mt-0">
-                  <Link href={"/login?step=5"}>
-                    <a className="btn btn-primary btn-block btn-sm">
+                  <Link href={"/login?step=5"} className="btn btn-primary btn-block btn-sm">
+                    
                       Create Profile
-                    </a>
+                    
                   </Link>
                 </div>
               </div>

@@ -105,7 +105,7 @@ function RepositoryReleaseView(props) {
                   repository.name +
                   "/releases/new"
                 }
-              >
+                legacyBehavior>
                 <button className="btn btn-primary btn-sm btn-block">
                   New Release
                 </button>

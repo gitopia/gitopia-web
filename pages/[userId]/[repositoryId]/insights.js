@@ -52,26 +52,28 @@ function RepositoryInsightsView(props) {
     return (
       <div className="flex items-center">
         <div>
-          <Link href={"/" + r.owner.id}>
-            <a
-              className={
-                "text-sm btn-link " + (current ? "text-type-secondary" : "")
-              }
-            >
-              {shrinkAddress(r.owner.id)}
-            </a>
+          <Link
+            href={"/" + r.owner.id}
+            className={
+              "text-sm btn-link " + (current ? "text-type-secondary" : "")
+            }
+            legacyBehavior>
+
+            {shrinkAddress(r.owner.id)}
+
           </Link>
         </div>
         <span className="text-sm text-type-quaternary mx-2">/</span>
         <div>
-          <Link href={"/" + r.owner.id + "/" + r.name}>
-            <a
-              className={
-                "text-sm btn-link " + (current ? "text-type-secondary" : "")
-              }
-            >
-              {r.name}
-            </a>
+          <Link
+            href={"/" + r.owner.id + "/" + r.name}
+            className={
+              "text-sm btn-link " + (current ? "text-type-secondary" : "")
+            }
+            legacyBehavior>
+
+            {r.name}
+
           </Link>
         </div>
         {current ? (

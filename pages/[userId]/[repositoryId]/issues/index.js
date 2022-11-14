@@ -178,7 +178,7 @@ function RepositoryIssueView(props) {
                   repository.name +
                   "/issues/new"
                 }
-              >
+                legacyBehavior>
                 <button className="btn btn-primary btn-sm btn-block">
                   New Issue
                 </button>
@@ -532,8 +532,9 @@ function RepositoryIssueView(props) {
                               "/issues/" +
                               i.iid
                             }
-                          >
-                            <a className="btn-neutral">{i.title}</a>
+                            className="btn-neutral"
+                            legacyBehavior>
+                            {i.title}
                           </Link>
                         </div>
                         <div className="text-xs text-type-secondary">
