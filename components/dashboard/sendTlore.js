@@ -132,8 +132,8 @@ function SendTlore(props) {
             loading ||
             validateAmountError !== null ||
             validateAddressError !== null ||
-            amount.length < 1 ||
-            receiverAddress.length < 1
+            amount.length <= 0 ||
+            receiverAddress != ""
           }
           onClick={async (e) => {
             setLoading(true);

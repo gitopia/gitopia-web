@@ -558,7 +558,8 @@ function DaoProposalDetails({ id, ...props }) {
                       disabled={
                         !dayjs().isBefore(dayjs(proposal.deposit_end_time)) ||
                         proposal.status == "PROPOSAL_STATUS_VOTING_PERIOD" ||
-                        validateAmountError !== null
+                        validateAmountError !== null ||
+                        amount.length <= 0
                       }
                     >
                       Submit
