@@ -218,7 +218,10 @@ function DaoProposalCreate({ dao, ...props }) {
               <span className="label-text text-sm">PROPOSAL TYPE</span>
             </label>
             <select
-              className="select select-bordered select-sm text-xs h-8"
+              className={
+                "select select-bordered select-sm text-xs h-8 focus:outline-none focus:border-type " +
+                (proposalType.length > 0 ? "border-green" : "")
+              }
               value={proposalType}
               onChange={(e) => {
                 setProposalType(e.target.value);
