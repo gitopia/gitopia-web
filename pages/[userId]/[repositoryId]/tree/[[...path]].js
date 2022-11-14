@@ -87,50 +87,60 @@ function RepositoryTreeView(props) {
     };
   }, []);
 
-  useEffect(async () => {
-    console.log("query", router.query);
-    if (repository.branches.length) {
-      console.log(repository, router.query.path);
-      if (!router.query.path) {
-        setErrorStatusCode(404);
-      }
-      const joinedPath = router.query.path.join("/");
-      let found = false;
-      repository.branches.every((b) => {
-        let branch = b.name;
-        let branchTest = new RegExp("^" + branch);
-        if (branchTest.test(joinedPath)) {
-          let path = joinedPath.replace(branch, "").split("/");
-          path = path.filter((p) => p !== "");
-          setBranchName(branch);
-          setIsTag(false);
-          setRepoPath(path);
-          console.log("branchName", branch, "repoPath", path, "isTag", false);
-          found = true;
+  useEffect(() => {
+    async function initBranch() {
+      console.log("query", router.query);
+      if (repository.branches.length) {
+        console.log(repository, router.query.path);
+        if (!router.query.path) {
+          setErrorStatusCode(404);
         }
-        return true;
-      });
-      if (!found) {
-        repository.tags.every((b) => {
+        const joinedPath = router.query.path.join("/");
+        let found = false;
+        repository.branches.every((b) => {
           let branch = b.name;
           let branchTest = new RegExp("^" + branch);
           if (branchTest.test(joinedPath)) {
             let path = joinedPath.replace(branch, "").split("/");
             path = path.filter((p) => p !== "");
             setBranchName(branch);
-            setIsTag(true);
+            setIsTag(false);
             setRepoPath(path);
-            console.log("branchName", branch, "repoPath", path, "isTag", true);
+            console.log("branchName", branch, "repoPath", path, "isTag", false);
             found = true;
-            return false;
           }
           return true;
         });
-      }
-      if (!found) {
-        setErrorStatusCode(404);
+        if (!found) {
+          repository.tags.every((b) => {
+            let branch = b.name;
+            let branchTest = new RegExp("^" + branch);
+            if (branchTest.test(joinedPath)) {
+              let path = joinedPath.replace(branch, "").split("/");
+              path = path.filter((p) => p !== "");
+              setBranchName(branch);
+              setIsTag(true);
+              setRepoPath(path);
+              console.log(
+                "branchName",
+                branch,
+                "repoPath",
+                path,
+                "isTag",
+                true
+              );
+              found = true;
+              return false;
+            }
+            return true;
+          });
+        }
+        if (!found) {
+          setErrorStatusCode(404);
+        }
       }
     }
+    initBranch();
   }, [router.query.path, repository.id]);
 
   const loadEntities = async (currentEntities = [], firstTime = false) => {
@@ -236,24 +246,27 @@ function RepositoryTreeView(props) {
     }
   };
 
-  useEffect(async () => {
-    if (repository.branches.length) {
-      loadEntities([], true);
-      const commitHistory = await getCommitHistory(
-        repository.id,
-        getBranchSha(branchName, repository.branches, repository.tags),
-        repoPath.join("/"),
-        1
-      );
-      if (
-        commitHistory &&
-        commitHistory.commits &&
-        commitHistory.commits.length
-      ) {
-        setCommitDetail(commitHistory.commits[0]);
-        setCommitsLength(commitHistory.pagination.total);
+  useEffect(() => {
+    async function initCommits() {
+      if (repository.branches.length) {
+        loadEntities([], true);
+        const commitHistory = await getCommitHistory(
+          repository.id,
+          getBranchSha(branchName, repository.branches, repository.tags),
+          repoPath.join("/"),
+          1
+        );
+        if (
+          commitHistory &&
+          commitHistory.commits &&
+          commitHistory.commits.length
+        ) {
+          setCommitDetail(commitHistory.commits[0]);
+          setCommitsLength(commitHistory.pagination.total);
+        }
       }
     }
+    initCommits();
   }, [repoPath]);
 
   return (

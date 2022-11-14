@@ -26,42 +26,21 @@ export default function usePullRequest(repository) {
   const refreshPullRequest = () =>
     setRefreshIndex((prevIndex) => prevIndex + 1);
 
-  useEffect(async () => {
-    const p = await getRepositoryPull(
-      router.query.userId,
-      router.query.repositoryId,
-      router.query.pullRequestIid
-    );
-    if (p) {
-      if (p.base.repositoryId === p.head.repositoryId) {
-        p.head.repository = p.base.repository = repository;
-        if (p.state === "OPEN") {
-          p.head.sha = getBranchSha(
-            p.head.branch,
-            repository.branches,
-            repository.tags
-          );
-          p.base.sha = getBranchSha(
-            p.base.branch,
-            repository.branches,
-            repository.tags
-          );
-        } else {
-          p.base.sha = p.base.commitSha;
-          p.head.sha = p.head.commitSha;
-        }
-      } else {
-        const forkRepo = await getRepository(p.head.repositoryId);
-        forkRepo.branches = await getAllRepositoryBranch(forkRepo.owner.id, forkRepo.name);
-        forkRepo.tags = await getAllRepositoryTag(forkRepo.owner.id, forkRepo.name);
-        if (forkRepo) {
-          p.head.repository = forkRepo;
-          p.base.repository = repository;
+  useEffect(() => {
+    async function initRepository() {
+      const p = await getRepositoryPull(
+        router.query.userId,
+        router.query.repositoryId,
+        router.query.pullRequestIid
+      );
+      if (p) {
+        if (p.base.repositoryId === p.head.repositoryId) {
+          p.head.repository = p.base.repository = repository;
           if (p.state === "OPEN") {
             p.head.sha = getBranchSha(
               p.head.branch,
-              forkRepo.branches,
-              forkRepo.tags
+              repository.branches,
+              repository.tags
             );
             p.base.sha = getBranchSha(
               p.base.branch,
@@ -72,12 +51,42 @@ export default function usePullRequest(repository) {
             p.base.sha = p.base.commitSha;
             p.head.sha = p.head.commitSha;
           }
+        } else {
+          const forkRepo = await getRepository(p.head.repositoryId);
+          forkRepo.branches = await getAllRepositoryBranch(
+            forkRepo.owner.id,
+            forkRepo.name
+          );
+          forkRepo.tags = await getAllRepositoryTag(
+            forkRepo.owner.id,
+            forkRepo.name
+          );
+          if (forkRepo) {
+            p.head.repository = forkRepo;
+            p.base.repository = repository;
+            if (p.state === "OPEN") {
+              p.head.sha = getBranchSha(
+                p.head.branch,
+                forkRepo.branches,
+                forkRepo.tags
+              );
+              p.base.sha = getBranchSha(
+                p.base.branch,
+                repository.branches,
+                repository.tags
+              );
+            } else {
+              p.base.sha = p.base.commitSha;
+              p.head.sha = p.head.commitSha;
+            }
+          }
         }
+        setPullRequest(p);
+      } else {
+        setErrorStatusCode(404);
       }
-      setPullRequest(p);
-    } else {
-      setErrorStatusCode(404);
     }
+    initRepository();
   }, [router.query, repository.id, refreshIndex]);
 
   return { pullRequest, refreshPullRequest };

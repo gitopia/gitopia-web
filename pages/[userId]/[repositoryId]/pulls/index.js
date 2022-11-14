@@ -115,7 +115,9 @@ function RepositoryPullsView(props) {
     }
   };
 
-  useEffect(getAllPulls, [repository, filters, page]);
+  useEffect(() => {
+    getAllPulls();
+  }, [repository, filters, page]);
 
   return (
     <div
@@ -176,7 +178,8 @@ function RepositoryPullsView(props) {
                 href={
                   "/" + repository.owner.id + "/" + repository.name + "/compare"
                 }
-                legacyBehavior>
+                legacyBehavior
+              >
                 <button className="btn btn-primary btn-sm btn-block">
                   New Pull Request
                 </button>
@@ -603,7 +606,8 @@ function RepositoryPullsView(props) {
                               i.iid
                             }
                             className="btn-neutral"
-                            legacyBehavior>
+                            legacyBehavior
+                          >
                             {i.title}
                           </Link>
                         </div>

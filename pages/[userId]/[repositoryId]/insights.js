@@ -46,7 +46,9 @@ function RepositoryInsightsView(props) {
     }
   };
 
-  useEffect(refreshRepositoryForks, [repository]);
+  useEffect(() => {
+    refreshRepositoryForks();
+  }, [repository]);
 
   const ownerRepoLinkItem = (r, current = false) => {
     return (
@@ -57,10 +59,9 @@ function RepositoryInsightsView(props) {
             className={
               "text-sm btn-link " + (current ? "text-type-secondary" : "")
             }
-            legacyBehavior>
-
+            legacyBehavior
+          >
             {shrinkAddress(r.owner.id)}
-
           </Link>
         </div>
         <span className="text-sm text-type-quaternary mx-2">/</span>
@@ -70,10 +71,9 @@ function RepositoryInsightsView(props) {
             className={
               "text-sm btn-link " + (current ? "text-type-secondary" : "")
             }
-            legacyBehavior>
-
+            legacyBehavior
+          >
             {r.name}
-
           </Link>
         </div>
         {current ? (

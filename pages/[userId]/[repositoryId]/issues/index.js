@@ -113,7 +113,9 @@ function RepositoryIssueView(props) {
     }
   };
 
-  useEffect(getAllIssues, [repository, filters, page]);
+  useEffect(() => {
+    getAllIssues();
+  }, [repository, filters, page]);
 
   return (
     <div
@@ -178,7 +180,8 @@ function RepositoryIssueView(props) {
                   repository.name +
                   "/issues/new"
                 }
-                legacyBehavior>
+                legacyBehavior
+              >
                 <button className="btn btn-primary btn-sm btn-block">
                   New Issue
                 </button>
@@ -533,7 +536,8 @@ function RepositoryIssueView(props) {
                               i.iid
                             }
                             className="btn-neutral"
-                            legacyBehavior>
+                            legacyBehavior
+                          >
                             {i.title}
                           </Link>
                         </div>

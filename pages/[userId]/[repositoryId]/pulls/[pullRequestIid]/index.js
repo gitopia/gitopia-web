@@ -51,7 +51,9 @@ function RepositoryPullView(props) {
     setAllComments(comments);
   };
 
-  useEffect(getAllComments, [pullRequest]);
+  useEffect(() => {
+    getAllComments();
+  }, [pullRequest]);
 
   return (
     <div

@@ -20,9 +20,12 @@ function AccountDaoHeader(props) {
     await props.getDaoDetailsForDashboard();
   };
 
-  useEffect(async () => {
-    const members = await getDaoMember(props.dao.address);
-    setIsEditable(await props.isCurrentUserEligibleToUpdate(members));
+  useEffect(() => {
+    async function getMembers() {
+      const members = await getDaoMember(props.dao.address);
+      setIsEditable(await props.isCurrentUserEligibleToUpdate(members));
+    }
+    getMembers();
   }, [props.dao.address, props.selectedAddress]);
 
   return (

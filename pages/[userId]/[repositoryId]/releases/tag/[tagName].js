@@ -25,8 +25,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryReleaseView(props) {
@@ -43,16 +43,19 @@ function RepositoryReleaseView(props) {
     false
   );
 
-  useEffect(async () => {
-    if (repository.releases.length) {
-      const latest = repository.releases.slice(-1);
-      console.log("latest", latest);
-      if (latest[0].tagName == router.query.tagName) {
-        setIsLatest(true);
-      } else {
-        setIsLatest(false);
+  useEffect(() => {
+    async function initLatest() {
+      if (repository.releases.length) {
+        const latest = repository.releases.slice(-1);
+        console.log("latest", latest);
+        if (latest[0].tagName == router.query.tagName) {
+          setIsLatest(true);
+        } else {
+          setIsLatest(false);
+        }
       }
     }
+    initLatest();
   }, [repository, router.query.tagName]);
 
   const getRelease = async () => {
@@ -72,12 +75,17 @@ function RepositoryReleaseView(props) {
     }
   };
 
-  useEffect(getRelease, [repository]);
+  useEffect(() => {
+    getRelease();
+  }, [repository]);
 
-  useEffect(async () => {
-    setCurrentUserEditPermission(
-      await props.isCurrentUserEligibleToUpdate(repository)
-    );
+  useEffect(() => {
+    async function updatePermissions() {
+      setCurrentUserEditPermission(
+        await props.isCurrentUserEligibleToUpdate(repository)
+      );
+    }
+    updatePermissions();
   }, [repository, props.user]);
 
   return (
@@ -105,7 +113,8 @@ function RepositoryReleaseView(props) {
                   repository.name +
                   "/releases/new"
                 }
-                legacyBehavior>
+                legacyBehavior
+              >
                 <button className="btn btn-primary btn-sm btn-block">
                   New Release
                 </button>

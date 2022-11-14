@@ -39,28 +39,31 @@ function RepositoryCommitTreeView(props) {
   const [branchName, setBranchName] = useState("");
   const [commitsLength, setCommitsLength] = useState(0);
 
-  useEffect(async () => {
-    if (repository) {
-      const joinedPath = router.query.branch.join("/");
-      let branchLen = repository.branches.length;
-      repository.branches.every((b) => {
-        let branch = b.name;
-        let branchTest = new RegExp("^" + branch);
-        if (branchTest.test(joinedPath)) {
-          let path = joinedPath.replace(branch, "").split("/");
-          path = path.filter((p) => p !== "");
-          setBranchName(branch);
-          if (branchName !== branch) setCommits([]);
-          console.log("branch", branch);
-          return false;
-        }
-        branchLen--;
-        if (branchLen < 1) {
-          setErrorStatusCode(404);
-        }
-        return true;
-      });
+  useEffect(() => {
+    async function initBranch() {
+      if (repository) {
+        const joinedPath = router.query.branch.join("/");
+        let branchLen = repository.branches.length;
+        repository.branches.every((b) => {
+          let branch = b.name;
+          let branchTest = new RegExp("^" + branch);
+          if (branchTest.test(joinedPath)) {
+            let path = joinedPath.replace(branch, "").split("/");
+            path = path.filter((p) => p !== "");
+            setBranchName(branch);
+            if (branchName !== branch) setCommits([]);
+            console.log("branch", branch);
+            return false;
+          }
+          branchLen--;
+          if (branchLen < 1) {
+            setErrorStatusCode(404);
+          }
+          return true;
+        });
+      }
     }
+    initBranch();
   }, [router.query.branch, repository.id]);
 
   const loadCommits = async (earlierCommits) => {
@@ -91,15 +94,18 @@ function RepositoryCommitTreeView(props) {
     setLoadingMore(false);
   };
 
-  useEffect(async () => {
-    if (typeof window !== "undefined") {
-      console.log(
-        "branchName updated, earlier commits will be cleared",
-        branchName
-      );
-      setNextKey(null);
-      await loadCommits([]);
+  useEffect(() => {
+    async function initCommits() {
+      if (typeof window !== "undefined") {
+        console.log(
+          "branchName updated, earlier commits will be cleared",
+          branchName
+        );
+        setNextKey(null);
+        await loadCommits([]);
+      }
     }
+    initCommits();
   }, [branchName]);
 
   return (

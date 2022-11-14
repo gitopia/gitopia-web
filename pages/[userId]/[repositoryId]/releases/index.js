@@ -55,12 +55,17 @@ function RepositoryReleasesView(props) {
     }
   };
 
-  useEffect(getReleases, [repository]);
+  useEffect(() => {
+    getReleases();
+  }, [repository]);
 
-  useEffect(async () => {
-    setCurrentUserEditPermission(
-      await props.isCurrentUserEligibleToUpdate(repository)
-    );
+  useEffect(() => {
+    async function updatePermissions() {
+      setCurrentUserEditPermission(
+        await props.isCurrentUserEligibleToUpdate(repository)
+      );
+    }
+    updatePermissions();
   }, [repository, props.user]);
 
   return (
@@ -112,7 +117,8 @@ function RepositoryReleasesView(props) {
                   repository.name +
                   "/releases/new"
                 }
-                legacyBehavior>
+                legacyBehavior
+              >
                 <button className="btn btn-primary btn-sm btn-block">
                   New Release
                 </button>
@@ -155,10 +161,9 @@ function RepositoryReleasesView(props) {
                       r.tagName
                     }
                     className="text-xl link link-primary no-underline hover:underline"
-                    legacyBehavior>
-
+                    legacyBehavior
+                  >
                     {repository.name + " " + r.tagName}
-
                   </Link>
                 </div>
               );

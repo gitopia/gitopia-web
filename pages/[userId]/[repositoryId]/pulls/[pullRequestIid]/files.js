@@ -26,8 +26,8 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryPullFilesView(props) {
@@ -36,27 +36,19 @@ function RepositoryPullFilesView(props) {
   const [stats, setStats] = useState({ stat: {} });
   const [viewType, setViewType] = useState("unified");
 
-  useEffect(async () => {
-    // let diff;
-    // if (pullRequest.base.repositoryId === pullRequest.head.repositoryId) {
-    //   diff = await getDiff(
-    //     pullRequest.base.repositoryId,
-    //     pullRequest.head.sha,
-    //     null,
-    //     pullRequest.base.sha,
-    //     true
-    //   );
-    // } else {
-    const diff = await getPullDiff(
-      pullRequest.base.repositoryId,
-      pullRequest.head.repositoryId,
-      pullRequest.base.sha,
-      pullRequest.head.sha,
-      null,
-      true
-    );
-    // }
-    setStats(diff);
+  useEffect(() => {
+    async function initDiff() {
+      const diff = await getPullDiff(
+        pullRequest.base.repositoryId,
+        pullRequest.head.repositoryId,
+        pullRequest.base.sha,
+        pullRequest.head.sha,
+        null,
+        true
+      );
+      setStats(diff);
+    }
+    initDiff();
   }, [pullRequest]);
 
   return (

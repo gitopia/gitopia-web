@@ -12,11 +12,14 @@ function RepositoryMainTabs({ repository, active, ...props }) {
     "/" + repository.owner.id + "/" + repository.name
   );
 
-  useEffect(async () => {
-    setCurrentUserEditPermission(
-      await props.isCurrentUserEligibleToUpdate(repository)
-    );
-    setHrefBase("/" + repository.owner.id + "/" + repository.name);
+  useEffect(() => {
+    async function updatePermissions() {
+      setCurrentUserEditPermission(
+        await props.isCurrentUserEligibleToUpdate(repository)
+      );
+      setHrefBase("/" + repository.owner.id + "/" + repository.name);
+    }
+    updatePermissions();
   }, [repository, props.user]);
 
   return (
@@ -25,10 +28,9 @@ function RepositoryMainTabs({ repository, active, ...props }) {
         <Link
           href={hrefBase}
           className={
-            "tab tab-md tab-bordered" +
-            (active === "code" ? " tab-active" : "")
-          }>
-
+            "tab tab-md tab-bordered" + (active === "code" ? " tab-active" : "")
+          }
+        >
           <span className="icon mr-2">
             <svg
               viewBox="0 0 24 24"
@@ -42,15 +44,14 @@ function RepositoryMainTabs({ repository, active, ...props }) {
             </svg>
           </span>
           <span>Code</span>
-
         </Link>
         <Link
           href={hrefBase + "/issues"}
           className={
             "tab tab-md tab-bordered" +
             (active === "issues" ? " tab-active" : "")
-          }>
-
+          }
+        >
           <span className="icon mr-2">
             <svg
               viewBox="0 0 24 24"
@@ -67,15 +68,14 @@ function RepositoryMainTabs({ repository, active, ...props }) {
             </svg>
           </span>
           <span>Issues</span>
-
         </Link>
         <Link
           href={hrefBase + "/pulls"}
           className={
             "tab tab-md tab-bordered" +
             (active === "pulls" ? " tab-active" : "")
-          }>
-
+          }
+        >
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -97,15 +97,14 @@ function RepositoryMainTabs({ repository, active, ...props }) {
             />
           </svg>
           <span>Pull Requests</span>
-
         </Link>
         <Link
           href={hrefBase + "/insights"}
           className={
             "tab tab-md tab-bordered" +
             (active === "insights" ? " tab-active" : "")
-          }>
-
+          }
+        >
           <span className="icon mr-2">
             <svg
               viewBox="0 0 24 24"
@@ -113,11 +112,7 @@ function RepositoryMainTabs({ repository, active, ...props }) {
               xmlns="http://www.w3.org/2000/svg"
               className="w-5 h-5"
             >
-              <path
-                d="M5 7V20H10V7H5Z"
-                stroke="currentColor"
-                strokeWidth="2"
-              />
+              <path d="M5 7V20H10V7H5Z" stroke="currentColor" strokeWidth="2" />
               <path
                 d="M14 4V20H19V4H14Z"
                 stroke="currentColor"
@@ -126,16 +121,15 @@ function RepositoryMainTabs({ repository, active, ...props }) {
             </svg>
           </span>
           <span>Insights</span>
-
         </Link>
         {currentUserEditPermission ? (
-          (<Link
+          <Link
             href={hrefBase + "/settings"}
             className={
               "tab tab-md tab-bordered" +
               (active === "settings" ? " tab-active" : "")
-            }>
-
+            }
+          >
             <span className="icon mr-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -151,8 +145,7 @@ function RepositoryMainTabs({ repository, active, ...props }) {
               </svg>
             </span>
             <span>Settings</span>
-
-          </Link>)
+          </Link>
         ) : (
           ""
         )}

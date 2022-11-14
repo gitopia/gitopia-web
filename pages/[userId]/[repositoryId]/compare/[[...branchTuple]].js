@@ -239,21 +239,28 @@ function RepositoryCompareView(props) {
     }
   };
 
-  useEffect(refreshRepositoryForks, [repository]);
-  useEffect(updateBranches, [repository, router.query.branchTuple]);
+  useEffect(() => {
+    refreshRepositoryForks();
+  }, [repository]);
+  useEffect(() => {
+    updateBranches();
+  }, [repository, router.query.branchTuple]);
 
-  useEffect(async () => {
-    const diff = await getPullDiff(
-      compare.target.repository.id,
-      compare.source.repository.id,
-      compare.target.sha,
-      compare.source.sha,
-      null,
-      true
-    );
-    console.log("diffStat", diff);
-    setStats(diff);
-    setStartCreatingPull(false);
+  useEffect(() => {
+    async function initStats() {
+      const diff = await getPullDiff(
+        compare.target.repository.id,
+        compare.source.repository.id,
+        compare.target.sha,
+        compare.source.sha,
+        null,
+        true
+      );
+      console.log("diffStat", diff);
+      setStats(diff);
+      setStartCreatingPull(false);
+    }
+    initStats();
   }, [compare]);
 
   const username = props.selectedAddress ? props.selectedAddress.slice(-1) : "";

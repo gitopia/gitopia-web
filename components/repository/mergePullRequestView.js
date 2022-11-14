@@ -104,7 +104,9 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
     setPullMergeAccess(await getGitServerAuthorization(props.selectedAddress));
     if (mergeAfter) setTimeout(mergePull, 0);
   };
-  useEffect(refreshPullMergeAccess, [props.selectedAddress]);
+  useEffect(() => {
+    refreshPullMergeAccess();
+  }, [props.selectedAddress]);
 
   return (
     <div className="flex w-full mt-8">

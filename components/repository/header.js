@@ -55,7 +55,9 @@ function RepositoryHeader({ repository, ...props }) {
     }
   };
   useEffect(setCounts, [repository.id]);
-  useEffect(refreshForkingAccess, [props.selectedAddress]);
+  useEffect(() => {
+    refreshForkingAccess();
+  }, [props.selectedAddress]);
 
   return (
     <div className="mb-1 sm:mb-8">
@@ -75,15 +77,14 @@ function RepositoryHeader({ repository, ...props }) {
             <div className="flex">
               <div className="mr-2">
                 <Link href={"/" + repository.owner.id} className="btn-link">
-
                   {shrinkAddress(repository.owner.id)}
-
                 </Link>
               </div>
               <div className="mr-2 text-type-tertiary">/</div>
               <Link
                 href={"/" + repository.owner.id + "/" + repository.name}
-                className="btn-link">
+                className="btn-link"
+              >
                 {repository.name}
               </Link>
               {repository.fork ? (

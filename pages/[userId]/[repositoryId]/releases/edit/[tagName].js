@@ -128,7 +128,9 @@ function RepositoryReleaseEditView(props) {
     }
   };
 
-  useEffect(getRelease, [repository]);
+  useEffect(() => {
+    getRelease();
+  }, [repository]);
 
   const username = props.selectedAddress ? props.selectedAddress.slice(-1) : "";
 

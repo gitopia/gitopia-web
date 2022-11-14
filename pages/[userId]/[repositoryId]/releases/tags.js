@@ -1,7 +1,6 @@
 import Head from "next/head";
 import Header from "../../../../components/header";
 
-import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -49,7 +48,8 @@ function RepositoryTagsView(props) {
                   repository.name +
                   "/releases/new"
                 }
-                legacyBehavior>
+                legacyBehavior
+              >
                 <button className="btn btn-primary btn-sm btn-block">
                   New Release
                 </button>
