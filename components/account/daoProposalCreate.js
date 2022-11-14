@@ -13,9 +13,8 @@ import validAddress from "../../helpers/validAddress";
 function DaoProposalCreate({ dao, ...props }) {
   const [validateAddressError, setValidateAddressError] = useState("");
   const [validateAmountError, setValidateAmountError] = useState("");
-  const [validateInitialAmountError, setValidateInitialAmountError] = useState(
-    ""
-  );
+  const [validateInitialAmountError, setValidateInitialAmountError] =
+    useState("");
   const [validateTitleError, setValidateTitleError] = useState("");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -188,7 +187,14 @@ function DaoProposalCreate({ dao, ...props }) {
               name="title"
               type="text"
               placeholder="Write title here"
-              className="input input-md input-bordered text-xs h-8"
+              className={
+                "input input-md input-bordered text-xs h-8 focus:outline-none focus:border-type " +
+                (validateTitleError
+                  ? "border-pink text-pink focus:border-pink"
+                  : title.length > 0
+                  ? "border-green"
+                  : "")
+              }
               value={title}
               onKeyUp={async (e) => {
                 await validateTitle(e.target.value);
@@ -261,7 +267,14 @@ function DaoProposalCreate({ dao, ...props }) {
               onMouseUp={async (e) => {
                 await validateInitialAmount(e.target.value);
               }}
-              className="input input-md input-bordered text-xs h-8"
+              className={
+                "input input-md input-bordered text-xs h-8 focus:outline-none focus:border-type " +
+                (validateInitialAmountError
+                  ? "border-pink text-pink focus:border-pink"
+                  : initialDeposit.length > 0
+                  ? "border-green"
+                  : "")
+              }
               value={initialDeposit}
               onChange={(e) => {
                 setInitialDeposit(e.target.value);
@@ -295,7 +308,14 @@ function DaoProposalCreate({ dao, ...props }) {
                   onMouseUp={async (e) => {
                     await validateAmount(e.target.value);
                   }}
-                  className="input input-md input-bordered text-xs h-8"
+                  className={
+                    "input input-md input-bordered text-xs h-8 focus:outline-none focus:border-type " +
+                    (validateAmountError
+                      ? "border-pink text-pink focus:border-pink"
+                      : amount.length > 0
+                      ? "border-green"
+                      : "")
+                  }
                   value={amount}
                   onChange={(e) => {
                     setAmount(e.target.value);
@@ -325,7 +345,14 @@ function DaoProposalCreate({ dao, ...props }) {
                   onKeyUp={async (e) => {
                     await validateUserAddress(e.target.value);
                   }}
-                  className="input input-md input-bordered text-xs h-8"
+                  className={
+                    "input input-md input-bordered text-xs h-8 focus:outline-none focus:border-type " +
+                    (validateAddressError
+                      ? "border-pink text-pink focus:border-pink"
+                      : address.length > 0
+                      ? "border-green"
+                      : "")
+                  }
                   value={address}
                   onChange={(e) => {
                     setAddress(e.target.value);
@@ -402,7 +429,10 @@ function DaoProposalCreate({ dao, ...props }) {
                   name="release version tag"
                   type="text"
                   placeholder="Write here the target release:e.g v1.4.2"
-                  className="input input-md input-bordered mb-4 text-xs h-8"
+                  className={
+                    "input input-md input-bordered mb-4 text-xs h-8 focus:outline-none focus:border-type " +
+                    (releaseVersionTag.length > 0 ? "border-green" : "")
+                  }
                   value={releaseVersionTag}
                   onChange={(e) => {
                     setReleaseVersionTag(e.target.value);
@@ -420,9 +450,13 @@ function DaoProposalCreate({ dao, ...props }) {
               <div className="form-control">
                 <input
                   name="chain upgrade height"
-                  type="text"
+                  type="number"
+                  min="1"
                   placeholder="Write here the block halt height or chain upgrade height: e.g 104032"
-                  className="input input-md input-bordered mb-4 text-xs h-8"
+                  className={
+                    "input input-md input-bordered mb-4 text-xs h-8 focus:outline-none focus:border-type " +
+                    (height.length > 0 ? "border-green" : "")
+                  }
                   value={height}
                   onChange={(e) => {
                     setHeight(e.target.value);
@@ -492,7 +526,12 @@ function DaoProposalCreate({ dao, ...props }) {
                       name="subspace"
                       type="text"
                       placeholder="subspace"
-                      className="input input-md input-bordered mb-4 text-xs h-8"
+                      className={
+                        "input input-md input-bordered mb-4 text-xs h-8 focus:outline-none focus:border-type " +
+                        (paramSubspaces[index]?.length > 0
+                          ? "border-green"
+                          : "")
+                      }
                       value={paramSubspaces[index]}
                       key={"s-" + index}
                       onChange={(e) => {
@@ -505,7 +544,10 @@ function DaoProposalCreate({ dao, ...props }) {
                       name="key"
                       type="text"
                       placeholder="key"
-                      className="input input-md input-bordered mb-4 text-xs h-8"
+                      className={
+                        "input input-md input-bordered mb-4 text-xs h-8 focus:outline-none focus:border-type " +
+                        (paramKeys[index]?.length > 0 ? "border-green" : "")
+                      }
                       value={paramKeys[index]}
                       key={"k-" + index}
                       onChange={(e) => {
@@ -518,7 +560,10 @@ function DaoProposalCreate({ dao, ...props }) {
                       name="value"
                       type="text"
                       placeholder="value"
-                      className="input input-md w-full input-bordered mb-4 text-xs h-8"
+                      className={
+                        "input input-md w-full input-bordered mb-4 text-xs h-8 focus:outline-none focus:border-type " +
+                        (paramValues[index]?.length > 0 ? "border-green" : "")
+                      }
                       value={paramValues[index]}
                       key={"v-" + index}
                       onChange={(e) => {
