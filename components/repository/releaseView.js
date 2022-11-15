@@ -20,34 +20,51 @@ export default function ReleaseView({
 
   return (
     <div className="p-4">
-      <div className="flex items-center">
-        {noLink ? (
-          <div className="text-3xl text-type-secondary">
-            {repository.name + " " + release.tagName}
-          </div>
-        ) : (
+      <div className="flex">
+        <div className="flex items-center">
+          {noLink ? (
+            <div className="text-3xl text-type-secondary">
+              {repository.name + " " + release.tagName}
+            </div>
+          ) : (
+            <Link
+              href={
+                "/" +
+                repository.owner.id +
+                "/" +
+                repository.name +
+                "/releases/tag/" +
+                release.tagName
+              }
+            >
+              <a className="text-3xl link link-primary no-underline hover:underline">
+                {repository.name + " " + release.tagName}
+              </a>
+            </Link>
+          )}
+          {latest ? (
+            <span className="ml-4 mt-1 badge badge-primary badge-outline">
+              Latest
+            </span>
+          ) : (
+            ""
+          )}
+        </div>
+        <div className="flex-none w-36 ml-auto">
           <Link
             href={
               "/" +
               repository.owner.id +
               "/" +
               repository.name +
-              "/releases/tag/" +
-              release.tagName
+              "/releases/new"
             }
           >
-            <a className="text-3xl link link-primary no-underline hover:underline">
-              {repository.name + " " + release.tagName}
-            </a>
+            <button className="btn btn-primary btn-sm btn-block">
+              New Release
+            </button>
           </Link>
-        )}
-        {latest ? (
-          <span className="ml-4 mt-1 badge badge-primary badge-outline">
-            Latest
-          </span>
-        ) : (
-          ""
-        )}
+        </div>
       </div>
       <div className="flex items-center mt-4">
         <div className="avatar mr-1">
