@@ -40,7 +40,7 @@ const TextInput = React.forwardRef(
             required={props.required}
             className={
               "input input-bordered h-24 py-2 focus:outline-none focus:border-type " +
-              (props.hint.shown
+              (props.hint.shown && props.hint.type == "error"
                 ? "border-pink text-pink input-" + props.hint.type
                 : props.value.length > 0
                 ? "border-green"
@@ -62,7 +62,7 @@ const TextInput = React.forwardRef(
               "input input-bordered focus:outline-none focus:border-type " +
               ("input-" + props.size) +
               " " +
-              (props.hint.shown
+              (props.hint.shown && props.hint.type == "error"
                 ? "border-pink text-pink input-" + props.hint.type
                 : props.value.length > 0
                 ? "border-green"
