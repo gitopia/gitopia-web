@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { connect } from "react-redux";
-import { updateUserAvatar } from "../../store/actions/user";
+import {
+  updateUserAvatar,
+  signUploadFileMessage,
+} from "../../store/actions/user";
 import { notify } from "reapop";
+import formatBytes from "../../helpers/formatBytes";
 
 function UserAvatar(props = { isEditable: false }) {
   const name = props.user.creator ? props.user.creator : ".";
@@ -9,46 +13,89 @@ function UserAvatar(props = { isEditable: false }) {
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [previewLoading, setPreviewLoading] = useState(false);
-  const [previewAvatarUrl, setPreviewAvatarUrl] = useState(
-    "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&name=.&background=2d3845"
-  );
+  const [previewAvatarUrl, setPreviewAvatarUrl] = useState("");
   const [previewAvatarText, setPreviewAvatarText] = useState(
     "Nothing to Preview"
   );
+  const [currentTab, setCurrentTab] = useState("upload");
+  const [imageFile, setImageFile] = useState(null);
+  const [imageFileHash, setImageFileHash] = useState(null);
+  const [imageUploading, setImageUploading] = useState(0);
 
-  const validateImageUrl = async (url) => {
+  const validateImageUrl = (url, setImageUrlAfterSuccess) => {
     if (url == "") {
       setValidateImageUrlError(null);
       setPreviewAvatarText("Nothing to Preview");
-      setPreviewAvatarUrl(
-        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
-      );
+      // setPreviewAvatarUrl(
+      //   "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
+      // );
       return;
     }
     setValidateImageUrlError(null);
     setPreviewLoading(true);
     setPreviewAvatarText("Loading...");
-    setPreviewAvatarUrl(
-      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
-    );
+    // setPreviewAvatarUrl(
+    //   "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
+    // );
     var image = new Image();
     image.onload = function () {
       if (this.width > 0) {
         setPreviewLoading(false);
         setValidateImageUrlError(null);
         setPreviewAvatarText("");
-        setPreviewAvatarUrl(imageUrl);
+        setPreviewAvatarUrl(url);
+        if (setImageUrlAfterSuccess) {
+          setImageUrl(url);
+        }
       }
     };
     image.onerror = function () {
       setPreviewLoading(false);
       setValidateImageUrlError("image doesn't exist");
       setPreviewAvatarText("");
-      setPreviewAvatarUrl(
-        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=!&background=2d3845&color=6F7A8F"
-      );
+      if (setImageUrlAfterSuccess) {
+        setImageUrl("");
+      }
+      // setPreviewAvatarUrl(
+      //   "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=!&background=2d3845&color=6F7A8F"
+      // );
     };
     image.src = url;
+  };
+
+  const uploadImage = async () => {
+    if (imageFile) {
+      setImageUploading(1);
+
+      const tx = await props.signUploadFileMessage(
+        imageFile.name,
+        imageFile.size,
+        imageFileHash
+      );
+
+      // console.log(imageFile.name, tx);
+
+      let formData = new FormData();
+      formData.append("tx", tx);
+      formData.append("image", imageFile);
+
+      let res = await fetch("/api/upload-profile-image", {
+        method: "post",
+        credentials: "same-origin",
+        body: formData,
+      }).then((response) => {
+        if (response.status === 200) return response.json();
+        else return response.text();
+      });
+      console.log(res);
+      if (res && res.url) {
+        validateImageUrl(res.url, true);
+        setImageUploading(2);
+      } else if (res) {
+        setValidateImageUrlError(res);
+        setImageUploading(0);
+      }
+    }
   };
 
   return (
@@ -72,12 +119,82 @@ function UserAvatar(props = { isEditable: false }) {
                 </div>
               </div>
             </div>
-            <div>
-              <label className="label">
-                <span className="label-text text-xs font-bold text-gray-400">
-                  IMAGE URL
-                </span>
-              </label>
+            <div className="tabs mb-4 mt-4">
+              <div
+                className={
+                  "tab tab-xs tab-bordered" +
+                  (currentTab === "upload" ? " tab-active" : "")
+                }
+                onClick={() => {
+                  setCurrentTab("upload");
+                }}
+              >
+                Upload File
+              </div>
+              <div
+                className={
+                  "tab tab-xs tab-bordered" +
+                  (currentTab === "url" ? " tab-active" : "")
+                }
+                onClick={() => {
+                  setCurrentTab("url");
+                }}
+              >
+                Image Url
+              </div>
+            </div>
+            {currentTab === "upload" ? (
+              <div>
+                <input
+                  name="profile_picture"
+                  placeholder="Upload"
+                  type="file"
+                  className="w-full h-11 pt-2 input input-xs input-ghost input-bordered "
+                  accept="image/*"
+                  onChange={async (e) => {
+                    if (e.target.files.length) {
+                      let file = e.target.files[0];
+                      if (
+                        file.size >
+                        process.env.NEXT_PUBLIC_MAX_AVATAR_IMAGE_SIZE_BYTES
+                      ) {
+                        setValidateImageUrlError(
+                          "File too big (>" +
+                            formatBytes(
+                              process.env
+                                .NEXT_PUBLIC_MAX_AVATAR_IMAGE_SIZE_BYTES
+                            ) +
+                            ")"
+                        );
+                        return;
+                      }
+                      setImageFile(file);
+                      let reader = new FileReader();
+                      const CryptoJS = (await import("crypto-js")).default;
+
+                      reader.onload = function (event) {
+                        let binary = event.target.result;
+                        let md5 = CryptoJS.MD5(
+                          CryptoJS.enc.Latin1.parse(binary)
+                        ).toString();
+                        console.log(file.name, file.size, md5);
+
+                        setImageFileHash(md5);
+                        setImageUploading(0);
+                      };
+
+                      reader.readAsBinaryString(file);
+                    } else {
+                      setImageFile(null);
+                      console.log("no file selected ");
+                    }
+                  }}
+                />
+              </div>
+            ) : (
+              ""
+            )}
+            {currentTab === "url" ? (
               <div>
                 <input
                   name="Image Url"
@@ -85,7 +202,7 @@ function UserAvatar(props = { isEditable: false }) {
                   autoComplete="off"
                   value={imageUrl}
                   onKeyUp={async (e) => {
-                    await validateImageUrl(e.target.value);
+                    validateImageUrl(e.target.value);
                   }}
                   onChange={(e) => {
                     setImageUrl(e.target.value);
@@ -93,26 +210,42 @@ function UserAvatar(props = { isEditable: false }) {
                   className="w-full h-11 input input-xs input-ghost input-bordered "
                 />
               </div>
-              {validateImageUrlError ? (
-                <label className="label">
-                  <span className="label-text-alt text-error">
-                    {validateImageUrlError}
-                  </span>
-                </label>
-              ) : (
-                ""
-              )}
-              {previewLoading ? (
-                <label className="label">
-                  <span className="label-text-alt text-amber-300">
-                    checking avatar url...
-                  </span>
-                </label>
-              ) : (
-                ""
-              )}
-            </div>
+            ) : (
+              ""
+            )}
+            {validateImageUrlError ? (
+              <label className="label">
+                <span className="label-text-alt text-error">
+                  {validateImageUrlError}
+                </span>
+              </label>
+            ) : (
+              ""
+            )}
+            {previewLoading ? (
+              <label className="label">
+                <span className="label-text-alt text-amber-300">
+                  checking avatar url...
+                </span>
+              </label>
+            ) : (
+              ""
+            )}
             <div className="modal-action ml-auto w-28">
+              {currentTab === "upload" ? (
+                <button
+                  className={
+                    "btn btn-sm btn-block" +
+                    (imageUploading === 1 ? " loading" : "")
+                  }
+                  disabled={imageUploading}
+                  onClick={uploadImage}
+                >
+                  UPLOAD
+                </button>
+              ) : (
+                ""
+              )}
               <label
                 htmlFor="avatar-url-modal"
                 className={
@@ -131,9 +264,9 @@ function UserAvatar(props = { isEditable: false }) {
                     }
                     setImageUrl("");
                     setPreviewAvatarText("Nothing to Preview");
-                    setPreviewAvatarUrl(
-                      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
-                    );
+                    // setPreviewAvatarUrl(
+                    //   "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
+                    // );
                     setLoading(false);
                   }
                 }}
@@ -198,5 +331,6 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   updateUserAvatar,
+  signUploadFileMessage,
   notify,
 })(UserAvatar);

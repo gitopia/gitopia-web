@@ -140,7 +140,7 @@ export const setWallet = ({ wallet }) => {
 export const unlockWallet = ({ name, password }) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
-    const encryptedWallet =
+    let encryptedWallet =
       state.wallets[state.wallets.findIndex((x) => x.name === name)].wallet;
     let wallet;
     try {

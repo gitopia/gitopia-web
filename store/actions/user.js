@@ -9,6 +9,8 @@ import { updateUserBalance, refreshCurrentDashboard } from "./wallet";
 import { notify } from "reapop";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getNodeInfo from "../../helpers/getNodeInfo";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { toBase64 } from "@cosmjs/encoding";
 
 export const createUser = ({ username, name, bio, avatarUrl }) => {
   return async (dispatch, getState) => {
@@ -307,17 +309,27 @@ export const updateAddressGrant = (address, permission, allow) => {
   };
 };
 
-export const calculateGithubRewards = () => {
+export const signUploadFileMessage = (name, size, md5) => {
   return async (dispatch, getState) => {
     const data = {
       // Any arbitrary object
-      access_token: "ASDASD",
+      name,
+      size,
+      md5,
     };
     try {
-      return await signMessage({ data })(dispatch, getState);
+      let s = await signMessage({ data })(dispatch, getState);
+      let raw = TxRaw.encode(s).finish();
+      let msg = toBase64(raw);
+      return msg;
     } catch (e) {
+      console.error(e);
       dispatch(notify(e.message, "error"));
       return null;
     }
   };
 };
+
+if (typeof window !== "undefined") {
+  window.toBase64 = toBase64;
+}

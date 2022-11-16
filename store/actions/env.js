@@ -82,7 +82,11 @@ export const signMessage = ({ data = {} }) => {
         signer: wallet.selectedAddress,
         data,
       });
-      const res = await env.txClient.sign([msg], JSON.stringify(data));
+      const res = await env.txClient.sign([msg], JSON.stringify(data), {
+        accountNumber: 0,
+        sequence: 0,
+        chainId: "",
+      });
       dispatch(dismissNotification(notifId));
       return res;
     } catch (e) {
