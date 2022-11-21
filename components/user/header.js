@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { getUserDetailsForSelectedAddress } from "../../store/actions/user";
 import { notify } from "reapop";
-import UserAvatar from "./avatar";
+import AccountAvatar from "../account/avatar";
 import UserBio from "./bio";
 import UserName from "./name";
 import UserUsername from "./username";
@@ -21,7 +21,11 @@ function UserHeader(props) {
 
   return (
     <div className="flex flex-col sm:flex-row mb-8 items-start">
-      <UserAvatar user={props.user} isEditable={isEditable} refresh={refresh} />
+      <AccountAvatar
+        user={props.user}
+        isEditable={isEditable}
+        refresh={refresh}
+      />
       <div className="flex-1 text-md sm:pl-12 w-full max-w-2xl">
         <UserName user={props.user} isEditable={isEditable} refresh={refresh} />
         <div className="text-type-secondary mb-4">

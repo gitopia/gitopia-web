@@ -1,42 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
   updateUserAvatar,
   signUploadFileMessage,
 } from "../../store/actions/user";
+import { updateDaoAvatar } from "../../store/actions/dao";
 import { notify } from "reapop";
 import formatBytes from "../../helpers/formatBytes";
 
-function UserAvatar(props = { isEditable: false }) {
-  const name = props.user.creator ? props.user.creator : ".";
+function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
+  const name = isDao
+    ? props.dao.name
+      ? props.dao.name
+      : "."
+    : props.user.creator
+    ? props.user.creator
+    : ".";
   const [validateImageUrlError, setValidateImageUrlError] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [previewLoading, setPreviewLoading] = useState(false);
-  const [previewAvatarUrl, setPreviewAvatarUrl] = useState("");
+  const [previewAvatarUrl, setPreviewAvatarUrl] = useState(null);
   const [previewAvatarText, setPreviewAvatarText] = useState(
-    "Nothing to Preview"
+    "Nothing to preview"
   );
   const [currentTab, setCurrentTab] = useState("upload");
   const [imageFile, setImageFile] = useState(null);
   const [imageFileHash, setImageFileHash] = useState(null);
   const [imageUploading, setImageUploading] = useState(0);
 
+  useEffect(() => {
+    setValidateImageUrlError("");
+    let url = isDao ? props.dao?.avatarUrl : props.user?.avatarUrl;
+    setImageUrl(url);
+    setPreviewAvatarUrl(url);
+    setPreviewAvatarText("");
+    setImageFile(null);
+    setImageFileHash(null);
+  }, [isDao ? props.dao?.id : props.user?.id]);
+
   const validateImageUrl = (url, setImageUrlAfterSuccess) => {
     if (url == "") {
       setValidateImageUrlError(null);
-      setPreviewAvatarText("Nothing to Preview");
-      // setPreviewAvatarUrl(
-      //   "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
-      // );
+      setPreviewAvatarText("Nothing to preview");
+      setPreviewAvatarUrl(null);
       return;
     }
     setValidateImageUrlError(null);
     setPreviewLoading(true);
     setPreviewAvatarText("Loading...");
-    // setPreviewAvatarUrl(
-    //   "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
-    // );
+    setPreviewAvatarUrl(null);
     var image = new Image();
     image.onload = function () {
       if (this.width > 0) {
@@ -47,6 +60,7 @@ function UserAvatar(props = { isEditable: false }) {
         if (setImageUrlAfterSuccess) {
           setImageUrl(url);
         }
+        // console.log("FileSize:", url, performance.getEntriesByName(url)[0]);
       }
     };
     image.onerror = function () {
@@ -56,9 +70,7 @@ function UserAvatar(props = { isEditable: false }) {
       if (setImageUrlAfterSuccess) {
         setImageUrl("");
       }
-      // setPreviewAvatarUrl(
-      //   "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=!&background=2d3845&color=6F7A8F"
-      // );
+      setPreviewAvatarUrl(null);
     };
     image.src = url;
   };
@@ -73,7 +85,10 @@ function UserAvatar(props = { isEditable: false }) {
         imageFileHash
       );
 
-      // console.log(imageFile.name, tx);
+      if (!tx) {
+        setImageUploading(0);
+        return;
+      }
 
       let formData = new FormData();
       formData.append("tx", tx);
@@ -112,8 +127,13 @@ function UserAvatar(props = { isEditable: false }) {
             </label>
 
             <div className="avatar flex-none mr-8 items-center mx-36">
-              <div className={"relative w-40 h-40 rounded-full"}>
-                <img src={previewAvatarUrl} />
+              <div
+                className={
+                  "relative w-40 h-40 border border-grey" +
+                  (isDao ? " rounded-md" : " rounded-full")
+                }
+              >
+                {previewAvatarUrl ? <img src={previewAvatarUrl} /> : ""}
                 <div className="absolute w-full bottom-16 text-center italic text-grey-300 text-sm">
                   {previewAvatarText}
                 </div>
@@ -122,7 +142,7 @@ function UserAvatar(props = { isEditable: false }) {
             <div className="tabs mb-4 mt-4">
               <div
                 className={
-                  "tab tab-xs tab-bordered" +
+                  "tab tab-sm tab-bordered" +
                   (currentTab === "upload" ? " tab-active" : "")
                 }
                 onClick={() => {
@@ -133,7 +153,7 @@ function UserAvatar(props = { isEditable: false }) {
               </div>
               <div
                 className={
-                  "tab tab-xs tab-bordered" +
+                  "tab tab-sm tab-bordered" +
                   (currentTab === "url" ? " tab-active" : "")
                 }
                 onClick={() => {
@@ -150,7 +170,7 @@ function UserAvatar(props = { isEditable: false }) {
                   placeholder="Upload"
                   type="file"
                   className="w-full h-11 pt-2 input input-xs input-ghost input-bordered "
-                  accept="image/*"
+                  accept="image/jpg, image/jpeg, image/png, image/gif"
                   onChange={async (e) => {
                     if (e.target.files.length) {
                       let file = e.target.files[0];
@@ -177,7 +197,6 @@ function UserAvatar(props = { isEditable: false }) {
                         let md5 = CryptoJS.MD5(
                           CryptoJS.enc.Latin1.parse(binary)
                         ).toString();
-                        console.log(file.name, file.size, md5);
 
                         setImageFileHash(md5);
                         setImageUploading(0);
@@ -225,7 +244,7 @@ function UserAvatar(props = { isEditable: false }) {
             {previewLoading ? (
               <label className="label">
                 <span className="label-text-alt text-amber-300">
-                  checking avatar url...
+                  Checking avatar url...
                 </span>
               </label>
             ) : (
@@ -257,16 +276,24 @@ function UserAvatar(props = { isEditable: false }) {
                     props.callback(imageUrl);
                   } else {
                     setLoading(true);
-                    const res = await props.updateUserAvatar(imageUrl);
+                    const res = isDao
+                      ? await props.updateDaoAvatar({
+                          id: props.dao.address,
+                          url: imageUrl,
+                        })
+                      : await props.updateUserAvatar(imageUrl);
                     if (res && res.code === 0) {
-                      props.notify("Your user avatar is updated", "info");
+                      props.notify(
+                        "Your " +
+                          (isDao ? "DAO" : "user") +
+                          " avatar is updated",
+                        "info"
+                      );
                       if (props.refresh) await props.refresh();
                     }
                     setImageUrl("");
-                    setPreviewAvatarText("Nothing to Preview");
-                    // setPreviewAvatarUrl(
-                    //   "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=0&caps=1&name=.&background=2d3845"
-                    // );
+                    setPreviewAvatarText("Nothing to preview");
+                    setPreviewAvatarUrl(null);
                     setLoading(false);
                   }
                 }}
@@ -281,7 +308,7 @@ function UserAvatar(props = { isEditable: false }) {
             </div>
           </div>
         </div>
-        {props.isEditable ? (
+        {isEditable ? (
           <label htmlFor="avatar-url-modal" className="modal-button">
             <div className="indicator-item indicator-bottom mr-6 mb-6 h-7.5 w-7.5 bg-base-100 rounded-full p-2 border border-grey-300 cursor-pointer hover:text-primary">
               <svg
@@ -306,13 +333,19 @@ function UserAvatar(props = { isEditable: false }) {
         <div className="avatar flex-none items-center">
           <div
             className={
-              "w-40 h-40 rounded-full border" +
-              (props.isEditable ? " border-grey-300" : " border-transparent")
+              "w-40 h-40 border" +
+              (isDao ? " rounded-md" : " rounded-full") +
+              (isEditable ? " border-grey-300" : " border-transparent")
             }
           >
             <img
               src={
-                props.user.avatarUrl == ""
+                isDao
+                  ? props.dao.avatarUrl == ""
+                    ? "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+                      name.slice(-1)
+                    : props.dao.avatarUrl
+                  : props.user.avatarUrl == ""
                   ? "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
                     name.slice(-1)
                   : props.user.avatarUrl
@@ -331,6 +364,7 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   updateUserAvatar,
+  updateDaoAvatar,
   signUploadFileMessage,
   notify,
-})(UserAvatar);
+})(AccountAvatar);

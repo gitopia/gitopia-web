@@ -7,7 +7,7 @@ import {
 import { notify } from "reapop";
 import DaoName from "../dao/name";
 import DaoDescription from "../dao/description";
-import DaoAvatar from "../dao/avatar";
+import AccountAvatar from "../account/avatar";
 import DaoLocation from "../dao/location";
 import DaoWebsite from "../dao/website";
 import getDaoMember from "../../helpers/getUserDaoMember";
@@ -30,7 +30,12 @@ function AccountDaoHeader(props) {
 
   return (
     <div className="flex flex-col sm:flex-row mb-8 items-start">
-      <DaoAvatar dao={props.dao} isEditable={isEditable} refresh={refresh} />
+      <AccountAvatar
+        dao={props.dao}
+        isEditable={isEditable}
+        refresh={refresh}
+        isDao={true}
+      />
       <div className="flex-1 max-w-3xl sm:pl-12">
         <DaoName dao={props.dao} isEditable={isEditable} refresh={refresh} />
         <div className="text-type-secondary mb-4">
