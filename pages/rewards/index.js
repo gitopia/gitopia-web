@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 export default function Rewards() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobile, setMobile] = useState(false);
+  const CLIENT_ID = "b4ca5c703ee899b26505";
+
   function detectWindowSize() {
     if (typeof window !== "undefined") {
       window.innerWidth <= 760 ? setMobile(true) : setMobile(false);
@@ -22,6 +24,12 @@ export default function Rewards() {
       }
     };
   });
+
+  function githubLogin() {
+    window.location.assign(
+      "https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID
+    );
+  }
   return (
     <div className={styles.wrapper}>
       <Head>
@@ -261,11 +269,14 @@ export default function Rewards() {
         </div>
         <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
           <div className="my-3 ml-4">Connect your Github Account</div>
-          <Link href="/login">
-            <div className="ml-auto btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md">
-              Connect Github
-            </div>
-          </Link>
+          <div
+            className="ml-auto btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md"
+            onClick={() => {
+              githubLogin();
+            }}
+          >
+            Connect Github
+          </div>
         </div>
         <div className="flex flex-col items-center mt-12">
           <Link href="/login">
