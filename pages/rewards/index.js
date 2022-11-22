@@ -3,11 +3,12 @@ import Head from "next/head";
 import Link from "next/link";
 import classnames from "classnames";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 export default function Rewards() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobile, setMobile] = useState(false);
   const CLIENT_ID = "b4ca5c703ee899b26505";
-
+  const router = useRouter();
   function detectWindowSize() {
     if (typeof window !== "undefined") {
       window.innerWidth <= 760 ? setMobile(true) : setMobile(false);
@@ -24,6 +25,14 @@ export default function Rewards() {
       }
     };
   });
+
+  useEffect(() => {
+    const query = window.location.search;
+    const urlParameters = new URLSearchParams(query);
+    const code = urlParameters.get("code");
+    console.log(code);
+    router.push("/rewards");
+  }, []);
 
   function githubLogin() {
     window.location.assign(
