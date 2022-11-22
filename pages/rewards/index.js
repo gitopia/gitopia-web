@@ -1,12 +1,18 @@
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { connect } from "react-redux";
+import { notify } from "reapop";
 import styles from "../../styles/landing.module.css";
 import Head from "next/head";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
 import Header from "../../components/landingPageHeader";
 import Footer from "../../components/landingPageFooter";
-export default function Rewards() {
+import getWhois from "../../helpers/getWhois";
+import { async } from "regenerator-runtime";
+function Rewards(props) {
   const [mobile, setMobile] = useState(false);
+  const [activeWallet, setActiveWallet] = useState(null);
+  const [code, setCode] = useState(null);
   const CLIENT_ID = "b4ca5c703ee899b26505";
   const router = useRouter();
   function detectWindowSize() {
@@ -15,6 +21,7 @@ export default function Rewards() {
     }
   }
   useEffect(() => {
+    console.log(code, activeWallet);
     if (typeof window !== "undefined") {
       window.addEventListener("resize", detectWindowSize);
     }
@@ -29,10 +36,17 @@ export default function Rewards() {
   useEffect(() => {
     const query = window.location.search;
     const urlParameters = new URLSearchParams(query);
-    const code = urlParameters.get("code");
-    console.log(code);
+    const codeValue = urlParameters.get("code");
+    setCode(codeValue);
     router.push("/rewards");
   }, []);
+
+  useEffect(async () => {
+    const data = await getWhois(props.activeWallet?.name);
+    if (props.activeWallet !== null && data !== null && data !== undefined) {
+      setActiveWallet(props.activeWallet);
+    }
+  }, [props.activeWallet]);
 
   function githubLogin() {
     window.location.assign(
@@ -72,28 +86,57 @@ export default function Rewards() {
         </div>
         <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-32">
           <div className="my-3 ml-4">Create a Gitopia Account</div>
-          <Link href="/login">
-            <div className="ml-auto btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md">
-              Create Account
-            </div>
-          </Link>
+          {activeWallet === null ? (
+            <Link href="/login">
+              <div className="ml-auto btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md">
+                Create Account
+              </div>
+            </Link>
+          ) : (
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="ml-auto mr-3 mt-2"
+            >
+              <circle cx="16" cy="16" r="16" fill="#66CE67" />
+            </svg>
+          )}
         </div>
         <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
           <div className="my-3 ml-4">Connect your Github Account</div>
-          <div
-            className="ml-auto btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md"
-            onClick={() => {
-              githubLogin();
-            }}
-          >
-            Connect Github
-          </div>
+          {code === null ? (
+            <div
+              className="ml-auto btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md"
+              onClick={() => {
+                githubLogin();
+              }}
+            >
+              Connect Github
+            </div>
+          ) : (
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="ml-auto mr-3 mt-2"
+            >
+              <circle cx="16" cy="16" r="16" fill="#66CE67" />
+            </svg>
+          )}
         </div>
         <div className="flex flex-col items-center mt-12">
           <Link href="/login">
-            <div className="ml-auto btn btn-tertiary bg-[#404957] h-14 py-3 w-80 rounded-md">
+            <button
+              className="ml-auto btn btn-primary bg-green h-14 py-3 w-80 rounded-md"
+              disabled={code === null || activeWallet === null}
+            >
               Check Eligibility
-            </div>
+            </button>
           </Link>
           <div className="text-xs opacity-50 text-white mt-4">
             If you have any issues, contact us at contact@gitopia.com
@@ -130,3 +173,13 @@ export default function Rewards() {
     </div>
   );
 }
+const mapStateToProps = (state) => {
+  return {
+    wallets: state.wallet.wallets,
+    activeWallet: state.wallet.activeWallet,
+  };
+};
+
+export default connect(mapStateToProps, {
+  notify,
+})(Rewards);
