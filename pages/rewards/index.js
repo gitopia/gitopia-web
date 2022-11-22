@@ -46,7 +46,7 @@ export default function Rewards() {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <section className={"flex flex-col items-center mt-40"}>
+      <section className={"flex flex-col items-center mt-40 relative"}>
         <div className="flex flex-col ml-10">
           <div className=" text-6xl font-bold w-1/2 tracking-tight leading-[4rem]">
             Check if you’re eligble to join the Airdrop.
@@ -99,7 +99,33 @@ export default function Rewards() {
             If you have any issues, contact us at contact@gitopia.com
           </div>
         </div>
+        <img
+          className={"absolute pointer-events-none z-1 left-5 "}
+          src="./rewards/drop-1.svg"
+        />
+        <img
+          className={"absolute pointer-events-none z-1 right-16 top-28 "}
+          src="./rewards/drop-2.svg"
+        />
+        <img
+          className={
+            "absolute pointer-events-none -z-10 w-3/4 right-5 top-1/3 mt-10 "
+          }
+          src="./rewards/objects.svg"
+        />
+        <img
+          className={"absolute pointer-events-none z-10 w-full top-1/4 mt-10 "}
+          src="./rewards/ellipse.svg"
+        />
       </section>
+      <img
+        className={"absolute pointer-events-none -z-20 w-full top-24"}
+        src="./rewards/stars-1.svg"
+      />
+      <img
+        className={"absolute pointer-events-none -z-20 w-full top-1/3"}
+        src="./rewards/stars-2.svg"
+      />
       <Footer />
     </div>
   );
