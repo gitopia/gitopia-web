@@ -8,7 +8,7 @@ import Link from "next/link";
 import Header from "../../components/landingPageHeader";
 import Footer from "../../components/landingPageFooter";
 import getWhois from "../../helpers/getWhois";
-import { async } from "regenerator-runtime";
+import LoadingRewards from "../../components/loadingRewards";
 function Rewards(props) {
   const [mobile, setMobile] = useState(false);
   const [activeWallet, setActiveWallet] = useState(null);
@@ -101,7 +101,16 @@ function Rewards(props) {
               xmlns="http://www.w3.org/2000/svg"
               className="ml-auto mr-3 mt-2"
             >
-              <circle cx="16" cy="16" r="16" fill="#66CE67" />
+              <path
+                d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16Z"
+                fill="#66CE67"
+              />
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M25.1348 10.9804L14.6906 23.0737L8.5625 18.1713L10.4366 15.8287L14.3085 18.9262L22.8643 9.01953L25.1348 10.9804Z"
+                fill="white"
+              />
             </svg>
           )}
         </div>
@@ -125,7 +134,16 @@ function Rewards(props) {
               xmlns="http://www.w3.org/2000/svg"
               className="ml-auto mr-3 mt-2"
             >
-              <circle cx="16" cy="16" r="16" fill="#66CE67" />
+              <path
+                d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16Z"
+                fill="#66CE67"
+              />
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M25.1348 10.9804L14.6906 23.0737L8.5625 18.1713L10.4366 15.8287L14.3085 18.9262L22.8643 9.01953L25.1348 10.9804Z"
+                fill="white"
+              />
             </svg>
           )}
         </div>
@@ -142,6 +160,12 @@ function Rewards(props) {
             If you have any issues, contact us at contact@gitopia.com
           </div>
         </div>
+        <img
+          className={"absolute pointer-events-none -z-10 left-1/3 -top-36"}
+          src="./rewards/drop-mid.svg"
+          width={"622"}
+          height={"762"}
+        />
         <img
           className={"absolute pointer-events-none z-1 left-5 "}
           src="./rewards/drop-1.svg"

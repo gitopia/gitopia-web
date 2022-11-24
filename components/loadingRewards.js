@@ -20,7 +20,10 @@ export default function LoadingRewards() {
         <div className="font-bold text-3xl text-center">
           This might take upto 15 minutes
         </div>
-        <div className="mt-5 text-center">
+        <div className="relative flex items-center justify-center pointer-events-none">
+          <img src="/rewards/loading-rewards.png"></img>
+        </div>
+        <div className="text-center">
           You only have to do this process once, afterwards
         </div>
         <div className="text-center">
@@ -33,9 +36,6 @@ export default function LoadingRewards() {
           <a className="flex-none btn btn-primary btn-wide w-52" href={"/home"}>
             LEARN MORE
           </a>
-        </div>
-        <div className="relative flex items-center justify-center">
-          <img src="/loading-rewards.svg"></img>
         </div>
       </div>
       <Footer />
