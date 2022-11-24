@@ -21,7 +21,7 @@ function GithubRewards(props) {
       return;
     }
     setLoading(true);
-    const res = await props.calculateGithubRewards();
+    const res = await props.calculateGithubRewards("ASDASDASD");
     console.log(res);
     setLoading(false);
   };

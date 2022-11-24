@@ -1,6 +1,7 @@
 import { walletActions, envActions } from "./actionTypes";
 import { notify, dismissNotification } from "reapop";
 import { initLedgerTransport, updateUserBalance } from "./wallet";
+import getNodeInfo from "../../helpers/getNodeInfo";
 
 export const sendTransaction = ({
   message,
@@ -82,11 +83,25 @@ export const signMessage = ({ data = {} }) => {
         signer: wallet.selectedAddress,
         data,
       });
-      const res = await env.txClient.sign([msg], JSON.stringify(data), {
-        accountNumber: 0,
-        sequence: 0,
-        chainId: "",
-      });
+      const info = await getNodeInfo();
+      const res = await env.txClient.sign(
+        [msg],
+        {
+          amount: [
+            {
+              amount: "0",
+              denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN,
+            },
+          ],
+          gas: "0",
+        },
+        JSON.stringify(data),
+        {
+          accountNumber: 0,
+          sequence: 0,
+          chainId: info.default_node_info.network,
+        }
+      );
       dispatch(dismissNotification(notifId));
       return res;
     } catch (e) {

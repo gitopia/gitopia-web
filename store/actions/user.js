@@ -333,3 +333,22 @@ export const signUploadFileMessage = (name, size, md5) => {
 if (typeof window !== "undefined") {
   window.toBase64 = toBase64;
 }
+
+export const calculateGithubRewards = (rewardToken) => {
+  return async (dispatch, getState) => {
+    const data = {
+      // Any arbitrary object
+      rewardToken,
+    };
+    try {
+      let s = await signMessage({ data })(dispatch, getState);
+      let raw = TxRaw.encode(s).finish();
+      let msg = toBase64(raw);
+      return msg;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
