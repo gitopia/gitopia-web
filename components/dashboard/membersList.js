@@ -127,7 +127,10 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
           </td>
           <td style={{ verticalAlign: "top" }}>
             <select
-              className="select select-bordered w-full select-sm"
+              className={
+                "select select-bordered w-full select-sm focus:outline-none focus:border-type " +
+                (collabRole.length > 0 ? "border-green" : "")
+              }
               value={collabRole}
               onChange={(e) => setCollabRole(e.target.value)}
             >

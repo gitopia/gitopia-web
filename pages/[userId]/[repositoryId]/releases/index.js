@@ -82,48 +82,7 @@ function RepositoryReleasesView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs repository={repository} active="code" />
-          <div className="flex mt-8">
-            <div className="form-control flex-1 mr-8">
-              {/* <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="w-full pr-16 input input-ghost input-sm input-bordered"
-                />
-                <button className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </button>
-              </div> */}
-            </div>
-            <div className="flex-none w-36">
-              <Link
-                href={
-                  "/" +
-                  repository.owner.id +
-                  "/" +
-                  repository.name +
-                  "/releases/new"
-                }
-                className="btn btn-primary btn-sm btn-block"
-              >
-                New Release
-              </Link>
-            </div>
-          </div>
-          <div className="mt-8">
+          <div className="mt-4">
             {latestRelease ? (
               <ReleaseView
                 repository={repository}

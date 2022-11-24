@@ -376,7 +376,13 @@ export const downloadWallet = (password) => {
         return false;
       }
       if (wallet) {
-        const backup = JSON.stringify(wallet);
+        let downloadWallet = {
+          name: wallet.name,
+          mnemonic: wallet.mnemonic,
+          HDpath: wallet.HDpath,
+          accounts: wallet.accounts,
+        };
+        const backup = JSON.stringify(downloadWallet);
         const blob = new Blob([backup.toString()], {
           type: "application/json; charset=utf-8",
         });

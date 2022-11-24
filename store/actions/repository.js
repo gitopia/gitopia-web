@@ -31,7 +31,12 @@ export const validatePostingEligibility = async (
       dispatch(notify("Balance low for creating " + msgType, "error"));
       return false;
     } else {
-      dispatch(notify("User not found", "error"));
+      dispatch(
+        notify(
+          "You need to create a profile before performing any action, please go back to the dashboard and setup your profile first",
+          "error"
+        )
+      );
       return false;
     }
   }

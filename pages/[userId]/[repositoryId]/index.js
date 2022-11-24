@@ -585,7 +585,17 @@ function RepositoryView(props) {
                     id="readme"
                     className="border border-gray-700 rounded overflow-hidden p-4 markdown-body mt-8"
                   >
-                    <MarkdownWrapper>{readmeFile}</MarkdownWrapper>
+                    <MarkdownWrapper
+                      hrefBase={[
+                        "",
+                        repository.owner.id,
+                        repository.name,
+                        "tree",
+                        selectedBranch,
+                      ].join("/")}
+                    >
+                      {readmeFile}
+                    </MarkdownWrapper>
                   </div>
                 ) : (
                   <div className="mt-8">No readme file</div>

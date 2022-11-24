@@ -155,7 +155,7 @@ function RepositoryTreeView(props) {
       console.log(res);
       if (res) {
         if (res.content) {
-          if (res.content[0].type === "BLOB" && res.content[0].content) {
+          if (res.content[0].type === "BLOB" && res.content[0].size) {
             // display file contents
             setEntityList([]);
             setReadmeFile(null);
@@ -165,22 +165,28 @@ function RepositoryTreeView(props) {
               setFileSyntax(extension);
               setFileSize(res.content[0].size);
 
-              if (
-                ["jpg", "jpeg", "png", "gif"].includes(extension.toLowerCase())
-              ) {
-                setIsImageFile(true);
-                setFile(res.content[0].content);
-              } else {
-                setIsImageFile(false);
-                setFile(window.atob(res.content[0].content));
-              }
+              if (res.content[0].content) {
+                if (
+                  ["jpg", "jpeg", "png", "gif"].includes(
+                    extension.toLowerCase()
+                  )
+                ) {
+                  setIsImageFile(true);
+                  setFile(res.content[0].content);
+                } else {
+                  setIsImageFile(false);
+                  setFile(window.atob(res.content[0].content));
+                }
 
-              if (extension.toLowerCase() === "md") {
-                setShowRenderedFileOption(true);
-                setShowRenderedFile(true);
+                if (extension.toLowerCase() === "md") {
+                  setShowRenderedFileOption(true);
+                  setShowRenderedFile(true);
+                } else {
+                  setShowRenderedFileOption(false);
+                  setShowRenderedFile(false);
+                }
               } else {
-                setShowRenderedFileOption(false);
-                setShowRenderedFile(false);
+                setFile("File size is too big to show (> 1MB)");
               }
             } catch (e) {
               // TODO: show error to user
@@ -246,8 +252,50 @@ function RepositoryTreeView(props) {
     }
   };
 
+  const b64toBlob = (b64Data, contentType = "", sliceSize = 512) => {
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+
+    const blob = new Blob(byteArrays, { type: contentType });
+    return blob;
+  };
+
+  const downloadFile = async () => {
+    const res = await getContent(
+      repository.id,
+      getBranchSha(branchName, repository.branches, repository.tags),
+      repoPath.join("/"),
+      null,
+      1,
+      true
+    );
+    if (
+      res?.content?.length &&
+      res.content[0].type === "BLOB" &&
+      res.content[0].size
+    ) {
+      const mime = (await import("mime-types")).default;
+      let contentType = mime.contentType(res.content[0].name);
+      const blob = b64toBlob(res.content[0].content, contentType);
+      const saveAs = (await import("file-saver")).default.saveAs;
+      saveAs(blob, res.content[0].name);
+    }
+  };
+
   useEffect(() => {
-    async function initCommits() {
+    const initCommits = async () => {
       if (repository.branches.length) {
         loadEntities([], true);
         const commitHistory = await getCommitHistory(
@@ -265,7 +313,7 @@ function RepositoryTreeView(props) {
           setCommitsLength(commitHistory.pagination.total);
         }
       }
-    }
+    };
     initCommits();
   }, [repoPath]);
 
@@ -366,7 +414,7 @@ function RepositoryTreeView(props) {
                             data-title="Source"
                             className="btn btn-xs"
                             checked={!showRenderedFile}
-                            onClick={() => {
+                            onChange={() => {
                               setShowRenderedFile(!showRenderedFile);
                             }}
                           />
@@ -376,7 +424,7 @@ function RepositoryTreeView(props) {
                             data-title="Rendered"
                             className="btn btn-xs"
                             checked={showRenderedFile}
-                            onClick={() => {
+                            onChange={() => {
                               setShowRenderedFile(!showRenderedFile);
                             }}
                           />
@@ -384,6 +432,12 @@ function RepositoryTreeView(props) {
                       ) : (
                         ""
                       )}
+                      <button
+                        onClick={downloadFile}
+                        className="btn btn-xs ml-2"
+                      >
+                        Raw
+                      </button>
                     </div>
                     {isImageFile ? (
                       <div className="flex justify-center align-center">
@@ -393,7 +447,17 @@ function RepositoryTreeView(props) {
                       </div>
                     ) : showRenderedFile ? (
                       <div className="markdown-body p-4">
-                        <MarkdownWrapper>{file}</MarkdownWrapper>
+                        <MarkdownWrapper
+                          hrefBase={[
+                            "",
+                            repository.owner.id,
+                            repository.name,
+                            "tree",
+                            branchName,
+                          ].join("/")}
+                        >
+                          {file}
+                        </MarkdownWrapper>
                       </div>
                     ) : (
                       <SyntaxHighlighter
@@ -417,7 +481,17 @@ function RepositoryTreeView(props) {
               id="readme"
               className="border border-gray-700 rounded overflow-hidden p-4 markdown-body mt-8"
             >
-              <MarkdownWrapper>{readmeFile}</MarkdownWrapper>
+              <MarkdownWrapper
+                hrefBase={[
+                  "",
+                  repository.owner.id,
+                  repository.name,
+                  "tree",
+                  branchName,
+                ].join("/")}
+              >
+                {readmeFile}
+              </MarkdownWrapper>
             </div>
           ) : (
             ""

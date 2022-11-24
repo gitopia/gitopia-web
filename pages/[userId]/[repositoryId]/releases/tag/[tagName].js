@@ -102,24 +102,7 @@ function RepositoryReleaseView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs repository={repository} active="code" />
-          <div className="flex mt-8">
-            <div className="form-control flex-1 mr-8"></div>
-            <div className="flex-none w-36">
-              <Link
-                href={
-                  "/" +
-                  repository.owner.id +
-                  "/" +
-                  repository.name +
-                  "/releases/new"
-                }
-                className="btn btn-primary btn-sm btn-block"
-              >
-                New Release
-              </Link>
-            </div>
-          </div>
-          <div className="mt-8 space-y-4">
+          <div className="mt-4 space-y-4">
             <ReleaseView
               repository={repository}
               release={release}

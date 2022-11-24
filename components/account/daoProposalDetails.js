@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { connect } from "react-redux";
 import getProposal from "../../helpers/getProposal";
 import dayjs from "dayjs";
@@ -15,7 +15,7 @@ import ReactMarkdown from "react-markdown";
 
 function DaoProposalDetails({ id, ...props }) {
   const [amount, setAmount] = useState("");
-  const [validateAmountError, setValidateAmountError] = useState("");
+  const [validateAmountError, setValidateAmountError] = useState(null);
   const [depositLoading, setDepositLoading] = useState(false);
   const [voteAbstainLoading, setVoteAbstainLoading] = useState(false);
   const [voteNoLoading, setVoteNoLoading] = useState(false);
@@ -30,6 +30,7 @@ function DaoProposalDetails({ id, ...props }) {
   const router = useRouter();
   const hrefBase = "/" + router.query.userId;
   const type = "@type";
+  const amountRef = useRef(null);
   var localizedFormat = require("dayjs/plugin/localizedFormat");
   dayjs.extend(localizedFormat);
 
@@ -504,6 +505,7 @@ function DaoProposalDetails({ id, ...props }) {
                 </label>
                 <div>
                   <input
+                    ref={amountRef}
                     name="Amount"
                     placeholder="Enter Amount"
                     autoComplete="off"
@@ -516,7 +518,14 @@ function DaoProposalDetails({ id, ...props }) {
                     onChange={(e) => {
                       setAmount(e.target.value);
                     }}
-                    className="w-full h-11 input input-xs input-ghost input-bordered "
+                    className={
+                      "w-full h-11 input input-xs input-ghost input-bordered focus:outline-none focus:border-type " +
+                      (validateAmountError
+                        ? "border-pink text-pink focus:border-pink"
+                        : amount.length > 0
+                        ? "border-green"
+                        : "")
+                    }
                   />
                 </div>
                 {validateAmountError ? (
@@ -546,6 +555,9 @@ function DaoProposalDetails({ id, ...props }) {
                               : (amount * 1000000).toString()
                           )
                           .then((res) => {
+                            amountRef.current.value = "";
+                            setAmount("");
+                            setValidateAmountError(null);
                             setDepositLoading(false);
                             refreshProposal();
                             refreshDepositors();
@@ -554,7 +566,8 @@ function DaoProposalDetails({ id, ...props }) {
                       disabled={
                         !dayjs().isBefore(dayjs(proposal.deposit_end_time)) ||
                         proposal.status == "PROPOSAL_STATUS_VOTING_PERIOD" ||
-                        validateAmountError !== null
+                        validateAmountError !== null ||
+                        amount.length <= 0
                       }
                     >
                       Submit
@@ -564,6 +577,8 @@ function DaoProposalDetails({ id, ...props }) {
                       className="btn btn-sm"
                       onClick={(e) => {
                         setAmount("");
+                        amountRef.current.value = "";
+                        setValidateAmountError(null);
                       }}
                     >
                       Close
@@ -762,7 +777,10 @@ function DaoProposalDetails({ id, ...props }) {
 }
 
 const mapStateToProps = (state) => {
-  return { advanceUser: state.user.advanceUser };
+  return {
+    advanceUser: state.user.advanceUser,
+    loreBalance: state.wallet.loreBalance,
+  };
 };
 
 export default connect(mapStateToProps, { proposalDeposit, proposalVote })(

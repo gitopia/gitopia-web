@@ -72,15 +72,19 @@ function DaoDashboard(props) {
           <div className="w-64 border-r border-grey flex flex-col">
             <div className="flex-1">
               <DashboardSelector />
-              <TopRepositories
-                repositories={allRepository.map((r) => {
-                  return {
-                    owner: props.currentDashboard,
-                    username: props.username,
-                    ...r,
-                  };
-                })}
-              />
+              {allRepository.length == 0 ? (
+                ""
+              ) : (
+                <TopRepositories
+                  repositories={allRepository.map((r) => {
+                    return {
+                      owner: props.currentDashboard,
+                      username: props.username,
+                      ...r,
+                    };
+                  })}
+                />
+              )}
             </div>
             <div>
               <div className="bg-footer-grad py-6">

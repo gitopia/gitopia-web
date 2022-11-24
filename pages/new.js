@@ -135,7 +135,10 @@ function NewRepository(props) {
                   <span className="label-text">Repository Owner</span>
                 </label>
                 <select
-                  className="select select-bordered select-md mr-2 sm:mr-0"
+                  className={
+                    "select select-bordered select-md mr-2 sm:mr-0 focus:outline-none focus:border-type " +
+                    (ownerId.length > 0 ? "border-green" : "")
+                  }
                   value={ownerId}
                   onChange={(e) => {
                     console.log("onchange");

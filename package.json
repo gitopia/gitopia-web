@@ -38,6 +38,7 @@
     "lodash": "^4.17.21",
     "next": "^13.0.3",
     "next-connect": "^0.13.0",
+    "mime-types": "^2.1.35",
     "next-redux-wrapper": "^6.0.2",
     "pm2": "^5.2.0",
     "prism-color-variables": "^1.0.1",

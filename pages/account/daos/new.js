@@ -41,9 +41,31 @@ function NewDao(props) {
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
+  const isValidUrl = (urlString) => {
+    try {
+      return Boolean(new URL(urlString));
+    } catch (e) {
+      return false;
+    }
+  };
+
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });
     setDescriptionHint({ ...descriptionHint, shown: false });
+    setWebsiteHint({ ...websiteHint, shown: false });
+  };
+
+  const validateWebsite = async () => {
+    hideHints();
+    if (!isValidUrl(website)) {
+      setWebsiteHint({
+        type: "error",
+        shown: true,
+        message: "Please enter a valid url",
+      });
+      return false;
+    }
+    return true;
   };
 
   const validateDao = async () => {
@@ -87,7 +109,7 @@ function NewDao(props) {
 
   const createDao = async () => {
     setDaoCreating(true);
-    if (validateDao()) {
+    if (validateDao() && validateWebsite()) {
       let res = await props.createDao({
         name: name.replace(sanitizedNameTest, "-"),
         description,
@@ -166,7 +188,10 @@ function NewDao(props) {
               name="dao_website"
               placeholder="Website"
               value={website}
-              setValue={setWebsite}
+              setValue={(v) => {
+                setWebsiteHint({ shown: false });
+                setWebsite(v);
+              }}
               hint={websiteHint}
             />
           </div>

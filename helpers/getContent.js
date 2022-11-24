@@ -6,16 +6,14 @@ export default async function getContent(
   commitSha = null,
   path = null,
   nextKey = null,
-  limit = 100
+  limit = 100,
+  noRestriction = false
 ) {
   let obj = {};
   if (!validSha.test(commitSha)) {
     return obj;
   }
-  const baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "/api/content"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/content";
+  const baseUrl = process.env.NEXT_PUBLIC_OBJECTS_URL + "/content";
   let params = {
     repository_id: Number(repoId),
     ref_id: commitSha,
@@ -29,6 +27,9 @@ export default async function getContent(
   }
   if (path) {
     params.path = path;
+  }
+  if (noRestriction) {
+    params.no_restriction = true;
   }
   await axios
     .post(baseUrl, params, {})

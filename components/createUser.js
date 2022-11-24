@@ -122,10 +122,8 @@ function CreateUser(props) {
 
   return (
     <>
-      <div className="text-4xl mt-16 sm:mt-0 sm:text-6xl mb-6">
-        Setup Your Profile
-      </div>
-      <div className="text-xs mb-8">On chain profile</div>
+      <div className="text-2xl mt-16 sm:mt-0 mb-6">Setup Your Profile</div>
+      <div className="text-base mb-8">On chain profile</div>
 
       <div>
         <AccountAvatar

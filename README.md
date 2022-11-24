@@ -1,6 +1,6 @@
 # Gitopia Web
 
-![Gitopia](https://github.com/gitopia/gitopia-web/blob/master/public/og-gitopia.jpg)
+![Gitopia](public/og-gitopia.jpg)
 
 Web frontend app for interacting with Gitopia chain.
 

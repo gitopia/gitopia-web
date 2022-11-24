@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { connect } from "react-redux";
 import { getBalance } from "../../store/actions/wallet";
 import { notify } from "reapop";
@@ -10,8 +10,9 @@ import shrinkAddress from "../../helpers/shrinkAddress";
 
 function SupportOwner({ ownerAddress, isMobile, ...props }) {
   const [ownerBalance, setOwnerBalance] = useState(0);
-  const [validateAmountError, setValidateAmountError] = useState("");
+  const [validateAmountError, setValidateAmountError] = useState(null);
   const [amount, setAmount] = useState(0);
+  const amountRef = useRef(null);
 
   function isNaturalNumber(n) {
     n = n.toString();
@@ -89,7 +90,7 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
           >
             Owner Address
           </div>
-          <div className="text-xs">{ownerAddress}</div>
+          <div className="text-xs">{shrinkAddress(ownerAddress)}</div>
         </div>
       </div>
       <div className="flex">
@@ -218,6 +219,7 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
             </label>
             <div>
               <input
+                ref={amountRef}
                 name="Amount"
                 placeholder="Enter Amount"
                 autoComplete="off"
@@ -230,7 +232,14 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
                 onChange={(e) => {
                   setAmount(e.target.value);
                 }}
-                className="w-full h-11 input input-xs input-ghost input-bordered "
+                className={
+                  "w-full h-11 input input-xs input-ghost input-bordered focus:outline-none focus:border-type " +
+                  (validateAmountError
+                    ? "border-pink text-pink focus:border-pink"
+                    : amount.length > 0
+                    ? "border-green"
+                    : "")
+                }
               />
             </div>
             {validateAmountError ? (
@@ -313,6 +322,9 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
                           : (amount * 1000000).toString()
                       )
                       .then(async (res) => {
+                        amountRef.current.value = "";
+                        setAmount("");
+                        setValidateAmountError(null);
                         const balance = await props.getBalance(ownerAddress);
                         setOwnerBalance(
                           props.advanceUser === true
@@ -325,11 +337,19 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
                         );
                       });
                   }}
-                  disabled={validateAmountError !== null}
+                  disabled={validateAmountError !== null || amount.length <= 0}
                 >
                   CONTRIBUTE
                 </label>
-                <label htmlFor="my-modal-2" className="btn btn-sm">
+                <label
+                  htmlFor="my-modal-2"
+                  className="btn btn-sm"
+                  onClick={(e) => {
+                    amountRef.current.value = "";
+                    setAmount("");
+                    setValidateAmountError(null);
+                  }}
+                >
                   Close
                 </label>
               </div>
