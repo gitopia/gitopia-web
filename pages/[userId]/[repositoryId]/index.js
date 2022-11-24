@@ -296,7 +296,6 @@ function RepositoryView(props) {
                               .tagName
                           }
                           className="link link-primary no-underline hover:underline"
-                          legacyBehavior
                         >
                           {repository.name +
                             " " +

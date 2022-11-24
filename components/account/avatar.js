@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { connect } from "react-redux";
 import {
   updateUserAvatar,
@@ -26,6 +26,7 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
   );
   const [currentTab, setCurrentTab] = useState("upload");
   const [imageFile, setImageFile] = useState(null);
+  const imageFileInput = useRef();
   const [imageFileHash, setImageFileHash] = useState(null);
   const [imageUploading, setImageUploading] = useState(0);
 
@@ -34,9 +35,15 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
     let url = isDao ? props.dao?.avatarUrl : props.user?.avatarUrl;
     setImageUrl(url);
     setPreviewAvatarUrl(url);
-    setPreviewAvatarText("");
+    !url || url === ""
+      ? setPreviewAvatarText("Nothing to preview")
+      : setPreviewAvatarText("");
     setImageFile(null);
+    if (imageFileInput.current) {
+      imageFileInput.current.value = null;
+    }
     setImageFileHash(null);
+    console.log("useEffect", url);
   }, [isDao ? props.dao?.id : props.user?.id]);
 
   const validateImageUrl = (url, setImageUrlAfterSuccess) => {
@@ -70,7 +77,7 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
       if (setImageUrlAfterSuccess) {
         setImageUrl("");
       }
-      setPreviewAvatarUrl(null);
+      setPreviewAvatarUrl("");
     };
     image.src = url;
   };
@@ -188,7 +195,6 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                         );
                         return;
                       }
-                      setImageFile(file);
                       let reader = new FileReader();
                       const CryptoJS = (await import("crypto-js")).default;
 
@@ -198,6 +204,7 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                           CryptoJS.enc.Latin1.parse(binary)
                         ).toString();
 
+                        setImageFile(file);
                         setImageFileHash(md5);
                         setImageUploading(0);
                       };
@@ -205,7 +212,10 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                       reader.readAsBinaryString(file);
                     } else {
                       setImageFile(null);
-                      console.log("no file selected ");
+                      if (imageFileInput.current) {
+                        imageFileInput.current.value = null;
+                      }
+                      setImageFileHash(null);
                     }
                   }}
                 />
@@ -293,7 +303,7 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                     }
                     setImageUrl("");
                     setPreviewAvatarText("Nothing to preview");
-                    setPreviewAvatarUrl(null);
+                    setPreviewAvatarUrl("");
                     setLoading(false);
                   }
                 }}

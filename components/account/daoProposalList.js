@@ -35,11 +35,9 @@ function DaoProposalList({ dao, ...props }) {
         <div className="flex-none">
           <Link
             href={"/" + router.query.userId + "?tab=proposals&id=new"}
-            legacyBehavior
+            className="btn btn-primary btn-sm btn-wide"
           >
-            <button className="btn btn-primary btn-sm btn-wide">
-              New Proposal
-            </button>
+            New Proposal
           </Link>
         </div>
       </div>

@@ -26,7 +26,7 @@ function UserDashboard(props) {
       <div className="mb-8">
         <GreetUser />
       </div>
-      <GithubRewards />
+      {/* <GithubRewards /> */}
       <div className="sm:flex mt-4">
         <div className="flex flex-1 sm:mr-2 bg-box-grad-tl bg-base-200 p-4 rounded-md">
           <div className="flex-none bg-box-grad-v w-28 sm:w-40 h-full rounded-md flex items-center">
@@ -52,8 +52,8 @@ function UserDashboard(props) {
               A DAO is a self-organizing online community that uses Gitopia to
               manage its development securely
             </div>
-            <Link href="/account/daos/new" legacyBehavior>
-              <button className="btn btn-outline btn-sm">Create a DAO</button>
+            <Link href="/account/daos/new" className="btn btn-outline btn-sm">
+              Create a DAO
             </Link>
           </div>
         </div>

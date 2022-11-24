@@ -59,7 +59,6 @@ function RepositoryInsightsView(props) {
             className={
               "text-sm btn-link " + (current ? "text-type-secondary" : "")
             }
-            legacyBehavior
           >
             {shrinkAddress(r.owner.id)}
           </Link>
@@ -71,7 +70,6 @@ function RepositoryInsightsView(props) {
             className={
               "text-sm btn-link " + (current ? "text-type-secondary" : "")
             }
-            legacyBehavior
           >
             {r.name}
           </Link>

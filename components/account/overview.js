@@ -54,7 +54,6 @@ function AccountOverview(props) {
                     <Link
                       href={hrefBase + "/" + r.name}
                       className="text-base btn-link"
-                      legacyBehavior
                     >
                       {r.name}
                     </Link>

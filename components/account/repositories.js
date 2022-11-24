@@ -34,7 +34,6 @@ function AccountRepositories(props) {
                       <Link
                         href={props.userId + "/" + r.name}
                         className="text-base btn-link"
-                        legacyBehavior
                       >
                         {r.name}
                       </Link>

@@ -178,11 +178,9 @@ function RepositoryPullsView(props) {
                 href={
                   "/" + repository.owner.id + "/" + repository.name + "/compare"
                 }
-                legacyBehavior
+                className="btn btn-primary btn-sm btn-block"
               >
-                <button className="btn btn-primary btn-sm btn-block">
-                  New Pull Request
-                </button>
+                New Pull Request
               </Link>
             </div>
           </div>
@@ -606,7 +604,6 @@ function RepositoryPullsView(props) {
                               i.iid
                             }
                             className="btn-neutral"
-                            legacyBehavior
                           >
                             {i.title}
                           </Link>

@@ -117,11 +117,9 @@ function RepositoryReleasesView(props) {
                   repository.name +
                   "/releases/new"
                 }
-                legacyBehavior
+                className="btn btn-primary btn-sm btn-block"
               >
-                <button className="btn btn-primary btn-sm btn-block">
-                  New Release
-                </button>
+                New Release
               </Link>
             </div>
           </div>
@@ -161,7 +159,6 @@ function RepositoryReleasesView(props) {
                       r.tagName
                     }
                     className="text-xl link link-primary no-underline hover:underline"
-                    legacyBehavior
                   >
                     {repository.name + " " + r.tagName}
                   </Link>
