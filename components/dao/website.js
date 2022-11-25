@@ -96,7 +96,7 @@ function DaoWebsite(props = { isEditable: false }) {
       <label
         htmlFor="website-edit-modal"
         onClick={() => {
-          setModalOpen(true);
+          if (props.isEditable) setModalOpen(true);
         }}
         className={
           "py-1 border-b mr-2 flex items-center" +
