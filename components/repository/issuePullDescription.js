@@ -8,6 +8,7 @@ import {
   updatePullRequestDescription,
 } from "../../store/actions/repository";
 import MarkdownEditor from "../markdownEditor";
+import Link from "next/link";
 
 function IssuePullDescription({
   issuePullObj,
@@ -139,9 +140,10 @@ function IssuePullDescription({
           <>
             <div className="flex text-xs px-4 py-2 bg-base-200 rounded-t items-center">
               <div className="flex-1">
-                {shrinkAddress(issuePullObj.creator) +
-                  " commented " +
-                  dayjs(issuePullObj.createdAt * 1000).fromNow()}
+                <Link href={"/" + issuePullObj.creator} className="btn-link">
+                  {shrinkAddress(issuePullObj.creator)}
+                </Link>
+                {" commented " + dayjs(issuePullObj.createdAt * 1000).fromNow()}
               </div>
               <div className="flex-none">
                 {issuePullObj.creator === props.selectedAddress ? (

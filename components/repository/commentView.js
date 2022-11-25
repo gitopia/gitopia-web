@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import ReactMarkdown from "react-markdown";
 import { useState } from "react";
 import CommentEditor from "./commentEditor";
+import Link from "next/link";
 
 function CommentView({
   comment = { creator: "" },
@@ -46,9 +47,10 @@ function CommentView({
         <div className="border border-grey rounded flex-1 max-w-2xl">
           <div className="flex text-xs px-4 py-2 bg-base-200 rounded-t items-center">
             <div className="flex-1">
-              {shrinkAddress(comment.creator) +
-                " commented " +
-                dayjs(comment.createdAt * 1000).fromNow()}
+              <Link href={"/" + comment.creator} className="btn-link">
+                {shrinkAddress(comment.creator)}
+              </Link>
+              {" commented " + dayjs(comment.createdAt * 1000).fromNow()}
             </div>
             <div className="flex-none">
               {comment.creator === userAddress ? (
