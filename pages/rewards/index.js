@@ -85,7 +85,13 @@ function Rewards(props) {
           </div>
         </div>
         <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-32">
-          <div className="my-3 ml-4">Create a Gitopia Account</div>
+          <div
+            className={
+              "my-3 ml-4 " + (activeWallet === null ? "" : "text-green")
+            }
+          >
+            Create a Gitopia Account
+          </div>
           {activeWallet === null ? (
             <Link href="/login">
               <div className="ml-auto btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md">
@@ -115,7 +121,9 @@ function Rewards(props) {
           )}
         </div>
         <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
-          <div className="my-3 ml-4">Connect your Github Account</div>
+          <div className={"my-3 ml-4 " + (code === null ? "" : "text-green")}>
+            Connect your Github Account
+          </div>
           {code === null ? (
             <div
               className="ml-auto btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md"
