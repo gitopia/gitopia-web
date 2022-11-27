@@ -66,36 +66,12 @@ export default function LoadingRewards() {
             account
           </div>
           {false ? (
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            <img
               className="ml-auto mr-3 mt-2"
-            >
-              <circle cx="16" cy="16" r="15" stroke="#36404D" strokeWidth="2" />
-            </svg>
+              src="/rewards/unchecked-mark.svg"
+            />
           ) : (
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="ml-auto mr-3 mt-2"
-            >
-              <path
-                d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16Z"
-                fill="#66CE67"
-              />
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M25.1348 10.9804L14.6906 23.0737L8.5625 18.1713L10.4366 15.8287L14.3085 18.9262L22.8643 9.01953L25.1348 10.9804Z"
-                fill="white"
-              />
-            </svg>
+            <img className="ml-auto mr-3 mt-2" src="/rewards/checkmark.svg" />
           )}
         </div>
         <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
@@ -104,36 +80,12 @@ export default function LoadingRewards() {
             iteration tool.
           </div>
           {true ? (
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            <img
               className="ml-auto mr-3 mt-2"
-            >
-              <circle cx="16" cy="16" r="15" stroke="#36404D" strokeWidth="2" />
-            </svg>
+              src="/rewards/unchecked-mark.svg"
+            />
           ) : (
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="ml-auto mr-3 mt-2"
-            >
-              <path
-                d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16Z"
-                fill="#66CE67"
-              />
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M25.1348 10.9804L14.6906 23.0737L8.5625 18.1713L10.4366 15.8287L14.3085 18.9262L22.8643 9.01953L25.1348 10.9804Z"
-                fill="white"
-              />
-            </svg>
+            <img className="ml-auto mr-3 mt-2" src="/rewards/checkmark.svg" />
           )}
         </div>
         <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
@@ -141,36 +93,12 @@ export default function LoadingRewards() {
             Create a butter chicken recipy and send us a photo to approve
           </div>
           {true ? (
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            <img
               className="ml-auto mr-3 mt-2"
-            >
-              <circle cx="16" cy="16" r="15" stroke="#36404D" strokeWidth="2" />
-            </svg>
+              src="/rewards/unchecked-mark.svg"
+            />
           ) : (
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="ml-auto mr-3 mt-2"
-            >
-              <path
-                d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16Z"
-                fill="#66CE67"
-              />
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M25.1348 10.9804L14.6906 23.0737L8.5625 18.1713L10.4366 15.8287L14.3085 18.9262L22.8643 9.01953L25.1348 10.9804Z"
-                fill="white"
-              />
-            </svg>
+            <img className="ml-auto mr-3 mt-2" src="/rewards/checkmark.svg" />
           )}
         </div>
         <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
@@ -178,36 +106,12 @@ export default function LoadingRewards() {
             Write a line of code and submit it on the blockchain
           </div>
           {true ? (
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            <img
               className="ml-auto mr-3 mt-2"
-            >
-              <circle cx="16" cy="16" r="15" stroke="#36404D" strokeWidth="2" />
-            </svg>
+              src="/rewards/unchecked-mark.svg"
+            />
           ) : (
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="ml-auto mr-3 mt-2"
-            >
-              <path
-                d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16Z"
-                fill="#66CE67"
-              />
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M25.1348 10.9804L14.6906 23.0737L8.5625 18.1713L10.4366 15.8287L14.3085 18.9262L22.8643 9.01953L25.1348 10.9804Z"
-                fill="white"
-              />
-            </svg>
+            <img className="ml-auto mr-3 mt-2" src="/rewards/checkmark.svg" />
           )}
         </div>
         <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
@@ -215,36 +119,12 @@ export default function LoadingRewards() {
             Share Gitopia on Twitter, Instagram and Discord.
           </div>
           {true ? (
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            <img
               className="ml-auto mr-3 mt-2"
-            >
-              <circle cx="16" cy="16" r="15" stroke="#36404D" strokeWidth="2" />
-            </svg>
+              src="/rewards/unchecked-mark.svg"
+            />
           ) : (
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="ml-auto mr-3 mt-2"
-            >
-              <path
-                d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16Z"
-                fill="#66CE67"
-              />
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M25.1348 10.9804L14.6906 23.0737L8.5625 18.1713L10.4366 15.8287L14.3085 18.9262L22.8643 9.01953L25.1348 10.9804Z"
-                fill="white"
-              />
-            </svg>
+            <img className="ml-auto mr-3 mt-2" src="/rewards/checkmark.svg" />
           )}
         </div>
         <div className="flex flex-col items-center mt-12">
@@ -260,7 +140,40 @@ export default function LoadingRewards() {
             If you have any issues, contact us at contact@gitopia.com
           </div>
         </div>
+        <img
+          className={"absolute pointer-events-none -z-10 left-1/3 -top-32"}
+          src="/rewards/drop-mid.svg"
+          width={"622"}
+          height={"762"}
+        />
+        <img
+          className={"absolute pointer-events-none z-1 left-5 "}
+          src="/rewards/drop-1.svg"
+        />
+        <img
+          className={"absolute pointer-events-none z-1 right-16 top-28 "}
+          src="/rewards/drop-2.svg"
+        />
+        <img
+          className={
+            "absolute pointer-events-none -z-10 w-3/4 right-10 top-1/4 mt-10 "
+          }
+          src="/rewards/objects.svg"
+        />
+        <img
+          className={"absolute pointer-events-none -z-20 w-full top-1/4 "}
+          src="/rewards/ellipse.svg"
+        />
+        <img
+          className={"absolute pointer-events-none -z-20 w-full bottom-1/2"}
+          src="/rewards/stars-3.svg"
+        />
       </section>
+      <img
+        className={"absolute pointer-events-none -z-20 w-full top-24"}
+        src="/rewards/stars-1.svg"
+      />
+
       <Footer />
     </div>
   );

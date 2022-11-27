@@ -99,25 +99,7 @@ function Rewards(props) {
               </div>
             </Link>
           ) : (
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="ml-auto mr-3 mt-2"
-            >
-              <path
-                d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16Z"
-                fill="#66CE67"
-              />
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M25.1348 10.9804L14.6906 23.0737L8.5625 18.1713L10.4366 15.8287L14.3085 18.9262L22.8643 9.01953L25.1348 10.9804Z"
-                fill="white"
-              />
-            </svg>
+            <img className="ml-auto mr-3 mt-2" src="./rewards/checkmark.svg" />
           )}
         </div>
         <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
@@ -134,25 +116,7 @@ function Rewards(props) {
               Connect Github
             </div>
           ) : (
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="ml-auto mr-3 mt-2"
-            >
-              <path
-                d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16Z"
-                fill="#66CE67"
-              />
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M25.1348 10.9804L14.6906 23.0737L8.5625 18.1713L10.4366 15.8287L14.3085 18.9262L22.8643 9.01953L25.1348 10.9804Z"
-                fill="white"
-              />
-            </svg>
+            <img className="ml-auto mr-3 mt-2" src="./rewards/checkmark.svg" />
           )}
         </div>
         <div className="flex flex-col items-center mt-12">
