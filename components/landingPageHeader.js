@@ -37,10 +37,11 @@ export default function Header() {
         ></div>
         {mobile && !menuOpen ? (
           <div className="mt-2 ml-auto mr-10">
-            <Link href="/home" className="">
-              <a className="h-8 px-7 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                Login
-              </a>
+            <Link
+              href="/home"
+              className="h-8 px-7 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+            >
+              Login
             </Link>
           </div>
         ) : (
@@ -131,10 +132,11 @@ export default function Header() {
             <div className={menuOpen ? "" : "mr-4 ml-4 " + styles.vl}></div>
             <li className={menuOpen ? "hidden" : "mr-4 ml-4 mt-1"}>
               <div className="flex flex-col justify-center items-center">
-                <Link href="/login">
-                  <a className="h-8 px-4 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                    Login
-                  </a>
+                <Link
+                  href="/login"
+                  className="h-8 px-4 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                >
+                  Login
                 </Link>
               </div>
             </li>

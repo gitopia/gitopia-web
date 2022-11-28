@@ -41,11 +41,14 @@ function Rewards(props) {
     router.push("/rewards");
   }, []);
 
-  useEffect(async () => {
-    const data = await getWhois(props.activeWallet?.name);
-    if (props.activeWallet !== null && data !== null && data !== undefined) {
-      setActiveWallet(props.activeWallet);
+  useEffect(() => {
+    async function fetchName() {
+      const data = await getWhois(props.activeWallet?.name);
+      if (props.activeWallet !== null && data !== null && data !== undefined) {
+        setActiveWallet(props.activeWallet);
+      }
     }
+    fetchName();
   }, [props.activeWallet]);
 
   function githubLogin() {
@@ -72,10 +75,12 @@ function Rewards(props) {
                 tokens available. All you need to do is to create a Gitopia
                 account, and connect your Github account.
               </div>
-              <Link href="/home">
-                <div className="btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md mt-10">
-                  Read How to Join
-                </div>
+
+              <Link
+                className="btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md mt-10"
+                href="/home"
+              >
+                Read How to Join
               </Link>
             </div>
             <div className="self-center ml-auto mr-10">
@@ -93,10 +98,11 @@ function Rewards(props) {
             Create a Gitopia Account
           </div>
           {activeWallet === null ? (
-            <Link href="/login">
-              <div className="ml-auto btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md">
-                Create Account
-              </div>
+            <Link
+              className="ml-auto btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md"
+              href="/home"
+            >
+              Create Account
             </Link>
           ) : (
             <img className="ml-auto mr-3 mt-2" src="./rewards/checkmark.svg" />
@@ -120,13 +126,12 @@ function Rewards(props) {
           )}
         </div>
         <div className="flex flex-col items-center mt-12">
-          <Link href="/login">
-            <button
-              className="ml-auto btn btn-primary bg-green h-14 py-3 w-80 rounded-md"
-              disabled={code === null || activeWallet === null}
-            >
-              Check Eligibility
-            </button>
+          <Link
+            className="ml-auto btn btn-primary bg-green h-14 py-3 w-80 rounded-md"
+            disabled={code === null || activeWallet === null}
+            href="/login"
+          >
+            Check Eligibility
           </Link>
           <div className="text-xs opacity-50 text-white mt-4">
             If you have any issues, contact us at contact@gitopia.com
