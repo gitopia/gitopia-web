@@ -8,8 +8,10 @@ import Link from "next/link";
 import Header from "../../components/landingPageHeader";
 import Footer from "../../components/landingPageFooter";
 import getWhois from "../../helpers/getWhois";
+import { calculateGithubRewards } from "../../store/actions/user";
 import LoadingRewards from "../../components/loadingRewards";
 function Rewards(props) {
+  const [loading, setLoading] = useState(false);
   const [mobile, setMobile] = useState(false);
   const [activeWallet, setActiveWallet] = useState(null);
   const [code, setCode] = useState(null);
@@ -21,7 +23,6 @@ function Rewards(props) {
     }
   }
   useEffect(() => {
-    console.log(code, activeWallet);
     if (typeof window !== "undefined") {
       window.addEventListener("resize", detectWindowSize);
     }
@@ -32,6 +33,18 @@ function Rewards(props) {
       }
     };
   });
+
+  const getTokens = async (code) => {
+    if (loading) return <LoadingRewards />;
+    if (!props.selectedAddress) {
+      props.notify("Please sign in before claiming tokens", "error");
+      return;
+    }
+    setLoading(true);
+    const res = await props.calculateGithubRewards(code);
+    console.log(res);
+    setLoading(false);
+  };
 
   useEffect(() => {
     const query = window.location.search;
@@ -126,13 +139,16 @@ function Rewards(props) {
           )}
         </div>
         <div className="flex flex-col items-center mt-12">
-          <Link
-            className="ml-auto btn btn-primary bg-green h-14 py-3 w-80 rounded-md"
+          <button
+            className={
+              "ml-auto btn btn-primary bg-green h-14 py-3 w-80 rounded-md " +
+              (loading ? "loading" : "")
+            }
             disabled={code === null || activeWallet === null}
-            href="/login"
+            onClick={getTokens}
           >
             Check Eligibility
-          </Link>
+          </button>
           <div className="text-xs opacity-50 text-white mt-4">
             If you have any issues, contact us at contact@gitopia.com
           </div>
@@ -178,9 +194,11 @@ const mapStateToProps = (state) => {
   return {
     wallets: state.wallet.wallets,
     activeWallet: state.wallet.activeWallet,
+    selectedAddress: state.wallet.selectedAddress,
   };
 };
 
 export default connect(mapStateToProps, {
   notify,
+  calculateGithubRewards,
 })(Rewards);
