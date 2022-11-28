@@ -45,8 +45,8 @@ const uploadImage = async (address, image) => {
   let estuaryUrl =
     "https://upload.estuary.tech/content/add?coluuid=" +
     process.env.ESTUARY_COLLECTION_UUID +
-    "&ignore_dupes=true&dir=/" +
-    address;
+    "&ignore_dupes=true" +
+    (config.enableDirectories ? "&dir=/" + address : "");
 
   const res = await fetch(estuaryUrl, {
     method: "post",
@@ -66,8 +66,7 @@ const findImage = async (address, image) => {
   let estuaryUrl =
     "https://api.estuary.tech/collections/" +
     process.env.ESTUARY_COLLECTION_UUID +
-    "&dir=/" +
-    address;
+    (config.enableDirectories ? "&dir=/" + address : "");
 
   let existing = await fetch(estuaryUrl, {
     headers: {
@@ -219,6 +218,7 @@ export const config = {
   api: {
     bodyParser: false,
   },
+  enableDirectories: false,
 };
 
 export default handler;
