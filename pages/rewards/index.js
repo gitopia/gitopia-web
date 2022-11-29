@@ -50,7 +50,7 @@ function Rewards(props) {
     };
   });
 
-  const getTokens = async (code) => {
+  const getTokens = async () => {
     if (loading) return;
     if (!props.selectedAddress) {
       props.notify("Please sign in before claiming tokens", "error");
