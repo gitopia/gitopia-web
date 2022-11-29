@@ -1,9 +1,76 @@
+import { useState, useEffect } from "react";
+import axios from "../helpers/axiosFetch";
 import Head from "next/head";
 import Header from "./landingPageHeader";
 import Footer from "./landingPageFooter";
 import styles from "../styles/landing.module.css";
 import Link from "next/link";
-export default function ClaimRewards() {
+import { connect } from "react-redux";
+import { notify } from "reapop";
+import { calculateGithubRewards } from "../store/actions/user";
+import { updateUserBalance } from "../store/actions/wallet";
+function ClaimRewards(props) {
+  const [loading, setLoading] = useState(false);
+  const [totalToken, setTotalToken] = useState(false);
+  const [claimedToken, setClaimedToken] = useState(null);
+  const [unclaimedToken, setUnclaimedToken] = useState(false);
+  const [days, setDays] = useState(0);
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+
+  const deadline = "December, 31, 2022";
+
+  const getTime = () => {
+    const time = Date.parse(deadline) - Date.now();
+    setDays(Math.floor(time / (1000 * 60 * 60 * 24)));
+    setHours(Math.floor((time / (1000 * 60 * 60)) % 24));
+    setMinutes(Math.floor((time / 1000 / 60) % 60));
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => getTime(deadline), 60000);
+    return () => clearInterval(interval);
+  });
+
+  useEffect(() => {
+    async function getTokens() {
+      await axios
+        .get("/rewards?addr=" + props.selectedAddress)
+        .then(({ data }) => {
+          setTotalToken(data.total_amount);
+          setClaimedToken(data.claimed_amount);
+          setUnclaimedToken(data.claimable_amount);
+        })
+        .catch(({ err }) => {
+          console.error(err);
+        });
+    }
+    getTokens();
+  }, [props.selectedAddress]);
+
+  const claimTokens = async () => {
+    if (loading) return;
+    if (!props.selectedAddress) {
+      props.notify("Please sign in before claiming tokens", "error");
+      return;
+    }
+    setLoading(true);
+    const res = await props.calculateGithubRewards("ASDASDASD");
+    console.log(res);
+    await axios
+      .post("http://localhost:3001/claim", {
+        payload: res,
+      })
+      .then((res) => {
+        updateUserBalance();
+        notify("Reward Claimed", info);
+      })
+      .catch(({ err }) => {
+        console.error(err);
+      });
+    setLoading(false);
+  };
+
   return (
     <div className={styles.wrapper}>
       <Head>
@@ -18,7 +85,7 @@ export default function ClaimRewards() {
           </div>
           <div className="flex">
             <div>
-              <Link href="/home">
+              <Link href="/login">
                 <div className="btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md mt-10">
                   Connect Wallet
                 </div>
@@ -27,11 +94,11 @@ export default function ClaimRewards() {
           </div>
           <div className="self-center ml-auto">
             <div className="opacity-50 font-bold">Total Token Available</div>
-            <div className="text-4xl">184,500 tLore</div>
+            <div className="text-4xl">{totalToken}</div>
             <div className="opacity-50 font-bold mt-8">Unclaimed</div>
-            <div className="text-4xl">84,500 tLore</div>
+            <div className="text-4xl">{claimedToken}</div>
             <div className="opacity-50 font-bold mt-8">Claimed Airdrop</div>
-            <div className="text-4xl">15,500 tLore</div>
+            <div className="text-4xl">{unclaimedToken}</div>
           </div>
         </div>
 
@@ -40,11 +107,11 @@ export default function ClaimRewards() {
             TIME LEFT
           </div>
           <div className="flex flex-row justify-between w-full px-16">
-            <div className="font-bold text-4xl py-8">80 DAYS</div>
+            <div className="font-bold text-4xl py-8">{days + " "} DAYS</div>
             <div className="border-l border-base-100 h-28"></div>
-            <div className="font-bold text-4xl py-8">13 HOURS</div>
+            <div className="font-bold text-4xl py-8">{hours + " "} HOURS</div>
             <div className="border-l border-base-100 h-28"></div>
-            <div className="font-bold text-4xl py-8">58 MIN</div>
+            <div className="font-bold text-4xl py-8">{minutes + " "}MIN</div>
           </div>
         </div>
         <div className="flex mt-24 w-2/3">
@@ -128,14 +195,18 @@ export default function ClaimRewards() {
           )}
         </div>
         <div className="flex flex-col items-center mt-12">
-          <Link href="/login">
-            <button
-              className="btn btn-primary bg-green h-14 py-3 w-72 rounded-md"
-              disabled={""}
-            >
-              Claim Now
-            </button>
-          </Link>
+          <button
+            className={
+              "btn btn-primary bg-green h-14 py-3 w-72 rounded-md " +
+              (loading ? "loading" : "")
+            }
+            disabled={""}
+            onClick={() => {
+              claimTokens();
+            }}
+          >
+            Claim Now
+          </button>
           <div className="text-xs opacity-50 text-white mt-4">
             If you have any issues, contact us at contact@gitopia.com
           </div>
@@ -168,6 +239,14 @@ export default function ClaimRewards() {
           className={"absolute pointer-events-none -z-20 w-full bottom-1/2"}
           src="/rewards/stars-3.svg"
         />
+        <img
+          className={"absolute pointer-events-none -z-20 left-5 top-1/4"}
+          src="/rewards/coin-1.svg"
+        />
+        <img
+          className={"absolute pointer-events-none -z-20 right-0 -top-44"}
+          src="/rewards/coin-2.svg"
+        />
       </section>
       <img
         className={"absolute pointer-events-none -z-20 w-full top-24"}
@@ -178,3 +257,16 @@ export default function ClaimRewards() {
     </div>
   );
 }
+const mapStateToProps = (state) => {
+  return {
+    wallets: state.wallet.wallets,
+    activeWallet: state.wallet.activeWallet,
+    selectedAddress: state.wallet.selectedAddress,
+  };
+};
+
+export default connect(mapStateToProps, {
+  notify,
+  calculateGithubRewards,
+  updateUserBalance,
+})(ClaimRewards);
