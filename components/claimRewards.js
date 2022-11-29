@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import { notify } from "reapop";
 import { calculateGithubRewards } from "../store/actions/user";
 import { updateUserBalance } from "../store/actions/wallet";
+import { getTasks } from "../store/actions/wallet";
 function ClaimRewards(props) {
   const [loading, setLoading] = useState(false);
   const [totalToken, setTotalToken] = useState(false);
@@ -17,6 +18,8 @@ function ClaimRewards(props) {
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
+  const [tasks, setTasks] = useState([]);
+  const [tasksCompleted, setTasksCompleted] = useState(0);
 
   const deadline = "December, 31, 2022";
 
@@ -25,6 +28,16 @@ function ClaimRewards(props) {
     setDays(Math.floor(time / (1000 * 60 * 60 * 24)));
     setHours(Math.floor((time / (1000 * 60 * 60)) % 24));
     setMinutes(Math.floor((time / 1000 / 60) % 60));
+  };
+
+  const calculateTasksPercentage = () => {
+    let count = 0;
+    for (let i = 0; i < tasks.length; i++) {
+      if (tasks[i].isComplete === true) {
+        count++;
+      }
+    }
+    setTasksCompleted(count / 6);
   };
 
   useEffect(() => {
@@ -45,6 +58,12 @@ function ClaimRewards(props) {
           console.error(err);
         });
     }
+    async function getTasks() {
+      const tasks = await props.getTasks(props.selectedAddress);
+      setTasks(tasks);
+      calculateTasksPercentage();
+    }
+    getTasks();
     getTokens();
   }, [props.selectedAddress]);
 
@@ -118,82 +137,41 @@ function ClaimRewards(props) {
           <div className="text-4xl">Mission</div>
           <div className="flex ml-auto">
             <div className="text-xs opacity-60 mt-4 font-bold mr-2">
-              15% Complete
+              {tasksCompleted + " "} Complete
             </div>
             <progress
               className="progress progress-primary w-80 mt-5"
-              value="15"
+              value={tasksCompleted}
               max="100"
             ></progress>
           </div>
         </div>
-        <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
-          <div className={"my-3 ml-4 " + (false ? "" : "text-green")}>
-            Stake uLore on December 1st or join our community with your Gitopia
-            account
-          </div>
-          {false ? (
-            <img
-              className="ml-auto mr-3 mt-2"
-              src="/rewards/unchecked-mark.svg"
-            />
-          ) : (
-            <img className="ml-auto mr-3 mt-2" src="/rewards/checkmark.svg" />
-          )}
-        </div>
-        <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
-          <div className={"my-3 ml-4 " + (true ? "" : "text-green")}>
-            Transfer a project from Github to Gitopia using our 1 click
-            iteration tool.
-          </div>
-          {true ? (
-            <img
-              className="ml-auto mr-3 mt-2"
-              src="/rewards/unchecked-mark.svg"
-            />
-          ) : (
-            <img className="ml-auto mr-3 mt-2" src="/rewards/checkmark.svg" />
-          )}
-        </div>
-        <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
-          <div className={"my-3 ml-4 " + (true ? "" : "text-green")}>
-            Create a butter chicken recipy and send us a photo to approve
-          </div>
-          {true ? (
-            <img
-              className="ml-auto mr-3 mt-2"
-              src="/rewards/unchecked-mark.svg"
-            />
-          ) : (
-            <img className="ml-auto mr-3 mt-2" src="/rewards/checkmark.svg" />
-          )}
-        </div>
-        <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
-          <div className={"my-3 ml-4 " + (true ? "" : "text-green")}>
-            Write a line of code and submit it on the blockchain
-          </div>
-          {true ? (
-            <img
-              className="ml-auto mr-3 mt-2"
-              src="/rewards/unchecked-mark.svg"
-            />
-          ) : (
-            <img className="ml-auto mr-3 mt-2" src="/rewards/checkmark.svg" />
-          )}
-        </div>
-        <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
-          <div className={"my-3 ml-4 " + (true ? "" : "text-green")}>
-            Share Gitopia on Twitter, Instagram and Discord.
-          </div>
-          {true ? (
-            <img
-              className="ml-auto mr-3 mt-2"
-              src="/rewards/unchecked-mark.svg"
-            />
-          ) : (
-            <img className="ml-auto mr-3 mt-2" src="/rewards/checkmark.svg" />
-          )}
-        </div>
+        {tasks.map((t, i = 0) => {
+          return (
+            <div
+              className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4"
+              key={i}
+            >
+              <div
+                className={"my-3 ml-4 " + (t.isComplete ? "text-green" : "")}
+              >
+                {t.type}
+              </div>
+              {t.isComplete ? (
+                <img
+                  className="ml-auto mr-3 mt-2"
+                  src="/rewards/checkmark.svg"
+                />
+              ) : (
+                <img
+                  className="ml-auto mr-3 mt-2"
+                  src="/rewards/unchecked-mark.svg"
+                />
+              )}
+            </div>
+          );
+        })}
+
         <div className="flex flex-col items-center mt-12">
           <button
             className={
@@ -269,4 +247,5 @@ export default connect(mapStateToProps, {
   notify,
   calculateGithubRewards,
   updateUserBalance,
+  getTasks,
 })(ClaimRewards);

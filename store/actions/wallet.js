@@ -998,3 +998,15 @@ export const estimateFee = (address, chain, msg, memo) => {
     return fees;
   };
 };
+export const getTasks = (address) => {
+  return async (dispatch, getState) => {
+    const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
+    try {
+      const res = await api.queryTasks(address);
+      if (res) return res.data.tasks;
+      else console.error(res.error);
+    } catch (e) {
+      console.error("Unable to get tasks", e);
+    }
+  };
+};
