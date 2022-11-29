@@ -9,12 +9,17 @@ import Header from "../../components/landingPageHeader";
 import Footer from "../../components/landingPageFooter";
 import getWhois from "../../helpers/getWhois";
 import { calculateGithubRewards } from "../../store/actions/user";
+import axios from "../../helpers/axiosFetch";
 import LoadingRewards from "../../components/loadingRewards";
+import ClaimRewards from "../../components/claimRewards";
+import { getBalance } from "../../store/actions/wallet";
 function Rewards(props) {
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState(null);
   const [mobile, setMobile] = useState(false);
   const [activeWallet, setActiveWallet] = useState(null);
   const [code, setCode] = useState(null);
+  const [walletBalance, setWalletBalance] = useState(null);
   const CLIENT_ID = "b4ca5c703ee899b26505";
   const router = useRouter();
   function detectWindowSize() {
@@ -23,6 +28,17 @@ function Rewards(props) {
     }
   }
   useEffect(() => {
+    async function initBalance() {
+      const balance = await props.getBalance(
+        "gitopia10nqaa8lh39y889ys369mz3znzscwcjgne4q8yg"
+      );
+      setWalletBalance(
+        props.advanceUser === true
+          ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+          : balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+      );
+    }
+    initBalance();
     if (typeof window !== "undefined") {
       window.addEventListener("resize", detectWindowSize);
     }
@@ -35,14 +51,31 @@ function Rewards(props) {
   });
 
   const getTokens = async (code) => {
-    if (loading) return <LoadingRewards />;
+    if (loading) return;
     if (!props.selectedAddress) {
       props.notify("Please sign in before claiming tokens", "error");
       return;
     }
     setLoading(true);
     const res = await props.calculateGithubRewards(code);
-    console.log(res);
+    await axios
+      .post("http://localhost:3001/rewards", {
+        code: res,
+      })
+      .then(({ data }) => {
+        if (data.status === "NOT_FOUND") {
+          setStatus("NOT_FOUND");
+        }
+        if (data.status === "INITIATED") {
+          setStatus("INITIATED");
+        }
+        if (data.status === "COMPLETE") {
+          setStatus("COMPLETE");
+        }
+      })
+      .catch(({ err }) => {
+        console.error(err);
+      });
     setLoading(false);
   };
 
@@ -68,6 +101,12 @@ function Rewards(props) {
     window.location.assign(
       "https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID
     );
+  }
+  if (status === "INITIATED") {
+    return <LoadingRewards />;
+  }
+  if (status === "COMPLETE") {
+    return <ClaimRewards />;
   }
   return (
     <div className={styles.wrapper}>
@@ -98,7 +137,7 @@ function Rewards(props) {
             </div>
             <div className="self-center ml-auto mr-10">
               <div className="opacity-50 font-bold">Total Token Available</div>
-              <div className="text-4xl">184,500 tLore</div>
+              <div className="text-4xl">{walletBalance}</div>
             </div>
           </div>
         </div>
@@ -201,4 +240,5 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   notify,
   calculateGithubRewards,
+  getBalance,
 })(Rewards);

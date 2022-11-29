@@ -1,9 +1,9 @@
 import Head from "next/head";
-import Header from "../../components/landingPageHeader";
-import Footer from "../../components/landingPageFooter";
-import styles from "../../styles/landing.module.css";
+import Header from "./landingPageHeader";
+import Footer from "./landingPageFooter";
+import styles from "../styles/landing.module.css";
 import Link from "next/link";
-export default function LoadingRewards() {
+export default function ClaimRewards() {
   return (
     <div className={styles.wrapper}>
       <Head>
