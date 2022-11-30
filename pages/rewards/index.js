@@ -182,12 +182,7 @@ function Rewards(props) {
             <div className={"my-3 ml-4 " + (code === null ? "" : "text-green")}>
               Connect your Github Account
             </div>
-            {status === 0 || status === 1 ? (
-              <img
-                className="ml-auto mr-3 mt-2"
-                src="./rewards/checkmark.svg"
-              />
-            ) : (
+            {code === null ? (
               <div
                 className="ml-auto btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md"
                 onClick={() => {
@@ -196,6 +191,11 @@ function Rewards(props) {
               >
                 Connect Github
               </div>
+            ) : (
+              <img
+                className="ml-auto mr-3 mt-2"
+                src="./rewards/checkmark.svg"
+              />
             )}
           </div>
           <div className="flex flex-col items-center mt-12">
