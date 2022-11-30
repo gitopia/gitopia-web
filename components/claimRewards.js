@@ -32,7 +32,7 @@ function ClaimRewards(props) {
 
   const calculateTasksPercentage = () => {
     let count = 0;
-    for (let i = 0; i < tasks.length; i++) {
+    for (let i = 0; i < tasks?.length; i++) {
       if (tasks[i].isComplete === true) {
         count++;
       }
@@ -46,26 +46,27 @@ function ClaimRewards(props) {
   });
 
   useEffect(() => {
-    async function getTokens() {
-      await axios
-        .get("/rewards?addr=" + props.selectedAddress)
-        .then(({ data }) => {
-          setTotalToken(data.total_amount);
-          setClaimedToken(data.claimed_amount);
-          setUnclaimedToken(data.claimable_amount);
-        })
-        .catch(({ err }) => {
-          console.error(err);
-        });
-    }
     async function getTasks() {
       const tasks = await props.getTasks(props.selectedAddress);
       setTasks(tasks);
       calculateTasksPercentage();
     }
     getTasks();
-    getTokens();
   }, [props.selectedAddress]);
+
+  async function getTokens() {
+    await axios
+      .get("/rewards?addr=" + props.selectedAddress)
+      .then(({ data }) => {
+        setTotalToken(data.total_amount);
+        setClaimedToken(data.claimed_amount);
+        setUnclaimedToken(data.claimable_amount);
+      })
+      .catch(({ err }) => {
+        console.error(err);
+      });
+  }
+  setInterval(getTokens, 120000);
 
   const claimTokens = async () => {
     if (loading) return;
@@ -82,6 +83,7 @@ function ClaimRewards(props) {
       })
       .then((res) => {
         updateUserBalance();
+        getTokens();
         notify("Reward Claimed", info);
       })
       .catch(({ err }) => {
@@ -146,7 +148,7 @@ function ClaimRewards(props) {
             ></progress>
           </div>
         </div>
-        {tasks.map((t, i = 0) => {
+        {tasks?.map((t, i = 0) => {
           return (
             <div
               className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4"
