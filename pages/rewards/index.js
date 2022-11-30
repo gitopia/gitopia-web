@@ -20,7 +20,6 @@ function Rewards(props) {
   const [activeWallet, setActiveWallet] = useState(null);
   const [code, setCode] = useState(null);
   const [walletBalance, setWalletBalance] = useState(null);
-  const CLIENT_ID = "b4ca5c703ee899b26505";
   const router = useRouter();
   function detectWindowSize() {
     if (typeof window !== "undefined") {
@@ -30,7 +29,7 @@ function Rewards(props) {
   useEffect(() => {
     async function initBalance() {
       const balance = await props.getBalance(
-        "gitopia10nqaa8lh39y889ys369mz3znzscwcjgne4q8yg"
+        process.env.NEXT_PUBLIC_REWARD_SERVICE_WALLET_ADDRESS
       );
       setWalletBalance(
         props.advanceUser === true
@@ -52,7 +51,11 @@ function Rewards(props) {
 
   async function fetchStatus() {
     const res = await axios
-      .get("http://localhost:3001/rewardss")
+      .get(
+        process.env.NEXT_PUBLIC_REWARD_SERVICE_URL +
+          "/rewards?addr=" +
+          props.selectedAddress
+      )
       .then(({ data }) => {
         setStatus(data.status);
       })
@@ -95,7 +98,7 @@ function Rewards(props) {
     setLoading(true);
     const res = await props.calculateGithubRewards(code);
     await axios
-      .post("http://localhost:3001/rewards", {
+      .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/rewards", {
         code: res,
       })
       .then(({ data }) => {
@@ -109,7 +112,8 @@ function Rewards(props) {
 
   function githubLogin() {
     window.location.assign(
-      "https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID
+      "https://github.com/login/oauth/authorize?client_id=" +
+        process.env.NEXT_PUBLIC_GITHUB_OAUTH_CLIENT_ID
     );
   }
   if (status === 0) {

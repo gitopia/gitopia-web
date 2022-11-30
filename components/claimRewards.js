@@ -56,7 +56,11 @@ function ClaimRewards(props) {
 
   async function getTokens() {
     await axios
-      .get("/rewards?addr=" + props.selectedAddress)
+      .get(
+        process.env.NEXT_PUBLIC_REWARD_SERVICE_URL +
+          "/rewards?addr=" +
+          props.selectedAddress
+      )
       .then(({ data }) => {
         setTotalToken(data.total_amount);
         setClaimedToken(data.claimed_amount);
@@ -77,7 +81,7 @@ function ClaimRewards(props) {
     setLoading(true);
     const res = await props.calculateGithubRewards("ASDASDASD");
     await axios
-      .post("http://localhost:3001/claim", {
+      .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/claim", {
         payload: res,
       })
       .then((res) => {

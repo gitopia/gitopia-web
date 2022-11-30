@@ -10,7 +10,11 @@ function LoadingRewards(props) {
   const router = useRouter();
   async function fetchStatus() {
     await axios
-      .get("/rewards?addr=" + props.selectedAddress)
+      .get(
+        process.env.NEXT_PUBLIC_REWARD_SERVICE_URL +
+          "/rewards?addr=" +
+          props.selectedAddress
+      )
       .then(({ data }) => {
         props.setStatus(data.status);
       })
