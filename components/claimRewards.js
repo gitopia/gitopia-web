@@ -76,7 +76,6 @@ function ClaimRewards(props) {
     }
     setLoading(true);
     const res = await props.calculateGithubRewards("ASDASDASD");
-    console.log(res);
     await axios
       .post("http://localhost:3001/claim", {
         payload: res,
