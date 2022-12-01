@@ -128,14 +128,15 @@ function Rewards(props) {
           <link rel="icon" href="/favicon.png" />
         </Head>
         <Header />
-        <section className={"flex flex-col items-center mt-40 relative"}>
-          <div className="flex flex-col ml-10">
-            <div className=" text-6xl font-bold w-1/2 tracking-tight leading-[4rem]">
-              Check if you’re eligble to join the Airdrop.
-            </div>
-            <div className="flex">
+        <section className={"flex flex-col items-center sm:mt-40 relative"}>
+          <div className="sm:flex items-center w-2/3">
+            <div>
+              <div className="text-4xl lg:text-6xl font-bold sm:w-2/3 tracking-tight lg:leading-[4rem]">
+                Check if you’re eligble to join
+                <br /> the Airdrop.
+              </div>
               <div>
-                <div className="w-80 mt-10 tracking-tight">
+                <div className="w-60 sm:w-80 mt-10 tracking-tight">
                   You can join the airdrop at any time as long as there are
                   still tokens available. All you need to do is to create a
                   Gitopia account, and connect your Github account.
@@ -148,15 +149,18 @@ function Rewards(props) {
                   Read How to Join
                 </Link>
               </div>
-              <div className="self-center ml-auto mr-10">
-                <div className="opacity-50 font-bold">
-                  Total Token Available
-                </div>
-                <div className="text-4xl">{walletBalance}</div>
-              </div>
+            </div>
+            <div className="ml-auto w-60 mt-10 sm:mt-20 lg:mt-32">
+              <div className="opacity-50 font-bold">Total Token Available</div>
+              <div className="text-4xl">{walletBalance}</div>
             </div>
           </div>
-          <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-32">
+          <div
+            className={
+              (activeWallet === null ? "sm:flex " : " flex") +
+              " p-4 box-border bg-[#222932] w-3/4 sm:w-2/3 rounded-xl mt-10 sm:mt-20 lg:mt-32"
+            }
+          >
             <div
               className={
                 "my-3 ml-4 " + (activeWallet === null ? "" : "text-green")
@@ -178,13 +182,18 @@ function Rewards(props) {
               />
             )}
           </div>
-          <div className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4">
+          <div
+            className={
+              (code === null ? "sm:flex " : " flex") +
+              " sm:flex p-4 box-border bg-[#222932] w-3/4 sm:w-2/3 rounded-xl mt-4"
+            }
+          >
             <div className={"my-3 ml-4 " + (code === null ? "" : "text-green")}>
               Connect your Github Account
             </div>
             {code === null ? (
               <div
-                className="ml-auto btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md"
+                className="ml-4 sm:ml-auto btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md"
                 onClick={() => {
                   githubLogin();
                 }}
@@ -214,19 +223,28 @@ function Rewards(props) {
             </div>
           </div>
           <img
-            className={"absolute pointer-events-none -z-10 left-1/3 -top-36"}
+            className={
+              "absolute pointer-events-none -z-10 left-1/3 -top-36 invisible lg:visible"
+            }
             src="./rewards/drop-mid.svg"
             width={"622"}
             height={"762"}
           />
+
           <img
-            className={"absolute pointer-events-none z-1 left-5 "}
+            className={
+              "absolute pointer-events-none -z-10 left-0 sm:-left-5 lg:left-5 lg:top-20 opacity-30 sm:opacity-100  "
+            }
             src="./rewards/drop-1.svg"
           />
+
           <img
-            className={"absolute pointer-events-none z-1 right-16 top-28 "}
+            className={
+              "absolute pointer-events-none -z-10 left-3/4 ml-20 top-20 opacity-30 sm:opacity-100"
+            }
             src="./rewards/drop-2.svg"
           />
+
           <img
             className={
               "absolute pointer-events-none -z-10 w-3/4 right-5 top-1/3 mt-10 "
@@ -235,17 +253,21 @@ function Rewards(props) {
           />
           <img
             className={
-              "absolute pointer-events-none z-10 w-full top-1/4 mt-10 "
+              "absolute pointer-events-none -z-20 w-full top-80 sm:top-60 lg:top-1/4 mt-10 "
             }
             src="./rewards/ellipse.svg"
           />
         </section>
         <img
-          className={"absolute pointer-events-none -z-20 w-full top-24"}
+          className={
+            "absolute pointer-events-none -z-20 w-full top-36 sm:top-24 invisible sm:visible"
+          }
           src="./rewards/stars-1.svg"
         />
         <img
-          className={"absolute pointer-events-none -z-20 w-full top-1/3"}
+          className={
+            "absolute pointer-events-none -z-20 w-full top-72 sm:top-1/3 invisible sm:visible"
+          }
           src="./rewards/stars-2.svg"
         />
         <Footer />
