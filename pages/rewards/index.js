@@ -60,7 +60,6 @@ function Rewards(props) {
         setStatus(data.status);
       })
       .catch((e) => {
-        console.error(e);
         setStatus(404);
       });
   }
@@ -128,8 +127,10 @@ function Rewards(props) {
           <link rel="icon" href="/favicon.png" />
         </Head>
         <Header />
-        <section className={"flex flex-col items-center sm:mt-40 relative"}>
-          <div className="sm:flex items-center w-2/3">
+        <section
+          className={"flex flex-col items-center mt-20 sm:mt-40 relative"}
+        >
+          <div className="sm:flex items-center sm:w-3/4 lg:w-2/3">
             <div>
               <div className="text-4xl lg:text-6xl font-bold sm:w-2/3 tracking-tight lg:leading-[4rem]">
                 Check if you’re eligble to join
@@ -158,7 +159,7 @@ function Rewards(props) {
           <div
             className={
               (activeWallet === null ? "sm:flex " : " flex") +
-              " p-4 box-border bg-[#222932] w-3/4 sm:w-2/3 rounded-xl mt-10 sm:mt-20 lg:mt-32"
+              " p-4 box-border bg-[#222932] w-3/4 lg:w-2/3 rounded-xl mt-10 sm:mt-20 lg:mt-32"
             }
           >
             <div
@@ -185,7 +186,7 @@ function Rewards(props) {
           <div
             className={
               (code === null ? "sm:flex " : " flex") +
-              " sm:flex p-4 box-border bg-[#222932] w-3/4 sm:w-2/3 rounded-xl mt-4"
+              " sm:flex p-4 box-border bg-[#222932] w-3/4 lg:w-2/3 rounded-xl mt-4"
             }
           >
             <div className={"my-3 ml-4 " + (code === null ? "" : "text-green")}>
@@ -266,7 +267,7 @@ function Rewards(props) {
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 w-full top-72 sm:top-1/3 invisible sm:visible"
+            "absolute pointer-events-none -z-20 w-full top-72 sm:top-1/4 mt-10 invisible sm:visible"
           }
           src="./rewards/stars-2.svg"
         />

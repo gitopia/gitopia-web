@@ -87,7 +87,7 @@ module.exports = {
           // "linear-gradient(36.49deg, #144763 -23.54%, rgba(61, 38, 76, 0) 29.37%), linear-gradient(36.49deg, #3D264C -23.54%, rgba(61, 38, 76, 0) 29.37%)",
           "linear-gradient(20deg, rgba(20,71,99,0.5) -25%, rgba(19, 24, 30, 0) 30%), linear-gradient(340deg, rgba(61,38,76,0.5) -25%, rgba(19, 24, 30, 0) 30%)",
         "rewards-grad":
-          "linear-gradient(90deg, #1E405F 0%, rgba(128, 83, 150, 0.15) 100%)"
+          "linear-gradient(90deg, #1E405F 0%, rgba(128, 83, 150, 0.15) 100%)",
       }),
       animation: {
         "spin-slow": "spin 3s linear infinite",
