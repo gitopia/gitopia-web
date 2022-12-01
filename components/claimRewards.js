@@ -10,6 +10,7 @@ import { notify } from "reapop";
 import { calculateGithubRewards } from "../store/actions/user";
 import { updateUserBalance } from "../store/actions/wallet";
 import { getTasks } from "../store/actions/wallet";
+import { error } from "daisyui/src/colors";
 function ClaimRewards(props) {
   const [loading, setLoading] = useState(false);
   const [totalToken, setTotalToken] = useState(false);
@@ -48,7 +49,9 @@ function ClaimRewards(props) {
   useEffect(() => {
     async function getTasks() {
       const tasks = await props.getTasks(props.selectedAddress);
-      setTasks(tasks);
+      if (tasks !== undefined) {
+        setTasks(tasks);
+      }
       calculateTasksPercentage();
     }
     getTasks();
@@ -66,7 +69,7 @@ function ClaimRewards(props) {
         setClaimedToken(data.claimed_amount);
         setUnclaimedToken(data.claimable_amount);
       })
-      .catch(({ err }) => {
+      .catch((err) => {
         console.error(err);
       });
   }
@@ -102,50 +105,63 @@ function ClaimRewards(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <section className={"flex flex-col items-center mt-40 relative"}>
-        <div className="flex flex-col ml-10 w-2/3">
-          <div className="text-7xl font-bold w-96 tracking-tight leading-[4rem]">
-            Claim Airdrop
-          </div>
-          <div className="flex">
+      <section className={"flex flex-col items-center sm:mt-20 relative"}>
+        <div className="items-center w-1/2 sm:w-3/4 lg:w-2/3">
+          <div>
+            <div className="text-4xl lg:text-7xl font-bold w-96 tracking-tight lg:leading-[4rem]">
+              Claim Airdrop
+            </div>
             <div>
-              <Link href="/login">
-                <div className="btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md mt-10">
-                  Connect Wallet
-                </div>
+              <Link
+                className="btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-60 rounded-md mt-10"
+                href="/login"
+              >
+                Connect Wallet
               </Link>
             </div>
           </div>
-          <div className="self-center ml-auto">
+          <div className="sm:ml-auto w-60 mt-10">
             <div className="opacity-50 font-bold">Total Token Available</div>
-            <div className="text-4xl">{totalToken}</div>
+            <div className="text-4xl">{totalToken} tLore</div>
             <div className="opacity-50 font-bold mt-8">Unclaimed</div>
-            <div className="text-4xl">{claimedToken}</div>
+            <div className="text-4xl">
+              {
+                //claimedToken
+              }{" "}
+              tLore
+            </div>
             <div className="opacity-50 font-bold mt-8">Claimed Airdrop</div>
-            <div className="text-4xl">{unclaimedToken}</div>
+            <div className="text-4xl">
+              {
+                //unclaimedToken
+              }{" "}
+              tLore
+            </div>
           </div>
         </div>
 
-        <div className="flex p-4 box-border bg-[#222932] w-2/3 rounded-3xl mt-4 h-44 mt-24 flex flex-col items-center">
+        <div className="flex p-4 box-border bg-[#222932] w-80 sm:w-3/4 lg:w-2/3 rounded-3xl mt-4 h-36 sm:h-44 mt-24 flex flex-col items-center">
           <div className="font-bold text-[#4C6784] text-sm uppercase">
             TIME LEFT
           </div>
-          <div className="flex flex-row justify-between w-full px-16">
-            <div className="font-bold text-4xl py-8">{days + " "} DAYS</div>
-            <div className="border-l border-base-100 h-28"></div>
-            <div className="font-bold text-4xl py-8">{hours + " "} HOURS</div>
-            <div className="border-l border-base-100 h-28"></div>
-            <div className="font-bold text-4xl py-8">{minutes + " "}MIN</div>
+          <div className="flex flex-row justify-between w-full px-3 sm:px-5 lg:px-16 2xl:px-32">
+            <div className="font-bold sm:text-4xl py-8">{days + " "} DAYS</div>
+            <div className="border-l border-base-100 h-20 sm:h-28"></div>
+            <div className="font-bold sm:text-4xl py-8">
+              {hours + " "} HOURS
+            </div>
+            <div className="border-l border-base-100 h-20 sm:h-28"></div>
+            <div className="font-bold sm:text-4xl py-8">{minutes + " "}MIN</div>
           </div>
         </div>
-        <div className="flex mt-24 w-2/3">
+        <div className="sm:flex mt-24 w-80 sm:w-3/4">
           <div className="text-4xl">Mission</div>
           <div className="flex ml-auto">
             <div className="text-xs opacity-60 mt-4 font-bold mr-2">
-              {tasksCompleted + " "} Complete
+              {tasksCompleted + "%"} Complete
             </div>
             <progress
-              className="progress progress-primary w-80 mt-5"
+              className="progress progress-primary w-56 sm:w-80 mt-5"
               value={tasksCompleted}
               max="100"
             ></progress>
@@ -154,7 +170,7 @@ function ClaimRewards(props) {
         {tasks?.map((t, i = 0) => {
           return (
             <div
-              className="flex p-4 box-border bg-[#222932] w-3/4 rounded-xl mt-4"
+              className="flex p-2 sm:p-4 box-border bg-[#222932] w-80 sm:w-3/4 rounded-xl mt-4 text-xs sm:text-base"
               key={i}
             >
               <div
@@ -164,12 +180,12 @@ function ClaimRewards(props) {
               </div>
               {t.isComplete ? (
                 <img
-                  className="ml-auto mr-3 mt-2"
+                  className="ml-auto mr-3 sm:mt-2"
                   src="/rewards/checkmark.svg"
                 />
               ) : (
                 <img
-                  className="ml-auto mr-3 mt-2"
+                  className="ml-auto mr-3 sm:mt-2"
                   src="/rewards/unchecked-mark.svg"
                 />
               )}
@@ -195,44 +211,72 @@ function ClaimRewards(props) {
           </div>
         </div>
         <img
-          className={"absolute pointer-events-none -z-10 left-1/3 -top-32"}
+          className={
+            "absolute pointer-events-none -z-10 left-1/3 -top-20 opacity-30 lg:opacity-100 invisible lg:visible"
+          }
           src="/rewards/drop-mid.svg"
           width={"622"}
           height={"762"}
         />
         <img
-          className={"absolute pointer-events-none z-1 left-5 "}
+          className={
+            "absolute pointer-events-none -z-10 -left-16 sm:left-5 lg:left-60 top-10 sm:top-28 lg:top-44"
+          }
           src="/rewards/drop-1.svg"
         />
         <img
-          className={"absolute pointer-events-none z-1 right-16 top-28 "}
+          className={
+            "absolute pointer-events-none -z-10 right-0 sm:right-16 lg:right-36 top-36 sm:top-28 lg:top-40 "
+          }
           src="/rewards/drop-2.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-10 w-3/4 right-10 top-1/4 mt-10 "
+            "absolute pointer-events-none -z-10 w-3/4 right-10 bottom-2/3 sm:mb-14 "
           }
           src="/rewards/objects.svg"
         />
         <img
-          className={"absolute pointer-events-none -z-20 w-full top-1/4 "}
+          className={
+            "absolute pointer-events-none -z-20 w-full bottom-1/3 mb-96 lg:mb-48 2xl:mb-10 "
+          }
           src="/rewards/ellipse.svg"
         />
         <img
-          className={"absolute pointer-events-none -z-20 w-full bottom-1/2"}
+          className={
+            "absolute pointer-events-none -z-20 w-full bottom-2/3 lg:bottom-1/3 lg:mb-48 invisible sm:visible"
+          }
           src="/rewards/stars-3.svg"
         />
         <img
-          className={"absolute pointer-events-none -z-20 left-5 top-1/4"}
+          className={
+            "absolute pointer-events-none -z-20 left-5 bottom-3/4 mt-20 invisible lg:visible"
+          }
           src="/rewards/coin-1.svg"
         />
         <img
-          className={"absolute pointer-events-none -z-20 right-0 -top-44"}
+          className={
+            "absolute pointer-events-none -z-20 right-0 -top-36 lg:-top-20 invisible sm:visible"
+          }
           src="/rewards/coin-2.svg"
+        />
+        <img
+          className={
+            "absolute pointer-events-none -z-20 bottom-2/3 left-36 invisible lg:visible"
+          }
+          src="/rewards/coin-3.png"
+        />
+        <img
+          className={
+            "absolute pointer-events-none bottom-1/2 mb-28 right-36 -z-20 invisible lg:visible"
+          }
+          src="/rewards/coin-4.svg"
         />
       </section>
       <img
-        className={"absolute pointer-events-none -z-20 w-full top-24"}
+        className={
+          "absolute pointer-events-none -z-20 w-full top-40 lg:top-28 invisible sm:visible"
+        }
         src="/rewards/stars-1.svg"
       />
 
