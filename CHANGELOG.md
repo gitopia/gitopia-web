@@ -1,5 +1,10 @@
 ## Changelog
 
+### v1.2.0 - 1st Dec 2022
+
+- Fix keplr gasPriceStep type issue
+- Better error and warning messages
+
 ### v1.1.0 - 11th Nov 2022
 
 - Fix keplr wallet integration
