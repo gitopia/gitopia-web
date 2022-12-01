@@ -43,10 +43,10 @@ function LoadingRewards(props) {
         <div className="text-center text-xl text-green font-bold">
           The time is nigh!
         </div>
-        <div className="mt-5 font-bold text-3xl text-center">
+        <div className="mt-5 font-bold text-xl sm:text-3xl text-center">
           Calculating your aidrop reward.
         </div>
-        <div className="font-bold text-3xl text-center">
+        <div className="font-bold text-xl sm:text-3xl text-center">
           This might take upto 15 minutes
         </div>
         <div className="relative flex items-center justify-center pointer-events-none">
