@@ -115,12 +115,19 @@ function CurrentWallet(props) {
                   Ledger
                 </span>
               </div>
-              <div className="mt-2 text-xs">{externalWalletMsg}</div>
+              <div className="mt-2 text-xs text-pink-900">
+                {externalWalletMsg}
+              </div>
               <div className="flex mt-4 w-full btn-group">
                 <button
                   className="btn btn-sm btn-block btn-primary flex-1"
                   onClick={async () => {
-                    await props.unlockLedgerWallet({ name: selectedWallet });
+                    const res = await props.unlockLedgerWallet({
+                      name: selectedWallet,
+                    });
+                    if (res?.message) {
+                      setExternalWalletMsg(res.message);
+                    }
                   }}
                   disabled={props.unlockingWallet}
                 >

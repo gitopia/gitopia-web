@@ -10,6 +10,7 @@ export default function Footer(props) {
             className="link no-underline hover:underline mt-3 sm:mt-0"
             href="https://docs.gitopia.com/"
             target="_blank"
+            rel="noreferrer"
           >
             Docs
           </a>
@@ -17,13 +18,15 @@ export default function Footer(props) {
             className="link no-underline hover:underline mt-3 sm:mt-0"
             href="https://gitopia.com/whitepaper.pdf"
             target="_blank"
+            rel="noreferrer"
           >
             Whitepaper
           </a>
           <a
             className="link no-underline hover:underline mt-3 sm:mt-0"
-            href="https://discord.gg/mVpQVW3vKE"
+            href="https://discord.gg/aqsKW3hUHD"
             target="_blank"
+            rel="noreferrer"
           >
             Discord
           </a>
@@ -31,6 +34,7 @@ export default function Footer(props) {
             className="link no-underline hover:underline mt-3 sm:mt-0"
             href="https://twitter.com/gitopiadao"
             target="_blank"
+            rel="noreferrer"
           >
             Twitter
           </a>
@@ -38,6 +42,7 @@ export default function Footer(props) {
             className="link no-underline hover:underline mt-3 sm:mt-0"
             href="https://t.me/Gitopia"
             target="_blank"
+            rel="noreferrer"
           >
             Telegram
           </a>
@@ -45,6 +50,7 @@ export default function Footer(props) {
             className="link no-underline hover:underline mt-3 sm:mt-0"
             href="https://medium.com/gitopia"
             target="_blank"
+            rel="noreferrer"
           >
             Medium
           </a>

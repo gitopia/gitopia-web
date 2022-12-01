@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import getUser from "../../helpers/getUser";
+import validAddress from "../../helpers/validAddress";
 
 function AssigneeSelector({
   collaborators = [],
@@ -15,7 +16,6 @@ function AssigneeSelector({
   const inputEl = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
   const [searchAddress, setSearchAddress] = useState("");
-  const validAddress = new RegExp("gitopia[a-z0-9]{39}");
   const collabAddresses = collaborators
     .filter((x) => x.permission !== "READ")
     .map((x) => x.id);

@@ -199,7 +199,7 @@ function RepositoryPullView(props) {
                   title="Reviewers"
                   assignees={pullRequest.reviewers}
                   collaborators={[
-                    { id: repository.owner.id, permission: "CREATOR" },
+                    { id: repository.owner.address, permission: "CREATOR" },
                     ...repository.collaborators,
                   ]}
                   onChange={async (list) => {
@@ -236,7 +236,7 @@ function RepositoryPullView(props) {
                 <AssigneeSelector
                   assignees={pullRequest.assignees}
                   collaborators={[
-                    { id: repository.owner.id, permission: "CREATOR" },
+                    { id: repository.owner.address, permission: "CREATOR" },
                     ...repository.collaborators,
                   ]}
                   onChange={async (list) => {

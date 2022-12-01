@@ -9,18 +9,30 @@ import { useRouter } from "next/router";
 import DashboardSelector from "../components/dashboard/dashboardSelector";
 import getHomeUrl from "../helpers/getHomeUrl";
 import useWindowSize from "../hooks/useWindowSize";
+import getAnyRepositoryAll from "../helpers/getAnyRepositoryAll";
 
 function Home(props) {
   const router = useRouter();
   const { isMobile } = useWindowSize();
+  const [allRepository, setAllRepository] = useState([]);
 
-  useEffect(() => {
-    if (props.selectedAddress !== props.currentDashboard) {
-      const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
-      console.log(newUrl);
-      router.push(newUrl);
+  useEffect(async () => {
+    if (props.selectedAddress) {
+      if (props.selectedAddress !== props.currentDashboard) {
+        const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
+        router.push(newUrl);
+      } else {
+        const repos = await getAnyRepositoryAll(props.currentDashboard);
+        if (repos) {
+          setAllRepository(repos);
+        } else {
+          setAllRepository([]);
+        }
+      }
+    } else {
+      setAllRepository([]);
     }
-  }, [props.dashboards, props.currentDashboard]);
+  }, [props.dashboards, props.currentDashboard, props.selectedAddress]);
 
   return (
     <div
@@ -59,11 +71,19 @@ function Home(props) {
           <div className="w-64 border-r border-grey flex flex-col">
             <div className="flex-1">
               <DashboardSelector />
-              <TopRepositories
-                repositories={props.repositories.map((r) => {
-                  return { owner: props.selectedAddress, ...r };
-                })}
-              />
+              {allRepository.length == 0 ? (
+                ""
+              ) : (
+                <TopRepositories
+                  repositories={allRepository.map((r) => {
+                    return {
+                      owner: props.selectedAddress,
+                      username: props.username,
+                      ...r,
+                    };
+                  })}
+                />
+              )}
             </div>
             <div>
               <div className="bg-footer-grad py-6">
@@ -77,7 +97,7 @@ function Home(props) {
                         href={
                           "/" +
                           process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
-                          "/proposals"
+                          "?tab=proposals"
                         }
                       >
                         <a className={"btn btn-xs btn-link mt-2"}>Proposals</a>
@@ -85,10 +105,7 @@ function Home(props) {
                       <Link
                         href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
                       >
-                        <a
-                          className={"btn btn-xs btn-link mt-2"}
-                          target="_blank"
-                        >
+                        <a className={"btn btn-xs btn-link mt-2"}>
                           Source code
                         </a>
                       </Link>
@@ -103,11 +120,19 @@ function Home(props) {
         ) : (
           <>
             <DashboardSelector />
-            <TopRepositories
-              repositories={props.repositories.map((r) => {
-                return { owner: props.selectedAddress, ...r };
-              })}
-            />
+            {allRepository.length == 0 ? (
+              ""
+            ) : (
+              <TopRepositories
+                repositories={allRepository.map((r) => {
+                  return {
+                    owner: props.selectedAddress,
+                    username: props.username,
+                    ...r,
+                  };
+                })}
+              />
+            )}
           </>
         )}
         <div className="flex-1 px-4">
@@ -126,15 +151,13 @@ function Home(props) {
                       href={
                         "/" +
                         process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
-                        "/proposals"
+                        "?tab=proposals"
                       }
                     >
                       <a className={"btn btn-xs btn-link mt-1"}>Proposals</a>
                     </Link>
                     <Link href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}>
-                      <a className={"btn btn-xs btn-link mt-1"} target="_blank">
-                        Source code
-                      </a>
+                      <a className={"btn btn-xs btn-link mt-1"}>Source code</a>
                     </Link>
                   </>
                 ) : (
@@ -156,7 +179,7 @@ const mapStateToProps = (state) => {
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
     selectedAddress: state.wallet.selectedAddress,
-    repositories: state.user.repositories,
+    username: state.user.username,
   };
 };
 

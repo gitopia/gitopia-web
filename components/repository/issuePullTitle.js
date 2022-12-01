@@ -121,7 +121,7 @@ function IssuePullTitle({
         <>
           {issuePullObj.creator === props.selectedAddress ? (
             <button
-              className="btn btn-sm btn-ghost ml-4"
+              className="btn btn-sm btn-ghost ml-4 uppercase text-green"
               onClick={() => {
                 setIsEditing(true);
               }}
@@ -141,7 +141,7 @@ function IssuePullTitle({
               (isPull ? "/compare" : "/issues/new")
             }
           >
-            <button className="btn btn-ghost btn-sm ml-4">
+            <button className="btn btn-ghost btn-sm ml-4 uppercase text-green">
               {isPull ? "New Pull Request" : "New Issue"}
             </button>
           </Link>

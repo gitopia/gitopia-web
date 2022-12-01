@@ -4,7 +4,7 @@ import Header from "../../../components/header";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
+import MarkdownWrapper from "../../../components/markdownWrapper";
 import { notify } from "reapop";
 
 import RepositoryHeader from "../../../components/repository/header";
@@ -24,16 +24,25 @@ import getContent from "../../../helpers/getContent";
 import getCommitHistory from "../../../helpers/getCommitHistory";
 import pluralize from "../../../helpers/pluralize";
 import useWindowSize from "../../../hooks/useWindowSize";
-import getUserRepository from "../../../helpers/getUserRepository";
+import getAnyRepository from "../../../helpers/getAnyRepository";
 import getRepositoryAll from "../../../helpers/getRepositoryAll";
+import getAllRepositoryBranch from "../../../helpers/getAllRepositoryBranch";
+import getAllRepositoryTag from "../../../helpers/getAllRepositoryTag";
 
 const atob = (base64) => {
   return Buffer.from(base64, "base64").toString("binary");
 };
 
 export async function getStaticProps({ params }) {
-  const r = await getUserRepository(params.userId, params.repositoryId);
+  let [r, branches, tags] = await Promise.all([
+    getAnyRepository(params.userId, params.repositoryId),
+    getAllRepositoryBranch(params.userId, params.repositoryId),
+    getAllRepositoryTag(params.userId, params.repositoryId),
+  ]);
+
   if (r) {
+    r.branches = branches;
+    r.tags = tags;
     let branchSha = getBranchSha(r.defaultBranch, r.branches, r.tags);
 
     const entitiesRes = await getContent(r.id, branchSha, null, null);
@@ -404,7 +413,7 @@ function RepositoryView(props) {
                 style={{ maxWidth: "calc(1024px - 18rem)" }}
               >
                 <SupportOwner
-                  ownerAddress={repository.owner.id}
+                  ownerAddress={repository.owner.address}
                   isMobile={isMobile}
                 />
                 <div className="mt-8 sm:flex justify-start">
@@ -430,7 +439,7 @@ function RepositoryView(props) {
                         repository.owner.id +
                         "/" +
                         repository.name +
-                        "/tree/branches"
+                        "/branches"
                       }
                     >
                       <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
@@ -479,7 +488,7 @@ function RepositoryView(props) {
                         repository.owner.id +
                         "/" +
                         repository.name +
-                        "/releases/tags"
+                        "/tags"
                       }
                     >
                       <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
@@ -549,6 +558,7 @@ function RepositoryView(props) {
                           "/" +
                           repository.name
                         }
+                        backups={repository.backups}
                       />
                     </div>
                   ) : (
@@ -560,6 +570,14 @@ function RepositoryView(props) {
                   <CommitDetailRow
                     commitDetail={commitDetail}
                     commitLink={
+                      "/" +
+                      repository.owner.id +
+                      "/" +
+                      repository.name +
+                      "/commit/" +
+                      commitDetail.id
+                    }
+                    commitHistoryLink={
                       "/" +
                       repository.owner.id +
                       "/" +
@@ -602,7 +620,17 @@ function RepositoryView(props) {
                     id="readme"
                     className="border border-gray-700 rounded overflow-hidden p-4 markdown-body mt-8"
                   >
-                    <ReactMarkdown>{readmeFile}</ReactMarkdown>
+                    <MarkdownWrapper
+                      hrefBase={[
+                        "",
+                        repository.owner.id,
+                        repository.name,
+                        "tree",
+                        selectedBranch,
+                      ].join("/")}
+                    >
+                      {readmeFile}
+                    </MarkdownWrapper>
                   </div>
                 ) : (
                   <div className="mt-8">No readme file</div>

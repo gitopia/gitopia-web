@@ -2,11 +2,11 @@ import { useState } from "react";
 import { notify } from "reapop";
 import { connect } from "react-redux";
 import { updateUserBalance } from "../../store/actions/wallet";
+import validAddress from "../../helpers/validAddress";
 
 function SendTlore(props) {
   const [validateAddressError, setValidateAddressError] = useState(null);
   const [validateAmountError, setValidateAmountError] = useState(null);
-  const validAddress = new RegExp("gitopia[a-z0-9]{39}");
   const [receiverAddress, setReceiverAddress] = useState("");
   const [amount, setAmount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -69,7 +69,14 @@ function SendTlore(props) {
           onChange={(e) => {
             setReceiverAddress(e.target.value);
           }}
-          className="w-full input input-sm input-ghost input-bordered"
+          className={
+            "w-full input input-sm input-ghost input-bordered focus:outline-none focus:border-type " +
+            (validateAddressError
+              ? "border-pink text-pink focus:border-pink"
+              : receiverAddress.length > 0
+              ? "border-green"
+              : "")
+          }
         />
         {validateAddressError ? (
           <label className="label">
@@ -97,7 +104,14 @@ function SendTlore(props) {
           onChange={(e) => {
             setAmount(e.target.value);
           }}
-          className="w-full input input-sm input-ghost input-bordered"
+          className={
+            "w-full input input-sm input-ghost input-bordered focus:outline-none focus:border-type " +
+            (validateAmountError
+              ? "border-pink text-pink focus:border-pink"
+              : amount.length > 0
+              ? "border-green"
+              : "")
+          }
         />
         {validateAmountError ? (
           <label className="label">
@@ -114,7 +128,13 @@ function SendTlore(props) {
           className={
             "btn btn-sm btn-primary flex-1" + (loading ? " loading" : "")
           }
-          disabled={loading}
+          disabled={
+            loading ||
+            validateAmountError !== null ||
+            validateAddressError !== null ||
+            amount.length <= 0 ||
+            receiverAddress != ""
+          }
           onClick={async (e) => {
             setLoading(true);
             if (

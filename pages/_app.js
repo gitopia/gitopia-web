@@ -10,7 +10,6 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Notifications from "../components/notifications";
 // import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import ErrorHandler from "../hooks/errorHandler";
-
 const progress = new ProgressBar({
   size: 2,
   color: "#66ce67",

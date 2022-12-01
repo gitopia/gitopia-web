@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import MarkdownEditor from "../../../../components/markdownEditor";
@@ -60,7 +59,8 @@ function RepositoryReleaseNewView(props) {
       const issue = {
         name: title,
         description,
-        repositoryId: parseInt(repository.id),
+        repoOwner: repository.owner.id,
+        repoName: repository.name,
         tagName,
         target: target.name,
         isTag: true,
@@ -175,7 +175,10 @@ function RepositoryReleaseNewView(props) {
                   <input
                     type="text"
                     placeholder="Tag Name"
-                    className="input input-sm input-bordered"
+                    className={
+                      "input input-sm input-bordered focus:outline-none focus:border-type " +
+                      (tagName.length > 0 ? "border-green" : "border-pink")
+                    }
                     value={tagName}
                     onChange={(e) => {
                       setTagName(e.target.value);
@@ -228,7 +231,8 @@ function RepositoryReleaseNewView(props) {
                         onClick={async () => {
                           setCreatingTag(true);
                           const res = await props.createTag({
-                            repositoryId: repository.id,
+                            repoOwnerId: repository.owner.id,
+                            repositoryName: repository.name,
                             name: tagName,
                             sha: target.sha,
                           });
@@ -304,8 +308,24 @@ function RepositoryReleaseNewView(props) {
                         </div>
                         <div className="">
                           <div className="text-xs flex items-center">
-                            <div className="mr-2">
-                              {"(" + shrinkSha(a.uploadResponse.data.sha) + ")"}
+                            <div
+                              className="mr-2 tooltip"
+                              data-tip={a.uploadResponse.data.sha}
+                            >
+                              <button
+                                className="btn btn-xs btn-ghost"
+                                onClick={(e) => {
+                                  if (navigator.clipboard) {
+                                    navigator.clipboard.writeText(
+                                      a.uploadResponse.data.sha
+                                    );
+                                  }
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                }}
+                              >
+                                {shrinkSha(a.uploadResponse.data.sha)}
+                              </button>
                             </div>
                             <button
                               className="btn btn-square btn-xs"
@@ -344,7 +364,7 @@ function RepositoryReleaseNewView(props) {
                       </div>
                       <div className="flex mt-2">
                         <progress
-                          class="progress progress-primary"
+                          className="progress progress-primary"
                           value={uploadingAttachment.completed}
                           max="100"
                         ></progress>
@@ -404,6 +424,7 @@ function RepositoryReleaseNewView(props) {
                 <a
                   href="semver.org"
                   target="_blank"
+                  rel="noreferrer"
                   className="link link-primary no-underline hover:underline"
                 >
                   semantic versioning.

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function OrgViewTabs({ hrefBase, active }) {
+export default function DaoViewTabs({ hrefBase, active }) {
   return (
     <div className="">
       <div className="tabs">
@@ -17,7 +17,7 @@ export default function OrgViewTabs({ hrefBase, active }) {
               >
                 <path
                   d="M1.93782 12.5L8 2L14.0622 12.5H1.93782Z"
-                  stroke-width="2"
+                  strokeWidth="2"
                 />
               </svg>
             </span>

@@ -61,9 +61,17 @@ function Header(props) {
     }
   };
 
-  let addressToShow = "";
+  let addressToShow = "",
+    avatarUrl = "";
   if (props.selectedAddress) {
     addressToShow = shrinkAddress(props.selectedAddress);
+    if (props.avatarUrl) {
+      avatarUrl = props.avatarUrl;
+    } else {
+      avatarUrl =
+        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
+        addressToShow.slice(-1);
+    }
   }
 
   function unreadNotification() {
@@ -102,7 +110,7 @@ function Header(props) {
   const updateNetworkName = async () => {
     if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
       const info = await getNodeInfo();
-      setChainId(info.node_info.network);
+      setChainId(info.default_node_info.network);
     }
   };
 
@@ -138,6 +146,7 @@ function Header(props) {
               className="btn btn-ghost btn-sm rounded-btn"
               onClick={() => setIsOpen(true)}
               target="_blank"
+              rel="noreferrer"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -164,10 +173,7 @@ function Header(props) {
           chainId={chainId}
         ></Drawer>
         <div
-          className={
-            "flex-none px-6 transition-all ease-out delay-150" +
-            (router.pathname === "/home" ? " sm:w-64" : " sm:w-42")
-          }
+          className={"flex-none px-6 transition-all ease-out delay-150 sm:w-42"}
         >
           <Link href={homeUrl}>
             <a>
@@ -213,6 +219,7 @@ function Header(props) {
               className="btn btn-ghost btn-sm rounded-btn"
               href={process.env.NEXT_PUBLIC_EXPLORER_URL}
               target="_blank"
+              rel="noreferrer"
             >
               Explorer
             </a>
@@ -226,6 +233,7 @@ function Header(props) {
               className="btn btn-ghost btn-sm rounded-btn"
               href={process.env.NEXT_PUBLIC_DOCS_URL}
               target="_blank"
+              rel="noreferrer"
             >
               Docs
             </a>
@@ -239,6 +247,7 @@ function Header(props) {
               className="btn btn-ghost btn-sm rounded-btn"
               href={process.env.NEXT_PUBLIC_FORUM_URL}
               target="_blank"
+              rel="noreferrer"
             >
               Forum
             </a>
@@ -302,6 +311,7 @@ function Header(props) {
               <a
                 className="link link-primary no-underline"
                 target="_blank"
+                rel="noreferrer"
                 href={process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES}
               >
                 SEE WHATS NEW
@@ -345,8 +355,8 @@ function Header(props) {
                     >
                       <mask id="path-1-inside-1_728_3215" fill="white">
                         <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
+                          fillRule="evenodd"
+                          clipRule="evenodd"
                           d="M15.9999 4.96387C11.9545 4.96387 8.67506 8.2433 8.67506 12.2887V16.8486H6.22461V22.7806H25.7745V16.8486H23.3247V12.2887C23.3247 8.24331 20.0453 4.96387 15.9999 4.96387Z"
                         />
                       </mask>
@@ -358,7 +368,7 @@ function Header(props) {
                       <path
                         d="M18.1402 23.8963C18.1402 24.1772 18.0848 24.4554 17.9773 24.715C17.8698 24.9746 17.7122 25.2104 17.5136 25.4091C17.3149 25.6077 17.079 25.7653 16.8195 25.8728C16.5599 25.9804 16.2817 26.0357 16.0008 26.0357C15.7198 26.0357 15.4416 25.9804 15.182 25.8728C14.9225 25.7653 14.6866 25.6077 14.488 25.4091C14.2893 25.2104 14.1317 24.9746 14.0242 24.715C13.9167 24.4554 13.8613 24.1772 13.8613 23.8963"
                         stroke="#ADBECB"
-                        stroke-width="2"
+                        strokeWidth="2"
                       />
                     </svg>
                   </a>
@@ -384,12 +394,7 @@ function Header(props) {
                   <div className="avatar absolute left-1">
                     <div className="rounded-full w-10 h-10">
                       {props.activeWallet && !props.unlockingWallet ? (
-                        <img
-                          src={
-                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
-                            addressToShow.slice(-1)
-                          }
-                        />
+                        <img src={avatarUrl} />
                       ) : (
                         ""
                       )}
@@ -520,6 +525,22 @@ function Header(props) {
                                 : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                             </a>
                           </li>
+                          <li>
+                            <Link
+                              href={
+                                props.username
+                                  ? "/" + props.username
+                                  : "/" + props.selectedAddress
+                              }
+                            >
+                              <a>My Profile</a>
+                            </Link>
+                          </li>
+                          <li>
+                            <Link href="/settings">
+                              <a>Settings</a>
+                            </Link>
+                          </li>
                           <div className="border-b border-grey my-2"></div>
                           <li>
                             <a
@@ -569,6 +590,8 @@ const mapStateToProps = (state) => {
     advanceUser: state.user.advanceUser,
     unlockingWallet: state.wallet.unlockingWallet,
     userNotification: state.userNotification,
+    avatarUrl: state.user.avatarUrl,
+    username: state.user.username,
   };
 };
 

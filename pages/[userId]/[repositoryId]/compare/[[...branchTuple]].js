@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import find from "lodash/find";
 
-import getUserRepository from "../../../../helpers/getUserRepository";
+import getAnyRepository from "../../../../helpers/getAnyRepository";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
@@ -22,8 +22,12 @@ import Label from "../../../../components/repository/label";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import getPullDiff from "../../../../helpers/getPullDiff";
 import getRepository from "../../../../helpers/getRepository";
+import getUser from "../../../../helpers/getUser";
+import getDao from "../../../../helpers/getDao";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import useRepository from "../../../../hooks/useRepository";
+import getAllRepositoryBranch from "../../../../helpers/getAllRepositoryBranch";
+import getAllRepositoryTag from "../../../../helpers/getAllRepositoryTag";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -82,20 +86,56 @@ function RepositoryCompareView(props) {
     }
   };
 
+  const getOwnerDetails = async (repo) => {
+    if (repo) {
+      if (repo.owner.type === "USER") {
+        let ownerDetails = await getUser(repo.owner.id);
+        if (ownerDetails)
+          return {
+            type: repo.owner.type,
+            id:
+              ownerDetails.username !== ""
+                ? ownerDetails.username
+                : repo.owner.id,
+            address: repo.owner.id,
+            username: ownerDetails.username,
+            avatarUrl: ownerDetails.avatarUrl,
+          };
+        else return repo.owner;
+      } else {
+        let ownerDetails = await getDao(repo.owner.id);
+        if (ownerDetails)
+          return {
+            type: repo.owner.type,
+            id: ownerDetails.name,
+            address: repo.owner.id,
+            username: ownerDetails.name,
+            avatarUrl: ownerDetails.avatarUrl,
+          };
+        else return repo.owner;
+      }
+    }
+  };
+
   const refreshRepositoryForks = async () => {
     const r = repository;
     if (r.id) {
       if (r.forks.length) {
         const pr = r.forks.map((r) => getRepository(r));
         const repos = await Promise.all(pr);
-        setForkedRepos(repos);
-        console.log("forked repos", repos);
-      }
-      if (r.parent !== "0") {
-        const repo = await getRepository(r.parent);
-        if (repo) {
-          setParentRepo(repo);
+        for (let i = 0; i < repos.length; i++) {
+          repos[i].owner = await getOwnerDetails(repos[i]);
         }
+        console.log("forked repos", repos);
+        setForkedRepos(repos);
+      }
+      if (r.parent && r.parent !== "0") {
+        const repo = await getRepository(r.parent);
+        const ownerDetails = await getOwnerDetails(repo);
+        setParentRepo({
+          ...repo,
+          owner: ownerDetails,
+        });
       }
     }
   };
@@ -122,9 +162,9 @@ function RepositoryCompareView(props) {
         if (reposlug[0].includes("/")) {
           // forked repo name also given
           const ownerslug = reposlug[0].split("/");
-          sourceRepo = await getUserRepository(ownerslug[0], ownerslug[1]);
+          sourceRepo = await getAnyRepository(ownerslug[0], ownerslug[1]);
         } else {
-          sourceRepo = await getUserRepository(
+          sourceRepo = await getAnyRepository(
             reposlug[0],
             router.query.repositoryId
           );
@@ -132,6 +172,13 @@ function RepositoryCompareView(props) {
         if (!sourceRepo) {
           sourceRepo = r;
         }
+        const [branches, tags] = await Promise.all([
+          getAllRepositoryBranch(sourceRepo.owner.id, sourceRepo.name),
+          getAllRepositoryTag(sourceRepo.owner.id, sourceRepo.name),
+        ]);
+        if (branches) sourceRepo.branches = branches;
+        if (tags) sourceRepo.tags = tags;
+
         sourceBranch = reposlug[1];
       } else {
         sourceRepo = r;
@@ -143,6 +190,8 @@ function RepositoryCompareView(props) {
         sourceRepo.branches,
         sourceRepo.tags
       );
+
+      sourceRepo.owner = await getOwnerDetails(sourceRepo);
 
       if (sourceSha && targetSha) {
         console.log(
@@ -231,7 +280,7 @@ function RepositoryCompareView(props) {
           <div className="mt-8">
             <div className="text-lg">Compare revisions</div>
             <div className="mt-2 text-sm text-type-secondary">
-              Choose a branch/tag (e.g. master ) to see what's changed or to
+              Choose a branch/tag (e.g. master) to see what&apos;s changed or to
               create a pull request.
             </div>
             <div className="text-sm text-type-secondary">
@@ -385,15 +434,18 @@ function RepositoryCompareView(props) {
                               const res = await props.createPullRequest({
                                 title,
                                 description,
-                                baseRepoId: compare.target.repository.id,
+                                baseRepoOwner:
+                                  compare.target.repository.owner.address,
+                                baseRepoName: compare.target.repository.name,
                                 baseBranch: compare.target.name,
-                                headRepoId: compare.source.repository.id,
+                                headRepoOwner:
+                                  compare.source.repository.owner.address,
+                                headRepoName: compare.source.repository.name,
                                 headBranch: compare.source.name,
                                 reviewers: reviewers,
                                 assignees: assignees,
                                 labelIds: labels,
                               });
-                              console.log(res);
                               if (res && res.code === 0) {
                                 router.push(
                                   "/" +
@@ -419,7 +471,10 @@ function RepositoryCompareView(props) {
                       <AssigneeSelector
                         assignees={reviewers}
                         collaborators={[
-                          { id: repository.owner.id, permission: "CREATOR" },
+                          {
+                            id: repository.owner.address,
+                            permission: "CREATOR",
+                          },
                           ...repository.collaborators,
                         ]}
                         onChange={async (list) => {
@@ -439,7 +494,10 @@ function RepositoryCompareView(props) {
                       <AssigneeSelector
                         assignees={assignees}
                         collaborators={[
-                          { id: repository.owner.id, permission: "CREATOR" },
+                          {
+                            id: repository.owner.address,
+                            permission: "CREATOR",
+                          },
                           ...repository.collaborators,
                         ]}
                         onChange={async (list) => {

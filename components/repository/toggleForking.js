@@ -2,12 +2,21 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { toggleRepositoryForking } from "../../store/actions/repository";
 
-function ToggleForking({ repoId, allowForking, onSuccess, ...props }) {
+function ToggleForking({
+  repoOwner,
+  repoName,
+  allowForking,
+  onSuccess,
+  ...props
+}) {
   const [currentState, setCurrentState] = useState(!!allowForking);
   const [isToggling, setIsToggling] = useState(false);
   const toggleForking = async () => {
     setIsToggling(true);
-    const res = await props.toggleRepositoryForking({ id: repoId });
+    const res = await props.toggleRepositoryForking({
+      repoOwner: repoOwner,
+      repoName: repoName,
+    });
     if (res && res.code === 0) {
       if (onSuccess) await onSuccess();
     }

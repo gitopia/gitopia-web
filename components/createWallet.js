@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as bip39 from "bip39";
 import { connect } from "react-redux";
 import {
@@ -7,6 +7,9 @@ import {
 } from "../store/actions/wallet";
 import TextInput from "./textInput";
 import { useRouter } from "next/router";
+import axios from "../helpers/axiosFetch";
+import { updateUserBalance } from "../store/actions/wallet";
+import { notify } from "reapop";
 
 function CreateWallet(props) {
   const [mnemonic, setMnemonic] = useState(bip39.generateMnemonic(256));
@@ -14,7 +17,7 @@ function CreateWallet(props) {
     const usernameRegex = /^(?!-)(?!.*-$)(?!.*?--)[A-Za-z0-9-]+$/;
     return usernameRegex.test(val);
   };
-  const [name, setName] = useState("");
+  const [name, setName] = useState("untitled-wallet-1");
   const [nameHint, setNameHint] = useState({
     shown: false,
     type: "error",
@@ -118,14 +121,76 @@ function CreateWallet(props) {
     }
   };
 
-  const newCreateWallet = () => {
-    hideHints();
-    setName("");
-    setPassword("");
-    setConfirmPassword("");
-    setMnemonic(bip39.generateMnemonic(256));
-    setWalletCreated(false);
+  useEffect(() => {
+    if (walletCreated) {
+      setTimeout(getTokens, 2000);
+      router.push("/login?step=5");
+    }
+  }, [walletCreated]);
+
+  // const newCreateWallet = () => {
+  //   hideHints();
+  //   setName("");
+  //   setPassword("");
+  //   setConfirmPassword("");
+  //   setMnemonic(bip39.generateMnemonic(256));
+  //   setWalletCreated(false);
+  // };
+
+  const getTokens = () => {
+    if (!props.selectedAddress) {
+      props.notify("Please sign in before claiming tokens", "error");
+      return;
+    }
+    // setLoading(amount);
+
+    axios
+      .post(
+        process.env.NODE_ENV === "development"
+          ? "/api/faucet"
+          : process.env.NEXT_PUBLIC_FAUCET_URL,
+        {
+          address: props.selectedAddress,
+        },
+        { timeout: 10000 }
+      )
+      .then((res) => {
+        if (
+          res?.data?.transfers &&
+          res?.data?.transfers.length &&
+          res.data.transfers[0].status === "error"
+        ) {
+          props.notify(res.data.transfers[0].error, "error");
+          // setLoading(0);
+        } else {
+          setTimeout(() => {
+            props.updateUserBalance(true);
+            // setLoading(0);
+          }, 2000);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        if (err?.response?.data?.error) {
+          props.notify(err.response.data.error, "error");
+        } else {
+          props.notify("Unable to reach faucet", "error");
+        }
+        // setLoading(0);
+      });
   };
+
+  useEffect(() => {
+    let highest = 0;
+    props.wallets.every((wallet) => {
+      if (wallet.name.includes("untitled-wallet")) {
+        let n = Number(wallet.name.split("-")[2]) || 0;
+        highest = Math.max(highest, n);
+      }
+      return true;
+    });
+    setName("untitled-wallet-" + (highest + 1));
+  }, []);
 
   return (
     <>
@@ -152,12 +217,7 @@ function CreateWallet(props) {
             >
               Download Backup
             </button>
-            <button
-              className="btn btn-secondary btn-block"
-              onClick={() => {
-                router.push("/home");
-              }}
-            >
+            <button className="btn btn-secondary btn-block" onClick={() => {}}>
               Done
             </button>
           </div>
@@ -172,16 +232,17 @@ function CreateWallet(props) {
           </div>
 
           <div className="max-w-md w-full p-4">
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <TextInput
                 type="text"
                 name="wallet_name"
                 placeholder="Wallet Name"
+                readOnly={true}
                 value={name}
                 setValue={setName}
                 hint={nameHint}
               />
-            </div>
+            </div> */}
             <div className="mb-4">
               <TextInput
                 type="password"
@@ -220,10 +281,13 @@ function CreateWallet(props) {
 const mapStateToProps = (state) => {
   return {
     wallets: state.wallet.wallets,
+    selectedAddress: state.wallet.selectedAddress,
   };
 };
 
 export default connect(mapStateToProps, {
   createWalletWithMnemonic,
   downloadWalletForRemoteHelper,
+  updateUserBalance,
+  notify,
 })(CreateWallet);

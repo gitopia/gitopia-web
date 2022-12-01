@@ -12,6 +12,8 @@ const TextInput = React.forwardRef(
       hint: { shown: false, type: "", message: "" },
       setHint: () => {},
       multiline: false,
+      readOnly: false,
+      required: false,
       className: "",
       size: "md",
       onEnter: () => {},
@@ -34,9 +36,15 @@ const TextInput = React.forwardRef(
             type={props.type}
             name={props.name}
             placeholder={props.placeholder}
+            readOnly={props.readOnly}
+            required={props.required}
             className={
-              "input input-bordered h-24 py-2 " +
-              (props.hint.shown ? "input-" + props.hint.type : "")
+              "input input-bordered h-24 py-2 focus:outline-none focus:border-type " +
+              (props.hint.shown && props.hint.type == "error"
+                ? "border-pink text-pink input-" + props.hint.type
+                : props.value.length > 0
+                ? "border-green"
+                : "")
             }
             value={props.value}
             onChange={(e) => {
@@ -49,11 +57,16 @@ const TextInput = React.forwardRef(
             type={props.type}
             name={props.name}
             placeholder={props.placeholder}
+            readOnly={props.readOnly}
             className={
-              "input input-bordered " +
+              "input input-bordered focus:outline-none focus:border-type " +
               ("input-" + props.size) +
               " " +
-              (props.hint.shown ? "input-" + props.hint.type : "")
+              (props.hint.shown && props.hint.type == "error"
+                ? "border-pink text-pink input-" + props.hint.type
+                : props.value.length > 0
+                ? "border-green"
+                : "")
             }
             value={props.value}
             onKeyUp={(e) => {

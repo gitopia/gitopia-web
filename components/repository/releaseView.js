@@ -4,6 +4,7 @@ import shrinkAddress from "../../helpers/shrinkAddress";
 import formatBytes from "../../helpers/formatBytes";
 import shrinkSha from "../../helpers/shrinkSha";
 import { useState } from "react";
+import MarkdownWrapper from "../markdownWrapper";
 
 export default function ReleaseView({
   release,
@@ -19,34 +20,51 @@ export default function ReleaseView({
 
   return (
     <div className="p-4">
-      <div className="flex items-center">
-        {noLink ? (
-          <div className="text-3xl text-type-secondary">
-            {repository.name + " " + release.tagName}
-          </div>
-        ) : (
+      <div className="flex">
+        <div className="flex items-center">
+          {noLink ? (
+            <div className="text-3xl text-type-secondary">
+              {repository.name + " " + release.tagName}
+            </div>
+          ) : (
+            <Link
+              href={
+                "/" +
+                repository.owner.id +
+                "/" +
+                repository.name +
+                "/releases/tag/" +
+                release.tagName
+              }
+            >
+              <a className="text-3xl link link-primary no-underline hover:underline">
+                {repository.name + " " + release.tagName}
+              </a>
+            </Link>
+          )}
+          {latest ? (
+            <span className="ml-4 mt-1 badge badge-primary badge-outline">
+              Latest
+            </span>
+          ) : (
+            ""
+          )}
+        </div>
+        <div className="flex-none w-36 ml-auto">
           <Link
             href={
               "/" +
               repository.owner.id +
               "/" +
               repository.name +
-              "/releases/tag/" +
-              release.tagName
+              "/releases/new"
             }
           >
-            <a className="text-3xl link link-primary no-underline hover:underline">
-              {repository.name + " " + release.tagName}
-            </a>
+            <button className="btn btn-primary btn-sm btn-block">
+              New Release
+            </button>
           </Link>
-        )}
-        {latest ? (
-          <span className="ml-4 mt-1 badge badge-primary badge-outline">
-            Latest
-          </span>
-        ) : (
-          ""
-        )}
+        </div>
       </div>
       <div className="flex items-center mt-4">
         <div className="avatar mr-1">
@@ -115,7 +133,7 @@ export default function ReleaseView({
       </div>
       <div className="text-xs mt-4 text-type-secondary">{release.name}</div>
       <div className="text-xs mt-2 text-type-secondary">
-        {release.description}
+        <MarkdownWrapper>{release.description}</MarkdownWrapper>
       </div>
       <div className="text-sm mt-4">
         <span>Assets</span>
@@ -131,6 +149,7 @@ export default function ReleaseView({
                 <a
                   className="flex py-2 items-center"
                   target="_blank"
+                  rel="noreferrer"
                   href={
                     process.env.NEXT_PUBLIC_OBJECTS_URL +
                     "/releases/" +
@@ -146,8 +165,22 @@ export default function ReleaseView({
                   <div className="flex-1 text-sm">{a.name}</div>
                   <div className="text-xs mr-2">{formatBytes(a.size)}</div>
                   <div className="">
-                    <div className="text-xs flex items-center">
-                      <div className="mr-2">{"(" + shrinkSha(a.sha) + ")"}</div>
+                    <div
+                      className="text-xs flex items-center tooltip"
+                      data-tip={a.sha}
+                    >
+                      <button
+                        className="btn btn-xs btn-ghost"
+                        onClick={(e) => {
+                          if (navigator.clipboard) {
+                            navigator.clipboard.writeText(a.sha);
+                          }
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
+                      >
+                        {shrinkSha(a.sha)}
+                      </button>
                     </div>
                   </div>
                 </a>

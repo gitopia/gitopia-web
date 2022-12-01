@@ -81,6 +81,7 @@ function RepositorySettingsView(props) {
                   <RenameRepository
                     currentName={repository.name}
                     repoId={repository.id}
+                    repoName={repository.name}
                     repoOwner={repository.owner.id}
                     onSuccess={async (newRepoName) => {
                       const url = [
@@ -93,7 +94,7 @@ function RepositorySettingsView(props) {
                       router.push(url);
                     }}
                   />
-                  {/* <div className="mt-6">
+                  <div className="mt-6">
                     <TransferOwnership
                       currentOwnerId={repository.owner.id}
                       repoName={repository.name}
@@ -109,7 +110,7 @@ function RepositorySettingsView(props) {
                         router.push(url);
                       }}
                     />
-                  </div> */}
+                  </div>
                 </div>
                 {/* <div className="flex py-6 items-center">
                   <div className="flex-1 mr-8">
@@ -134,7 +135,8 @@ function RepositorySettingsView(props) {
                 </div>
                 <div className="py-4">
                   <CollaboratorsList
-                    repoId={repository.id}
+                    repoName={repository.name}
+                    repoOwnerId={repository.owner.id}
                     collaborators={[
                       { id: repository.owner.id, permission: "CREATOR" },
                       ...repository.collaborators,
@@ -188,7 +190,8 @@ function RepositorySettingsView(props) {
                 </div> */}
                 <div className="form-control sm:px-4 py-4 sm:py-6">
                   <ToggleForking
-                    repoId={repository.id}
+                    repoOwner={repository.owner.id}
+                    repoName={repository.name}
                     allowForking={repository.allowForking}
                     onSuccess={refreshRepository}
                   />

@@ -1,25 +1,33 @@
 import Head from "next/head";
 import Header from "../../components/header";
-
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
-import Link from "next/link";
-
 import Footer from "../../components/footer";
 import getUser from "../../helpers/getUser";
-import getRepository from "../../helpers/getRepository";
-import getOrganization from "../../helpers/getOrganization";
-import dayjs from "dayjs";
+import getDao from "../../helpers/getDao";
 import PublicTabs from "../../components/dashboard/publicTabs";
 import UserHeader from "../../components/user/header";
+import AccountOverview from "../../components/account/overview";
 import { useErrorStatus } from "../../hooks/errorHandler";
 import getUserAll from "../../helpers/getUserAll";
-import getOrganizationAll from "../../helpers/getOrganizationAll";
+import getDaoAll from "../../helpers/getDaoAll";
+import getWhois from "../../helpers/getWhois";
+import AccountRepositories from "../../components/account/repositories";
+import AccountTransactions from "../../components/account/transactions";
+import AccountPeople from "../../components/account/people";
+import AccountDaoHeader from "../../components/account/daoHeader";
+import DaoProposalList from "../../components/account/daoProposalList";
+import DaoProposalCreate from "../../components/account/daoProposalCreate";
+import DaoProposalDetails from "../../components/account/daoProposalDetails";
+import validAddress from "../../helpers/validAddress";
 
 const getAllRepos = async (repoIds) => {
-  const pr = repoIds.map((r) => getRepository(r.id));
-  return await Promise.all(pr);
+  if (repoIds) {
+    const pr = repoIds.map((r) => getRepository(r.id));
+    return await Promise.all(pr);
+  }
+  return [];
 };
 
 const getOrgAvatarLink = (org) => {
@@ -38,7 +46,7 @@ const getOrgAvatarLink = (org) => {
 export async function getStaticProps({ params }) {
   const [u, o] = await Promise.all([
     getUser(params.userId),
-    getOrganization(params.userId),
+    getDao(params.userId),
   ]);
   const orgAvatarLink = getOrgAvatarLink(o);
   let allRepos = [];
@@ -54,7 +62,7 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths() {
-  const [users, orgs] = await Promise.all([getUserAll(), getOrganizationAll()]);
+  const [users, orgs] = await Promise.all([getUserAll(), getDaoAll()]);
   let paths = [];
   users?.map((u) => {
     paths.push({ params: { userId: u.creator } });
@@ -76,42 +84,88 @@ function AccountView(props) {
     repositories: [],
     ...props.user,
   });
-  const [org, setOrg] = useState({
+  const [dao, setDao] = useState({
     name: "",
     repositories: [],
     ...props.org,
   });
-  const [allRepos, setAllRepos] = useState(props.allRepos);
-  const [avatarLink, setAvatarLink] = useState(props.orgAvatarLink);
+  // const [allRepos, setAllRepos] = useState(props.allRepos);
+  // const [avatarLink, setAvatarLink] = useState(props.orgAvatarLink);
 
   useEffect(async () => {
     const [u, o] = await Promise.all([
       getUser(router.query.userId),
-      getOrganization(router.query.userId),
+      getDao(router.query.userId),
     ]);
     if (u) {
       setUser(u);
-      setOrg({ name: "", repositories: [] });
+      setDao({ name: "", repositories: [] });
     } else if (o) {
-      setOrg(o);
+      setDao(o);
       setUser({ creator: "", repositories: [] });
     } else {
       setErrorStatusCode(404);
       setUser({ creator: "", repositories: [] });
-      setOrg({ name: "", repositories: [] });
+      setDao({ name: "", repositories: [] });
     }
   }, [router.query]);
 
-  useEffect(async () => {
-    setAvatarLink(getOrgAvatarLink(org));
-    if (user && user.id) {
-      setAllRepos(await getAllRepos(user.repositories));
-    } else if (org && org.id) {
-      setAllRepos(await getAllRepos(org.repositories));
-    }
-  }, [user.id, org.id]);
+  // useEffect(async () => {
+  //   setAvatarLink(getOrgAvatarLink(org));
+  //   if (user && user.id) {
+  //     setAllRepos(await getAllRepos(user.repositories));
+  //   } else if (org && org.id) {
+  //     setAllRepos(await getAllRepos(org.repositories));
+  //   }
+  // }, [user.id, org.id]);
 
   const hrefBase = "/" + router.query.userId;
+
+  const getId = async (updatedName) => {
+    if (updatedName) {
+      router.push("/" + updatedName);
+      return;
+    }
+    if (validAddress.test(router.query.userId)) {
+      const [u, o] = await Promise.all([
+        getUser(router.query.userId),
+        getDao(router.query.userId),
+      ]);
+      if (u) {
+        setUser(u);
+        setDao({ name: "" });
+      } else if (o) {
+        setDao(o);
+      } else {
+        setErrorStatusCode(404);
+        setUser({ creator: "" });
+      }
+    } else {
+      const data = await getWhois(router.query.userId);
+      if (data?.ownerType === "USER") {
+        const u = await getUser(data.address);
+        if (u) {
+          setUser(u);
+        } else {
+          setErrorStatusCode(404);
+          setUser({ creator: "" });
+        }
+      } else if (data?.ownerType === "DAO") {
+        const o = await getDao(data.address);
+        if (o) {
+          setDao(o);
+        } else {
+          setErrorStatusCode(404);
+          setDao({ name: "" });
+        }
+      } else {
+        setErrorStatusCode(404);
+        setUser({ creator: "" });
+      }
+    }
+  };
+
+  useEffect(getId, [router.query]);
 
   return (
     <div
@@ -119,61 +173,69 @@ function AccountView(props) {
       className="flex flex-col bg-base-100 text-base-content min-h-screen"
     >
       <Head>
-        <title>{user.id ? user.creator : org.name}</title>
+        <title>
+          {user.id ? (user.username ? user.username : user.creator) : dao.name}
+        </title>
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
       <div className="flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
-          {org.address ? (
-            <div className="flex flex-1 mb-8">
-              <div className="avatar flex-none mr-8 items-center">
-                <div className={"w-14 h-14 rounded-full"}>
-                  <img src={avatarLink} />
-                </div>
-              </div>
-              <div className="flex-1">
-                <div className="text-md">{org.name}</div>
-                <div className="text-sm text-type-secondary mt-2">
-                  {org.description}
-                </div>
-              </div>
-            </div>
+          {dao.address ? (
+            <AccountDaoHeader dao={dao} refresh={getId} />
           ) : (
-            <UserHeader user={user} />
+            <UserHeader user={user} refresh={getId} />
           )}
           <div className="flex flex-1 mt-8 border-b border-grey">
             <PublicTabs
-              active="repositories"
+              active={router.query.tab || "overview"}
               hrefBase={hrefBase}
-              showPeople={org.address}
+              showPeople={dao.address}
               showProposal={
                 process.env.NEXT_PUBLIC_GITOPIA_ADDRESS.toString() ===
-                  router.query.userId && org.address
+                  router.query.userId && dao.address
               }
             />
           </div>
-          <div className="mt-8">
-            <ul className="">
-              {allRepos.map((r) => {
-                return (
-                  <li className="p-4" key={r.id}>
-                    <div>
-                      <div>
-                        <Link href={hrefBase + "/" + r.name}>
-                          <a className="text-base btn-link">{r.name}</a>
-                        </Link>
-                      </div>
-                      <div className="mt-2 text-sm">{r.description}</div>
-                      <div className="mt-2 text-xs text-type-secondary">
-                        {"Last updated " + dayjs(r.updatedAt * 1000).fromNow()}
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          {router.query.tab === "overview" || router.query.tab === undefined ? (
+            <AccountOverview
+              user={user}
+              dao={dao}
+              userId={router.query.userId}
+            />
+          ) : (
+            ""
+          )}
+          {router.query.tab === "repositories" ? (
+            <AccountRepositories
+              user={user}
+              dao={dao}
+              userId={router.query.userId}
+            />
+          ) : (
+            ""
+          )}
+          {router.query.tab === "transactions" ? (
+            <AccountTransactions
+              userId={user.creator ? user.creator : dao.address}
+            />
+          ) : (
+            ""
+          )}
+          {router.query.tab === "proposals" ? (
+            router.query.id ? (
+              router.query.id === "new" ? (
+                <DaoProposalCreate dao={dao} />
+              ) : (
+                <DaoProposalDetails id={router.query.id} />
+              )
+            ) : (
+              <DaoProposalList dao={dao} />
+            )
+          ) : (
+            ""
+          )}
+          {router.query.tab === "people" ? <AccountPeople dao={dao} /> : ""}
         </main>
       </div>
       <Footer />

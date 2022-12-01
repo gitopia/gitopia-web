@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 
-import getUserRepository from "../../../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
 import MarkdownEditor from "../../../../../components/markdownEditor";
@@ -69,7 +68,8 @@ function RepositoryReleaseEditView(props) {
       const issue = {
         name: title,
         description,
-        repositoryId: parseInt(repository.id),
+        repoOwner: repository.owner.id,
+        repoName: repository.name,
         tagName,
         target: target.name,
         isTag: true,
@@ -184,7 +184,10 @@ function RepositoryReleaseEditView(props) {
                   <input
                     type="text"
                     placeholder="Tag Name"
-                    className="input input-sm input-bordered"
+                    className={
+                      "input input-sm input-bordered focus:outline-none focus:border-type " +
+                      (tagName.length > 0 ? "border-green" : "border-pink")
+                    }
                     value={tagName}
                     onChange={(e) => {
                       setTagName(e.target.value);
@@ -237,7 +240,8 @@ function RepositoryReleaseEditView(props) {
                         onClick={async () => {
                           setCreatingTag(true);
                           const res = await props.createTag({
-                            repositoryId: repository.id,
+                            repoOwnerId: repository.owner.id,
+                            repositoryName: repository.name,
                             name: tagName,
                             sha: target.sha,
                           });
@@ -303,7 +307,10 @@ function RepositoryReleaseEditView(props) {
                 <div className="my-4 divide-y divide-grey">
                   {attachments.map((a, i) => {
                     return (
-                      <div className={"flex py-2 items-center"}>
+                      <div
+                        className={"flex py-2 items-center"}
+                        key={"attachment" + i}
+                      >
                         <div className="flex-1 text-sm">
                           {a.file ? a.file.name : a.name}
                         </div>
@@ -358,7 +365,7 @@ function RepositoryReleaseEditView(props) {
                       </div>
                       <div className="flex mt-2">
                         <progress
-                          class="progress progress-primary"
+                          className="progress progress-primary"
                           value={uploadingAttachment.completed}
                           max="100"
                         ></progress>
@@ -418,6 +425,7 @@ function RepositoryReleaseEditView(props) {
                 <a
                   href="semver.org"
                   target="_blank"
+                  rel="noreferrer"
                   className="link link-primary no-underline hover:underline"
                 >
                   semantic versioning.

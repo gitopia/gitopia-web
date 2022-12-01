@@ -9,7 +9,7 @@ const initialState = {
   followers: [],
   following: [],
   repositories: [],
-  organizations: [],
+  // organizations: [],
   starred_repos: [],
   subscriptions: "",
   email: "",
@@ -41,7 +41,7 @@ const reducer = (state = initialState, action) => {
     }
 
     case userActions.INIT_DASHBOARDS: {
-      const { name, id } = action.payload;
+      const { name, id, daos = [] } = action.payload;
       const dashboards = [
         {
           type: "User",
@@ -49,15 +49,36 @@ const reducer = (state = initialState, action) => {
           id,
           url: "/home",
         },
-        ...state.organizations.map((o) => {
+        ...daos.map((d) => {
           return {
-            type: "Organization",
-            ...o,
-            url: "/daos/" + o.id + "/dashboard",
+            type: "Dao",
+            id: d.address,
+            name: d.name,
+            description: d.description,
+            avatarUrl: d.avatarUrl,
+            url: "/daos/" + d.name + "/dashboard",
           };
         }),
       ];
       return { ...state, dashboards };
+    }
+
+    case userActions.UPDATE_DASHBOARD_ENTRY: {
+      const { id, name, description, avatarUrl } = action.payload;
+      let newDashboards = [...state.dashboards];
+      newDashboards.every((d) => {
+        if (d.id === id) {
+          d.name = name;
+          d.description = description;
+          d.avatarUrl = avatarUrl;
+          if (d.type === "Dao") {
+            d.url = "/daos/" + name + "/dashboard";
+          }
+          return false;
+        }
+        return true;
+      });
+      return { ...state, dashboards: newDashboards };
     }
 
     default:

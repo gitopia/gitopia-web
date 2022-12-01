@@ -1,10 +1,18 @@
+const validUserAddress = new RegExp("^gitopia([a-z0-9]{39})$");
+const validDaoAddress = new RegExp("^gitopia([a-z0-9]{59})$");
 export default function shrinkAddress(address) {
-  if (typeof address === "string") {
+  if (validUserAddress.test(address)) {
     let trimText = address.slice(11, 42);
     if (trimText.length) {
       return address.replace("gitopia", "").replace(trimText, "...");
     }
     return address;
+  } else if (validDaoAddress.test(address)) {
+    let trimText = address.slice(11, 62);
+    if (trimText.length) {
+      return address.replace("gitopia", "").replace(trimText, "...");
+    }
+    return address;
   }
-  return "";
+  return address;
 }

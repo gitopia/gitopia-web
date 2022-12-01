@@ -91,7 +91,7 @@ function IssuePullDescription({
           </div>
         </div>
       </div>
-      <div className="border border-grey rounded flex-1">
+      <div className="border border-grey rounded flex-1 max-w-2xl">
         {isEditing ? (
           <div className="p-4">
             <MarkdownEditor

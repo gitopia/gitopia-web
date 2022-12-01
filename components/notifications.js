@@ -736,8 +736,8 @@ function Notifications(props) {
       console.error(e);
     }
     if (jsonData) {
-      const fullTx = decodeTx(jsonData.value.TxResult.tx);
-      parseTx(fullTx);
+      // const fullTx = decodeTx(jsonData.value.TxResult.tx);
+      // parseTx(fullTx);
       parseEvents(jsonData.value.TxResult.result.events);
     }
   };

@@ -1,5 +1,7 @@
 import getBranchSha from "./getBranchSha";
 import getRepository from "./getRepository";
+import getAllRepositoryBranch from "./getAllRepositoryBranch";
+import getAllRepositoryTag from "./getAllRepositoryTag";
 
 export default async function getPullRepoInfo(pullRequest, baseRepository) {
   let p = pullRequest;
@@ -22,6 +24,11 @@ export default async function getPullRepoInfo(pullRequest, baseRepository) {
     }
   } else {
     const forkRepo = await getRepository(p.head.repositoryId);
+    forkRepo.branches = await getAllRepositoryBranch(
+      forkRepo.owner.id,
+      forkRepo.name
+    );
+    forkRepo.tags = await getAllRepositoryTag(forkRepo.owner.id, forkRepo.name);
     if (forkRepo) {
       p.head.repository = forkRepo;
       p.base.repository = baseRepository;

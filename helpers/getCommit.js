@@ -1,4 +1,5 @@
 const validSha = new RegExp(/^[a-f0-9]{40}$/);
+import axios from "../helpers/axiosFetch";
 
 export default async function getCommit(repoId = null, commitSha = null) {
   let obj = {};
@@ -18,16 +19,12 @@ export default async function getCommit(repoId = null, commitSha = null) {
   if (commitSha) {
     baseUrl = baseUrl + "/" + commitSha;
   }
-  await fetch(baseUrl, {
-    method: "POST", // *GET, POST, PUT, DELETE, etc.
-    mode: "cors", // no-cors, *cors, same-origin
-    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-    body: JSON.stringify(params),
-  })
-    .then((response) => {
-      obj = response.json();
-    })
-    .catch((err) => console.error(err));
-
-  return obj;
+  try {
+    return await axios.post(baseUrl, params).then((response) => {
+      return response.data;
+    });
+  } catch (e) {
+    console.error(e);
+    return obj;
+  }
 }

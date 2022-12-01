@@ -1073,6 +1073,7 @@ ul.mde-suggestions li[aria-selected="true"] {
 /* ----- tailwind + daisyui custom styling ----- */
 .tooltip:before {
   font-size: 0.75rem;
+  max-width: 40rem;
 }
 
 .tab.tab-bordered {
@@ -1100,6 +1101,11 @@ ul.mde-suggestions li[aria-selected="true"] {
   padding-bottom: calc(var(--tab-padding, 1rem) / 2);
 }
 
+.tab-sm {
+  --tab-padding: 0;
+  margin-right: 1rem;
+}
+
 .tab-lifted.tab-active:last-child:after {
   background-image: var(--tab-corner-bg);
 }
@@ -1107,4 +1113,20 @@ ul.mde-suggestions li[aria-selected="true"] {
 .menu li.bordered a,
 .menu li.bordered span {
   border-left-width: 2px;
+}
+
+.react-calendar-heatmap .color-gitopia-empty {
+  fill: #2d3845;
+}
+.react-calendar-heatmap .color-gitopia-low {
+  fill: #29b7e4;
+}
+.react-calendar-heatmap .color-gitopia-high {
+  fill: #66ce67;
+}
+.react-calendar-heatmap g.react-calendar-heatmap-all-weeks {
+  transform: translate(30px, 18px);
+}
+.react-calendar-heatmap g.react-calendar-heatmap-weekday-labels {
+  transform: translate(0px, 18px);
 }

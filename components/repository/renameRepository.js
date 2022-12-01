@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import TextInput from "../textInput";
 import { connect } from "react-redux";
 import { renameRepository } from "../../store/actions/repository";
-import isRepositoryNameAvailable from "../../helpers/isRepositoryNameAvailable";
+import isRepositoryNameTaken from "../../helpers/isRepositoryNameTaken";
 
 function RenameRepository({
   repoId = null,
+  repoName = null,
   repoOwner = null,
   currentName = "",
   onSuccess,
@@ -35,11 +36,7 @@ function RenameRepository({
       });
       return false;
     }
-    const alreadyAvailable = await isRepositoryNameAvailable(
-      name,
-      repoOwner,
-      props.dashboards
-    );
+    const alreadyAvailable = await isRepositoryNameTaken(name, repoOwner);
     if (alreadyAvailable) {
       setNameHint({
         type: "error",
@@ -55,7 +52,8 @@ function RenameRepository({
     setIsChanging(true);
     if (await validateName()) {
       const res = await props.renameRepository({
-        id: repoId,
+        repoOwner: repoOwner,
+        repoName: repoName,
         name: name.replace(sanitizedNameTest, "-"),
       });
       if (res) {

@@ -3,14 +3,12 @@ import Header from "../../../components/header";
 
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { useRouter } from "next/router";
 
-import getUserRepository from "../../../helpers/getUserRepository";
 import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
 import Footer from "../../../components/footer";
 import Link from "next/link";
-import dayjs from "dayjs";
+
 import getRepository from "../../../helpers/getRepository";
 import shrinkAddress from "../../../helpers/shrinkAddress";
 import useRepository from "../../../hooks/useRepository";

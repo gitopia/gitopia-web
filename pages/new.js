@@ -7,7 +7,7 @@ import Header from "../components/header";
 import TextInput from "../components/textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
 import Footer from "../components/footer";
-import isRepositoryNameAvailable from "../helpers/isRepositoryNameAvailable";
+import isRepositoryNameTaken from "../helpers/isRepositoryNameTaken";
 
 function NewRepository(props) {
   const router = useRouter();
@@ -59,11 +59,7 @@ function NewRepository(props) {
       });
       return false;
     }
-    const alreadyAvailable = await isRepositoryNameAvailable(
-      name,
-      ownerId,
-      props.dashboards
-    );
+    const alreadyAvailable = await isRepositoryNameTaken(name, ownerId);
 
     if (alreadyAvailable) {
       setNameHint({
@@ -73,29 +69,29 @@ function NewRepository(props) {
       });
       return false;
     }
-    if (description === "") {
-      setDescriptionHint({
-        ...descriptionHint,
-        shown: true,
-        message: "Please enter a description",
-      });
-      return false;
-    }
     return true;
   };
 
   const createRepository = async () => {
     setRepositoryCreating(true);
     if (await validateRepository()) {
+      let ownerName = ownerId;
+      accountsList.every((a) => {
+        if (a.id === ownerId) {
+          ownerName = a.name;
+          return false;
+        }
+        return true;
+      });
       console.log("create Repo", {
         name: name.replace(sanitizedNameTest, "-"),
         description,
-        ownerId,
+        ownerName,
       });
       let res = await props.createRepository({
         name: name.replace(sanitizedNameTest, "-"),
         description,
-        ownerId,
+        ownerId: ownerName,
       });
       if (res && res.url) {
         router.push(res.url);
@@ -139,7 +135,10 @@ function NewRepository(props) {
                   <span className="label-text">Repository Owner</span>
                 </label>
                 <select
-                  className="select select-bordered select-md mr-2 sm:mr-0"
+                  className={
+                    "select select-bordered select-md mr-2 sm:mr-0 focus:outline-none focus:border-type " +
+                    (ownerId.length > 0 ? "border-green" : "")
+                  }
                   value={ownerId}
                   onChange={(e) => {
                     console.log("onchange");
@@ -214,7 +213,6 @@ function NewRepository(props) {
 
 const mapStateToProps = (state) => {
   return {
-    repositories: state.user.repositories,
     dashboards: state.user.dashboards,
     currentDashboard: state.user.currentDashboard,
   };

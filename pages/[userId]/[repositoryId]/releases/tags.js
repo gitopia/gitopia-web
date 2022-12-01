@@ -55,9 +55,10 @@ function RepositoryTagsView(props) {
                 </button>
               </Link>
             </div>
+            {/* TODO: Should just be tagged releases instead of all tags */}
             {repository.tags.map((t) => {
               return (
-                <div className="mt-8">
+                <div className="mt-8" key={t.name}>
                   <div className="flex">
                     <div>
                       <svg
@@ -78,7 +79,7 @@ function RepositoryTagsView(props) {
                     <div className="text-primary">{t.name}</div>
                   </div>
                   <div className="text-xs text-type-secondary mt-2">
-                    {"last updated " + dayjs(t.lastUpdatedAt * 1000).fromNow()}
+                    {"last updated " + dayjs(t.updatedAt * 1000).fromNow()}
                   </div>
                 </div>
               );

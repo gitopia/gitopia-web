@@ -1,10 +1,15 @@
 import Head from "next/head";
 import Header from "../components/header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateWallet from "../components/createWallet";
 import RecoverWallet from "../components/recoverWallet";
 import Footer from "../components/footer";
 import ConnectLedger from "../components/connectLedger";
+import CreateUser from "../components/createUser";
+import { useRouter } from "next/router";
+import initKeplr from "../helpers/keplr";
+import { unlockKeplrWallet } from "../store/actions/wallet";
+import { connect } from "react-redux";
 
 /*
 Wizard Steps
@@ -14,8 +19,13 @@ Wizard Steps
 4 - Recover existing wallet
 */
 
-export default function Login(props) {
-  const [step, setStep] = useState(1);
+function Login(props) {
+  const { query, push } = useRouter();
+  const [step, setStep] = useState(Number(query.step) || 1);
+
+  useEffect(() => {
+    setStep(Number(query.step) || 1);
+  }, [query.step]);
   return (
     <div
       data-theme="dark"
@@ -69,6 +79,19 @@ export default function Login(props) {
                   <img src="/existing-wallet.svg" className="w-20 h-20" />
                   <div className="ml-8">Recover exisiting wallet</div>
                 </button>
+                <button
+                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
+                  onClick={async (e) => {
+                    await initKeplr();
+                    const acc = await props.unlockKeplrWallet();
+                    if (acc) {
+                      push("/home");
+                    }
+                  }}
+                >
+                  <img src="/keplr-logo.svg" className="w-20 h-20 p-2" />
+                  <div className="ml-8">Connect Keplr</div>
+                </button>
               </div>
             </div>
             <div className="text-sm mt-2 mb-16 max-w-md text-center">
@@ -104,8 +127,17 @@ export default function Login(props) {
         {step === 2 && <ConnectLedger />}
         {step === 3 && <CreateWallet />}
         {step === 4 && <RecoverWallet />}
+        {step === 5 && <CreateUser />}
       </div>
       <Footer />
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {};
+};
+
+export default connect(mapStateToProps, {
+  unlockKeplrWallet,
+})(Login);

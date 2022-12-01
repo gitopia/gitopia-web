@@ -1,4 +1,8 @@
-Frontend app for interacting with Gitopia chain.
+# Gitopia Web
+
+![Gitopia](public/og-gitopia.jpg)
+
+Web frontend app for interacting with Gitopia chain.
 
 ## Local setup
 
@@ -43,8 +47,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Contributing
 
-We welcome any bugfixes or optimizations from communinty. For requesting any feature please create an issue first.
-Detailed guidelines for creating pull requests will be updated soon.
+Gitopia Web is an open source project and contributions from community are always welcome. Discussion and development majorly take place on the Gitopia via issues and proposals -- everyone is welcome to post bugs, feature requests, comments and pull requests to Gitopia. (read [Contribution Guidelines](CONTRIBUTING.md) and [Coding Guidelines](CodingGuidelines.md).
 
 Setup your local environment variables
 
@@ -57,6 +60,12 @@ Start a development server
 
 ```bash
 yarn dev
+```
+
+Test your code for linting errors
+
+```bash
+yarn lint
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

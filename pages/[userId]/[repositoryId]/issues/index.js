@@ -275,7 +275,7 @@ function RepositoryIssueView(props) {
                         {[
                           { id: repository.owner.id, permission: "CREATOR" },
                           ...repository.collaborators,
-                        ].map((c) => {
+                        ].map((c, i) => {
                           return (
                             <li
                               className="normal-case font-normal"
@@ -289,6 +289,7 @@ function RepositoryIssueView(props) {
                                 setFilterText(newFilterText);
                                 setFilters(parseFilters(newFilterText));
                               }}
+                              key={"author" + i}
                             >
                               <a className="avatar">
                                 <div className="w-6 h-6 rounded-full mr-2">
@@ -348,9 +349,12 @@ function RepositoryIssueView(props) {
                           </a>
                         </li>
 
-                        {repository.labels.map((l) => {
+                        {repository.labels.map((l, i) => {
                           return (
-                            <li className="normal-case font-normal">
+                            <li
+                              className="normal-case font-normal"
+                              key={"label" + i}
+                            >
                               <a
                                 onClick={() => {
                                   let labelText = "label:" + l.name;
@@ -397,7 +401,7 @@ function RepositoryIssueView(props) {
                         {[
                           { id: repository.owner.id, permission: "CREATOR" },
                           ...repository.collaborators,
-                        ].map((c) => {
+                        ].map((c, i) => {
                           return (
                             <li
                               className="normal-case font-normal"
@@ -413,6 +417,7 @@ function RepositoryIssueView(props) {
                                 setFilterText(newFilterText);
                                 setFilters(parseFilters(newFilterText));
                               }}
+                              key={"assignee" + i}
                             >
                               <a className="avatar">
                                 <div className="w-6 h-6 rounded-full mr-2">
@@ -528,6 +533,7 @@ function RepositoryIssueView(props) {
                               className="link no-underline hover:underline"
                               href={"/" + i.creator}
                               target="_blank"
+                              rel="noreferrer"
                             >
                               {shrinkAddress(i.creator)}
                             </a>
@@ -536,6 +542,7 @@ function RepositoryIssueView(props) {
                               className="link no-underline hover:underline"
                               href={"/" + i.closedBy}
                               target="_blank"
+                              rel="noreferrer"
                             >
                               {shrinkAddress(i.closedBy)}
                             </a>

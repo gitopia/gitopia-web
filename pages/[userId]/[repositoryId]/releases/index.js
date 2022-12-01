@@ -24,17 +24,16 @@ export async function getStaticProps() {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking' 
-  }
+    fallback: "blocking",
+  };
 }
 
 function RepositoryReleasesView(props) {
   const { repository, refreshRepository } = useRepository();
   const [latestRelease, setLatestRelease] = useState(null);
   const [olderReleases, setOlderReleases] = useState([]);
-  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
-    false
-  );
+  const [currentUserEditPermission, setCurrentUserEditPermission] =
+    useState(false);
   const getReleases = async () => {
     if (repository) {
       const release = await getRepositoryReleaseLatest(
@@ -77,7 +76,7 @@ function RepositoryReleasesView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs repository={repository} active="code" />
-          <div className="flex mt-8">
+          <div className="flex">
             <div className="form-control flex-1 mr-8">
               {/* <div className="relative">
                 <input
@@ -103,23 +102,8 @@ function RepositoryReleasesView(props) {
                 </button>
               </div> */}
             </div>
-            <div className="flex-none w-36">
-              <Link
-                href={
-                  "/" +
-                  repository.owner.id +
-                  "/" +
-                  repository.name +
-                  "/releases/new"
-                }
-              >
-                <button className="btn btn-primary btn-sm btn-block">
-                  New Release
-                </button>
-              </Link>
-            </div>
           </div>
-          <div className="mt-8">
+          <div className="mt-4">
             {latestRelease ? (
               <ReleaseView
                 repository={repository}
@@ -142,9 +126,9 @@ function RepositoryReleasesView(props) {
             ) : (
               ""
             )}
-            {olderReleases.map((r) => {
+            {olderReleases.map((r, i) => {
               return (
-                <div className="px-4 py-2">
+                <div className="px-4 py-2" key={"release" + i}>
                   <Link
                     href={
                       "/" +

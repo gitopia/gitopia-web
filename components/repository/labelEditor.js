@@ -42,7 +42,8 @@ const defaultLabels = [
 ];
 
 function LabelEditor({
-  repoId,
+  repoOwner,
+  repoName,
   labelId,
   onSuccess,
   onError,
@@ -104,7 +105,8 @@ function LabelEditor({
     setIsSaving(true);
     if (validateLabel()) {
       const res = await props.createRepositoryLabel({
-        repoId,
+        repoOwner,
+        repoName,
         name,
         color,
         description,
@@ -124,7 +126,8 @@ function LabelEditor({
     setIsSaving(true);
     if (validateLabel()) {
       const res = await props.updateRepositoryLabel({
-        repositoryId: repoId,
+        repoOwner,
+        repoName,
         labelId,
         name,
         color,

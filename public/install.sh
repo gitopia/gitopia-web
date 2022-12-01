@@ -12,10 +12,11 @@ function fail {
 }
 function install {
 	#settings
-	USER="gitopia1dlpc7ps63kj5v0kn5v8eq9sn2n8v8r5z9jmwff"
+	USER="gitopia"
 	PROG="git-remote-gitopia"
+	PROG2="git-gitopia"
 	MOVE="true"
-	VERSION="0.4.2"
+	VERSION="1.3.0"
 	INSECURE="false"
 	OUT_DIR="/usr/local/bin"
 	OBJECTS_URL="https://server.gitopia.com"
@@ -121,20 +122,16 @@ function install {
 	else
 		fail "unknown file type: $FTYPE"
 	fi
-	#search subtree largest file (bin)
-	TMP_BIN=$(find . -type f | xargs du | sort -n | tail -n 1 | cut -f 2)
-	if [ ! -f "$TMP_BIN" ]; then
-		fail "could not find find binary (largest file)"
-	fi
-	#ensure its larger than 1MB
-	if [[ $(du -m $TMP_BIN | cut -f1) -lt 1 ]]; then
-		fail "no binary found ($TMP_BIN is not larger than 1MB)"
+	#check binaries exist
+	if [[ ! -f "$PROG" || ! -f "$PROG2" ]]; then
+		fail "could not find binaries"
 	fi
 	#move into PATH or cwd
-	chmod +x $TMP_BIN || fail "chmod +x failed"
+	(chmod +x $PROG $PROG2) || fail "chmod +x failed"
 	
-	mv $TMP_BIN $OUT_DIR/$PROG || fail "mv failed\nRun the below command to finish the installation\n\nsudo mv ${TMP_DIR}/${PROG} ${OUT_DIR}/${PROG}\n\n" #FINAL STEP!
-	echo "Installed at $OUT_DIR/$PROG"
+	(mv $PROG $PROG2 $OUT_DIR) || fail "mv failed\nRun the below command to finish the installation\n\nsudo mv ${TMP_DIR}/${PROG} ${TMP_DIR}/${PROG2} ${OUT_DIR}\n\n" #FINAL STEP!
+	echo "Installed $PROG at $OUT_DIR/$PROG"
+	echo "Installed $PROG2 at $OUT_DIR/$PROG2"
 	#done
 	cleanup
 }

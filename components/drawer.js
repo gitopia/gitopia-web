@@ -87,6 +87,7 @@ function Drawer(props) {
                 className="hover:bg-gray-700"
                 href={process.env.NEXT_PUBLIC_EXPLORER_URL}
                 target="_blank"
+                rel="noreferrer"
                 onClick={() => {
                   props.setIsOpen(false);
                 }}
@@ -99,6 +100,7 @@ function Drawer(props) {
                 className="hover:bg-gray-700"
                 href={process.env.NEXT_PUBLIC_DOCS_URL}
                 target="_blank"
+                rel="noreferrer"
                 onClick={() => {
                   props.setIsOpen(false);
                 }}
@@ -111,6 +113,7 @@ function Drawer(props) {
                 className="hover:bg-gray-700"
                 href={process.env.NEXT_PUBLIC_FORUM_URL}
                 target="_blank"
+                rel="noreferrer"
                 onClick={() => {
                   props.setIsOpen(false);
                 }}
@@ -131,6 +134,7 @@ function Drawer(props) {
                   <a
                     className="link link-primary no-underline"
                     target="_blank"
+                    rel="noreferrer"
                     href={process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES}
                   >
                     SEE WHATS NEW

@@ -47,7 +47,8 @@ function RepositoryIssueCreateView(props) {
       const issue = {
         title,
         description,
-        repositoryId: parseInt(repository.id),
+        repositoryName: repository.name,
+        repositoryOwner: repository.owner.id,
         assignees,
         labels,
       };
@@ -135,7 +136,7 @@ function RepositoryIssueCreateView(props) {
                 <AssigneeSelector
                   assignees={assignees}
                   collaborators={[
-                    { id: repository.owner.id, permission: "CREATOR" },
+                    { id: repository.owner.address, permission: "CREATOR" },
                     ...repository.collaborators,
                   ]}
                   onChange={async (list) => {

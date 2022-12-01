@@ -1,3 +1,4 @@
+import isNumber from "lodash/isNumber";
 const validSha = new RegExp(/^[a-f0-9]{40}$/);
 
 export default async function getDiff(
@@ -7,8 +8,12 @@ export default async function getDiff(
   prevCommitSha,
   onlyStat
 ) {
-  let obj = {};
+  let obj = {},
+    numRepoId = Number(repoId);
   if (!validSha.test(commitSha)) {
+    return obj;
+  }
+  if (!isNumber(numRepoId)) {
     return obj;
   }
   const baseUrl =
@@ -16,7 +21,7 @@ export default async function getDiff(
       ? "/api/diff"
       : process.env.NEXT_PUBLIC_OBJECTS_URL + "/diff";
   let params = {
-    repository_id: Number(repoId),
+    repository_id: numRepoId,
     commit_sha: commitSha,
     pagination: {
       limit: 10,
@@ -30,11 +35,12 @@ export default async function getDiff(
   }
   if (onlyStat) {
     params.only_stat = true;
+  } else {
+    params.only_stat = false;
   }
   if (nextKey) {
     params.pagination.key = nextKey;
   }
-  console.log("params", params);
   await fetch(baseUrl, {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     mode: "cors", // no-cors, *cors, same-origin
