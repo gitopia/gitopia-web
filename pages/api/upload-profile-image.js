@@ -14,6 +14,7 @@ import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import getNodeInfo from "../../helpers/getNodeInfo";
 import { MsgSignData } from "@gitopia/gitopia-js/types/gitopia/offchain";
+import { v4 as uuidv4 } from "uuid";
 
 const handler = nextConnect({
   onError: (err, req, res, next) => {
@@ -36,17 +37,17 @@ handler.use(fileUpload());
 
 const uploadImage = async (address, image) => {
   let fd = new FormData();
-  fd.append(
-    "data",
-    new Blob([image.data], { type: image.mimetype }),
-    image.name
-  );
+  const name = uuidv4();
+  fd.append("data", new Blob([image.data], { type: image.mimetype }), name);
   fd.append("filename", image.name);
   let estuaryUrl =
     "https://upload.estuary.tech/content/add?coluuid=" +
     process.env.ESTUARY_COLLECTION_UUID +
     "&ignore_dupes=true" +
-    (config.enableDirectories ? "&dir=/" + address : "");
+    "&dir=/" +
+    address +
+    "/" +
+    name;
 
   const res = await fetch(estuaryUrl, {
     method: "post",
@@ -59,38 +60,6 @@ const uploadImage = async (address, image) => {
   });
   console.log("Upload response", res);
   return res;
-};
-
-const findImage = async (address, image) => {
-  // check earlier uploads
-  let estuaryUrl =
-    "https://api.estuary.tech/collections/" +
-    process.env.ESTUARY_COLLECTION_UUID +
-    (config.enableDirectories ? "&dir=/" + address : "");
-
-  let existing = await fetch(estuaryUrl, {
-    headers: {
-      Authorization: "Bearer " + process.env.ESTUARY_API_KEY,
-    },
-  }).then((r) => r.json());
-  let found;
-  if (existing?.length) {
-    existing.every((item) => {
-      if (item.name === image.name && item.size === image.size) {
-        found = item;
-        return false;
-      }
-      return true;
-    });
-    if (found) {
-      console.log("Found in " + existing.length + " uploads", found);
-    } else {
-      console.log("Not Found in " + existing.length + " uploads");
-    }
-  } else {
-    console.log("List response", existing);
-  }
-  return found;
 };
 
 handler.post(async (request, response) => {
@@ -193,19 +162,6 @@ handler.post(async (request, response) => {
       return response
         .status(200)
         .json({ url: "https://api.estuary.tech/gw/ipfs/" + res.cid });
-    } else if (
-      res?.error?.details ===
-      'failed to request createContent: {"error":{"code":500,"reason":"Internal Server Error","details":"ERROR: duplicate key value violates unique constraint \\"collection_refs_paths\\" (SQLSTATE 23505)"}}\n'
-    ) {
-      const found = await findImage(address, image);
-      if (found) {
-        return response
-          .status(200)
-          .json({ url: "https://dweb.link/ipfs/" + found.cid });
-      }
-      return response
-        .status(400)
-        .send("File already uploaded by other account");
     }
     return response.status(400).send("Unable to process request");
   } catch (e) {
@@ -218,7 +174,6 @@ export const config = {
   api: {
     bodyParser: false,
   },
-  enableDirectories: false,
 };
 
 export default handler;
