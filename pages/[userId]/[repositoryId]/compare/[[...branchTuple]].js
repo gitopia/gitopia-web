@@ -28,6 +28,7 @@ import shrinkAddress from "../../../../helpers/shrinkAddress";
 import useRepository from "../../../../hooks/useRepository";
 import getAllRepositoryBranch from "../../../../helpers/getAllRepositoryBranch";
 import getAllRepositoryTag from "../../../../helpers/getAllRepositoryTag";
+import getPullRequestCommits from "../../../../helpers/getPullRequestCommits";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -45,6 +46,7 @@ function RepositoryCompareView(props) {
   const { repository } = useRepository();
   const [viewType, setViewType] = useState("unified");
   const [stats, setStats] = useState({ stat: {} });
+  const [commits, setCommits] = useState([]);
   const [compare, setCompare] = useState({
     source: { repository: {}, name: "", sha: "" },
     target: { repository: {}, name: "", sha: "" },
@@ -239,21 +241,38 @@ function RepositoryCompareView(props) {
     }
   };
 
-  useEffect(refreshRepositoryForks, [repository]);
-  useEffect(updateBranches, [repository, router.query.branchTuple]);
+  useEffect(() => {
+    refreshRepositoryForks();
+  }, [repository]);
+  useEffect(() => {
+    updateBranches();
+  }, [repository, router.query.branchTuple]);
 
-  useEffect(async () => {
-    const diff = await getPullDiff(
-      compare.target.repository.id,
-      compare.source.repository.id,
-      compare.target.sha,
-      compare.source.sha,
-      null,
-      true
-    );
-    console.log("diffStat", diff);
-    setStats(diff);
-    setStartCreatingPull(false);
+  useEffect(() => {
+    async function initStats() {
+      const [diff, commits] = await Promise.all([
+        getPullDiff(
+          compare.target.repository.id,
+          compare.source.repository.id,
+          compare.target.sha,
+          compare.source.sha,
+          null,
+          true
+        ),
+        await getPullRequestCommits(
+          compare.target.repository.id,
+          compare.source.repository.id,
+          compare.target.name,
+          compare.source.name,
+          compare.target.sha,
+          compare.source.sha
+        ),
+      ]);
+      setStats(diff);
+      setCommits(commits);
+      setStartCreatingPull(false);
+    }
+    initStats();
   }, [compare]);
 
   const username = props.selectedAddress ? props.selectedAddress.slice(-1) : "";
@@ -560,7 +579,7 @@ function RepositoryCompareView(props) {
                 <button
                   className="btn btn-sm btn-primary btn-block"
                   onClick={() => setStartCreatingPull(true)}
-                  disabled={!stats.files_changed}
+                  disabled={!commits.length}
                 >
                   Create Pull Request
                 </button>
@@ -568,16 +587,51 @@ function RepositoryCompareView(props) {
             )}
           </div>
           {stats.files_changed ? (
-            <DiffView
-              stats={stats}
-              repoId={compare.source.repository.id}
-              baseRepoId={compare.target.repository.id}
-              currentSha={compare.source.sha}
-              previousSha={compare.target.sha}
-              onViewTypeChange={(v) => setViewType(v)}
-            />
+            commits.length ? (
+              <DiffView
+                stats={stats}
+                repoId={compare.source.repository.id}
+                baseRepoId={compare.target.repository.id}
+                currentSha={compare.source.sha}
+                previousSha={compare.target.sha}
+                onViewTypeChange={(v) => setViewType(v)}
+              />
+            ) : (
+              <div className="alert alert-warning">
+                <div className="flex-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span>
+                    {compare.source.repository.id ===
+                    compare.target.repository.id
+                      ? compare.target.name +
+                        " is ahead of  " +
+                        compare.source.name
+                      : shrinkAddress(compare.target.repository.owner.id) +
+                        "/" +
+                        compare.target.name +
+                        " is ahead of " +
+                        shrinkAddress(compare.source.repository.owner.id) +
+                        "/" +
+                        compare.source.name}
+                  </span>
+                </div>
+              </div>
+            )
           ) : (
-            <div className="alert alert-info">
+            <div className="alert alert-warning">
               <div className="flex-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

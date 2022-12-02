@@ -137,7 +137,7 @@ function NewRepository(props) {
                 <select
                   className={
                     "select select-bordered select-md mr-2 sm:mr-0 focus:outline-none focus:border-type " +
-                    (ownerId.length > 0 ? "border-green" : "")
+                    (ownerId?.length > 0 ? "border-green" : "")
                   }
                   value={ownerId}
                   onChange={(e) => {

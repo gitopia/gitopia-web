@@ -1,8 +1,6 @@
 import Head from "next/head";
 import Header from "../../components/header";
-import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { useRouter } from "next/router";
 import Footer from "../../components/footer";
 import AccountGrants from "../../components/account/grants";
 import Link from "next/link";
@@ -45,8 +43,11 @@ function AccountView(props) {
             </div>
             <div className="flex-1"></div>
             <div className="">
-              <Link href={"/" + props.user.username}>
-                <a className="btn btn-xs btn-outline">View Profile</a>
+              <Link
+                href={"/" + props.user.username}
+                className="btn btn-xs btn-outline"
+              >
+                View Profile
               </Link>
             </div>
           </div>

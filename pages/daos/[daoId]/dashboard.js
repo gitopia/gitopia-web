@@ -29,13 +29,16 @@ function DaoDashboard(props) {
   const { isMobile } = useWindowSize();
   const [allRepository, setAllRepository] = useState([]);
 
-  useEffect(async () => {
-    if (router.query.daoId !== props.currentDashboard) {
-      router.push(getHomeUrl(props.dashboards, props.currentDashboard));
+  useEffect(() => {
+    async function initDashboard() {
+      if (router.query.daoId !== props.currentDashboard) {
+        router.push(getHomeUrl(props.dashboards, props.currentDashboard));
+      }
+      const repos = await getAnyRepositoryAll(props.currentDashboard);
+      setAllRepository(repos);
+      props.getDaoDetailsForDashboard();
     }
-    const repos = await getAnyRepositoryAll(props.currentDashboard);
-    setAllRepository(repos);
-    props.getDaoDetailsForDashboard();
+    initDashboard();
   }, [props.currentDashboard]);
   return (
     <div
@@ -80,15 +83,15 @@ function DaoDashboard(props) {
                           process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
                           "?tab=proposals"
                         }
+                        className={"btn btn-xs btn-link mt-2"}
                       >
-                        <a className={"btn btn-xs btn-link mt-2"}>Proposals</a>
+                        Proposals
                       </Link>
                       <Link
                         href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
+                        className={"btn btn-xs btn-link mt-2"}
                       >
-                        <a className={"btn btn-xs btn-link mt-2"}>
-                          Source code
-                        </a>
+                        Source code
                       </Link>
                     </>
                   ) : (
@@ -119,11 +122,15 @@ function DaoDashboard(props) {
                         process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
                         "?tab=proposals"
                       }
+                      className={"btn btn-xs btn-link mt-1"}
                     >
-                      <a className={"btn btn-xs btn-link mt-1"}>Proposals</a>
+                      Proposals
                     </Link>
-                    <Link href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}>
-                      <a className={"btn btn-xs btn-link mt-1"}>Source code</a>
+                    <Link
+                      href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
+                      className={"btn btn-xs btn-link mt-1"}
+                    >
+                      Source code
                     </Link>
                   </>
                 ) : (

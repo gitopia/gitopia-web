@@ -16,22 +16,25 @@ function Home(props) {
   const { isMobile } = useWindowSize();
   const [allRepository, setAllRepository] = useState([]);
 
-  useEffect(async () => {
-    if (props.selectedAddress) {
-      if (props.selectedAddress !== props.currentDashboard) {
-        const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
-        router.push(newUrl);
-      } else {
-        const repos = await getAnyRepositoryAll(props.currentDashboard);
-        if (repos) {
-          setAllRepository(repos);
+  useEffect(() => {
+    async function setRepos() {
+      if (props.selectedAddress) {
+        if (props.selectedAddress !== props.currentDashboard) {
+          const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
+          router.push(newUrl);
         } else {
-          setAllRepository([]);
+          const repos = await getAnyRepositoryAll(props.currentDashboard);
+          if (repos) {
+            setAllRepository(repos);
+          } else {
+            setAllRepository([]);
+          }
         }
+      } else {
+        setAllRepository([]);
       }
-    } else {
-      setAllRepository([]);
     }
+    setRepos();
   }, [props.dashboards, props.currentDashboard, props.selectedAddress]);
 
   return (
@@ -99,15 +102,15 @@ function Home(props) {
                           process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
                           "?tab=proposals"
                         }
+                        className={"btn btn-xs btn-link mt-2"}
                       >
-                        <a className={"btn btn-xs btn-link mt-2"}>Proposals</a>
+                        Proposals
                       </Link>
                       <Link
                         href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
+                        className={"btn btn-xs btn-link mt-2"}
                       >
-                        <a className={"btn btn-xs btn-link mt-2"}>
-                          Source code
-                        </a>
+                        Source code
                       </Link>
                     </>
                   ) : (
@@ -153,11 +156,15 @@ function Home(props) {
                         process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
                         "?tab=proposals"
                       }
+                      className={"btn btn-xs btn-link mt-1"}
                     >
-                      <a className={"btn btn-xs btn-link mt-1"}>Proposals</a>
+                      Proposals
                     </Link>
-                    <Link href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}>
-                      <a className={"btn btn-xs btn-link mt-1"}>Source code</a>
+                    <Link
+                      href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
+                      className={"btn btn-xs btn-link mt-1"}
+                    >
+                      Source code
                     </Link>
                   </>
                 ) : (

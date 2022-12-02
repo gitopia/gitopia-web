@@ -45,13 +45,16 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
     }
   };
 
-  useEffect(async () => {
-    const balance = await props.getBalance(ownerAddress);
-    setOwnerBalance(
-      props.advanceUser === true
-        ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-        : balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
-    );
+  useEffect(() => {
+    async function initBalance() {
+      const balance = await props.getBalance(ownerAddress);
+      setOwnerBalance(
+        props.advanceUser === true
+          ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+          : balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+      );
+    }
+    initBalance();
   }, [ownerAddress]);
 
   return (

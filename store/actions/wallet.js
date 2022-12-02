@@ -140,7 +140,7 @@ export const setWallet = ({ wallet }) => {
 export const unlockWallet = ({ name, password }) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
-    const encryptedWallet =
+    let encryptedWallet =
       state.wallets[state.wallets.findIndex((x) => x.name === name)].wallet;
     let wallet;
     try {
@@ -466,9 +466,7 @@ export const unlockLedgerWallet = ({ name }) => {
         prefix: "gitopia",
         ledgerAppName: "Cosmos",
       });
-
-      const pubkey = await accountSigner.ledger.getPubkey();
-      const addr = await accountSigner.ledger.getCosmosAddress();
+      const addr = (await accountSigner.getAccounts())[0].address;
 
       const CryptoJS = (await import("crypto-js")).default;
       let newWallet = JSON.parse(

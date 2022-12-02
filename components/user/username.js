@@ -93,7 +93,7 @@ function UserUsername(props = { isEditable: false }) {
       <label
         htmlFor="username-edit-modal"
         onClick={() => {
-          setModalOpen(true);
+          if (props.isEditable) setModalOpen(true);
         }}
         className={
           "modal-button py-1 border-b mr-2" +

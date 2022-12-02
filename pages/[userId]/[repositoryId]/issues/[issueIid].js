@@ -30,6 +30,7 @@ import IssuePullTitle from "../../../../components/repository/issuePullTitle";
 import IssuePullDescription from "../../../../components/repository/issuePullDescription";
 import { useErrorStatus } from "../../../../hooks/errorHandler";
 import pluralize from "../../../../helpers/pluralize";
+import Link from "next/link";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -57,20 +58,23 @@ function RepositoryIssueView(props) {
   const [allComments, setAllComments] = useState([]);
   const [allLabels, setAllLabels] = useState([]);
 
-  useEffect(async () => {
-    const [i] = await Promise.all([
-      getRepositoryIssue(
-        router.query.userId,
-        router.query.repositoryId,
-        router.query.issueIid
-      ),
-    ]);
-    if (i) {
-      setIssue(i);
-    } else {
-      setErrorStatusCode(404);
+  useEffect(() => {
+    async function initIssues() {
+      const [i] = await Promise.all([
+        getRepositoryIssue(
+          router.query.userId,
+          router.query.repositoryId,
+          router.query.issueIid
+        ),
+      ]);
+      if (i) {
+        setIssue(i);
+      } else {
+        setErrorStatusCode(404);
+      }
+      setAllLabels(repository.labels);
     }
-    setAllLabels(repository.labels);
+    initIssues();
   }, [router.query.issueIid, repository.id]);
 
   const getAllComments = async () => {
@@ -88,7 +92,9 @@ function RepositoryIssueView(props) {
     setIssue(i);
   };
 
-  useEffect(getAllComments, [issue]);
+  useEffect(() => {
+    getAllComments();
+  }, [issue]);
 
   return (
     <div
@@ -127,9 +133,10 @@ function RepositoryIssueView(props) {
               <span className="text-type text-sm uppercase">{issue.state}</span>
             </span>
             <span className="text-xs mr-2 text-type-secondary">
-              {shrinkAddress(issue.creator) +
-                " opened this issue " +
-                dayjs(issue.createdAt * 1000).fromNow()}
+              <Link href={"/" + issue.creator} className="btn-link">
+                {shrinkAddress(issue.creator)}
+              </Link>
+              {" opened this issue " + dayjs(issue.createdAt * 1000).fromNow()}
             </span>
             <span className="text-xl mr-2 text-type-secondary">&middot;</span>
             <span className="text-xs text-type-secondary">

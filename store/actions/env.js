@@ -1,6 +1,7 @@
 import { walletActions, envActions } from "./actionTypes";
 import { notify, dismissNotification } from "reapop";
 import { initLedgerTransport, updateUserBalance } from "./wallet";
+import getNodeInfo from "../../helpers/getNodeInfo";
 
 export const sendTransaction = ({
   message,
@@ -54,6 +55,70 @@ export const sendTransaction = ({
       }
       dispatch(dismissNotification(notifId));
       throw new Error(error);
+    }
+  };
+};
+
+export const signMessage = ({ data = {} }) => {
+  return async (dispatch, getState) => {
+    try {
+      await setupTxClients(dispatch, getState);
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+    const { wallet, env } = getState();
+    let notifId;
+    if (wallet.activeWallet && wallet.activeWallet.isLedger) {
+      const msg = dispatch(
+        notify("Please sign the message on your ledger", "loading", {
+          dismissible: false,
+          dismissAfter: 0,
+        })
+      );
+      notifId = msg.payload.id;
+    }
+    try {
+      const msg = await env.txClient.msgSignData({
+        signer: wallet.selectedAddress,
+        data,
+      });
+      const info = await getNodeInfo();
+      const res = await env.txClient.sign(
+        [msg],
+        {
+          amount: [
+            {
+              amount: "0",
+              denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN,
+            },
+          ],
+          gas: "0",
+        },
+        JSON.stringify(data),
+        {
+          accountNumber: 0,
+          sequence: 0,
+          chainId: info.default_node_info.network,
+        }
+      );
+      dispatch(dismissNotification(notifId));
+      return res;
+    } catch (e) {
+      switch (e.message) {
+        case "Ledger Native Error: DisconnectedDeviceDuringOperation: The device was disconnected.":
+          initLedgerTransport({ force: true })(dispatch, getState);
+          dispatch({
+            type: envActions.SET_CLIENTS,
+            payload: {
+              txClient: null,
+              queryClient: env.queryClient,
+            },
+          });
+          setupTxClients(dispatch, getState);
+      }
+      dispatch(dismissNotification(notifId));
+      throw new Error(e.message);
     }
   };
 };

@@ -12,7 +12,9 @@ function AccountPeople(props) {
     }
   };
 
-  useEffect(getAllMembers, [props.dao]);
+  useEffect(() => {
+    getAllMembers();
+  }, [props.dao]);
 
   return (
     <>
@@ -33,8 +35,12 @@ function AccountPeople(props) {
                     </div>
                   </div>
                   <div className="mr-8">
-                    <Link href={"/" + m.address}>
-                      <a className="text-sm btn-link">{m.address}</a>
+                    <Link
+                      href={"/" + m.address}
+                      className="text-sm btn-link"
+                      legacyBehavior
+                    >
+                      {m.address}
                     </Link>
                   </div>
                   <div className="flex-1 text-right text-sm">

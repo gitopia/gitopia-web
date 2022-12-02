@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { connect } from "react-redux";
 import ToggleStorageBridgeAuthorization from "../repository/toggleStorageBridgeAuthorization";
 import ToggleGitServerAuthorization from "../repository/toggleGitServerAuthorization";
 

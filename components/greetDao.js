@@ -39,10 +39,11 @@ function GreetDao({ dao, ...props }) {
               </div>
             </div>
             <div className="flex-none w-60 mr-8 mt-4 sm:mt-0">
-              <Link href={"/" + dao.address}>
-                <a className="btn btn-accent btn-block btn-sm">
-                  Update DAO Name
-                </a>
+              <Link
+                href={"/" + dao.address}
+                className="btn btn-accent btn-block btn-sm"
+              >
+                Update DAO Name
               </Link>
             </div>
           </div>
@@ -50,8 +51,8 @@ function GreetDao({ dao, ...props }) {
       ) : (
         <div>
           <div className="text-xs uppercase">Welcome to</div>
-          <Link href={"/" + dao.name}>
-            <a className="text-lg btn-link">{dao.name}</a>
+          <Link href={"/" + dao.name} className="text-lg btn-link">
+            {dao.name}
           </Link>
         </div>
       )}

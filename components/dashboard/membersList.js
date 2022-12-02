@@ -1,5 +1,5 @@
 import TextInput from "../textInput";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { connect } from "react-redux";
 import { addMember, removeMember } from "../../store/actions/dao";
 import getUser from "../../helpers/getUser";

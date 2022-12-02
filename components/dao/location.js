@@ -96,7 +96,7 @@ function DaoLocation(props = { isEditable: false }) {
       <label
         htmlFor="location-edit-modal"
         onClick={() => {
-          setModalOpen(true);
+          if (props.isEditable) setModalOpen(true);
         }}
         className={
           "py-1 border-b mr-2 flex items-center" +

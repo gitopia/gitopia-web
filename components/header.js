@@ -86,9 +86,7 @@ function Header(props) {
     });
   }
 
-  useEffect(async () => {
-    unreadNotification();
-  }, [props.userNotification]);
+  useEffect(unreadNotification, [props.userNotification]);
 
   useEffect(() => {
     onUserMenuClose();
@@ -100,19 +98,11 @@ function Header(props) {
     getHomeUrl(props.dashboards, props.currentDashboard)
   );
 
-  useEffect(
-    () => setHomeUrl(getHomeUrl(props.dashboards, props.currentDashboard)),
-    [props.dashboards, props.currentDashboard]
-  );
+  useEffect(() => {
+    setHomeUrl(getHomeUrl(props.dashboards, props.currentDashboard));
+  }, [props.dashboards, props.currentDashboard]);
 
   const headerMessage = process.env.NEXT_PUBLIC_HEADER_MESSAGE;
-
-  const updateNetworkName = async () => {
-    if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
-      const info = await getNodeInfo();
-      setChainId(info.default_node_info.network);
-    }
-  };
 
   const kelprWalletChange = async () => {
     console.log("Keplr wallet change", props.activeWallet);
@@ -121,7 +111,15 @@ function Header(props) {
     }
   };
 
-  useEffect(updateNetworkName, []);
+  useEffect(() => {
+    const updateNetworkName = async () => {
+      if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
+        const info = await getNodeInfo();
+        setChainId(info.default_node_info.network);
+      }
+    };
+    updateNetworkName();
+  }, []);
 
   useEffect(() => {
     window.addEventListener("keplr_keystorechange", kelprWalletChange);
@@ -176,43 +174,41 @@ function Header(props) {
           className={"flex-none px-6 transition-all ease-out delay-150 sm:w-42"}
         >
           <Link href={homeUrl}>
-            <a>
-              <img
-                width={80}
-                src="/logo-white.svg"
-                className="cursor-pointer mt-2"
-              ></img>
-            </a>
+            <img
+              width={80}
+              src="/logo-white.svg"
+              className="cursor-pointer mt-2"
+            ></img>
           </Link>
         </div>
         {/* <div className="flex-none mr-2">
-          <div className="form-control">
-            <div className="relative">
-              <input
-                name="search"
-                type="text"
-                placeholder="Search"
-                className="w-full pr-16 input input-sm input-ghost input-bordered"
-              />
-              <button className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </button>
-            </div>
+        <div className="form-control">
+          <div className="relative">
+            <input
+              name="search"
+              type="text"
+              placeholder="Search"
+              className="w-full pr-16 input input-sm input-ghost input-bordered"
+            />
+            <button className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </button>
           </div>
-        </div> */}
+        </div>
+      </div> */}
         {!isMobile ? (
           <div className="items-stretch">
             <a
@@ -330,50 +326,50 @@ function Header(props) {
           >
             <div className="flex">
               {/* <div className="mt-2">
-                <div className="indicator flex-none mr-4">
-                  {unread === true && menuOpen !== true ? (
-                    <div class="indicator-item badge badge-primary"></div>
-                  ) : (
-                    ""
-                  )}
-                  <a
-                    class="btn btn-primary btn-circle btn-base btn-outline btn-sm w-10 h-10"
-                    href="#"
-                    onClick={(e) => {
-                      setUnread(false);
-                      setMenuOpen(true);
-                      setMenuState(5);
-                      e.preventDefault();
-                    }}
+              <div className="indicator flex-none mr-4">
+                {unread === true && menuOpen !== true ? (
+                  <div class="indicator-item badge badge-primary"></div>
+                ) : (
+                  ""
+                )}
+                <a
+                  class="btn btn-primary btn-circle btn-base btn-outline btn-sm w-10 h-10"
+                  href="#"
+                  onClick={(e) => {
+                    setUnread(false);
+                    setMenuOpen(true);
+                    setMenuState(5);
+                    e.preventDefault();
+                  }}
+                >
+                  <svg
+                    width="32"
+                    height="32"
+                    viewBox="0 0 32 32"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    <svg
-                      width="32"
-                      height="32"
-                      viewBox="0 0 32 32"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <mask id="path-1-inside-1_728_3215" fill="white">
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M15.9999 4.96387C11.9545 4.96387 8.67506 8.2433 8.67506 12.2887V16.8486H6.22461V22.7806H25.7745V16.8486H23.3247V12.2887C23.3247 8.24331 20.0453 4.96387 15.9999 4.96387Z"
-                        />
-                      </mask>
+                    <mask id="path-1-inside-1_728_3215" fill="white">
                       <path
-                        d="M8.67506 16.8486V18.8486H10.6751V16.8486H8.67506ZM6.22461 16.8486V14.8486H4.22461V16.8486H6.22461ZM6.22461 22.7806H4.22461V24.7806H6.22461V22.7806ZM25.7745 22.7806V24.7806H27.7745V22.7806H25.7745ZM25.7745 16.8486H27.7745V14.8486H25.7745V16.8486ZM23.3247 16.8486H21.3247V18.8486H23.3247V16.8486ZM10.6751 12.2887C10.6751 9.34787 13.0591 6.96387 15.9999 6.96387V2.96387C10.8499 2.96387 6.67506 7.13873 6.67506 12.2887H10.6751ZM10.6751 16.8486V12.2887H6.67506V16.8486H10.6751ZM6.22461 18.8486H8.67506V14.8486H6.22461V18.8486ZM8.22461 22.7806V16.8486H4.22461V22.7806H8.22461ZM25.7745 20.7806H6.22461V24.7806H25.7745V20.7806ZM23.7745 16.8486V22.7806H27.7745V16.8486H23.7745ZM23.3247 18.8486H25.7745V14.8486H23.3247V18.8486ZM21.3247 12.2887V16.8486H25.3247V12.2887H21.3247ZM15.9999 6.96387C18.9407 6.96387 21.3247 9.34788 21.3247 12.2887H25.3247C25.3247 7.13874 21.1499 2.96387 15.9999 2.96387V6.96387Z"
-                        fill="#ADBECB"
-                        mask="url(#path-1-inside-1_728_3215)"
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M15.9999 4.96387C11.9545 4.96387 8.67506 8.2433 8.67506 12.2887V16.8486H6.22461V22.7806H25.7745V16.8486H23.3247V12.2887C23.3247 8.24331 20.0453 4.96387 15.9999 4.96387Z"
                       />
-                      <path
-                        d="M18.1402 23.8963C18.1402 24.1772 18.0848 24.4554 17.9773 24.715C17.8698 24.9746 17.7122 25.2104 17.5136 25.4091C17.3149 25.6077 17.079 25.7653 16.8195 25.8728C16.5599 25.9804 16.2817 26.0357 16.0008 26.0357C15.7198 26.0357 15.4416 25.9804 15.182 25.8728C14.9225 25.7653 14.6866 25.6077 14.488 25.4091C14.2893 25.2104 14.1317 24.9746 14.0242 24.715C13.9167 24.4554 13.8613 24.1772 13.8613 23.8963"
-                        stroke="#ADBECB"
-                        strokeWidth="2"
-                      />
-                    </svg>
-                  </a>
-                </div>
-              </div> */}
+                    </mask>
+                    <path
+                      d="M8.67506 16.8486V18.8486H10.6751V16.8486H8.67506ZM6.22461 16.8486V14.8486H4.22461V16.8486H6.22461ZM6.22461 22.7806H4.22461V24.7806H6.22461V22.7806ZM25.7745 22.7806V24.7806H27.7745V22.7806H25.7745ZM25.7745 16.8486H27.7745V14.8486H25.7745V16.8486ZM23.3247 16.8486H21.3247V18.8486H23.3247V16.8486ZM10.6751 12.2887C10.6751 9.34787 13.0591 6.96387 15.9999 6.96387V2.96387C10.8499 2.96387 6.67506 7.13873 6.67506 12.2887H10.6751ZM10.6751 16.8486V12.2887H6.67506V16.8486H10.6751ZM6.22461 18.8486H8.67506V14.8486H6.22461V18.8486ZM8.22461 22.7806V16.8486H4.22461V22.7806H8.22461ZM25.7745 20.7806H6.22461V24.7806H25.7745V20.7806ZM23.7745 16.8486V22.7806H27.7745V16.8486H23.7745ZM23.3247 18.8486H25.7745V14.8486H23.3247V18.8486ZM21.3247 12.2887V16.8486H25.3247V12.2887H21.3247ZM15.9999 6.96387C18.9407 6.96387 21.3247 9.34788 21.3247 12.2887H25.3247C25.3247 7.13874 21.1499 2.96387 15.9999 2.96387V6.96387Z"
+                      fill="#ADBECB"
+                      mask="url(#path-1-inside-1_728_3215)"
+                    />
+                    <path
+                      d="M18.1402 23.8963C18.1402 24.1772 18.0848 24.4554 17.9773 24.715C17.8698 24.9746 17.7122 25.2104 17.5136 25.4091C17.3149 25.6077 17.079 25.7653 16.8195 25.8728C16.5599 25.9804 16.2817 26.0357 16.0008 26.0357C15.7198 26.0357 15.4416 25.9804 15.182 25.8728C14.9225 25.7653 14.6866 25.6077 14.488 25.4091C14.2893 25.2104 14.1317 24.9746 14.0242 24.715C13.9167 24.4554 13.8613 24.1772 13.8613 23.8963"
+                      stroke="#ADBECB"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                </a>
+              </div>
+            </div> */}
               <div
                 className={
                   "dropdown dropdown-end " + (menuOpen ? "dropdown-open" : "")
@@ -442,29 +438,29 @@ function Header(props) {
                 </button>
                 <div className="shadow-xl dropdown-content bg-base-300 rounded mt-1">
                   {/* {menuState === 6 && (
-                    <NotificationsList
-                      setMenuOpen={setMenuOpen}
-                      setMenuState={setMenuState}
-                      formattedIssueNotifications={formattedIssueNotifications}
-                      formattedPullNotifications={formattedPullNotifications}
-                      showNotificationListState={showNotificationListState}
-                    />
-                  )}
-                  {menuState === 5 && (
-                    <NotificationsCard
-                      setMenuOpen={setMenuOpen}
-                      setMenuState={setMenuState}
-                      setFormattedIssueNotifications={
-                        setFormattedIssueNotifications
-                      }
-                      setFormattedPullNotifications={
-                        setFormattedPullNotifications
-                      }
-                      setShowNotificationListState={
-                        setShowNotificationListState
-                      }
-                    />
-                  )} */}
+                  <NotificationsList
+                    setMenuOpen={setMenuOpen}
+                    setMenuState={setMenuState}
+                    formattedIssueNotifications={formattedIssueNotifications}
+                    formattedPullNotifications={formattedPullNotifications}
+                    showNotificationListState={showNotificationListState}
+                  />
+                )}
+                {menuState === 5 && (
+                  <NotificationsCard
+                    setMenuOpen={setMenuOpen}
+                    setMenuState={setMenuState}
+                    setFormattedIssueNotifications={
+                      setFormattedIssueNotifications
+                    }
+                    setFormattedPullNotifications={
+                      setFormattedPullNotifications
+                    }
+                    setShowNotificationListState={
+                      setShowNotificationListState
+                    }
+                  />
+                )} */}
                   {menuState === 2 && <CurrentWallet />}
                   {menuState === 3 && menuOpen && (
                     <SendTlore
@@ -533,13 +529,11 @@ function Header(props) {
                                   : "/" + props.selectedAddress
                               }
                             >
-                              <a>My Profile</a>
+                              My Profile
                             </Link>
                           </li>
                           <li>
-                            <Link href="/settings">
-                              <a>Settings</a>
-                            </Link>
+                            <Link href="/settings">Settings</Link>
                           </li>
                           <div className="border-b border-grey my-2"></div>
                           <li>

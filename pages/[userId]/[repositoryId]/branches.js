@@ -44,8 +44,8 @@ function RepositoryBranchesView(props) {
                 router.query.repositoryId,
                 "branches",
               ].join("/")}
-            >
-              <a className="btn btn-sm btn-active">Branches</a>
+              className="btn btn-sm btn-active">
+              Branches
             </Link>
             <Link
               href={[
@@ -54,8 +54,8 @@ function RepositoryBranchesView(props) {
                 router.query.repositoryId,
                 "tags",
               ].join("/")}
-            >
-              <a className="btn btn-sm">Tags</a>
+              className="btn btn-sm">
+              Tags
             </Link>
           </div>
           <div className="mt-14">

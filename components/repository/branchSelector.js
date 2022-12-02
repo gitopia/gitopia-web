@@ -197,8 +197,8 @@ export default function BranchSelector({
               return (
                 <li key={"branch-selector" + i}>
                   {baseUrl ? (
-                    <Link href={baseUrl + "/" + b.name}>
-                      <a className="whitespace-nowrap">{b.name}</a>
+                    <Link href={baseUrl + "/" + b.name} className="whitespace-nowrap">
+                      {b.name}
                     </Link>
                   ) : (
                     <a

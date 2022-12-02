@@ -1115,6 +1115,15 @@ ul.mde-suggestions li[aria-selected="true"] {
   border-left-width: 2px;
 }
 
+.btn-link {
+  text-decoration: none;
+}
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+/* ----- react-calendar-heatmap ----- */
+
 .react-calendar-heatmap .color-gitopia-empty {
   fill: #2d3845;
 }

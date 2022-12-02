@@ -24,17 +24,20 @@ export default function usePullRequest(repository, initialPullRequest = {}) {
   const refreshPullRequest = () =>
     setRefreshIndex((prevIndex) => prevIndex + 1);
 
-  useEffect(async () => {
-    const p = await getRepositoryPull(
-      router.query.userId,
-      router.query.repositoryId,
-      router.query.pullRequestIid
-    );
-    if (p) {
-      setPullRequest(await getPullRepoInfo(p, repository));
-    } else {
-      setErrorStatusCode(404);
-    }
+  useEffect(() => {
+    const initRepository = async () => {
+      const p = await getRepositoryPull(
+        router.query.userId,
+        router.query.repositoryId,
+        router.query.pullRequestIid
+      );
+      if (p) {
+        setPullRequest(await getPullRepoInfo(p, repository));
+      } else {
+        setErrorStatusCode(404);
+      }
+    };
+    initRepository();
   }, [router.query, repository.id, refreshIndex]);
 
   return { pullRequest, refreshPullRequest };

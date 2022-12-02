@@ -165,7 +165,9 @@ function AccountView(props) {
     }
   };
 
-  useEffect(getId, [router.query]);
+  useEffect(() => {
+    getId();
+  }, [router.query]);
 
   return (
     <div

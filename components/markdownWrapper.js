@@ -48,7 +48,7 @@ export default function MarkdownWrapper(props) {
               )
               .replace(new RegExp("/blob/|/tree/"), "/raw/");
             return finalUrl;
-          } else if (props.hrefBase) {
+          } else if (!sanitizedUrl.includes(":") && props.hrefBase) {
             let finalUrl =
               "/api" +
               props.hrefBase.replace(new RegExp("/blob/|/tree/"), "/raw/") +

@@ -7,6 +7,8 @@ import AutoLogin from "../components/autoLogin";
 import NotificationManager from "../components/notificationManager";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
 import Notifications from "../components/notifications";
 // import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import ErrorHandler from "../hooks/errorHandler";
@@ -22,6 +24,7 @@ Router.events.on("routeChangeComplete", progress.finish);
 Router.events.on("routeChangeError", progress.finish);
 
 dayjs.extend(relativeTime);
+dayjs.extend(customParseFormat);
 
 function MyApp({ Component, pageProps }) {
   return (

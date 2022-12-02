@@ -43,17 +43,20 @@ function RepositoryPullCommitsView(props) {
   const [loadedTill, setLoadedTill] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  useEffect(async () => {
-    const shas = await getPullRequestCommits(
-      pullRequest.base.repositoryId,
-      pullRequest.head.repositoryId,
-      pullRequest.base.branch,
-      pullRequest.head.branch,
-      pullRequest.base.commitSha,
-      pullRequest.head.commitSha
-    );
-    console.log(shas);
-    setCommitShas(shas);
+  useEffect(() => {
+    async function initCommits() {
+      const shas = await getPullRequestCommits(
+        pullRequest.base.repositoryId,
+        pullRequest.head.repositoryId,
+        pullRequest.base.branch,
+        pullRequest.head.branch,
+        pullRequest.base.commitSha,
+        pullRequest.head.commitSha
+      );
+      console.log(shas);
+      setCommitShas(shas);
+    }
+    initCommits();
   }, [pullRequest.id]);
 
   const paginationLimit = 100;
@@ -90,7 +93,9 @@ function RepositoryPullCommitsView(props) {
     setLoadingMore(false);
   };
 
-  useEffect(loadCommits, [loadedTill]);
+  useEffect(() => {
+    loadCommits();
+  }, [loadedTill]);
   useEffect(() => {
     loadCommits(true);
   }, [commitShas]);

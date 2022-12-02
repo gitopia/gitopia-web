@@ -67,7 +67,7 @@ function RepositoryIssueCreateView(props) {
     setPostingIssue(false);
   };
 
-  useEffect(async () => {
+  useEffect(() => {
     if (repository) {
       setAllLabels(repository.labels);
     }

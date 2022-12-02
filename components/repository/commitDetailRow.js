@@ -102,13 +102,12 @@ export default function CommitDetailRow({
         {commitLink ? (
           !isMobile ? (
             <div className="mr-2 flex-none flex btn-group">
-              <Link href={commitLink}>
+              <Link href={commitLink} className="btn btn-xs btn-ghost">
                 {
                   //link link-primary text-sm no-underline hover:underline
                 }
-                <a className="btn btn-xs btn-ghost">
-                  {commitDetail.id.slice(0, 6)}
-                </a>
+
+                {commitDetail.id.slice(0, 6)}
               </Link>
               <button
                 className="btn btn-xs btn-ghost"
@@ -139,7 +138,7 @@ export default function CommitDetailRow({
           ""
         )}
         <div className="flex-none text-type-secondary text-xs pt-1">
-          {dayjs(commitDetail.author.date).fromNow()}
+          {dayjs(commitDetail.author.date, "YYYY-MM-DD HH:mm:ss Z").fromNow()}
         </div>
         {commitHistoryLink ? (
           <a className="ml-4 flex" href={commitHistoryLink}>

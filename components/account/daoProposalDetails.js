@@ -82,10 +82,18 @@ function DaoProposalDetails({ id, ...props }) {
     }
   };
 
-  useEffect(refreshProposal, [id]);
-  useEffect(refreshTally, [id]);
-  useEffect(refreshDepositors, [id]);
-  useEffect(refreshVoters, [id]);
+  useEffect(() => {
+    refreshProposal();
+  }, [id]);
+  useEffect(() => {
+    refreshTally();
+  }, [id]);
+  useEffect(() => {
+    refreshDepositors();
+  }, [id]);
+  useEffect(() => {
+    refreshVoters();
+  }, [id]);
 
   function isNaturalNumber(n) {
     n = n.toString();
