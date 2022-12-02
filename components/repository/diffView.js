@@ -139,67 +139,65 @@ export default function DiffView({
     onViewTypeChange(viewType);
   }, [viewType]);
 
-  return (
-    <>
-      <div className="flex px-4 py-2">
-        <div className="flex-1 flex">
-          <div className="pr-4">
-            {stats.files_changed}
-            <span className="mx-1">
-              {pluralize("file", stats.files_changed).replace(/^\w/, (c) =>
-                c.toUpperCase()
-              )}
-            </span>
-            Changed
-          </div>
-          <div className="pr-4 text-green ">
-            {" + " + (stats.stat ? stats.stat.addition : 0)}
-          </div>
-          <div className="pr-4 text-red">
-            {" - " + (stats.stat ? stats.stat.deletion : 0)}
-          </div>
+  return <>
+    <div className="flex px-4 py-2">
+      <div className="flex-1 flex">
+        <div className="pr-4">
+          {stats.files_changed}
+          <span className="mx-1">
+            {pluralize("file", stats.files_changed).replace(/^\w/, (c) =>
+              c.toUpperCase()
+            )}
+          </span>
+          Changed
         </div>
-        <div className="flex-none btn-group">
-          <button
-            className={
-              "btn btn-xs btn-outline btn-primary " +
-              (viewType === "unified" ? "btn-active" : "")
-            }
-            onClick={() => {
-              setViewType("unified");
-            }}
-          >
-            Unified
-          </button>
-          <button
-            className={
-              "btn btn-xs btn-outline btn-primary " +
-              (viewType === "split" ? "btn-active" : "")
-            }
-            onClick={() => {
-              setViewType("split");
-            }}
-          >
-            Split
-          </button>
+        <div className="pr-4 text-green ">
+          {" + " + (stats.stat ? stats.stat.addition : 0)}
+        </div>
+        <div className="pr-4 text-red">
+          {" - " + (stats.stat ? stats.stat.deletion : 0)}
         </div>
       </div>
-      <div>{files.map(renderFile)}</div>
-      {hasMore ? (
-        <div className="mt-8 text-center">
-          <button
-            className={"btn btn-sm btn-wide " + (loadingMore ? "loading" : "")}
-            disabled={loadingMore}
-            onClick={() => {
-              loadDiffs(files, repoId);
-            }}
-          >
-            Load More
-          </button>
-        </div>
-      ) : (
-        ""
-      )}
-    </>
-  );
+      <div className="flex-none btn-group">
+        <button
+          className={
+            "btn btn-xs btn-outline btn-primary " +
+            (viewType === "unified" ? "btn-active" : "")
+          }
+          onClick={() => {
+            setViewType("unified");
+          }}
+        >
+          Unified
+        </button>
+        <button
+          className={
+            "btn btn-xs btn-outline btn-primary " +
+            (viewType === "split" ? "btn-active" : "")
+          }
+          onClick={() => {
+            setViewType("split");
+          }}
+        >
+          Split
+        </button>
+      </div>
+    </div>
+    <div>{files.map(renderFile)}</div>
+    {hasMore ? (
+      <div className="mt-8 text-center">
+        <button
+          className={"btn btn-sm btn-wide " + (loadingMore ? "loading" : "")}
+          disabled={loadingMore}
+          onClick={() => {
+            loadDiffs(files, repoId);
+          }}
+        >
+          Load More
+        </button>
+      </div>
+    ) : (
+      ""
+    )}
+  </>;
 }

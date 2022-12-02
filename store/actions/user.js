@@ -3,11 +3,14 @@ import {
   sendTransaction,
   setupTxClients,
   handlePostingTransaction,
+  signMessage,
 } from "./env";
 import { updateUserBalance, refreshCurrentDashboard } from "./wallet";
 import { notify } from "reapop";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getNodeInfo from "../../helpers/getNodeInfo";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { toBase64 } from "@cosmjs/encoding";
 
 export const createUser = ({ username, name, bio, avatarUrl }) => {
   return async (dispatch, getState) => {
@@ -303,5 +306,49 @@ export const updateAddressGrant = (address, permission, allow) => {
       permission,
     });
     return await handlePostingTransaction(dispatch, getState, message);
+  };
+};
+
+export const signUploadFileMessage = (name, size, md5) => {
+  return async (dispatch, getState) => {
+    const data = {
+      // Any arbitrary object
+      name,
+      size,
+      md5,
+    };
+    try {
+      let s = await signMessage({ data })(dispatch, getState);
+      let raw = TxRaw.encode(s).finish();
+      let msg = toBase64(raw);
+      return msg;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
+
+if (typeof window !== "undefined") {
+  window.toBase64 = toBase64;
+}
+
+export const calculateGithubRewards = (rewardToken) => {
+  return async (dispatch, getState) => {
+    const data = {
+      // Any arbitrary object
+      rewardToken,
+    };
+    try {
+      let s = await signMessage({ data })(dispatch, getState);
+      let raw = TxRaw.encode(s).finish();
+      let msg = toBase64(raw);
+      return msg;
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
   };
 };

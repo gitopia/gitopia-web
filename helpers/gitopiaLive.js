@@ -52,36 +52,35 @@ function GitopiaLive(props) {
                   props.repository.name +
                   "#readme"
                 }
-              >
-                <a className="mt-6 flex items-center text-xs text-type-secondary font-semibold hover:text-green">
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 mr-2"
-                  >
-                    <rect
-                      x="4"
-                      y="5"
-                      width="8"
-                      height="14"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
-                    <rect
-                      x="12"
-                      y="5"
-                      width="8"
-                      height="14"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
-                  </svg>
+                className="mt-6 flex items-center text-xs text-type-secondary font-semibold hover:text-green">
 
-                  <span>README</span>
-                </a>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 mr-2"
+                >
+                  <rect
+                    x="4"
+                    y="5"
+                    width="8"
+                    height="14"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <rect
+                    x="12"
+                    y="5"
+                    width="8"
+                    height="14"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                </svg>
+                <span>README</span>
+
               </Link>
             </div>
           ) : (
@@ -133,18 +132,18 @@ function GitopiaLive(props) {
                         props.repository.releases.length - 1
                       ].tagName
                     }
-                  >
-                    <a className="link link-primary no-underline hover:underline">
-                      {props.repository.name +
-                        " " +
-                        props.repository.releases[
-                          props.repository.releases.length - 1
-                        ].tagName}
-                    </a>
+                    className="link link-primary no-underline hover:underline">
+
+                    {props.repository.name +
+                      " " +
+                      props.repository.releases[
+                        props.repository.releases.length - 1
+                      ].tagName}
+
                   </Link>
                 </div>
               ) : (
-                <Link
+                (<Link
                   href={
                     "/" +
                     props.repository.owner.id +
@@ -152,38 +151,37 @@ function GitopiaLive(props) {
                     props.repository.name +
                     "/releases/new"
                   }
-                >
-                  <a className="mt-6 flex items-center text-xs text-type-secondary font-semibold uppercase hover:text-green">
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="transparent"
-                      className="w-4 h-4 mr-2"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M12 7V17"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                      <path
-                        d="M17 12H7"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="11"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                    </svg>
+                  className="mt-6 flex items-center text-xs text-type-secondary font-semibold uppercase hover:text-green">
 
-                    <span>Create a release</span>
-                  </a>
-                </Link>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="transparent"
+                    className="w-4 h-4 mr-2"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 7V17"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <path
+                      d="M17 12H7"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="11"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                  <span>Create a release</span>
+
+                </Link>)
               )}
             </div>
           </div>

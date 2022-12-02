@@ -133,42 +133,48 @@ function RepositoryView(props) {
     setLoadingEntities(false);
   };
 
-  useEffect(async () => {
-    if (typeof window !== "undefined" && repository.branches.length) {
-      loadEntities([], true);
-      let branchSha = getBranchSha(
-        repository.defaultBranch,
-        repository.branches,
-        repository.tags
-      );
-      if (!branchSha) {
-        setSelectedBranch(repository.branches[0].name);
-        branchSha = repository.branches[0].sha;
-      } else {
-        setSelectedBranch(repository.defaultBranch);
-      }
-      const commitHistory = await getCommitHistory(
-        repository.id,
-        branchSha,
-        null,
-        1
-      );
+  useEffect(() => {
+    async function initCommitHistory() {
+      if (typeof window !== "undefined" && repository.branches.length) {
+        loadEntities([], true);
+        let branchSha = getBranchSha(
+          repository.defaultBranch,
+          repository.branches,
+          repository.tags
+        );
+        if (!branchSha) {
+          setSelectedBranch(repository.branches[0].name);
+          branchSha = repository.branches[0].sha;
+        } else {
+          setSelectedBranch(repository.defaultBranch);
+        }
+        const commitHistory = await getCommitHistory(
+          repository.id,
+          branchSha,
+          null,
+          1
+        );
 
-      if (
-        commitHistory &&
-        commitHistory.commits &&
-        commitHistory.commits.length
-      ) {
-        setCommitDetail(commitHistory.commits[0]);
-        setCommitsLength(commitHistory.pagination.total);
+        if (
+          commitHistory &&
+          commitHistory.commits &&
+          commitHistory.commits.length
+        ) {
+          setCommitDetail(commitHistory.commits[0]);
+          setCommitsLength(commitHistory.pagination.total);
+        }
       }
     }
+    initCommitHistory();
   }, [repository.id]);
 
-  useEffect(async () => {
-    setCurrentUserEditPermission(
-      await props.isCurrentUserEligibleToUpdate(repository)
-    );
+  useEffect(() => {
+    async function updatePermissions() {
+      setCurrentUserEditPermission(
+        await props.isCurrentUserEligibleToUpdate(repository)
+      );
+    }
+    updatePermissions();
   }, [props.user, repository]);
 
   return (
@@ -206,6 +212,7 @@ function RepositoryView(props) {
                           repository.name +
                           "#readme"
                         }
+                        legacyBehavior
                       >
                         <a className="mt-6 flex items-center text-xs text-type-secondary font-semibold hover:text-green">
                           <svg
@@ -233,7 +240,6 @@ function RepositoryView(props) {
                               strokeWidth="2"
                             />
                           </svg>
-
                           <span>README</span>
                         </a>
                       </Link>
@@ -289,14 +295,12 @@ function RepositoryView(props) {
                             repository.releases[repository.releases.length - 1]
                               .tagName
                           }
+                          className="link link-primary no-underline hover:underline"
                         >
-                          <a className="link link-primary no-underline hover:underline">
-                            {repository.name +
-                              " " +
-                              repository.releases[
-                                repository.releases.length - 1
-                              ].tagName}
-                          </a>
+                          {repository.name +
+                            " " +
+                            repository.releases[repository.releases.length - 1]
+                              .tagName}
                         </Link>
                       </div>
                     ) : (
@@ -308,6 +312,7 @@ function RepositoryView(props) {
                           repository.name +
                           "/releases/new"
                         }
+                        legacyBehavior
                       >
                         <a className="mt-6 flex items-center text-xs text-type-secondary font-semibold uppercase hover:text-green">
                           <svg
@@ -336,7 +341,6 @@ function RepositoryView(props) {
                               strokeWidth="2"
                             />
                           </svg>
-
                           <span>Create a release</span>
                         </a>
                       </Link>

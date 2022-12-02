@@ -17,10 +17,13 @@ function AccountTransactions(props) {
     setCurrentPage(currentPage + 1);
   };
 
-  useEffect(async () => {
-    const data = await getUserTransaction(props.userId, 10, currentPage);
-    setUserTransactions(data.tx_responses);
-    setPageTotal(Math.ceil(data.total / 10));
+  useEffect(() => {
+    async function initTransactions() {
+      const data = await getUserTransaction(props.userId, 10, currentPage);
+      setUserTransactions(data.tx_responses);
+      setPageTotal(Math.ceil(data.total / 10));
+    }
+    initTransactions();
   }, [props.userId, currentPage]);
 
   return (

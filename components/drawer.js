@@ -28,13 +28,11 @@ function Drawer(props) {
               }
             >
               <Link href={props.homeUrl}>
-                <a>
-                  <img
-                    width={80}
-                    src="/logo-white.svg"
-                    className="cursor-pointer mt-2"
-                  ></img>
-                </a>
+                <img
+                  width={80}
+                  src="/logo-white.svg"
+                  className="cursor-pointer mt-2"
+                ></img>
               </Link>
             </div>
           </header>

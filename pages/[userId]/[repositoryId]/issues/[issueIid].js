@@ -57,20 +57,23 @@ function RepositoryIssueView(props) {
   const [allComments, setAllComments] = useState([]);
   const [allLabels, setAllLabels] = useState([]);
 
-  useEffect(async () => {
-    const [i] = await Promise.all([
-      getRepositoryIssue(
-        router.query.userId,
-        router.query.repositoryId,
-        router.query.issueIid
-      ),
-    ]);
-    if (i) {
-      setIssue(i);
-    } else {
-      setErrorStatusCode(404);
+  useEffect(() => {
+    async function initIssues() {
+      const [i] = await Promise.all([
+        getRepositoryIssue(
+          router.query.userId,
+          router.query.repositoryId,
+          router.query.issueIid
+        ),
+      ]);
+      if (i) {
+        setIssue(i);
+      } else {
+        setErrorStatusCode(404);
+      }
+      setAllLabels(repository.labels);
     }
-    setAllLabels(repository.labels);
+    initIssues();
   }, [router.query.issueIid, repository.id]);
 
   const getAllComments = async () => {
@@ -88,7 +91,9 @@ function RepositoryIssueView(props) {
     setIssue(i);
   };
 
-  useEffect(getAllComments, [issue]);
+  useEffect(() => {
+    getAllComments();
+  }, [issue]);
 
   return (
     <div

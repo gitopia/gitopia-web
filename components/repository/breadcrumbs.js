@@ -12,7 +12,7 @@ export default function Breadcrumbs({
       <ul className="flex-wrap">
         <li>
           <Link href={[baseUrl, "tree", branchName].join("/")}>
-            <a>{repoName}</a>
+            {repoName}
           </Link>
         </li>
         {path.map((p, i) => {
@@ -26,7 +26,7 @@ export default function Breadcrumbs({
                   ...path.slice(0, i + 1),
                 ].join("/")}
               >
-                <a>{path[i]}</a>
+                {path[i]}
               </Link>
             </li>
           );

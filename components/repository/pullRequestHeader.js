@@ -58,10 +58,12 @@ export default function PullRequestHeader({
         </span>
         <span className="text-xs mr-2 text-type-secondary">
           {shrinkAddress(pullRequest.creator) + " wants to merge "}
-          <Link href={headLink}>
-            <a className="text-xs link link-primary no-underline hover:underline">
-              {headName}
-            </a>
+          <Link
+            href={headLink}
+            className="text-xs link link-primary no-underline hover:underline">
+
+            {headName}
+
           </Link>
           {" to "}
           <Link
@@ -73,10 +75,10 @@ export default function PullRequestHeader({
               "/tree/" +
               pullRequest.base.branch
             }
-          >
-            <a className="text-xs link link-primary no-underline hover:underline">
-              {pullRequest.base.branch}
-            </a>
+            className="text-xs link link-primary no-underline hover:underline">
+
+            {pullRequest.base.branch}
+
           </Link>
         </span>
       </div>

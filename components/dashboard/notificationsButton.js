@@ -36,7 +36,7 @@ function NotificationsCard(props) {
     });
   }
 
-  useEffect(async () => {
+  useEffect(() => {
     countNotification();
   }, [db.notifications]);
 

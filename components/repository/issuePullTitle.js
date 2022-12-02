@@ -140,10 +140,9 @@ function IssuePullTitle({
               repository.name +
               (isPull ? "/pulls/new" : "/issues/new")
             }
+            className="btn btn-ghost btn-sm ml-4 uppercase text-green"
           >
-            <button className="btn btn-ghost btn-sm ml-4 uppercase text-green">
-              {isPull ? "New Pull Request" : "New Issue"}
-            </button>
+            {isPull ? "New Pull Request" : "New Issue"}
           </Link>
         </>
       )}

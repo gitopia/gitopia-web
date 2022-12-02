@@ -7,7 +7,7 @@ import {
 import Link from "next/link";
 import { notify } from "reapop";
 import TextInput from "./textInput";
-import UserAvatar from "./user/avatar";
+import AccountAvatar from "./account/avatar";
 import { useRouter } from "next/router";
 
 function CreateUser(props) {
@@ -126,7 +126,7 @@ function CreateUser(props) {
       <div className="text-base mb-8">On chain profile</div>
 
       <div>
-        <UserAvatar
+        <AccountAvatar
           user={{ avatarUrl, name, username, bio }}
           refresh={() => {}}
           isEditable={true}

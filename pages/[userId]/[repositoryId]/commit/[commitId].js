@@ -41,24 +41,27 @@ function RepositoryCommitDiffView(props) {
     id: "",
   });
 
-  useEffect(async () => {
-    if (repository.id) {
-      const c = await getCommit(repository.id, router.query.commitId);
-      if (c && c.id) {
-        const data = await getDiff(
-          Number(repository.id),
-          router.query.commitId,
-          null,
-          null,
-          true
-        );
-        if (data) {
-          setCommit({ ...c, ...data });
+  useEffect(() => {
+    async function initDiff() {
+      if (repository.id) {
+        const c = await getCommit(repository.id, router.query.commitId);
+        if (c && c.id) {
+          const data = await getDiff(
+            Number(repository.id),
+            router.query.commitId,
+            null,
+            null,
+            true
+          );
+          if (data) {
+            setCommit({ ...c, ...data });
+          }
+        } else {
+          setErrorStatusCode(404);
         }
-      } else {
-        setErrorStatusCode(404);
       }
     }
+    initDiff();
   }, [router.query, repository.id]);
 
   return (

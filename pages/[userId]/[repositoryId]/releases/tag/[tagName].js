@@ -39,19 +39,23 @@ function RepositoryReleaseView(props) {
     attachments: [],
   });
   const [isLatest, setIsLatest] = useState(false);
-  const [currentUserEditPermission, setCurrentUserEditPermission] =
-    useState(false);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
 
-  useEffect(async () => {
-    if (repository.releases.length) {
-      const latest = repository.releases.slice(-1);
-      console.log("latest", latest);
-      if (latest[0].tagName == router.query.tagName) {
-        setIsLatest(true);
-      } else {
-        setIsLatest(false);
+  useEffect(() => {
+    async function initLatest() {
+      if (repository.releases.length) {
+        const latest = repository.releases.slice(-1);
+        console.log("latest", latest);
+        if (latest[0].tagName == router.query.tagName) {
+          setIsLatest(true);
+        } else {
+          setIsLatest(false);
+        }
       }
     }
+    initLatest();
   }, [repository, router.query.tagName]);
 
   const getRelease = async () => {
@@ -71,12 +75,17 @@ function RepositoryReleaseView(props) {
     }
   };
 
-  useEffect(getRelease, [repository]);
+  useEffect(() => {
+    getRelease();
+  }, [repository]);
 
-  useEffect(async () => {
-    setCurrentUserEditPermission(
-      await props.isCurrentUserEligibleToUpdate(repository)
-    );
+  useEffect(() => {
+    async function updatePermissions() {
+      setCurrentUserEditPermission(
+        await props.isCurrentUserEligibleToUpdate(repository)
+      );
+    }
+    updatePermissions();
   }, [repository, props.user]);
 
   return (
@@ -93,7 +102,6 @@ function RepositoryReleaseView(props) {
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs repository={repository} active="code" />
-
           <div className="mt-4 space-y-4">
             <ReleaseView
               repository={repository}
