@@ -32,7 +32,9 @@ const getIP = (request) =>
   request.headers["x-real-ip"] ||
   request.connection.remoteAddress;
 
-handler.use(rateLimit({ keyGenerator: getIP, windowMs: 60 * 1000, max: 10 }));
+handler.use(
+  rateLimit({ keyGenerator: getIP, windowMs: 10 * 60 * 1000, max: 10 })
+);
 handler.use(fileUpload());
 
 const uploadImage = async (address, image) => {
@@ -158,10 +160,8 @@ handler.post(async (request, response) => {
 
     const res = await uploadImage(address, image);
 
-    if (res?.cid) {
-      return response
-        .status(200)
-        .json({ url: "https://api.estuary.tech/gw/ipfs/" + res.cid });
+    if (res?.estuary_retrieval_url) {
+      return response.status(200).json({ url: res.estuary_retrieval_url });
     }
     return response.status(400).send("Unable to process request");
   } catch (e) {

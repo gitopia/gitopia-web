@@ -43,7 +43,6 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
       imageFileInput.current.value = null;
     }
     setImageFileHash(null);
-    console.log("useEffect", url);
   }, [isDao ? props.dao?.id : props.user?.id]);
 
   const validateImageUrl = (url, setImageUrlAfterSuccess) => {
@@ -67,12 +66,11 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
         if (setImageUrlAfterSuccess) {
           setImageUrl(url);
         }
-        // console.log("FileSize:", url, performance.getEntriesByName(url)[0]);
       }
     };
     image.onerror = function () {
       setPreviewLoading(false);
-      setValidateImageUrlError("image doesn't exist");
+      setValidateImageUrlError("Unable to preview");
       setPreviewAvatarText("");
       if (setImageUrlAfterSuccess) {
         setImageUrl("");
@@ -109,7 +107,6 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
         if (response.status === 200) return response.json();
         else return response.text();
       });
-      console.log(res);
       if (res && res.url) {
         validateImageUrl(res.url, true);
         setImageUploading(2);
