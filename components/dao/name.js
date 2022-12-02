@@ -92,7 +92,7 @@ function DaoName(props = { isEditable: false }) {
       <label
         htmlFor="name-edit-modal"
         onClick={() => {
-          setModalOpen(true);
+          if (props.isEditable) setModalOpen(true);
         }}
         className={
           "modal-button text-2xl py-1 inline-block border-b" +
