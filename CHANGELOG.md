@@ -7,6 +7,10 @@
 - Disable pull request creation from ahead branch
 - Minor UX bug fixes
 
+### v1.2.1 - 1st Dec 2022
+
+- fix build: add null check
+
 ### v1.2.0 - 1st Dec 2022
 
 - Fix keplr gasPriceStep type issue
