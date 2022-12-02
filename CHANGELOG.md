@@ -1,5 +1,12 @@
 ## Changelog
 
+### v1.3.0 - 2st Dec 2022
+
+- Profile image upload to ipfs
+- Date parsing fixed in safari
+- Disable pull request creation from ahead branch
+- Minor UX bug fixes
+
 ### v1.2.0 - 1st Dec 2022
 
 - Fix keplr gasPriceStep type issue
