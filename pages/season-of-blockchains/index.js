@@ -469,13 +469,18 @@ export default function SeasonOfBlockchains() {
                 </div>
                 <div className={styles.section5Body}>
                   <div className={styles.section5BodyTitle}>
-                    Announcing GSoB
+                    GSoB Announcement and Projects Application Period
                   </div>
                   <div className={styles.section5Content}>
-                    User visits the GSoB site Sign up for Gitopia Join discord
-                    <br className={styles.br}></br> and Register for GSoB (can
-                    be a voluntary step to receive
-                    <br className={styles.br}></br> updates regarding GSoB)
+                    Interested projects can submit their applications to be
+                    <br className={styles.br}></br> mentor projects for GSoB.
+                    Program administrators will
+                    <br className={styles.br}></br> start reviewing the project
+                    applications. Interested
+                    <br className={styles.br}></br> participants can fill out
+                    the pre-interest forms and join the
+                    <br className={styles.br}></br> Gitopia Discord channel for
+                    updates.
                   </div>
                 </div>
               </div>
@@ -495,21 +500,17 @@ export default function SeasonOfBlockchains() {
                 </div>
                 <div className={styles.section5Body}>
                   <div className={styles.section5BodyTitle}>
-                    Organizations Announced
+                    Participating Projects Announced
                   </div>
-
                   <div className={styles.section5Content}>
-                    Users can check ideas of the participating organizations
-                    <br className={styles.br}></br> They can interact with the
-                    participating organization
-                    <br className={styles.br}></br> members to discuss
-                    application ideas and flows and get
-                    <br className={styles.br}></br> initial insights into the
-                    project (This can be done on our
-                    <br className={styles.br}></br> discord. We can make a
-                    specific category for GSoB on{" "}
-                    <br className={styles.br}></br> discord and channels will be
-                    named after participating orgs)
+                    The list of selected mentoring projects is published.
+                    <br className={styles.br}></br> Potential GSoB contributors
+                    can check the ideas of the
+                    <br className={styles.br}></br> participating projects and
+                    interact with the project members
+                    <br className={styles.br}></br> to discuss application ideas
+                    and get initial insights into the
+                    <br className={styles.br}></br> project.
                   </div>
                 </div>
               </div>
@@ -528,13 +529,14 @@ export default function SeasonOfBlockchains() {
                 </div>
                 <div className={styles.section5Body}>
                   <div className={styles.section5BodyTitle}>
-                    GSoB Participant applications out
+                    Contributors Application Period
                   </div>
                   <div className={styles.section5Content}>
-                    Contributors can share their proposals to the organization
-                    <br className={styles.br}></br> that they are willing to
-                    participate Accepted participants
-                    <br className={styles.br}></br> announced
+                    Potential contributors can submit their proposals to the
+                    <br className={styles.br}></br> mentor projects they are
+                    interested in contributing to.
+                    <br className={styles.br}></br> Accepted contributor
+                    proposals are announced after review.
                   </div>
                 </div>
               </div>
@@ -553,13 +555,16 @@ export default function SeasonOfBlockchains() {
                 </div>
                 <div className={styles.section5Body}>
                   <div className={styles.section5BodyTitle}>
-                    1 week community bonding period
+                    Community Bonding Period
                   </div>
                   <div className={styles.section5Content}>
-                    Selected contributors interact with mentors and
-                  </div>
-                  <div className={styles.section5Content}>
-                    get familiar with the project
+                    Selected contributors can spend the one-week
+                    <br className={styles.br}></br>
+                    community bonding period getting to know their
+                    <br className={styles.br}></br>
+                    mentors, read the documentation, and get up to
+                    <br className={styles.br}></br>
+                    speed to begin working on their projects.
                   </div>
                 </div>
               </div>
@@ -577,7 +582,13 @@ export default function SeasonOfBlockchains() {
                   <hr className={styles.vl2}></hr>
                 </div>
                 <div className={styles.section5Body}>
-                  <div className={styles.section5BodyTitle}>Coding period</div>
+                  <div className={styles.section5BodyTitle}>
+                    Development Period
+                  </div>
+                  <div className={styles.section5Content}>
+                    Contributors start working on their Gitopia Season of
+                    Blockchains projects.
+                  </div>
                   <div className={styles.section5Content}>
                     Day 1-15: Coding Phase 1 followed by initial
                     evaluation/submission
@@ -613,8 +624,8 @@ export default function SeasonOfBlockchains() {
                     Results Announced
                   </div>
                   <div className={styles.section5Content}>
-                    Contributors are notified of the results and the
-                    <br className={styles.br}></br>stipends are distributed
+                    Contributors are notified of the results, and the stipends
+                    are distributed.
                   </div>
                 </div>
               </div>
