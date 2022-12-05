@@ -1,6 +1,12 @@
 ## Changelog
 
-### v1.3.0 - 2st Dec 2022
+### v1.3.1 - 5th Dec 2022
+
+- Fix the input validation in sendTlore component
+- Fix the text overflow in mobile view
+- Updated the GSoB copy
+
+### v1.3.0 - 2nd Dec 2022
 
 - Profile image upload to ipfs
 - Date parsing fixed in safari
