@@ -31,10 +31,6 @@ function UserHeader(props) {
       }
     }
     getDaos();
-  });
-
-  useEffect(() => {
-    //  setIsEditable(props.user.creator === props.selectedAddress);
   }, [props.user.creator, props.selectedAddress]);
 
   return (
