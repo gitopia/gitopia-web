@@ -24,10 +24,7 @@ function UserHeader(props) {
       const daos = await getUserDaoAll(props.user.creator);
       if (daos?.length > 0) {
         setDaosLength(daos.length);
-        setDaos(daos);
-        if (daosLength > 2) {
-          setDaos([daos[0], daos[1]]);
-        }
+        setDaos([daos[0], daos[1]]);
       }
     }
     getDaos();
