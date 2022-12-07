@@ -152,7 +152,6 @@ function RepositoryTreeView(props) {
         repoPath.join("/"),
         firstTime ? null : hasMoreEntities
       );
-      console.log(res);
       if (res) {
         if (res.content) {
           if (res.content[0].type === "BLOB" && res.content[0].size) {

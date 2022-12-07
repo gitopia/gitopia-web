@@ -43,7 +43,6 @@ function ConnectLedger(props) {
   const createWallet = async () => {
     setCreatingWallet(true);
     let res = await props.initLedgerTransport();
-    console.log(res);
     if (res.transport) {
       setConnectPermission(true);
       let s = await props.getLedgerSigner(res.transport);

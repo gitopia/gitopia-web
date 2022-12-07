@@ -77,7 +77,6 @@ function RepositoryCommitTreeView(props) {
       nextKey,
       true
     );
-    console.log(res);
     if (res) {
       if (res.commits && res.commits.length) {
         setCommits([...earlierCommits, ...res.commits]);
