@@ -36,7 +36,7 @@ export default function KnowledgeCenter() {
       <div className="flex sm:ml-24 sm:border-b sm:border-grey sm:py-2 mb-4">
         <div className="flex-1 text-sm">Create a new DAO</div>
         <a
-          href="https://docs.gitopia.com/organizations"
+          href="https://docs.gitopia.com/dao"
           className="btn btn-link btn-xs"
           target="_blank"
           rel="noreferrer"
