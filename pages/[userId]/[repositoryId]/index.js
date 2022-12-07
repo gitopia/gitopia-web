@@ -79,11 +79,13 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths() {
-  const repos = await getRepositoryAll();
+  const fs = (await import("fs")).default;
   let paths = [];
-  repos?.map((r) => {
-    paths.push({ params: { userId: r.owner.id, repositoryId: r.name } });
-  });
+  try {
+    paths = JSON.parse(fs.readFileSync("./seo/paths-repositories.json"));
+  } catch (e) {
+    console.error(e);
+  }
   return {
     paths,
     fallback: "blocking",

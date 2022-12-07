@@ -32,11 +32,20 @@ import getRepositoryPull from "../../../../../helpers/getRepositoryPull";
 import getPullRepoInfo from "../../../../../helpers/getPullRepoInfo";
 import getPullAll from "../../../../../helpers/getPullAll";
 import getRepositoryAll from "../../../../../helpers/getRepositoryAll";
-import getUserRepository from "../../../../../helpers/getUserRepository";
+import getAnyRepository from "../../../../../helpers/getAnyRepository";
+import getAllRepositoryBranch from "../../../../../helpers/getAllRepositoryBranch";
+import getAllRepositoryTag from "../../../../../helpers/getAllRepositoryTag";
 
 export async function getStaticProps({ params }) {
-  const r = await getUserRepository(params.userId, params.repositoryId);
+  const [r, b, t] = await Promise.all([
+    getAnyRepository(params.userId, params.repositoryId),
+    getAllRepositoryBranch(params.userId, params.repositoryId),
+    getAllRepositoryTag(params.userId, params.repositoryId),
+  ]);
+
   if (r) {
+    r.branches = b;
+    r.tags = t;
     const p = await getRepositoryPull(
       params.userId,
       params.repositoryId,
@@ -53,24 +62,13 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths() {
-  const [pulls, repos] = await Promise.all([getPullAll(), getRepositoryAll()]);
-  let repoIdMap = {},
-    paths = [];
-  repos?.map((r) => {
-    repoIdMap[r.id] = r;
-  });
-  pulls?.map((p) => {
-    const baseRepo = repoIdMap[p.base.repositoryId];
-    if (baseRepo) {
-      paths.push({
-        params: {
-          userId: baseRepo.creator,
-          repositoryId: baseRepo.name,
-          pullRequestIid: p.iid,
-        },
-      });
-    }
-  });
+  const fs = (await import("fs")).default;
+  let paths = [];
+  try {
+    paths = JSON.parse(fs.readFileSync("./seo/paths-pulls.json"));
+  } catch (e) {
+    console.error(e);
+  }
   return {
     paths,
     fallback: "blocking",

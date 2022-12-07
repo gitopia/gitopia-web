@@ -31,14 +31,44 @@ import IssuePullDescription from "../../../../components/repository/issuePullDes
 import { useErrorStatus } from "../../../../hooks/errorHandler";
 import pluralize from "../../../../helpers/pluralize";
 import Link from "next/link";
+import getAnyRepository from "../../../../helpers/getAnyRepository";
+import getAllRepositoryBranch from "../../../../helpers/getAllRepositoryBranch";
+import getAllRepositoryTag from "../../../../helpers/getAllRepositoryTag";
 
-export async function getStaticProps() {
+export async function getStaticProps({ params }) {
+  const [r, b, t] = await Promise.all([
+    getAnyRepository(params.userId, params.repositoryId),
+    getAllRepositoryBranch(params.userId, params.repositoryId),
+    getAllRepositoryTag(params.userId, params.repositoryId),
+  ]);
+
+  if (r) {
+    r.branches = b;
+    r.tags = t;
+    const i = await getRepositoryIssue(
+      params.userId,
+      params.repositoryId,
+      params.issueIid
+    );
+    if (i) {
+      const pr = i.comments.map((c) => getComment(c));
+      const comments = await Promise.all(pr);
+      return { props: { repository: r, issue: i, comments }, revalidate: 1 };
+    }
+  }
   return { props: {} };
 }
 
 export async function getStaticPaths() {
+  const fs = (await import("fs")).default;
+  let paths = [];
+  try {
+    paths = JSON.parse(fs.readFileSync("./seo/paths-issues.json"));
+  } catch (e) {
+    console.error(e);
+  }
   return {
-    paths: [],
+    paths,
     fallback: "blocking",
   };
 }
@@ -46,7 +76,7 @@ export async function getStaticPaths() {
 function RepositoryIssueView(props) {
   const router = useRouter();
   const { setErrorStatusCode } = useErrorStatus();
-  const { repository } = useRepository();
+  const { repository } = useRepository(props.repository);
   const [issue, setIssue] = useState({
     iid: router.query.issueIid,
     creator: "",
@@ -54,8 +84,9 @@ function RepositoryIssueView(props) {
     comments: [],
     assignees: [],
     labels: [],
+    ...props.issue,
   });
-  const [allComments, setAllComments] = useState([]);
+  const [allComments, setAllComments] = useState(props.comments || []);
   const [allLabels, setAllLabels] = useState([]);
 
   useEffect(() => {

@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import Link from "next/link";
-import getRepository from "../../helpers/getRepository";
 import sortBy from "lodash/sortBy";
 import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
 
 function AccountRepositories(props) {
-  const [allRepos, setAllRepos] = useState([]);
+  const [allRepos, setAllRepos] = useState(props.allRepos || []);
 
   const getAllRepos = async () => {
     if (props.userId) {

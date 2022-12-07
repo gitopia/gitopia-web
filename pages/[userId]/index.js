@@ -10,8 +10,6 @@ import PublicTabs from "../../components/dashboard/publicTabs";
 import UserHeader from "../../components/user/header";
 import AccountOverview from "../../components/account/overview";
 import { useErrorStatus } from "../../hooks/errorHandler";
-import getUserAll from "../../helpers/getUserAll";
-import getDaoAll from "../../helpers/getDaoAll";
 import getWhois from "../../helpers/getWhois";
 import AccountRepositories from "../../components/account/repositories";
 import AccountTransactions from "../../components/account/transactions";
@@ -21,55 +19,38 @@ import DaoProposalList from "../../components/account/daoProposalList";
 import DaoProposalCreate from "../../components/account/daoProposalCreate";
 import DaoProposalDetails from "../../components/account/daoProposalDetails";
 import validAddress from "../../helpers/validAddress";
-
-const getAllRepos = async (repoIds) => {
-  if (repoIds) {
-    const pr = repoIds.map((r) => getRepository(r.id));
-    return await Promise.all(pr);
-  }
-  return [];
-};
-
-const getOrgAvatarLink = (org) => {
-  if (org?.name) {
-    let letter = org.name.slice(0, 1);
-    const link =
-      process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === org.address
-        ? "/logo-g.svg"
-        : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-          letter;
-    return link;
-  }
-  return "";
-};
+import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
+import sortBy from "lodash/sortBy";
 
 export async function getStaticProps({ params }) {
-  const [u, o] = await Promise.all([
-    getUser(params.userId),
-    getDao(params.userId),
-  ]);
-  const orgAvatarLink = getOrgAvatarLink(o);
-  let allRepos = [];
-  if (u && u.id) {
-    allRepos = await getAllRepos(u.repositories);
-  } else if (o && o.id) {
-    allRepos = await getAllRepos(o.repositories);
+  const data = await getWhois(params.userId);
+  let u,
+    d,
+    allRepos = [];
+  if (data?.ownerType === "USER") {
+    u = await getUser(params.userId);
+    const pr = await getAnyRepositoryAll(params.userId);
+    allRepos = sortBy(pr, (r) => -Number(r.updatedAt));
+  } else if (data?.ownerType === "DAO") {
+    d = await getDao(params.userId);
+    const pr = await getAnyRepositoryAll(params.userId);
+    allRepos = sortBy(pr, (r) => -Number(r.updatedAt));
   }
+
   return {
-    props: { user: u || {}, org: o || {}, orgAvatarLink, allRepos },
+    props: { user: u || {}, dao: d || {}, allRepos },
     revalidate: 1,
   };
 }
 
 export async function getStaticPaths() {
-  const [users, orgs] = await Promise.all([getUserAll(), getDaoAll()]);
+  const fs = (await import("fs")).default;
   let paths = [];
-  users?.map((u) => {
-    paths.push({ params: { userId: u.creator } });
-  });
-  orgs?.map((o) => {
-    paths.push({ params: { userId: o.address } });
-  });
+  try {
+    paths = JSON.parse(fs.readFileSync("./seo/paths-owners.json"));
+  } catch (e) {
+    console.error(e);
+  }
   return {
     paths,
     fallback: "blocking",
@@ -87,37 +68,8 @@ function AccountView(props) {
   const [dao, setDao] = useState({
     name: "",
     repositories: [],
-    ...props.org,
+    ...props.dao,
   });
-  // const [allRepos, setAllRepos] = useState(props.allRepos);
-  // const [avatarLink, setAvatarLink] = useState(props.orgAvatarLink);
-
-  useEffect(async () => {
-    const [u, o] = await Promise.all([
-      getUser(router.query.userId),
-      getDao(router.query.userId),
-    ]);
-    if (u) {
-      setUser(u);
-      setDao({ name: "", repositories: [] });
-    } else if (o) {
-      setDao(o);
-      setUser({ creator: "", repositories: [] });
-    } else {
-      setErrorStatusCode(404);
-      setUser({ creator: "", repositories: [] });
-      setDao({ name: "", repositories: [] });
-    }
-  }, [router.query]);
-
-  // useEffect(async () => {
-  //   setAvatarLink(getOrgAvatarLink(org));
-  //   if (user && user.id) {
-  //     setAllRepos(await getAllRepos(user.repositories));
-  //   } else if (org && org.id) {
-  //     setAllRepos(await getAllRepos(org.repositories));
-  //   }
-  // }, [user.id, org.id]);
 
   const hrefBase = "/" + router.query.userId;
 
@@ -167,7 +119,7 @@ function AccountView(props) {
 
   useEffect(() => {
     getId();
-  }, [router.query]);
+  }, [router.query.userId]);
 
   return (
     <div
@@ -204,6 +156,7 @@ function AccountView(props) {
               user={user}
               dao={dao}
               userId={router.query.userId}
+              allRepos={props.allRepos}
             />
           ) : (
             ""
@@ -213,6 +166,7 @@ function AccountView(props) {
               user={user}
               dao={dao}
               userId={router.query.userId}
+              allRepos={props.allRepos}
             />
           ) : (
             ""
