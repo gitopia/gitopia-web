@@ -7,12 +7,10 @@ import AccountAvatar from "../account/avatar";
 import UserBio from "./bio";
 import UserName from "./name";
 import UserUsername from "./username";
-import { async } from "regenerator-runtime";
 
 function UserHeader(props) {
   const [isEditable, setIsEditable] = useState(false);
   const [daos, setDaos] = useState([]);
-  const [daosLength, setDaosLength] = useState(0);
 
   const refresh = async (updatedUserName) => {
     await props.refresh(updatedUserName);
@@ -22,10 +20,7 @@ function UserHeader(props) {
   useEffect(() => {
     async function getDaos() {
       const daos = await getUserDaoAll(props.user.creator);
-      if (daos?.length > 0) {
-        setDaosLength(daos.length);
-        setDaos([daos[0], daos[1]]);
-      }
+      setDaos(daos);
     }
     getDaos();
   }, [props.user.creator, props.selectedAddress]);
@@ -68,11 +63,11 @@ function UserHeader(props) {
 
       <div className="flex flex-col items-start">
         {daos?.length > 0 ? (
-          <div>
+          <div className="mb-8">
             <div className="text-xl">Daos</div>
             <div className="flex mt-4">
-              {daos.map((dao) => {
-                return (
+              {daos.map((dao, index) => {
+                return index < 2 ? (
                   <a className="flex" key={dao.id} href={"/" + dao.name}>
                     <div className="avatar flex-none mr-2 items-center">
                       <div className={"w-9 h-9 rounded-full"}>
@@ -85,11 +80,13 @@ function UserHeader(props) {
                       </div>
                     </div>
                   </a>
+                ) : (
+                  ""
                 );
               })}
-              {daosLength > 2 ? (
+              {daos?.length > 2 ? (
                 <div className="rounded-full bg-grey w-9 h-9 flex items-center justify-center">
-                  {daosLength - 2}+
+                  {daos?.length - 2}+
                 </div>
               ) : (
                 ""
@@ -101,7 +98,7 @@ function UserHeader(props) {
         )}
         {isEditable ? (
           <button
-            className="flex-1 link no-underline uppercase mt-8 font-semibold text-green text-sm"
+            className="flex-1 link no-underline uppercase font-semibold text-green text-sm"
             onClick={() => {
               setIsEditable(false);
             }}
@@ -112,7 +109,7 @@ function UserHeader(props) {
           <>
             {props.user.creator === props.selectedAddress ? (
               <button
-                className="link no-underline uppercase text-green mt-8 font-semibold text-sm"
+                className="link no-underline uppercase text-green font-semibold text-sm"
                 onClick={() => {
                   setIsEditable(true);
                 }}
