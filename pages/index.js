@@ -354,9 +354,7 @@ export default function Landing() {
           {mobile && !menuOpen ? (
             <div className="mt-2 ml-auto mr-10">
               <Link href="/home" className="">
-                
-                  Login
-                
+                Login
               </Link>
             </div>
           ) : (
@@ -460,10 +458,9 @@ export default function Landing() {
                 <div className="flex flex-col justify-center items-center">
                   <Link
                     href="/login"
-                    className="h-8 px-4 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                    
-                      Login
-                    
+                    className="h-8 px-4 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  >
+                    Login
                   </Link>
                 </div>
               </li>
@@ -556,10 +553,9 @@ export default function Landing() {
             >
               <Link
                 href="/home"
-                className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-
+                className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              >
                 {mobile ? " Get Started" : "Push code to Gitopia"}
-
               </Link>
             </div>
           </div>
@@ -2587,10 +2583,9 @@ export default function Landing() {
                   >
                     <Link
                       href="/home"
-                      className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                      
-                        Create your Gitopia Profile
-                      
+                      className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                    >
+                      Create your Gitopia Profile
                     </Link>
                   </div>
                   <div className="flex mb-4">
@@ -2832,10 +2827,9 @@ export default function Landing() {
             </div>
             <Link
               href="/new"
-              className="ml-4 px-16 py-4 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-              
-                Create a Repository
-              
+              className="ml-4 px-16 py-4 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+            >
+              Create a Repository
             </Link>
           </div>
           <img
@@ -3400,10 +3394,9 @@ export default function Landing() {
                 >
                   <Link
                     href="/account/daos/new"
-                    className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                    
-                      Create a DAO
-                    
+                    className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  >
+                    Create a DAO
                   </Link>
                 </div>
               ) : (
@@ -3820,16 +3813,27 @@ export default function Landing() {
           }
         >
           <div className={styles.backers2 + " flex"}>
-            <img src="./sandeep.svg" className="mr-2" />
+            <img
+              src="./sandeep.svg"
+              className={"mr-2 " + (mobile ? "absolute sm:relative top-5" : "")}
+            />
 
-            <div>
+            <div
+              className={mobile ? "absolute sm:relative top-0 right-24" : ""}
+            >
               <div className={styles.backers2Name}>Sandeep Nailwal</div>
               <div className={styles.backers2Title}>Co-founder Polygon</div>
             </div>
           </div>
           <div className={styles.backers2 + " flex"}>
-            <img src="./tanmay.svg" className="mr-2" />
-            <div>
+            <img
+              src="./tanmay.svg"
+              className={"mr-2 " + (mobile ? "absolute sm:relative top-5" : "")}
+            />
+
+            <div
+              className={mobile ? "absolute sm:relative -top-2 right-24" : ""}
+            >
               <div className={styles.backers2Name}>Tanmay Bhat</div>
               <div className={styles.backers2Title}>
                 Comedian, Investor, YouTube influencer
@@ -3838,8 +3842,14 @@ export default function Landing() {
           </div>
 
           <div className={styles.backers2 + " flex"}>
-            <img src="./tushar.svg" className="mr-2" />
-            <div>
+            <img
+              src="./tushar.svg"
+              className={"mr-2 " + (mobile ? "absolute sm:relative top-5" : "")}
+            />
+
+            <div
+              className={mobile ? "absolute sm:relative top-0 right-24" : ""}
+            >
               <div className={styles.backers2Name}>Tushar Aggarwal</div>
               <div className={styles.backers2Title}>
                 Founder and CEO, Persistence
@@ -3848,8 +3858,16 @@ export default function Landing() {
           </div>
           {mobile ? (
             <div className={styles.backers2 + " flex"}>
-              <img src="./zhi.svg" className="mr-2" />
-              <div>
+              <img
+                src="./zhi.svg"
+                className={
+                  "mr-2 " + (mobile ? "absolute sm:relative top-5" : "")
+                }
+              />
+
+              <div
+                className={mobile ? "absolute sm:relative top-0 right-24" : ""}
+              >
                 <div className={styles.backers2Name}>Zhi Hao Loy</div>
                 <div className={styles.backers2Title}>
                   General Counsel, Persistence
@@ -3868,8 +3886,16 @@ export default function Landing() {
           )}
         >
           <div className={styles.backers2 + " flex"}>
-            <img src="./akshay.svg" className="mr-2" />
-            <div>
+            <img
+              src="./akshay.svg"
+              className={"mr-2 " + (mobile ? "absolute sm:relative top-5" : "")}
+            />
+
+            <div
+              className={
+                mobile ? "absolute sm:relative -top-3 right-24 bg-blue" : ""
+              }
+            >
               <div className={styles.backers2Name}>Akshay BD</div>
               <div className={styles.backers2Title}>
                 Investor and Co-creator Superteam DAO

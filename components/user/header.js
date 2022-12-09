@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { getUserDetailsForSelectedAddress } from "../../store/actions/user";
+import getUserDaoAll from "../../helpers/getUserDaoAll";
 import { notify } from "reapop";
 import AccountAvatar from "../account/avatar";
 import UserBio from "./bio";
@@ -9,6 +10,7 @@ import UserUsername from "./username";
 
 function UserHeader(props) {
   const [isEditable, setIsEditable] = useState(false);
+  const [daos, setDaos] = useState([]);
 
   const refresh = async (updatedUserName) => {
     await props.refresh(updatedUserName);
@@ -16,25 +18,33 @@ function UserHeader(props) {
   };
 
   useEffect(() => {
-    setIsEditable(props.user.creator === props.selectedAddress);
+    async function getDaos() {
+      const daos = await getUserDaoAll(props.user.creator);
+      setDaos(daos);
+    }
+    getDaos();
   }, [props.user.creator, props.selectedAddress]);
 
   return (
     <div className="flex flex-col sm:flex-row mb-8 items-start">
-      <AccountAvatar
-        user={props.user}
-        isEditable={isEditable}
-        refresh={refresh}
-      />
-      <div className="flex-1 text-md sm:pl-12 w-full max-w-2xl">
-        <UserName user={props.user} isEditable={isEditable} refresh={refresh} />
-        <div className="text-type-secondary mb-4">
+      <div className="">
+        <AccountAvatar
+          user={props.user}
+          isEditable={isEditable}
+          refresh={refresh}
+        />
+        <div className="grid justify-items-center">
           <UserUsername
             user={props.user}
             isEditable={isEditable}
             refresh={refresh}
           />
-          <span className="mr-2 hidden sm:inline">&middot;</span>
+        </div>
+      </div>
+      <div className="flex-1 sm:pl-12 w-full max-w-2xl">
+        <div className="text-xl mb-4">About</div>
+        <UserName user={props.user} isEditable={isEditable} refresh={refresh} />
+        <div className="text-type-secondary mb-4 flex">
           <a
             href={
               process.env.NEXT_PUBLIC_EXPLORER_URL +
@@ -50,44 +60,68 @@ function UserHeader(props) {
         </div>
         <UserBio user={props.user} isEditable={isEditable} refresh={refresh} />
       </div>
-      {/* <div className="form-control flex justify-end">
-        <label className="label cursor-pointer">
-          <span className="text-xs text-type-secondary label-text mr-2">
-            Edit Profile
-          </span>
-          <input
-            type="checkbox"
-            className="toggle toggle-sm toggle-primary"
-            checked={isEditable}
-            onClick={(e) => {
-              setIsEditable(e.target.checked);
-            }}
-          />
-        </label>
-      </div> */}
-      {/* <div className="text-xl">DAOs</div>
-        <div className="flex mt-4">
-          {user.organizations.length > 0 ? (
-            user.organizations.map((dao) => {
-              return (
-                <div className="flex" key={dao.id}>
-                  <div className="avatar flex-none mr-2 items-center">
-                    <div className={"w-8 h-8 rounded-full"}>
-                      <img
-                        src={
-                          "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                          dao.name.slice(0)
-                        }
-                      />
+
+      <div className="flex flex-col items-start">
+        {daos?.length > 0 ? (
+          <div className="mb-8">
+            <div className="text-xl">Daos</div>
+            <div className="flex mt-4">
+              {daos.map((dao, index) => {
+                return index < 2 ? (
+                  <a className="flex" key={dao.id} href={"/" + dao.name}>
+                    <div className="avatar flex-none mr-2 items-center">
+                      <div className={"w-9 h-9 rounded-full"}>
+                        <img
+                          src={
+                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
+                            dao.name.slice(0)
+                          }
+                        />
+                      </div>
                     </div>
-                  </div>
+                  </a>
+                ) : (
+                  ""
+                );
+              })}
+              {daos?.length > 2 ? (
+                <div className="rounded-full bg-grey w-9 h-9 flex items-center justify-center">
+                  {daos?.length - 2}+
                 </div>
-              );
-            })
-          ) : (
-            <div className="text-type-secondary text-xs font-semibold">---</div>
-          )}
-        </div> */}
+              ) : (
+                ""
+              )}
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
+        {isEditable ? (
+          <button
+            className="flex-1 link no-underline uppercase font-semibold text-green text-sm"
+            onClick={() => {
+              setIsEditable(false);
+            }}
+          >
+            Done
+          </button>
+        ) : (
+          <>
+            {props.user.creator === props.selectedAddress ? (
+              <button
+                className="link no-underline uppercase text-green font-semibold text-sm"
+                onClick={() => {
+                  setIsEditable(true);
+                }}
+              >
+                Edit Profile
+              </button>
+            ) : (
+              ""
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
