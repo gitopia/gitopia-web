@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { notify } from "reapop";
 import { connect } from "react-redux";
 import { updateUserBalance } from "../../store/actions/wallet";
@@ -6,8 +6,20 @@ import Link from "next/link";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import { signOut } from "../../store/actions/wallet";
 import { assets } from "../../ibc-assets-config";
+import getBalanceInDollars from "../../helpers/getWalletBalanceInDollars";
 
 function WalletInfo(props) {
+  const [balance, setBalance] = useState(0);
+  useEffect(() => {
+    async function getWalletbalance() {
+      let balance = await getBalanceInDollars(props.selectedAddress);
+      if (balance) {
+        setBalance(balance);
+      }
+    }
+    getWalletbalance();
+  });
+
   return (
     <div className="w-96 p-4 flex flex-col bg-[#28313C] rounded-2xl">
       <div className="px-2 flex">
@@ -17,7 +29,14 @@ function WalletInfo(props) {
         <div className="ml-auto flex">
           <div className="avatar">
             <div className="rounded-full w-6 h-6">
-              <img src={props.avatarUrl}></img>
+              <img
+                src={
+                  props.avatarUrl
+                    ? props.avatarUrl
+                    : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
+                      props.selectedAddress.slice(-1)
+                }
+              ></img>
             </div>
           </div>
           <div className="text-xs mt-1 ml-2">
@@ -92,7 +111,7 @@ function WalletInfo(props) {
           </svg>
           <div className="text-sm text-type-primary ml-4">Total Balance</div>
           <div className="text-type-primary text-2xl font-bold ml-6">
-            $20,500.45
+            ${balance}
           </div>
         </div>
         <div className="text-type-primary text-xs font-bold uppercase mt-6 mb-4">
@@ -108,9 +127,9 @@ function WalletInfo(props) {
                 <img src={asset.icon} />
               </div>
               <div className="ml-3">{asset.chain_name}</div>
-              <div className="ml-auto flex mr-4">
-                <div className="text-type-primary text-xs mr-3 mt-1.5">
-                  Recieve
+              <div className="ml-auto flex mr-3">
+                <div className="text-type-primary text-xs mr-2 mt-1.5">
+                  Withdraw
                 </div>
                 <Link className="hover:cursor-pointer" href="/assets/withdraw">
                   <svg
@@ -120,27 +139,27 @@ function WalletInfo(props) {
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <g clip-path="url(#clip0_22_357)">
+                    <g clipPath="url(#clip0_22_357)">
                       <path
                         d="M16 8.5V20.375"
                         stroke="white"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                       <path
                         d="M10.375 14.75L16 20.375L21.625 14.75"
                         stroke="white"
-                        stroke-width="1.2"
-                        stroke-linecap="square"
-                        stroke-linejoin="round"
+                        strokeWidth="1.2"
+                        strokeLinecap="square"
+                        strokeLinejoin="round"
                       />
                       <path
                         d="M9.125 22.875H22.875"
                         stroke="white"
-                        stroke-width="1.2"
-                        stroke-linecap="square"
-                        stroke-linejoin="round"
+                        strokeWidth="1.2"
+                        strokeLinecap="square"
+                        strokeLinejoin="round"
                       />
                     </g>
                     <rect
@@ -150,7 +169,7 @@ function WalletInfo(props) {
                       height="31"
                       rx="15.5"
                       stroke="white"
-                      stroke-opacity="0.2"
+                      strokeOpacity="0.2"
                     />
                     <defs>
                       <clipPath id="clip0_22_357">
@@ -166,9 +185,9 @@ function WalletInfo(props) {
                 </Link>
               </div>
               <div className="border-l-2 border-[#5A6068] h-8"></div>
-              <div className="ml-4 flex">
-                <div className="text-type-primary text-xs mr-3 mt-1.5">
-                  Send
+              <div className="ml-3 flex">
+                <div className="text-type-primary text-xs mr-2 mt-1.5">
+                  Deposit
                 </div>
                 <Link className="mr-1" href="/assets/deposit">
                   <svg
@@ -178,7 +197,7 @@ function WalletInfo(props) {
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <g clip-path="url(#clip0_22_365)">
+                    <g clipPath="url(#clip0_22_365)">
                       <path
                         d="M10.5757 20.5757L10.1515 21L11 21.8485L11.4243 21.4243L10.5757 20.5757ZM21.4243 11.4243C21.6586 11.1899 21.6586 10.8101 21.4243 10.5757C21.1899 10.3414 20.8101 10.3414 20.5757 10.5757L21.4243 11.4243ZM11.4243 21.4243L21.4243 11.4243L20.5757 10.5757L10.5757 20.5757L11.4243 21.4243Z"
                         fill="white"
@@ -186,9 +205,9 @@ function WalletInfo(props) {
                       <path
                         d="M12.875 11H21V19.125"
                         stroke="white"
-                        stroke-width="1.2"
-                        stroke-linecap="square"
-                        stroke-linejoin="round"
+                        strokeWidth="1.2"
+                        strokeLinecap="square"
+                        strokeLinejoin="round"
                       />
                     </g>
                     <rect
@@ -198,7 +217,7 @@ function WalletInfo(props) {
                       height="31"
                       rx="15.5"
                       stroke="white"
-                      stroke-opacity="0.2"
+                      strokeOpacity="0.2"
                     />
                     <defs>
                       <clipPath id="clip0_22_365">

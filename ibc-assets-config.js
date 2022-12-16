@@ -12,3 +12,6 @@ export const assets = [
     icon: "./tokens/osmo.svg",
   },
 ];
+export const coingeckoId = {
+  uosmo: { id: "osmosis", coinDecimals: 6, coinDenom: "OSMO" },
+};
