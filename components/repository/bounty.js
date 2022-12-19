@@ -20,12 +20,15 @@ function CreateBounty(props) {
   const ref2 = useRef(null);
   const ref3 = useRef("dd/mm/yyyy");
 
-  useEffect(async () => {
-    const b = await getBalances(props.selectedAddress);
-    console.log(b);
-    if (b) {
-      setBalances(b.balances);
+  useEffect(() => {
+    async function getBalance() {
+      const b = await getBalances(props.selectedAddress);
+      console.log(b);
+      if (b) {
+        setBalances(b.balances);
+      }
     }
+    getBalance();
   }, [id]);
 
   useEffect(() => {

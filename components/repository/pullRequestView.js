@@ -11,14 +11,17 @@ function IssuePullRequestView(props) {
   const [pulls, setPulls] = useState([]);
   const [isHovering, setIsHovering] = useState({ id: null });
 
-  useEffect(async () => {
-    const array = [];
-    for (var i = 0; i < props.pullRequests.length; i++) {
-      const res = await getPullRequest(props.pullRequests[i].id);
-      array.push(res);
-    }
+  useEffect(() => {
+    async function fetchPulls() {
+      const array = [];
+      for (var i = 0; i < props.pullRequests.length; i++) {
+        const res = await getPullRequest(props.pullRequests[i].id);
+        array.push(res);
+      }
 
-    setPulls(array);
+      setPulls(array);
+    }
+    fetchPulls();
   }, [props.pullRequests.length]);
 
   return (

@@ -32,13 +32,16 @@ function PullRequestIssueView(props) {
     }
   };
 
-  useEffect(async () => {
-    const array = [];
-    for (var i = 0; i < props.issues.length; i++) {
-      const res = await getIssue(props.issues[i].id);
-      array.push(res);
+  useEffect(() => {
+    async function fetchIssues() {
+      const array = [];
+      for (var i = 0; i < props.issues.length; i++) {
+        const res = await getIssue(props.issues[i].id);
+        array.push(res);
+      }
+      setIssues(array);
     }
-    setIssues(array);
+    fetchIssues();
   }, [props.issues.length]);
   return (
     <div

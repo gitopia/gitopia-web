@@ -11,26 +11,29 @@ function IssueBountyView(props) {
   const [bounties, setBounties] = useState([]);
   const [coins, setCoins] = useState([]);
   const [isHovering, setIsHovering] = useState(false);
-  useEffect(async () => {
-    const bountyArray = [];
-    const coin = {};
-    const coinArray = [];
-    for (var i = 0; i < props.bounties.length; i++) {
-      const res = await getBounty(props.bounties[i]);
-      bountyArray.push(res);
-      res.amount.map((a) => {
-        coin[a.denom] !== undefined
-          ? (coin[a.denom].amount = coin[a.denom].amount + parseInt(a.amount))
-          : (coin[a.denom] = { amount: parseInt(a.amount), denom: a.denom });
-      });
+  useEffect(() => {
+    async function fetchBountyArray() {
+      const bountyArray = [];
+      const coin = {};
+      const coinArray = [];
+      for (var i = 0; i < props.bounties.length; i++) {
+        const res = await getBounty(props.bounties[i]);
+        bountyArray.push(res);
+        res.amount.map((a) => {
+          coin[a.denom] !== undefined
+            ? (coin[a.denom].amount = coin[a.denom].amount + parseInt(a.amount))
+            : (coin[a.denom] = { amount: parseInt(a.amount), denom: a.denom });
+        });
+      }
+      for (const property in coin) {
+        coinArray.push(coin[property]);
+      }
+      setCoins(coinArray);
+      console.log(coins);
+      setBounties(bountyArray.slice(0, 4));
+      console.log(bounties);
     }
-    for (const property in coin) {
-      coinArray.push(coin[property]);
-    }
-    setCoins(coinArray);
-    console.log(coins);
-    setBounties(bountyArray.slice(0, 4));
-    console.log(bounties);
+    fetchBountyArray();
   }, [props.bounties.length]);
   return (
     <div

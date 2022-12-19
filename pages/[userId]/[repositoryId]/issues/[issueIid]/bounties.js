@@ -60,29 +60,35 @@ function RepositoryIssueView(props) {
   var localizedFormat = require("dayjs/plugin/localizedFormat");
   dayjs.extend(localizedFormat);
 
-  useEffect(async () => {
-    const array = [];
-    for (var i = 0; i < issue.bounties.length; i++) {
-      const res = await getBounty(issue.bounties[i]);
-      array.push(res);
+  useEffect(() => {
+    async function fetchBounty() {
+      const array = [];
+      for (var i = 0; i < issue.bounties.length; i++) {
+        const res = await getBounty(issue.bounties[i]);
+        array.push(res);
+      }
+      setBounties(array);
     }
-    setBounties(array);
+    fetchBounty();
   }, [issue.bounties]);
 
-  useEffect(async () => {
-    const [i] = await Promise.all([
-      getRepositoryIssue(
-        router.query.userId,
-        router.query.repositoryId,
-        router.query.issueIid
-      ),
-    ]);
-    if (i) {
-      setIssue(i);
-    } else {
-      setErrorStatusCode(404);
+  useEffect(() => {
+    async function fetchIssue() {
+      const [i] = await Promise.all([
+        getRepositoryIssue(
+          router.query.userId,
+          router.query.repositoryId,
+          router.query.issueIid
+        ),
+      ]);
+      if (i) {
+        setIssue(i);
+      } else {
+        setErrorStatusCode(404);
+      }
+      setAllLabels(repository.labels);
     }
-    setAllLabels(repository.labels);
+    fetchIssue();
   }, [router.query.issueIid, repository.id]);
 
   const refreshIssue = async () => {

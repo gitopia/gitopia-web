@@ -42,13 +42,16 @@ function RepositoryPullIssuesView(props) {
   const [textEntered, setEnteredText] = useState("");
   const [issueList, setIssueList] = useState([]);
 
-  useEffect(async () => {
-    const array = [];
-    for (var i = 0; i < pullRequest.issues.length; i++) {
-      const res = await getIssue(pullRequest.issues[i].id);
-      array.push(res);
+  useEffect(() => {
+    async function fetchIssues() {
+      const array = [];
+      for (var i = 0; i < pullRequest.issues.length; i++) {
+        const res = await getIssue(pullRequest.issues[i].id);
+        array.push(res);
+      }
+      setIssues(array);
     }
-    setIssues(array);
+    fetchIssues();
   }, [pullRequest.issues.length]);
 
   return (

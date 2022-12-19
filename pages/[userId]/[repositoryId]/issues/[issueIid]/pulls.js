@@ -42,28 +42,34 @@ function RepositoryIssueLinkedPullsView(props) {
     pullRequests: [],
   });
 
-  useEffect(async () => {
-    const [i] = await Promise.all([
-      getRepositoryIssue(
-        router.query.userId,
-        router.query.repositoryId,
-        router.query.issueIid
-      ),
-    ]);
-    if (i) {
-      setIssue(i);
-    } else {
-      setErrorStatusCode(404);
+  useEffect(() => {
+    async function fetchIssue() {
+      const [i] = await Promise.all([
+        getRepositoryIssue(
+          router.query.userId,
+          router.query.repositoryId,
+          router.query.issueIid
+        ),
+      ]);
+      if (i) {
+        setIssue(i);
+      } else {
+        setErrorStatusCode(404);
+      }
     }
+    fetchIssue();
   }, [router.query.issueIid, repository.id]);
 
-  useEffect(async () => {
-    const array = [];
-    for (var i = 0; i < issue.pullRequests.length; i++) {
-      const res = await getPullRequest(issue.pullRequests[i].id);
-      array.push(res);
+  useEffect(() => {
+    async function fetchPulls() {
+      const array = [];
+      for (var i = 0; i < issue.pullRequests.length; i++) {
+        const res = await getPullRequest(issue.pullRequests[i].id);
+        array.push(res);
+      }
+      setPulls(array);
     }
-    setPulls(array);
+    fetchPulls();
   }, [issue.pullRequests.length]);
 
   const refreshIssue = async () => {
