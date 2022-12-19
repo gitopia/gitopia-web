@@ -5,8 +5,6 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 
-// revisit this file after relayer setup
-
 function CreateBounty(props) {
   const router = useRouter();
   var id = router.query.userId;
@@ -23,29 +21,11 @@ function CreateBounty(props) {
   const ref3 = useRef("dd/mm/yyyy");
 
   useEffect(async () => {
-    /*
-    const b = await getBalances(id);
+    const b = await getBalances(props.selectedAddress);
+    console.log(b);
     if (b) {
       setBalances(b.balances);
-    } */
-    setBalances([
-      {
-        denom: "utlore",
-        amount: "89794159",
-      },
-      {
-        denom: "tlore",
-        amount: "12345",
-      },
-      {
-        denom: "lore",
-        amount: "794159",
-      },
-      {
-        denom: "btc",
-        amount: "97949",
-      },
-    ]);
+    }
   }, [id]);
 
   useEffect(() => {
@@ -149,6 +129,7 @@ function CreateBounty(props) {
                     className={
                       "flex text-sm box-border bg-grey-500 mr-2 h-11 p-3 rounded-lg uppercase"
                     }
+                    key={i}
                   >
                     <div className="mr-2">{a.denom}</div>
                     <div>{a.amount}</div>
@@ -190,11 +171,11 @@ function CreateBounty(props) {
                   xmlns="http://www.w3.org/2000/svg"
                   className="mt-1"
                 >
-                  <path d="M5 0V10" stroke="#66CE67" stroke-width="2" />
+                  <path d="M5 0V10" stroke="#66CE67" strokeWidth="2" />
                   <path
                     d="M10 5L-3.57628e-07 5"
                     stroke="#66CE67"
-                    stroke-width="2"
+                    strokeWidth="2"
                   />
                 </svg>
               </div>
@@ -334,6 +315,7 @@ function CreateBounty(props) {
                     className={
                       "flex text-sm box-border bg-grey-900 mr-2 h-11 p-3 rounded-lg uppercase mt-2"
                     }
+                    key={i}
                   >
                     <div className="mr-2">{a.denom}</div>
                     <div>{a.amount}</div>
@@ -377,25 +359,25 @@ function CreateBounty(props) {
                     <path
                       d="M16 2V5"
                       stroke="#E5EDF5"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
                     />
                     <path
                       d="M8 2V5"
                       stroke="#E5EDF5"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
                     />
                     <path
                       d="M3 7.5C3 6.43913 3.42143 5.42172 4.17157 4.67157C4.92172 3.92143 5.93913 3.5 7 3.5H17C18.0609 3.5 19.0783 3.92143 19.8284 4.67157C20.5786 5.42172 21 6.43913 21 7.5V18C21 19.0609 20.5786 20.0783 19.8284 20.8284C19.0783 21.5786 18.0609 22 17 22H7C5.93913 22 4.92172 21.5786 4.17157 20.8284C3.42143 20.0783 3 19.0609 3 18V7.5Z"
                       stroke="#E5EDF5"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                     />
                     <path
                       d="M3 9H21"
                       stroke="#E5EDF5"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
                     />
                   </svg>
                 </div>

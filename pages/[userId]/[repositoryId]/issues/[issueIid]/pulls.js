@@ -262,7 +262,7 @@ function RepositoryIssueLinkedPullsView(props) {
                         <path
                           d="M8 13H1V1H18V13H15H14V14V16.2768L8.49614 13.1318L8.26556 13H8Z"
                           stroke="#ADBECB"
-                          stroke-width="2"
+                          strokeWidth="2"
                         />
                       </svg>
                     </div>

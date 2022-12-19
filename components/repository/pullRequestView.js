@@ -45,7 +45,7 @@ function IssuePullRequestView(props) {
                     <path
                       d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
                       stroke="#ADBECB"
-                      stroke-width="2"
+                      strokeWidth="2"
                     />
                     <circle cx="8.5" cy="18.5" r="2.5" fill="#ADBECB" />
                     <circle cx="8.5" cy="5.5" r="2.5" fill="#ADBECB" />
@@ -117,9 +117,9 @@ function IssuePullRequestView(props) {
                         <path
                           d="M11 5H1M1 5L5 1M1 5L5 9"
                           stroke="#ADBECB"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                       </svg>
                       <div

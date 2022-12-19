@@ -200,9 +200,9 @@ function RepositoryIssueView(props) {
                   return (
                     <div className="flex mt-2 mb-3 pt-3" key={b.id}>
                       <div className="w-1/4">
-                        {b.amount.map((a) => {
+                        {b.amount.map((a, index) => {
                           return (
-                            <div className="flex">
+                            <div className="flex" key={index}>
                               {a.denom == "utlore" ? (
                                 <div className="ml-3 mt-0.5 mr-1">
                                   <svg

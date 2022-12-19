@@ -65,7 +65,7 @@ function PullRequestIssueView(props) {
                   >
                     <path
                       d="M1.93782 12.5L8 2L14.0622 12.5L1.93782 12.5Z"
-                      stroke-width="2"
+                      strokeWidth="2"
                     />
                   </svg>
                   <div>

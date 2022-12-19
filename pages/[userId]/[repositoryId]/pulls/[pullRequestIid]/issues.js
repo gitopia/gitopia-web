@@ -153,7 +153,7 @@ function RepositoryPullIssuesView(props) {
                     </svg>
                   </button>
                   {issueList.length > 0 && issue.title == "" ? (
-                    <div class="card bg-grey-500 p-4">
+                    <div className="card bg-grey-500 p-4">
                       {issueList.map((i, key) => {
                         return (
                           <div
@@ -161,6 +161,7 @@ function RepositoryPullIssuesView(props) {
                               setIssue(i);
                               setEnteredText("");
                             }}
+                            key={key}
                           >
                             <div
                               className={
@@ -178,12 +179,12 @@ function RepositoryPullIssuesView(props) {
                                 <path
                                   d="M5 20L5 4L19 4L19 20L5 20Z"
                                   stroke="#ADBECB"
-                                  stroke-width="2"
+                                  strokeWidth="2"
                                 />
                                 <path
                                   d="M8 15L16 15M8 9L16 9"
                                   stroke="#ADBECB"
-                                  stroke-width="2"
+                                  strokeWidth="2"
                                 />
                               </svg>
 
@@ -350,7 +351,7 @@ function RepositoryPullIssuesView(props) {
                           >
                             {i.assignees.map((a, key) => {
                               return (
-                                <div className="flex">
+                                <div className="flex" key={key}>
                                   <div
                                     className={"avatar flex-none items-center "}
                                     key={key}
@@ -407,7 +408,7 @@ function RepositoryPullIssuesView(props) {
                         <path
                           d="M8 13H1V1H18V13H15H14V14V16.2768L8.49614 13.1318L8.26556 13H8Z"
                           stroke="#ADBECB"
-                          stroke-width="2"
+                          strokeWidth="2"
                         />
                       </svg>
                     </div>
