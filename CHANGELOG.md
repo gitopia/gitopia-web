@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.3.2 - 20th Dec 2022
+
+- Fix ledger wallet onboarding
+
 ### v1.3.1 - 5th Dec 2022
 
 - Fix the input validation in sendTlore component
