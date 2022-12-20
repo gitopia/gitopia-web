@@ -23,7 +23,6 @@ function CreateBounty(props) {
   useEffect(() => {
     async function getBalance() {
       const b = await getBalances(props.selectedAddress);
-      console.log(b);
       if (b) {
         setBalances(b.balances);
       }
@@ -231,7 +230,7 @@ function CreateBounty(props) {
                     className="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 leading-tight focus:outline-none text-2xl font-bold"
                     type="text"
                     placeholder="Enter Amount"
-                    aria-label="Full name"
+                    aria-label="Amount"
                     ref={ref1}
                     onKeyUp={async (e) => {
                       await validateAmount(e.target.value);
