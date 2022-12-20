@@ -580,7 +580,7 @@ export const getLedgerSigner = () => {
         prefix: "gitopia",
         ledgerAppName: "Cosmos",
       });
-      const addr = await accountSigner.ledger.getCosmosAddress();
+      const addr = (await accountSigner.getAccounts())[0].address;
       return { signer: accountSigner, addr: addr };
     } catch (e) {
       let error = e;
