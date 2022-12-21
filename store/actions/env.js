@@ -123,10 +123,34 @@ export const signMessage = ({ data = {} }) => {
   };
 };
 
-export const setupTxClients = async (dispatch, getState) => {
+export const setupTxClients = async (dispatch, getState, chainId = null) => {
   const { env, wallet } = getState();
+
   if (wallet.activeWallet) {
     if (!env.txClient) {
+      if (chainId !== null) {
+        return new Promise((resolve, reject) => {
+          dispatch({
+            type: walletActions.GET_PASSWORD_FOR_UNLOCK_WALLET,
+            payload: {
+              usedFor: wallet.activeWallet.isLedger ? "Connect" : "Unlock",
+              resolve: (action) => {
+                dispatch({
+                  type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
+                });
+                resolve({ message: action });
+              },
+              reject: (reason) => {
+                dispatch({
+                  type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
+                });
+                reject({ message: reason });
+              },
+              chainId: chainId,
+            },
+          });
+        });
+      }
       return new Promise((resolve, reject) => {
         dispatch({
           type: walletActions.GET_PASSWORD_FOR_UNLOCK_WALLET,

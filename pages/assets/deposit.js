@@ -1,24 +1,45 @@
 import { connect } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-// revisit this file after relayer setup
+import { ibcDeposit } from "../../store/actions/wallet";
+import { useRouter } from "next/router";
+import getChainInfo from "../../helpers/getChainInfo";
 
 function DepositIbcAsset(props) {
+  const [amount, setAmount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [counterPartyChainInfo, setCounterPartyChainInfo] = useState(null);
+  const router = useRouter();
   useEffect(() => {
+    if (
+      props.activeWallet?.counterPartyAddress === undefined ||
+      props.activeWallet.counterPartyChain === null
+    ) {
+      router.push("/home");
+    }
     document.getElementById("my-modal-2").checked = true;
   }, []);
+
+  useEffect(() => {
+    async function getChain() {
+      let info = await getChainInfo(props.activeWallet?.counterPartyChain);
+      setCounterPartyChainInfo(info);
+    }
+    getChain();
+  }, [props.activeWallet]);
+
   return (
     <div>
-      <label for="my-modal-2" class="btn modal-button hidden">
+      <label htmlFor="my-modal-2" className="btn modal-button hidden">
         Deposit
       </label>
 
-      <input type="checkbox" id="my-modal-2" class="modal-toggle" />
+      <input type="checkbox" id="my-modal-2" className="modal-toggle" />
       <div
-        class="modal modal-bottom sm:modal-middle cursor-pointer"
+        className="modal modal-bottom sm:modal-middle cursor-pointer"
         htmlFor="my-modal-2"
       >
-        <div class="modal-box relative bg-grey-500">
+        <div className="modal-box relative bg-grey-500">
           <div className="flex mb-4">
             <div className="w-11/12 font-bold text-sm text-type">
               Deposit IBC Asset
@@ -46,7 +67,7 @@ function DepositIbcAsset(props) {
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-3">
             <div className="font-bold">FROM</div>
             <div className="text-type-secondary">
-              cosmos903y12987t1rbfu2iyvf8rf9723fe239e23v97sd92eh9b93
+              {props.activeWallet?.counterPartyAddress}
             </div>
           </div>
           <div className="flex justify-center">
@@ -61,32 +82,38 @@ function DepositIbcAsset(props) {
                 <path
                   d="M10 3.33334L10 16.6667"
                   stroke="white"
-                  stroke-width="2"
-                  stroke-miterlimit="10"
-                  stroke-linecap="round"
+                  strokeWidth="2"
+                  strokeMiterlimit="10"
+                  strokeLinecap="round"
                 />
                 <path
                   d="M15.8332 10.8333L9.99984 16.6667L4.1665 10.8333"
                   stroke="white"
-                  stroke-width="2"
-                  stroke-miterlimit="10"
-                  stroke-linecap="square"
+                  strokeWidth="2"
+                  strokeMiterlimit="10"
+                  strokeLinecap="square"
                 />
               </svg>
             </div>
           </div>
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-2">
             <div className="font-bold">TO</div>
-            <div className="text-type-secondary">
-              cosmos903y12987t1rbfu2iyvf8rf9723fe239e23v97sd92eh9b93
-            </div>
+            <div className="text-type-secondary">{props.selectedAddress}</div>
           </div>
           <div className="text-white mt-5">Amount to Deposit</div>
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-2">
             <div className="font-bold">Available Balance : 0 ATOM</div>
             <div className="border border-gray-700 rounded-xl p-3 bg-grey-900 mt-2">
               <div className="flex">
-                <div> 823 </div>
+                <input
+                  className="appearance-none bg-transparent border-none  focus:outline-none "
+                  type="text"
+                  placeholder="Enter Amount"
+                  aria-label="Amount"
+                  onChange={(e) => {
+                    setAmount(e.target.value);
+                  }}
+                ></input>
                 <div
                   className="link link-primary text-xs text-primary font-bold no-underline ml-auto"
                   onClick={(e) => {}}
@@ -101,8 +128,24 @@ function DepositIbcAsset(props) {
             <div className="modal-action">
               <label
                 htmlFor="my-modal-2"
-                className="btn w-96 px-56 flex-1 bg-green-900 text-xs ml-1"
-                onClick={(e) => {}}
+                className={
+                  "btn w-96 px-56 flex-1 bg-green-900 text-xs ml-1 " + loading
+                }
+                onClick={(e) => {
+                  setLoading(true);
+                  props.ibcDeposit(
+                    counterPartyChainInfo.port_id,
+                    counterPartyChainInfo.channel_id,
+                    amount,
+                    counterPartyChainInfo.coin_minimal_denom,
+                    props.selectedAddress,
+                    props.activeWallet.counterPartyAddress,
+                    1,
+                    100345,
+                    0
+                  );
+                  setLoading(false);
+                }}
                 disabled={false}
               >
                 DEPOSIT
@@ -115,7 +158,12 @@ function DepositIbcAsset(props) {
   );
 }
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    selectedAddress: state.wallet.selectedAddress,
+    activeWallet: state.wallet.activeWallet,
+  };
 };
 
-export default connect(mapStateToProps, {})(DepositIbcAsset);
+export default connect(mapStateToProps, {
+  ibcDeposit,
+})(DepositIbcAsset);

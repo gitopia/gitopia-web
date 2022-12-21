@@ -88,12 +88,20 @@ function AutoLogin(props) {
 
   const unlockLocalWallet = async () => {
     let res;
-    if (props.getPassword === "Unlock")
-      res = await props.unlockWallet({
-        name: walletName,
-        password: password,
-      });
-    else if (props.getPassword === "Download") {
+    if (props.getPassword === "Unlock") {
+      if (props.getPasswordPromise.chainId !== undefined) {
+        res = await props.unlockWallet({
+          name: walletName,
+          password: password,
+          chainId: props.getPasswordPromise.chainId,
+        });
+      } else {
+        res = await props.unlockWallet({
+          name: walletName,
+          password: password,
+        });
+      }
+    } else if (props.getPassword === "Download") {
       res = await props.downloadWallet(password);
     } else if (props.getPassword === "Connect") {
       res = await props.unlockLedgerWallet({ name: walletName });

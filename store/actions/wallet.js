@@ -8,14 +8,21 @@ import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import find from "lodash/find";
 import { notify } from "reapop";
-import { setupTxClients } from "./env";
+import { setupTxClients, sendTransaction } from "./env";
 import getNodeInfo from "../../helpers/getNodeInfo";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getUser from "../../helpers/getUser";
+import getChainInfo from "../../helpers/getChainInfo";
 
 let ledgerTransport;
 
-const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
+const postWalletUnlocked = async (
+  accountSigner,
+  dispatch,
+  getState,
+  accountSignerSecondary = null,
+  chainInfo = null
+) => {
   const { env, wallet } = getState();
 
   dispatch({
@@ -26,17 +33,31 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
   if (accountSigner) {
     const { queryClient, txClient } = await import("@gitopia/gitopia-js");
 
-    const [tc, qc, amount] = await Promise.all([
-      txClient(accountSigner, { addr: env.rpcNode, gasPrice: wallet.gasPrice }),
+    const [tc, qc, tcs, qcs, amount] = await Promise.all([
+      txClient(
+        accountSigner,
+        { addr: env.rpcNode, gasPrice: wallet.gasPrice },
+        "gitopia"
+      ),
       queryClient({ addr: env.apiNode }),
+      txClient(
+        accountSignerSecondary,
+        {
+          addr: chainInfo.rpc_node,
+          gasPrice: wallet.gasPrice,
+        },
+        chainInfo.prefix
+      ),
+      queryClient({ addr: chainInfo.api_node }),
       updateUserBalance()(dispatch, getState),
     ]);
-
     dispatch({
       type: envActions.SET_CLIENTS,
       payload: {
         txClient: tc,
         queryClient: qc,
+        txClientSecondary: tcs,
+        queryClientSecondary: qcs,
       },
     });
     if (wallet.getPasswordPromise.resolve) {
@@ -137,9 +158,14 @@ export const setWallet = ({ wallet }) => {
   };
 };
 
-export const unlockWallet = ({ name, password }) => {
+export const unlockWallet = ({ name, password, chainId = null }) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
+    let chainInfo;
+    let accountSignerSecondary;
+    if (chainId !== null) {
+      chainInfo = await getChainInfo(chainId);
+    }
     let encryptedWallet =
       state.wallets[state.wallets.findIndex((x) => x.name === name)].wallet;
     let wallet;
@@ -164,6 +190,19 @@ export const unlockWallet = ({ name, password }) => {
           prefix: "gitopia",
         }
       );
+      if (chainId !== null) {
+        accountSignerSecondary = await DirectSecp256k1HdWallet.fromMnemonic(
+          wallet.mnemonic,
+          {
+            prefix: chainInfo.prefix,
+          }
+        );
+        const [counterPartyAccount] =
+          await accountSignerSecondary.getAccounts();
+        const counterPartyAddress = counterPartyAccount.address;
+        wallet.counterPartyAddress = counterPartyAddress;
+        wallet.counterPartyChain = chainId;
+      }
 
       // Check if user exists, rename the old wallet to correct username
       let user = await getUser(wallet.accounts[0].address),
@@ -209,7 +248,17 @@ export const unlockWallet = ({ name, password }) => {
       }
 
       try {
-        await postWalletUnlocked(accountSigner, dispatch, getState);
+        if (chainId !== null) {
+          await postWalletUnlocked(
+            accountSigner,
+            dispatch,
+            getState,
+            accountSignerSecondary,
+            chainInfo
+          );
+        } else {
+          await postWalletUnlocked(accountSigner, dispatch, getState);
+        }
       } catch (e) {
         console.error(e);
       }
@@ -681,7 +730,17 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
   });
 };
 
-export const ibcTransfer = (
+export const getAddressforChain = (name, chainId) => {
+  return async (dispatch, getState) => {
+    try {
+      await setupTxClients(dispatch, getState, chainId);
+    } catch (e) {
+      return e;
+    }
+  };
+};
+
+export const ibcWithdraw = (
   sourcePort,
   sourceChannel,
   amount,
@@ -708,17 +767,70 @@ export const ibcTransfer = (
             revision_height: revision_height,
           },
           timeoutTimestamp: timeoutTimestamp,
-          token: [
-            {
-              amount: amount,
-              denom: denom,
-            },
-          ],
+          token: {
+            amount: amount,
+            denom: denom,
+          },
+        };
+        const message = await env.txClient.msgTransfer(send);
+        const result = await sendTransaction({ message })(dispatch, getState);
+        updateUserBalance()(dispatch, getState);
+        if (result && result.code === 0) {
+          updateUserBalance()(dispatch, getState);
+          dispatch(notify("Transfer Successful", "info"));
+          return true;
+        } else {
+          dispatch(notify(result.rawLog, "error"));
+          return null;
+        }
+      } catch (e) {
+        console.error(e);
+        dispatch(notify(e.message, "error"));
+        return null;
+      }
+    }
+  };
+};
+
+export const ibcDeposit = (
+  sourcePort,
+  sourceChannel,
+  amount,
+  denom,
+  sender,
+  receiver,
+  revision_number,
+  revision_height,
+  timeoutTimestamp = 0
+) => {
+  return async (dispatch, getState) => {
+    const { wallet } = getState();
+    if (wallet.activeWallet) {
+      try {
+        await setupTxClients(dispatch, getState);
+        const { env } = getState();
+        const send = {
+          sourcePort: sourcePort,
+          sourceChannel: sourceChannel,
+          sender: sender,
+          receiver: receiver,
+          timeoutHeight: {
+            revision_number: revision_number,
+            revision_height: revision_height,
+          },
+          timeoutTimestamp: timeoutTimestamp,
+          token: {
+            amount: amount,
+            denom: denom,
+          },
         };
         const msg = await env.txClient.msgTransfer(send);
-        const fee = "auto";
+        const fee = {
+          amount: [{ amount: "200", denom: "uosmo" }],
+          gas: "200000",
+        };
         const memo = "";
-        const result = await env.txClient.signAndBroadcast([msg], {
+        const result = await env.txClientSecondary.signAndBroadcast([msg], {
           fee,
           memo,
         });

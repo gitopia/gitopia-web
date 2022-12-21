@@ -7,9 +7,12 @@ import shrinkAddress from "../../helpers/shrinkAddress";
 import { signOut } from "../../store/actions/wallet";
 import { assets } from "../../ibc-assets-config";
 import getBalanceInDollars from "../../helpers/getWalletBalanceInDollars";
+import { useRouter } from "next/router";
+import { getAddressforChain } from "../../store/actions/wallet";
 
 function WalletInfo(props) {
   const [balance, setBalance] = useState(0);
+  const router = useRouter();
   useEffect(() => {
     async function getWalletbalance() {
       let balance = await getBalanceInDollars(props.selectedAddress);
@@ -131,7 +134,20 @@ function WalletInfo(props) {
                 <div className="text-type-primary text-xs mr-2 mt-1.5">
                   Withdraw
                 </div>
-                <Link className="hover:cursor-pointer" href="/assets/withdraw">
+                <div
+                  className="hover:cursor-pointer"
+                  onClick={() => {
+                    props
+                      .getAddressforChain(
+                        props.activeWallet.name,
+                        asset.chain_name
+                      )
+                      .then(() => {
+                        router.push("/assets/withdraw");
+                      });
+                  }}
+                  id={index}
+                >
                   <svg
                     width="32"
                     height="32"
@@ -182,14 +198,27 @@ function WalletInfo(props) {
                       </clipPath>
                     </defs>
                   </svg>
-                </Link>
+                </div>
               </div>
               <div className="border-l-2 border-[#5A6068] h-8"></div>
               <div className="ml-3 flex">
                 <div className="text-type-primary text-xs mr-2 mt-1.5">
                   Deposit
                 </div>
-                <Link className="mr-1" href="/assets/deposit">
+                <div
+                  className="mr-1"
+                  onClick={() => {
+                    props
+                      .getAddressforChain(
+                        props.activeWallet.name,
+                        asset.chain_name
+                      )
+                      .then(() => {
+                        router.push("/assets/deposit");
+                      });
+                  }}
+                  id={index}
+                >
                   <svg
                     width="32"
                     height="32"
@@ -230,7 +259,7 @@ function WalletInfo(props) {
                       </clipPath>
                     </defs>
                   </svg>
-                </Link>
+                </div>
               </div>
             </div>
           );
@@ -290,6 +319,7 @@ const mapStateToProps = (state) => {
     loreBalance: state.wallet.loreBalance,
     advanceUser: state.user.advanceUser,
     avatarUrl: state.user.avatarUrl,
+    activeWallet: state.wallet.activeWallet,
   };
 };
 
@@ -297,4 +327,5 @@ export default connect(mapStateToProps, {
   updateUserBalance,
   notify,
   signOut,
+  getAddressforChain,
 })(WalletInfo);

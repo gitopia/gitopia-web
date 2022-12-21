@@ -1,25 +1,33 @@
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-
-// revisit this file after relayer setup
+import { ibcWithdraw } from "../../store/actions/wallet";
+import { gitopiaIbc } from "../../ibc-assets-config";
+import { useRouter } from "next/router";
 
 function WithdrawIbcAsset(props) {
+  const [amount, setAmount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   useEffect(() => {
+    if (props.activeWallet.counterPartyAddress === undefined) {
+      router.push("/home");
+    }
     document.getElementById("my-modal").checked = true;
   }, []);
+
   return (
     <div>
-      <label for="my-modal" class="btn modal-button hidden">
+      <label htmlFor="my-modal" className="btn modal-button hidden">
         Withdraw
       </label>
 
-      <input type="checkbox" id="my-modal" class="modal-toggle" />
+      <input type="checkbox" id="my-modal" className="modal-toggle" />
       <div
-        class="modal modal-bottom sm:modal-middle cursor-pointer"
+        className="modal modal-bottom sm:modal-middle cursor-pointer"
         htmlFor="my-modal"
       >
-        <div class="modal-box relative bg-grey-500">
+        <div className="modal-box relative bg-grey-500">
           <div className="flex mb-4">
             <div className="w-11/12 font-bold text-sm text-type">
               Withdraw IBC Asset
@@ -46,9 +54,7 @@ function WithdrawIbcAsset(props) {
           <div className="text-white">IBC Transfer</div>
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-3">
             <div className="font-bold">FROM</div>
-            <div className="text-type-secondary">
-              cosmos903y12987t1rbfu2iyvf8rf9723fe239e23v97sd92eh9b93
-            </div>
+            <div className="text-type-secondary">{props.selectedAddress}</div>
           </div>
           <div className="flex justify-center">
             <div className="w-9 border border-gray-700 p-1.5 rounded-lg mt-2">
@@ -62,16 +68,16 @@ function WithdrawIbcAsset(props) {
                 <path
                   d="M10 3.33334L10 16.6667"
                   stroke="white"
-                  stroke-width="2"
-                  stroke-miterlimit="10"
-                  stroke-linecap="round"
+                  strokeWidth="2"
+                  strokeMiterlimit="10"
+                  strokeLinecap="round"
                 />
                 <path
                   d="M15.8332 10.8333L9.99984 16.6667L4.1665 10.8333"
                   stroke="white"
-                  stroke-width="2"
-                  stroke-miterlimit="10"
-                  stroke-linecap="square"
+                  strokeWidth="2"
+                  strokeMiterlimit="10"
+                  strokeLinecap="square"
                 />
               </svg>
             </div>
@@ -79,15 +85,31 @@ function WithdrawIbcAsset(props) {
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-2">
             <div className="font-bold">TO</div>
             <div className="text-type-secondary">
-              cosmos903y12987t1rbfu2iyvf8rf9723fe239e23v97sd92eh9b93
+              {props.activeWallet?.counterPartyAddress}
             </div>
           </div>
           <div className="text-white mt-5">Amount to Withdraw</div>
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-2">
-            <div className="font-bold">Available Balance : 0 ATOM</div>
+            <div className="font-bold">
+              {"Available Balance : " +
+                (props.advanceUser === true
+                  ? props.loreBalance
+                  : props.loreBalance / 1000000)}{" "}
+              {props.advanceUser === true
+                ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+            </div>
             <div className="border border-gray-700 rounded-xl p-3 bg-grey-900 mt-2">
               <div className="flex">
-                <div> 823 </div>
+                <input
+                  className="appearance-none bg-transparent border-none  focus:outline-none "
+                  type="text"
+                  placeholder="Enter Amount"
+                  aria-label="Amount"
+                  onChange={(e) => {
+                    setAmount(e.target.value);
+                  }}
+                ></input>
                 <div
                   className="link link-primary text-xs text-primary font-bold no-underline ml-auto"
                   onClick={(e) => {}}
@@ -102,9 +124,30 @@ function WithdrawIbcAsset(props) {
             <div className="modal-action">
               <label
                 htmlFor="my-modal"
-                className="btn w-96 px-56 flex-1 bg-green-900 text-xs ml-1"
-                onClick={(e) => {}}
-                disabled={false}
+                className={
+                  "btn w-96 px-56 flex-1 bg-green-900 text-xs ml-1 " +
+                  (loading ? "loading" : "")
+                }
+                onClick={(e) => {
+                  setLoading(true);
+                  props
+                    .ibcWithdraw(
+                      gitopiaIbc.port_id,
+                      gitopiaIbc.channel_id,
+                      amount,
+                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN,
+                      props.selectedAddress,
+                      props.activeWallet.counterPartyAddress,
+                      1,
+                      0,
+                      1770910630000000000
+                    )
+                    .then(() => {
+                      router.push("/home");
+                      setLoading(false);
+                    });
+                }}
+                disabled={amount <= 0}
               >
                 WITHDRAW
               </label>
@@ -116,7 +159,13 @@ function WithdrawIbcAsset(props) {
   );
 }
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    selectedAddress: state.wallet.selectedAddress,
+    loreBalance: state.wallet.loreBalance,
+    activeWallet: state.wallet.activeWallet,
+  };
 };
 
-export default connect(mapStateToProps, {})(WithdrawIbcAsset);
+export default connect(mapStateToProps, {
+  ibcWithdraw,
+})(WithdrawIbcAsset);

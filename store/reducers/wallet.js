@@ -109,11 +109,14 @@ const reducer = (state = initialState, action) => {
     }
 
     case walletActions.GET_PASSWORD_FOR_UNLOCK_WALLET: {
-      const { resolve, reject, usedFor } = action.payload;
+      const { resolve, reject, usedFor, chainId } = action.payload;
       return {
         ...state,
         getPassword: usedFor,
-        getPasswordPromise: { resolve, reject },
+        getPasswordPromise:
+          chainId !== undefined
+            ? { resolve, reject, chainId }
+            : { resolve, reject },
       };
     }
 

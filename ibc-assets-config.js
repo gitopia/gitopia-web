@@ -13,7 +13,7 @@ export const assets = [
     rpc_node: "https://rpc-test.osmosis.zone/",
     api_node: "https://osmosistest-rpc.quickapi.com/",
     prefix: "osmo",
-    coinMinimalDenom: "uosmo",
+    coin_minimal_denom: "uosmo",
     fee: "200",
   },
 ];
