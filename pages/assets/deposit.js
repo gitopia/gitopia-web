@@ -133,18 +133,22 @@ function DepositIbcAsset(props) {
                 }
                 onClick={(e) => {
                   setLoading(true);
-                  props.ibcDeposit(
-                    counterPartyChainInfo.port_id,
-                    counterPartyChainInfo.channel_id,
-                    amount,
-                    counterPartyChainInfo.coin_minimal_denom,
-                    props.selectedAddress,
-                    props.activeWallet.counterPartyAddress,
-                    1,
-                    100345,
-                    0
-                  );
-                  setLoading(false);
+                  props
+                    .ibcDeposit(
+                      counterPartyChainInfo.port_id,
+                      counterPartyChainInfo.channel_id,
+                      amount,
+                      counterPartyChainInfo.coin_minimal_denom,
+                      props.activeWallet.counterPartyAddress,
+                      props.selectedAddress,
+                      1,
+                      0,
+                      1770910630000000000
+                    )
+                    .then(() => {
+                      router.push("/home");
+                      setLoading(false);
+                    });
                 }}
                 disabled={false}
               >
