@@ -10,7 +10,7 @@ function WithdrawIbcAsset(props) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   useEffect(() => {
-    if (props.activeWallet.counterPartyAddress === undefined) {
+    if (props.activeWallet?.counterPartyAddress === undefined) {
       router.push("/home");
     }
     document.getElementById("my-modal").checked = true;

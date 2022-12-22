@@ -104,7 +104,14 @@ function AutoLogin(props) {
     } else if (props.getPassword === "Download") {
       res = await props.downloadWallet(password);
     } else if (props.getPassword === "Connect") {
-      res = await props.unlockLedgerWallet({ name: walletName });
+      if (props.getPasswordPromise.chainId !== undefined) {
+        res = await props.unlockLedgerWallet({
+          name: walletName,
+          chainId: props.getPasswordPromise.chainId,
+        });
+      } else {
+        res = await props.unlockLedgerWallet({ name: walletName });
+      }
       if (res?.message) {
         props.notify(res.message, "error");
         if (props.getPasswordPromise.reject) {

@@ -32,34 +32,52 @@ const postWalletUnlocked = async (
 
   if (accountSigner) {
     const { queryClient, txClient } = await import("@gitopia/gitopia-js");
-
-    const [tc, qc, tcs, qcs, amount] = await Promise.all([
-      txClient(
-        accountSigner,
-        { addr: env.rpcNode, gasPrice: wallet.gasPrice },
-        "gitopia"
-      ),
-      queryClient({ addr: env.apiNode }),
-      txClient(
-        accountSignerSecondary,
-        {
-          addr: chainInfo.rpc_node,
-          gasPrice: wallet.gasPrice,
+    if (accountSignerSecondary !== null) {
+      const [tc, qc, tcs, qcs, amount] = await Promise.all([
+        txClient(
+          accountSigner,
+          { addr: env.rpcNode, gasPrice: wallet.gasPrice },
+          "gitopia"
+        ),
+        queryClient({ addr: env.apiNode }),
+        txClient(
+          accountSignerSecondary,
+          {
+            addr: chainInfo.rpc_node,
+            gasPrice: wallet.gasPrice,
+          },
+          chainInfo.prefix
+        ),
+        queryClient({ addr: chainInfo.api_node }),
+        updateUserBalance()(dispatch, getState),
+      ]);
+      dispatch({
+        type: envActions.SET_CLIENTS,
+        payload: {
+          txClient: tc,
+          queryClient: qc,
+          txClientSecondary: tcs,
+          queryClientSecondary: qcs,
         },
-        chainInfo.prefix
-      ),
-      queryClient({ addr: chainInfo.api_node }),
-      updateUserBalance()(dispatch, getState),
-    ]);
-    dispatch({
-      type: envActions.SET_CLIENTS,
-      payload: {
-        txClient: tc,
-        queryClient: qc,
-        txClientSecondary: tcs,
-        queryClientSecondary: qcs,
-      },
-    });
+      });
+    } else {
+      const [tc, qc, amount] = await Promise.all([
+        txClient(
+          accountSigner,
+          { addr: env.rpcNode, gasPrice: wallet.gasPrice },
+          "gitopia"
+        ),
+        queryClient({ addr: env.apiNode }),
+        updateUserBalance()(dispatch, getState),
+      ]);
+      dispatch({
+        type: envActions.SET_CLIENTS,
+        payload: {
+          txClient: tc,
+          queryClient: qc,
+        },
+      });
+    }
     if (wallet.getPasswordPromise.resolve) {
       wallet.getPasswordPromise.resolve("Unlock success");
     }
@@ -489,7 +507,7 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
   };
 };
 
-export const unlockLedgerWallet = ({ name }) => {
+export const unlockLedgerWallet = ({ name, chainId = null }) => {
   return async (dispatch, getState) => {
     const TransportWebUSB = (await import("@ledgerhq/hw-transport-webusb"))
       .default;
@@ -501,7 +519,11 @@ export const unlockLedgerWallet = ({ name }) => {
     let accountSigner;
     let encryptedWallet =
       wallet.wallets[wallet.wallets.findIndex((x) => x.name === name)].wallet;
-
+    let chainInfo;
+    let accountSignerSecondary;
+    if (chainId !== null) {
+      chainInfo = await getChainInfo(chainId);
+    }
     dispatch({ type: walletActions.START_UNLOCKING_WALLET });
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
@@ -523,6 +545,20 @@ export const unlockLedgerWallet = ({ name }) => {
           CryptoJS.enc.Utf8
         )
       );
+      console.log(chainId);
+      if (chainId !== null) {
+        accountSignerSecondary = new LedgerSigner(ledgerTransport, {
+          hdPaths: [path],
+          prefix: chainInfo.prefix,
+          ledgerAppName: "Cosmos",
+        });
+        const [counterPartyAccount] =
+          await accountSignerSecondary.getAccounts();
+        const counterPartyAddress = counterPartyAccount.address;
+        console.log(accountSignerSecondary);
+        newWallet.counterPartyAddress = counterPartyAddress;
+        newWallet.counterPartyChain = chainId;
+      }
       if (addr !== newWallet.accounts[0].address) {
         dispatch(
           notify("Wallet address not matching Ledger's address", "error")
@@ -567,7 +603,17 @@ export const unlockLedgerWallet = ({ name }) => {
         },
       });
 
-      await postWalletUnlocked(accountSigner, dispatch, getState);
+      if (chainId !== null) {
+        await postWalletUnlocked(
+          accountSigner,
+          dispatch,
+          getState,
+          accountSignerSecondary,
+          chainInfo
+        );
+      } else {
+        await postWalletUnlocked(accountSigner, dispatch, getState);
+      }
 
       dispatch({ type: walletActions.STOP_UNLOCKING_WALLET });
       dispatch({
@@ -733,7 +779,48 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
 export const getAddressforChain = (name, chainId) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(dispatch, getState, chainId);
+      const { wallet } = getState();
+      let activeWallet = wallet.activeWallet;
+      if (activeWallet.isKeplr) {
+        if (window.keplr && window.getOfflineSigner) {
+          try {
+            const info = await getNodeInfo();
+            const chain = info.default_node_info.network;
+            const offlineSigner = await window.getOfflineSignerAuto(chain);
+            const accountSignerSecondary = await window.getOfflineSignerAuto(
+              "osmo-test-4"
+            );
+            const accounts = await offlineSigner.getAccounts();
+            const counterPartyAccount =
+              await accountSignerSecondary.getAccounts();
+            activeWallet.counterPartyAddress = counterPartyAccount[0].address;
+            activeWallet.counterPartyChain = chainId;
+            await dispatch({
+              type: walletActions.SET_ACTIVE_WALLET,
+              payload: {
+                wallet: activeWallet,
+              },
+            });
+            await postWalletUnlocked(
+              offlineSigner,
+              dispatch,
+              getState,
+              accountSignerSecondary,
+              chainId
+            );
+            return accounts[0];
+          } catch (e) {
+            console.error(e);
+            return null;
+          }
+        } else {
+          dispatch(
+            notify("Please ensure keplr extension is installed", "error")
+          );
+        }
+      } else {
+        await setupTxClients(dispatch, getState, chainId);
+      }
     } catch (e) {
       return e;
     }
@@ -824,12 +911,13 @@ export const ibcDeposit = (
             denom: denom,
           },
         };
-        const msg = await env.txClient.msgTransfer(send);
+        const msg = await env.txClientSecondary.msgTransfer(send);
         const fee = {
           amount: [{ amount: "200", denom: "uosmo" }],
           gas: "200000",
         };
         const memo = "";
+        console.log(env.txClientSecondary);
         const result = await env.txClientSecondary.signAndBroadcast([msg], {
           fee,
           memo,
