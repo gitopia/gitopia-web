@@ -226,10 +226,8 @@ function RepositoryCompareView(props) {
   const getNewUrl = (baseRepo, baseBranch, headRepo, headBranch) => {
     const baseOwner = baseRepo.owner.id;
     const baseRepoName = baseRepo.name;
-    const baseRepoId = baseRepo.id;
     const headOwner = headRepo.owner.id;
     const headRepoName = headRepo.name;
-    const headRepoId = headRepo.id;
     if (headOwner === baseOwner) {
       return `/${baseOwner}/${baseRepoName}/compare/${baseBranch}...${headBranch}`;
     } else {

@@ -11,6 +11,7 @@ import pullRequestStateClass from "../../helpers/pullRequestStateClass";
 import mergePullRequestCheck from "../../helpers/mergePullRequestCheck";
 import getPullRequestMergePermission from "../../helpers/getPullRequestMergePermission";
 import getGitServerAuthorization from "../../helpers/getGitServerAuthStatus";
+import getPullRequestCommits from "../../helpers/getPullRequestCommits";
 
 function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
   const [isMerging, setIsMerging] = useState(false);
@@ -31,26 +32,39 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
       return;
     }
     setIsMerging(true);
-    const res = await mergePullRequestCheck(
-      pullRequest.iid,
-      pullRequest.base.repositoryId,
-      pullRequest.head.repositoryId,
-      pullRequest.base.branch,
-      pullRequest.head.branch,
-      "merge",
-      props.selectedAddress,
-      "<>",
-      props.selectedAddress
-    );
-    console.log("mergeCheck", res);
-    if (res && res.data.is_mergeable) {
-      setMessage("This branch has no conflicts with base branch");
-      setStateClass(pullRequestStateClass(pullRequest.state));
-      setIconType("check");
+    const [mergeCheck, commits] = await Promise.all([
+      mergePullRequestCheck(
+        pullRequest.iid,
+        pullRequest.base.repositoryId,
+        pullRequest.head.repositoryId,
+        pullRequest.base.branch,
+        pullRequest.head.branch,
+        "merge",
+        props.selectedAddress,
+        "<>",
+        props.selectedAddress
+      ),
+      await getPullRequestCommits(
+        pullRequest.base.repositoryId,
+        pullRequest.head.repositoryId,
+        pullRequest.base.branch,
+        pullRequest.head.branch
+      ),
+    ]);
+    if (commits?.length) {
+      if (mergeCheck?.data?.is_mergeable) {
+        setMessage("This branch has no conflicts with base branch");
+        setStateClass(pullRequestStateClass(pullRequest.state));
+        setIconType("check");
+      } else {
+        setMessage(
+          "There are conflicts in merging the branch, please resolve and push again"
+        );
+        setStateClass("warning");
+        setIconType("warning");
+      }
     } else {
-      setMessage(
-        "There are conflicts in merging the branch, please resolve and push again"
-      );
+      setMessage("Target branch is same or ahead of base branch");
       setStateClass("warning");
       setIconType("warning");
     }
@@ -144,7 +158,7 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
           "flex flex-1 items-center border p-4 rounded-md border-" + stateClass
         }
       >
-        <div className="flex">
+        <div className="flex w-2/3">
           {iconType === "check" ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"

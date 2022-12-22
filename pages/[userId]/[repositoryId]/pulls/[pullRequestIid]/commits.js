@@ -137,11 +137,11 @@ function RepositoryPullCommitsView(props) {
               active="commits"
             />
           </div>
-          <div className="mt-8 px-4">
-            {commitShas.length}
-            <span className="ml-1 capitalize">
+          <div className="mt-8 px-4 flex">
+            <span>{commitShas.length}</span>
+            <div className="ml-1 capitalize">
               {pluralize("commit", commitShas.length)}
-            </span>
+            </div>
           </div>
           <div className="mt-8">
             {commits.map((c, i) => {

@@ -52,16 +52,15 @@ export default function usePullRequest(repository) {
             p.head.sha = p.head.commitSha;
           }
         } else {
-          const forkRepo = await getRepository(p.head.repositoryId);
-          forkRepo.branches = await getAllRepositoryBranch(
-            forkRepo.owner.id,
-            forkRepo.name
-          );
-          forkRepo.tags = await getAllRepositoryTag(
-            forkRepo.owner.id,
-            forkRepo.name
-          );
+          let forkRepo = await getRepository(p.head.repositoryId);
+          const [forkRepoBranches, forkRepoTags] = Promise.all([
+            await getAllRepositoryBranch(forkRepo.owner.id, forkRepo.name),
+            await getAllRepositoryTag(forkRepo.owner.id, forkRepo.name),
+          ]);
+
           if (forkRepo) {
+            if (forkRepoBranches) forkRepo.branches = forkRepoBranches;
+            if (forRepoTags) forkRepo.tags = forkRepoTags;
             p.head.repository = forkRepo;
             p.base.repository = repository;
             if (p.state === "OPEN") {
