@@ -9,6 +9,7 @@ function DepositIbcAsset(props) {
   const [amount, setAmount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [counterPartyChainInfo, setCounterPartyChainInfo] = useState(null);
+  const [validateAmountError, setValidateAmountError] = useState(null);
   const router = useRouter();
   useEffect(() => {
     if (
@@ -28,6 +29,43 @@ function DepositIbcAsset(props) {
     getChain();
   }, [props.activeWallet]);
 
+  function fillAmount(amount) {
+    document.getElementById("amount").value = amount;
+  }
+  function isNaturalNumber(n) {
+    n = n.toString();
+    var n1 = Math.abs(n),
+      n2 = parseInt(n, 10);
+    return !isNaN(n1) && n2 === n1 && n1.toString() === n;
+  }
+
+  const validateAmount = (amount) => {
+    setValidateAmountError(null);
+    let Vamount = Number(amount);
+    if (amount == "" || amount == 0) {
+      setValidateAmountError("Enter a valid amount");
+    }
+
+    let balance = props.loreBalance;
+    if (props.advanceUser === false) {
+      Vamount = Vamount * 1000000;
+    }
+    if (Vamount > 0 && isNaturalNumber(Vamount)) {
+      if (Vamount < 10 || Vamount > 0) {
+        if (Vamount > balance) {
+          setValidateAmountError("Insufficient balance");
+          return false;
+        }
+      } else {
+        setValidateAmountError("Amount should be in range 1-10");
+        return false;
+      }
+    } else {
+      setValidateAmountError("Enter a valid amount");
+      return false;
+    }
+    return true;
+  };
   return (
     <div>
       <label htmlFor="my-modal-2" className="btn modal-button hidden">
@@ -102,26 +140,52 @@ function DepositIbcAsset(props) {
           </div>
           <div className="text-white mt-5">Amount to Deposit</div>
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-2">
-            <div className="font-bold">Available Balance : 0 ATOM</div>
+            <div className="font-bold">Available Balance : 0 OSMO</div>
             <div className="border border-gray-700 rounded-xl p-3 bg-grey-900 mt-2">
               <div className="flex">
                 <input
-                  className="appearance-none bg-transparent border-none  focus:outline-none "
+                  className={
+                    "appearance-none bg-transparent border-none  focus:outline-none w-full " +
+                    (validateAmountError
+                      ? "border-pink text-pink focus:border-pink"
+                      : amount.length > 0
+                      ? "border-green"
+                      : "")
+                  }
                   type="text"
                   placeholder="Enter Amount"
                   aria-label="Amount"
+                  id="amount"
                   onChange={(e) => {
                     setAmount(e.target.value);
+                  }}
+                  onKeyUp={(e) => {
+                    validateAmount(e.target.value);
+                  }}
+                  onMouseUp={(e) => {
+                    validateAmount(e.target.value);
                   }}
                 ></input>
                 <div
                   className="link link-primary text-xs text-primary font-bold no-underline ml-auto"
-                  onClick={(e) => {}}
+                  onClick={(e) => {
+                    fillAmount("20");
+                    setAmount("20");
+                  }}
                 >
                   Max
                 </div>
               </div>
             </div>
+            {validateAmountError ? (
+              <label className="label">
+                <span className="label-text-alt text-error">
+                  {validateAmountError}
+                </span>
+              </label>
+            ) : (
+              ""
+            )}
           </div>
 
           <div className="flex ml-auto self-center">
@@ -137,7 +201,9 @@ function DepositIbcAsset(props) {
                     .ibcDeposit(
                       counterPartyChainInfo.port_id,
                       counterPartyChainInfo.channel_id,
-                      amount,
+                      props.advanceUser
+                        ? amount
+                        : (Number(amount) * 1000000).toString(),
                       counterPartyChainInfo.coin_minimal_denom,
                       props.activeWallet.counterPartyAddress,
                       props.selectedAddress,

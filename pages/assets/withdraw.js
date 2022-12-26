@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 function WithdrawIbcAsset(props) {
   const [amount, setAmount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [validateAmountError, setValidateAmountError] = useState(null);
   const router = useRouter();
   useEffect(() => {
     if (props.activeWallet?.counterPartyAddress === undefined) {
@@ -16,6 +17,43 @@ function WithdrawIbcAsset(props) {
     document.getElementById("my-modal").checked = true;
   }, []);
 
+  function fillAmount(amount) {
+    document.getElementById("amount").value = amount;
+  }
+  function isNaturalNumber(n) {
+    n = n.toString();
+    var n1 = Math.abs(n),
+      n2 = parseInt(n, 10);
+    return !isNaN(n1) && n2 === n1 && n1.toString() === n;
+  }
+
+  const validateAmount = (amount) => {
+    setValidateAmountError(null);
+    let Vamount = Number(amount);
+    if (amount == "" || amount == 0) {
+      setValidateAmountError("Enter a valid amount");
+    }
+
+    let balance = props.loreBalance;
+    if (props.advanceUser === false) {
+      Vamount = Vamount * 1000000;
+    }
+    if (Vamount > 0 && isNaturalNumber(Vamount)) {
+      if (Vamount < 10 || Vamount > 0) {
+        if (Vamount > balance) {
+          setValidateAmountError("Insufficient balance");
+          return false;
+        }
+      } else {
+        setValidateAmountError("Amount should be in range 1-10");
+        return false;
+      }
+    } else {
+      setValidateAmountError("Enter a valid amount");
+      return false;
+    }
+    return true;
+  };
   return (
     <div>
       <label htmlFor="my-modal" className="btn modal-button hidden">
@@ -102,22 +140,56 @@ function WithdrawIbcAsset(props) {
             <div className="border border-gray-700 rounded-xl p-3 bg-grey-900 mt-2">
               <div className="flex">
                 <input
-                  className="appearance-none bg-transparent border-none  focus:outline-none "
+                  className={
+                    "appearance-none bg-transparent border-none  focus:outline-none w-full " +
+                    (validateAmountError
+                      ? "border-pink text-pink focus:border-pink"
+                      : amount.length > 0
+                      ? "border-green"
+                      : "")
+                  }
                   type="text"
                   placeholder="Enter Amount"
                   aria-label="Amount"
+                  id="amount"
+                  onKeyUp={(e) => {
+                    validateAmount(e.target.value);
+                  }}
+                  onMouseUp={(e) => {
+                    validateAmount(e.target.value);
+                  }}
                   onChange={(e) => {
                     setAmount(e.target.value);
                   }}
                 ></input>
                 <div
                   className="link link-primary text-xs text-primary font-bold no-underline ml-auto"
-                  onClick={(e) => {}}
+                  onClick={(e) => {
+                    fillAmount(
+                      props.advanceUser
+                        ? props.loreBalance.toString()
+                        : (props.loreBalance / 1000000).toString()
+                    );
+                    setAmount(
+                      props.advanceUser
+                        ? props.loreBalance.toString()
+                        : (props.loreBalance / 1000000).toString()
+                    );
+                  }}
                 >
                   Max
                 </div>
               </div>
             </div>
+            {validateAmountError ? (
+              <label className="label">
+                <span className="label-text-alt text-error">
+                  {validateAmountError}
+                </span>
+              </label>
+            ) : (
+              ""
+            )}
           </div>
 
           <div className="flex ml-auto self-center">
@@ -134,7 +206,9 @@ function WithdrawIbcAsset(props) {
                     .ibcWithdraw(
                       gitopiaIbc.port_id,
                       gitopiaIbc.channel_id,
-                      amount,
+                      props.advanceUser
+                        ? amount
+                        : (Number(amount) * 1000000).toString(),
                       process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN,
                       props.selectedAddress,
                       props.activeWallet.counterPartyAddress,
@@ -163,6 +237,7 @@ const mapStateToProps = (state) => {
     selectedAddress: state.wallet.selectedAddress,
     loreBalance: state.wallet.loreBalance,
     activeWallet: state.wallet.activeWallet,
+    advanceUser: state.user.advanceUser,
   };
 };
 
