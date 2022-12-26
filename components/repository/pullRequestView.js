@@ -69,7 +69,7 @@ function IssuePullRequestView(props) {
                   </div>
                 </div>
                 {isHovering.id == p.id ? (
-                  <div className="flex card bg-[#28313c] w-72 h-48 p-3">
+                  <div className="flex card bg-[#28313c] w-72 h-48 p-3 z-10 absolute">
                     <div className="flex">
                       <div className="avatar flex-none items-center w-1/6">
                         <div className={"w-7 h-7 rounded-full"}>
