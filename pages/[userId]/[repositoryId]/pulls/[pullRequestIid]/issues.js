@@ -21,8 +21,6 @@ import { ApolloProvider } from "@apollo/client";
 import client from "../../../../../helpers/apolloClient";
 import QueryIssues from "../../../../../helpers/queryIssuesByTitleGql";
 
-// revisit after graphql update
-
 export async function getStaticProps() {
   return { props: {} };
 }
@@ -131,7 +129,7 @@ function RepositoryPullIssuesView(props) {
                   <ApolloProvider client={client}>
                     <QueryIssues
                       substr={textEntered}
-                      repoId={0}
+                      repoId={Number(repository.id)}
                       setIssueList={setIssueList}
                     />
                   </ApolloProvider>
@@ -213,6 +211,7 @@ function RepositoryPullIssuesView(props) {
               onClick={() => {
                 props.linkPullIssuebyIid(pullRequest.id, issue.iid);
               }}
+              disabled={issue.iid === ""}
             >
               Link Issue
             </button>

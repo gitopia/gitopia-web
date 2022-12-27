@@ -7,7 +7,6 @@ export default async function getDenomNameByHash(denom) {
     const result = await api.queryDenomTrace(denomHash);
     if (result.ok) {
       let denom = result.data.denom_trace.base_denom;
-      console.log(denom);
       return denom;
     }
   } catch (e) {
