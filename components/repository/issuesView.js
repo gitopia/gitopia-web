@@ -97,7 +97,9 @@ function PullRequestIssueView(props) {
                       </div>
                       <div className="text-xs text-type mt-0.5 w-5/6 leading-3">
                         {shrinkAddress(i.creator)} on{" "}
-                        {dayjs.unix(parseInt(i.createdAt)).format("DD/MM/YYYY")}{" "}
+                        {dayjs
+                          .unix(parseInt(i.createdAt))
+                          .format("MMM DD, YYYY")}{" "}
                       </div>
                     </div>
                     <div className="flex mt-2">
