@@ -98,7 +98,7 @@ function IssueBountyView(props) {
           );
         })}
         {isHovering ? (
-          <div className="flex card bg-grey-500 w-72 h-fit p-3 z-10 absolute rounded-lg">
+          <div className="flex card bg-[#28313C] w-72 h-fit p-3 z-10 absolute rounded-lg">
             {bounties.map((b, index) => {
               return (
                 <div

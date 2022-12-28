@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
+import getDenomNameByHash from "../../helpers/getDenomNameByHash";
 
 function CreateBounty(props) {
   const router = useRouter();
@@ -16,6 +17,7 @@ function CreateBounty(props) {
   const [maxAmount, setMaxAmount] = useState([]);
   const [validateAmountError, setValidateAmountError] = useState("");
   const [click, setClick] = useState(false);
+  const [tokenKV, setTokenKV] = useState({});
   const ref1 = useRef(null);
   const ref2 = useRef(null);
   const ref3 = useRef("dd/mm/yyyy");
@@ -23,12 +25,21 @@ function CreateBounty(props) {
   useEffect(() => {
     async function getBalance() {
       const b = await getBalances(props.selectedAddress);
+      let kv = {};
       if (b) {
+        for (let i = 0; i < b.balances.length; i++) {
+          if (b.balances[i].denom.includes("ibc")) {
+            let denomName = await getDenomNameByHash(b.balances[i].denom);
+            b.balances[i].showDenom = denomName;
+            kv[b.balances[i].denom] = denomName;
+          }
+        }
+        setTokenKV(kv);
         setBalances(b.balances);
       }
     }
     getBalance();
-  }, [id]);
+  }, [props.selectedAddress]);
 
   useEffect(() => {
     if (props.bountyAmount.length < 1) {
@@ -261,11 +272,11 @@ function CreateBounty(props) {
                   {balances.map((t, i) => {
                     return !tokenDenom.includes(t.denom) ? (
                       <option key={i} value={t.denom}>
-                        {t.denom}
+                        {t.showDenom ? t.showDenom : t.denom}
                       </option>
                     ) : (
                       <option key={i} value={t.denom} disabled={true}>
-                        {t.denom}
+                        {t.showDenom ? t.showDenom : t.denom}
                       </option>
                     );
                   })}
@@ -319,7 +330,9 @@ function CreateBounty(props) {
                     }
                     key={i}
                   >
-                    <div className="mr-2">{a.denom}</div>
+                    <div className="mr-2">
+                      {a.denom.includes("ibc") ? tokenKV[a.denom] : a.denom}
+                    </div>
                     <div>{a.amount}</div>
                     <div
                       className="link ml-8 mt-1 no-underline"
