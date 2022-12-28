@@ -83,7 +83,7 @@ function PullRequestIssueView(props) {
                   </div>
                 </div>
                 {isHovering.id == i.id ? (
-                  <div className="flex card bg-[#28313C] w-60 h-auto p-3 z-10 absolute rounded-md">
+                  <div className="flex card bg-[#28313C] w-60 h-auto p-3 z-10 absolute rounded-lg">
                     <div className="flex">
                       <div className="avatar flex-none items-center w-1/6">
                         <div className={"w-6 h-6  rounded-full"}>
@@ -104,16 +104,17 @@ function PullRequestIssueView(props) {
                       <div className="text-teal text-xs font-semibold w-1/6 leading-4">
                         #{i.iid}
                       </div>
-                      <div className="text-type text-xs font-semibold w-5/6 leading-3">
-                        {i.title}
+                      <div className="w-5/6">
+                        <div className="text-type text-xs font-semibold leading-3">
+                          {i.title}
+                        </div>
+                        <div className="text-type-secondary text-xs mt-1 leading-4">
+                          {i.description.split(" ").length > 15
+                            ? i.description.split(" ").splice(0, 15).join(" ") +
+                              "..."
+                            : i.description}
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="ml-9 text-type-secondary text-xs mt-1 leading-4">
-                      {i.description.split(" ").length > 15
-                        ? i.description.split(" ").splice(0, 15).join(" ") +
-                          "..."
-                        : i.description}
                     </div>
                   </div>
                 ) : index === issues.length - 1 ? (

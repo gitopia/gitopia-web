@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { debounce } from "lodash";
 import { createComment } from "../../store/actions/repository";
 import { notify } from "reapop";
+import getRepositoryById from "../../helpers/getRepositoryById";
 
 function IssuePullRequestView(props) {
   const [pulls, setPulls] = useState([]);
@@ -14,8 +15,15 @@ function IssuePullRequestView(props) {
   useEffect(() => {
     async function fetchPulls() {
       const array = [];
+      let baseRepo, headRepo;
       for (var i = 0; i < props.pullRequests.length; i++) {
         const res = await getPullRequest(props.pullRequests[i].id);
+        if (res) {
+          baseRepo = await getRepositoryById(res.base.repositoryId);
+          headRepo = await getRepositoryById(res.head.repositoryId);
+        }
+        res.baseRepo = baseRepo;
+        res.headRepo = headRepo;
         array.push(res);
       }
 
@@ -69,7 +77,7 @@ function IssuePullRequestView(props) {
                   </div>
                 </div>
                 {isHovering.id == p.id ? (
-                  <div className="flex card bg-[#28313c] w-72 h-48 p-3 z-10 absolute">
+                  <div className="flex card bg-[#28313c] w-72 h-auto p-3 z-10 absolute rounded-lg">
                     <div className="flex">
                       <div className="avatar flex-none items-center w-1/6">
                         <div className={"w-7 h-7 rounded-full"}>
@@ -90,51 +98,63 @@ function IssuePullRequestView(props) {
                       <div className="text-teal text-xs font-semibold w-1/6">
                         #{p.iid}
                       </div>
-                      <div className="text-type text-xs font-semibold w-5/6">
-                        {p.title}
-                      </div>
-                    </div>
-                    <div className="text-type-secondary text-xs mt-1 ml-11">
-                      {p.description.split(" ").length > 15
-                        ? p.description.split(" ").splice(0, 15).join(" ") +
-                          "..."
-                        : p.description}
-                    </div>
-                    <div className="flex mt-auto">
-                      <div
-                        className={
-                          "flex text-xs box-border bg-white/10 h-6 p-0.5 rounded-md px-1.5"
-                        }
-                      >
-                        <div className="text-type-secondary">enzaimz :</div>
-                        <div className="ml-1 text-teal">master</div>
-                      </div>
-                      <svg
-                        width="12"
-                        height="10"
-                        viewBox="0 0 12 10"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="m-1.5"
-                      >
-                        <path
-                          d="M11 5H1M1 5L5 1M1 5L5 9"
-                          stroke="#ADBECB"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <div
-                        className={
-                          "flex text-xs box-border bg-white/10 h-6 p-0.5 rounded-md px-1.5"
-                        }
-                      >
-                        <div className="text-type-secondary">enzaimz :</div>
-                        <div className="ml-1 text-teal">master</div>
+                      <div className="w-5/6">
+                        <div className="text-type text-xs font-semibold">
+                          {p.title}
+                        </div>
+                        <div className="text-type-secondary text-xs mt-1">
+                          {p.description.split(" ").length > 15
+                            ? p.description.split(" ").splice(0, 15).join(" ") +
+                              "..."
+                            : p.description}
+                        </div>
+                        <div className="flex mt-4">
+                          <div
+                            className={
+                              "flex text-xs box-border bg-white/10 h-6 p-0.5 rounded-md px-1.5"
+                            }
+                          >
+                            <div className="text-type-secondary">
+                              {p.baseRepo.name} :
+                            </div>
+                            <div className="ml-1 text-teal">
+                              {p.base.branch}
+                            </div>
+                          </div>
+                          <svg
+                            width="12"
+                            height="10"
+                            viewBox="0 0 12 10"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="m-1.5"
+                          >
+                            <path
+                              d="M11 5H1M1 5L5 1M1 5L5 9"
+                              stroke="#ADBECB"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          <div
+                            className={
+                              "flex text-xs box-border bg-white/10 h-6 p-0.5 rounded-md px-1.5"
+                            }
+                          >
+                            <div className="text-type-secondary">
+                              {p.headRepo.name} :
+                            </div>
+                            <div className="ml-1 text-teal">
+                              {p.head.branch}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
+                ) : index === pulls.length - 1 ? (
+                  ""
                 ) : (
                   <svg
                     width="22"
