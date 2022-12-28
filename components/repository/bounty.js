@@ -214,6 +214,8 @@ function CreateBounty(props) {
                 props.setBountyAmount([]);
                 setExpiry("dd/mm/yyyy");
                 ref3.current.value = "";
+                ref2.current.value = "Select Token";
+                ref1.current.value = "";
               }}
             >
               <svg
@@ -439,6 +441,8 @@ function CreateBounty(props) {
                             props.setBountyAmount([]);
                             setExpiry("");
                             ref3.current.value = "dd/mm/yyyy";
+                            ref2.current.value = "Select Token";
+                            ref1.current.value = "";
                             if (res && res.code === 0) {
                               props.onUpdate() ? props.onUpdate() : "";
                             }
