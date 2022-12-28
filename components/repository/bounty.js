@@ -110,17 +110,13 @@ function CreateBounty(props) {
       setValidateAmountError("Enter Valid Amount");
     }
 
-    let balance = props.loreBalance;
-    if (props.advanceUser === false) {
-      Vamount = Vamount * 1000000;
-    }
+    let balance = maxAmount[counter];
+    // if (props.advanceUser === false) {
+    //   Vamount = Vamount * 1000000;
+    // }
     if (Vamount > 0 && isNaturalNumber(Vamount)) {
-      if (Vamount < 10 || Vamount > 0) {
-        if (Vamount > balance) {
-          setValidateAmountError("Insufficient Balance");
-        }
-      } else {
-        setValidateAmountError("Amount should be in range 1-10");
+      if (Vamount > balance) {
+        setValidateAmountError("Insufficient Balance");
       }
     } else {
       setValidateAmountError("Enter a Valid Amount");
