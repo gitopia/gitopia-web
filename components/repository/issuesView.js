@@ -83,7 +83,7 @@ function PullRequestIssueView(props) {
                   </div>
                 </div>
                 {isHovering.id == i.id ? (
-                  <div className="flex card bg-grey-500 w-52 h-48 p-3 z-10 absolute">
+                  <div className="flex card bg-[#28313C] w-60 h-auto p-3 z-10 absolute rounded-md">
                     <div className="flex">
                       <div className="avatar flex-none items-center w-1/6">
                         <div className={"w-6 h-6  rounded-full"}>
@@ -109,54 +109,15 @@ function PullRequestIssueView(props) {
                       </div>
                     </div>
 
-                    <div className="ml-8 text-type-secondary text-xs mt-1 leading-4">
+                    <div className="ml-9 text-type-secondary text-xs mt-1 leading-4">
                       {i.description.split(" ").length > 15
                         ? i.description.split(" ").splice(0, 15).join(" ") +
                           "..."
                         : i.description}
                     </div>
-                    <div className="relative mt-auto">
-                      <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none my-2">
-                        <div className="avatar flex-none items-center">
-                          <div className={"w-6 h-6 rounded-full"}>
-                            <img
-                              src={
-                                "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                                props.selectedAddress.slice(-1)
-                              }
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Leave a comment"
-                        className="input input-bordered input-sm w-full max-w-xs text-xs pl-10 h-10 leading-3"
-                        onKeyUp={async (e) => {
-                          if (e.code === "Enter" || e.code === "NumpadEnter") {
-                            createComment(isHovering.id);
-                            setIsHovering({ id: null });
-                            setComment("");
-                          } else {
-                            await validateComment(e.target.value);
-                          }
-                        }}
-                        value={comment}
-                        onChange={(e) => {
-                          setComment(e.target.value);
-                        }}
-                      />
-                    </div>
-                    {validateCommentError ? (
-                      <label className="label">
-                        <span className="label-text-alt text-error">
-                          {validateCommentError}
-                        </span>
-                      </label>
-                    ) : (
-                      ""
-                    )}
                   </div>
+                ) : index === issues.length - 1 ? (
+                  ""
                 ) : (
                   <svg
                     width="22"

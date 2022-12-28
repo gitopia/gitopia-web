@@ -142,7 +142,7 @@ function RepositoryPullView(props) {
               </div>
             </div>
 
-            <div className="flex-none sm:w-64 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
+            <div className="flex-none sm:w-72 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
               <div className="pb-8">
                 <AssigneeSelector
                   title="Reviewers"
