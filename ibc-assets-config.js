@@ -9,7 +9,7 @@ export const assets = [
     connection_id: "connection-2640",
     channel_id: "channel-1775",
     port_id: "transfer",
-    icon: "./tokens/osmo.svg",
+    icon: "/tokens/osmo.svg",
     rpc_node: "https://rpc-test.osmosis.zone/",
     api_node: "https://osmosistest-rpc.quickapi.com/",
     prefix: "osmo",
@@ -19,7 +19,18 @@ export const assets = [
 ];
 
 export const coingeckoId = {
-  uosmo: { id: "osmosis", coinDecimals: 6, coinDenom: "OSMO" },
+  uosmo: {
+    id: "osmosis",
+    coinDecimals: 6,
+    coinDenom: "OSMO",
+    icon: "/tokens/osmosis.svg",
+  },
+  utlore: {
+    id: "",
+    coinDecimals: 6,
+    coinDenom: "TLORE",
+    icon: "/tokens/gitopia.svg",
+  },
 };
 export const gitopiaIbc = {
   chain_name: "gitopia",
