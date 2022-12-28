@@ -23,6 +23,8 @@ import {
 import CreateBounty from "../../../../../components/repository/bounty";
 import ExtendExpiry from "../../../../../components/repository/extendExpiry";
 import getBounty from "../../../../../helpers/getBounty";
+import getDenomNameByHash from "../../../../../helpers/getDenomNameByHash";
+import { coingeckoId } from "../../../../../ibc-assets-config";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -65,7 +67,8 @@ function RepositoryIssueView(props) {
       const array = [];
       for (var i = 0; i < issue.bounties.length; i++) {
         const res = await getBounty(issue.bounties[i]);
-        array.push(res);
+        const bounty = await updateDenomName(res);
+        array.push(bounty);
       }
       setBounties(array);
     }
@@ -91,6 +94,16 @@ function RepositoryIssueView(props) {
     fetchIssue();
   }, [router.query.issueIid, repository.id]);
 
+  async function updateDenomName(bounty) {
+    for (let i = 0; i < bounty.amount.length; i++) {
+      if (bounty.amount[i].denom.includes("ibc")) {
+        let denomName = await getDenomNameByHash(bounty.amount[i].denom);
+        bounty.amount[i].denom = denomName;
+      }
+    }
+    return bounty;
+  }
+
   const refreshIssue = async () => {
     const i = await getRepositoryIssue(
       repository.owner.id,
@@ -105,7 +118,8 @@ function RepositoryIssueView(props) {
     const array = [];
     for (var i = 0; i < issue.bounties.length; i++) {
       const res = await getBounty(issue.bounties[i]);
-      array.push(res);
+      const bounty = await updateDenomName(res);
+      array.push(bounty);
     }
     setBounties(array);
   };
@@ -177,7 +191,7 @@ function RepositoryIssueView(props) {
             {bounties.length > 0 ? (
               <div className="border border-gray-700 rounded mt-4 text-justify divide-y divide-gray-700">
                 <div className="flex mt-2 mb-2">
-                  <div className="w-1/4">
+                  <div className="w-1/3">
                     <div className="text-type-secondary text-sm ml-3">
                       Amount
                     </div>
@@ -205,48 +219,21 @@ function RepositoryIssueView(props) {
                 {bounties.map((b) => {
                   return (
                     <div className="flex mt-2 mb-3 pt-3" key={b.id}>
-                      <div className="w-1/4">
+                      <div className="w-1/3 flex divide-x divide-grey">
                         {b.amount.map((a, index) => {
                           return (
                             <div className="flex" key={index}>
-                              {a.denom == "utlore" ? (
-                                <div className="ml-3 mt-0.5 mr-1">
-                                  <svg
-                                    width="8"
-                                    height="14"
-                                    viewBox="0 0 10 17"
-                                    fill="none"
-                                    className="mr-1 mt-px text-purple-50"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      clipRule="evenodd"
-                                      d="M5.00061 8.51845C6.33523 8.51845 7.41715 7.43653 7.41715 6.10192C7.41715 4.7673 6.33523 3.68538 5.00061 3.68538C3.666 3.68538 2.58408 4.7673 2.58408 6.10192C2.58408 7.43653 3.666 8.51845 5.00061 8.51845ZM5.00061 10.2314C7.28128 10.2314 9.13013 8.38259 9.13013 6.10192C9.13013 3.82125 7.28128 1.9724 5.00061 1.9724C2.71994 1.9724 0.871094 3.82125 0.871094 6.10192C0.871094 8.38259 2.71994 10.2314 5.00061 10.2314Z"
-                                      fill="currentColor"
-                                    />
-                                    <path
-                                      fillRule="evenodd"
-                                      clipRule="evenodd"
-                                      d="M2.58408 11.1195C2.58408 11.7593 2.84059 12.3714 3.29468 12.8215C3.74849 13.2713 4.36229 13.5225 5.00061 13.5225C5.63893 13.5225 6.25273 13.2713 6.70655 12.8215C7.16063 12.3714 7.41715 11.7593 7.41715 11.1195H9.13013C9.13013 12.2004 8.69698 13.2386 7.92343 14.0053C7.14962 14.7723 6.09841 15.2046 5.00061 15.2046C3.90281 15.2046 2.8516 14.7723 2.07779 14.0053C1.30425 13.2386 0.871094 12.2004 0.871094 11.1195H2.58408Z"
-                                      fill="currentColor"
-                                    />
-                                    <path
-                                      d="M4.19727 0.743828H5.8455V2.39206H4.19727V0.743828Z"
-                                      fill="currentColor"
-                                    />
-                                    <path
-                                      d="M4.19727 14.7537H5.8455V16.4019H4.19727V14.7537Z"
-                                      fill="currentColor"
-                                    />
-                                  </svg>
-                                </div>
-                              ) : (
-                                <div className="ml-3"></div>
-                              )}
+                              <img
+                                height={24}
+                                width={24}
+                                src={coingeckoId[a.denom].icon}
+                                className="ml-4"
+                              />
 
-                              <div className="text-sm mr-1">{a.denom}</div>
-                              <div className="text-sm">{a.amount}</div>
+                              <div className="ml-2 text-sm mr-1 uppercase">
+                                {a.denom}
+                              </div>
+                              <div className="text-sm mr-4">{a.amount}</div>
                             </div>
                           );
                         })}
