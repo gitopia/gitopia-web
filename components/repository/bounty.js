@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import getDenomNameByHash from "../../helpers/getDenomNameByHash";
+import { coingeckoId } from "../../ibc-assets-config";
 
 function CreateBounty(props) {
   const router = useRouter();
@@ -92,7 +93,9 @@ function CreateBounty(props) {
     array[counter] = balances[i].amount;
     setMaxAmount(array);
   };
-
+  function fillAmount(amount) {
+    document.getElementById("amount").value = amount;
+  }
   function isNaturalNumber(n) {
     n = n.toString();
     var n1 = Math.abs(n),
@@ -243,6 +246,7 @@ function CreateBounty(props) {
                     placeholder="Enter Amount"
                     aria-label="Amount"
                     ref={ref1}
+                    id="amount"
                     onKeyUp={async (e) => {
                       await validateAmount(e.target.value);
                     }}
@@ -288,7 +292,8 @@ function CreateBounty(props) {
                 <div
                   className="link link-primary text-xs text-primary font-bold no-underline"
                   onClick={(e) => {
-                    //setAmount(maxAmount);
+                    fillAmount(maxAmount[counter] - 200);
+                    handleAmountOnChange(maxAmount[counter] - 200);
                   }}
                 >
                   Max
@@ -321,36 +326,42 @@ function CreateBounty(props) {
             ""
           )}
           {props.bountyAmount.length > 0 ? (
-            <div className="grid grid-cols-3">
+            <div className="grid grid-cols-2 w-3/4">
               {props.bountyAmount.map((a, i) => {
                 return (
                   <div
                     className={
-                      "flex text-sm box-border bg-grey-900 mr-2 h-11 p-3 rounded-lg uppercase mt-2"
+                      "flex text-sm box-border bg-grey-900 mr-2 h-11 px-2 rounded-lg uppercase mt-2"
                     }
                     key={i}
                   >
-                    <div className="mr-2">
+                    <img
+                      src={
+                        coingeckoId[
+                          a.denom.includes("ibc") ? tokenKV[a.denom] : a.denom
+                        ].icon
+                      }
+                      className="py-1"
+                    />
+                    <div className="ml-2 mr-2 py-3">
                       {a.denom.includes("ibc") ? tokenKV[a.denom] : a.denom}
                     </div>
-                    <div>{a.amount}</div>
+                    <div className="py-3">{a.amount}</div>
                     <div
-                      className="link ml-8 mt-1 no-underline"
+                      className="link ml-auto mt-1 no-underline py-3 mr-1"
                       onClick={() => {
                         handleDelete(i);
                       }}
                     >
                       <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 14 14"
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                       >
-                        <path
-                          d="M13.5303 1.5304C13.8231 1.23751 13.8231 0.762637 13.5303 0.469744C13.2374 0.176851 12.7625 0.176851 12.4696 0.469744L13.5303 1.5304ZM0.46967 12.4697C0.176777 12.7626 0.176777 13.2374 0.46967 13.5303C0.762563 13.8232 1.23744 13.8232 1.53033 13.5303L0.46967 12.4697ZM12.4696 13.5303C12.7625 13.8231 13.2374 13.8231 13.5303 13.5303C13.8231 13.2374 13.8231 12.7625 13.5303 12.4696L12.4696 13.5303ZM1.53033 0.46967C1.23744 0.176777 0.762563 0.176777 0.46967 0.46967C0.176777 0.762563 0.176777 1.23744 0.46967 1.53033L1.53033 0.46967ZM12.4696 0.469744L0.46967 12.4697L1.53033 13.5303L13.5303 1.5304L12.4696 0.469744ZM13.5303 12.4696L1.53033 0.46967L0.46967 1.53033L12.4696 13.5303L13.5303 12.4696Z"
-                          fill="#E5EDF5"
-                        />
+                        <path d="M1 1L11 11" stroke="#3E4051" strokeWidth="2" />
+                        <path d="M1 11L11 1" stroke="#3E4051" strokeWidth="2" />
                       </svg>
                     </div>
                   </div>

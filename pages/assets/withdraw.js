@@ -167,13 +167,13 @@ function WithdrawIbcAsset(props) {
                   onClick={(e) => {
                     fillAmount(
                       props.advanceUser
-                        ? props.loreBalance.toString()
-                        : (props.loreBalance / 1000000).toString()
+                        ? (props.loreBalance - 200).toString()
+                        : ((props.loreBalance - 200) / 1000000).toString()
                     );
                     setAmount(
                       props.advanceUser
-                        ? props.loreBalance.toString()
-                        : (props.loreBalance / 1000000).toString()
+                        ? (props.loreBalance - 200).toString()
+                        : ((props.loreBalance - 200) / 1000000).toString()
                     );
                   }}
                 >
