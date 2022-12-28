@@ -209,7 +209,7 @@ function RepositoryPullIssuesView(props) {
             <button
               className="ml-auto btn btn-primary text-xs btn-sm mt-4"
               onClick={() => {
-                props.linkPullIssuebyIid(pullRequest.id, 1).then(() => {
+                props.linkPullIssuebyIid(pullRequest.id, issue.iid).then(() => {
                   setIssue({ title: "", iid: "" });
                 });
               }}

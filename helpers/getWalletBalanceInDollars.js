@@ -40,7 +40,7 @@ export default async function getBalanceInDollars(address) {
         }
       }
     }
-    return totalPrice;
+    return totalPrice < 1 ? totalPrice.toFixed(7) : totalPrice;
   } catch (e) {
     console.error(e);
   }

@@ -54,7 +54,12 @@ function IssueBountyView(props) {
     fetchBountyArray();
   }, [props.bounties.length]);
   return (
-    <div className="pt-8 mb-4 ml-2">
+    <div
+      className="pt-8 mb-4 ml-2"
+      onMouseLeave={debounce(() => {
+        setIsHovering(false);
+      }, 100)}
+    >
       <div className="ml-1 font-semibold mb-4">Bounties</div>
       <div className="">
         {coins.map((c, index) => {
@@ -72,7 +77,11 @@ function IssueBountyView(props) {
               <div className="text-type-secondary">
                 <div className="flex text-sm">
                   <div className="mr-2">
-                    <img src={coingeckoId[c.denom].icon}></img>
+                    <img
+                      src={coingeckoId[c.denom].icon}
+                      width={28}
+                      height={28}
+                    ></img>
                   </div>
                   <div className={"flex uppercase ml-2 mr-4 pb-3 mt-1.5"}>
                     {c.denom}
