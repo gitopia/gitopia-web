@@ -26,6 +26,12 @@ function IssueBountyView(props) {
           const bountyValueInDollars = await getBountyValueInDollars(res);
           res.bountyValueInDollars = bountyValueInDollars;
         }
+        for (let i = 0; i < res.amount.length; i++) {
+          if (res.amount[i].denom.includes("ibc")) {
+            let denomName = await getDenomNameByHash(res.amount[i].denom);
+            res.amount[i].showDenom = denomName;
+          }
+        }
         bountyArray.push(res);
         res.amount.map((a) => {
           coin[a.denom] !== undefined
@@ -83,7 +89,7 @@ function IssueBountyView(props) {
                       height={28}
                     ></img>
                   </div>
-                  <div className={"flex uppercase ml-2 mr-4 pb-3 mt-1.5"}>
+                  <div className={"flex uppercase ml-1 mr-3 pb-3 mt-1.5"}>
                     {c.denom}
                   </div>
                   <svg
@@ -97,8 +103,8 @@ function IssueBountyView(props) {
                     <rect width="1" height="15" fill="#404450" />
                   </svg>
 
-                  <div className={"flex ml-4 pb-3 mt-1.5"}>{c.amount}</div>
-                  <div className="ml-3 font-bold text-xs text-type-tertiary mt-2">
+                  <div className={"flex ml-3 pb-3 mt-1.5"}>{c.amount}</div>
+                  <div className="ml-2 font-bold text-xs text-type-tertiary mt-2">
                     {c.denom !== "utlore" ? "≈$" + c.dollarAmount + "USD" : ""}
                   </div>
                 </div>
@@ -118,14 +124,40 @@ function IssueBountyView(props) {
                   }
                   key={index}
                 >
-                  <div className="ml-2 flex mb-2 mt-2">
-                    {b.amount.length === 1 ? (
-                      <img src={""} className="mr-2" />
+                  <div className="ml-2 flex mb-2 mt-2 relative">
+                    {b.amount.length > 1 ? (
+                      <div className="flex mr-12">
+                        {b.amount.map((a, index) => {
+                          return (
+                            <div key={index}>
+                              <img
+                                src={
+                                  a.denom.includes("ibc")
+                                    ? coingeckoId[a.showDenom].icon
+                                    : coingeckoId[a.denom].icon
+                                }
+                                className={
+                                  "absolute left-" +
+                                  index * 4 +
+                                  " -z-" +
+                                  index * 10
+                                }
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
                     ) : (
-                      <div className="mr-2" />
+                      <img
+                        src={
+                          b.amount[0].denom.includes("ibc")
+                            ? coingeckoId[b.amount[0].showDenom].icon
+                            : coingeckoId[b.amount[0].denom].icon
+                        }
+                      />
                     )}
 
-                    <div className="text-type-primary text-sm ml-2 mt-2">
+                    <div className={"text-type-primary text-sm ml-2 mt-2"}>
                       ${b.bountyValueInDollars}
                     </div>
 
