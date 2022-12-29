@@ -47,22 +47,23 @@ function IssuePullRequestView(props) {
               <div className="stroke-type-secondary hover:stroke-teal text-type-secondary hover:text-teal">
                 <div className="flex">
                   <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
+                    width="12"
+                    height="18"
+                    viewBox="0 0 12 18"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
+                    className="mr-2"
                   >
                     <path
-                      d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
-                      stroke="#ADBECB"
+                      d="M2.5 15.5V9M2.5 2.5V9M2.5 9H7C8.10457 9 9 9.89543 9 11V15.5"
+                      stroke="currentColor"
                       strokeWidth="2"
                     />
-                    <circle cx="8.5" cy="18.5" r="2.5" fill="#ADBECB" />
-                    <circle cx="8.5" cy="5.5" r="2.5" fill="#ADBECB" />
+                    <circle cx="2.5" cy="15.5" r="2.5" fill="currentColor" />
+                    <circle cx="2.5" cy="2.5" r="2.5" fill="currentColor" />
                     <path
-                      d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
-                      fill="#ADBECB"
+                      d="M11.5 15.5C11.5 16.8807 10.3807 18 9 18C7.61929 18 6.5 16.8807 6.5 15.5C6.5 14.1193 7.61929 13 9 13C10.3807 13 11.5 14.1193 11.5 15.5Z"
+                      fill="currentColor"
                     />
                   </svg>
                   <div>
