@@ -206,7 +206,7 @@ function WalletInfo(props) {
                   Deposit
                 </div>
                 <div
-                  className="mr-1"
+                  className="mr-1 hover:cursor-pointer"
                   onClick={() => {
                     props
                       .getAddressforChain(
@@ -301,12 +301,12 @@ function WalletInfo(props) {
             <div className="font-semibold text-3xl">0</div>
             <div className="font-bold text-xs">≈$0.0</div>
           </div>
-          <Link
-            href=""
-            className="mt-4 ml-auto h-8 px-3.5 py-2 w-32 rounded text-white text-xs font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 uppercase"
+          <div
+            disabled={true}
+            className="btn mt-4 ml-auto h-8 px-3.5 py-2 w-36 rounded text-white text-xs font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 uppercase"
           >
             claim rewards
-          </Link>
+          </div>
         </div>
       </div>
     </div>
