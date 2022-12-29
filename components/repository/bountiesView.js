@@ -75,9 +75,6 @@ function IssueBountyView(props) {
               key={index}
               onMouseOver={debounce(() => {
                 setIsHovering(true);
-              }, 500)}
-              onMouseLeave={debounce(() => {
-                setIsHovering(false);
               }, 100)}
             >
               <div className="text-type-secondary">
