@@ -18,7 +18,7 @@ import usePullRequest from "../../../../../hooks/usePullRequest";
 import shrinkAddress from "../../../../../helpers/shrinkAddress";
 import dayjs from "dayjs";
 import { ApolloProvider } from "@apollo/client";
-import client from "../../../../../helpers/apolloClient";
+import { updatedClient } from "../../../../../helpers/apolloClient";
 import QueryIssues from "../../../../../helpers/queryIssuesByTitleGql";
 
 export async function getStaticProps() {
@@ -126,7 +126,7 @@ function RepositoryPullIssuesView(props) {
                     }}
                   />
 
-                  <ApolloProvider client={client}>
+                  <ApolloProvider client={updatedClient}>
                     <QueryIssues
                       substr={textEntered}
                       repoId={Number(repository.id)}
