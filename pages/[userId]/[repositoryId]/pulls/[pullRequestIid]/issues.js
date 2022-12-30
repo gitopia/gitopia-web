@@ -315,16 +315,14 @@ function RepositoryPullIssuesView(props) {
                     >
                       {
                         <div className="flex">
-                          <svg
-                            width="8"
-                            height="8"
-                            viewBox="0 0 8 8"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="mr-3 mt-3 ml-4"
-                          >
-                            <circle cx="4" cy="4" r="4" fill="#66CE67" />
-                          </svg>
+                          <span
+                            className={
+                              "mr-3 ml-4 mt-2 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
+                              (i.state === "OPEN"
+                                ? "bg-green-900"
+                                : "bg-red-900")
+                            }
+                          />
                           <div className="text-sm mt-1">{i.title}</div>
                         </div>
                       }

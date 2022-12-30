@@ -17,6 +17,7 @@ import { useErrorStatus } from "../../../../../hooks/errorHandler";
 import pluralize from "../../../../../helpers/pluralize";
 import IssueTabs from "../../../../../components/repository/issueTabs";
 import getPullRequest from "../../../../../helpers/getPullRequest";
+import pullRequestStateClass from "../../../../../helpers/pullRequestStateClass";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -227,16 +228,13 @@ function RepositoryIssueLinkedPullsView(props) {
                     <div className="w-2/3">
                       {
                         <div className="flex">
-                          <svg
-                            width="8"
-                            height="8"
-                            viewBox="0 0 8 8"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="mr-3 mt-3 ml-4"
-                          >
-                            <circle cx="4" cy="4" r="4" fill="#66CE67" />
-                          </svg>
+                          <span
+                            className={
+                              "mr-3 mt-2 ml-4 h-2 w-2 rounded-md justify-self-end self-center inline-block bg-" +
+                              pullRequestStateClass(p.state)
+                            }
+                          />
+
                           <div className="text-sm mt-1">{p.title}</div>
                         </div>
                       }
