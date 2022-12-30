@@ -190,20 +190,20 @@ function RepositoryIssueView(props) {
             </div>
             {bounties.length > 0 ? (
               <div className="border border-gray-700 rounded mt-4 text-justify divide-y divide-gray-700">
-                <div className="flex mt-2 mb-2">
-                  <div className="w-1/3">
+                <div className="flex mt-2 mb-2 ml-3">
+                  <div className="w-1/4">
                     <div className="text-type-secondary text-sm ml-3">
                       Amount
                     </div>
                   </div>
 
                   <div className="w-1/6">
-                    <div className="text-type-secondary text-sm ">
+                    <div className="text-type-secondary text-sm">
                       Wallet Address
                     </div>
                   </div>
                   <div className="w-1/6">
-                    <div className="text-type-secondary text-sm ">
+                    <div className="text-type-secondary text-sm">
                       Expiry Date
                     </div>
                   </div>
@@ -219,7 +219,7 @@ function RepositoryIssueView(props) {
                 {bounties.map((b) => {
                   return (
                     <div className="flex mt-2 mb-3 pt-3" key={b.id}>
-                      <div className="w-1/3 flex divide-x divide-grey">
+                      <div className="w-1/4 flex divide-x divide-grey">
                         {b.amount.map((a, index) => {
                           return (
                             <div className="flex" key={index}>
@@ -238,7 +238,7 @@ function RepositoryIssueView(props) {
                           );
                         })}
                       </div>
-                      <div className="w-1/6">
+                      <div className="ml-5 w-1/6">
                         <div className="text-sm">
                           {shrinkAddress(b.creator)}
                         </div>
@@ -289,7 +289,7 @@ function RepositoryIssueView(props) {
 
                       {b.expireAt < dayjs().unix() &&
                       b.state != "BOUNTY_STATE_REVERTEDBACK" ? (
-                        <div className="flex ml-auto mr-3">
+                        <div className="flex w-1/4 mr-3">
                           <div
                             className={
                               "btn btn-outline rounded text-xs border-green-900 btn-xs font-normal hover:bg-green hover:border-green-900 hover:text-white px-4 " +
@@ -320,7 +320,7 @@ function RepositoryIssueView(props) {
                           ></ExtendExpiry>
                         </div>
                       ) : (
-                        ""
+                        <div className="w-1/4 mr-1"></div>
                       )}
                     </div>
                   );
