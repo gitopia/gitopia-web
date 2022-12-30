@@ -40,7 +40,7 @@ function DepositIbcAsset(props) {
   }, [props.activeWallet]);
 
   function fillAmount(amount) {
-    document.getElementById("amount").value = amount;
+    document.getElementById("amount").value = amount.toString();
   }
   function isNaturalNumber(n) {
     n = n.toString();
@@ -179,8 +179,8 @@ function DepositIbcAsset(props) {
                 <div
                   className="link link-primary text-xs text-primary font-bold no-underline ml-auto"
                   onClick={(e) => {
-                    fillAmount("20");
-                    setAmount("20");
+                    fillAmount(balance - 200);
+                    setAmount(balance - 200);
                   }}
                 >
                   Max
