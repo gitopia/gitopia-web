@@ -12,6 +12,7 @@ export const assets = [
     icon: "/tokens/osmo.svg",
     rpc_node: "https://rpc-test.osmosis.zone/",
     api_node: "https://osmosistest-rpc.quickapi.com/",
+    lcd_node: "https://lcd.testnet.osmosis.zone/",
     prefix: "osmo",
     coin_minimal_denom: "uosmo",
     fee: "200",

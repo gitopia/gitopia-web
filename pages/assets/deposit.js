@@ -4,12 +4,14 @@ import Link from "next/link";
 import { ibcDeposit } from "../../store/actions/wallet";
 import { useRouter } from "next/router";
 import getChainInfo from "../../helpers/getChainInfo";
+import { getBalanceForChain } from "../../helpers/getBalanceForChain";
 
 function DepositIbcAsset(props) {
   const [amount, setAmount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [counterPartyChainInfo, setCounterPartyChainInfo] = useState(null);
   const [validateAmountError, setValidateAmountError] = useState(null);
+  const [balance, setBalance] = useState(0);
   const router = useRouter();
   useEffect(() => {
     if (
@@ -25,6 +27,14 @@ function DepositIbcAsset(props) {
     async function getChain() {
       let info = await getChainInfo(props.activeWallet?.counterPartyChain);
       setCounterPartyChainInfo(info);
+      if (info) {
+        let b = await getBalanceForChain(
+          info.lcd_node,
+          props.activeWallet?.counterPartyAddress,
+          info.coin_minimal_denom
+        );
+        setBalance(b);
+      }
     }
     getChain();
   }, [props.activeWallet]);
@@ -140,7 +150,7 @@ function DepositIbcAsset(props) {
           </div>
           <div className="text-white mt-5">Amount to Deposit</div>
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-2">
-            <div className="font-bold">Available Balance : 0 OSMO</div>
+            <div className="font-bold">Available Balance : {balance} OSMO</div>
             <div className="border border-gray-700 rounded-xl p-3 bg-grey-900 mt-2">
               <div className="flex">
                 <input
