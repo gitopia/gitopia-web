@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { notify } from "reapop";
 import { connect } from "react-redux";
 import { updateUserBalance } from "../../store/actions/wallet";
-import Link from "next/link";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import { signOut } from "../../store/actions/wallet";
 import { assets } from "../../ibc-assets-config";
@@ -114,7 +113,7 @@ function WalletInfo(props) {
           </svg>
           <div className="text-sm text-type-primary ml-4">Total Balance</div>
           <div className="text-type-primary text-2xl font-bold ml-6">
-            ${balance}
+            ≈ ${balance}
           </div>
         </div>
         <div className="text-type-primary text-xs font-bold uppercase mt-6 mb-4">

@@ -36,5 +36,5 @@ export default async function getBountyValueInDollars(bounty) {
   } catch (e) {
     console.error(e);
   }
-  return totalPrice.toFixed(10);
+  return totalPrice < 1 ? totalPrice.toFixed(10) : totalPrice.toFixed(3);
 }
