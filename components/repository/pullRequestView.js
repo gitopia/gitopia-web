@@ -4,13 +4,14 @@ import getPullRequest from "../../helpers/getPullRequest";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import dayjs from "dayjs";
 import { debounce } from "lodash";
-import { createComment } from "../../store/actions/repository";
 import { notify } from "reapop";
 import getRepositoryById from "../../helpers/getRepositoryById";
+import { useRouter } from "next/router";
 
 function IssuePullRequestView(props) {
   const [pulls, setPulls] = useState([]);
   const [isHovering, setIsHovering] = useState({ id: null });
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchPulls() {
@@ -78,7 +79,21 @@ function IssuePullRequestView(props) {
                   </div>
                 </div>
                 {isHovering.id == p.id ? (
-                  <div className="flex card bg-[#28313C] w-72 h-auto p-3 z-10 absolute rounded-lg">
+                  <div
+                    className="flex card bg-[#28313C] w-72 h-auto p-3 z-10 absolute rounded-lg hover:cursor-pointer"
+                    onClick={() => {
+                      if (window) {
+                        window.open(
+                          "/" +
+                            router.query.userId +
+                            "/" +
+                            router.query.repositoryId +
+                            "/pulls/" +
+                            p.iid
+                        );
+                      }
+                    }}
+                  >
                     <div className="flex">
                       <div className="avatar flex-none items-center w-1/6">
                         <div className={"w-7 h-7 rounded-full"}>
@@ -185,6 +200,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { createComment, notify })(
-  IssuePullRequestView
-);
+export default connect(mapStateToProps, { notify })(IssuePullRequestView);

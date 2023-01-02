@@ -4,33 +4,13 @@ import getIssue from "../../helpers/getIssue";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import dayjs from "dayjs";
 import { debounce } from "lodash";
-import { createComment } from "../../store/actions/repository";
 import { notify } from "reapop";
+import { useRouter } from "next/router";
 
 function PullRequestIssueView(props) {
   const [issues, setIssues] = useState([]);
   const [isHovering, setIsHovering] = useState({ id: null });
-  const [comment, setComment] = useState("");
-  const [validateCommentError, setValidateCommentError] = useState("");
-
-  const validateComment = async (comment) => {
-    setValidateCommentError(null);
-    if (comment.trim().length === 0) {
-      setValidateCommentError("Comment cannot be empty");
-    }
-  };
-
-  const createComment = async (id) => {
-    const res = await props.createComment({
-      parentId: id,
-      body: comment,
-      commentType: "ISSUE",
-    });
-    if (res && res.code === 0) {
-      setComment("");
-      props.notify("Comment added to issue #" + id, "info");
-    }
-  };
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchIssues() {
@@ -48,7 +28,6 @@ function PullRequestIssueView(props) {
       className="pt-8 mb-4 ml-2"
       onMouseLeave={debounce(() => {
         setIsHovering({ id: null });
-        setComment("");
       }, 100)}
     >
       <div className="font-semibold mb-2 text-sm">Issues</div>
@@ -83,7 +62,21 @@ function PullRequestIssueView(props) {
                   </div>
                 </div>
                 {isHovering.id == i.id ? (
-                  <div className="flex card bg-[#28313C] w-60 h-auto p-3 z-10 absolute rounded-lg">
+                  <div
+                    className="flex card bg-[#28313C] w-60 h-auto p-3 z-10 absolute rounded-lg hover:cursor-pointer"
+                    onClick={() => {
+                      if (window) {
+                        window.open(
+                          "/" +
+                            router.query.userId +
+                            "/" +
+                            router.query.repositoryId +
+                            "/issues/" +
+                            i.iid
+                        );
+                      }
+                    }}
+                  >
                     <div className="flex">
                       <div className="avatar flex-none items-center w-1/6">
                         <div className={"w-6 h-6  rounded-full"}>
@@ -148,6 +141,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { createComment, notify })(
-  PullRequestIssueView
-);
+export default connect(mapStateToProps, { notify })(PullRequestIssueView);
