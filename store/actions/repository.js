@@ -845,6 +845,7 @@ export const createPullRequest = ({
   reviewers = [],
   assignees = [],
   labelIds = [],
+  issues = [],
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
@@ -869,6 +870,9 @@ export const createPullRequest = ({
     }
     if (labelIds.length) {
       pull.labelIds = labelIds;
+    }
+    if (issues.length) {
+      pull.issues = issues;
     }
 
     try {
