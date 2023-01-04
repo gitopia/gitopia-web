@@ -91,7 +91,18 @@ function RepositoryPullsView(props) {
       );
       console.log(data);
       if (data) {
-        if (data.PullRequest) setAllPulls(data.PullRequest);
+        if (data.PullRequest) {
+          for (let i = 0; i < data.PullRequest.length; i++) {
+            const c = await getPullRequestCommentAll(
+              repository.id,
+              data.PullRequest[i].iid
+            );
+            if (c) {
+              data.PullRequest[i].comments = c;
+            }
+          }
+        }
+        setAllPulls(data.PullRequest);
         if (data.pagination)
           setPagination({ ...pagination, ...data.pagination });
       }

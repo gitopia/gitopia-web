@@ -20,6 +20,7 @@ import dayjs from "dayjs";
 import { ApolloProvider } from "@apollo/client";
 import { updatedClient } from "../../../../../helpers/apolloClient";
 import QueryIssues from "../../../../../helpers/queryIssuesByTitleGql";
+import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -45,6 +46,8 @@ function RepositoryPullIssuesView(props) {
       const array = [];
       for (var i = 0; i < pullRequest.issues.length; i++) {
         const res = await getIssue(pullRequest.issues[i].id);
+        const comment = await getIssueCommentAll(repository.id, res.iid);
+        res.comments = comment;
         array.push(res);
       }
       setIssues(array);

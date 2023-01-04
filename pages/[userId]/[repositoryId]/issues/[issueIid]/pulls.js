@@ -18,6 +18,8 @@ import pluralize from "../../../../../helpers/pluralize";
 import IssueTabs from "../../../../../components/repository/issueTabs";
 import getPullRequest from "../../../../../helpers/getPullRequest";
 import pullRequestStateClass from "../../../../../helpers/pullRequestStateClass";
+import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
+import getPullRequestCommentAll from "../../../../../helpers/getPullRequestCommentAll";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -45,14 +47,16 @@ function RepositoryIssueLinkedPullsView(props) {
 
   useEffect(() => {
     async function fetchIssue() {
-      const [i] = await Promise.all([
+      const [i, c] = await Promise.all([
         getRepositoryIssue(
           router.query.userId,
           router.query.repositoryId,
           router.query.issueIid
         ),
+        getIssueCommentAll(repository.id, router.query.issueIid),
       ]);
       if (i) {
+        i.comments = c;
         setIssue(i);
       } else {
         setErrorStatusCode(404);
@@ -66,6 +70,8 @@ function RepositoryIssueLinkedPullsView(props) {
       const array = [];
       for (var i = 0; i < issue.pullRequests.length; i++) {
         const res = await getPullRequest(issue.pullRequests[i].id);
+        const comment = await getPullRequestCommentAll(repository.id, res.iid);
+        res.comments = comment;
         array.push(res);
       }
       setPulls(array);
@@ -74,12 +80,18 @@ function RepositoryIssueLinkedPullsView(props) {
   }, [issue.pullRequests.length]);
 
   const refreshIssue = async () => {
-    const i = await getRepositoryIssue(
-      repository.owner.id,
-      repository.name,
-      issue.iid
-    );
-    setIssue(i);
+    const [i, c] = await Promise.all([
+      getRepositoryIssue(
+        router.query.userId,
+        router.query.repositoryId,
+        router.query.issueIid
+      ),
+      getIssueCommentAll(repository.id, router.query.issueIid),
+    ]);
+    if (i) {
+      i.comments = c;
+      setIssue(i);
+    }
   };
 
   return (

@@ -25,6 +25,7 @@ import ExtendExpiry from "../../../../../components/repository/extendExpiry";
 import getBounty from "../../../../../helpers/getBounty";
 import getDenomNameByHash from "../../../../../helpers/getDenomNameByHash";
 import { coingeckoId } from "../../../../../ibc-assets-config";
+import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -51,7 +52,6 @@ function RepositoryBountiesView(props) {
     labels: [],
     bounties: [],
   });
-  const [allLabels, setAllLabels] = useState([]);
 
   const [updatedExpiry, setUpdatedExpiry] = useState("");
   const [bountyId, setBountyId] = useState(null);
@@ -74,19 +74,20 @@ function RepositoryBountiesView(props) {
 
   useEffect(() => {
     async function fetchIssue() {
-      const [i] = await Promise.all([
+      const [i, c] = await Promise.all([
         getRepositoryIssue(
           router.query.userId,
           router.query.repositoryId,
           router.query.issueIid
         ),
+        getIssueCommentAll(repository.id, router.query.issueIid),
       ]);
       if (i) {
+        i.comments = c;
         setIssue(i);
       } else {
         setErrorStatusCode(404);
       }
-      setAllLabels(repository.labels);
     }
     fetchIssue();
   }, [router.query.issueIid, repository.id]);
@@ -114,12 +115,18 @@ function RepositoryBountiesView(props) {
   }
 
   const refreshIssue = async () => {
-    const i = await getRepositoryIssue(
-      repository.owner.id,
-      repository.name,
-      issue.iid
-    );
-    setIssue(i);
+    const [i, c] = await Promise.all([
+      getRepositoryIssue(
+        router.query.userId,
+        router.query.repositoryId,
+        router.query.issueIid
+      ),
+      getIssueCommentAll(repository.id, router.query.issueIid),
+    ]);
+    if (i) {
+      i.comments = c;
+      setIssue(i);
+    }
   };
 
   const refreshBounty = async () => {

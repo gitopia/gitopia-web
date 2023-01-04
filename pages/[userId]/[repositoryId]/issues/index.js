@@ -10,6 +10,7 @@ import find from "lodash/find";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import getRepositoryIssueAll from "../../../../helpers/getRepositoryIssueAll";
+import getIssueCommentAll from "../../../../helpers/getIssueCommentAll";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import Footer from "../../../../components/footer";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
@@ -91,7 +92,15 @@ function RepositoryIssueView(props) {
         }
       );
       console.log(data);
-      if (data.Issue) setAllIssues(data.Issue);
+      if (data.Issue) {
+        for (let i = 0; i < data.Issue.length; i++) {
+          const c = await getIssueCommentAll(repository.id, data.Issue[i].iid);
+          if (c) {
+            data.Issue[i].comments = c;
+          }
+        }
+      }
+      setAllIssues(data.Issue);
       if (data.pagination) setPagination({ ...pagination, ...data.pagination });
     }
   };
