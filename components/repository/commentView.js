@@ -7,6 +7,9 @@ import Link from "next/link";
 
 function CommentView({
   comment = { creator: "" },
+  repositoryId,
+  parentIid,
+  parent,
   userAddress,
   onUpdate,
   onDelete,
@@ -32,14 +35,17 @@ function CommentView({
       </div>
       {isEditing ? (
         <CommentEditor
-          commentId={comment.id}
+          repositoryId={repositoryId}
+          parentIid={parentIid}
+          parent={parent}
+          commentIid={comment.commentIid}
           initialComment={comment.body}
           isEdit={true}
           onCancel={() => {
             setIsEditing(false);
           }}
-          onSuccess={async (id) => {
-            if (onUpdate) await onUpdate(id);
+          onSuccess={async (iid) => {
+            if (onUpdate) await onUpdate(iid);
             setIsEditing(false);
           }}
         />
@@ -133,7 +139,7 @@ function CommentView({
               }
               onClick={async () => {
                 setIsDeleting(true);
-                if (onDelete) await onDelete(comment.id);
+                if (onDelete) await onDelete(comment.commentIid);
                 setConfirmDelete(false);
                 setIsDeleting(false);
               }}

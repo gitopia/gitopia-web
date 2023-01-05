@@ -9,8 +9,10 @@ import {
 } from "../../store/actions/repository";
 
 function CommentEditor({
-  commentId = null,
-  issueId = null,
+  commentIid = null,
+  repositoryId = null,
+  parent = null,
+  parentIid = null,
   initialComment = "",
   isEdit = false,
   onSuccess = null,
@@ -49,9 +51,10 @@ function CommentEditor({
     setPostingComment(true);
     if (validateComment()) {
       const res = await props.createComment({
-        parentId: issueId,
+        repositoryId: repositoryId,
+        parentIid: parentIid,
+        parent: parent,
         body: comment,
-        commentType: commentType,
       });
       if (res && res.code === 0) {
         setComment("");
@@ -65,12 +68,15 @@ function CommentEditor({
     setPostingComment(true);
     if (validateComment()) {
       const res = await props.updateComment({
-        id: commentId,
+        repositoryId: repositoryId,
+        parentIid: parentIid,
+        parent: parent,
+        commentIid: commentIid,
         body: comment,
       });
       if (res && res.code === 0) {
         setComment("");
-        if (onSuccess) await onSuccess(commentId);
+        if (onSuccess) await onSuccess(commentIid);
       }
     }
     setPostingComment(false);

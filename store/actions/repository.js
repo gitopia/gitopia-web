@@ -4,7 +4,6 @@ import { createUser, getUserDetailsForSelectedAddress } from "./user";
 import { updateUserBalance } from "./wallet";
 import dayjs from "dayjs";
 import { watchTask } from "./taskQueue";
-import getUserDaoAll from "../../helpers/getUserDaoAll";
 
 export const validatePostingEligibility = async (
   dispatch,
@@ -145,14 +144,13 @@ export const createIssue = ({
 };
 
 export const createComment = ({
-  parentId = null,
+  repositoryId = null,
+  parentIid = null,
+  parent = "",
   body = "",
   attachments = [],
   diffHunk = "",
   path = "",
-  system = false,
-  authorAssociation = "",
-  commentType = "",
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "comment")))
@@ -161,9 +159,10 @@ export const createComment = ({
     const { wallet, env } = getState();
     const comment = {
       creator: wallet.selectedAddress,
-      parentId,
+      repositoryId,
+      parentIid,
+      parent,
       body,
-      commentType,
     };
     if (attachments.length) {
       comment.attachments = attachments;
@@ -173,12 +172,6 @@ export const createComment = ({
     }
     if (path.trim() !== "") {
       comment.path = path;
-    }
-    if (authorAssociation.trim() !== "") {
-      comment.authorAssociation = authorAssociation;
-    }
-    if (system) {
-      comment.system = true;
     }
     console.log("comment", comment);
 
@@ -194,7 +187,14 @@ export const createComment = ({
   };
 };
 
-export const updateComment = ({ id = null, body = "", attachments = [] }) => {
+export const updateComment = ({
+  repositoryId = null,
+  parentIid = null,
+  parent = null,
+  commentIid = null,
+  body = "",
+  attachments = [],
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "comment")))
       return null;
@@ -202,7 +202,10 @@ export const updateComment = ({ id = null, body = "", attachments = [] }) => {
     const { wallet, env } = getState();
     const comment = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId,
+      parentIid,
+      parent: parent === "COMMENT_PARENT_ISSUE" ? 0 : 1,
+      commentIid,
       body,
       attachments,
     };
@@ -219,7 +222,12 @@ export const updateComment = ({ id = null, body = "", attachments = [] }) => {
   };
 };
 
-export const deleteComment = ({ id = null }) => {
+export const deleteComment = ({
+  repositoryId = null,
+  parentIid = null,
+  parent = null,
+  commentIid = null,
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "comment")))
       return null;
@@ -227,7 +235,10 @@ export const deleteComment = ({ id = null }) => {
     const { wallet, env } = getState();
     const comment = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId,
+      parentIid,
+      parent: parent === "COMMENT_PARENT_ISSUE" ? 0 : 1,
+      commentIid,
     };
     try {
       const message = await env.txClient.msgDeleteComment(comment);

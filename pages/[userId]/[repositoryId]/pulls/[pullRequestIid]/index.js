@@ -5,7 +5,7 @@ import find from "lodash/find";
 import Head from "next/head";
 
 import Header from "../../../../../components/header";
-import getComment from "../../../../../helpers/getComment";
+import getPullRequestComment from "../../../../../helpers/getPullRequestComment";
 import RepositoryHeader from "../../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
 import Footer from "../../../../../components/footer";
@@ -31,6 +31,7 @@ import IssuePullDescription from "../../../../../components/repository/issuePull
 import getBranchSha from "../../../../../helpers/getBranchSha";
 import filter from "lodash/filter";
 import PullRequestIssueView from "../../../../../components/repository/issuesView";
+import getPullRequestCommentAll from "../../../../../helpers/getPullRequestCommentAll";
 
 export async function getStaticProps({ params }) {
   try {
@@ -117,9 +118,13 @@ function RepositoryPullView(props) {
   const [allComments, setAllComments] = useState(props.comments || []);
 
   const getAllComments = async () => {
-    const pr = pullRequest.comments.map((c) => getComment(c));
-    const comments = await Promise.all(pr);
-    setAllComments(comments);
+    const comments = await getPullRequestCommentAll(
+      repository.id,
+      pullRequest.iid
+    );
+    if (comments) {
+      setAllComments(comments);
+    }
   };
 
   useEffect(() => {
@@ -177,16 +182,28 @@ function RepositoryPullView(props) {
                     return (
                       <CommentView
                         comment={c}
+                        repositoryId={repository.id}
+                        parentIid={pullRequest.iid}
+                        parent={"COMMENT_PARENT_PULL_REQUEST"}
                         key={"comment" + i}
                         userAddress={props.selectedAddress}
-                        onUpdate={async (id) => {
-                          const newComment = await getComment(id);
+                        onUpdate={async (iid) => {
+                          const newComment = await getPullRequestComment(
+                            repository.id,
+                            pullRequest.iid,
+                            iid
+                          );
                           const newAllComments = [...allComments];
                           newAllComments[i] = newComment;
                           setAllComments(newAllComments);
                         }}
-                        onDelete={async (id) => {
-                          const res = await props.deleteComment({ id });
+                        onDelete={async (iid) => {
+                          const res = await props.deleteComment({
+                            repositoryId: repository.id,
+                            parentIid: pullRequest.iid,
+                            parent: "COMMENT_PARENT_PULL_REQUEST",
+                            commentIid: iid,
+                          });
                           if (res && res.code === 0) {
                             const newAllComments = [...allComments];
                             newAllComments.splice(i, 1);
@@ -203,7 +220,9 @@ function RepositoryPullView(props) {
                 />
                 <div className="flex w-full mt-8 pl-10">
                   <CommentEditor
-                    issueId={pullRequest.id}
+                    repositoryId={repository.id}
+                    parentIid={pullRequest.iid}
+                    parent={"COMMENT_PARENT_PULL_REQUEST"}
                     issueState={pullRequest.state}
                     onSuccess={refreshPullRequest}
                     commentType="PULLREQUEST"
