@@ -1,16 +1,10 @@
 import api from "./getApi";
 
-export default async function getIssue(issueId) {
+export default async function getIssue(id, repositoryName, issueIid) {
   try {
-    const res = await api.queryIssue(issueId);
+    const res = await api.queryRepositoryIssue(id, repositoryName, issueIid);
     if (res.ok) {
       let i = res.data.Issue;
-      // try {
-      //   const owner = JSON.parse(r.owner);
-      //   r.owner = owner;
-      // } catch (e) {
-      //   console.error(e);
-      // }
       return i;
     }
   } catch (e) {

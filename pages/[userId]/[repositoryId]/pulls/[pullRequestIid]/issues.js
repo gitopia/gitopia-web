@@ -45,7 +45,11 @@ function RepositoryPullIssuesView(props) {
     async function fetchIssues() {
       const array = [];
       for (var i = 0; i < pullRequest.issues.length; i++) {
-        const res = await getIssue(pullRequest.issues[i].id);
+        const res = await getIssue(
+          repository.id,
+          repository.name,
+          pullRequest.issues[i].iid
+        );
         const comment = await getIssueCommentAll(repository.id, res.iid);
         res.comments = comment;
         array.push(res);

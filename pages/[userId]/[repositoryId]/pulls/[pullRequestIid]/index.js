@@ -360,7 +360,11 @@ function RepositoryPullView(props) {
                 </div>
               </div>
               {pullRequest.issues.length > 0 ? (
-                <PullRequestIssueView issues={pullRequest.issues} />
+                <PullRequestIssueView
+                  issues={pullRequest.issues}
+                  repositoryId={repository.id}
+                  repositoryName={repository.name}
+                />
               ) : (
                 ""
               )}
