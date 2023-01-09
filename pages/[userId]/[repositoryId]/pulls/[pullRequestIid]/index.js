@@ -216,6 +216,7 @@ function RepositoryPullView(props) {
                 })}
                 <MergePullRequestView
                   pullRequest={pullRequest}
+                  repositoryId={repository.id}
                   refreshPullRequest={refreshPullRequest}
                 />
                 <div className="flex w-full mt-8 pl-10">
@@ -254,7 +255,8 @@ function RepositoryPullView(props) {
                     );
 
                     const res = await props.updatePullRequestReviewers({
-                      pullId: pullRequest.id,
+                      repositoryId: repository,
+                      pullIid: pullRequest.iid,
                       addedReviewers,
                       removedReviewers,
                     });
@@ -291,7 +293,8 @@ function RepositoryPullView(props) {
                     );
 
                     const res = await props.updatePullRequestAssignees({
-                      pullId: pullRequest.id,
+                      repositoryId: repository.id,
+                      pullIid: pullRequest.iid,
                       addedAssignees,
                       removedAssignees,
                     });
@@ -332,7 +335,8 @@ function RepositoryPullView(props) {
                     );
 
                     const res = await props.updatePullRequestLabels({
-                      pullId: pullRequest.id,
+                      repositoryId: repository.id,
+                      pullIid: pullRequest.iid,
                       addedLabels,
                       removedLabels,
                     });

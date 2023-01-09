@@ -108,7 +108,10 @@ function CommentEditor({
                 disabled={togglingIssue || postingComment}
                 onClick={async () => {
                   setTogglingIssue(true);
-                  const res = await props.toggleIssueState({ id: issueId });
+                  const res = await props.toggleIssueState({
+                    repositoryId: repositoryId,
+                    iid: parentIid,
+                  });
                   if (res && res.code === 0) {
                     if (onSuccess) {
                       await onSuccess();
@@ -132,7 +135,8 @@ function CommentEditor({
                 onClick={async () => {
                   setTogglingIssue(true);
                   const res = await props.updatePullRequestState({
-                    id: issueId,
+                    repositoryId: repositoryId,
+                    iid: parentIid,
                     state: "CLOSED",
                   });
                   if (res && res.code === 0) {

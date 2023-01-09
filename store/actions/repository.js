@@ -252,7 +252,7 @@ export const deleteComment = ({
   };
 };
 
-export const toggleIssueState = ({ id = null }) => {
+export const toggleIssueState = ({ repositoryId = null, iid = null }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "comment")))
       return null;
@@ -260,7 +260,8 @@ export const toggleIssueState = ({ id = null }) => {
     const { wallet, env } = getState();
     const comment = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId,
+      iid,
     };
     try {
       const message = await env.txClient.msgToggleIssueState(comment);
@@ -423,7 +424,11 @@ export const changeRepositoryOwner = ({
   };
 };
 
-export const updateIssueTitle = ({ title = null, id = null }) => {
+export const updateIssueTitle = ({
+  title = null,
+  repositoryId = null,
+  iid = null,
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "issue")))
       return null;
@@ -431,7 +436,8 @@ export const updateIssueTitle = ({ title = null, id = null }) => {
     const { wallet, env } = getState();
     const issue = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId,
+      iid,
       title,
     };
 
@@ -453,7 +459,11 @@ export const updateIssueTitle = ({ title = null, id = null }) => {
   };
 };
 
-export const updatePullRequestTitle = ({ title = null, id = null }) => {
+export const updatePullRequestTitle = ({
+  title = null,
+  repositoryId = null,
+  iid = null,
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
       return null;
@@ -461,7 +471,8 @@ export const updatePullRequestTitle = ({ title = null, id = null }) => {
     const { wallet, env } = getState();
     const pull = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId,
+      iid,
       title,
     };
 
@@ -483,7 +494,11 @@ export const updatePullRequestTitle = ({ title = null, id = null }) => {
   };
 };
 
-export const updateIssueDescription = ({ description = null, id = null }) => {
+export const updateIssueDescription = ({
+  description = null,
+  repositoryId = null,
+  iid = null,
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "issue")))
       return null;
@@ -491,7 +506,8 @@ export const updateIssueDescription = ({ description = null, id = null }) => {
     const { wallet, env } = getState();
     const issue = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId,
+      iid,
       description,
     };
 
@@ -515,7 +531,8 @@ export const updateIssueDescription = ({ description = null, id = null }) => {
 
 export const updatePullRequestDescription = ({
   description = null,
-  id = null,
+  repositoryId = null,
+  iid = null,
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
@@ -524,7 +541,8 @@ export const updatePullRequestDescription = ({
     const { wallet, env } = getState();
     const pull = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId,
+      iid,
       description,
     };
 
@@ -547,7 +565,8 @@ export const updatePullRequestDescription = ({
 };
 
 export const updateIssueAssignees = ({
-  issueId = null,
+  repositoryId = null,
+  iid = null,
   addedAssignees = [],
   removedAssignees = [],
 }) => {
@@ -558,12 +577,14 @@ export const updateIssueAssignees = ({
     const { wallet, env } = getState();
     const issueAddAssignees = {
       creator: wallet.selectedAddress,
-      id: issueId,
+      repositoryId: repositoryId,
+      iid: iid,
       assignees: addedAssignees,
     };
     const issueRemoveAssignees = {
       creator: wallet.selectedAddress,
-      id: issueId,
+      repositoryId: repositoryId,
+      iid: iid,
       assignees: removedAssignees,
     };
 
@@ -603,7 +624,8 @@ export const updateIssueAssignees = ({
 };
 
 export const updateIssueLabels = ({
-  issueId = null,
+  repositoryId = null,
+  iid = null,
   addedLabels = [],
   removedLabels = [],
 }) => {
@@ -614,12 +636,14 @@ export const updateIssueLabels = ({
     const { wallet, env } = getState();
     const issueAddLabels = {
       creator: wallet.selectedAddress,
-      issueId: issueId,
+      repositoryId: repositoryId,
+      iid: iid,
       labelIds: addedLabels,
     };
     const issueRemoveLabels = {
       creator: wallet.selectedAddress,
-      issueId: issueId,
+      repositoryId: repositoryId,
+      iid: iid,
       labelIds: removedLabels,
     };
 
@@ -1031,7 +1055,8 @@ export const createTag = ({
 };
 
 export const updatePullRequestAssignees = ({
-  pullId = null,
+  repositoryId = null,
+  pullIid = null,
   addedAssignees = [],
   removedAssignees = [],
 }) => {
@@ -1044,12 +1069,14 @@ export const updatePullRequestAssignees = ({
     const { wallet, env } = getState();
     const pullAddAssignees = {
       creator: wallet.selectedAddress,
-      id: pullId,
+      repositoryId: repositoryId,
+      iid: pullIid,
       assignees: addedAssignees,
     };
     const pullRemoveAssignees = {
       creator: wallet.selectedAddress,
-      id: pullId,
+      repositoryId: repositoryId,
+      iid: pullIid,
       assignees: removedAssignees,
     };
 
@@ -1091,7 +1118,8 @@ export const updatePullRequestAssignees = ({
 };
 
 export const updatePullRequestReviewers = ({
-  pullId = null,
+  repositoryId = null,
+  pullIid = null,
   addedReviewers = [],
   removedReviewers = [],
 }) => {
@@ -1104,12 +1132,14 @@ export const updatePullRequestReviewers = ({
     const { wallet, env } = getState();
     const pullAddReviewers = {
       creator: wallet.selectedAddress,
-      id: pullId,
+      repositoryId: repositoryId,
+      iid: pullIid,
       reviewers: addedReviewers,
     };
     const pullRemoveReviewers = {
       creator: wallet.selectedAddress,
-      id: pullId,
+      repositoryId: repositoryId,
+      iid: pullIid,
       reviewers: removedReviewers,
     };
 
@@ -1151,7 +1181,8 @@ export const updatePullRequestReviewers = ({
 };
 
 export const updatePullRequestLabels = ({
-  pullId = null,
+  repositoryId = null,
+  pullIid = null,
   addedLabels = [],
   removedLabels = [],
 }) => {
@@ -1162,12 +1193,14 @@ export const updatePullRequestLabels = ({
     const { wallet, env } = getState();
     const issueAddLabels = {
       creator: wallet.selectedAddress,
-      pullRequestId: pullId,
+      repositoryId: repositoryId,
+      iid: pullIid,
       labelIds: addedLabels,
     };
     const issueRemoveLabels = {
       creator: wallet.selectedAddress,
-      pullRequestId: pullId,
+      repositoryId: repositoryId,
+      iid: pullIid,
       labelIds: removedLabels,
     };
 
@@ -1206,7 +1239,12 @@ export const updatePullRequestLabels = ({
   };
 };
 
-export const updatePullRequestState = ({ id, state, mergeCommitSha }) => {
+export const updatePullRequestState = ({
+  repositoryId = null,
+  iid = null,
+  state,
+  mergeCommitSha,
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
       return null;
@@ -1214,7 +1252,8 @@ export const updatePullRequestState = ({ id, state, mergeCommitSha }) => {
     const { wallet, env } = getState();
     const pullState = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId,
+      iid,
       state,
       mergeCommitSha,
     };
@@ -1235,7 +1274,7 @@ export const updatePullRequestState = ({ id, state, mergeCommitSha }) => {
   };
 };
 
-export const mergePullRequest = ({ id }) => {
+export const mergePullRequest = ({ repositoryId, iid }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
       return null;
@@ -1243,7 +1282,8 @@ export const mergePullRequest = ({ id }) => {
     const { wallet, env } = getState();
     const mergePull = {
       creator: wallet.selectedAddress,
-      id,
+      repositoryId: repositoryId,
+      iid,
       provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
     };
 

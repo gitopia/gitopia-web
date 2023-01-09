@@ -296,7 +296,8 @@ function RepositoryIssueView(props) {
                     );
 
                     const res = await props.updateIssueAssignees({
-                      issueId: issue.id,
+                      repositoryId: repository.id,
+                      iid: issue.iid,
                       addedAssignees,
                       removedAssignees,
                     });
@@ -334,7 +335,8 @@ function RepositoryIssueView(props) {
                     );
 
                     const res = await props.updateIssueLabels({
-                      issueId: issue.id,
+                      repositoryId: repository.id,
+                      iid: issue.iid,
                       addedLabels,
                       removedLabels,
                     });

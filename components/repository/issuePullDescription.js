@@ -62,11 +62,13 @@ function IssuePullDescription({
       const res = isPull
         ? await props.updatePullRequestDescription({
             description: newDescription,
-            id: issuePullObj.id,
+            repositoryId: repository.id,
+            iid: issuePullObj.iid,
           })
         : await props.updateIssueDescription({
             description: newDescription,
-            id: issuePullObj.id,
+            repositoryId: repository.id,
+            iid: issuePullObj.iid,
           });
       if (res && res.code === 0) {
         if (onUpdate) await onUpdate(newDescription);

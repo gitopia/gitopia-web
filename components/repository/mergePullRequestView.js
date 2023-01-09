@@ -12,15 +12,19 @@ import mergePullRequestCheck from "../../helpers/mergePullRequestCheck";
 import getPullRequestMergePermission from "../../helpers/getPullRequestMergePermission";
 import getGitServerAuthorization from "../../helpers/getGitServerAuthStatus";
 
-function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
+function MergePullRequestView({
+  repositoryId,
+  pullRequest,
+  refreshPullRequest,
+  ...props
+}) {
   const [isMerging, setIsMerging] = useState(false);
   const [stateClass, setStateClass] = useState("");
   const [iconType, setIconType] = useState("check");
   const [message, setMessage] = useState("");
   const [pullMergeAccess, setPullMergeAccess] = useState(false);
-  const [pullMergeAccessDialogShown, setPullMergeAccessDialogShown] = useState(
-    false
-  );
+  const [pullMergeAccessDialogShown, setPullMergeAccessDialogShown] =
+    useState(false);
   const [isGrantingAccess, setIsGrantingAccess] = useState(false);
 
   const checkMerge = async () => {
@@ -70,7 +74,10 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
         setIsMerging(false);
         return;
       }
-      const res = await props.mergePullRequest({ id: pullRequest.id });
+      const res = await props.mergePullRequest({
+        repositoryId: repositoryId,
+        iid: pullRequest.iid,
+      });
       if (res) {
         if (res.TaskState === "TASK_STATE_SUCCESS") refreshPullRequest();
         else if (res.TaskState === "TASK_STATE_FAILURE")

@@ -479,7 +479,7 @@ function CreateBounty(props) {
                           .createBounty(
                             props.bountyAmount,
                             dayjs(expiry.toString()).unix(),
-                            props.issue.id,
+                            props.issue.iid,
                             "issue"
                           )
                           .then((res) => {

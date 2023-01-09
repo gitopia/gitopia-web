@@ -218,9 +218,11 @@ function RepositoryPullIssuesView(props) {
             <button
               className="ml-auto btn btn-primary text-xs btn-sm mt-4"
               onClick={() => {
-                props.linkPullIssuebyIid(pullRequest.id, issue.iid).then(() => {
-                  setIssue({ title: "", iid: "" });
-                });
+                props
+                  .linkPullIssuebyIid(repository.id, pullRequest.iid, issue.iid)
+                  .then(() => {
+                    setIssue({ title: "", iid: "" });
+                  });
               }}
               disabled={issue.iid === ""}
             >
@@ -430,7 +432,11 @@ function RepositoryPullIssuesView(props) {
                       <button
                         className="link link-primary text-xs uppercase no-underline"
                         onClick={() => {
-                          props.unlinkPullIssuebyIid(pullRequest.id, i.iid);
+                          props.unlinkPullIssuebyIid(
+                            repository.id,
+                            pullRequest.iid,
+                            i.iid
+                          );
                         }}
                       >
                         Unlink
