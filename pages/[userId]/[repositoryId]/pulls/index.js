@@ -18,6 +18,7 @@ import Label from "../../../../components/repository/label";
 import parseFilters from "../../../../helpers/parseFilters";
 import pullRequestStateClass from "../../../../helpers/pullRequestStateClass";
 import useWindowSize from "../../../../hooks/useWindowSize";
+import getPullRequestCommentAll from "../../../../helpers/getPullRequestCommentAll";
 
 export async function getStaticProps() {
   return { props: {} };
