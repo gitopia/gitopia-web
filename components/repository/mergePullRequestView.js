@@ -65,7 +65,8 @@ function MergePullRequestView({
     setIsMerging(true);
     const user = await getPullRequestMergePermission(
       props.selectedAddress,
-      pullRequest.id
+      repositoryId,
+      pullRequest.iid
     );
     if (user && user.havePermission) {
       let access = await getGitServerAuthorization(props.selectedAddress);
