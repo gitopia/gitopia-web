@@ -1,16 +1,10 @@
 import api from "./getApi";
 
-export default async function getPullRequest(pullId) {
+export default async function getPullRequest(id, repositoryName, pullIid) {
   try {
-    const res = await api.queryPullRequest(pullId);
+    const res = await api.queryPullRequest(id, repositoryName, pullIid);
     if (res.ok) {
       let i = res.data.PullRequest;
-      // try {
-      //   const owner = JSON.parse(r.owner);
-      //   r.owner = owner;
-      // } catch (e) {
-      //   console.error(e);
-      // }
       return i;
     }
   } catch (e) {

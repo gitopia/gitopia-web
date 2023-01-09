@@ -69,7 +69,11 @@ function RepositoryIssueLinkedPullsView(props) {
     async function fetchPulls() {
       const array = [];
       for (var i = 0; i < issue.pullRequests.length; i++) {
-        const res = await getPullRequest(issue.pullRequests[i].id);
+        const res = await getPullRequest(
+          repository.id,
+          repository.name,
+          issue.pullRequests[i].iid
+        );
         const comment = await getPullRequestCommentAll(repository.id, res.iid);
         res.comments = comment;
         array.push(res);

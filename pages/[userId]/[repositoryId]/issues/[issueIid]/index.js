@@ -362,7 +362,11 @@ function RepositoryIssueView(props) {
                 </div>
               </div>
               {issue.pullRequests.length > 0 ? (
-                <IssuePullRequestView pullRequests={issue.pullRequests} />
+                <IssuePullRequestView
+                  pullRequests={issue.pullRequests}
+                  repositoryId={repository.id}
+                  repositoryName={repository.name}
+                />
               ) : (
                 ""
               )}
