@@ -46,7 +46,7 @@ function RepositoryPullIssuesView(props) {
       const array = [];
       for (var i = 0; i < pullRequest.issues.length; i++) {
         const res = await getIssue(
-          repository.id,
+          props.selectedAddress,
           repository.name,
           pullRequest.issues[i].iid
         );

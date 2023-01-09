@@ -70,7 +70,7 @@ function RepositoryIssueLinkedPullsView(props) {
       const array = [];
       for (var i = 0; i < issue.pullRequests.length; i++) {
         const res = await getPullRequest(
-          repository.id,
+          props.selectedAddress,
           repository.name,
           issue.pullRequests[i].iid
         );

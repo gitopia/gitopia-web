@@ -19,17 +19,17 @@ function IssuePullRequestView(props) {
       let baseRepo, headRepo;
       for (var i = 0; i < props.pullRequests.length; i++) {
         const res = await getPullRequest(
-          props.repositoryId,
+          props.selectedAddress,
           props.repositoryName,
           props.pullRequests[i].iid
         );
         if (res) {
           baseRepo = await getRepositoryById(res.base.repositoryId);
           headRepo = await getRepositoryById(res.head.repositoryId);
+          res.baseRepo = baseRepo;
+          res.headRepo = headRepo;
+          array.push(res);
         }
-        res.baseRepo = baseRepo;
-        res.headRepo = headRepo;
-        array.push(res);
       }
 
       setPulls(array);
