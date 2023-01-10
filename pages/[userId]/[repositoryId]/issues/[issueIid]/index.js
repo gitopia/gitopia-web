@@ -376,7 +376,7 @@ function RepositoryIssueView(props) {
               ) : (
                 ""
               )}
-              {issue.bounties.length > 0 ? (
+              {issue.bounties?.length > 0 ? (
                 <IssueBountyView bounties={issue.bounties} />
               ) : (
                 ""
