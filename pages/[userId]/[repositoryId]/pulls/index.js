@@ -100,6 +100,8 @@ function RepositoryPullsView(props) {
             );
             if (c) {
               data.PullRequest[i].comments = c;
+            } else {
+              data.PullRequest[i].comments = [];
             }
           }
         }

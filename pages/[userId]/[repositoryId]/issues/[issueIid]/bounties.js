@@ -182,9 +182,9 @@ function RepositoryBountiesView(props) {
             </span>
             <span className="text-xl mr-2 text-type-secondary">&middot;</span>
             <span className="text-xs text-type-secondary">
-              {issue.comments.length}
+              {issue.comments?.length}
               <span className="ml-1">
-                {pluralize("comment", issue.comments.length)}
+                {pluralize("comment", issue.comments?.length)}
               </span>
             </span>
           </div>

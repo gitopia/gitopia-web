@@ -127,7 +127,11 @@ function RepositoryIssueView(props) {
 
   const getAllComments = async () => {
     const comments = await getIssueCommentAll(repository.id, issue.iid);
-    setAllComments(comments);
+    if (comments) {
+      setAllComments(comments);
+    } else {
+      setAllComments([]);
+    }
   };
 
   const refreshIssue = async () => {
@@ -191,7 +195,7 @@ function RepositoryIssueView(props) {
             <span className="text-xs text-type-secondary">
               {issue.comments?.length}
               <span className="ml-1">
-                {pluralize("comment", issue.comments.length)}
+                {pluralize("comment", issue.comments?.length)}
               </span>
             </span>
           </div>

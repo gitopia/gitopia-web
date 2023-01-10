@@ -97,6 +97,8 @@ function RepositoryIssueView(props) {
           const c = await getIssueCommentAll(repository.id, data.Issue[i].iid);
           if (c) {
             data.Issue[i].comments = c;
+          } else {
+            data.Issue[i].comments = [];
           }
         }
       }
