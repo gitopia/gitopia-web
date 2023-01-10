@@ -564,7 +564,7 @@ function RepositoryIssueView(props) {
                       </div>
                     </div>
                     <div className="flex items-center">
-                      {i.bounties.length > 0 ? (
+                      {i.bounties?.length > 0 ? (
                         <svg
                           width="32"
                           height="32"
