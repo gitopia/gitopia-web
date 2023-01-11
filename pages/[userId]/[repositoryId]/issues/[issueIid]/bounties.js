@@ -199,6 +199,7 @@ function RepositoryBountiesView(props) {
               <CreateBounty
                 issue={issue}
                 id={id}
+                repository={repository}
                 onUpdate={refreshBounty}
                 bountyAmount={bountyAmount}
                 setBountyAmount={setBountyAmount}

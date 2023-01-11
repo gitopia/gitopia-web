@@ -480,7 +480,8 @@ function CreateBounty(props) {
                             props.bountyAmount,
                             dayjs(expiry.toString()).unix(),
                             props.issue.iid,
-                            "issue"
+                            "issue",
+                            props.repository.id
                           )
                           .then((res) => {
                             setAmount([]);
