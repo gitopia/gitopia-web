@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 
-import getRepositoryIssue from "../../../../../helpers/getRepositoryIssue";
+import getIssue from "../../../../../helpers/getIssue";
 import shrinkAddress from "../../../../../helpers/shrinkAddress";
 import RepositoryHeader from "../../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
@@ -75,7 +75,7 @@ function RepositoryBountiesView(props) {
   useEffect(() => {
     async function fetchIssue() {
       const [i, c] = await Promise.all([
-        getRepositoryIssue(
+        getIssue(
           router.query.userId,
           router.query.repositoryId,
           router.query.issueIid
@@ -116,7 +116,7 @@ function RepositoryBountiesView(props) {
 
   const refreshIssue = async () => {
     const [i, c] = await Promise.all([
-      getRepositoryIssue(
+      getIssue(
         router.query.userId,
         router.query.repositoryId,
         router.query.issueIid

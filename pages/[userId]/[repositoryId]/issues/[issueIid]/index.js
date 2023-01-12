@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import find from "lodash/find";
 
-import getRepositoryIssue from "../../../../../helpers/getRepositoryIssue";
+import getIssue from "../../../../../helpers/getIssue";
 import getIssueComment from "../../../../../helpers/getIssueComment";
 import shrinkAddress from "../../../../../helpers/shrinkAddress";
 import RepositoryHeader from "../../../../../components/repository/header";
@@ -107,7 +107,7 @@ function RepositoryIssueView(props) {
   useEffect(() => {
     async function initIssues() {
       const [i, c] = await Promise.all([
-        getRepositoryIssue(
+        getIssue(
           router.query.userId,
           router.query.repositoryId,
           router.query.issueIid
@@ -136,7 +136,7 @@ function RepositoryIssueView(props) {
 
   const refreshIssue = async () => {
     const [i, c] = await Promise.all([
-      getRepositoryIssue(repository.owner.id, repository.name, issue.iid),
+      getIssue(router.query.userId, repository.name, issue.iid),
       getIssueCommentAll(repository.id, router.query.issueIid),
     ]);
     if (i) {
