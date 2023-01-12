@@ -161,7 +161,7 @@ export const createComment = ({
       creator: wallet.selectedAddress,
       repositoryId,
       parentIid,
-      parent,
+      parent: parent === "COMMENT_PARENT_ISSUE" ? 0 : 1,
       body,
     };
     if (attachments.length) {
