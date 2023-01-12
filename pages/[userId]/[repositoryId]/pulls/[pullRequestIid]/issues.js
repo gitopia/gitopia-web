@@ -46,12 +46,10 @@ function RepositoryPullIssuesView(props) {
       const array = [];
       for (var i = 0; i < pullRequest.issues.length; i++) {
         const res = await getIssue(
-          props.selectedAddress,
+          repository.owner.id,
           repository.name,
           pullRequest.issues[i].iid
         );
-        const comment = await getIssueCommentAll(repository.id, res.iid);
-        res.comments = comment;
         array.push(res);
       }
       setIssues(array);
@@ -408,7 +406,7 @@ function RepositoryPullIssuesView(props) {
                     </div>
                     <div className="w-1/12 flex mr-4 mt-1">
                       <div className="text-sm mr-3 font-bold text-type-secondary">
-                        {i.comments.length}
+                        {i.commentsCount}
                       </div>
                       <svg
                         width="19"

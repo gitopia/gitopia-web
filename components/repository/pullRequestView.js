@@ -19,7 +19,7 @@ function IssuePullRequestView(props) {
       let baseRepo, headRepo;
       for (var i = 0; i < props.pullRequests.length; i++) {
         const res = await getPullRequest(
-          props.selectedAddress,
+          props.repoOwner,
           props.repositoryName,
           props.pullRequests[i].iid
         );

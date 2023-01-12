@@ -368,6 +368,7 @@ function RepositoryPullView(props) {
                   issues={pullRequest.issues}
                   repositoryId={repository.id}
                   repositoryName={repository.name}
+                  repoOwner={repository.owner.id}
                 />
               ) : (
                 ""

@@ -49,33 +49,36 @@ function RepositoryIssueLinkedPullsView(props) {
     async function fetchIssue() {
       const [i, c] = await Promise.all([
         getRepositoryIssue(
-          router.query.userId,
+          repository.owner.id,
           router.query.repositoryId,
           router.query.issueIid
         ),
         getIssueCommentAll(repository.id, router.query.issueIid),
       ]);
       if (i) {
-        i.comments = c;
+        if (c) {
+          i.comments = c;
+        } else {
+          i.comments = [];
+        }
         setIssue(i);
       } else {
         setErrorStatusCode(404);
       }
     }
     fetchIssue();
-  }, [router.query.issueIid, repository.id]);
+  }, [router.query.issueIid, repository.id, router.query.userId]);
 
   useEffect(() => {
     async function fetchPulls() {
       const array = [];
       for (var i = 0; i < issue.pullRequests.length; i++) {
         const res = await getPullRequest(
-          props.selectedAddress,
+          repository.owner.id,
           repository.name,
           issue.pullRequests[i].iid
         );
-        const comment = await getPullRequestCommentAll(repository.id, res.iid);
-        res.comments = comment;
+
         array.push(res);
       }
       setPulls(array);
@@ -269,7 +272,7 @@ function RepositoryIssueLinkedPullsView(props) {
                     </div>
                     <div className="w-1/12 flex mr-8 mt-1.5 ml-2">
                       <div className="text-sm mr-3 font-bold text-type-secondary">
-                        {p.comments.length}
+                        {p.commentsCount}
                       </div>
                       <svg
                         width="19"

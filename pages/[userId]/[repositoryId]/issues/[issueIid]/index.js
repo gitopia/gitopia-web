@@ -372,6 +372,7 @@ function RepositoryIssueView(props) {
                   pullRequests={issue.pullRequests}
                   repositoryId={repository.id}
                   repositoryName={repository.name}
+                  repoOwner={repository.owner.id}
                 />
               ) : (
                 ""
