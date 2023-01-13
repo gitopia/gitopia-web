@@ -4,11 +4,17 @@ import { connect } from "react-redux";
 import { ibcWithdraw } from "../../store/actions/wallet";
 import { gitopiaIbc } from "../../ibc-assets-config";
 import { useRouter } from "next/router";
+import getChainInfo from "../../helpers/getChainInfo";
+import getBalances from "../../helpers/getAllBalances";
+import getDenomNameByHash from "../../helpers/getDenomNameByHash";
 
 function WithdrawIbcAsset(props) {
   const [amount, setAmount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [validateAmountError, setValidateAmountError] = useState(null);
+  const [balance, setBalance] = useState(0);
+  const [tokenDenom, setTokenDenom] = useState("");
+  const [ibcTokenDenom, setIbcTokenDenom] = useState("");
   const router = useRouter();
   useEffect(() => {
     if (props.activeWallet?.counterPartyAddress === undefined) {
@@ -16,6 +22,28 @@ function WithdrawIbcAsset(props) {
     }
     document.getElementById("my-modal").checked = true;
   }, []);
+
+  useEffect(() => {
+    async function getChain() {
+      let info = await getChainInfo(props.activeWallet?.counterPartyChain);
+      setTokenDenom(info?.coin_minimal_denom);
+
+      let res = await getBalances(props.selectedAddress);
+      if (res) {
+        let b = res.balances;
+        for (let i = 0; i < b.length; i++) {
+          if (b[i]?.denom.includes("ibc")) {
+            let denom = await getDenomNameByHash(b[i]?.denom);
+            if (denom == info?.coin_minimal_denom) {
+              setBalance(b[i]?.amount);
+              setIbcTokenDenom(b[i]?.denom);
+            }
+          }
+        }
+      }
+    }
+    getChain();
+  }, [props.activeWallet]);
 
   function fillAmount(amount) {
     document.getElementById("amount").value = amount;
@@ -33,19 +61,9 @@ function WithdrawIbcAsset(props) {
     if (amount == "" || amount == 0) {
       setValidateAmountError("Enter a valid amount");
     }
-
-    let balance = props.loreBalance;
-    if (props.advanceUser === false) {
-      Vamount = Vamount * 1000000;
-    }
     if (Vamount > 0 && isNaturalNumber(Vamount)) {
-      if (Vamount < 10 || Vamount > 0) {
-        if (Vamount > balance) {
-          setValidateAmountError("Insufficient balance");
-          return false;
-        }
-      } else {
-        setValidateAmountError("Amount should be in range 1-10");
+      if (Vamount > balance) {
+        setValidateAmountError("Insufficient balance");
         return false;
       }
     } else {
@@ -129,13 +147,8 @@ function WithdrawIbcAsset(props) {
           <div className="text-white mt-5">Amount to Withdraw</div>
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-2">
             <div className="font-bold">
-              {"Available Balance : " +
-                (props.advanceUser === true
-                  ? props.loreBalance
-                  : props.loreBalance / 1000000)}{" "}
-              {props.advanceUser === true
-                ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-                : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+              Available Balance : {balance + " "}
+              {tokenDenom.toUpperCase()}
             </div>
             <div className="border border-gray-700 rounded-xl p-3 bg-grey-900 mt-2">
               <div className="flex">
@@ -165,16 +178,8 @@ function WithdrawIbcAsset(props) {
                 <div
                   className="link link-primary text-xs text-primary font-bold no-underline ml-auto"
                   onClick={(e) => {
-                    fillAmount(
-                      props.advanceUser
-                        ? (props.loreBalance - 200).toString()
-                        : ((props.loreBalance - 200) / 1000000).toString()
-                    );
-                    setAmount(
-                      props.advanceUser
-                        ? (props.loreBalance - 200).toString()
-                        : ((props.loreBalance - 200) / 1000000).toString()
-                    );
+                    fillAmount((balance - 200).toString());
+                    setAmount((balance - 200).toString());
                   }}
                 >
                   Max
@@ -206,10 +211,8 @@ function WithdrawIbcAsset(props) {
                     .ibcWithdraw(
                       gitopiaIbc.port_id,
                       gitopiaIbc.channel_id,
-                      props.advanceUser
-                        ? amount
-                        : (Number(amount) * 1000000).toString(),
-                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN,
+                      amount,
+                      ibcTokenDenom,
                       props.selectedAddress,
                       props.activeWallet.counterPartyAddress,
                       1,

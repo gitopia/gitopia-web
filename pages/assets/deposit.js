@@ -12,6 +12,7 @@ function DepositIbcAsset(props) {
   const [counterPartyChainInfo, setCounterPartyChainInfo] = useState(null);
   const [validateAmountError, setValidateAmountError] = useState(null);
   const [balance, setBalance] = useState(0);
+  const [token, setToken] = useState("");
   const router = useRouter();
   useEffect(() => {
     if (
@@ -27,6 +28,7 @@ function DepositIbcAsset(props) {
     async function getChain() {
       let info = await getChainInfo(props.activeWallet?.counterPartyChain);
       setCounterPartyChainInfo(info);
+      setToken(info.coin_minimal_denom);
       if (info) {
         let b = await getBalanceForChain(
           info.lcd_node,
@@ -55,19 +57,9 @@ function DepositIbcAsset(props) {
     if (amount == "" || amount == 0) {
       setValidateAmountError("Enter a valid amount");
     }
-
-    let balance = props.loreBalance;
-    if (props.advanceUser === false) {
-      Vamount = Vamount * 1000000;
-    }
     if (Vamount > 0 && isNaturalNumber(Vamount)) {
-      if (Vamount < 10 || Vamount > 0) {
-        if (Vamount > balance) {
-          setValidateAmountError("Insufficient balance");
-          return false;
-        }
-      } else {
-        setValidateAmountError("Amount should be in range 1-10");
+      if (Vamount > balance) {
+        setValidateAmountError("Insufficient balance");
         return false;
       }
     } else {
@@ -150,7 +142,9 @@ function DepositIbcAsset(props) {
           </div>
           <div className="text-white mt-5">Amount to Deposit</div>
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-2">
-            <div className="font-bold">Available Balance : {balance} OSMO</div>
+            <div className="font-bold">
+              Available Balance : {balance} {token.toUpperCase()}
+            </div>
             <div className="border border-gray-700 rounded-xl p-3 bg-grey-900 mt-2">
               <div className="flex">
                 <input
@@ -211,9 +205,7 @@ function DepositIbcAsset(props) {
                     .ibcDeposit(
                       counterPartyChainInfo.port_id,
                       counterPartyChainInfo.channel_id,
-                      props.advanceUser
-                        ? amount
-                        : (Number(amount) * 1000000).toString(),
+                      amount,
                       counterPartyChainInfo.coin_minimal_denom,
                       props.activeWallet.counterPartyAddress,
                       props.selectedAddress,
