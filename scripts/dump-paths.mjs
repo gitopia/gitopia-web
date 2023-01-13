@@ -3,18 +3,24 @@ import fs from "fs";
 import { Api } from "@gitopia/gitopia-js/rest.js";
 import * as env from "@next/env";
 import globby from "globby";
+import filter from "lodash/filter.js";
 
 env.default.loadEnvConfig(process.cwd());
 console.log("API_URL", process.env.NEXT_PUBLIC_API_URL);
 console.log("SERVER_URL", process.env.NEXT_PUBLIC_SERVER_URL);
 
-const paginationLimit = 10,
+const paginationLimit = 200,
   workingDir = "./seo";
 
 let owners = [],
   repositories = [],
   issues = [],
   pulls = [],
+  branches = [],
+  tags = [],
+  comments = [],
+  releases = [],
+  whois = [],
   dynamicPaths = [],
   dynamicPathParams = [];
 
@@ -103,6 +109,25 @@ function saveParamsForPaths(filename) {
   dynamicPathParams = [];
 }
 
+function dumpData() {
+  fs.writeFileSync(workingDir + "/dump-owners.json", JSON.stringify(owners));
+  fs.writeFileSync(
+    workingDir + "/dump-repositories.json",
+    JSON.stringify(repositories)
+  );
+  fs.writeFileSync(workingDir + "/dump-issues.json", JSON.stringify(issues));
+  fs.writeFileSync(workingDir + "/dump-pulls.json", JSON.stringify(pulls));
+  fs.writeFileSync(
+    workingDir + "/dump-comments.json",
+    JSON.stringify(comments)
+  );
+  fs.writeFileSync(workingDir + "/dump-whois.json", JSON.stringify(whois));
+  fs.writeFileSync(
+    workingDir + "/dump-releases.json",
+    JSON.stringify(releases)
+  );
+}
+
 async function saveSitemap() {
   const staticPaths = await getStaticPaths();
   const sitemapString = `<?xml version="1.0" encoding="UTF-8"?>
@@ -134,51 +159,82 @@ Promise.all([
   populate("queryRepositoryAll", "Repository", repositories),
   populate("queryIssueAll", "Issue", issues),
   populate("queryPullRequestAll", "PullRequest", pulls),
+  populate("queryBranchAll", "Branch", branches),
+  populate("queryTagAll", "Tag", tags),
+  populate("queryCommentAll", "Comment", comments),
+  populate("queryReleaseAll", "Release", releases),
+  populate("queryWhoisAll", "Whois", whois),
   getStaticPaths(),
 ])
   .then(() => {
     createDir();
     owners.forEach((u) => {
-      addPath({ userId: u.username ? u.username : u.address }, [
-        u.username ? u.username : u.address,
-      ]);
+      if (!/^temp-/.test(u.username) && u.address)
+        addPath({ userId: u.username ? u.username : u.address }, [
+          u.username ? u.username : u.address,
+        ]);
     });
+    console.log("Saving Owners", dynamicPathParams.length);
     saveParamsForPaths(workingDir + "/paths-owners.json");
     repositories.forEach((r) => {
       let owner = find(owners, { address: r.owner.id });
+      let b = filter(branches, { repositoryId: r.id }),
+        t = filter(tags, { repositoryId: r.id });
       r.owner.username = owner?.username ? owner.username : r.owner.id;
-      addPath(
-        {
-          userId: r.owner.username,
-          repositoryId: r.name,
-        },
-        [owner?.username, r.name]
-      );
+      r.branches = b;
+      r.tags = t;
+      if (!/^temp-/.test(owner.username) && owner.address) {
+        addPath(
+          {
+            userId: r.owner.username,
+            repositoryId: r.name,
+          },
+          [owner?.username, r.name]
+        );
+      }
     });
+    console.log("Saving Repositories", dynamicPathParams.length);
     saveParamsForPaths(workingDir + "/paths-repositories.json");
     issues.forEach((i) => {
       let repo = find(repositories, { id: i.repositoryId });
-      addPath(
-        {
-          userId: repo?.owner.username,
-          repositoryId: repo?.name,
-          issueIid: i.iid,
-        },
-        [repo?.owner.username, repo?.name, "issues", i.iid]
-      );
+      if (
+        !/^temp-/.test(repo?.owner?.username) &&
+        repo?.owner?.username &&
+        repo?.name &&
+        i.iid
+      ) {
+        addPath(
+          {
+            userId: repo?.owner.username,
+            repositoryId: repo?.name,
+            issueIid: i.iid,
+          },
+          [repo?.owner.username, repo?.name, "issues", i.iid]
+        );
+      }
     });
+    console.log("Saving Issues", dynamicPathParams.length);
     saveParamsForPaths(workingDir + "/paths-issues.json");
     pulls.forEach((p) => {
       let repo = find(repositories, { id: p.base.repositoryId });
-      addPath(
-        {
-          userId: repo?.owner.username,
-          repositoryId: repo?.name,
-          pullRequestIid: p.iid,
-        },
-        [repo?.owner.username, repo?.name, "pulls", p.iid]
-      );
+      if (
+        !/^temp-/.test(repo?.owner?.username) &&
+        repo?.owner?.username &&
+        repo?.name &&
+        p.iid
+      ) {
+        addPath(
+          {
+            userId: repo?.owner.username,
+            repositoryId: repo?.name,
+            pullRequestIid: p.iid,
+          },
+          [repo?.owner.username, repo?.name, "pulls", p.iid]
+        );
+      }
     });
+    console.log("Saving Pull Requests", dynamicPathParams.length);
     saveParamsForPaths(workingDir + "/paths-pulls.json");
+    dumpData();
   })
   .then(saveSitemap);

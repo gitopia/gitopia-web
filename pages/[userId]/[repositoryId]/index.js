@@ -24,51 +24,52 @@ import getContent from "../../../helpers/getContent";
 import getCommitHistory from "../../../helpers/getCommitHistory";
 import pluralize from "../../../helpers/pluralize";
 import useWindowSize from "../../../hooks/useWindowSize";
-import getAnyRepository from "../../../helpers/getAnyRepository";
-import getRepositoryAll from "../../../helpers/getRepositoryAll";
-import getAllRepositoryBranch from "../../../helpers/getAllRepositoryBranch";
-import getAllRepositoryTag from "../../../helpers/getAllRepositoryTag";
+import find from "lodash/find";
 
 const atob = (base64) => {
   return Buffer.from(base64, "base64").toString("binary");
 };
 
 export async function getStaticProps({ params }) {
-  let [r, branches, tags] = await Promise.all([
-    getAnyRepository(params.userId, params.repositoryId),
-    getAllRepositoryBranch(params.userId, params.repositoryId),
-    getAllRepositoryTag(params.userId, params.repositoryId),
-  ]);
+  const fs = (await import("fs")).default;
+  const repositories = JSON.parse(
+    fs.readFileSync("./seo/dump-repositories.json")
+  );
+
+  const r = find(
+    repositories,
+    (r) =>
+      r.name === params.repositoryId &&
+      (r.owner.id === params.userId || r.owner.username === params.userId)
+  );
 
   if (r) {
-    r.branches = branches;
-    r.tags = tags;
     let branchSha = getBranchSha(r.defaultBranch, r.branches, r.tags);
 
-    const entitiesRes = await getContent(r.id, branchSha, null, null);
+    // const entitiesRes = await getContent(r.id, branchSha, null, null);
 
-    const commitHistory = await getCommitHistory(r.id, branchSha, null, 1);
+    // const commitHistory = await getCommitHistory(r.id, branchSha, null, 1);
 
-    const readmeRegex = new RegExp(/^README/gi);
-    let readmeFile = null;
-    for (let i = 0; i < entitiesRes?.content?.length; i++) {
-      if (readmeRegex.test(entitiesRes.content[i].name)) {
-        const readme = await getContent(
-          r.id,
-          branchSha,
-          entitiesRes.content[i].name
-        );
-        if (readme?.content[0]) {
-          readmeFile = atob(readme.content[0].content);
-        }
-      }
-    }
+    // const readmeRegex = new RegExp(/^README/gi);
+    // let readmeFile = null;
+    // for (let i = 0; i < entitiesRes?.content?.length; i++) {
+    //   if (readmeRegex.test(entitiesRes.content[i].name)) {
+    //     const readme = await getContent(
+    //       r.id,
+    //       branchSha,
+    //       entitiesRes.content[i].name
+    //     );
+    //     if (readme?.content[0]) {
+    //       readmeFile = atob(readme.content[0].content);
+    //     }
+    //   }
+    // }
     return {
       props: {
         repository: r,
-        entitiesRes,
-        commitHistory: { commits: [{}], ...commitHistory },
-        readmeFile,
+        // entitiesRes,
+        // commitHistory: { commits: [{}], ...commitHistory },
+        // readmeFile,
       },
       revalidate: 1,
     };

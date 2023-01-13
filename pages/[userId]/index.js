@@ -19,21 +19,31 @@ import DaoProposalList from "../../components/account/daoProposalList";
 import DaoProposalCreate from "../../components/account/daoProposalCreate";
 import DaoProposalDetails from "../../components/account/daoProposalDetails";
 import validAddress from "../../helpers/validAddress";
-import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
 import sortBy from "lodash/sortBy";
+import find from "lodash/find";
+import filter from "lodash/filter";
 
 export async function getStaticProps({ params }) {
-  const data = await getWhois(params.userId);
-  let u,
+  let data,
+    u,
     d,
     allRepos = [];
+  const fs = (await import("fs")).default;
+  let whois = JSON.parse(fs.readFileSync("./seo/dump-whois.json")),
+    repositories = JSON.parse(fs.readFileSync("./seo/dump-repositories.json")),
+    owners = JSON.parse(fs.readFileSync("./seo/dump-owners.json"));
+  if (validAddress.test(params.userId)) {
+    data = find(whois, { address: params.userId });
+  } else {
+    data = find(whois, { name: params.userId });
+  }
   if (data?.ownerType === "USER") {
-    u = await getUser(params.userId);
-    const pr = await getAnyRepositoryAll(params.userId);
+    u = find(owners, { address: data.address });
+    const pr = filter(repositories, (r) => r.owner.id === u.creator);
     allRepos = sortBy(pr, (r) => -Number(r.updatedAt));
   } else if (data?.ownerType === "DAO") {
-    d = await getDao(params.userId);
-    const pr = await getAnyRepositoryAll(params.userId);
+    d = find(owners, { address: data.address });
+    const pr = filter(repositories, (r) => r.owner.id === d.address);
     allRepos = sortBy(pr, (r) => -Number(r.updatedAt));
   }
 
@@ -42,6 +52,26 @@ export async function getStaticProps({ params }) {
     revalidate: 1,
   };
 }
+
+// export async function getServerSideProps({ params }) {
+//   let data, u,
+//     d,
+//     allRepos = [];
+//       data = await getWhois(params.userId);
+//     if (data?.ownerType === "USER") {
+//       u = await getUser(params.userId);
+//       const pr = await getAnyRepositoryAll(params.userId);
+//       allRepos = sortBy(pr, (r) => -Number(r.updatedAt));
+//     } else if (data?.ownerType === "DAO") {
+//       d = await getDao(params.userId);
+//       const pr = await getAnyRepositoryAll(params.userId);
+//       allRepos = sortBy(pr, (r) => -Number(r.updatedAt));
+//     }
+//   return {
+//     props: { user: u || {}, dao: d || {}, allRepos },
+//     revalidate: 1,
+//   };
+// }
 
 export async function getStaticPaths() {
   const fs = (await import("fs")).default;
@@ -79,15 +109,18 @@ function AccountView(props) {
       return;
     }
     if (validAddress.test(router.query.userId)) {
-      const [u, o] = await Promise.all([
-        getUser(router.query.userId),
-        getDao(router.query.userId),
-      ]);
+      const validUserAddress = new RegExp("^gitopia([a-z0-9]{39})$");
+      let u, d;
+      if (validUserAddress.test(router.query.userId)) {
+        u = await getUser(router.query.userId);
+      } else {
+        d = await getDao(router.query.userId);
+      }
       if (u) {
         setUser(u);
         setDao({ name: "" });
-      } else if (o) {
-        setDao(o);
+      } else if (d) {
+        setDao(d);
       } else {
         setErrorStatusCode(404);
         setUser({ creator: "" });

@@ -62,7 +62,7 @@ export default function useRepository(initialRepository = {}) {
             branches: branches,
             tags: tags,
           });
-        } else {
+        } else if (r.owner.type === "DAO") {
           ownerDetails = await getDao(r.owner.id);
           setRepository({
             ...r,
@@ -82,7 +82,7 @@ export default function useRepository(initialRepository = {}) {
       }
       setFirstFetchLoading(false);
     };
-    fetch();
+    if (!initialRepository.id) fetch();
   }, [router.query.userId, router.query.repositoryId, refreshIndex]);
   return { repository, refreshRepository, firstFetchLoading };
 }

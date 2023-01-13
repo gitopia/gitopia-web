@@ -28,34 +28,62 @@ import useRepository from "../../../../../hooks/useRepository";
 import usePullRequest from "../../../../../hooks/usePullRequest";
 import MergePullRequestView from "../../../../../components/repository/mergePullRequestView";
 import IssuePullDescription from "../../../../../components/repository/issuePullDescription";
-import getRepositoryPull from "../../../../../helpers/getRepositoryPull";
-import getPullRepoInfo from "../../../../../helpers/getPullRepoInfo";
-import getPullAll from "../../../../../helpers/getPullAll";
-import getRepositoryAll from "../../../../../helpers/getRepositoryAll";
-import getAnyRepository from "../../../../../helpers/getAnyRepository";
-import getAllRepositoryBranch from "../../../../../helpers/getAllRepositoryBranch";
-import getAllRepositoryTag from "../../../../../helpers/getAllRepositoryTag";
+import getBranchSha from "../../../../../helpers/getBranchSha";
+import filter from "lodash/filter";
 
 export async function getStaticProps({ params }) {
-  const [r, b, t] = await Promise.all([
-    getAnyRepository(params.userId, params.repositoryId),
-    getAllRepositoryBranch(params.userId, params.repositoryId),
-    getAllRepositoryTag(params.userId, params.repositoryId),
-  ]);
+  const fs = (await import("fs")).default;
+  const repositories = JSON.parse(
+      fs.readFileSync("./seo/dump-repositories.json")
+    ),
+    pulls = JSON.parse(fs.readFileSync("./seo/dump-pulls.json")),
+    comments = JSON.parse(fs.readFileSync("./seo/dump-comments.json"));
+
+  const r = find(
+    repositories,
+    (r) =>
+      r.name === params.repositoryId &&
+      (r.owner.id === params.userId || r.owner.username === params.userId)
+  );
 
   if (r) {
-    r.branches = b;
-    r.tags = t;
-    const p = await getRepositoryPull(
-      params.userId,
-      params.repositoryId,
-      params.pullRequestIid
+    const p = find(
+      pulls,
+      (t) => t.iid === params.pullRequestIid && t.base?.repositoryId === r.id
     );
     if (p) {
-      const pullRequest = await getPullRepoInfo(p, r);
-      const pr = pullRequest.comments.map((c) => getComment(c));
-      const comments = await Promise.all(pr);
-      return { props: { repository: r, pullRequest, comments }, revalidate: 1 };
+      if (p.base.repositoryId === p.head.repositoryId) {
+        p.head.repository = p.base.repository = r;
+        if (p.state === "OPEN") {
+          p.head.sha = getBranchSha(p.head.branch, r.branches, r.tags);
+          p.base.sha = getBranchSha(p.base.branch, r.branches, r.tags);
+        } else {
+          p.base.sha = p.base.commitSha;
+          p.head.sha = p.head.commitSha;
+        }
+      } else {
+        const forkRepo = find(repositories, { id: p.head.repositoryId });
+        if (forkRepo) {
+          p.head.repository = forkRepo;
+          p.base.repository = r;
+          if (p.state === "OPEN") {
+            p.head.sha = getBranchSha(
+              p.head.branch,
+              forkRepo.branches,
+              forkRepo.tags
+            );
+            p.base.sha = getBranchSha(p.base.branch, r.branches, r.tags);
+          } else {
+            p.base.sha = p.base.commitSha;
+            p.head.sha = p.head.commitSha;
+          }
+        }
+      }
+      const cs = filter(comments, (c) => p.comments.includes(c.id));
+      return {
+        props: { repository: r, pullRequest: p, comments: cs },
+        revalidate: 1,
+      };
     }
   }
   return { props: {} };

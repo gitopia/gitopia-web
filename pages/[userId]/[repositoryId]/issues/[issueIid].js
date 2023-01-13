@@ -31,29 +31,32 @@ import IssuePullDescription from "../../../../components/repository/issuePullDes
 import { useErrorStatus } from "../../../../hooks/errorHandler";
 import pluralize from "../../../../helpers/pluralize";
 import Link from "next/link";
-import getAnyRepository from "../../../../helpers/getAnyRepository";
-import getAllRepositoryBranch from "../../../../helpers/getAllRepositoryBranch";
-import getAllRepositoryTag from "../../../../helpers/getAllRepositoryTag";
+import filter from "lodash/filter";
 
 export async function getStaticProps({ params }) {
-  const [r, b, t] = await Promise.all([
-    getAnyRepository(params.userId, params.repositoryId),
-    getAllRepositoryBranch(params.userId, params.repositoryId),
-    getAllRepositoryTag(params.userId, params.repositoryId),
-  ]);
+  const fs = (await import("fs")).default;
+  const issues = JSON.parse(fs.readFileSync("./seo/dump-issues.json")),
+    repositories = JSON.parse(fs.readFileSync("./seo/dump-repositories.json")),
+    comments = JSON.parse(fs.readFileSync("./seo/dump-comments.json"));
+
+  const r = find(
+    repositories,
+    (r) =>
+      r.name === params.repositoryId &&
+      (r.owner.id === params.userId || r.owner.username === params.userId)
+  );
 
   if (r) {
-    r.branches = b;
-    r.tags = t;
-    const i = await getRepositoryIssue(
-      params.userId,
-      params.repositoryId,
-      params.issueIid
+    const i = find(
+      issues,
+      (t) => t.iid === params.issueIid && t.repositoryId === r.id
     );
     if (i) {
-      const pr = i.comments.map((c) => getComment(c));
-      const comments = await Promise.all(pr);
-      return { props: { repository: r, issue: i, comments }, revalidate: 1 };
+      const cs = filter(comments, (c) => i.comments.includes(c.id));
+      return {
+        props: { repository: r, issue: i, comments: cs },
+        revalidate: 1,
+      };
     }
   }
   return { props: {} };
