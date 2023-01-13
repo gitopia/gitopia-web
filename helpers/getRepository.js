@@ -9,6 +9,6 @@ export default async function getRepository(repoId) {
       return u;
     }
   } catch (e) {
-    console.error(e);
+    console.log("Not found repository", repoId);
   }
 }

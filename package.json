@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/dump-paths.mjs",
     "build": "next build && next export",
     "postbuild": "cp ./seo/sitemap.xml ./public/",
     "start": "next start",

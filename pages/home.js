@@ -11,11 +11,20 @@ import getHomeUrl from "../helpers/getHomeUrl";
 import useWindowSize from "../hooks/useWindowSize";
 import getAnyRepositoryAll from "../helpers/getAnyRepositoryAll";
 
+export async function getStaticProps() {
+  const fs = await import("fs");
+  const buildId = fs.readFileSync("./seo/build-id").toString();
+  return {
+    props: {
+      buildId,
+    },
+  };
+}
+
 function Home(props) {
   const router = useRouter();
   const { isMobile } = useWindowSize();
   const [allRepository, setAllRepository] = useState([]);
-
   useEffect(() => {
     async function setRepos() {
       if (props.selectedAddress) {
@@ -90,8 +99,11 @@ function Home(props) {
             </div>
             <div>
               <div className="bg-footer-grad py-6">
-                <div className="text-xs text-type-secondary mx-8 mb-4">
+                <div className="text-xs text-type-secondary mx-8 mb-2">
                   &copy; Gitopia {new Date().getFullYear()}
+                </div>
+                <div className="text-xs text-type-tertiary mx-8 mb-4">
+                  Build {props.buildId}
                 </div>
                 <div className="mx-6">
                   {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ? (

@@ -9,6 +9,7 @@ export default async function getDao(daoId) {
       return u;
     }
   } catch (e) {
-    console.error(e);
+    console.log("Not found DAO", daoId);
+    // console.error(e);
   }
 }
