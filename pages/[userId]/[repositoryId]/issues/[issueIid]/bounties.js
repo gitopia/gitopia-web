@@ -287,41 +287,36 @@ function RepositoryIssueView(props) {
                         )}
                       </div>
 
-                      {b.expireAt < dayjs().unix() &&
-                      b.state != "BOUNTY_STATE_REVERTEDBACK" ? (
-                        <div className="flex w-1/4 mr-3">
-                          <div
-                            className={
-                              "btn btn-outline rounded text-xs border-green-900 btn-xs font-normal hover:bg-green hover:border-green-900 hover:text-white px-4 " +
-                              (closeBountyLoading ? "loading" : "")
-                            }
-                            onClick={() => {
-                              props.closeBounty(b.id).then(refreshBounty);
-                            }}
-                          >
-                            CLOSE BOUNTY
-                          </div>
-                          <label
-                            htmlFor="my-modal-2"
-                            className={
-                              "ml-2 btn modal-button btn-outline rounded text-xs border-green-900 btn-xs font-normal hover:bg-green hover:border-green-900 hover:text-white px-4 "
-                            }
-                            onClick={() => {
-                              setBountyId(b.id);
-                            }}
-                          >
-                            EXTEND EXPIRY
-                          </label>
-                          <ExtendExpiry
-                            updatedExpiry={updatedExpiry}
-                            setUpdatedExpiry={setUpdatedExpiry}
-                            bountyId={bountyId}
-                            onUpdate={refreshBounty}
-                          ></ExtendExpiry>
+                      <div className="flex w-1/4 mr-3">
+                        <div
+                          className={
+                            "btn btn-outline rounded text-xs border-green-900 btn-xs font-normal hover:bg-green hover:border-green-900 hover:text-white px-4 " +
+                            (closeBountyLoading ? "loading" : "")
+                          }
+                          onClick={() => {
+                            props.closeBounty(b.id).then(refreshBounty);
+                          }}
+                        >
+                          CLOSE BOUNTY
                         </div>
-                      ) : (
-                        <div className="w-1/4 mr-1"></div>
-                      )}
+                        <label
+                          htmlFor="my-modal-2"
+                          className={
+                            "ml-2 btn modal-button btn-outline rounded text-xs border-green-900 btn-xs font-normal hover:bg-green hover:border-green-900 hover:text-white px-4 "
+                          }
+                          onClick={() => {
+                            setBountyId(b.id);
+                          }}
+                        >
+                          EXTEND EXPIRY
+                        </label>
+                        <ExtendExpiry
+                          updatedExpiry={updatedExpiry}
+                          setUpdatedExpiry={setUpdatedExpiry}
+                          bountyId={bountyId}
+                          onUpdate={refreshBounty}
+                        ></ExtendExpiry>
+                      </div>
                     </div>
                   );
                 })}
