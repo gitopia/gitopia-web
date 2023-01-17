@@ -5,6 +5,7 @@ import { ibcDeposit } from "../../store/actions/wallet";
 import { useRouter } from "next/router";
 import getChainInfo from "../../helpers/getChainInfo";
 import { getBalanceForChain } from "../../helpers/getBalanceForChain";
+import { coingeckoId } from "../../ibc-assets-config";
 
 function DepositIbcAsset(props) {
   const [amount, setAmount] = useState(0);
@@ -13,6 +14,7 @@ function DepositIbcAsset(props) {
   const [validateAmountError, setValidateAmountError] = useState(null);
   const [balance, setBalance] = useState(0);
   const [token, setToken] = useState("");
+  const [tokenDecimals, setTokenDecimals] = useState(0);
   const router = useRouter();
   useEffect(() => {
     if (
@@ -28,14 +30,17 @@ function DepositIbcAsset(props) {
     async function getChain() {
       let info = await getChainInfo(props.activeWallet?.counterPartyChain);
       setCounterPartyChainInfo(info);
-      setToken(info.coin_minimal_denom);
+      setToken(coingeckoId[info?.coin_minimal_denom].coinDenom);
       if (info) {
         let b = await getBalanceForChain(
           info.lcd_node,
           props.activeWallet?.counterPartyAddress,
           info.coin_minimal_denom
         );
-        setBalance(b);
+        setBalance(
+          b / Math.pow(10, coingeckoId[info?.coin_minimal_denom].coinDecimals)
+        );
+        setTokenDecimals(coingeckoId[info?.coin_minimal_denom].coinDecimals);
       }
     }
     getChain();
@@ -57,7 +62,7 @@ function DepositIbcAsset(props) {
     if (amount == "" || amount == 0) {
       setValidateAmountError("Enter a valid amount");
     }
-    if (Vamount > 0 && isNaturalNumber(Vamount)) {
+    if (Vamount > 0 && isNaturalNumber(Vamount * Math.pow(10, tokenDecimals))) {
       if (Vamount > balance) {
         setValidateAmountError("Insufficient balance");
         return false;
@@ -173,8 +178,8 @@ function DepositIbcAsset(props) {
                 <div
                   className="link link-primary text-xs text-primary font-bold no-underline ml-auto"
                   onClick={(e) => {
-                    fillAmount(balance - 200);
-                    setAmount(balance - 200);
+                    fillAmount(balance);
+                    setAmount(balance);
                   }}
                 >
                   Max
@@ -205,7 +210,7 @@ function DepositIbcAsset(props) {
                     .ibcDeposit(
                       counterPartyChainInfo.port_id,
                       counterPartyChainInfo.channel_id,
-                      amount,
+                      (Number(amount) * Math.pow(10, tokenDecimals)).toString(),
                       counterPartyChainInfo.coin_minimal_denom,
                       props.activeWallet.counterPartyAddress,
                       props.selectedAddress,

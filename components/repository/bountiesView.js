@@ -46,12 +46,26 @@ function IssueBountyView(props) {
       for (let i = 0; i < coinArray.length; i++) {
         if (coinArray[i].denom.includes("ibc")) {
           let denomName = await getDenomNameByHash(coinArray[i].denom);
-          coinArray[i].denom = denomName;
           let dollarAmount = await getTokenValueInDollars(
-            coinArray[i].denom,
+            denomName,
             coinArray[i].amount
           );
-          coinArray[i].dollarAmount = dollarAmount;
+          if (dollarAmount && denomName) {
+            let standardDenomName = coingeckoId[denomName].coinDenom;
+            coinArray[i].standardDenomName = standardDenomName;
+            coinArray[i].denom = denomName;
+            coinArray[i].amount =
+              coinArray[i].amount /
+              Math.pow(10, coingeckoId[denomName].coinDecimals);
+
+            coinArray[i].dollarAmount = dollarAmount;
+          }
+        } else {
+          let standardDenomName = coingeckoId[coinArray[i].denom].coinDenom;
+          coinArray[i].standardDenomName = standardDenomName;
+          coinArray[i].amount =
+            coinArray[i].amount /
+            Math.pow(10, coingeckoId[coinArray[i].denom].coinDecimals);
         }
       }
       setCoins(coinArray);
@@ -79,15 +93,17 @@ function IssueBountyView(props) {
             >
               <div className="text-type-secondary">
                 <div className="flex text-sm">
-                  <div className="mr-2">
+                  <div className="mr-1.5 mt-1">
                     <img
                       src={coingeckoId[c.denom].icon}
-                      width={28}
-                      height={28}
+                      width={24}
+                      height={24}
                     ></img>
                   </div>
-                  <div className={"flex uppercase ml-1 mr-3 pb-3 mt-1.5"}>
-                    {c.denom}
+                  <div
+                    className={"flex uppercase ml-1 mr-3 pb-3 mt-1.5 text-xs"}
+                  >
+                    {c.standardDenomName}
                   </div>
                   <svg
                     width="1"
@@ -97,11 +113,13 @@ function IssueBountyView(props) {
                     xmlns="http://www.w3.org/2000/svg"
                     className="mt-2.5"
                   >
-                    <rect width="1" height="15" fill="#404450" />
+                    <rect width="1" height="12" fill="#404450" />
                   </svg>
 
-                  <div className={"flex ml-3 pb-3 mt-1.5"}>{c.amount}</div>
-                  <div className="ml-2 font-bold text-xs text-type-tertiary mt-2">
+                  <div className={"flex ml-3 pb-3 mt-1.5 text-xs"}>
+                    {c.amount}
+                  </div>
+                  <div className="ml-2 font-bold text-xs text-type-tertiary mt-1.5">
                     {c.denom !== "utlore" ? "≈$" + c.dollarAmount + "USD" : ""}
                   </div>
                 </div>

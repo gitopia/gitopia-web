@@ -99,6 +99,18 @@ function RepositoryIssueView(props) {
       if (bounty.amount[i].denom.includes("ibc")) {
         let denomName = await getDenomNameByHash(bounty.amount[i].denom);
         bounty.amount[i].denom = denomName;
+        if (denomName) {
+          bounty.amount[i].standardDenomName = coingeckoId[denomName].coinDenom;
+          bounty.amount[i].amount =
+            bounty.amount[i].amount /
+            Math.pow(10, coingeckoId[denomName].coinDecimals);
+        }
+      } else {
+        bounty.amount[i].standardDenomName =
+          coingeckoId[bounty.amount[i].denom].coinDenom;
+        bounty.amount[i].amount =
+          bounty.amount[i].amount /
+          Math.pow(10, coingeckoId[bounty.amount[i].denom].coinDecimals);
       }
     }
     return bounty;
@@ -231,7 +243,7 @@ function RepositoryIssueView(props) {
                               />
 
                               <div className="ml-2 text-sm mr-1 uppercase">
-                                {a.denom}
+                                {a.standardDenomName}
                               </div>
                               <div className="text-sm mr-4">{a.amount}</div>
                             </div>

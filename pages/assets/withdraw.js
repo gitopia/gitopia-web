@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { ibcWithdraw } from "../../store/actions/wallet";
-import { gitopiaIbc } from "../../ibc-assets-config";
+import { coingeckoId, gitopiaIbc } from "../../ibc-assets-config";
 import { useRouter } from "next/router";
 import getChainInfo from "../../helpers/getChainInfo";
 import getBalances from "../../helpers/getAllBalances";
@@ -15,6 +15,7 @@ function WithdrawIbcAsset(props) {
   const [balance, setBalance] = useState(0);
   const [tokenDenom, setTokenDenom] = useState("");
   const [ibcTokenDenom, setIbcTokenDenom] = useState("");
+  const [tokenDecimals, setTokenDecimals] = useState(0);
   const router = useRouter();
   useEffect(() => {
     if (props.activeWallet?.counterPartyAddress === undefined) {
@@ -26,7 +27,7 @@ function WithdrawIbcAsset(props) {
   useEffect(() => {
     async function getChain() {
       let info = await getChainInfo(props.activeWallet?.counterPartyChain);
-      setTokenDenom(info?.coin_minimal_denom);
+      setTokenDenom(coingeckoId[info?.coin_minimal_denom].coinDenom);
 
       let res = await getBalances(props.selectedAddress);
       if (res) {
@@ -35,8 +36,17 @@ function WithdrawIbcAsset(props) {
           if (b[i]?.denom.includes("ibc")) {
             let denom = await getDenomNameByHash(b[i]?.denom);
             if (denom == info?.coin_minimal_denom) {
-              setBalance(b[i]?.amount);
+              setBalance(
+                b[i]?.amount /
+                  Math.pow(
+                    10,
+                    coingeckoId[info?.coin_minimal_denom].coinDecimals
+                  )
+              );
               setIbcTokenDenom(b[i]?.denom);
+              setTokenDecimals(
+                coingeckoId[info?.coin_minimal_denom].coinDecimals
+              );
             }
           }
         }
@@ -61,7 +71,7 @@ function WithdrawIbcAsset(props) {
     if (amount == "" || amount == 0) {
       setValidateAmountError("Enter a valid amount");
     }
-    if (Vamount > 0 && isNaturalNumber(Vamount)) {
+    if (Vamount > 0 && isNaturalNumber(Vamount * Math.pow(10, tokenDecimals))) {
       if (Vamount > balance) {
         setValidateAmountError("Insufficient balance");
         return false;
@@ -178,8 +188,12 @@ function WithdrawIbcAsset(props) {
                 <div
                   className="link link-primary text-xs text-primary font-bold no-underline ml-auto"
                   onClick={(e) => {
-                    fillAmount((balance - 200).toString());
-                    setAmount((balance - 200).toString());
+                    fillAmount(
+                      (balance - 200 / Math.pow(10, tokenDecimals)).toString()
+                    );
+                    setAmount(
+                      (balance - 200 / Math.pow(10, tokenDecimals)).toString()
+                    );
                   }}
                 >
                   Max
@@ -211,7 +225,7 @@ function WithdrawIbcAsset(props) {
                     .ibcWithdraw(
                       gitopiaIbc.port_id,
                       gitopiaIbc.channel_id,
-                      amount,
+                      (Number(amount) * Math.pow(10, tokenDecimals)).toString(),
                       ibcTokenDenom,
                       props.selectedAddress,
                       props.activeWallet.counterPartyAddress,

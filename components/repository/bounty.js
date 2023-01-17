@@ -16,7 +16,7 @@ function CreateBounty(props) {
   const [amount, setAmount] = useState([]);
   const [tokenDenom, setTokenDenom] = useState([]);
   const [maxAmount, setMaxAmount] = useState([]);
-  const [validateAmountError, setValidateAmountError] = useState("");
+  const [validateAmountError, setValidateAmountError] = useState(null);
   const [click, setClick] = useState(false);
   const [tokenKV, setTokenKV] = useState({});
   const ref1 = useRef(null);
@@ -31,8 +31,26 @@ function CreateBounty(props) {
         for (let i = 0; i < b.balances.length; i++) {
           if (b.balances[i].denom.includes("ibc")) {
             let denomName = await getDenomNameByHash(b.balances[i].denom);
-            b.balances[i].showDenom = denomName;
-            kv[b.balances[i].denom] = denomName;
+            if (denomName) {
+              b.balances[i].showDenom = coingeckoId[denomName].coinDenom;
+              b.balances[i].amount =
+                b.balances[i].amount /
+                Math.pow(10, coingeckoId[denomName].coinDecimals);
+              kv[b.balances[i].denom] = {
+                denom: denomName,
+                standardDenom: coingeckoId[denomName].coinDenom,
+              };
+            }
+          } else {
+            b.balances[i].showDenom =
+              coingeckoId[b.balances[i].denom].coinDenom;
+            b.balances[i].amount =
+              b.balances[i].amount /
+              Math.pow(10, coingeckoId[b.balances[i].denom].coinDecimals);
+            kv[b.balances[i].denom] = {
+              denom: b.balances[i].denom,
+              standardDenom: coingeckoId[b.balances[i].denom].coinDenom,
+            };
           }
         }
         setTokenKV(kv);
@@ -51,7 +69,16 @@ function CreateBounty(props) {
 
   const handleClick = () => {
     let arr = props.bountyAmount.slice();
-    arr.push({ amount: amount[counter], denom: tokenDenom[counter] });
+    let coinDecimals =
+      coingeckoId[
+        tokenDenom[counter].includes("ibc")
+          ? tokenKV[tokenDenom[counter]].denom
+          : tokenDenom[counter]
+      ]?.coinDecimals;
+    arr.push({
+      amount: (Number(amount[counter]) * Math.pow(10, coinDecimals)).toString(),
+      denom: tokenDenom[counter],
+    });
     props.setBountyAmount(arr);
     setCounter(counter + 1);
     ref1.current.value = "";
@@ -90,7 +117,7 @@ function CreateBounty(props) {
   const handleMaxAmountOnChange = (denom) => {
     const i = balances.map((object) => object.denom).indexOf(denom);
     const array = maxAmount.slice();
-    array[counter] = balances[i].amount;
+    array[counter] = balances[i]?.amount;
     setMaxAmount(array);
   };
   function fillAmount(amount) {
@@ -109,17 +136,25 @@ function CreateBounty(props) {
     if (amount == "" || amount == 0) {
       setValidateAmountError("Enter Valid Amount");
     }
+    if (tokenDenom[counter] !== undefined) {
+      let balance = maxAmount[counter];
+      let coinDecimals =
+        coingeckoId[
+          tokenDenom[counter].includes("ibc")
+            ? tokenKV[tokenDenom[counter]].denom
+            : tokenDenom[counter]
+        ]?.coinDecimals;
 
-    let balance = maxAmount[counter];
-    // if (props.advanceUser === false) {
-    //   Vamount = Vamount * 1000000;
-    // }
-    if (Vamount > 0 && isNaturalNumber(Vamount)) {
-      if (Vamount > balance) {
-        setValidateAmountError("Insufficient Balance");
+      if (
+        Vamount > 0 &&
+        isNaturalNumber(Vamount * Math.pow(10, coinDecimals))
+      ) {
+        if (Vamount > balance) {
+          setValidateAmountError("Insufficient Balance");
+        }
+      } else {
+        setValidateAmountError("Enter a Valid Amount");
       }
-    } else {
-      setValidateAmountError("Enter a Valid Amount");
     }
   };
   return (
@@ -216,6 +251,7 @@ function CreateBounty(props) {
                 ref3.current.value = "";
                 ref2.current.value = "Select Token";
                 ref1.current.value = "";
+                setValidateAmountError(null);
               }}
             >
               <svg
@@ -264,7 +300,7 @@ function CreateBounty(props) {
                 </div>
                 <select
                   className="select w-fit max-w-xs ml-auto h-10"
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     handleTokenDenomOnChange(e.target.value);
                     handleMaxAmountOnChange(e.target.value);
                   }}
@@ -274,11 +310,11 @@ function CreateBounty(props) {
                   {balances.map((t, i) => {
                     return !tokenDenom.includes(t.denom) ? (
                       <option key={i} value={t.denom}>
-                        {t.showDenom ? t.showDenom : t.denom}
+                        {t.showDenom}
                       </option>
                     ) : (
                       <option key={i} value={t.denom} disabled={true}>
-                        {t.showDenom ? t.showDenom : t.denom}
+                        {t.showDenom}
                       </option>
                     );
                   })}
@@ -290,8 +326,8 @@ function CreateBounty(props) {
                 <div
                   className="link link-primary text-xs text-primary font-bold no-underline"
                   onClick={(e) => {
-                    fillAmount(maxAmount[counter] - 200);
-                    handleAmountOnChange(maxAmount[counter] - 200);
+                    fillAmount(maxAmount[counter] - 0.0002);
+                    handleAmountOnChange(maxAmount[counter] - 0.0002);
                   }}
                 >
                   Max
@@ -305,7 +341,8 @@ function CreateBounty(props) {
                 onClick={handleClick}
                 disabled={
                   amount[counter] == undefined ||
-                  tokenDenom[counter] == undefined
+                  tokenDenom[counter] == undefined ||
+                  validateAmountError !== null
                 }
               >
                 ADD TOKEN TO BOUNTY
@@ -324,7 +361,7 @@ function CreateBounty(props) {
             ""
           )}
           {props.bountyAmount.length > 0 ? (
-            <div className="grid grid-cols-2 w-3/4">
+            <div className="grid grid-cols-2 w-5/6">
               {props.bountyAmount.map((a, i) => {
                 return (
                   <div
@@ -336,15 +373,27 @@ function CreateBounty(props) {
                     <img
                       src={
                         coingeckoId[
-                          a.denom.includes("ibc") ? tokenKV[a.denom] : a.denom
+                          a.denom.includes("ibc")
+                            ? tokenKV[a.denom].denom
+                            : a.denom
                         ].icon
                       }
                       className="py-1"
                     />
                     <div className="ml-2 mr-2 py-3">
-                      {a.denom.includes("ibc") ? tokenKV[a.denom] : a.denom}
+                      {tokenKV[a.denom].standardDenom}
                     </div>
-                    <div className="py-3">{a.amount}</div>
+                    <div className="py-3">
+                      {a.amount /
+                        Math.pow(
+                          10,
+                          coingeckoId[
+                            a.denom.includes("ibc")
+                              ? tokenKV[a.denom].denom
+                              : a.denom
+                          ].coinDecimals
+                        )}
+                    </div>
                     <div
                       className="link ml-auto mt-1 no-underline py-3 mr-1"
                       onClick={() => {
@@ -443,6 +492,7 @@ function CreateBounty(props) {
                             ref3.current.value = "dd/mm/yyyy";
                             ref2.current.value = "Select Token";
                             ref1.current.value = "";
+                            setValidateAmountError(null);
                             if (res && res.code === 0) {
                               props.onUpdate() ? props.onUpdate() : "";
                             }
