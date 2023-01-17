@@ -7,6 +7,7 @@ const QUERY_ISSUES = gql`
       title
       repositoryid
       iid
+      state
     }
   }
 `;

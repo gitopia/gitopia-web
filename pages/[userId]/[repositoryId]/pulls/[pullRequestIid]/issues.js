@@ -156,7 +156,7 @@ function RepositoryPullIssuesView(props) {
                   {issueList.length > 0 && issue.title == "" ? (
                     <div className="card bg-grey-500 p-4">
                       {issueList.map((i, key) => {
-                        return (
+                        return i.state === "OPEN" ? (
                           <div
                             onClick={() => {
                               setIssue(i);
@@ -197,6 +197,8 @@ function RepositoryPullIssuesView(props) {
                               </div>
                             </div>
                           </div>
+                        ) : (
+                          ""
                         );
                       })}
                     </div>
