@@ -351,7 +351,7 @@ function RepositoryPullIssuesView(props) {
                           </div>
                           <div
                             tabIndex="0"
-                            className="dropdown-content p-4 bg-base-100 rounded-box w-48 grid grid-cols-1 gap-4 bg-grey-500 h-52 overflow-y-scroll"
+                            className="dropdown-content p-4 bg-base-100 rounded-box w-48 grid grid-cols-1 gap-4 bg-grey-500 max-h-40 overflow-y-scroll"
                           >
                             {i.assignees.map((a, key) => {
                               return (

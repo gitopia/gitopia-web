@@ -232,23 +232,70 @@ function RepositoryIssueView(props) {
                   return (
                     <div className="flex mt-2 mb-3 pt-3" key={b.id}>
                       <div className="w-1/4 flex divide-x divide-grey">
-                        {b.amount.map((a, index) => {
-                          return (
-                            <div className="flex" key={index}>
-                              <img
-                                height={24}
-                                width={24}
-                                src={coingeckoId[a.denom].icon}
-                                className="ml-4"
-                              />
-
-                              <div className="ml-2 text-sm mr-1 uppercase">
-                                {a.standardDenomName}
+                        {b.amount.length > 1 ? (
+                          <div className="dropdown">
+                            <div className="flex">
+                              <div className="flex">
+                                <div className="ml-4 text-xs border-2 border-grey rounded-full p-1">
+                                  1+
+                                </div>
+                                <div className="text-sm ml-2 mt-0.5">
+                                  Tokens
+                                </div>
                               </div>
-                              <div className="text-sm mr-4">{a.amount}</div>
+                              <div
+                                className={
+                                  "ml-4 link link-primary no-underline uppercase text-xs font-bold mt-1"
+                                }
+                                tabIndex="0"
+                              >
+                                See All
+                              </div>
                             </div>
-                          );
-                        })}
+                            <div
+                              tabIndex="0"
+                              className="flex dropdown-content py-4 bg-grey-500 rounded-md divide-x-2 divide-grey w-max ml-6 mt-2"
+                            >
+                              {b.amount.map((a, key) => {
+                                return (
+                                  <div className="flex" key={key}>
+                                    <img
+                                      height={24}
+                                      width={24}
+                                      src={coingeckoId[a.denom].icon}
+                                      className="ml-4"
+                                    />
+
+                                    <div className="ml-2 text-sm uppercase">
+                                      {a.standardDenomName}
+                                    </div>
+                                    <div className="text-sm ml-2 mr-4">
+                                      {a.amount}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ) : (
+                          b.amount.map((a, index) => {
+                            return (
+                              <div className="flex" key={index}>
+                                <img
+                                  height={24}
+                                  width={24}
+                                  src={coingeckoId[a.denom].icon}
+                                  className="ml-4"
+                                />
+
+                                <div className="ml-2 text-sm mr-1 uppercase">
+                                  {a.standardDenomName}
+                                </div>
+                                <div className="text-sm mr-4">{a.amount}</div>
+                              </div>
+                            );
+                          })
+                        )}
                       </div>
                       <div className="ml-5 w-1/6">
                         <div className="text-sm">
