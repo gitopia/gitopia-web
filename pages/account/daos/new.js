@@ -57,7 +57,7 @@ function NewDao(props) {
 
   const validateWebsite = async () => {
     hideHints();
-    if (!isValidUrl(website)) {
+    if (!isValidUrl(website) && website.length > 0) {
       setWebsiteHint({
         type: "error",
         shown: true,
