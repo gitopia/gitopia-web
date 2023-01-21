@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import getChainInfo from "../../helpers/getChainInfo";
 import getBalances from "../../helpers/getAllBalances";
 import getDenomNameByHash from "../../helpers/getDenomNameByHash";
+import dayjs from "dayjs";
 
 function WithdrawIbcAsset(props) {
   const [amount, setAmount] = useState(0);
@@ -229,9 +230,7 @@ function WithdrawIbcAsset(props) {
                       ibcTokenDenom,
                       props.selectedAddress,
                       props.activeWallet.counterPartyAddress,
-                      1,
-                      0,
-                      1770910630000000000
+                      dayjs(dayjs().add(1, "day")).valueOf() * 1000000000
                     )
                     .then(() => {
                       router.push("/home");

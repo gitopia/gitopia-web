@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import getChainInfo from "../../helpers/getChainInfo";
 import { getBalanceForChain } from "../../helpers/getBalanceForChain";
 import { coingeckoId } from "../../ibc-assets-config";
+import dayjs from "dayjs";
 
 function DepositIbcAsset(props) {
   const [amount, setAmount] = useState(0);
@@ -214,9 +215,7 @@ function DepositIbcAsset(props) {
                       counterPartyChainInfo.coin_minimal_denom,
                       props.activeWallet.counterPartyAddress,
                       props.selectedAddress,
-                      1,
-                      0,
-                      1770910630000000000
+                      dayjs(dayjs().add(1, "day")).valueOf() * 1000000000
                     )
                     .then(() => {
                       router.push("/home");

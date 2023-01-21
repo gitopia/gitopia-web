@@ -834,8 +834,6 @@ export const ibcWithdraw = (
   denom,
   sender,
   receiver,
-  revision_number,
-  revision_height,
   timeoutTimestamp = 0
 ) => {
   return async (dispatch, getState) => {
@@ -849,10 +847,6 @@ export const ibcWithdraw = (
           sourceChannel: sourceChannel,
           sender: sender,
           receiver: receiver,
-          timeoutHeight: {
-            revision_number: revision_number,
-            revision_height: revision_height,
-          },
           timeoutTimestamp: timeoutTimestamp,
           token: {
             amount: amount,
@@ -886,8 +880,6 @@ export const ibcDeposit = (
   denom,
   sender,
   receiver,
-  revision_number,
-  revision_height,
   timeoutTimestamp = 0
 ) => {
   return async (dispatch, getState) => {
@@ -901,10 +893,6 @@ export const ibcDeposit = (
           sourceChannel: sourceChannel,
           sender: sender,
           receiver: receiver,
-          timeoutHeight: {
-            revision_number: revision_number,
-            revision_height: revision_height,
-          },
           timeoutTimestamp: timeoutTimestamp,
           token: {
             amount: amount,
