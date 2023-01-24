@@ -212,10 +212,7 @@ function DepositIbcAsset(props) {
                       counterPartyChainInfo.port_id,
                       counterPartyChainInfo.channel_id,
                       (Number(amount) * Math.pow(10, tokenDecimals)).toString(),
-                      counterPartyChainInfo.coin_minimal_denom,
-                      props.activeWallet.counterPartyAddress,
-                      props.selectedAddress,
-                      dayjs(dayjs().add(1, "day")).valueOf() * 1000000000
+                      counterPartyChainInfo.coin_minimal_denom
                     )
                     .then(() => {
                       router.push("/home");

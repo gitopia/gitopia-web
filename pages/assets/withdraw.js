@@ -223,10 +223,7 @@ function WithdrawIbcAsset(props) {
                       gitopiaIbc.port_id,
                       gitopiaIbc.channel_id,
                       (Number(amount) * Math.pow(10, tokenDecimals)).toString(),
-                      ibcTokenDenom,
-                      props.selectedAddress,
-                      props.activeWallet.counterPartyAddress,
-                      dayjs(dayjs().add(1, "day")).valueOf() * 1000000000
+                      ibcTokenDenom
                     )
                     .then(() => {
                       router.push("/home");

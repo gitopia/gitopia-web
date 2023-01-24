@@ -13,6 +13,7 @@ import getNodeInfo from "../../helpers/getNodeInfo";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getUser from "../../helpers/getUser";
 import getChainInfo from "../../helpers/getChainInfo";
+import dayjs from "dayjs";
 
 let ledgerTransport;
 
@@ -827,15 +828,7 @@ export const getAddressforChain = (name, chainId) => {
   };
 };
 
-export const ibcWithdraw = (
-  sourcePort,
-  sourceChannel,
-  amount,
-  denom,
-  sender,
-  receiver,
-  timeoutTimestamp = 0
-) => {
+export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
@@ -845,9 +838,9 @@ export const ibcWithdraw = (
         const send = {
           sourcePort: sourcePort,
           sourceChannel: sourceChannel,
-          sender: sender,
-          receiver: receiver,
-          timeoutTimestamp: timeoutTimestamp,
+          sender: wallet.selectedAddress,
+          receiver: wallet.activeWallet.counterPartyAddress,
+          timeoutTimestamp: dayjs(dayjs().add(1, "day")).valueOf() * 1000000000,
           token: {
             amount: amount,
             denom: denom,
@@ -873,15 +866,7 @@ export const ibcWithdraw = (
   };
 };
 
-export const ibcDeposit = (
-  sourcePort,
-  sourceChannel,
-  amount,
-  denom,
-  sender,
-  receiver,
-  timeoutTimestamp = 0
-) => {
+export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
@@ -891,9 +876,9 @@ export const ibcDeposit = (
         const send = {
           sourcePort: sourcePort,
           sourceChannel: sourceChannel,
-          sender: sender,
-          receiver: receiver,
-          timeoutTimestamp: timeoutTimestamp,
+          sender: wallet.activeWallet.counterPartyAddress,
+          receiver: wallet.selectedAddress,
+          timeoutTimestamp: dayjs(dayjs().add(1, "day")).valueOf() * 1000000000,
           token: {
             amount: amount,
             denom: denom,
@@ -905,7 +890,6 @@ export const ibcDeposit = (
           gas: "200000",
         };
         const memo = "";
-        console.log(env.txClientSecondary);
         const result = await env.txClientSecondary.signAndBroadcast([msg], {
           fee,
           memo,
