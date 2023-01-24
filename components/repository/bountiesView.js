@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import getBounty from "../../helpers/getBounty";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
-import { debounce } from "lodash";
+import debounce from "lodash";
 import Link from "next/link";
 import getDenomNameByHash from "../../helpers/getDenomNameByHash";
 import { coingeckoId } from "../../ibc-assets-config";
