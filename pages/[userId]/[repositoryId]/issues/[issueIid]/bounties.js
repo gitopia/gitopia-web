@@ -37,7 +37,7 @@ export async function getStaticPaths() {
   };
 }
 
-function RepositoryIssueView(props) {
+function RepositoryBountiesView(props) {
   const router = useRouter();
   var id = router.query.userId;
   const { setErrorStatusCode } = useErrorStatus();
@@ -402,4 +402,4 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   updateBountyExpiry,
   closeBounty,
-})(RepositoryIssueView);
+})(RepositoryBountiesView);
