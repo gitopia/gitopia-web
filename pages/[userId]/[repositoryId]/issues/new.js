@@ -17,7 +17,6 @@ import LabelSelector from "../../../../components/repository/labelSelector";
 import Label from "../../../../components/repository/label";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
-import dayjs from "dayjs";
 import CreateBounty from "../../../../components/repository/bounty";
 import { createBounty } from "../../../../store/actions/bounties";
 
@@ -31,9 +30,6 @@ export async function getStaticPaths() {
     fallback: "blocking",
   };
 }
-
-var localizedFormat = require("dayjs/plugin/localizedFormat");
-dayjs.extend(localizedFormat);
 
 function RepositoryIssueCreateView(props) {
   const router = useRouter();

@@ -59,9 +59,6 @@ function RepositoryBountiesView(props) {
   const [closeBountyLoading, setCloseBountyLoading] = useState(false);
   const [bountyAmount, setBountyAmount] = useState([]);
 
-  var localizedFormat = require("dayjs/plugin/localizedFormat");
-  dayjs.extend(localizedFormat);
-
   useEffect(() => {
     async function fetchBounty() {
       const array = [];
