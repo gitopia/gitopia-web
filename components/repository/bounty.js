@@ -326,8 +326,8 @@ function CreateBounty(props) {
                 <div
                   className="link link-primary text-xs text-primary font-bold no-underline"
                   onClick={(e) => {
-                    fillAmount(maxAmount[counter] - 0.0002);
-                    handleAmountOnChange(maxAmount[counter] - 0.0002);
+                    fillAmount(maxAmount[counter]);
+                    handleAmountOnChange(maxAmount[counter]);
                   }}
                 >
                   Max

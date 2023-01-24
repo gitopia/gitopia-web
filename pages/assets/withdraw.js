@@ -189,12 +189,8 @@ function WithdrawIbcAsset(props) {
                 <div
                   className="link link-primary text-xs text-primary font-bold no-underline ml-auto"
                   onClick={(e) => {
-                    fillAmount(
-                      (balance - 200 / Math.pow(10, tokenDecimals)).toString()
-                    );
-                    setAmount(
-                      (balance - 200 / Math.pow(10, tokenDecimals)).toString()
-                    );
+                    fillAmount(balance.toString());
+                    setAmount(balance.toString());
                   }}
                 >
                   Max
