@@ -14,6 +14,7 @@ import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getUser from "../../helpers/getUser";
 import getChainInfo from "../../helpers/getChainInfo";
 import dayjs from "dayjs";
+import { calculateFee, GasPrice } from "@cosmjs/stargate";
 
 let ledgerTransport;
 
@@ -885,11 +886,14 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
           },
         };
         const msg = await env.txClientSecondary.msgTransfer(send);
-        const fee = {
-          amount: [{ amount: "200", denom: "uosmo" }],
-          gas: "200000",
-        };
         const memo = "";
+        let fees = await estimateOsmoFee([msg], memo)(getState);
+        const fee = {
+          amount: [
+            { amount: fees.amount[0].amount, denom: fees.amount[0].denom },
+          ],
+          gas: fees.gas,
+        };
         const result = await env.txClientSecondary.signAndBroadcast([msg], {
           fee,
           memo,
@@ -908,5 +912,15 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
         return null;
       }
     }
+  };
+};
+
+export const estimateOsmoFee = (msg, memo) => {
+  return async (getState) => {
+    const { env } = getState();
+    const gasPrice = GasPrice.fromString("0.025uosmo");
+    const gasEstimation = await env.txClientSecondary.simulate(msg, memo);
+    const fees = calculateFee(Math.round(gasEstimation * 1.3), gasPrice);
+    return fees;
   };
 };
