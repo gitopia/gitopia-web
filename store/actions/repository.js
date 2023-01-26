@@ -94,6 +94,8 @@ export const createIssue = ({
   labels = [],
   weight = 0,
   assignees = [],
+  bountyAmount = [],
+  bountyExpiry = 0,
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "issue")))
@@ -119,7 +121,12 @@ export const createIssue = ({
     if (weight) {
       issue.weight = weight;
     }
-
+    if (bountyAmount.length) {
+      issue.bountyAmount = bountyAmount;
+    }
+    if (bountyExpiry) {
+      issue.bountyExpiry = bountyExpiry;
+    }
     try {
       const message = await env.txClient.msgCreateIssue(issue);
       const result = await sendTransaction({ message })(dispatch, getState);
@@ -838,6 +845,7 @@ export const createPullRequest = ({
   reviewers = [],
   assignees = [],
   labelIds = [],
+  issues = [],
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
@@ -862,6 +870,9 @@ export const createPullRequest = ({
     }
     if (labelIds.length) {
       pull.labelIds = labelIds;
+    }
+    if (issues.length) {
+      pull.issues = issues;
     }
 
     try {

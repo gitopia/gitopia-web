@@ -2,7 +2,7 @@ import Head from "next/head";
 import Header from "../../../../components/header";
 
 import { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import find from "lodash/find";
 
@@ -29,6 +29,10 @@ import useRepository from "../../../../hooks/useRepository";
 import getAllRepositoryBranch from "../../../../helpers/getAllRepositoryBranch";
 import getAllRepositoryTag from "../../../../helpers/getAllRepositoryTag";
 import getPullRequestCommits from "../../../../helpers/getPullRequestCommits";
+import { ApolloProvider } from "@apollo/client";
+import QueryIssues from "../../../../helpers/queryIssuesByTitleGql";
+import { updatedClient } from "../../../../helpers/apolloClient";
+import { notify } from "reapop";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -43,6 +47,7 @@ export async function getStaticPaths() {
 
 function RepositoryCompareView(props) {
   const router = useRouter();
+  const dispatch = useDispatch();
   const { repository } = useRepository();
   const [viewType, setViewType] = useState("unified");
   const [stats, setStats] = useState({ stat: {} });
@@ -60,6 +65,9 @@ function RepositoryCompareView(props) {
   const [labels, setLabels] = useState([]);
   const [forkedRepos, setForkedRepos] = useState([]);
   const [parentRepo, setParentRepo] = useState(null);
+  const [textEntered, setEnteredText] = useState("");
+  const [issueList, setIssueList] = useState([]);
+  const [issueArray, setIssueArray] = useState([]);
 
   const setDefaultBranches = (r) => {
     if (r.branches.length) {
@@ -241,6 +249,23 @@ function RepositoryCompareView(props) {
     }
   };
 
+  const handleAddIssue = (i) => {
+    let obj = issueArray.find((issue) => issue.iid === i.iid);
+    if (obj === undefined) {
+      let arr = issueArray.slice();
+      arr.push(i);
+      setIssueArray(arr);
+    } else {
+      dispatch(notify("Issue already attached", "error"));
+    }
+  };
+
+  const handleDeleteIssue = (index) => {
+    let arr = issueArray;
+    arr.splice(index, 1);
+    setIssueArray([...arr]);
+  };
+
   useEffect(() => {
     refreshRepositoryForks();
   }, [repository]);
@@ -408,6 +433,138 @@ function RepositoryCompareView(props) {
               </div>
             </div>
           </div>
+          <div className="mt-6">
+            <div className="text-base">Link Issue</div>
+            <div className="form-control flex-1 mt-3">
+              <div className="relative">
+                <ApolloProvider client={updatedClient}>
+                  <QueryIssues
+                    substr={textEntered}
+                    repoId={Number(repository.id)}
+                    setIssueList={setIssueList}
+                  />
+                </ApolloProvider>
+
+                <button className="absolute right-0 top-2 rounded-l-none btn btn-sm btn-ghost">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </button>
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="w-full input input-ghost input-bordered"
+                  value={textEntered}
+                  onChange={(e) => {
+                    setEnteredText(e.target.value);
+                  }}
+                  onKeyUp={(e) => {
+                    if (e.code === "Enter") {
+                      setEnteredText(e.target.value);
+                    }
+                  }}
+                />
+                {issueList.length > 0 ? (
+                  <div className="card bg-grey-500 p-4">
+                    {issueList.map((i, key) => {
+                      return (
+                        <div
+                          onClick={() => {
+                            handleAddIssue(i);
+                            setEnteredText("");
+                          }}
+                          key={key}
+                        >
+                          <div
+                            className={
+                              "flex border-grey-300 pb-3 pt-3 hover:cursor-pointer " +
+                              (key < issueList.length - 1 ? "border-b" : "")
+                            }
+                          >
+                            <svg
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M5 20L5 4L19 4L19 20L5 20Z"
+                                stroke="#ADBECB"
+                                strokeWidth="2"
+                              />
+                              <path
+                                d="M8 15L16 15M8 9L16 9"
+                                stroke="#ADBECB"
+                                strokeWidth="2"
+                              />
+                            </svg>
+
+                            <div className="text-type-secondary ml-4 text-sm mt-0.5">
+                              {i.title}
+                            </div>
+                            <div className="font-bold text-xs text-type-secondary ml-auto uppercase mt-1">
+                              opened by {shrinkAddress(i.creator)}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
+            </div>
+            {issueArray.length > 0 ? (
+              <div className="flex mt-2">
+                {issueArray.map((issue, index) => {
+                  return (
+                    <div
+                      className="flex text-sm box-border bg-grey-500 mr-2 h-11 p-3 rounded-lg mt-2"
+                      key={index}
+                    >
+                      {issue.title.split(" ").length > 4
+                        ? issue.title.split(" ").splice(0, 4).join(" ") + "..."
+                        : issue.title}
+                      <div
+                        className="link ml-4 mt-1 no-underline"
+                        onClick={() => {
+                          handleDeleteIssue(index);
+                        }}
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 14 14"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M13.5303 1.5304C13.8231 1.23751 13.8231 0.762637 13.5303 0.469744C13.2374 0.176851 12.7625 0.176851 12.4696 0.469744L13.5303 1.5304ZM0.46967 12.4697C0.176777 12.7626 0.176777 13.2374 0.46967 13.5303C0.762563 13.8232 1.23744 13.8232 1.53033 13.5303L0.46967 12.4697ZM12.4696 13.5303C12.7625 13.8231 13.2374 13.8231 13.5303 13.5303C13.8231 13.2374 13.8231 12.7625 13.5303 12.4696L12.4696 13.5303ZM1.53033 0.46967C1.23744 0.176777 0.762563 0.176777 0.46967 0.46967C0.176777 0.762563 0.176777 1.23744 0.46967 1.53033L1.53033 0.46967ZM12.4696 0.469744L0.46967 12.4697L1.53033 13.5303L13.5303 1.5304L12.4696 0.469744ZM13.5303 12.4696L1.53033 0.46967L0.46967 1.53033L12.4696 13.5303L13.5303 12.4696Z"
+                            fill="#E5EDF5"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              ""
+            )}
+          </div>
           <div className="my-8">
             {startCreatingPull ? (
               <div>
@@ -464,6 +621,7 @@ function RepositoryCompareView(props) {
                                 reviewers: reviewers,
                                 assignees: assignees,
                                 labelIds: labels,
+                                issues: issueArray,
                               });
                               if (res && res.code === 0) {
                                 router.push(

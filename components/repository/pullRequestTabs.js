@@ -7,30 +7,34 @@ export default function PullRequestTabs({ hrefBase, active }) {
         <Link
           href={hrefBase}
           className={
-            "tab tab-lifted" +
-            (active === "conversation" ? " tab-active" : "")
-          }>
-          
-            Conversation
-          
+            "tab tab-lifted" + (active === "conversation" ? " tab-active" : "")
+          }
+        >
+          Conversation
         </Link>
         <Link
           href={hrefBase + "/commits"}
           className={
             "tab tab-lifted" + (active === "commits" ? " tab-active" : "")
-          }>
-          
-            Commits
-          
+          }
+        >
+          Commits
         </Link>
         <Link
           href={hrefBase + "/files"}
           className={
             "tab tab-lifted" + (active === "files" ? " tab-active" : "")
-          }>
-          
-            Files Changed
-          
+          }
+        >
+          Files Changed
+        </Link>
+        <Link
+          href={hrefBase + "/issues"}
+          className={
+            "tab tab-lifted" + (active === "issues" ? " tab-active" : "")
+          }
+        >
+          Issues
         </Link>
       </div>
       <div

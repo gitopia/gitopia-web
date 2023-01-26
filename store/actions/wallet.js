@@ -8,14 +8,23 @@ import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import find from "lodash/find";
 import { notify } from "reapop";
-import { setupTxClients } from "./env";
+import { setupTxClients, sendTransaction } from "./env";
 import getNodeInfo from "../../helpers/getNodeInfo";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getUser from "../../helpers/getUser";
+import getChainInfo from "../../helpers/getChainInfo";
+import dayjs from "dayjs";
+import { calculateFee, GasPrice } from "@cosmjs/stargate";
 
 let ledgerTransport;
 
-const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
+const postWalletUnlocked = async (
+  accountSigner,
+  dispatch,
+  getState,
+  accountSignerSecondary = null,
+  chainInfo = null
+) => {
   const { env, wallet } = getState();
 
   dispatch({
@@ -25,20 +34,52 @@ const postWalletUnlocked = async (accountSigner, dispatch, getState) => {
 
   if (accountSigner) {
     const { queryClient, txClient } = await import("@gitopia/gitopia-js");
-
-    const [tc, qc, amount] = await Promise.all([
-      txClient(accountSigner, { addr: env.rpcNode, gasPrice: wallet.gasPrice }),
-      queryClient({ addr: env.apiNode }),
-      updateUserBalance()(dispatch, getState),
-    ]);
-
-    dispatch({
-      type: envActions.SET_CLIENTS,
-      payload: {
-        txClient: tc,
-        queryClient: qc,
-      },
-    });
+    if (accountSignerSecondary !== null) {
+      const [tc, qc, tcs, qcs, amount] = await Promise.all([
+        txClient(
+          accountSigner,
+          { addr: env.rpcNode, gasPrice: wallet.gasPrice },
+          "gitopia"
+        ),
+        queryClient({ addr: env.apiNode }),
+        txClient(
+          accountSignerSecondary,
+          {
+            addr: chainInfo.rpc_node,
+            gasPrice: wallet.gasPrice,
+          },
+          chainInfo.prefix
+        ),
+        queryClient({ addr: chainInfo.api_node }),
+        updateUserBalance()(dispatch, getState),
+      ]);
+      dispatch({
+        type: envActions.SET_CLIENTS,
+        payload: {
+          txClient: tc,
+          queryClient: qc,
+          txClientSecondary: tcs,
+          queryClientSecondary: qcs,
+        },
+      });
+    } else {
+      const [tc, qc, amount] = await Promise.all([
+        txClient(
+          accountSigner,
+          { addr: env.rpcNode, gasPrice: wallet.gasPrice },
+          "gitopia"
+        ),
+        queryClient({ addr: env.apiNode }),
+        updateUserBalance()(dispatch, getState),
+      ]);
+      dispatch({
+        type: envActions.SET_CLIENTS,
+        payload: {
+          txClient: tc,
+          queryClient: qc,
+        },
+      });
+    }
     if (wallet.getPasswordPromise.resolve) {
       wallet.getPasswordPromise.resolve("Unlock success");
     }
@@ -137,9 +178,14 @@ export const setWallet = ({ wallet }) => {
   };
 };
 
-export const unlockWallet = ({ name, password }) => {
+export const unlockWallet = ({ name, password, chainId = null }) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
+    let chainInfo;
+    let accountSignerSecondary;
+    if (chainId !== null) {
+      chainInfo = await getChainInfo(chainId);
+    }
     let encryptedWallet =
       state.wallets[state.wallets.findIndex((x) => x.name === name)].wallet;
     let wallet;
@@ -164,6 +210,19 @@ export const unlockWallet = ({ name, password }) => {
           prefix: "gitopia",
         }
       );
+      if (chainId !== null) {
+        accountSignerSecondary = await DirectSecp256k1HdWallet.fromMnemonic(
+          wallet.mnemonic,
+          {
+            prefix: chainInfo.prefix,
+          }
+        );
+        const [counterPartyAccount] =
+          await accountSignerSecondary.getAccounts();
+        const counterPartyAddress = counterPartyAccount.address;
+        wallet.counterPartyAddress = counterPartyAddress;
+        wallet.counterPartyChain = chainId;
+      }
 
       // Check if user exists, rename the old wallet to correct username
       let user = await getUser(wallet.accounts[0].address),
@@ -209,7 +268,17 @@ export const unlockWallet = ({ name, password }) => {
       }
 
       try {
-        await postWalletUnlocked(accountSigner, dispatch, getState);
+        if (chainId !== null) {
+          await postWalletUnlocked(
+            accountSigner,
+            dispatch,
+            getState,
+            accountSignerSecondary,
+            chainInfo
+          );
+        } else {
+          await postWalletUnlocked(accountSigner, dispatch, getState);
+        }
       } catch (e) {
         console.error(e);
       }
@@ -440,7 +509,7 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
   };
 };
 
-export const unlockLedgerWallet = ({ name }) => {
+export const unlockLedgerWallet = ({ name, chainId = null }) => {
   return async (dispatch, getState) => {
     const TransportWebUSB = (await import("@ledgerhq/hw-transport-webusb"))
       .default;
@@ -452,7 +521,11 @@ export const unlockLedgerWallet = ({ name }) => {
     let accountSigner;
     let encryptedWallet =
       wallet.wallets[wallet.wallets.findIndex((x) => x.name === name)].wallet;
-
+    let chainInfo;
+    let accountSignerSecondary;
+    if (chainId !== null) {
+      chainInfo = await getChainInfo(chainId);
+    }
     dispatch({ type: walletActions.START_UNLOCKING_WALLET });
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
@@ -474,6 +547,20 @@ export const unlockLedgerWallet = ({ name }) => {
           CryptoJS.enc.Utf8
         )
       );
+      console.log(chainId);
+      if (chainId !== null) {
+        accountSignerSecondary = new LedgerSigner(ledgerTransport, {
+          hdPaths: [path],
+          prefix: chainInfo.prefix,
+          ledgerAppName: "Cosmos",
+        });
+        const [counterPartyAccount] =
+          await accountSignerSecondary.getAccounts();
+        const counterPartyAddress = counterPartyAccount.address;
+        console.log(accountSignerSecondary);
+        newWallet.counterPartyAddress = counterPartyAddress;
+        newWallet.counterPartyChain = chainId;
+      }
       if (addr !== newWallet.accounts[0].address) {
         dispatch(
           notify("Wallet address not matching Ledger's address", "error")
@@ -518,7 +605,17 @@ export const unlockLedgerWallet = ({ name }) => {
         },
       });
 
-      await postWalletUnlocked(accountSigner, dispatch, getState);
+      if (chainId !== null) {
+        await postWalletUnlocked(
+          accountSigner,
+          dispatch,
+          getState,
+          accountSignerSecondary,
+          chainInfo
+        );
+      } else {
+        await postWalletUnlocked(accountSigner, dispatch, getState);
+      }
 
       dispatch({ type: walletActions.STOP_UNLOCKING_WALLET });
       dispatch({
@@ -679,4 +776,151 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
       daos: daos,
     },
   });
+};
+
+export const getAddressforChain = (name, chainId) => {
+  return async (dispatch, getState) => {
+    try {
+      const { wallet } = getState();
+      let activeWallet = wallet.activeWallet;
+      if (activeWallet.isKeplr) {
+        if (window.keplr && window.getOfflineSigner) {
+          try {
+            const info = await getNodeInfo();
+            const chain = info.default_node_info.network;
+            const offlineSigner = await window.getOfflineSignerAuto(chain);
+            const accountSignerSecondary = await window.getOfflineSignerAuto(
+              "osmo-test-4"
+            );
+            const accounts = await offlineSigner.getAccounts();
+            const counterPartyAccount =
+              await accountSignerSecondary.getAccounts();
+            activeWallet.counterPartyAddress = counterPartyAccount[0].address;
+            activeWallet.counterPartyChain = chainId;
+            await dispatch({
+              type: walletActions.SET_ACTIVE_WALLET,
+              payload: {
+                wallet: activeWallet,
+              },
+            });
+            await postWalletUnlocked(
+              offlineSigner,
+              dispatch,
+              getState,
+              accountSignerSecondary,
+              chainId
+            );
+            return accounts[0];
+          } catch (e) {
+            console.error(e);
+            return null;
+          }
+        } else {
+          dispatch(
+            notify("Please ensure keplr extension is installed", "error")
+          );
+        }
+      } else {
+        await setupTxClients(dispatch, getState, chainId);
+      }
+    } catch (e) {
+      return e;
+    }
+  };
+};
+
+export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
+  return async (dispatch, getState) => {
+    const { wallet } = getState();
+    if (wallet.activeWallet) {
+      try {
+        await setupTxClients(dispatch, getState);
+        const { env } = getState();
+        const send = {
+          sourcePort: sourcePort,
+          sourceChannel: sourceChannel,
+          sender: wallet.selectedAddress,
+          receiver: wallet.activeWallet.counterPartyAddress,
+          timeoutTimestamp: dayjs(dayjs().add(1, "day")).valueOf() * 1000000000,
+          token: {
+            amount: amount,
+            denom: denom,
+          },
+        };
+        const message = await env.txClient.msgTransfer(send);
+        const result = await sendTransaction({ message })(dispatch, getState);
+        updateUserBalance()(dispatch, getState);
+        if (result && result.code === 0) {
+          updateUserBalance()(dispatch, getState);
+          dispatch(notify("Transfer Successful", "info"));
+          return true;
+        } else {
+          dispatch(notify(result.rawLog, "error"));
+          return null;
+        }
+      } catch (e) {
+        console.error(e);
+        dispatch(notify(e.message, "error"));
+        return null;
+      }
+    }
+  };
+};
+
+export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
+  return async (dispatch, getState) => {
+    const { wallet } = getState();
+    if (wallet.activeWallet) {
+      try {
+        await setupTxClients(dispatch, getState);
+        const { env } = getState();
+        const send = {
+          sourcePort: sourcePort,
+          sourceChannel: sourceChannel,
+          sender: wallet.activeWallet.counterPartyAddress,
+          receiver: wallet.selectedAddress,
+          timeoutTimestamp: dayjs(dayjs().add(1, "day")).valueOf() * 1000000000,
+          token: {
+            amount: amount,
+            denom: denom,
+          },
+        };
+        const msg = await env.txClientSecondary.msgTransfer(send);
+        const memo = "";
+        let fees = await estimateOsmoFee([msg], memo)(getState);
+        const fee = {
+          amount: [
+            { amount: fees.amount[0].amount, denom: fees.amount[0].denom },
+          ],
+          gas: fees.gas,
+        };
+        const result = await env.txClientSecondary.signAndBroadcast([msg], {
+          fee,
+          memo,
+        });
+        if (result && result.code === 0) {
+          updateUserBalance()(dispatch, getState);
+          dispatch(notify("Transaction Successful", "info"));
+          return true;
+        } else {
+          dispatch(notify(result.rawLog, "error"));
+          return null;
+        }
+      } catch (e) {
+        console.error(e);
+        dispatch(notify(e.message, "error"));
+        return null;
+      }
+    }
+  };
+};
+
+export const estimateOsmoFee = (msg, memo) => {
+  return async (getState) => {
+    const { env } = getState();
+    const gasPrice = GasPrice.fromString("0.025uosmo");
+    const gasEstimation = await env.txClientSecondary.simulate(msg, memo);
+    const fees = calculateFee(Math.round(gasEstimation * 1.3), gasPrice);
+    return fees;
+  };
 };
