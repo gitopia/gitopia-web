@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import getProposals from "../../helpers/getProposals";
-import dayjs from "dayjs";
 import ProposalItem from "../../components/dashboard/proposalItem";
 
 function DaoProposalList({ dao, ...props }) {
@@ -13,8 +12,6 @@ function DaoProposalList({ dao, ...props }) {
   //   repositories: [],
   // });
   const [proposals, setProposals] = useState([]);
-  var localizedFormat = require("dayjs/plugin/localizedFormat");
-  dayjs.extend(localizedFormat);
 
   useEffect(() => {
     async function initProposals() {

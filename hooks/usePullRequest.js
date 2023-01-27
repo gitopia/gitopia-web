@@ -15,6 +15,7 @@ export default function usePullRequest(repository, initialPullRequest = {}) {
     reviewers: [],
     assignees: [],
     labels: [],
+    issues: [],
     head: { repository: {} },
     base: { repository: {} },
     ...initialPullRequest,

@@ -30,6 +30,7 @@ import MergePullRequestView from "../../../../../components/repository/mergePull
 import IssuePullDescription from "../../../../../components/repository/issuePullDescription";
 import getBranchSha from "../../../../../helpers/getBranchSha";
 import filter from "lodash/filter";
+import PullRequestIssueView from "../../../../../components/repository/issuesView";
 
 export async function getStaticProps({ params }) {
   const fs = (await import("fs")).default;
@@ -196,21 +197,7 @@ function RepositoryPullView(props) {
                   pullRequest={pullRequest}
                   refreshPullRequest={refreshPullRequest}
                 />
-                <div className="flex w-full mt-8">
-                  <div className="flex-none mr-4">
-                    <div className="avatar">
-                      <div className="mb-8 rounded-full w-10 h-10">
-                        <img
-                          src={
-                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                            (props.selectedAddress
-                              ? props.selectedAddress.slice(-1)
-                              : "")
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex w-full mt-8 pl-10">
                   <CommentEditor
                     issueId={pullRequest.id}
                     issueState={pullRequest.state}
@@ -221,7 +208,7 @@ function RepositoryPullView(props) {
               </div>
             </div>
 
-            <div className="flex-none sm:w-64 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
+            <div className="flex-none sm:w-72 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
               <div className="pb-8">
                 <AssigneeSelector
                   title="Reviewers"
@@ -349,6 +336,11 @@ function RepositoryPullView(props) {
                     : "None yet"}
                 </div>
               </div>
+              {pullRequest.issues.length > 0 ? (
+                <PullRequestIssueView issues={pullRequest.issues} />
+              ) : (
+                ""
+              )}
             </div>
           </div>
         </main>

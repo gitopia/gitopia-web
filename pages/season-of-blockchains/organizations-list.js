@@ -1462,7 +1462,7 @@ export default function Partnerships() {
         </div>
         <hr className={styles.divider}></hr>
         <div className={"flex flex-col sm:flex-row " + styles.footerEnd}>
-          <div className="">Copyright © 2021 Gitopia | All Rights Reserved</div>
+          <div className="">Copyright © 2023 Gitopia | All Rights Reserved</div>
           <div className="flex ">
             <div className="mr-4">Privacy policy</div>
             <div className="mr-4">Terms of services</div>

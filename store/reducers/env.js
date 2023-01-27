@@ -15,6 +15,8 @@ const initialState = {
   initialized: false,
   txClient: null,
   queryClient: null,
+  txClientSecondary: null,
+  queryClientSecondary: null,
   recordingTasks: 0,
 };
 
@@ -94,11 +96,14 @@ const reducer = (state = initialState, action) => {
     }
 
     case envActions.SET_CLIENTS: {
-      const { txClient, queryClient } = action.payload;
+      const { txClient, queryClient, txClientSecondary, queryClientSecondary } =
+        action.payload;
       return {
         ...state,
         txClient,
         queryClient,
+        txClientSecondary,
+        queryClientSecondary,
       };
     }
 

@@ -1,5 +1,5 @@
 import Head from "next/head";
-import Header from "../../../../components/header";
+import Header from "../../../../../components/header";
 
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -7,29 +7,32 @@ import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import find from "lodash/find";
 
-import getRepositoryIssue from "../../../../helpers/getRepositoryIssue";
-import getComment from "../../../../helpers/getComment";
-import shrinkAddress from "../../../../helpers/shrinkAddress";
-import RepositoryHeader from "../../../../components/repository/header";
-import RepositoryMainTabs from "../../../../components/repository/mainTabs";
-import Footer from "../../../../components/footer";
-import CommentEditor from "../../../../components/repository/commentEditor";
-import CommentView from "../../../../components/repository/commentView";
-import SystemCommentView from "../../../../components/repository/systemCommentView";
+import getRepositoryIssue from "../../../../../helpers/getRepositoryIssue";
+import getComment from "../../../../../helpers/getComment";
+import shrinkAddress from "../../../../../helpers/shrinkAddress";
+import RepositoryHeader from "../../../../../components/repository/header";
+import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
+import Footer from "../../../../../components/footer";
+import CommentEditor from "../../../../../components/repository/commentEditor";
+import CommentView from "../../../../../components/repository/commentView";
+import SystemCommentView from "../../../../../components/repository/systemCommentView";
 import {
   deleteComment,
   updateIssueLabels,
   updateIssueAssignees,
-} from "../../../../store/actions/repository";
-import AssigneeSelector from "../../../../components/repository/assigneeSelector";
-import LabelSelector from "../../../../components/repository/labelSelector";
-import Label from "../../../../components/repository/label";
-import AssigneeGroup from "../../../../components/repository/assigneeGroup";
-import useRepository from "../../../../hooks/useRepository";
-import IssuePullTitle from "../../../../components/repository/issuePullTitle";
-import IssuePullDescription from "../../../../components/repository/issuePullDescription";
-import { useErrorStatus } from "../../../../hooks/errorHandler";
-import pluralize from "../../../../helpers/pluralize";
+} from "../../../../../store/actions/repository";
+import AssigneeSelector from "../../../../../components/repository/assigneeSelector";
+import LabelSelector from "../../../../../components/repository/labelSelector";
+import Label from "../../../../../components/repository/label";
+import AssigneeGroup from "../../../../../components/repository/assigneeGroup";
+import useRepository from "../../../../../hooks/useRepository";
+import IssuePullTitle from "../../../../../components/repository/issuePullTitle";
+import IssuePullDescription from "../../../../../components/repository/issuePullDescription";
+import { useErrorStatus } from "../../../../../hooks/errorHandler";
+import pluralize from "../../../../../helpers/pluralize";
+import IssueTabs from "../../../../../components/repository/issueTabs";
+import IssuePullRequestView from "../../../../../components/repository/pullRequestView";
+import IssueBountyView from "../../../../../components/repository/bountiesView";
 import Link from "next/link";
 import filter from "lodash/filter";
 
@@ -87,6 +90,8 @@ function RepositoryIssueView(props) {
     comments: [],
     assignees: [],
     labels: [],
+    pullRequests: [],
+    bounties: [],
     ...props.issue,
   });
   const [allComments, setAllComments] = useState(props.comments || []);
@@ -174,12 +179,17 @@ function RepositoryIssueView(props) {
             </span>
             <span className="text-xl mr-2 text-type-secondary">&middot;</span>
             <span className="text-xs text-type-secondary">
-              {issue.comments.length}
+              {issue.comments?.length}
               <span className="ml-1">
                 {pluralize("comment", issue.comments.length)}
               </span>
             </span>
           </div>
+          <IssueTabs
+            repository={repository}
+            issueId={issue.iid}
+            active="conversation"
+          />
           <div className="sm:flex mt-8">
             <div className="flex flex-1">
               <div className="flex flex-col w-full">
@@ -218,7 +228,7 @@ function RepositoryIssueView(props) {
                   }
                 })}
                 <div className="flex w-full mt-8">
-                  <div className="flex-none mr-4">
+                  <div className="flex-none">
                     <div className="avatar">
                       <div className="mb-8 rounded-full w-10 h-10">
                         <img
@@ -240,7 +250,7 @@ function RepositoryIssueView(props) {
                 </div>
               </div>
             </div>
-            <div className="flex-none sm:w-64 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
+            <div className="flex-none sm:w-72 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
               <div className="pb-8">
                 <AssigneeSelector
                   assignees={issue.assignees}
@@ -327,6 +337,16 @@ function RepositoryIssueView(props) {
                     : "None yet"}
                 </div>
               </div>
+              {issue.pullRequests.length > 0 ? (
+                <IssuePullRequestView pullRequests={issue.pullRequests} />
+              ) : (
+                ""
+              )}
+              {issue.bounties.length > 0 ? (
+                <IssueBountyView bounties={issue.bounties} />
+              ) : (
+                ""
+              )}
               {/* <div className="py-8">
                 <div className="flex-1 text-left px-3 mb-1">
                   Linked Pull Requests

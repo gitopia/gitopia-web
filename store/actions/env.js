@@ -123,8 +123,9 @@ export const signMessage = ({ data = {} }) => {
   };
 };
 
-export const setupTxClients = async (dispatch, getState) => {
+export const setupTxClients = async (dispatch, getState, chainId = null) => {
   const { env, wallet } = getState();
+
   if (wallet.activeWallet) {
     if (!env.txClient) {
       return new Promise((resolve, reject) => {
@@ -144,6 +145,7 @@ export const setupTxClients = async (dispatch, getState) => {
               });
               reject({ message: reason });
             },
+            chainId: chainId,
           },
         });
       });

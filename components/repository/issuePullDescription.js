@@ -92,9 +92,9 @@ function IssuePullDescription({
           </div>
         </div>
       </div>
-      <div className="border border-grey rounded flex-1 max-w-2xl">
+      <div className="flex-1">
         {isEditing ? (
-          <div className="p-4">
+          <div className="">
             <MarkdownEditor
               value={newDescription}
               setValue={setNewDescription}
@@ -137,60 +137,67 @@ function IssuePullDescription({
             </div>
           </div>
         ) : (
-          <>
-            <div className="flex text-xs px-4 py-2 bg-base-200 rounded-t items-center">
-              <div className="flex-1">
-                <Link href={"/" + issuePullObj.creator} className="btn-link">
-                  {shrinkAddress(issuePullObj.creator)}
-                </Link>
-                {" commented " + dayjs(issuePullObj.createdAt * 1000).fromNow()}
-              </div>
-              <div className="flex-none">
-                {issuePullObj.creator === props.selectedAddress ? (
-                  <div className="dropdown dropdown-end">
-                    <div
-                      tabIndex="0"
-                      className="btn btn-square btn-xs btn-ghost"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
+          <div className="">
+            <div className="border border-grey rounded-lg flex-1">
+              <div className="flex text-xs px-4 py-2 rounded-t">
+                <div className="flex-none ml-auto">
+                  {issuePullObj.creator === props.selectedAddress ? (
+                    <div className="dropdown dropdown-end">
+                      <div
+                        tabIndex="0"
+                        className="btn btn-square btn-xs btn-ghost"
                       >
-                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                      </svg>
-                    </div>
-                    <ul
-                      tabIndex="0"
-                      className="shadow menu dropdown-content bg-base-300 rounded-md w-32"
-                    >
-                      <li>
-                        <a
-                          onClick={() => {
-                            setIsEditing(true);
-                          }}
+                        <svg
+                          width="21"
+                          height="5"
+                          viewBox="0 0 21 5"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
-                          Edit
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                ) : (
-                  ""
-                )}
+                          <circle cx="2.5" cy="2.5" r="2.5" fill="#767C87" />
+                          <circle cx="10.5" cy="2.5" r="2.5" fill="#767C87" />
+                          <circle cx="18.5" cy="2.5" r="2.5" fill="#767C87" />
+                        </svg>
+                      </div>
+                      <ul
+                        tabIndex="0"
+                        className="shadow menu dropdown-content bg-base-300 rounded-md w-32"
+                      >
+                        <li>
+                          <a
+                            onClick={() => {
+                              setIsEditing(true);
+                            }}
+                          >
+                            Edit
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+
+              <div className="text-xs px-6 pb-6">
+                <div className="text-white font-normal mb-3 markdown-body">
+                  {issuePullObj.description.length ? (
+                    <ReactMarkdown linkTarget="_blank">
+                      {issuePullObj.description}
+                    </ReactMarkdown>
+                  ) : (
+                    <ReactMarkdown>{"*No description given*"}</ReactMarkdown>
+                  )}
+                </div>
+                <div className="flex-1 font-bold text-xs uppercase text-type-tertiary">
+                  {shrinkAddress(issuePullObj.creator) +
+                    " commented " +
+                    dayjs(issuePullObj.createdAt * 1000).fromNow()}
+                </div>
               </div>
             </div>
-            <div className="p-4 markdown-body">
-              {issuePullObj.description.length ? (
-                <ReactMarkdown linkTarget="_blank">
-                  {issuePullObj.description}
-                </ReactMarkdown>
-              ) : (
-                <ReactMarkdown>{"*No description given*"}</ReactMarkdown>
-              )}
-            </div>
-          </>
+          </div>
         )}
       </div>
     </div>
