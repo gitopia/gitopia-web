@@ -131,10 +131,10 @@ function WalletInfo(props) {
               <div className="ml-3">{asset.chain_name}</div>
               <div className="ml-auto flex mr-3">
                 <div className="text-type-primary text-xs mr-2 mt-1.5">
-                  Withdraw
+                  Deposit
                 </div>
                 <div
-                  className="hover:cursor-pointer"
+                  className="mr-1 hover:cursor-pointer"
                   onClick={() => {
                     props
                       .getAddressforChain(
@@ -142,7 +142,7 @@ function WalletInfo(props) {
                         asset.chain_name
                       )
                       .then(() => {
-                        router.push("/assets/withdraw");
+                        router.push("/assets/deposit");
                       });
                   }}
                   id={index}
@@ -202,10 +202,10 @@ function WalletInfo(props) {
               <div className="border-l-2 border-[#5A6068] h-8"></div>
               <div className="ml-3 flex">
                 <div className="text-type-primary text-xs mr-2 mt-1.5">
-                  Deposit
+                  Withdraw
                 </div>
                 <div
-                  className="mr-1 hover:cursor-pointer"
+                  className="hover:cursor-pointer"
                   onClick={() => {
                     props
                       .getAddressforChain(
@@ -213,7 +213,7 @@ function WalletInfo(props) {
                         asset.chain_name
                       )
                       .then(() => {
-                        router.push("/assets/deposit");
+                        router.push("/assets/withdraw");
                       });
                   }}
                   id={index}
