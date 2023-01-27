@@ -28,24 +28,28 @@ export async function getStaticProps({ params }) {
     u,
     d,
     allRepos = [];
-  const fs = (await import("fs")).default;
-  let whois = JSON.parse(fs.readFileSync("./seo/dump-whois.json")),
-    repositories = JSON.parse(fs.readFileSync("./seo/dump-repositories.json")),
-    owners = JSON.parse(fs.readFileSync("./seo/dump-owners.json"));
-  if (validAddress.test(params.userId)) {
-    data = find(whois, { address: params.userId });
-  } else {
-    data = find(whois, { name: params.userId });
-  }
-  if (data?.ownerType === "USER") {
-    u = find(owners, { address: data.address });
-    const pr = filter(repositories, (r) => r.owner.id === u.creator);
-    allRepos = sortBy(pr, (r) => -Number(r.updatedAt));
-  } else if (data?.ownerType === "DAO") {
-    d = find(owners, { address: data.address });
-    const pr = filter(repositories, (r) => r.owner.id === d.address);
-    allRepos = sortBy(pr, (r) => -Number(r.updatedAt));
-  }
+  try {
+    const fs = (await import("fs")).default;
+    let whois = JSON.parse(fs.readFileSync("./seo/dump-whois.json")),
+      repositories = JSON.parse(
+        fs.readFileSync("./seo/dump-repositories.json")
+      ),
+      owners = JSON.parse(fs.readFileSync("./seo/dump-owners.json"));
+    if (validAddress.test(params.userId)) {
+      data = find(whois, { address: params.userId });
+    } else {
+      data = find(whois, { name: params.userId });
+    }
+    if (data?.ownerType === "USER") {
+      u = find(owners, { address: data.address });
+      const pr = filter(repositories, (r) => r.owner.id === u.creator);
+      allRepos = sortBy(pr, (r) => -Number(r.updatedAt));
+    } else if (data?.ownerType === "DAO") {
+      d = find(owners, { address: data.address });
+      const pr = filter(repositories, (r) => r.owner.id === d.address);
+      allRepos = sortBy(pr, (r) => -Number(r.updatedAt));
+    }
+  } catch (e) {}
 
   return {
     props: { user: u || {}, dao: d || {}, allRepos },
@@ -74,12 +78,14 @@ export async function getStaticProps({ params }) {
 // }
 
 export async function getStaticPaths() {
-  const fs = (await import("fs")).default;
   let paths = [];
-  try {
-    paths = JSON.parse(fs.readFileSync("./seo/paths-owners.json"));
-  } catch (e) {
-    console.error(e);
+  if (process.env.GENERATE_SEO_PAGES) {
+    try {
+      const fs = (await import("fs")).default;
+      paths = JSON.parse(fs.readFileSync("./seo/paths-owners.json"));
+    } catch (e) {
+      console.error(e);
+    }
   }
   return {
     paths,

@@ -31,61 +31,65 @@ const atob = (base64) => {
 };
 
 export async function getStaticProps({ params }) {
-  const fs = (await import("fs")).default;
-  const repositories = JSON.parse(
-    fs.readFileSync("./seo/dump-repositories.json")
-  );
+  try {
+    const fs = (await import("fs")).default;
+    const repositories = JSON.parse(
+      fs.readFileSync("./seo/dump-repositories.json")
+    );
 
-  const r = find(
-    repositories,
-    (r) =>
-      r.name === params.repositoryId &&
-      (r.owner.id === params.userId || r.owner.username === params.userId)
-  );
+    const r = find(
+      repositories,
+      (r) =>
+        r.name === params.repositoryId &&
+        (r.owner.id === params.userId || r.owner.username === params.userId)
+    );
 
-  if (r) {
-    let branchSha = getBranchSha(r.defaultBranch, r.branches, r.tags);
+    if (r) {
+      let branchSha = getBranchSha(r.defaultBranch, r.branches, r.tags);
 
-    // const entitiesRes = await getContent(r.id, branchSha, null, null);
+      const entitiesRes = await getContent(r.id, branchSha, null, null);
 
-    // const commitHistory = await getCommitHistory(r.id, branchSha, null, 1);
+      const commitHistory = await getCommitHistory(r.id, branchSha, null, 1);
 
-    // const readmeRegex = new RegExp(/^README/gi);
-    // let readmeFile = null;
-    // for (let i = 0; i < entitiesRes?.content?.length; i++) {
-    //   if (readmeRegex.test(entitiesRes.content[i].name)) {
-    //     const readme = await getContent(
-    //       r.id,
-    //       branchSha,
-    //       entitiesRes.content[i].name
-    //     );
-    //     if (readme?.content[0]) {
-    //       readmeFile = atob(readme.content[0].content);
-    //     }
-    //   }
-    // }
-    return {
-      props: {
-        repository: r,
-        // entitiesRes,
-        // commitHistory: { commits: [{}], ...commitHistory },
-        // readmeFile,
-      },
-      revalidate: 1,
-    };
-  }
+      const readmeRegex = new RegExp(/^README/gi);
+      let readmeFile = null;
+      for (let i = 0; i < entitiesRes?.content?.length; i++) {
+        if (readmeRegex.test(entitiesRes.content[i].name)) {
+          const readme = await getContent(
+            r.id,
+            branchSha,
+            entitiesRes.content[i].name
+          );
+          if (readme?.content[0]) {
+            readmeFile = atob(readme.content[0].content);
+          }
+        }
+      }
+      return {
+        props: {
+          repository: r,
+          entitiesRes,
+          commitHistory: { commits: [{}], ...commitHistory },
+          readmeFile,
+        },
+        revalidate: 1,
+      };
+    }
+  } catch (e) {}
   return {
     props: {},
   };
 }
 
 export async function getStaticPaths() {
-  const fs = (await import("fs")).default;
   let paths = [];
-  try {
-    paths = JSON.parse(fs.readFileSync("./seo/paths-repositories.json"));
-  } catch (e) {
-    console.error(e);
+  if (process.env.GENERATE_SEO_PAGES) {
+    try {
+      const fs = (await import("fs")).default;
+      paths = JSON.parse(fs.readFileSync("./seo/paths-repositories.json"));
+    } catch (e) {
+      console.error(e);
+    }
   }
   return {
     paths,

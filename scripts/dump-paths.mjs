@@ -6,8 +6,6 @@ import globby from "globby";
 import filter from "lodash/filter.js";
 
 env.default.loadEnvConfig(process.cwd());
-console.log("API_URL", process.env.NEXT_PUBLIC_API_URL);
-console.log("SERVER_URL", process.env.NEXT_PUBLIC_SERVER_URL);
 
 const paginationLimit = 200,
   workingDir = "./seo";
@@ -68,7 +66,7 @@ function addPath(params, urlParts) {
   dynamicPathParams.push({ params });
 }
 
-function createDir() {
+function ensureWorkingDir() {
   if (!fs.existsSync(workingDir)) fs.mkdirSync(workingDir);
 }
 
@@ -143,6 +141,16 @@ async function saveSitemap() {
   );
 }
 
+ensureWorkingDir();
+if (!process.env.GENERATE_SEO_PAGES) {
+  console.warn(
+    "Page generation flag is off, run `GENERATE_SEO_PAGES=1 yarn build` to generate pages"
+  );
+  process.exit(0);
+}
+console.log("API_URL", process.env.NEXT_PUBLIC_API_URL);
+console.log("SERVER_URL", process.env.NEXT_PUBLIC_SERVER_URL);
+
 Promise.all([
   populate("queryUserAll", "User", owners, (u) => {
     return {
@@ -167,7 +175,6 @@ Promise.all([
   getStaticPaths(),
 ])
   .then(() => {
-    createDir();
     owners.forEach((u) => {
       if (!/^temp-/.test(u.username) && u.address)
         addPath({ userId: u.username ? u.username : u.address }, [
