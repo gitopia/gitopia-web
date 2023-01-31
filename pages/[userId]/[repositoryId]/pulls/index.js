@@ -17,6 +17,7 @@ import renderPagination from "../../../../helpers/renderPagination";
 import Label from "../../../../components/repository/label";
 import parseFilters from "../../../../helpers/parseFilters";
 import pullRequestStateClass from "../../../../helpers/pullRequestStateClass";
+import useWindowSize from "../../../../hooks/useWindowSize";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -39,25 +40,7 @@ function RepositoryPullsView(props) {
     limit: 10,
     countTotal: true,
   });
-  const [isMobile, setIsMobile] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
+  const { isMobile } = useWindowSize();
 
   const getAllPulls = async () => {
     if (repository) {

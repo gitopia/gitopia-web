@@ -8,30 +8,23 @@ import UserDashboard from "../components/dashboard/user";
 import { useRouter } from "next/router";
 import DashboardSelector from "../components/dashboard/dashboardSelector";
 import getHomeUrl from "../helpers/getHomeUrl";
+import useWindowSize from "../hooks/useWindowSize";
 import getAnyRepositoryAll from "../helpers/getAnyRepositoryAll";
+
+export async function getStaticProps() {
+  const fs = await import("fs");
+  const buildId = fs.readFileSync("./seo/build-id").toString();
+  return {
+    props: {
+      buildId,
+    },
+  };
+}
 
 function Home(props) {
   const router = useRouter();
-  const [isMobile, setIsMobile] = useState(false);
+  const { isMobile } = useWindowSize();
   const [allRepository, setAllRepository] = useState([]);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
-
   useEffect(() => {
     async function setRepos() {
       if (props.selectedAddress) {
@@ -106,8 +99,11 @@ function Home(props) {
             </div>
             <div>
               <div className="bg-footer-grad py-6">
-                <div className="text-xs text-type-secondary mx-8 mb-4">
+                <div className="text-xs text-type-secondary mx-8 mb-2">
                   &copy; Gitopia {new Date().getFullYear()}
+                </div>
+                <div className="text-xs text-type-tertiary mx-8 mb-4">
+                  Build {props.buildId}
                 </div>
                 <div className="mx-6">
                   {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ? (

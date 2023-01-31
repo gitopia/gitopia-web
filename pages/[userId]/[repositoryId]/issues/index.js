@@ -17,6 +17,7 @@ import useRepository from "../../../../hooks/useRepository";
 import parseFilters from "../../../../helpers/parseFilters";
 import renderPagination from "../../../../helpers/renderPagination";
 import Label from "../../../../components/repository/label";
+import useWindowSize from "../../../../hooks/useWindowSize";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -40,25 +41,7 @@ function RepositoryIssueView(props) {
     limit: 10,
     countTotal: true,
   });
-  const [isMobile, setIsMobile] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
+  const { isMobile } = useWindowSize();
 
   const getAllIssues = async () => {
     if (repository) {

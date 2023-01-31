@@ -3,7 +3,6 @@ import Header from "../../../components/header";
 
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { useRouter } from "next/router";
 import Link from "next/link";
 import MarkdownWrapper from "../../../components/markdownWrapper";
 import { notify } from "reapop";
@@ -24,57 +23,108 @@ import SupportOwner from "../../../components/repository/supportOwner";
 import getContent from "../../../helpers/getContent";
 import getCommitHistory from "../../../helpers/getCommitHistory";
 import pluralize from "../../../helpers/pluralize";
+import useWindowSize from "../../../hooks/useWindowSize";
+import find from "lodash/find";
 
-export async function getStaticProps() {
-  return { props: {} };
+const atob = (base64) => {
+  return Buffer.from(base64, "base64").toString("binary");
+};
+
+export async function getStaticProps({ params }) {
+  try {
+    const fs = (await import("fs")).default;
+    const repositories = JSON.parse(
+      fs.readFileSync("./seo/dump-repositories.json")
+    );
+
+    const r = find(
+      repositories,
+      (r) =>
+        r.name === params.repositoryId &&
+        (r.owner.id === params.userId || r.owner.username === params.userId)
+    );
+
+    if (r) {
+      let branchSha = getBranchSha(r.defaultBranch, r.branches, r.tags);
+
+      const entitiesRes = await getContent(r.id, branchSha, null, null);
+
+      const commitHistory = await getCommitHistory(r.id, branchSha, null, 1);
+
+      const readmeRegex = new RegExp(/^README/gi);
+      let readmeFile = null;
+      for (let i = 0; i < entitiesRes?.content?.length; i++) {
+        if (readmeRegex.test(entitiesRes.content[i].name)) {
+          const readme = await getContent(
+            r.id,
+            branchSha,
+            entitiesRes.content[i].name
+          );
+          if (readme?.content[0]) {
+            readmeFile = atob(readme.content[0].content);
+          }
+        }
+      }
+      return {
+        props: {
+          repository: r,
+          entitiesRes,
+          commitHistory: { commits: [{}], ...commitHistory },
+          readmeFile,
+        },
+        revalidate: 1,
+      };
+    }
+  } catch (e) {}
+  return {
+    props: {},
+  };
 }
 
 export async function getStaticPaths() {
+  let paths = [];
+  if (process.env.GENERATE_SEO_PAGES) {
+    try {
+      const fs = (await import("fs")).default;
+      paths = JSON.parse(fs.readFileSync("./seo/paths-repositories.json"));
+    } catch (e) {
+      console.error(e);
+    }
+  }
   return {
-    paths: [],
+    paths,
     fallback: "blocking",
   };
 }
 
 function RepositoryView(props) {
-  const { repository, firstFetchLoading } = useRepository();
+  const { repository, firstFetchLoading } = useRepository(props.repository);
 
-  const [entityList, setEntityList] = useState([]);
-  const [hasMoreEntities, setHasMoreEntities] = useState(null);
+  const [entityList, setEntityList] = useState(
+    props.entitiesRes?.content || []
+  );
+  const [hasMoreEntities, setHasMoreEntities] = useState(
+    props.entitiesRes?.pagination?.next_key
+  );
   const [loadingEntities, setLoadingEntities] = useState(false);
-  const [readmeFile, setReadmeFile] = useState(null);
+  const [readmeFile, setReadmeFile] = useState(props.readmeFile);
   const [commitDetail, setCommitDetail] = useState({
     author: {},
     message: "",
     title: "",
     id: "",
+    ...props.commitHistory?.commits[0],
   });
-  const [commitsLength, setCommitsLength] = useState(0);
+  const [commitsLength, setCommitsLength] = useState(
+    props.commitHistory?.pagination?.total
+  );
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
   );
   const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
     false
   );
-  const [isMobile, setIsMobile] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  }, []);
+  const { isMobile } = useWindowSize();
 
   const loadEntities = async (currentEntities = [], firstTime = false) => {
     setLoadingEntities(true);
@@ -111,7 +161,7 @@ function RepositoryView(props) {
             if (readme) {
               if (readme.content && readme.content[0]) {
                 try {
-                  let file = window.atob(readme.content[0].content);
+                  let file = atob(readme.content[0].content);
                   setReadmeFile(file);
                 } catch (e) {
                   console.error(e);
@@ -155,11 +205,7 @@ function RepositoryView(props) {
           1
         );
 
-        if (
-          commitHistory &&
-          commitHistory.commits &&
-          commitHistory.commits.length
-        ) {
+        if (commitHistory?.commits?.length) {
           setCommitDetail(commitHistory.commits[0]);
           setCommitsLength(commitHistory.pagination.total);
         }

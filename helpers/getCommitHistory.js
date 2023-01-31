@@ -14,10 +14,7 @@ export default async function getCommitHistory(
   if (!validSha.test(initCommitSha)) {
     return obj;
   }
-  let baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "/api/commits"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/commits";
+  let baseUrl = process.env.NEXT_PUBLIC_OBJECTS_URL + "/commits";
   let params = {
     repository_id: Number(repoId),
     init_commit_id: initCommitSha,

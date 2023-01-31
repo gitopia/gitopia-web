@@ -14,7 +14,6 @@ function ToggleGitServerAuthorization({ address, onSuccess, ...props }) {
       if (onSuccess) await onSuccess(!currentState);
       setCurrentState(!currentState);
     }
-    console.log(res);
     setIsToggling(false);
   };
 

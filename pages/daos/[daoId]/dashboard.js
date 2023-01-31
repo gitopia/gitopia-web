@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { getDaoDetailsForDashboard } from "../../../store/actions/dao";
 import Dao from "../../../components/dashboard/dao";
 import Link from "next/link";
+import useWindowSize from "../../../hooks/useWindowSize";
 import getAnyRepositoryAll from "../../../helpers/getAnyRepositoryAll";
 
 export async function getStaticProps() {
@@ -25,26 +26,8 @@ export async function getStaticPaths() {
 function DaoDashboard(props) {
   const hrefBase = "/daos/" + props.currentDashboard;
   const router = useRouter();
+  const { isMobile } = useWindowSize();
   const [allRepository, setAllRepository] = useState([]);
-  const [isMobile, setIsMobile] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
 
   useEffect(() => {
     async function initDashboard() {

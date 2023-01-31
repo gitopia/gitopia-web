@@ -113,4 +113,11 @@ module.exports = withBundleAnalyzer({
       },
     ];
   },
+  async generateBuildId() {
+    const { determineBuildId } = await import("./scripts/build-id.mjs");
+    const fs = await import("fs");
+    let buildId = await determineBuildId();
+    fs.writeFileSync("./seo/build-id", buildId);
+    return buildId;
+  },
 });

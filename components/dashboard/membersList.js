@@ -23,7 +23,6 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
       message: "",
     });
     const res = await getUser(collabAddress);
-    console.log(res);
     if (!res) {
       setCollabHint({
         shown: true,
@@ -42,7 +41,6 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
         userId: collabAddress,
         role: collabRole,
       });
-      console.log(res);
       if (refreshDao) await refreshDao();
       setCollabAddress("");
       setCollabHint({

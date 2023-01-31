@@ -9,6 +9,6 @@ export default async function getUser(userId) {
       return u;
     }
   } catch (e) {
-    console.error(e);
+    console.log("Not found User", userId);
   }
 }

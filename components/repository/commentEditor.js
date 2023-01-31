@@ -103,7 +103,6 @@ function CommentEditor({
                 onClick={async () => {
                   setTogglingIssue(true);
                   const res = await props.toggleIssueState({ id: issueId });
-                  console.log(res);
                   if (res && res.code === 0) {
                     if (onSuccess) {
                       await onSuccess();
@@ -130,7 +129,6 @@ function CommentEditor({
                     id: issueId,
                     state: "CLOSED",
                   });
-                  console.log(res);
                   if (res && res.code === 0) {
                     if (onSuccess) {
                       await onSuccess();

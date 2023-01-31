@@ -34,14 +34,53 @@ import IssueTabs from "../../../../../components/repository/issueTabs";
 import IssuePullRequestView from "../../../../../components/repository/pullRequestView";
 import IssueBountyView from "../../../../../components/repository/bountiesView";
 import Link from "next/link";
+import filter from "lodash/filter";
 
-export async function getStaticProps() {
+export async function getStaticProps({ params }) {
+  try {
+    const fs = (await import("fs")).default;
+    const issues = JSON.parse(fs.readFileSync("./seo/dump-issues.json")),
+      repositories = JSON.parse(
+        fs.readFileSync("./seo/dump-repositories.json")
+      ),
+      comments = JSON.parse(fs.readFileSync("./seo/dump-comments.json"));
+
+    const r = find(
+      repositories,
+      (r) =>
+        r.name === params.repositoryId &&
+        (r.owner.id === params.userId || r.owner.username === params.userId)
+    );
+
+    if (r) {
+      const i = find(
+        issues,
+        (t) => t.iid === params.issueIid && t.repositoryId === r.id
+      );
+      if (i) {
+        const cs = filter(comments, (c) => i.comments.includes(c.id));
+        return {
+          props: { repository: r, issue: i, comments: cs },
+          revalidate: 1,
+        };
+      }
+    }
+  } catch (e) {}
   return { props: {} };
 }
 
 export async function getStaticPaths() {
+  let paths = [];
+  if (process.env.GENERATE_SEO_PAGES) {
+    try {
+      const fs = (await import("fs")).default;
+      paths = JSON.parse(fs.readFileSync("./seo/paths-issues.json"));
+    } catch (e) {
+      console.error(e);
+    }
+  }
   return {
-    paths: [],
+    paths,
     fallback: "blocking",
   };
 }
@@ -49,7 +88,7 @@ export async function getStaticPaths() {
 function RepositoryIssueView(props) {
   const router = useRouter();
   const { setErrorStatusCode } = useErrorStatus();
-  const { repository } = useRepository();
+  const { repository } = useRepository(props.repository);
   const [issue, setIssue] = useState({
     iid: router.query.issueIid,
     creator: "",
@@ -59,8 +98,9 @@ function RepositoryIssueView(props) {
     labels: [],
     pullRequests: [],
     bounties: [],
+    ...props.issue,
   });
-  const [allComments, setAllComments] = useState([]);
+  const [allComments, setAllComments] = useState(props.comments || []);
   const [allLabels, setAllLabels] = useState([]);
 
   useEffect(() => {
