@@ -59,6 +59,7 @@ export default function ReleaseView({
               "/releases/new"
             }
             className="btn btn-primary btn-sm btn-block"
+            data-test="new-release"
           >
             New Release
           </Link>
@@ -87,7 +88,11 @@ export default function ReleaseView({
         </div>
         {showEditControls ? (
           <div className="dropdown dropdown-end">
-            <div tabIndex="0" className="m-1 btn btn-square btn-xs btn-ghost" data-test="release-edits">
+            <div
+              tabIndex="0"
+              className="m-1 btn btn-square btn-xs btn-ghost"
+              data-test="release-edits"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
