@@ -28,7 +28,7 @@ function WithdrawIbcAsset(props) {
   useEffect(() => {
     async function getChain() {
       let info = await getChainInfo(props.activeWallet?.counterPartyChain);
-      setTokenDenom(coingeckoId[info?.coin_minimal_denom].coinDenom);
+      setTokenDenom(coingeckoId[info?.coin_minimal_denom]?.coinDenom);
 
       let res = await getBalances(props.selectedAddress);
       if (res) {
@@ -159,7 +159,7 @@ function WithdrawIbcAsset(props) {
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-2">
             <div className="font-bold">
               Available Balance : {balance + " "}
-              {tokenDenom.toUpperCase()}
+              {tokenDenom?.toUpperCase()}
             </div>
             <div className="border border-gray-700 rounded-xl p-3 bg-grey-900 mt-2">
               <div className="flex">

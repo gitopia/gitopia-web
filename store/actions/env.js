@@ -127,7 +127,7 @@ export const setupTxClients = async (dispatch, getState, chainId = null) => {
   const { env, wallet } = getState();
 
   if (wallet.activeWallet) {
-    if (!env.txClient) {
+    if (!env.txClient || chainId != null) {
       return new Promise((resolve, reject) => {
         dispatch({
           type: walletActions.GET_PASSWORD_FOR_UNLOCK_WALLET,
