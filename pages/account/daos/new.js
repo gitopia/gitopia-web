@@ -7,7 +7,7 @@ import Head from "next/head";
 import Header from "../../../components/header";
 import TextInput from "../../../components/textInput";
 import Footer from "../../../components/footer";
-import DaoAvatar from "../../../components/dao/avatar";
+import AccountAvatar from "../../../components/account/avatar";
 import getUserDaoAll from "../../../helpers/getUserDaoAll";
 
 function NewDao(props) {
@@ -41,9 +41,31 @@ function NewDao(props) {
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
+  const isValidUrl = (urlString) => {
+    try {
+      return Boolean(new URL(urlString));
+    } catch (e) {
+      return false;
+    }
+  };
+
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });
     setDescriptionHint({ ...descriptionHint, shown: false });
+    setWebsiteHint({ ...websiteHint, shown: false });
+  };
+
+  const validateWebsite = async () => {
+    hideHints();
+    if (!isValidUrl(website) && website.length > 0) {
+      setWebsiteHint({
+        type: "error",
+        shown: true,
+        message: "Please enter a valid url",
+      });
+      return false;
+    }
+    return true;
   };
 
   const validateDao = async () => {
@@ -59,7 +81,7 @@ function NewDao(props) {
 
     let alreadyAvailable = false;
     const daos = await getUserDaoAll(props.selectedAddress);
-    daos.every((o) => {
+    daos?.every((o) => {
       if (o.name === name) {
         alreadyAvailable = true;
         return false;
@@ -87,7 +109,7 @@ function NewDao(props) {
 
   const createDao = async () => {
     setDaoCreating(true);
-    if (validateDao()) {
+    if (validateDao() && validateWebsite()) {
       let res = await props.createDao({
         name: name.replace(sanitizedNameTest, "-"),
         description,
@@ -116,7 +138,8 @@ function NewDao(props) {
         <main className="container mx-auto max-w-md py-12 px-4 sm:px-0">
           <div className="text-2xl">Create a new DAO</div>
           <div className="mt-4">
-            <DaoAvatar
+            <AccountAvatar
+              isDao={true}
               dao={{ name, avatarUrl }}
               isEditable={true}
               callback={(newAvatarUrl) => setAvatarUrl(newAvatarUrl)}
@@ -165,7 +188,10 @@ function NewDao(props) {
               name="dao_website"
               placeholder="Website"
               value={website}
-              setValue={setWebsite}
+              setValue={(v) => {
+                setWebsiteHint({ shown: false });
+                setWebsite(v);
+              }}
               hint={websiteHint}
             />
           </div>

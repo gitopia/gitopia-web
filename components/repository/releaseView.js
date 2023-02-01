@@ -4,6 +4,7 @@ import shrinkAddress from "../../helpers/shrinkAddress";
 import formatBytes from "../../helpers/formatBytes";
 import shrinkSha from "../../helpers/shrinkSha";
 import { useState } from "react";
+import MarkdownWrapper from "../markdownWrapper";
 
 export default function ReleaseView({
   release,
@@ -19,34 +20,49 @@ export default function ReleaseView({
 
   return (
     <div className="p-4">
-      <div className="flex items-center">
-        {noLink ? (
-          <div className="text-3xl text-type-secondary">
-            {repository.name + " " + release.tagName}
-          </div>
-        ) : (
+      <div className="flex">
+        <div className="flex items-center">
+          {noLink ? (
+            <div className="text-3xl text-type-secondary">
+              {repository.name + " " + release.tagName}
+            </div>
+          ) : (
+            <Link
+              href={
+                "/" +
+                repository.owner.id +
+                "/" +
+                repository.name +
+                "/releases/tag/" +
+                release.tagName
+              }
+              className="text-3xl link link-primary no-underline hover:underline"
+            >
+              {repository.name + " " + release.tagName}
+            </Link>
+          )}
+          {latest ? (
+            <span className="ml-4 mt-1 badge badge-primary badge-outline">
+              Latest
+            </span>
+          ) : (
+            ""
+          )}
+        </div>
+        <div className="flex-none w-36 ml-auto">
           <Link
             href={
               "/" +
               repository.owner.id +
               "/" +
               repository.name +
-              "/releases/tag/" +
-              release.tagName
+              "/releases/new"
             }
+            className="btn btn-primary btn-sm btn-block"
           >
-            <a className="text-3xl link link-primary no-underline hover:underline">
-              {repository.name + " " + release.tagName}
-            </a>
+            New Release
           </Link>
-        )}
-        {latest ? (
-          <span className="ml-4 mt-1 badge badge-primary badge-outline">
-            Latest
-          </span>
-        ) : (
-          ""
-        )}
+        </div>
       </div>
       <div className="flex items-center mt-4">
         <div className="avatar mr-1">
@@ -59,10 +75,11 @@ export default function ReleaseView({
             />
           </div>
         </div>
-        <Link href={"/" + release.creator}>
-          <a className="text-sm link no-underline hover:underline text-type-secondary">
-            {shrinkAddress(release.creator)}
-          </a>
+        <Link
+          href={"/" + release.creator}
+          className="text-sm link no-underline hover:underline text-type-secondary"
+        >
+          {shrinkAddress(release.creator)}
         </Link>
         <div className="ml-1 text-sm text-type-secondary">
           {"released this on " +
@@ -95,7 +112,7 @@ export default function ReleaseView({
                     release.tagName
                   }
                 >
-                  <a>Edit</a>
+                  Edit
                 </Link>
               </li>
               <li data-test="release-del">
@@ -115,7 +132,7 @@ export default function ReleaseView({
       </div>
       <div className="text-xs mt-4 text-type-secondary">{release.name}</div>
       <div className="text-xs mt-2 text-type-secondary">
-        {release.description}
+        <MarkdownWrapper>{release.description}</MarkdownWrapper>
       </div>
       <div className="text-sm mt-4">
         <span>Assets</span>

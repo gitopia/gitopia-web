@@ -1205,7 +1205,7 @@ export default function Partnerships() {
                 xmlns="http://www.w3.org/2000/svg"
                 onClick={() => {
                   if (window) {
-                    window.open("https://discord.gg/95SQmmWC");
+                    window.open("https://discord.gg/aqsKW3hUHD");
                   }
                 }}
                 target="_blank"
@@ -1462,7 +1462,7 @@ export default function Partnerships() {
         </div>
         <hr className={styles.divider}></hr>
         <div className={"flex flex-col sm:flex-row " + styles.footerEnd}>
-          <div className="">Copyright © 2021 Gitopia | All Rights Reserved</div>
+          <div className="">Copyright © 2023 Gitopia | All Rights Reserved</div>
           <div className="flex ">
             <div className="mr-4">Privacy policy</div>
             <div className="mr-4">Terms of services</div>

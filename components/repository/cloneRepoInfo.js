@@ -97,45 +97,43 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
             ""
           )}
         </div>
-        <div className="flex items-center p-2 text-sm text-bold text-accent-focus">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 mr-2 mt-px"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            />
-          </svg>
-          <span className="">Please Note</span>
-        </div>
-        <div className="px-2">
-          <span className="text-sm mr-2">
-            {(() => {
-              switch (tab) {
-                case "gitopia":
-                  return "In order to use gitopia protocol, you need to install git remote helper first";
-                case "ipfs":
-                  return "In order to use ipfs clone, you need to install the helper first";
-                case "arweave":
-                  return "In order to use arweave clone, you need to install the helper first";
-              }
-            })()}
-          </span>
-          <a
-            href="https://docs.gitopia.com/git-remote-gitopia"
-            target="_blank"
-            rel="noreferrer"
-            className="text-sm text-teal"
-          >
-            Learn more
-          </a>
-        </div>
+        {tab === "gitopia" ? (
+          <>
+            <div className="flex items-center p-2 text-sm text-bold text-accent-focus">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2 mt-px"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span className="">Please Note</span>
+            </div>
+            <div className="px-2">
+              <span className="text-sm mr-2">
+                In order to use gitopia protocol, you need to install git remote
+                helper first
+              </span>
+              <a
+                href="https://docs.gitopia.com/git-remote-gitopia"
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm text-teal"
+              >
+                Learn more
+              </a>
+            </div>
+          </>
+        ) : (
+          ""
+        )}
         <div className="mt-6">
           {tab === "ipfs" || tab === "arweave" ? (
             <div className="relative w-full mt-4">
@@ -183,39 +181,43 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
           ) : (
             ""
           )}
-          <div className="relative w-full mt-4">
-            <input
-              rows={2}
-              cols={120}
-              name="repository-url"
-              type="text"
-              value={cloneCmd}
-              readOnly={true}
-              className="w-full input input-ghost input-md input-bordered py-2 pr-14"
-            />
-            <button
-              className="absolute right-0 top-0 btn btn-ghost btn-md"
-              onClick={(e) => {
-                navigator.clipboard.writeText(cloneCmd);
-                props.notify("Copied to clipboard", "info");
-              }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+          {tab === "gitopia" ? (
+            <div className="relative w-full mt-4">
+              <input
+                rows={2}
+                cols={120}
+                name="repository-url"
+                type="text"
+                value={cloneCmd}
+                readOnly={true}
+                className="w-full input input-ghost input-md input-bordered py-2 pr-14"
+              />
+              <button
+                className="absolute right-0 top-0 btn btn-ghost btn-md"
+                onClick={(e) => {
+                  navigator.clipboard.writeText(cloneCmd);
+                  props.notify("Copied to clipboard", "info");
+                }}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                />
-              </svg>
-            </button>
-          </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+              </button>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </div>

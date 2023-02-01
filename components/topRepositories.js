@@ -35,8 +35,8 @@ function TopRepositories({ repositories = [] }) {
         {repos.map((r) => {
           return (
             <li className="" key={r.id}>
-              <Link href={"/" + r.username + "/" + r.name}>
-                <a className="rounded">{r.name}</a>
+              <Link href={"/" + r.username + "/" + r.name} className="rounded">
+                {r.name}
               </Link>
             </li>
           );
@@ -44,10 +44,12 @@ function TopRepositories({ repositories = [] }) {
       </ul>
       {hasMore ? (
         <div className="mx-6 my-2">
-          <Link href={"/" + repos[0].username}>
-            <a className="btn btn-xs btn-link" data-test="all_repositories">
-              All Repositories
-            </a>
+          <Link
+            href={"/" + repos[0].username}
+            className="btn btn-xs btn-link"
+            data-test="all_repositories"
+          >
+            All Repositories
           </Link>
         </div>
       ) : (

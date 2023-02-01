@@ -27,8 +27,6 @@ function CollaboratorsList({
 
   const validateCollaborator = async () => {
     const res = await getUser(collabAddress);
-    console.log(res);
-
     if (!res) {
       setCollabHint({
         shown: true,
@@ -48,7 +46,6 @@ function CollaboratorsList({
         user: collabAddress,
         role: collabRole,
       });
-      console.log(res);
     }
     if (refreshRepository) await refreshRepository();
     setCollabAddress("");
@@ -140,7 +137,10 @@ function CollaboratorsList({
             <td style={{ verticalAlign: "top" }}>
               <select
                 data-test="permissions"
-                className="select select-bordered w-full select-sm"
+                className={
+                  "select select-bordered w-full select-sm focus:outline-none focus:border-type " +
+                  (collabRole.length > 0 ? "border-green" : "")
+                }
                 value={collabRole}
                 onChange={(e) => setCollabRole(e.target.value)}
               >

@@ -3,6 +3,14 @@ module.exports = {
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    {
+      pattern: /(bg|text)-(red)-(800)/,
+    },
+    {
+      pattern: /(bg|text)-(yellow)/,
+    },
+  ],
   darkMode: "media", // or 'media' or 'class'
   theme: {
     fontFamily: {
@@ -20,6 +28,7 @@ module.exports = {
         },
         red: {
           DEFAULT: "#D82F28",
+          800: "#ED5819",
           900: "#D82F28",
         },
         purple: {
@@ -38,7 +47,10 @@ module.exports = {
           // DEFAULT: "#404450",
           DEFAULT: "#3E4051",
           100: "#E5EDF5",
+          200: "#B3B4B7",
           300: "#6F7A8F",
+          500: "#28313B",
+          900: "#1B2028",
         },
         pink: {
           50: "#FFB0DB",
@@ -48,6 +60,9 @@ module.exports = {
         },
         blue: {
           DEFAULT: "#BFD6F8",
+        },
+        yellow: {
+          DEFAULT: "#FCC945",
         },
         type: {
           DEFAULT: "#E2EBF2",

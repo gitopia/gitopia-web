@@ -1,6 +1,7 @@
 import api from "./getApi";
 
-export default async function getUser(repoId) {
+export default async function getRepository(repoId) {
+  if (!repoId) return null;
   try {
     const res = await api.queryRepository(repoId);
     if (res.ok) {
@@ -8,6 +9,6 @@ export default async function getUser(repoId) {
       return u;
     }
   } catch (e) {
-    console.error(e);
+    console.log("Not found repository", repoId);
   }
 }

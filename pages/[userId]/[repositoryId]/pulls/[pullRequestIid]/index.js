@@ -28,22 +28,93 @@ import useRepository from "../../../../../hooks/useRepository";
 import usePullRequest from "../../../../../hooks/usePullRequest";
 import MergePullRequestView from "../../../../../components/repository/mergePullRequestView";
 import IssuePullDescription from "../../../../../components/repository/issuePullDescription";
+import getBranchSha from "../../../../../helpers/getBranchSha";
+import filter from "lodash/filter";
+import PullRequestIssueView from "../../../../../components/repository/issuesView";
 
-export async function getStaticProps() {
+export async function getStaticProps({ params }) {
+  try {
+    const fs = (await import("fs")).default;
+    const repositories = JSON.parse(
+        fs.readFileSync("./seo/dump-repositories.json")
+      ),
+      pulls = JSON.parse(fs.readFileSync("./seo/dump-pulls.json")),
+      comments = JSON.parse(fs.readFileSync("./seo/dump-comments.json"));
+
+    const r = find(
+      repositories,
+      (r) =>
+        r.name === params.repositoryId &&
+        (r.owner.id === params.userId || r.owner.username === params.userId)
+    );
+
+    if (r) {
+      const p = find(
+        pulls,
+        (t) => t.iid === params.pullRequestIid && t.base?.repositoryId === r.id
+      );
+      if (p) {
+        if (p.base.repositoryId === p.head.repositoryId) {
+          p.head.repository = p.base.repository = r;
+          if (p.state === "OPEN") {
+            p.head.sha = getBranchSha(p.head.branch, r.branches, r.tags);
+            p.base.sha = getBranchSha(p.base.branch, r.branches, r.tags);
+          } else {
+            p.base.sha = p.base.commitSha;
+            p.head.sha = p.head.commitSha;
+          }
+        } else {
+          const forkRepo = find(repositories, { id: p.head.repositoryId });
+          if (forkRepo) {
+            p.head.repository = forkRepo;
+            p.base.repository = r;
+            if (p.state === "OPEN") {
+              p.head.sha = getBranchSha(
+                p.head.branch,
+                forkRepo.branches,
+                forkRepo.tags
+              );
+              p.base.sha = getBranchSha(p.base.branch, r.branches, r.tags);
+            } else {
+              p.base.sha = p.base.commitSha;
+              p.head.sha = p.head.commitSha;
+            }
+          }
+        }
+        const cs = filter(comments, (c) => p.comments.includes(c.id));
+        return {
+          props: { repository: r, pullRequest: p, comments: cs },
+          revalidate: 1,
+        };
+      }
+    }
+  } catch (e) {}
   return { props: {} };
 }
 
 export async function getStaticPaths() {
+  let paths = [];
+  if (process.env.GENERATE_SEO_PAGES) {
+    try {
+      const fs = (await import("fs")).default;
+      paths = JSON.parse(fs.readFileSync("./seo/paths-pulls.json"));
+    } catch (e) {
+      console.error(e);
+    }
+  }
   return {
-    paths: [],
+    paths,
     fallback: "blocking",
   };
 }
 
 function RepositoryPullView(props) {
-  const { repository } = useRepository();
-  const { pullRequest, refreshPullRequest } = usePullRequest(repository);
-  const [allComments, setAllComments] = useState([]);
+  const { repository } = useRepository(props.repository);
+  const { pullRequest, refreshPullRequest } = usePullRequest(
+    repository,
+    props.pullRequest
+  );
+  const [allComments, setAllComments] = useState(props.comments || []);
 
   const getAllComments = async () => {
     const pr = pullRequest.comments.map((c) => getComment(c));
@@ -51,7 +122,9 @@ function RepositoryPullView(props) {
     setAllComments(comments);
   };
 
-  useEffect(getAllComments, [pullRequest]);
+  useEffect(() => {
+    getAllComments();
+  }, [pullRequest]);
 
   return (
     <div
@@ -128,21 +201,7 @@ function RepositoryPullView(props) {
                   pullRequest={pullRequest}
                   refreshPullRequest={refreshPullRequest}
                 />
-                <div className="flex w-full mt-8">
-                  <div className="flex-none mr-4">
-                    <div className="avatar">
-                      <div className="mb-8 rounded-full w-10 h-10">
-                        <img
-                          src={
-                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                            (props.selectedAddress
-                              ? props.selectedAddress.slice(-1)
-                              : "")
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex w-full mt-8 pl-10">
                   <CommentEditor
                     issueId={pullRequest.id}
                     issueState={pullRequest.state}
@@ -153,7 +212,7 @@ function RepositoryPullView(props) {
               </div>
             </div>
 
-            <div className="flex-none sm:w-64 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
+            <div className="flex-none sm:w-72 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
               <div className="pb-8">
                 <AssigneeSelector
                   title="Reviewers"
@@ -281,6 +340,11 @@ function RepositoryPullView(props) {
                     : "None yet"}
                 </div>
               </div>
+              {pullRequest.issues.length > 0 ? (
+                <PullRequestIssueView issues={pullRequest.issues} />
+              ) : (
+                ""
+              )}
             </div>
           </div>
         </main>

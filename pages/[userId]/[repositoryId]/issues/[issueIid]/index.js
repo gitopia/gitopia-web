@@ -1,5 +1,5 @@
 import Head from "next/head";
-import Header from "../../../../components/header";
+import Header from "../../../../../components/header";
 
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -7,37 +7,80 @@ import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import find from "lodash/find";
 
-import getRepositoryIssue from "../../../../helpers/getRepositoryIssue";
-import getComment from "../../../../helpers/getComment";
-import shrinkAddress from "../../../../helpers/shrinkAddress";
-import RepositoryHeader from "../../../../components/repository/header";
-import RepositoryMainTabs from "../../../../components/repository/mainTabs";
-import Footer from "../../../../components/footer";
-import CommentEditor from "../../../../components/repository/commentEditor";
-import CommentView from "../../../../components/repository/commentView";
-import SystemCommentView from "../../../../components/repository/systemCommentView";
+import getRepositoryIssue from "../../../../../helpers/getRepositoryIssue";
+import getComment from "../../../../../helpers/getComment";
+import shrinkAddress from "../../../../../helpers/shrinkAddress";
+import RepositoryHeader from "../../../../../components/repository/header";
+import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
+import Footer from "../../../../../components/footer";
+import CommentEditor from "../../../../../components/repository/commentEditor";
+import CommentView from "../../../../../components/repository/commentView";
+import SystemCommentView from "../../../../../components/repository/systemCommentView";
 import {
   deleteComment,
   updateIssueLabels,
   updateIssueAssignees,
-} from "../../../../store/actions/repository";
-import AssigneeSelector from "../../../../components/repository/assigneeSelector";
-import LabelSelector from "../../../../components/repository/labelSelector";
-import Label from "../../../../components/repository/label";
-import AssigneeGroup from "../../../../components/repository/assigneeGroup";
-import useRepository from "../../../../hooks/useRepository";
-import IssuePullTitle from "../../../../components/repository/issuePullTitle";
-import IssuePullDescription from "../../../../components/repository/issuePullDescription";
-import { useErrorStatus } from "../../../../hooks/errorHandler";
-import pluralize from "../../../../helpers/pluralize";
+} from "../../../../../store/actions/repository";
+import AssigneeSelector from "../../../../../components/repository/assigneeSelector";
+import LabelSelector from "../../../../../components/repository/labelSelector";
+import Label from "../../../../../components/repository/label";
+import AssigneeGroup from "../../../../../components/repository/assigneeGroup";
+import useRepository from "../../../../../hooks/useRepository";
+import IssuePullTitle from "../../../../../components/repository/issuePullTitle";
+import IssuePullDescription from "../../../../../components/repository/issuePullDescription";
+import { useErrorStatus } from "../../../../../hooks/errorHandler";
+import pluralize from "../../../../../helpers/pluralize";
+import IssueTabs from "../../../../../components/repository/issueTabs";
+import IssuePullRequestView from "../../../../../components/repository/pullRequestView";
+import IssueBountyView from "../../../../../components/repository/bountiesView";
+import Link from "next/link";
+import filter from "lodash/filter";
 
-export async function getStaticProps() {
+export async function getStaticProps({ params }) {
+  try {
+    const fs = (await import("fs")).default;
+    const issues = JSON.parse(fs.readFileSync("./seo/dump-issues.json")),
+      repositories = JSON.parse(
+        fs.readFileSync("./seo/dump-repositories.json")
+      ),
+      comments = JSON.parse(fs.readFileSync("./seo/dump-comments.json"));
+
+    const r = find(
+      repositories,
+      (r) =>
+        r.name === params.repositoryId &&
+        (r.owner.id === params.userId || r.owner.username === params.userId)
+    );
+
+    if (r) {
+      const i = find(
+        issues,
+        (t) => t.iid === params.issueIid && t.repositoryId === r.id
+      );
+      if (i) {
+        const cs = filter(comments, (c) => i.comments.includes(c.id));
+        return {
+          props: { repository: r, issue: i, comments: cs },
+          revalidate: 1,
+        };
+      }
+    }
+  } catch (e) {}
   return { props: {} };
 }
 
 export async function getStaticPaths() {
+  let paths = [];
+  if (process.env.GENERATE_SEO_PAGES) {
+    try {
+      const fs = (await import("fs")).default;
+      paths = JSON.parse(fs.readFileSync("./seo/paths-issues.json"));
+    } catch (e) {
+      console.error(e);
+    }
+  }
   return {
-    paths: [],
+    paths,
     fallback: "blocking",
   };
 }
@@ -45,7 +88,7 @@ export async function getStaticPaths() {
 function RepositoryIssueView(props) {
   const router = useRouter();
   const { setErrorStatusCode } = useErrorStatus();
-  const { repository } = useRepository();
+  const { repository } = useRepository(props.repository);
   const [issue, setIssue] = useState({
     iid: router.query.issueIid,
     creator: "",
@@ -53,24 +96,30 @@ function RepositoryIssueView(props) {
     comments: [],
     assignees: [],
     labels: [],
+    pullRequests: [],
+    bounties: [],
+    ...props.issue,
   });
-  const [allComments, setAllComments] = useState([]);
+  const [allComments, setAllComments] = useState(props.comments || []);
   const [allLabels, setAllLabels] = useState([]);
 
-  useEffect(async () => {
-    const [i] = await Promise.all([
-      getRepositoryIssue(
-        router.query.userId,
-        router.query.repositoryId,
-        router.query.issueIid
-      ),
-    ]);
-    if (i) {
-      setIssue(i);
-    } else {
-      setErrorStatusCode(404);
+  useEffect(() => {
+    async function initIssues() {
+      const [i] = await Promise.all([
+        getRepositoryIssue(
+          router.query.userId,
+          router.query.repositoryId,
+          router.query.issueIid
+        ),
+      ]);
+      if (i) {
+        setIssue(i);
+      } else {
+        setErrorStatusCode(404);
+      }
+      setAllLabels(repository.labels);
     }
-    setAllLabels(repository.labels);
+    initIssues();
   }, [router.query.issueIid, repository.id]);
 
   const getAllComments = async () => {
@@ -88,7 +137,9 @@ function RepositoryIssueView(props) {
     setIssue(i);
   };
 
-  useEffect(getAllComments, [issue]);
+  useEffect(() => {
+    getAllComments();
+  }, [issue]);
 
   return (
     <div
@@ -127,18 +178,24 @@ function RepositoryIssueView(props) {
               <span className="text-type text-sm uppercase">{issue.state}</span>
             </span>
             <span className="text-xs mr-2 text-type-secondary">
-              {shrinkAddress(issue.creator) +
-                " opened this issue " +
-                dayjs(issue.createdAt * 1000).fromNow()}
+              <Link href={"/" + issue.creator} className="btn-link">
+                {shrinkAddress(issue.creator)}
+              </Link>
+              {" opened this issue " + dayjs(issue.createdAt * 1000).fromNow()}
             </span>
             <span className="text-xl mr-2 text-type-secondary">&middot;</span>
             <span className="text-xs text-type-secondary">
-              {issue.comments.length}
+              {issue.comments?.length}
               <span className="ml-1">
                 {pluralize("comment", issue.comments.length)}
               </span>
             </span>
           </div>
+          <IssueTabs
+            repository={repository}
+            issueId={issue.iid}
+            active="conversation"
+          />
           <div className="sm:flex mt-8">
             <div className="flex flex-1">
               <div className="flex flex-col w-full">
@@ -177,7 +234,7 @@ function RepositoryIssueView(props) {
                   }
                 })}
                 <div className="flex w-full mt-8">
-                  <div className="flex-none mr-4">
+                  <div className="flex-none">
                     <div className="avatar">
                       <div className="mb-8 rounded-full w-10 h-10">
                         <img
@@ -199,7 +256,7 @@ function RepositoryIssueView(props) {
                 </div>
               </div>
             </div>
-            <div className="flex-none sm:w-64 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
+            <div className="flex-none sm:w-72 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
               <div className="pb-8">
                 <AssigneeSelector
                   assignees={issue.assignees}
@@ -286,6 +343,16 @@ function RepositoryIssueView(props) {
                     : "None yet"}
                 </div>
               </div>
+              {issue.pullRequests.length > 0 ? (
+                <IssuePullRequestView pullRequests={issue.pullRequests} />
+              ) : (
+                ""
+              )}
+              {issue.bounties.length > 0 ? (
+                <IssueBountyView bounties={issue.bounties} />
+              ) : (
+                ""
+              )}
               {/* <div className="py-8">
                 <div className="flex-1 text-left px-3 mb-1">
                   Linked Pull Requests

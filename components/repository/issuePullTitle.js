@@ -124,7 +124,7 @@ function IssuePullTitle({
         <>
           {issuePullObj.creator === props.selectedAddress ? (
             <button
-              className="btn btn-sm btn-ghost ml-4"
+              className="btn btn-sm btn-ghost ml-4 uppercase text-green"
               onClick={() => {
                 setIsEditing(true);
               }}
@@ -142,12 +142,11 @@ function IssuePullTitle({
               repository.owner.id +
               "/" +
               repository.name +
-              (isPull ? "/pulls/new" : "/issues/new")
+              (isPull ? "/compare" : "/issues/new")
             }
+            className="btn btn-ghost btn-sm ml-4 uppercase text-green"
           >
-            <button className="btn btn-ghost btn-sm ml-4">
-              {isPull ? "New Pull Request" : "New Issue"}
-            </button>
+            {isPull ? "New Pull Request" : "New Issue"}
           </Link>
         </>
       )}

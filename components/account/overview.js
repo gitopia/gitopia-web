@@ -12,7 +12,7 @@ import { sortBy } from "lodash";
 import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
 
 function AccountOverview(props) {
-  const [allRepos, setAllRepos] = useState([]);
+  const [allRepos, setAllRepos] = useState(props.allRepos || []);
   const [contributions, setContributions] = useState([{}]);
   const [totalContributions, setTotalContributions] = useState(0);
 
@@ -33,7 +33,9 @@ function AccountOverview(props) {
     // setAvatarLink(link);
   };
 
-  useEffect(getAllRepos, [props.user.creator, props.dao.name]);
+  useEffect(() => {
+    getAllRepos();
+  }, [props.user.creator, props.dao.name]);
 
   const hrefBase = "/" + props.userId;
 
@@ -49,8 +51,11 @@ function AccountOverview(props) {
                   key={r.id}
                 >
                   <div className="flex-1 mb-4 sm:mb-0">
-                    <Link href={hrefBase + "/" + r.name}>
-                      <a className="text-base btn-link">{r.name}</a>
+                    <Link
+                      href={hrefBase + "/" + r.name}
+                      className="text-base btn-link"
+                    >
+                      {r.name}
                     </Link>
                     <div
                       className={

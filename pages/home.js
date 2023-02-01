@@ -8,46 +8,42 @@ import UserDashboard from "../components/dashboard/user";
 import { useRouter } from "next/router";
 import DashboardSelector from "../components/dashboard/dashboardSelector";
 import getHomeUrl from "../helpers/getHomeUrl";
+import useWindowSize from "../hooks/useWindowSize";
 import getAnyRepositoryAll from "../helpers/getAnyRepositoryAll";
+
+export async function getStaticProps() {
+  const fs = await import("fs");
+  const buildId = fs.readFileSync("./seo/build-id").toString();
+  return {
+    props: {
+      buildId,
+    },
+  };
+}
 
 function Home(props) {
   const router = useRouter();
-  const [isMobile, setIsMobile] = useState(false);
+  const { isMobile } = useWindowSize();
   const [allRepository, setAllRepository] = useState([]);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
-
-  useEffect(async () => {
-    if (props.selectedAddress) {
-      if (props.selectedAddress !== props.currentDashboard) {
-        const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
-        router.push(newUrl);
-      } else {
-        const repos = await getAnyRepositoryAll(props.currentDashboard);
-        if (repos) {
-          setAllRepository(repos);
+    async function setRepos() {
+      if (props.selectedAddress) {
+        if (props.selectedAddress !== props.currentDashboard) {
+          const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
+          router.push(newUrl);
         } else {
-          setAllRepository([]);
+          const repos = await getAnyRepositoryAll(props.currentDashboard);
+          if (repos) {
+            setAllRepository(repos);
+          } else {
+            setAllRepository([]);
+          }
         }
+      } else {
+        setAllRepository([]);
       }
-    } else {
-      setAllRepository([]);
     }
+    setRepos();
   }, [props.dashboards, props.currentDashboard, props.selectedAddress]);
 
   return (
@@ -87,20 +83,27 @@ function Home(props) {
           <div className="w-64 border-r border-grey flex flex-col">
             <div className="flex-1">
               <DashboardSelector />
-              <TopRepositories
-                repositories={allRepository.map((r) => {
-                  return {
-                    owner: props.selectedAddress,
-                    username: props.username,
-                    ...r,
-                  };
-                })}
-              />
+              {allRepository.length == 0 ? (
+                ""
+              ) : (
+                <TopRepositories
+                  repositories={allRepository.map((r) => {
+                    return {
+                      owner: props.selectedAddress,
+                      username: props.username,
+                      ...r,
+                    };
+                  })}
+                />
+              )}
             </div>
             <div>
               <div className="bg-footer-grad py-6">
-                <div className="text-xs text-type-secondary mx-8 mb-4">
+                <div className="text-xs text-type-secondary mx-8 mb-2">
                   &copy; Gitopia {new Date().getFullYear()}
+                </div>
+                <div className="text-xs text-type-tertiary mx-8 mb-4">
+                  Build {props.buildId}
                 </div>
                 <div className="mx-6">
                   {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ? (
@@ -111,15 +114,15 @@ function Home(props) {
                           process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
                           "?tab=proposals"
                         }
+                        className={"btn btn-xs btn-link mt-2"}
                       >
-                        <a className={"btn btn-xs btn-link mt-2"}>Proposals</a>
+                        Proposals
                       </Link>
                       <Link
                         href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
+                        className={"btn btn-xs btn-link mt-2"}
                       >
-                        <a className={"btn btn-xs btn-link mt-2"}>
-                          Source code
-                        </a>
+                        Source code
                       </Link>
                     </>
                   ) : (
@@ -132,15 +135,19 @@ function Home(props) {
         ) : (
           <>
             <DashboardSelector />
-            <TopRepositories
-              repositories={allRepository.map((r) => {
-                return {
-                  owner: props.selectedAddress,
-                  username: props.username,
-                  ...r,
-                };
-              })}
-            />
+            {allRepository.length == 0 ? (
+              ""
+            ) : (
+              <TopRepositories
+                repositories={allRepository.map((r) => {
+                  return {
+                    owner: props.selectedAddress,
+                    username: props.username,
+                    ...r,
+                  };
+                })}
+              />
+            )}
           </>
         )}
         <div className="flex-1 px-4">
@@ -161,11 +168,15 @@ function Home(props) {
                         process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
                         "?tab=proposals"
                       }
+                      className={"btn btn-xs btn-link mt-1"}
                     >
-                      <a className={"btn btn-xs btn-link mt-1"}>Proposals</a>
+                      Proposals
                     </Link>
-                    <Link href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}>
-                      <a className={"btn btn-xs btn-link mt-1"}>Source code</a>
+                    <Link
+                      href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
+                      className={"btn btn-xs btn-link mt-1"}
+                    >
+                      Source code
                     </Link>
                   </>
                 ) : (

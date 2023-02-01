@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import {
   initLedgerTransport,
   getLedgerSigner,
   showLedgerAddress,
   addLedgerWallet,
+  updateUserBalance,
 } from "../store/actions/wallet";
-import TextInput from "./textInput";
+import axios from "../helpers/axiosFetch";
 import { useRouter } from "next/router";
+import { notify } from "reapop";
 
 function ConnectLedger(props) {
-  const [name, setName] = useState("");
+  const [name, setName] = useState("untitled-ledger-1");
   const [nameHint, setNameHint] = useState({
     shown: false,
     type: "error",
@@ -24,87 +26,95 @@ function ConnectLedger(props) {
   const [ledgerAddress, setLedgerAddress] = useState("");
   const [addressVerified, setAddressVerified] = useState(false);
   const [verifyError, setVerifyError] = useState(null);
+  const [walletCreated, setWalletCreated] = useState(false);
 
   const router = useRouter();
-
-  const hideHints = () => {
-    setNameHint({ ...nameHint, shown: false });
-    setConnectPermission(false);
-    setConnectError(null);
-    setAppOpen(false);
-    setAppError(null);
-    setAddressVerified(false);
-    setVerifyError(null);
-  };
-
-  const validateWallet = () => {
-    hideHints();
-    if (name.trim() === "") {
-      setNameHint({ ...nameHint, shown: true, message: "Please enter a name" });
-      return false;
-    }
-    if (name.trim().length > 39) {
-      setNameHint({
-        ...nameHint,
-        shown: true,
-        message: "Name can be maximum 39 characters",
-      });
-      return false;
-    }
-    let alreadyAvailable = false;
+  useEffect(() => {
+    let highest = 0;
     props.wallets.every((wallet) => {
-      console.log(wallet.name, name === wallet.name);
-      if (wallet.name === name) {
-        alreadyAvailable = true;
-        return false;
+      if (wallet.name.includes("untitled-ledger")) {
+        let n = Number(wallet.name.split("-")[2]) || 0;
+        highest = Math.max(highest, n);
       }
       return true;
     });
-    console.log(props.wallets, name);
-    if (alreadyAvailable) {
-      setNameHint({
-        ...nameHint,
-        shown: true,
-        message: "Wallet name already taken",
-      });
-      return false;
-    }
-    return true;
-  };
-
+    setName("untitled-ledger-" + (highest + 1));
+  }, []);
   const createWallet = async () => {
     setCreatingWallet(true);
-    if (validateWallet()) {
-      let res = await props.initLedgerTransport();
-      console.log(res);
-      if (res.transport) {
-        setConnectPermission(true);
-        let s = await props.getLedgerSigner(res.transport);
-        console.log(s);
-        if (s.signer) {
-          setAppOpen(true);
-          setLedgerAddress(s.addr);
-          let v = await props.showLedgerAddress(s.signer);
-          console.log(v);
-          if (v.pubkey) {
-            setAddressVerified(true);
-            const a = await props.addLedgerWallet(name, s.addr, s.signer);
-            if (a) {
-              router.push("/home");
-            }
-          } else {
-            setVerifyError("Unable to confirm on ledger");
+    let res = await props.initLedgerTransport();
+    if (res.transport) {
+      setConnectPermission(true);
+      let s = await props.getLedgerSigner(res.transport);
+      console.log(s);
+      if (s.signer) {
+        setAppOpen(true);
+        setLedgerAddress(s.addr);
+        let v = await props.showLedgerAddress(s.signer);
+        console.log(v);
+        if (v.pubkey) {
+          setAddressVerified(true);
+          const a = await props.addLedgerWallet(name, s.addr, s.signer);
+          if (a === "USER_CREATED") {
+            router.push("/home");
+          } else if (a === "WALLET_ADDED") {
+            setTimeout(getTokens, 2000);
+            router.push("/login?step=5");
           }
         } else {
-          setAppError(s.message);
+          setVerifyError("Unable to confirm on ledger");
         }
       } else {
-        setConnectError(res.message);
+        setAppError(s.message);
       }
+    } else {
+      setConnectError(res.message);
     }
+
     setCreatingWallet(false);
   };
+  const getTokens = () => {
+    if (!props.selectedAddress) {
+      props.notify("Please sign in before claiming tokens", "error");
+      return;
+    }
+    // setLoading(amount);
 
+    axios
+      .post(
+        process.env.NODE_ENV === "development"
+          ? "/api/faucet"
+          : process.env.NEXT_PUBLIC_FAUCET_URL,
+        {
+          address: props.selectedAddress,
+        },
+        { timeout: 10000 }
+      )
+      .then((res) => {
+        if (
+          res?.data?.transfers &&
+          res?.data?.transfers.length &&
+          res.data.transfers[0].status === "error"
+        ) {
+          props.notify(res.data.transfers[0].error, "error");
+          // setLoading(0);
+        } else {
+          setTimeout(() => {
+            props.updateUserBalance(true);
+            // setLoading(0);
+          }, 2000);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        if (err?.response?.data?.error) {
+          props.notify(err.response.data.error, "error");
+        } else {
+          props.notify("Unable to reach faucet", "error");
+        }
+        // setLoading(0);
+      });
+  };
   return (
     <>
       <div className="text-4xl mt-16 sm:mt-0 sm:text-6xl mb-6">
@@ -112,18 +122,6 @@ function ConnectLedger(props) {
       </div>
       <div className="text-xs mb-8">
         Your wallet is your login information to access the app
-      </div>
-      <div className="max-w-md w-full p-4">
-        <div className="">
-          <TextInput
-            type="text"
-            name="wallet_name"
-            placeholder="Wallet Name"
-            value={name}
-            setValue={setName}
-            hint={nameHint}
-          />
-        </div>
       </div>
       <div className="max-w-md w-full px-4">
         <div className="flex py-2 justify-between items-center rounded-md">
@@ -264,6 +262,7 @@ function ConnectLedger(props) {
 const mapStateToProps = (state) => {
   return {
     wallets: state.wallet.wallets,
+    selectedAddress: state.wallet.selectedAddress,
   };
 };
 
@@ -272,4 +271,6 @@ export default connect(mapStateToProps, {
   getLedgerSigner,
   showLedgerAddress,
   addLedgerWallet,
+  updateUserBalance,
+  notify,
 })(ConnectLedger);

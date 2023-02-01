@@ -9,11 +9,16 @@ import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import MarkdownEditor from "../../../../components/markdownEditor";
 import { createIssue } from "../../../../store/actions/repository";
+import { getBalance } from "../../../../store/actions/wallet";
+import { updateUserBalance } from "../../../../store/actions/wallet";
+import { notify } from "reapop";
 import AssigneeSelector from "../../../../components/repository/assigneeSelector";
 import LabelSelector from "../../../../components/repository/labelSelector";
 import Label from "../../../../components/repository/label";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../hooks/useRepository";
+import CreateBounty from "../../../../components/repository/bounty";
+import { createBounty } from "../../../../store/actions/bounties";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -36,6 +41,8 @@ function RepositoryIssueCreateView(props) {
   const [labels, setLabels] = useState([]);
   const [postingIssue, setPostingIssue] = useState(false);
   const [allLabels, setAllLabels] = useState([]);
+  const [bountyAmount, setBountyAmount] = useState([]);
+  const [bountyExpiry, setBountyExpiry] = useState(0);
 
   const validateIssue = () => {
     return true;
@@ -51,6 +58,8 @@ function RepositoryIssueCreateView(props) {
         repositoryOwner: repository.owner.id,
         assignees,
         labels,
+        bountyAmount,
+        bountyExpiry,
       };
       const res = await props.createIssue(issue);
       if (res && res.code === 0) {
@@ -67,7 +76,7 @@ function RepositoryIssueCreateView(props) {
     setPostingIssue(false);
   };
 
-  useEffect(async () => {
+  useEffect(() => {
     if (repository) {
       setAllLabels(repository.labels);
     }
@@ -115,11 +124,13 @@ function RepositoryIssueCreateView(props) {
                     data-test="issue_title"
                   />
                 </div>
-                <MarkdownEditor
-                  value={description}
-                  setValue={setDescription}
-                  id="issue-description"
+                <CreateBounty
+                  setBountyExpiry={setBountyExpiry}
+                  setBountyAmount={setBountyAmount}
+                  bountyAmount={bountyAmount}
+                  bountyExpiry={bountyExpiry}
                 />
+                <MarkdownEditor value={description} setValue={setDescription} />
                 <div className="text-right mt-4">
                   <div className="inline-block w-36">
                     <button
@@ -220,10 +231,16 @@ function RepositoryIssueCreateView(props) {
 
 const mapStateToProps = (state) => {
   return {
+    loreBalance: state.wallet.loreBalance,
     selectedAddress: state.wallet.selectedAddress,
+    advanceUser: state.user.advanceUser,
   };
 };
 
-export default connect(mapStateToProps, { createIssue })(
-  RepositoryIssueCreateView
-);
+export default connect(mapStateToProps, {
+  createIssue,
+  getBalance,
+  updateUserBalance,
+  notify,
+  createBounty,
+})(RepositoryIssueCreateView);

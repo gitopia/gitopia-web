@@ -13,6 +13,7 @@ import CollaboratorsList from "../../../components/repository/collaboratorsList"
 import TransferOwnership from "../../../components/repository/transferOwnership";
 import useRepository from "../../../hooks/useRepository";
 import ToggleForking from "../../../components/repository/toggleForking";
+import useWindowSize from "../../../hooks/useWindowSize";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -28,25 +29,7 @@ export async function getStaticPaths() {
 function RepositorySettingsView(props) {
   const router = useRouter();
   const { repository, refreshRepository } = useRepository();
-  const [isMobile, setIsMobile] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
+  const { isMobile } = useWindowSize();
 
   return (
     <div

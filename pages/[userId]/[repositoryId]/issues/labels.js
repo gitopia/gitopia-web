@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Header from "../../../../components/header";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 

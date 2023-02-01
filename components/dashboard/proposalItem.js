@@ -99,7 +99,7 @@ export default function ProposalItem({
   hrefBase = "",
 }) {
   return (
-    <Link href={hrefBase + "&id=" + proposal.proposal_id}>
+    <Link href={hrefBase + "&id=" + proposal.proposal_id} legacyBehavior>
       <div className="cursor-pointer w-full border-2 border-grey rounded-lg p-4">
         <div className="text-sm">
           <span>{proposal.content.title}</span>

@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import Link from "next/link";
-import getRepository from "../../helpers/getRepository";
 import sortBy from "lodash/sortBy";
 import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
 
 function AccountRepositories(props) {
-  const [allRepos, setAllRepos] = useState([]);
+  const [allRepos, setAllRepos] = useState(props.allRepos || []);
 
   const getAllRepos = async () => {
     if (props.userId) {
@@ -18,7 +17,9 @@ function AccountRepositories(props) {
     }
   };
 
-  useEffect(getAllRepos, [props.user, props.dao]);
+  useEffect(() => {
+    getAllRepos();
+  }, [props.user, props.dao]);
 
   return (
     <>
@@ -29,8 +30,11 @@ function AccountRepositories(props) {
                 <li className="p-4" key={r.id}>
                   <div>
                     <div>
-                      <Link href={props.userId + "/" + r.name}>
-                        <a className="text-base btn-link">{r.name}</a>
+                      <Link
+                        href={props.userId + "/" + r.name}
+                        className="text-base btn-link"
+                      >
+                        {r.name}
                       </Link>
                     </div>
                     <div className="mt-2 text-sm">{r.description}</div>

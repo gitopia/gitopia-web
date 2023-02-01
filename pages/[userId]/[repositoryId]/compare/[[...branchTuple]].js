@@ -2,7 +2,7 @@ import Head from "next/head";
 import Header from "../../../../components/header";
 
 import { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import find from "lodash/find";
 
@@ -22,8 +22,17 @@ import Label from "../../../../components/repository/label";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
 import getPullDiff from "../../../../helpers/getPullDiff";
 import getRepository from "../../../../helpers/getRepository";
+import getUser from "../../../../helpers/getUser";
+import getDao from "../../../../helpers/getDao";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import useRepository from "../../../../hooks/useRepository";
+import getAllRepositoryBranch from "../../../../helpers/getAllRepositoryBranch";
+import getAllRepositoryTag from "../../../../helpers/getAllRepositoryTag";
+import getPullRequestCommits from "../../../../helpers/getPullRequestCommits";
+import { ApolloProvider } from "@apollo/client";
+import QueryIssues from "../../../../helpers/queryIssuesByTitleGql";
+import { updatedClient } from "../../../../helpers/apolloClient";
+import { notify } from "reapop";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -38,9 +47,11 @@ export async function getStaticPaths() {
 
 function RepositoryCompareView(props) {
   const router = useRouter();
+  const dispatch = useDispatch();
   const { repository } = useRepository();
   const [viewType, setViewType] = useState("unified");
   const [stats, setStats] = useState({ stat: {} });
+  const [commits, setCommits] = useState([]);
   const [compare, setCompare] = useState({
     source: { repository: {}, name: "", sha: "" },
     target: { repository: {}, name: "", sha: "" },
@@ -54,6 +65,9 @@ function RepositoryCompareView(props) {
   const [labels, setLabels] = useState([]);
   const [forkedRepos, setForkedRepos] = useState([]);
   const [parentRepo, setParentRepo] = useState(null);
+  const [textEntered, setEnteredText] = useState("");
+  const [issueList, setIssueList] = useState([]);
+  const [issueArray, setIssueArray] = useState([]);
 
   const setDefaultBranches = (r) => {
     if (r.branches.length) {
@@ -82,20 +96,56 @@ function RepositoryCompareView(props) {
     }
   };
 
+  const getOwnerDetails = async (repo) => {
+    if (repo) {
+      if (repo.owner.type === "USER") {
+        let ownerDetails = await getUser(repo.owner.id);
+        if (ownerDetails)
+          return {
+            type: repo.owner.type,
+            id:
+              ownerDetails.username !== ""
+                ? ownerDetails.username
+                : repo.owner.id,
+            address: repo.owner.id,
+            username: ownerDetails.username,
+            avatarUrl: ownerDetails.avatarUrl,
+          };
+        else return repo.owner;
+      } else {
+        let ownerDetails = await getDao(repo.owner.id);
+        if (ownerDetails)
+          return {
+            type: repo.owner.type,
+            id: ownerDetails.name,
+            address: repo.owner.id,
+            username: ownerDetails.name,
+            avatarUrl: ownerDetails.avatarUrl,
+          };
+        else return repo.owner;
+      }
+    }
+  };
+
   const refreshRepositoryForks = async () => {
     const r = repository;
     if (r.id) {
       if (r.forks.length) {
         const pr = r.forks.map((r) => getRepository(r));
         const repos = await Promise.all(pr);
-        setForkedRepos(repos);
+        for (let i = 0; i < repos.length; i++) {
+          repos[i].owner = await getOwnerDetails(repos[i]);
+        }
         console.log("forked repos", repos);
+        setForkedRepos(repos);
       }
       if (r.parent && r.parent !== "0") {
         const repo = await getRepository(r.parent);
-        if (repo) {
-          setParentRepo(repo);
-        }
+        const ownerDetails = await getOwnerDetails(repo);
+        setParentRepo({
+          ...repo,
+          owner: ownerDetails,
+        });
       }
     }
   };
@@ -132,6 +182,13 @@ function RepositoryCompareView(props) {
         if (!sourceRepo) {
           sourceRepo = r;
         }
+        const [branches, tags] = await Promise.all([
+          getAllRepositoryBranch(sourceRepo.owner.id, sourceRepo.name),
+          getAllRepositoryTag(sourceRepo.owner.id, sourceRepo.name),
+        ]);
+        if (branches) sourceRepo.branches = branches;
+        if (tags) sourceRepo.tags = tags;
+
         sourceBranch = reposlug[1];
       } else {
         sourceRepo = r;
@@ -143,6 +200,8 @@ function RepositoryCompareView(props) {
         sourceRepo.branches,
         sourceRepo.tags
       );
+
+      sourceRepo.owner = await getOwnerDetails(sourceRepo);
 
       if (sourceSha && targetSha) {
         console.log(
@@ -190,21 +249,55 @@ function RepositoryCompareView(props) {
     }
   };
 
-  useEffect(refreshRepositoryForks, [repository]);
-  useEffect(updateBranches, [repository, router.query.branchTuple]);
+  const handleAddIssue = (i) => {
+    let obj = issueArray.find((issue) => issue.iid === i.iid);
+    if (obj === undefined) {
+      let arr = issueArray.slice();
+      arr.push(i);
+      setIssueArray(arr);
+    } else {
+      dispatch(notify("Issue already attached", "error"));
+    }
+  };
 
-  useEffect(async () => {
-    const diff = await getPullDiff(
-      compare.target.repository.id,
-      compare.source.repository.id,
-      compare.target.sha,
-      compare.source.sha,
-      null,
-      true
-    );
-    console.log("diffStat", diff);
-    setStats(diff);
-    setStartCreatingPull(false);
+  const handleDeleteIssue = (index) => {
+    let arr = issueArray;
+    arr.splice(index, 1);
+    setIssueArray([...arr]);
+  };
+
+  useEffect(() => {
+    refreshRepositoryForks();
+  }, [repository]);
+  useEffect(() => {
+    updateBranches();
+  }, [repository, router.query.branchTuple]);
+
+  useEffect(() => {
+    async function initStats() {
+      const [diff, commits] = await Promise.all([
+        getPullDiff(
+          compare.target.repository.id,
+          compare.source.repository.id,
+          compare.target.sha,
+          compare.source.sha,
+          null,
+          true
+        ),
+        await getPullRequestCommits(
+          compare.target.repository.id,
+          compare.source.repository.id,
+          compare.target.name,
+          compare.source.name,
+          compare.target.sha,
+          compare.source.sha
+        ),
+      ]);
+      setStats(diff);
+      setCommits(commits);
+      setStartCreatingPull(false);
+    }
+    initStats();
   }, [compare]);
 
   const username = props.selectedAddress ? props.selectedAddress.slice(-1) : "";
@@ -240,7 +333,10 @@ function RepositoryCompareView(props) {
             </div>
           </div>
           <div className="mt-8 sm:flex items-center">
-            <div className="flex-1 sm:mr-2 border border-grey p-4 rounded-lg" data-test="source_branch">
+            <div
+              className="flex-1 sm:mr-2 border border-grey p-4 rounded-lg"
+              data-test="source_branch"
+            >
               <div className="text-xs font-bold uppercase text-type-secondary">
                 Source
               </div>
@@ -297,7 +393,10 @@ function RepositoryCompareView(props) {
                 />
               </svg>
             </div>
-            <div className="flex-1 sm:ml-2 border border-grey p-4 rounded-lg" data-test="target_branch">
+            <div
+              className="flex-1 sm:ml-2 border border-grey p-4 rounded-lg"
+              data-test="target_branch"
+            >
               <div className="text-xs font-bold uppercase text-type-secondary">
                 Target
               </div>
@@ -339,6 +438,138 @@ function RepositoryCompareView(props) {
                 />
               </div>
             </div>
+          </div>
+          <div className="mt-6">
+            <div className="text-base">Link Issue</div>
+            <div className="form-control flex-1 mt-3">
+              <div className="relative">
+                <ApolloProvider client={updatedClient}>
+                  <QueryIssues
+                    substr={textEntered}
+                    repoId={Number(repository.id)}
+                    setIssueList={setIssueList}
+                  />
+                </ApolloProvider>
+
+                <button className="absolute right-0 top-2 rounded-l-none btn btn-sm btn-ghost">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </button>
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="w-full input input-ghost input-bordered"
+                  value={textEntered}
+                  onChange={(e) => {
+                    setEnteredText(e.target.value);
+                  }}
+                  onKeyUp={(e) => {
+                    if (e.code === "Enter") {
+                      setEnteredText(e.target.value);
+                    }
+                  }}
+                />
+                {issueList.length > 0 ? (
+                  <div className="card bg-grey-500 p-4">
+                    {issueList.map((i, key) => {
+                      return (
+                        <div
+                          onClick={() => {
+                            handleAddIssue(i);
+                            setEnteredText("");
+                          }}
+                          key={key}
+                        >
+                          <div
+                            className={
+                              "flex border-grey-300 pb-3 pt-3 hover:cursor-pointer " +
+                              (key < issueList.length - 1 ? "border-b" : "")
+                            }
+                          >
+                            <svg
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M5 20L5 4L19 4L19 20L5 20Z"
+                                stroke="#ADBECB"
+                                strokeWidth="2"
+                              />
+                              <path
+                                d="M8 15L16 15M8 9L16 9"
+                                stroke="#ADBECB"
+                                strokeWidth="2"
+                              />
+                            </svg>
+
+                            <div className="text-type-secondary ml-4 text-sm mt-0.5">
+                              {i.title}
+                            </div>
+                            <div className="font-bold text-xs text-type-secondary ml-auto uppercase mt-1">
+                              opened by {shrinkAddress(i.creator)}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
+            </div>
+            {issueArray.length > 0 ? (
+              <div className="flex mt-2">
+                {issueArray.map((issue, index) => {
+                  return (
+                    <div
+                      className="flex text-sm box-border bg-grey-500 mr-2 h-11 p-3 rounded-lg mt-2"
+                      key={index}
+                    >
+                      {issue.title.split(" ").length > 4
+                        ? issue.title.split(" ").splice(0, 4).join(" ") + "..."
+                        : issue.title}
+                      <div
+                        className="link ml-4 mt-1 no-underline"
+                        onClick={() => {
+                          handleDeleteIssue(index);
+                        }}
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 14 14"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M13.5303 1.5304C13.8231 1.23751 13.8231 0.762637 13.5303 0.469744C13.2374 0.176851 12.7625 0.176851 12.4696 0.469744L13.5303 1.5304ZM0.46967 12.4697C0.176777 12.7626 0.176777 13.2374 0.46967 13.5303C0.762563 13.8232 1.23744 13.8232 1.53033 13.5303L0.46967 12.4697ZM12.4696 13.5303C12.7625 13.8231 13.2374 13.8231 13.5303 13.5303C13.8231 13.2374 13.8231 12.7625 13.5303 12.4696L12.4696 13.5303ZM1.53033 0.46967C1.23744 0.176777 0.762563 0.176777 0.46967 0.46967C0.176777 0.762563 0.176777 1.23744 0.46967 1.53033L1.53033 0.46967ZM12.4696 0.469744L0.46967 12.4697L1.53033 13.5303L13.5303 1.5304L12.4696 0.469744ZM13.5303 12.4696L1.53033 0.46967L0.46967 1.53033L12.4696 13.5303L13.5303 12.4696Z"
+                            fill="#E5EDF5"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              ""
+            )}
           </div>
           <div className="my-8">
             {startCreatingPull ? (
@@ -398,6 +629,7 @@ function RepositoryCompareView(props) {
                                 reviewers: reviewers,
                                 assignees: assignees,
                                 labelIds: labels,
+                                issues: issueArray,
                               });
                               if (res && res.code === 0) {
                                 router.push(
@@ -513,7 +745,7 @@ function RepositoryCompareView(props) {
                 <button
                   className="btn btn-sm btn-primary btn-block"
                   onClick={() => setStartCreatingPull(true)}
-                  disabled={!stats.files_changed}
+                  disabled={!commits.length}
                   data-test="create-pr"
                 >
                   Create Pull Request
@@ -522,16 +754,51 @@ function RepositoryCompareView(props) {
             )}
           </div>
           {stats.files_changed ? (
-            <DiffView
-              stats={stats}
-              repoId={compare.source.repository.id}
-              baseRepoId={compare.target.repository.id}
-              currentSha={compare.source.sha}
-              previousSha={compare.target.sha}
-              onViewTypeChange={(v) => setViewType(v)}
-            />
+            commits.length ? (
+              <DiffView
+                stats={stats}
+                repoId={compare.source.repository.id}
+                baseRepoId={compare.target.repository.id}
+                currentSha={compare.source.sha}
+                previousSha={compare.target.sha}
+                onViewTypeChange={(v) => setViewType(v)}
+              />
+            ) : (
+              <div className="alert alert-warning">
+                <div className="flex-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span>
+                    {compare.source.repository.id ===
+                    compare.target.repository.id
+                      ? compare.target.name +
+                        " is ahead of  " +
+                        compare.source.name
+                      : shrinkAddress(compare.target.repository.owner.id) +
+                        "/" +
+                        compare.target.name +
+                        " is ahead of " +
+                        shrinkAddress(compare.source.repository.owner.id) +
+                        "/" +
+                        compare.source.name}
+                  </span>
+                </div>
+              </div>
+            )
           ) : (
-            <div className="alert alert-info">
+            <div className="alert alert-warning">
               <div className="flex-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

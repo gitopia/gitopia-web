@@ -75,15 +75,23 @@ function NewRepository(props) {
   const createRepository = async () => {
     setRepositoryCreating(true);
     if (await validateRepository()) {
+      let ownerName = ownerId;
+      accountsList.every((a) => {
+        if (a.id === ownerId) {
+          ownerName = a.name;
+          return false;
+        }
+        return true;
+      });
       console.log("create Repo", {
         name: name.replace(sanitizedNameTest, "-"),
         description,
-        ownerId,
+        ownerName,
       });
       let res = await props.createRepository({
         name: name.replace(sanitizedNameTest, "-"),
         description,
-        ownerId,
+        ownerId: ownerName,
       });
       if (res && res.url) {
         router.push(res.url);
@@ -127,7 +135,10 @@ function NewRepository(props) {
                   <span className="label-text">Repository Owner</span>
                 </label>
                 <select
-                  className="select select-bordered select-md mr-2 sm:mr-0"
+                  className={
+                    "select select-bordered select-md mr-2 sm:mr-0 focus:outline-none focus:border-type " +
+                    (ownerId?.length > 0 ? "border-green" : "")
+                  }
                   value={ownerId}
                   onChange={(e) => {
                     console.log("onchange");

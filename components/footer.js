@@ -24,7 +24,7 @@ export default function Footer(props) {
           </a>
           <a
             className="link no-underline hover:underline mt-3 sm:mt-0"
-            href="https://discord.gg/mVpQVW3vKE"
+            href="https://discord.gg/aqsKW3hUHD"
             target="_blank"
             rel="noreferrer"
           >

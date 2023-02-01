@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { setCurrentDashboard } from "../../store/actions/user";
 import ClickAwayListener from "react-click-away-listener";
 import { useRouter } from "next/router";
+import shrinkAddress from "../../helpers/shrinkAddress";
 
 function DashboardSelector(props) {
   const router = useRouter();
@@ -83,7 +84,12 @@ function DashboardSelector(props) {
               </svg>
             )}
             <div className="flex-1 text-left">
-              <div className="text-md" data-test="selected_user">{selected.name}</div>
+              <div className="text-md" data-test="selected_user">
+                {selected.name?.includes("untitled-wallet") ||
+                selected.name?.includes("untitled-ledger")
+                  ? shrinkAddress(selected.id)
+                  : selected.name}
+              </div>
             </div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -141,7 +147,12 @@ function DashboardSelector(props) {
                       </svg>
                     )}
                     <div className="flex-1 text-left">
-                      <div className="text-sm">{a.name}</div>
+                      <div className="text-sm">
+                        {a.name?.includes("untitled-wallet") ||
+                        a.name?.includes("untitled-ledger")
+                          ? shrinkAddress(a.id)
+                          : a.name}
+                      </div>
                     </div>
                   </a>
                 </li>

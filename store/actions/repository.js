@@ -31,7 +31,12 @@ export const validatePostingEligibility = async (
       dispatch(notify("Balance low for creating " + msgType, "error"));
       return false;
     } else {
-      dispatch(notify("User not found", "error"));
+      dispatch(
+        notify(
+          "You need to create a profile before performing any action, please go back to the dashboard and setup your profile first",
+          "error"
+        )
+      );
       return false;
     }
   }
@@ -89,6 +94,8 @@ export const createIssue = ({
   labels = [],
   weight = 0,
   assignees = [],
+  bountyAmount = [],
+  bountyExpiry = 0,
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "issue")))
@@ -114,7 +121,12 @@ export const createIssue = ({
     if (weight) {
       issue.weight = weight;
     }
-
+    if (bountyAmount.length) {
+      issue.bountyAmount = bountyAmount;
+    }
+    if (bountyExpiry) {
+      issue.bountyExpiry = bountyExpiry;
+    }
     try {
       const message = await env.txClient.msgCreateIssue(issue);
       const result = await sendTransaction({ message })(dispatch, getState);
@@ -833,6 +845,7 @@ export const createPullRequest = ({
   reviewers = [],
   assignees = [],
   labelIds = [],
+  issues = [],
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
@@ -857,6 +870,9 @@ export const createPullRequest = ({
     }
     if (labelIds.length) {
       pull.labelIds = labelIds;
+    }
+    if (issues.length) {
+      pull.issues = issues;
     }
 
     try {

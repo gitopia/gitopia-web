@@ -17,6 +17,7 @@ import renderPagination from "../../../../helpers/renderPagination";
 import Label from "../../../../components/repository/label";
 import parseFilters from "../../../../helpers/parseFilters";
 import pullRequestStateClass from "../../../../helpers/pullRequestStateClass";
+import useWindowSize from "../../../../hooks/useWindowSize";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -39,25 +40,7 @@ function RepositoryPullsView(props) {
     limit: 10,
     countTotal: true,
   });
-  const [isMobile, setIsMobile] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
+  const { isMobile } = useWindowSize();
 
   const getAllPulls = async () => {
     if (repository) {
@@ -115,7 +98,9 @@ function RepositoryPullsView(props) {
     }
   };
 
-  useEffect(getAllPulls, [repository, filters, page]);
+  useEffect(() => {
+    getAllPulls();
+  }, [repository, filters, page]);
 
   return (
     <div
@@ -176,10 +161,10 @@ function RepositoryPullsView(props) {
                 href={
                   "/" + repository.owner.id + "/" + repository.name + "/compare"
                 }
+                className="btn btn-primary btn-sm btn-block"
+                data-test="new-pull-request"
               >
-                <button className="btn btn-primary btn-sm btn-block" data-test="new-pull-request">
-                  New Pull Request
-                </button>
+                New Pull Request
               </Link>
             </div>
           </div>
@@ -602,8 +587,10 @@ function RepositoryPullsView(props) {
                               "/pulls/" +
                               i.iid
                             }
+                            className="btn-neutral"
+                            data-test="select-open-pr"
                           >
-                            <a className="btn-neutral" data-test="select-open-pr">{i.title}</a>
+                            {i.title}
                           </Link>
                         </div>
                         <div className="text-xs text-type-secondary">

@@ -59,15 +59,22 @@ function LabelSelector({
       </button>
       <div className="dropdown-content shadow-lg bg-base-300 rounded w-56 p-4 mt-1">
         <div className="mb-2">
-          <Link href={editLabels}>
-            <a className="btn btn-block btn-ghost btn-sm" data-test="edit_labels">Edit Labels</a>
+          <Link
+            href={editLabels}
+            className="btn btn-block btn-ghost btn-sm"
+            data-test="edit_labels"
+          >
+            Edit Labels
           </Link>
         </div>
         <div className="max-h-60 overflow-auto">
           {repoLabels.map((l, i) => {
             return (
               <div className="form-control" key={"label" + i}>
-                <label className="cursor-pointer label justify-start" data-test="select_label">
+                <label
+                  className="cursor-pointer label justify-start"
+                  data-test="select_label"
+                >
                   <input
                     type="checkbox"
                     checked={checkMap[l.id]}

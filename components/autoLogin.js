@@ -10,6 +10,7 @@ import {
 import initKeplr from "../helpers/keplr";
 import TextInput from "./textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
+import { notify } from "reapop";
 
 function AutoLogin(props) {
   const [password, setPassword] = useState("");
@@ -24,37 +25,40 @@ function AutoLogin(props) {
   const [externalWalletMsg, setExternalWalletMsg] = useState(null);
   const inputEl = useRef();
 
-  useEffect(async () => {
-    let lastWallet;
-    try {
-      const data = localStorage["lastWallet"];
-      if (data) lastWallet = JSON.parse(data);
-    } catch (e) {
-      console.error(e);
-    }
-    if (lastWallet) {
-      if (!props.activeWallet) {
-        console.log("Last wallet found.. ", lastWallet.name);
-        if (lastWallet.isKeplr) {
-          await initKeplr();
-          const acc = await props.unlockKeplrWallet();
-          console.log(acc);
-          if (acc) {
-            console.log("Keplr sign in success");
+  useEffect(() => {
+    async function setWallet() {
+      let lastWallet;
+      try {
+        const data = localStorage["lastWallet"];
+        if (data) lastWallet = JSON.parse(data);
+      } catch (e) {
+        console.error(e);
+      }
+      if (lastWallet) {
+        if (!props.activeWallet) {
+          console.log("Last wallet found.. ", lastWallet.name);
+          if (lastWallet.isKeplr) {
+            await initKeplr();
+            const acc = await props.unlockKeplrWallet();
+            console.log(acc);
+            if (acc) {
+              console.log("Keplr sign in success");
+            }
+          } else {
+            setWalletName(lastWallet.name);
+            setAddress(lastWallet.accounts[0].address);
+            let res = await props.setWallet({
+              wallet: lastWallet,
+            });
           }
         } else {
-          setWalletName(lastWallet.name);
-          setAddress(lastWallet.accounts[0].address);
-          let res = await props.setWallet({
-            wallet: lastWallet,
-          });
+          console.log("Wallet active");
         }
       } else {
-        console.log("Wallet active");
+        console.log("Last wallet not found");
       }
-    } else {
-      console.log("Last wallet not found");
     }
+    setWallet();
   }, []);
 
   useEffect(() => {
@@ -84,16 +88,36 @@ function AutoLogin(props) {
 
   const unlockLocalWallet = async () => {
     let res;
-    if (props.getPassword === "Unlock")
-      res = await props.unlockWallet({
-        name: walletName,
-        password: password,
-      });
-    else if (props.getPassword === "Download") {
+    if (props.getPassword === "Unlock") {
+      if (props.getPasswordPromise.chainId !== undefined) {
+        res = await props.unlockWallet({
+          name: walletName,
+          password: password,
+          chainId: props.getPasswordPromise.chainId,
+        });
+      } else {
+        res = await props.unlockWallet({
+          name: walletName,
+          password: password,
+        });
+      }
+    } else if (props.getPassword === "Download") {
       res = await props.downloadWallet(password);
     } else if (props.getPassword === "Connect") {
-      res = await props.unlockLedgerWallet({ name: walletName });
-      console.log(res);
+      if (props.getPasswordPromise.chainId !== undefined) {
+        res = await props.unlockLedgerWallet({
+          name: walletName,
+          chainId: props.getPasswordPromise.chainId,
+        });
+      } else {
+        res = await props.unlockLedgerWallet({ name: walletName });
+      }
+      if (res?.message) {
+        props.notify(res.message, "error");
+        if (props.getPasswordPromise.reject) {
+          props.getPasswordPromise.reject("Please try again.");
+        }
+      }
     }
     if (res) {
       console.log("Sign in success");
@@ -206,4 +230,5 @@ export default connect(mapStateToProps, {
   downloadWallet,
   unlockKeplrWallet,
   unlockLedgerWallet,
+  notify,
 })(AutoLogin);

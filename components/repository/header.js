@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import getGitServerAuthorization from "../../helpers/getGitServerAuthStatus";
 import { notify } from "reapop";
 import pluralize from "../../helpers/pluralize";
+import useWindowSize from "../../hooks/useWindowSize";
 
 function RepositoryHeader({ repository, ...props }) {
   const [forkTargetShown, setForkTargetShown] = useState(false);
@@ -17,32 +18,13 @@ function RepositoryHeader({ repository, ...props }) {
   const [forkingSuccess, setForkingSuccess] = useState(false);
   const [forkingAccess, setForkingAccess] = useState(false);
   const [isGrantingAccess, setIsGrantingAccess] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const { isMobile } = useWindowSize();
   const [branchCount, setBranchCount] = useState(0);
   const [tagCount, setTagCount] = useState(0);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  });
   const router = useRouter();
 
   const avatarLink =
-    process.env.NEXT_PUBLIC_GITOPIA_ADDRESS === repository.owner.id
-      ? "/logo-g.svg"
-      : repository.owner.avatarUrl !== ""
+    repository.owner.avatarUrl !== ""
       ? repository.owner.avatarUrl
       : "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
         repository.owner?.id?.slice(-1);
@@ -57,7 +39,9 @@ function RepositoryHeader({ repository, ...props }) {
     }
   };
   useEffect(setCounts, [repository.id]);
-  useEffect(refreshForkingAccess, [props.selectedAddress]);
+  useEffect(() => {
+    refreshForkingAccess();
+  }, [props.selectedAddress]);
 
   return (
     <div className="mb-1 sm:mb-8">
@@ -76,15 +60,17 @@ function RepositoryHeader({ repository, ...props }) {
           <div>
             <div className="flex">
               <div className="mr-2">
-                <Link href={"/" + repository.owner.id}>
-                  <a className="btn-link">
-                    {shrinkAddress(repository.owner.id)}
-                  </a>
+                <Link href={"/" + repository.owner.id} className="btn-link">
+                  {shrinkAddress(repository.owner.id)}
                 </Link>
               </div>
               <div className="mr-2 text-type-tertiary">/</div>
-              <Link href={"/" + repository.owner.id + "/" + repository.name}>
-                <a className="btn-link" data-test="repo_name">{repository.name}</a>
+              <Link
+                href={"/" + repository.owner.id + "/" + repository.name}
+                className="btn-link"
+                data-test="repo_name"
+              >
+                {repository.name}
               </Link>
               {repository.fork ? (
                 <div className="badge badge-outline ml-2 mt-1 text-type-tertiary">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import FaucetReceiver from "../faucetReceiver";
+import GithubRewards from "../githubRewards";
 import GreetUser from "../greetUser";
 import KnowledgeCenter from "./knowledgeCenter";
 
@@ -25,6 +26,7 @@ function UserDashboard(props) {
       <div className="mb-8">
         <GreetUser />
       </div>
+      {/* <GithubRewards /> */}
       <div className="sm:flex mt-4">
         <div className="flex flex-1 sm:mr-2 bg-box-grad-tl bg-base-200 p-4 rounded-md">
           <div className="flex-none bg-box-grad-v w-28 sm:w-40 h-full rounded-md flex items-center">
@@ -35,13 +37,12 @@ function UserDashboard(props) {
             <div className="text-xs mb-4 sm:mb-8 text-type-secondary">
               Begin from scratch or import an existing repository
             </div>
-            <Link href="/new">
-              <a
-                className="btn btn-outline btn-sm mt-4"
-                data-test="create-new-repo"
-              >
-                Create a Repository
-              </a>
+            <Link
+              href="/new"
+              className="btn btn-outline btn-sm mt-4"
+              data-test="create-new-repo"
+            >
+              Create a Repository
             </Link>
           </div>
         </div>
@@ -55,8 +56,12 @@ function UserDashboard(props) {
               A DAO is a self-organizing online community that uses Gitopia to
               manage its development securely
             </div>
-            <Link href="/account/daos/new">
-              <button className="btn btn-outline btn-sm" data-test="create_dao">Create a DAO</button>
+            <Link
+              href="/account/daos/new"
+              className="btn btn-outline btn-sm"
+              data-test="create_dao"
+            >
+              Create a DAO
             </Link>
           </div>
         </div>

@@ -104,7 +104,9 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
     setPullMergeAccess(await getGitServerAuthorization(props.selectedAddress));
     if (mergeAfter) setTimeout(mergePull, 0);
   };
-  useEffect(refreshPullMergeAccess, [props.selectedAddress]);
+  useEffect(() => {
+    refreshPullMergeAccess();
+  }, [props.selectedAddress]);
 
   return (
     <div className="flex w-full mt-8">
@@ -226,7 +228,6 @@ function MergePullRequestView({ pullRequest, refreshPullRequest, ...props }) {
               onClick={async () => {
                 setIsGrantingAccess(true);
                 const res = await props.authorizeGitServer();
-                console.log(res);
                 setIsGrantingAccess(false);
                 if (res.code !== 0) {
                   props.notify(res.rawLog, "error");

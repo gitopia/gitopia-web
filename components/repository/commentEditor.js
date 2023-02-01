@@ -77,7 +77,7 @@ function CommentEditor({
   };
 
   return (
-    <div className="border border-grey rounded flex-1 max-w-2xl p-4">
+    <div className="ml-4 flex-1">
       <MarkdownEditor
         value={comment}
         setValue={setComment}
@@ -104,7 +104,6 @@ function CommentEditor({
                 onClick={async () => {
                   setTogglingIssue(true);
                   const res = await props.toggleIssueState({ id: issueId });
-                  console.log(res);
                   if (res && res.code === 0) {
                     if (onSuccess) {
                       await onSuccess();
@@ -131,7 +130,6 @@ function CommentEditor({
                     id: issueId,
                     state: "CLOSED",
                   });
-                  console.log(res);
                   if (res && res.code === 0) {
                     if (onSuccess) {
                       await onSuccess();

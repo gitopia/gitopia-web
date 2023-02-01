@@ -7,7 +7,7 @@ import {
 } from "cosmjs-types/cosmos/upgrade/v1beta1/upgrade";
 import { CommunityPoolSpendProposal } from "cosmjs-types/cosmos/distribution/v1beta1/distribution";
 import { sendTransaction, setupTxClients } from "./env";
-import { longify } from "@cosmjs/stargate/build/queries/utils";
+import { longify } from "@cosmjs/stargate/build/queryclient/utils";
 import {
   ParameterChangeProposal,
   ParamChange,
@@ -138,13 +138,14 @@ export const communityPoolSpendProposal = (
             denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
           },
         ];
-        const communityPoolSpendProposal =
-          CommunityPoolSpendProposal.fromPartial({
+        const communityPoolSpendProposal = CommunityPoolSpendProposal.fromPartial(
+          {
             title: title,
             description: description,
             recipient: address,
             amount: amountToSend,
-          });
+          }
+        );
         const msgAny = Any.fromPartial({
           typeUrl: "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal",
           value: Uint8Array.from(

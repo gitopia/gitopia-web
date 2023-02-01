@@ -1,5 +1,5 @@
 import TextInput from "../textInput";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { connect } from "react-redux";
 import { addMember, removeMember } from "../../store/actions/dao";
 import getUser from "../../helpers/getUser";
@@ -23,7 +23,6 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
       message: "",
     });
     const res = await getUser(collabAddress);
-    console.log(res);
     if (!res) {
       setCollabHint({
         shown: true,
@@ -42,7 +41,6 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
         userId: collabAddress,
         role: collabRole,
       });
-      console.log(res);
       if (refreshDao) await refreshDao();
       setCollabAddress("");
       setCollabHint({
@@ -129,7 +127,10 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
           </td>
           <td style={{ verticalAlign: "top" }}>
             <select
-              className="select select-bordered w-full select-sm"
+              className={
+                "select select-bordered w-full select-sm focus:outline-none focus:border-type " +
+                (collabRole.length > 0 ? "border-green" : "")
+              }
               value={collabRole}
               onChange={(e) => setCollabRole(e.target.value)}
               data-test="member_role"

@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import React from "react";
 import classnames from "classnames";
 import styles from "../styles/landing.module.css";
@@ -12,12 +12,13 @@ import YoutubeEmbed from "../helpers/youtubeEmbed";
 import GitopiaLive from "../helpers/gitopiaLive";
 import getAllRepositoryBranch from "../helpers/getAllRepositoryBranch";
 import getAllRepositoryTag from "../helpers/getAllRepositoryTag";
+import getDao from "../helpers/getDao";
 const pCircles = [
   {
     url: "#circle1",
     x: 800,
     y: -50,
-    z: 5,
+    z: 8,
     mx: 440,
     my: -280,
     r: 166,
@@ -26,7 +27,7 @@ const pCircles = [
     url: "#circle2",
     x: -350,
     y: -100,
-    z: 9,
+    z: 14,
     mx: -600,
     my: -220,
     r: 211,
@@ -35,7 +36,7 @@ const pCircles = [
     url: "#circle3",
     x: 470,
     y: 180,
-    z: 7,
+    z: 5,
     mx: 800,
     my: 0,
     r: 134,
@@ -44,7 +45,7 @@ const pCircles = [
     url: "#circle4",
     x: 130,
     y: 200,
-    z: 9,
+    z: 12,
     mx: 450,
     my: 100,
     r: 64,
@@ -53,7 +54,7 @@ const pCircles = [
     url: "#circle5",
     x: -500,
     y: 150,
-    z: 15,
+    z: 12,
     mx: -500,
     my: -400,
     r: 74,
@@ -62,7 +63,7 @@ const pCircles = [
     url: "#circle6",
     x: -120,
     y: -100,
-    z: 13,
+    z: 10,
     mx: -700,
     my: -100,
     r: 84,
@@ -71,7 +72,7 @@ const pCircles = [
     url: "#circle7",
     x: 30,
     y: -340,
-    z: 13,
+    z: 16,
     mx: -700,
     my: 0,
     r: 106,
@@ -167,6 +168,21 @@ export default function Landing() {
   });
   const [entityList, setEntityList] = useState([]);
   const [mobile, setMobile] = useState(false);
+  const [isVisible, setVisible] = useState(true);
+  const domRef = useRef();
+  useEffect(() => {
+    let domRefValue = null;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => setVisible(entry.isIntersecting));
+    });
+
+    if (domRef.current) {
+      observer.observe(domRef.current);
+      domRefValue = domRef.current;
+    }
+
+    return () => observer.unobserve(domRefValue);
+  }, []);
 
   function detectWindowSize() {
     if (typeof window !== "undefined") {
@@ -203,8 +219,21 @@ export default function Landing() {
     const repo = await getAnyRepository(demoAddress, demoRepoName);
     let branches = await getAllRepositoryBranch(demoAddress, demoRepoName);
     let tags = await getAllRepositoryTag(demoAddress, demoRepoName);
+    let ownerDetails = {};
     if (repo) {
-      setRepository({ ...repo, branches, tags });
+      ownerDetails = await getDao(repo.owner.id);
+      setRepository({
+        ...repo,
+        owner: {
+          type: repo.owner.type,
+          id: ownerDetails.name !== "" ? ownerDetails.name : repo.owner.id,
+          address: repo.owner.id,
+          username: ownerDetails.name,
+          avatarUrl: ownerDetails.avatarUrl,
+        },
+        branches: branches,
+        tags: tags,
+      });
       let branchSha = getBranchSha(repo.defaultBranch, branches);
       const commitHistory = await getCommitHistory(repo.id, branchSha, null, 1);
 
@@ -325,9 +354,7 @@ export default function Landing() {
           {mobile && !menuOpen ? (
             <div className="mt-2 ml-auto mr-10">
               <Link href="/home" className="">
-                <a className="h-8 px-7 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                  Login
-                </a>
+                Login
               </Link>
             </div>
           ) : (
@@ -429,10 +456,11 @@ export default function Landing() {
               <div className={menuOpen ? "" : "mr-4 ml-4 " + styles.vl}></div>
               <li className={menuOpen ? "hidden" : "mr-4 ml-4 mt-1"}>
                 <div className="flex flex-col justify-center items-center">
-                  <Link href="/login">
-                    <a className="h-8 px-4 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                      Login
-                    </a>
+                  <Link
+                    href="/login"
+                    className="h-8 px-4 py-1.5 w-24 rounded-md text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  >
+                    Login
                   </Link>
                 </div>
               </li>
@@ -523,10 +551,11 @@ export default function Landing() {
                 styles.primaryCTA
               )}
             >
-              <Link href="/home">
-                <a className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                  {mobile ? " Get Started" : "Push code to Gitopia"}
-                </a>
+              <Link
+                href="/home"
+                className="h-14 px-8 py-4 w-80 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              >
+                {mobile ? " Get Started" : "Push code to Gitopia"}
               </Link>
             </div>
           </div>
@@ -550,7 +579,7 @@ export default function Landing() {
           className={
             styles.planet +
             " absolute pointer-events-none z-1 " +
-            (mobile ? "-right-14" : "top-14 left-20")
+            (mobile ? "-right-14" : "top-18 lg:top-14 -left-5 lg:left-20")
           }
           src="./star-1.svg"
           width={mobile ? "130" : "244"}
@@ -569,7 +598,7 @@ export default function Landing() {
             " absolute pointer-events-none z-1  " +
             (mobile
               ? " -left-8 blur-[1px] opacity-70 top-1/2 pt-5"
-              : " top-3/4 left-10 mr-10")
+              : " top-3/4 left-0 lg:top-3/4 lg:left-10 mr-10")
           }
           src="./car.svg"
           width={mobile ? "175" : "487"}
@@ -578,7 +607,7 @@ export default function Landing() {
         <img
           className={
             "absolute pointer-events-none z-1  " +
-            (mobile ? "hidden" : "top-0 left-2/3 top-2/3")
+            (mobile ? "hidden" : " left-3/4 lg:left-2/3 top-2/3")
           }
           src="./star-3.svg"
         />
@@ -586,7 +615,9 @@ export default function Landing() {
           className={
             styles.moon +
             " absolute pointer-events-none z-1  " +
-            (mobile ? "top-1/3 mt-20" : "top-1/2 left-2/3")
+            (mobile
+              ? "top-1/3 mt-20"
+              : "  top-3/4 lg:top-1/2 right-0 lg:left-2/3")
           }
           src="./moon.svg"
           width={mobile ? "239" : "423"}
@@ -635,7 +666,7 @@ export default function Landing() {
         <img
           className={
             "absolute pointer-events-none z-1  " +
-            (mobile ? " -left-10 top-1/3" : " bottom-0 left-1/2")
+            (mobile ? " -left-10 top-1/3" : " bottom-1/2 lg:bottom-0 left-1/2")
           }
           src="./shootingStar3.svg"
         />
@@ -2381,7 +2412,11 @@ export default function Landing() {
           viewBox="0 0 453 1024"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className={mobile ? "hidden" : "pointer-events-none absolute right-0"}
+          className={
+            mobile
+              ? "hidden"
+              : "pointer-events-none absolute right-0 opacity-90"
+          }
         >
           <g filter="url(#filter0_f_3091_9106)">
             <path
@@ -2424,6 +2459,57 @@ export default function Landing() {
             </radialGradient>
           </defs>
         </svg>
+        <svg
+          width="537"
+          height="1183"
+          viewBox="0 0 537 1183"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={
+            mobile ? "hidden" : "pointer-events-none absolute opacity-90 left-0"
+          }
+        >
+          <g opacity="0.34" filter="url(#filter0_f_3716_10789)">
+            <path
+              d="M-317.424 880.571C-47.1374 695.728 80.3732 883.736 198.336 765.773C316.299 647.81 316.299 456.554 198.336 338.591C80.3731 220.628 -110.883 220.628 -228.846 338.591C-346.809 456.554 -607.204 1121.57 -317.424 880.571Z"
+              fill="url(#paint0_radial_3716_10789)"
+            />
+          </g>
+          <defs>
+            <filter
+              id="filter0_f_3716_10789"
+              x="-699.465"
+              y="0.118652"
+              width="1236.27"
+              height="1182.65"
+              filterUnits="userSpaceOnUse"
+              colorInterpolationFilters="sRGB"
+            >
+              <feFlood floodOpacity="0" result="BackgroundImageFix" />
+              <feBlend
+                mode="normal"
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <feGaussianBlur
+                stdDeviation="125"
+                result="effect1_foregroundBlur_3716_10789"
+              />
+            </filter>
+            <radialGradient
+              id="paint0_radial_3716_10789"
+              cx="0"
+              cy="0"
+              r="1"
+              gradientUnits="userSpaceOnUse"
+              gradientTransform="translate(-15.2548 552.182) rotate(45) scale(302.063 302.063)"
+            >
+              <stop offset="0.442708" stopColor="#992D81" />
+              <stop offset="1" stopColor="#6029DB" />
+            </radialGradient>
+          </defs>
+        </svg>
         <div className={styles.row}>
           <h3 className={classnames([styles.h3, styles.hlHorizontal])}>
             Built on {mobile ? <br /> : ""} Cosmos with ❤️
@@ -2433,7 +2519,7 @@ export default function Landing() {
             framework. The use of Cosmos SDK has enabled us to leverage the
             Tendermint BFT consensus engine and build the blockchain that is
             optimized for Gitopia’s use case.
-            {mobile ? <div className="mt-5"> </div> : ""}
+            {mobile ? <div className="mt-5"> </div> : " "}
             Along with the high throughput and fast finality, Cosmos IBC also
             enables other IBC compatible chains to integrate directly with
             Gitopia.
@@ -2495,15 +2581,16 @@ export default function Landing() {
                       styles.collaborationsBenefitsCard1Button
                     )}
                   >
-                    <Link href="/home">
-                      <a className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                        Create your Gitopia Profile
-                      </a>
+                    <Link
+                      href="/home"
+                      className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                    >
+                      Create your Gitopia Profile
                     </Link>
                   </div>
                   <div className="flex mb-4">
                     <div className="ml-20 sm:ml-2 mt-2">🚀</div>
-                    <div className="ml-4 leading-5">
+                    <div className="ml-4 leading-5 text-[#aaacae]">
                       Reserve your username
                       <br /> before others take it! 👆
                     </div>
@@ -2549,7 +2636,7 @@ export default function Landing() {
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   Helps you create a copy of the repository hosted on Gitopia to
-                  experiment with changes or use as a basis.
+                  experiment with changes or use as a basis
                 </div>
               </div>
               <div className="items-left text-left">
@@ -2561,7 +2648,7 @@ export default function Landing() {
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   Users can now set usernames for their wallet addresses on
-                  Gitopia.
+                  Gitopia
                 </div>
               </div>
             </div>
@@ -2738,10 +2825,11 @@ export default function Landing() {
               nodes that are incentivised for high availability and good
               behaviour.
             </div>
-            <Link href="/new">
-              <a className="ml-4 px-16 py-4 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                Create a Repository
-              </a>
+            <Link
+              href="/new"
+              className="ml-4 px-16 py-4 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+            >
+              Create a Repository
             </Link>
           </div>
           <img
@@ -2754,7 +2842,15 @@ export default function Landing() {
 
       <section className={classnames([styles.section])}>
         <div className="grid sm:grid-cols-2 sm:grid-row-1 grid-cols-1 grid-row-2 sm:gap-6 gap-4">
-          <div className={styles.openSource + " relative"}>
+          <div
+            className={classnames(
+              styles.openSource,
+              styles.fadeInDown,
+              "relative",
+              isVisible ? styles.isVisible : ""
+            )}
+            ref={domRef}
+          >
             <div>
               <img src="/opensource.svg"></img>
             </div>
@@ -2789,7 +2885,14 @@ export default function Landing() {
               </div>
             </div>
           </div>
-          <div className={styles.openSource + " relative"}>
+          <div
+            className={classnames(
+              styles.openSource,
+              styles.fadeInDown2,
+              "relative",
+              isVisible ? styles.isVisible : ""
+            )}
+          >
             <div>
               <img src="/incentivization.svg"></img>
             </div>
@@ -2851,7 +2954,7 @@ export default function Landing() {
           height={mobile ? "74" : "227"}
           width={mobile ? "88" : "210"}
           id="parallax"
-          value="10"
+          value="2"
         />
         <img
           src="./gitopia-coin.svg"
@@ -2859,13 +2962,13 @@ export default function Landing() {
             "absolute -z-10 " + (mobile ? " hidden" : " right-3/4 bottom-1/2")
           }
           id="parallax"
-          value="5"
+          value="3"
         />
         <img
           src="./gitopia-coin-1.svg"
           className={mobile ? "hidden" : "absolute -z-10 left-1/2 top-1/3"}
           id="parallax"
-          value="2"
+          value="10"
         />
         <svg
           width="726"
@@ -3004,7 +3107,7 @@ export default function Landing() {
           width={"56"}
           height={"56"}
           id="parallax"
-          value="5"
+          value="4"
         />
         <img
           src="./getStartedCoin-2.svg"
@@ -3013,7 +3116,7 @@ export default function Landing() {
             (mobile ? " left-1/4 -bottom-5" : " left-16 bottom-0")
           }
           id="parallax"
-          value="2"
+          value="18"
         />
         <img
           src="./getStartedCoin-3.svg"
@@ -3024,7 +3127,7 @@ export default function Landing() {
           width={mobile ? "43" : ""}
           height={mobile ? "43" : ""}
           id="parallax"
-          value="5"
+          value="8"
         />
         <img
           src="./getStartedCoin-4.svg"
@@ -3034,7 +3137,7 @@ export default function Landing() {
               : "absolute -z-10 opacity-100 pointer-events-none right-16 pr-32 top-3/4"
           }
           id="parallax"
-          value="2"
+          value="14"
         />
         <img
           src="./getStartedCoin-5.svg"
@@ -3057,7 +3160,7 @@ export default function Landing() {
               : "absolute -z-10  opacity-100 pointer-events-none right-5 top-2/3"
           }
           id="parallax"
-          value="5"
+          value="3"
         />
         <img
           src="./getStartedCoin-4.svg"
@@ -3067,7 +3170,7 @@ export default function Landing() {
               : "absolute -z-10  opacity-100 pointer-events-none -right-5 bottom-0"
           }
           id="parallax"
-          value="2"
+          value="16"
         />
         {mobile ? (
           <svg
@@ -3275,12 +3378,12 @@ export default function Landing() {
                 Discover the incredible benefits of Web3 specific Workflows
               </div>
               <div className={" " + styles.collaborationsBenefitsCard1Body}>
-                Gitopia is a decentralized and community-controlled alternative
-                to code collaboration platforms like GitHub, GitLab, and
-                Bitbucket. {mobile ? <div className="mt-5"> </div> : ""} Gitopia
-                offers Open Source and Web3 with wide variety of tailor-made
-                workflows for better development of projects and engaging with
-                the contributors.
+                Gitopia is a decentralized and community-governed alternative to
+                code collaboration platforms like GitHub, GitLab, and Bitbucket.{" "}
+                {mobile ? <div className="mt-5"> </div> : ""} Gitopia offers
+                Open Source and Web3 with wide variety of tailor-made workflows
+                for better development of projects and engaging with the
+                contributors.
               </div>
               {!mobile ? (
                 <div
@@ -3289,10 +3392,11 @@ export default function Landing() {
                     styles.collaborationsBenefitsCard1Button
                   )}
                 >
-                  <Link href="/account/daos/new">
-                    <a className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
-                      Create DAO
-                    </a>
+                  <Link
+                    href="/account/daos/new"
+                    className="h-12 py-3 w-72 rounded text-white text-sm font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  >
+                    Create a DAO
                   </Link>
                 </div>
               ) : (
@@ -3311,7 +3415,7 @@ export default function Landing() {
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   Community can raise or vote on proposals to help shape the
-                  future of Gitopia.
+                  future of Gitopia
                 </div>
               </div>
               <div className="items-left text-left">
@@ -3323,8 +3427,8 @@ export default function Landing() {
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   DAOs at Gitopia would provide a decentralized code management
-                  tool for people and institutions that do not know nor trust
-                  each other.
+                  tool for people and institutions that don`&apos;`t know or
+                  trust each other
                 </div>
               </div>
               <div className="items-left text-left">
@@ -3336,7 +3440,7 @@ export default function Landing() {
                 </div>
                 <div className={styles.collaborationsBenefitsCard2Body}>
                   Create bounties for the issues you wish to get built with
-                  community and reward contributors on their code submissions.
+                  community and reward contributors on their code submissions
                 </div>
               </div>
               <div className="items-left text-left">
@@ -3709,16 +3813,27 @@ export default function Landing() {
           }
         >
           <div className={styles.backers2 + " flex"}>
-            <img src="./sandeep.svg" className="mr-2" />
+            <img
+              src="./sandeep.svg"
+              className={"mr-2 " + (mobile ? "absolute sm:relative top-5" : "")}
+            />
 
-            <div>
+            <div
+              className={mobile ? "absolute sm:relative top-0 right-24" : ""}
+            >
               <div className={styles.backers2Name}>Sandeep Nailwal</div>
-              <div className={styles.backers2Title}>Co-founder polygon</div>
+              <div className={styles.backers2Title}>Co-founder Polygon</div>
             </div>
           </div>
           <div className={styles.backers2 + " flex"}>
-            <img src="./tanmay.svg" className="mr-2" />
-            <div>
+            <img
+              src="./tanmay.svg"
+              className={"mr-2 " + (mobile ? "absolute sm:relative top-5" : "")}
+            />
+
+            <div
+              className={mobile ? "absolute sm:relative -top-2 right-24" : ""}
+            >
               <div className={styles.backers2Name}>Tanmay Bhat</div>
               <div className={styles.backers2Title}>
                 Comedian, Investor, YouTube influencer
@@ -3727,8 +3842,14 @@ export default function Landing() {
           </div>
 
           <div className={styles.backers2 + " flex"}>
-            <img src="./tushar.svg" className="mr-2" />
-            <div>
+            <img
+              src="./tushar.svg"
+              className={"mr-2 " + (mobile ? "absolute sm:relative top-5" : "")}
+            />
+
+            <div
+              className={mobile ? "absolute sm:relative top-0 right-24" : ""}
+            >
               <div className={styles.backers2Name}>Tushar Aggarwal</div>
               <div className={styles.backers2Title}>
                 Founder and CEO, Persistence
@@ -3737,8 +3858,16 @@ export default function Landing() {
           </div>
           {mobile ? (
             <div className={styles.backers2 + " flex"}>
-              <img src="./zhi.svg" className="mr-2" />
-              <div>
+              <img
+                src="./zhi.svg"
+                className={
+                  "mr-2 " + (mobile ? "absolute sm:relative top-5" : "")
+                }
+              />
+
+              <div
+                className={mobile ? "absolute sm:relative top-0 right-24" : ""}
+              >
                 <div className={styles.backers2Name}>Zhi Hao Loy</div>
                 <div className={styles.backers2Title}>
                   General Counsel, Persistence
@@ -3757,8 +3886,16 @@ export default function Landing() {
           )}
         >
           <div className={styles.backers2 + " flex"}>
-            <img src="./akshay.svg" className="mr-2" />
-            <div>
+            <img
+              src="./akshay.svg"
+              className={"mr-2 " + (mobile ? "absolute sm:relative top-5" : "")}
+            />
+
+            <div
+              className={
+                mobile ? "absolute sm:relative -top-3 right-24 bg-blue" : ""
+              }
+            >
               <div className={styles.backers2Name}>Akshay BD</div>
               <div className={styles.backers2Title}>
                 Investor and Co-creator Superteam DAO
@@ -3918,7 +4055,7 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className={"mt-16 sm:mt-0 sm:ml-16  " + styles.teamCard}>
+        <div className={"mt-16 sm:mt-0 " + styles.teamCard}>
           <img
             className={styles.teamImage}
             src="/avatar.svg"
@@ -4190,7 +4327,7 @@ export default function Landing() {
                 xmlns="http://www.w3.org/2000/svg"
                 onClick={() => {
                   if (window) {
-                    window.open("https://discord.gg/95SQmmWC");
+                    window.open("https://discord.gg/aqsKW3hUHD");
                   }
                 }}
                 target="_blank"
@@ -4447,7 +4584,7 @@ export default function Landing() {
         </div>
         <hr className={styles.divider}></hr>
         <div className={"flex flex-col sm:flex-row " + styles.footerEnd}>
-          <div className="">Copyright © 2021 Gitopia | All Rights Reserved</div>
+          <div className="">Copyright © 2023 Gitopia | All Rights Reserved</div>
           <div className="flex ">
             <div className="mr-4">Privacy policy</div>
             <div className="mr-4">Terms of services</div>

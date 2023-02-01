@@ -80,6 +80,7 @@ a {
 }
 
 /* ----- react-mde ----- */
+
 .mde-header {
   flex-shrink: 0;
   display: flex;
@@ -91,21 +92,24 @@ a {
   display: flex;
   flex-direction: row;
   flex-grow: 1;
+  font-size: 12px;
+  margin-bottom: 10px;
 }
 .mde-header .mde-tabs button {
   margin: 0px 3px;
   padding: 0px 6px;
   background-color: transparent;
-  border-bottom: 2px solid transparent;
+  text-transform: uppercase;
   cursor: pointer;
   outline: none;
+  font-weight: 700;
+
 }
 .mde-header .mde-tabs button:first-child {
   margin-left: 0px;
 }
 .mde-header .mde-tabs button.selected {
   color: white;
-  border-bottom: 2px solid #33ab34;
 }
 .mde-header .svg-icon {
   width: 1em;
@@ -209,7 +213,8 @@ a {
   overflow-y: auto;
   color: white;
   background: transparent;
-  border: 1px solid #c8ccd030;
+  border: 1px solid #747D96;
+  border-radius: 8px;
 }
 
 .react-mde * {
@@ -337,7 +342,7 @@ ul.mde-suggestions li[aria-selected="true"] {
   color: #e2ebf2;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
     sans-serif, Apple Color Emoji, Segoe UI Emoji;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.5;
   word-wrap: break-word;
 }
@@ -1114,6 +1119,15 @@ ul.mde-suggestions li[aria-selected="true"] {
 .menu li.bordered span {
   border-left-width: 2px;
 }
+
+.btn-link {
+  text-decoration: none;
+}
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+/* ----- react-calendar-heatmap ----- */
 
 .react-calendar-heatmap .color-gitopia-empty {
   fill: #2d3845;

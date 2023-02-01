@@ -14,14 +14,16 @@ function ToggleStorageBridgeAuthorization({ address, onSuccess, ...props }) {
       if (onSuccess) await onSuccess(!currentState);
       setCurrentState(!currentState);
     }
-    console.log(res);
     setIsToggling(false);
   };
 
-  useEffect(async () => {
-    setIsToggling(true);
-    setCurrentState(await getStorageBridgeAuthStatus(address));
-    setIsToggling(false);
+  useEffect(() => {
+    async function initAddress() {
+      setIsToggling(true);
+      setCurrentState(await getStorageBridgeAuthStatus(address));
+      setIsToggling(false);
+    }
+    initAddress();
   }, [address]);
 
   return (

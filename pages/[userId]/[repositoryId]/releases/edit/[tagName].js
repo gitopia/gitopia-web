@@ -128,7 +128,9 @@ function RepositoryReleaseEditView(props) {
     }
   };
 
-  useEffect(getRelease, [repository]);
+  useEffect(() => {
+    getRelease();
+  }, [repository]);
 
   const username = props.selectedAddress ? props.selectedAddress.slice(-1) : "";
 
@@ -184,7 +186,10 @@ function RepositoryReleaseEditView(props) {
                   <input
                     type="text"
                     placeholder="Tag Name"
-                    className="input input-sm input-bordered"
+                    className={
+                      "input input-sm input-bordered focus:outline-none focus:border-type " +
+                      (tagName.length > 0 ? "border-green" : "border-pink")
+                    }
                     value={tagName}
                     onChange={(e) => {
                       setTagName(e.target.value);

@@ -115,12 +115,19 @@ function CurrentWallet(props) {
                   Ledger
                 </span>
               </div>
-              <div className="mt-2 text-xs">{externalWalletMsg}</div>
+              <div className="mt-2 text-xs text-pink-900">
+                {externalWalletMsg}
+              </div>
               <div className="flex mt-4 w-full btn-group">
                 <button
                   className="btn btn-sm btn-block btn-primary flex-1"
                   onClick={async () => {
-                    await props.unlockLedgerWallet({ name: selectedWallet });
+                    const res = await props.unlockLedgerWallet({
+                      name: selectedWallet,
+                    });
+                    if (res?.message) {
+                      setExternalWalletMsg(res.message);
+                    }
                   }}
                   disabled={props.unlockingWallet}
                 >
@@ -208,26 +215,27 @@ function CurrentWallet(props) {
             <div className="ml-10 mr-2 whitespace-nowrap">Connect Keplr</div>
           </button>
 
-          <Link href="/login">
-            <a className="btn btn-outline border-grey rounded-full px-4 relative justify-start">
-              <div className="rounded-full w-10 h-10 bg-primary flex justify-center items-center absolute left-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-              </div>
-              <div className="ml-10 mr-2 whitespace-nowrap">Create New</div>
-            </a>
+          <Link
+            href="/login"
+            className="btn btn-outline border-grey rounded-full px-4 relative justify-start"
+          >
+            <div className="rounded-full w-10 h-10 bg-primary flex justify-center items-center absolute left-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </div>
+            <div className="ml-10 mr-2 whitespace-nowrap">Create New</div>
           </Link>
         </div>
       )}

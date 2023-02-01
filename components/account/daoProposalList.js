@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import getProposals from "../../helpers/getProposals";
-import dayjs from "dayjs";
 import ProposalItem from "../../components/dashboard/proposalItem";
 
 function DaoProposalList({ dao, ...props }) {
@@ -13,15 +12,16 @@ function DaoProposalList({ dao, ...props }) {
   //   repositories: [],
   // });
   const [proposals, setProposals] = useState([]);
-  var localizedFormat = require("dayjs/plugin/localizedFormat");
-  dayjs.extend(localizedFormat);
 
-  useEffect(async () => {
-    if (router.query.userId !== process.env.NEXT_PUBLIC_GITOPIA_ADDRESS) {
-      router.push("/" + router.query.userId);
+  useEffect(() => {
+    async function initProposals() {
+      if (router.query.userId !== process.env.NEXT_PUBLIC_GITOPIA_ADDRESS) {
+        router.push("/" + router.query.userId);
+      }
+      const p = await getProposals();
+      setProposals(p);
     }
-    const p = await getProposals();
-    setProposals(p);
+    initProposals();
   }, []);
 
   return (
@@ -30,10 +30,11 @@ function DaoProposalList({ dao, ...props }) {
         <div className="text-lg">Proposal List</div>
 
         <div className="flex-none">
-          <Link href={"/" + router.query.userId + "?tab=proposals&id=new"}>
-            <button className="btn btn-primary btn-sm btn-wide">
-              New Proposal
-            </button>
+          <Link
+            href={"/" + router.query.userId + "?tab=proposals&id=new"}
+            className="btn btn-primary btn-sm btn-wide"
+          >
+            New Proposal
           </Link>
         </div>
       </div>

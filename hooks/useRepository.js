@@ -7,7 +7,7 @@ import getDao from "../helpers/getDao";
 import getAllRepositoryBranch from "../helpers/getAllRepositoryBranch";
 import getAllRepositoryTag from "../helpers/getAllRepositoryTag";
 
-export default function useRepository() {
+export default function useRepository(initialRepository = {}) {
   const { setErrorStatusCode } = useErrorStatus();
   const router = useRouter();
   const [repository, setRepository] = useState({
@@ -23,9 +23,10 @@ export default function useRepository() {
     forks: [],
     stargazers: [],
     releases: [],
+    ...initialRepository,
   });
   const [refreshIndex, setRefreshIndex] = useState(1);
-  const [firstFetchLoading, setFirstFetchLoading] = useState(true);
+  const [firstFetchLoading, setFirstFetchLoading] = useState(false);
 
   const refreshRepository = () => setRefreshIndex((prevIndex) => prevIndex + 1);
 
@@ -40,8 +41,8 @@ export default function useRepository() {
         let ownerDetails = {};
 
         const [branches, tags] = await Promise.all([
-          getAllRepositoryBranch(repository.owner.id, repository.name),
-          getAllRepositoryTag(repository.owner.id, repository.name),
+          getAllRepositoryBranch(r.owner.id, r.name),
+          getAllRepositoryTag(r.owner.id, r.name),
         ]);
 
         if (r.owner.type === "USER") {
@@ -61,7 +62,7 @@ export default function useRepository() {
             branches: branches,
             tags: tags,
           });
-        } else {
+        } else if (r.owner.type === "DAO") {
           ownerDetails = await getDao(r.owner.id);
           setRepository({
             ...r,
@@ -81,7 +82,7 @@ export default function useRepository() {
       }
       setFirstFetchLoading(false);
     };
-    fetch();
+    if (!initialRepository.id) fetch();
   }, [router.query.userId, router.query.repositoryId, refreshIndex]);
   return { repository, refreshRepository, firstFetchLoading };
 }
