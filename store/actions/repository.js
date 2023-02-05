@@ -1090,6 +1090,42 @@ export const deleteTag = ({
   };
 };
 
+export const deleteBranch = ({
+  repoOwnerId = null,
+  repositoryName = null,
+  name = null,
+}) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "tag")))
+      return null;
+
+    const { wallet, env } = getState();
+    const branch = {
+      creator: wallet.selectedAddress,
+      repositoryId: {
+        id: repoOwnerId,
+        name: repositoryName,
+      },
+      branch: name,
+    };
+
+    try {
+      const message = await env.txClient.msgDeleteBranch(branch);
+      const result = await sendTransaction({ message })(dispatch, getState);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        console.log(result);
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
 export const updatePullRequestAssignees = ({
   repositoryId = null,
   pullIid = null,
