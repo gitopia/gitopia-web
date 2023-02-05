@@ -81,7 +81,7 @@ function RepositoryTagsView(props) {
                     <div>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mt-2 mr-4"
+                        className="h-5 w-5 mt-1 mr-4"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -94,9 +94,9 @@ function RepositoryTagsView(props) {
                         />
                       </svg>
                     </div>
-                    <div className="text-primary mt-1">{t.name}</div>
+                    <div className="text-primary">{t.name}</div>
                     {currentUserEditPermission ? (
-                      <div className=" ml-10 flex-none text-sm sm:text-base w-10 sm:w-20">
+                      <div className="ml-2 flex-none text-sm sm:text-base w-10 sm:w-20">
                         <div
                           onClick={() => {
                             setConfirmDelete(true);

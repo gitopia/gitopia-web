@@ -153,7 +153,7 @@ function RepositoryTagsView(props) {
                       </svg>
                     </button>
                     {currentUserEditPermission ? (
-                      <div className=" ml-10 flex-none text-sm sm:text-base w-10 sm:w-20">
+                      <div className="ml-2 flex-none text-sm sm:text-base w-10 sm:w-20">
                         <div
                           onClick={() => {
                             setConfirmDelete(true);
