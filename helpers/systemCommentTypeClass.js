@@ -11,7 +11,7 @@ export const commentType = {
         d="M22.9107 8.64216C23.4647 9.00242 23.8316 9.47334 23.9798 10.0117C24.128 10.55 24.0533 11.1404 23.7607 11.7298C23.4685 12.3183 22.9686 12.8865 22.3061 13.3829C21.6436 13.8793 20.8394 14.2884 19.9662 14.5731C19.093 14.8578 18.1782 15.0092 17.3044 15.0136C16.4306 15.0181 15.6255 14.8754 14.9616 14.5986L15.5766 13.1239C16.0056 13.3029 16.5916 13.4195 17.2963 13.4159C17.9963 13.4124 18.7469 13.2901 19.4709 13.054C20.1958 12.8177 20.84 12.485 21.348 12.1043C21.8611 11.7198 22.1735 11.3337 22.3296 11.0193C22.4791 10.7181 22.4658 10.5319 22.4394 10.4357C22.4127 10.3387 22.3271 10.1685 22.0397 9.98163C21.2122 9.44357 19.8477 9.35892 18.8917 9.42736L17.774 7.99178C19.357 7.74635 21.5153 7.7348 22.9107 8.64216Z"
         fill="#ADBECB"
       />
-      <circle cx="16" cy="16.0005" r="15" stroke="#3E4051" stroke-width="2" />
+      <circle cx="16" cy="16.0005" r="15" stroke="#3E4051" strokeWidth="2" />
     </svg>
   ),
   COMMENT_TYPE_REMOVE_LABELS: "",
@@ -51,7 +51,7 @@ export const commentType = {
   ),
   COMMENT_TYPE_REMOVE_ASSIGNEES: (
     <svg viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="16" cy="16.1016" r="15" stroke="#3E4051" stroke-width="2" />
+      <circle cx="16" cy="16.1016" r="15" stroke="#3E4051" strokeWidth="2" />
       <path
         d="M10.249 21.8523L21.7503 10.351"
         stroke="#ADBECB"
@@ -64,8 +64,41 @@ export const commentType = {
       />
     </svg>
   ),
-  COMMENT_TYPE_ADD_REVIEWERS: "",
-  " COMMENT_TYPE_REMOVE_REVIEWERS": "",
+  COMMENT_TYPE_ADD_REVIEWERS: (
+    <svg
+      width="32"
+      height="33"
+      viewBox="0 0 32 33"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="16" cy="16.9817" r="15" stroke="#3E4051" strokeWidth="2" />
+      <path
+        d="M13.3645 13.8645V13.8645C13.3645 12.8348 14.1993 12 15.2291 12H15.3645C16.4691 12 17.3645 12.8954 17.3645 14V14C17.3645 15.1046 16.4691 16 15.3645 16H13.3645"
+        stroke="#ADBECB"
+        strokeWidth="1.5"
+      />
+      <path
+        d="M14 18L14 20"
+        stroke="#ADBECB"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <circle
+        cx="15.0979"
+        cy="15.5867"
+        r="7.64496"
+        transform="rotate(-30 15.0979 15.5867)"
+        stroke="#ADBECB"
+        strokeWidth="2"
+      />
+      <path
+        d="M21.7 26.6C22.0314 27.0418 22.6582 27.1314 23.1 26.8C23.5418 26.4686 23.6314 25.8418 23.3 25.4L21.7 26.6ZM18.7 22.6L21.7 26.6L23.3 25.4L20.3 21.4L18.7 22.6Z"
+        fill="#ADBECB"
+      />
+    </svg>
+  ),
+  COMMENT_TYPE_REMOVE_REVIEWERS: "",
   COMMENT_TYPE_MODIFIED_TITLE: (
     <svg viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle
@@ -100,127 +133,193 @@ export const commentType = {
   ),
 
   COMMENT_TYPE_ISSUE_CLOSED: (
-    <svg viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="16" cy="16" r="15" stroke="#3E4051" strokeWidth="2" />
       <path
-        d="M20.2614 13.7865V12.5402C20.2614 10.1867 18.3535 8.27881 16 8.27881V8.27881C13.6465 8.27881 11.7386 10.1867 11.7386 12.5402V13.7865"
+        d="M8.83069 16.7917L13.0825 21.0435L23.1694 10.9565"
         stroke="#ADBECB"
         strokeWidth="2"
       />
-      <path
-        d="M11.556 24.218H20.444C21.5486 24.218 22.444 23.3226 22.444 22.218V15.5787C22.444 14.4742 21.5486 13.5787 20.444 13.5787H11.556C10.4514 13.5787 9.55597 14.4742 9.55597 15.5787V22.218C9.55597 23.3226 10.4514 24.218 11.556 24.218Z"
-        stroke="#ADBECB"
-        strokeWidth="2"
-      />
-      <circle
-        cx="2.23496"
-        cy="2.23496"
-        r="2.23496"
-        transform="matrix(1 0 0 -1 13.765 21.1334)"
-        fill="#ADBECB"
-      />
-      <circle cx="16" cy="16.9224" r="15" stroke="#3E4051" strokeWidth="2" />
     </svg>
   ),
 
   COMMENT_TYPE_ISSUE_OPENED: (
-    <svg viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="32"
+      height="33"
+      viewBox="0 0 32 33"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="16" cy="16.1479" r="15" stroke="#3E4051" strokeWidth="2" />
       <path
-        d="M19.6408 12.1756V10.2512C19.6408 8.2404 18.0108 6.61035 16 6.61035H15.417C13.7282 6.61035 12.3592 7.97936 12.3592 9.66812V9.66812"
+        d="M22.1231 22.4893C21.2852 23.3053 20.272 23.9192 19.1608 24.2842C18.0496 24.6491 16.8697 24.7555 15.7111 24.5952C14.5525 24.4349 13.4459 24.0121 12.4755 23.359C11.5052 22.706 10.6968 21.84 10.112 20.8271"
         stroke="#ADBECB"
         strokeWidth="2"
       />
       <path
-        d="M10.9915 23.4075H21.0086C21.717 23.4075 22.2912 22.8332 22.2912 22.1249V14.3032C22.2912 13.5949 21.717 13.0206 21.0086 13.0206H10.9915C10.2831 13.0206 9.70886 13.5949 9.70886 14.3032V22.1249C9.70886 22.8332 10.2831 23.4075 10.9915 23.4075Z"
+        d="M9.98613 11.4614C10.7378 10.2617 11.787 9.27689 13.0318 8.60252C14.2766 7.92815 15.6747 7.5872 17.0902 7.61279C18.5057 7.63837 19.8905 8.02963 21.1101 8.74854C22.3297 9.46745 23.3426 10.4896 24.0505 11.7156"
         stroke="#ADBECB"
         strokeWidth="2"
       />
-      <circle
-        cx="2.07659"
-        cy="2.07659"
-        r="2.07659"
-        transform="matrix(1 0 0 -1 13.9234 20.2906)"
+      <path
+        d="M24.7349 19.8991L23.3182 24.8498L19.7391 21.1476L24.7349 19.8991Z"
         fill="#ADBECB"
       />
-      <circle cx="16" cy="16.0356" r="15" stroke="#3E4051" strokeWidth="2" />
+      <path
+        d="M8.21313 15.0103L8.30016 9.86163L12.7155 12.5113L8.21313 15.0103Z"
+        fill="#ADBECB"
+      />
+      <path d="M17 12.2759L17 17.1998" stroke="#ADBECB" strokeWidth="2" />
+      <path d="M17 18.2879L17 19.7892" stroke="#ADBECB" strokeWidth="2" />
     </svg>
   ),
 
   COMMENT_TYPE_PULL_REQUEST_CLOSED: (
-    <svg viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="32"
+      height="33"
+      viewBox="0 0 32 33"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <circle
-        cx="11.8869"
-        cy="11.7702"
-        r="3.49449"
+        cx="21.1319"
+        cy="21.6029"
+        r="2.57237"
         stroke="#ADBECB"
         strokeWidth="2"
       />
       <circle
-        cx="20.1131"
-        cy="20.4919"
-        r="3.49449"
+        cx="11.2378"
+        cy="21.6029"
+        r="2.57237"
+        stroke="#ADBECB"
+        strokeWidth="2"
+      />
+      <circle
+        cx="11.2378"
+        cy="10.7921"
+        r="2.57237"
+        stroke="#ADBECB"
+        strokeWidth="2"
+      />
+      <circle cx="16" cy="16.2434" r="15" stroke="#3E4051" strokeWidth="2" />
+      <path
+        d="M21.0768 18.696L21.0768 15.6066"
         stroke="#ADBECB"
         strokeWidth="2"
       />
       <path
-        d="M13.7715 14.1669L17.4443 17.8396"
+        d="M11.1826 18.696L11.1826 13.2971"
         stroke="#ADBECB"
         strokeWidth="2"
       />
-      <circle cx="16" cy="16.1311" r="15" stroke="#3E4051" strokeWidth="2" />
+      <path
+        d="M18.1992 13.6699L23.9542 7.91479"
+        stroke="#ADBECB"
+        strokeWidth="2"
+      />
+      <path
+        d="M18.1992 7.91462L23.9542 13.6697"
+        stroke="#ADBECB"
+        strokeWidth="2"
+      />
     </svg>
   ),
 
   COMMENT_TYPE_PULL_REQUEST_OPENED: (
-    <svg viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="32"
+      height="33"
+      viewBox="0 0 32 33"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        cx="22.3047"
+        cy="22.32"
+        r="2.57237"
+        stroke="#ADBECB"
+        strokeWidth="2"
+      />
+      <circle
+        cx="11.1607"
+        cy="22.32"
+        r="2.57237"
+        stroke="#ADBECB"
+        strokeWidth="2"
+      />
+      <circle
+        cx="11.1607"
+        cy="11.5093"
+        r="2.57237"
+        stroke="#ADBECB"
+        strokeWidth="2"
+      />
+      <circle cx="16" cy="16.9606" r="15" stroke="#3E4051" strokeWidth="2" />
       <path
-        d="M13.0547 11.7709L17.7004 11.7709C19.3573 11.7709 20.7004 13.1141 20.7004 14.7709L20.7004 17.4358"
+        d="M22.3046 19.4132L22.3046 14.0618C22.3046 12.6518 21.1615 11.5087 19.7515 11.5087V11.5087"
         stroke="#ADBECB"
         strokeWidth="2"
       />
-      <circle
-        cx="10.4597"
-        cy="12.674"
-        r="3.15493"
+      <path
+        d="M15.7106 11.509L20.108 8.09273L20.108 14.9252L15.7106 11.509Z"
+        fill="#ADBECB"
+      />
+      <path
+        d="M11.1056 19.4132L11.1056 14.0143"
         stroke="#ADBECB"
         strokeWidth="2"
       />
-      <circle
-        cx="20.7005"
-        cy="21.3078"
-        r="3.15493"
-        stroke="#ADBECB"
-        strokeWidth="2"
-      />
-      <circle cx="16" cy="16.4524" r="15" stroke="#3E4051" strokeWidth="2" />
     </svg>
   ),
   COMMENT_TYPE_PULL_REQUEST_MERGED: (
-    <svg viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M9.81085 14.6171L9.81085 22.8057C9.81085 23.9336 10.7252 24.8479 11.853 24.8479L20.0014 24.8479"
-        stroke="#ADBECB"
-        strokeWidth="2"
-      />
-      <path
-        d="M13.1045 9.74625L20.0972 9.74625C21.225 9.74625 22.1394 10.6606 22.1394 11.7884L22.1394 19.0632"
+    <svg
+      width="32"
+      height="33"
+      viewBox="0 0 32 33"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        cx="22.3047"
+        cy="22.0372"
+        r="2.57237"
         stroke="#ADBECB"
         strokeWidth="2"
       />
       <circle
-        cx="20.7563"
-        cy="21.8312"
-        r="3.03997"
+        cx="11.1607"
+        cy="22.0372"
+        r="2.57237"
         stroke="#ADBECB"
         strokeWidth="2"
       />
       <circle
-        cx="11.2436"
-        cy="11.9444"
-        r="3.03997"
+        cx="11.1607"
+        cy="11.2264"
+        r="2.57237"
         stroke="#ADBECB"
         strokeWidth="2"
       />
-      <circle cx="16" cy="16.8877" r="15" stroke="#3E4051" strokeWidth="2" />
+      <circle cx="16" cy="16.6777" r="15" stroke="#3E4051" strokeWidth="2" />
+      <path
+        d="M22.3047 19.1303L22.3047 14.2258C22.3047 12.5689 20.9615 11.2258 19.3047 11.2258L13.7616 11.2258"
+        stroke="#ADBECB"
+        strokeWidth="2"
+      />
+      <path
+        d="M11.1056 19.1303L11.1056 13.7314"
+        stroke="#ADBECB"
+        strokeWidth="2"
+      />
     </svg>
   ),
 
@@ -281,7 +380,7 @@ export const commentType = {
         strokeWidth="2"
         strokeLinecap="round"
       />
-      <circle cx="16" cy="16.9224" r="15" stroke="#3E4051" stroke-width="2" />
+      <circle cx="16" cy="16.9224" r="15" stroke="#3E4051" strokeWidth="2" />
     </svg>
   ),
 };
