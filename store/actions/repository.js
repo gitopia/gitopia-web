@@ -85,6 +85,37 @@ export const createRepository = ({
   };
 };
 
+export const deleteRepository = ({ name = null, ownerId = null }) => {
+  return async (dispatch, getState) => {
+    const { wallet } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+      return null;
+    const repository = {
+      creator: wallet.selectedAddress,
+      repositoryId: {
+        id: ownerId,
+        name: name,
+      },
+    };
+    const { env } = getState();
+    try {
+      const message = await env.txClient.msgDeleteDao(repository);
+      const result = await sendTransaction({ message })(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
+      if (result && result.code === 0) {
+        getUserDetailsForSelectedAddress()(dispatch, getState);
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
+
 export const createIssue = ({
   title = "",
   description = "",
