@@ -887,7 +887,11 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
         };
         const msg = await env.txClientSecondary.msgTransfer(send);
         const memo = "";
-        let fees = await estimateOsmoFee([msg], memo)(getState);
+        let fees = await estimateOsmoFee(
+          wallet.activeWallet.counterPartyAddress,
+          [msg],
+          memo
+        )(getState);
         const fee = {
           amount: [
             { amount: fees.amount[0].amount, denom: fees.amount[0].denom },
@@ -915,11 +919,15 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
   };
 };
 
-export const estimateOsmoFee = (msg, memo) => {
+export const estimateOsmoFee = (address, msg, memo) => {
   return async (getState) => {
     const { env } = getState();
     const gasPrice = GasPrice.fromString("0.025uosmo");
-    const gasEstimation = await env.txClientSecondary.simulate(msg, memo);
+    const gasEstimation = await env.txClientSecondary.simulate(
+      address,
+      msg,
+      memo
+    );
     const fees = calculateFee(Math.round(gasEstimation * 1.3), gasPrice);
     return fees;
   };

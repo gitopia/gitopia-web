@@ -406,6 +406,7 @@ function Header(props) {
                   }
                   onClick={(e) => {
                     setMenuOpen(true);
+                    if (props.activeWallet) setMenuState(1);
                   }}
                   ref={menuRef}
                 >

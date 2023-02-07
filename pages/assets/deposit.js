@@ -31,7 +31,7 @@ function DepositIbcAsset(props) {
     async function getChain() {
       let info = await getChainInfo(props.activeWallet?.counterPartyChain);
       setCounterPartyChainInfo(info);
-      setToken(coingeckoId[info?.coin_minimal_denom].coinDenom);
+      setToken(coingeckoId[info?.coin_minimal_denom]?.coinDenom);
       if (info) {
         let b = await getBalanceForChain(
           info.lcd_node,
@@ -149,7 +149,7 @@ function DepositIbcAsset(props) {
           <div className="text-white mt-5">Amount to Deposit</div>
           <div className="border border-gray-700 rounded-xl p-3 text-xs mt-2">
             <div className="font-bold">
-              Available Balance : {balance} {token.toUpperCase()}
+              Available Balance : {balance} {token?.toUpperCase()}
             </div>
             <div className="border border-gray-700 rounded-xl p-3 bg-grey-900 mt-2">
               <div className="flex">
