@@ -227,10 +227,10 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@gitopia/gitopia-js@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@gitopia/gitopia-js/-/gitopia-js-1.1.0.tgz#64420d5ea47676b4866b2400666f8c5f54a46418"
-  integrity sha512-zCa5mUizeNsAuAGl/xkGUb3cKV5Py/f464aPr1DZmGG99ESjVtZuZBPn5HTkfaTE6pm/4suh2+7law1TOueo+w==
+"@gitopia/gitopia-js@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@gitopia/gitopia-js/-/gitopia-js-1.3.0.tgz#995f1e9d427f52f14a8afc85894d5fa477b2214c"
+  integrity sha512-r+PjiCbpaYCI8s+i82MUx7Er/5y+RGLOovXVDOM56rdL6g94Ykah+bsYjujz+IQbDUOcJ6MXKCfuNGHDncyt7A==
 
 "@graphql-typed-document-node/core@^3.1.1":
   version "3.1.1"
