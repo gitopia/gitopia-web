@@ -20,6 +20,7 @@ const CurrentWallet = dynamic(() => import("./currentWallet"));
 import Drawer from "./drawer";
 import useWindowSize from "../hooks/useWindowSize";
 import WalletInfo from "./dashboard/walletInfo";
+import SearchBar from "./searchBar";
 // const NotificationsCard = dynamic(() =>
 //   import("./dashboard/notificationsButton")
 // );
@@ -180,34 +181,7 @@ function Header(props) {
             ></img>
           </Link>
         </div>
-        {/* <div className="flex-none mr-2">
-        <div className="form-control">
-          <div className="relative">
-            <input
-              name="search"
-              type="text"
-              placeholder="Search"
-              className="w-full pr-16 input input-sm input-ghost input-bordered"
-            />
-            <button className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div> */}
+        <SearchBar />
         {!isMobile ? (
           <div className="items-stretch">
             <a
