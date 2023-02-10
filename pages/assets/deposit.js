@@ -3,15 +3,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ibcDeposit } from "../../store/actions/wallet";
 import { useRouter } from "next/router";
-import getChainInfo from "../../helpers/getChainInfo";
 import { getBalanceForChain } from "../../helpers/getBalanceForChain";
-import { coingeckoId } from "../../ibc-assets-config";
-import dayjs from "dayjs";
 
 function DepositIbcAsset(props) {
   const [amount, setAmount] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [counterPartyChainInfo, setCounterPartyChainInfo] = useState(null);
   const [validateAmountError, setValidateAmountError] = useState(null);
   const [balance, setBalance] = useState(0);
   const [token, setToken] = useState("");
@@ -29,20 +25,23 @@ function DepositIbcAsset(props) {
 
   useEffect(() => {
     async function getChain() {
-      let info = await getChainInfo(props.activeWallet?.counterPartyChain);
-      setCounterPartyChainInfo(info);
-      setToken(coingeckoId[info?.coin_minimal_denom]?.coinDenom);
-      if (info) {
-        let b = await getBalanceForChain(
-          info.lcd_node,
-          props.activeWallet?.counterPartyAddress,
-          info.coin_minimal_denom
-        );
-        setBalance(
-          b / Math.pow(10, coingeckoId[info?.coin_minimal_denom].coinDecimals)
-        );
-        setTokenDecimals(coingeckoId[info?.coin_minimal_denom].coinDecimals);
-      }
+      setToken(props.ibcAssets.chainInfo.asset.assets[0].denom_units[1].denom);
+
+      let b = await getBalanceForChain(
+        props.ibcAssets.chainInfo.chain.apis.rest[3].address,
+        props.activeWallet?.counterPartyAddress,
+        props.ibcAssets.chainInfo.asset.assets[0].denom_units[0].denom
+      );
+      setBalance(
+        b /
+          Math.pow(
+            10,
+            props.ibcAssets.chainInfo.asset.assets[0].denom_units[1].exponent
+          )
+      );
+      setTokenDecimals(
+        props.ibcAssets.chainInfo.asset.assets[0].denom_units[1].exponent
+      );
     }
     getChain();
   }, [props.activeWallet]);
@@ -209,10 +208,23 @@ function DepositIbcAsset(props) {
                   setLoading(true);
                   props
                     .ibcDeposit(
-                      counterPartyChainInfo.port_id,
-                      counterPartyChainInfo.channel_id,
+                      props.ibcAssets.chainInfo.ibc.chain_1.chain_name.includes(
+                        "gitopia"
+                      )
+                        ? props.ibcAssets.chainInfo.ibc.channels[0].chain_2
+                            .port_id
+                        : props.ibcAssets.chainInfo.ibc.channels[0].chain_1
+                            .port_id,
+                      props.ibcAssets.chainInfo.ibc.chain_1.chain_name.includes(
+                        "gitopia"
+                      )
+                        ? props.ibcAssets.chainInfo.ibc.channels[0].chain_2
+                            .channel_id
+                        : props.ibcAssets.chainInfo.ibc.channels[0].chain_1
+                            .channel_id,
                       (Number(amount) * Math.pow(10, tokenDecimals)).toString(),
-                      counterPartyChainInfo.coin_minimal_denom
+                      props.ibcAssets.chainInfo.asset.assets[0].denom_units[0]
+                        .denom
                     )
                     .then(() => {
                       router.push("/home");
@@ -234,6 +246,7 @@ const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
     activeWallet: state.wallet.activeWallet,
+    ibcAssets: state.ibcAssets,
   };
 };
 

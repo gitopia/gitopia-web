@@ -2,12 +2,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { ibcWithdraw } from "../../store/actions/wallet";
-import { coingeckoId, gitopiaIbc } from "../../ibc-assets-config";
+import { gitopiaIbc } from "../../ibc-assets-config";
 import { useRouter } from "next/router";
-import getChainInfo from "../../helpers/getChainInfo";
 import getBalances from "../../helpers/getAllBalances";
 import getDenomNameByHash from "../../helpers/getDenomNameByHash";
-import dayjs from "dayjs";
 
 function WithdrawIbcAsset(props) {
   const [amount, setAmount] = useState(0);
@@ -27,8 +25,9 @@ function WithdrawIbcAsset(props) {
 
   useEffect(() => {
     async function getChain() {
-      let info = await getChainInfo(props.activeWallet?.counterPartyChain);
-      setTokenDenom(coingeckoId[info?.coin_minimal_denom]?.coinDenom);
+      setTokenDenom(
+        props.ibcAssets.chainInfo.asset.assets[0].denom_units[1].denom
+      );
 
       let res = await getBalances(props.selectedAddress);
       if (res) {
@@ -36,17 +35,22 @@ function WithdrawIbcAsset(props) {
         for (let i = 0; i < b.length; i++) {
           if (b[i]?.denom.includes("ibc")) {
             let denom = await getDenomNameByHash(b[i]?.denom);
-            if (denom == info?.coin_minimal_denom) {
+            if (
+              denom ==
+              props.ibcAssets.chainInfo.asset.assets[0].denom_units[0].denom
+            ) {
               setBalance(
                 b[i]?.amount /
                   Math.pow(
                     10,
-                    coingeckoId[info?.coin_minimal_denom].coinDecimals
+                    props.ibcAssets.chainInfo.asset.assets[0].denom_units[1]
+                      .exponent
                   )
               );
               setIbcTokenDenom(b[i]?.denom);
               setTokenDecimals(
-                coingeckoId[info?.coin_minimal_denom].coinDecimals
+                props.ibcAssets.chainInfo.asset.assets[0].denom_units[1]
+                  .exponent
               );
             }
           }
@@ -247,6 +251,7 @@ const mapStateToProps = (state) => {
     loreBalance: state.wallet.loreBalance,
     activeWallet: state.wallet.activeWallet,
     advanceUser: state.user.advanceUser,
+    ibcAssets: state.ibcAssets,
   };
 };
 

@@ -9,6 +9,8 @@ import {
   signOut,
   unlockKeplrWallet,
 } from "../store/actions/wallet";
+import { setIbcAssets } from "../store/actions/ibcAssets";
+import { getAssetList } from "../helpers/getIbcAssetList";
 import shrinkAddress from "../helpers/shrinkAddress";
 import getHomeUrl from "../helpers/getHomeUrl";
 import { notify } from "reapop";
@@ -40,16 +42,14 @@ function Header(props) {
   const [menuState, setMenuState] = useState(1);
   const [menuOpen, setMenuOpen] = useState(false);
   const [chainId, setChainId] = useState("");
+  const [assets, setAssets] = useState([]);
   const [unread, setUnread] = useState(false);
   const router = useRouter();
   const menuRef = useRef();
-  const [
-    formattedIssueNotifications,
-    setFormattedIssueNotifications,
-  ] = useState([]);
-  const [showNotificationListState, setShowNotificationListState] = useState(
-    ""
-  );
+  const [formattedIssueNotifications, setFormattedIssueNotifications] =
+    useState([]);
+  const [showNotificationListState, setShowNotificationListState] =
+    useState("");
   const { isMobile } = useWindowSize();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -117,6 +117,11 @@ function Header(props) {
         setChainId(info.default_node_info.network);
       }
     };
+    const getIbcAssets = async () => {
+      const assets = await getAssetList();
+      setAssets(assets);
+    };
+    getIbcAssets();
     updateNetworkName();
   }, []);
 
@@ -365,10 +370,10 @@ function Header(props) {
                       className="btn btn-primary btn-circle btn-base btn-outline btn-sm w-10 h-10"
                       href="#"
                       onClick={(e) => {
-                        setUnread(false);
                         setMenuOpen(true);
                         setMenuState(6);
                         e.preventDefault();
+                        props.setIbcAssets(assets);
                       }}
                     >
                       <svg
@@ -624,4 +629,5 @@ export default connect(mapStateToProps, {
   signOut,
   notify,
   unlockKeplrWallet,
+  setIbcAssets,
 })(Header);

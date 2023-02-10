@@ -4,13 +4,14 @@ import { connect } from "react-redux";
 import { updateUserBalance } from "../../store/actions/wallet";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import { signOut } from "../../store/actions/wallet";
-import { assets } from "../../ibc-assets-config";
 import getBalanceInDollars from "../../helpers/getWalletBalanceInDollars";
 import { useRouter } from "next/router";
 import { getAddressforChain } from "../../store/actions/wallet";
+import { getAssetList } from "../../helpers/getIbcAssetList";
 
 function WalletInfo(props) {
   const [balance, setBalance] = useState(0);
+  const [assets, setAssets] = useState([]);
   const router = useRouter();
   useEffect(() => {
     async function getWalletbalance() {
@@ -19,11 +20,18 @@ function WalletInfo(props) {
         setBalance(balance);
       }
     }
+    async function getAssets() {
+      let assets = await getAssetList();
+      if (assets) {
+        setAssets(assets);
+      }
+    }
     getWalletbalance();
-  });
+    getAssets();
+  }, [props.selectedAddress]);
 
   return (
-    <div className="w-96 p-4 flex flex-col bg-[#28313C] rounded-2xl">
+    <div className="w-max p-4 flex flex-col bg-[#28313C] rounded-2xl">
       <div className="px-2 flex">
         <div className="text-type-primary text-xs font-bold uppercase">
           Account
@@ -125,16 +133,16 @@ function WalletInfo(props) {
               className="flex p-3 box-content h-7 bg-white bg-opacity-10 rounded-xl flex mb-3"
               key={index}
             >
-              <div className="">
-                <img src={asset.icon} />
+              <div className="mt-0.5">
+                <img height={"30"} width={"30"} src={asset.logo_URIs.png} />
               </div>
-              <div className="ml-3">{asset.chain_name}</div>
-              <div className="ml-auto flex mr-3">
-                <div className="text-type-primary text-xs mr-2 mt-1.5">
+              <div className="ml-1 text-sm mt-1">{asset.chain_name}</div>
+              <div className="ml-auto flex mr-2">
+                <div className="text-type-primary text-xs mr-1 mt-1.5">
                   Deposit
                 </div>
                 <div
-                  className="mr-1 hover:cursor-pointer"
+                  className="mr-0.5 hover:cursor-pointer"
                   onClick={() => {
                     props
                       .getAddressforChain(
@@ -148,8 +156,8 @@ function WalletInfo(props) {
                   id={index}
                 >
                   <svg
-                    width="32"
-                    height="32"
+                    width="28"
+                    height="28"
                     viewBox="0 0 32 32"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -200,8 +208,8 @@ function WalletInfo(props) {
                 </div>
               </div>
               <div className="border-l-2 border-[#5A6068] h-8"></div>
-              <div className="ml-3 flex">
-                <div className="text-type-primary text-xs mr-2 mt-1.5">
+              <div className="ml-2 flex">
+                <div className="text-type-primary text-xs mr-1 mt-1.5">
                   Withdraw
                 </div>
                 <div
@@ -219,8 +227,8 @@ function WalletInfo(props) {
                   id={index}
                 >
                   <svg
-                    width="32"
-                    height="32"
+                    width="28"
+                    height="28"
                     viewBox="0 0 32 32"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
