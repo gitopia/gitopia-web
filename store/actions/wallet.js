@@ -11,6 +11,7 @@ import find from "lodash/find";
 import { notify } from "reapop";
 import { setupTxClients, sendTransaction } from "./env";
 import getNodeInfo from "../../helpers/getNodeInfo";
+import getAnyNodeInfo from "../../helpers/getAnyNodeInfo";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getUser from "../../helpers/getUser";
 import getChainInfo from "../../helpers/getChainInfo";
@@ -813,11 +814,32 @@ export const getAddressforChain = (name, chainId) => {
       if (activeWallet.isKeplr) {
         if (window.keplr && window.getOfflineSigner) {
           try {
+            let chainInfo, chainAsset, chainIbc;
+            if (chainId !== null && chainId !== undefined) {
+              [chainInfo, chainAsset, chainIbc] = await Promise.all([
+                getChainInfo(chainId),
+                getChainAssetList(chainId),
+                getChainIbcAsset(chainId),
+              ]);
+              if (chainInfo && chainAsset && chainIbc) {
+                await dispatch({
+                  type: ibcAssetsActions.SET_CHAIN_INFO,
+                  payload: {
+                    chain: chainInfo,
+                    assets: chainAsset,
+                    ibc: chainIbc,
+                  },
+                });
+              }
+            }
             const info = await getNodeInfo();
+            const counterPartyChainInfo = await getAnyNodeInfo(
+              chainInfo.apis.rest[3].address
+            );
             const chain = info.default_node_info.network;
             const offlineSigner = await window.getOfflineSignerAuto(chain);
             const accountSignerSecondary = await window.getOfflineSignerAuto(
-              "osmo-test-4"
+              counterPartyChainInfo.default_node_info.network
             );
             const accounts = await offlineSigner.getAccounts();
             const counterPartyAccount =
