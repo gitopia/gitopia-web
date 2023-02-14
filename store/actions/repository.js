@@ -99,7 +99,7 @@ export const deleteRepository = ({ name = null, ownerId = null }) => {
     };
     const { env } = getState();
     try {
-      const message = await env.txClient.msgDeleteDao(repository);
+      const message = await env.txClient.msgDeleteRepository(repository);
       const result = await sendTransaction({ message })(dispatch, getState);
       updateUserBalance()(dispatch, getState);
       if (result && result.code === 0) {
