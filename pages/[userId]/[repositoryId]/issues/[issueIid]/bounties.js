@@ -198,40 +198,40 @@ function RepositoryBountiesView(props) {
               />
             </div>
             {bounties.length > 0 ? (
-              <div className="border border-gray-700 rounded mt-4 text-justify divide-y divide-gray-700">
+              <div className="border border-gray-700 rounded mt-4 text-justify sm:divide-y sm:divide-gray-700 overflow-x-auto">
                 <div className="flex mt-2 mb-2 ml-3">
-                  <div className="w-1/4">
-                    <div className="text-type-secondary text-sm ml-3">
+                  <div className="sm:w-1/4">
+                    <div className="w-56 sm:w-full text-type-secondary text-sm ml-3">
                       Amount
                     </div>
                   </div>
 
-                  <div className="w-1/6">
-                    <div className="text-type-secondary text-sm">
+                  <div className="sm:w-1/6 ">
+                    <div className="w-32 sm:w-full text-type-secondary text-sm">
                       Wallet Address
                     </div>
                   </div>
-                  <div className="w-1/6">
-                    <div className="text-type-secondary text-sm">
+                  <div className="sm:w-1/6 ">
+                    <div className="w-36 sm:w-full mr-4 sm:mr-0 text-type-secondary text-sm">
                       Expiry Date
                     </div>
                   </div>
-                  <div className="w-1/6">
+                  <div className="sm:w-1/6 ">
                     <div className="text-type-secondary text-sm ">Status</div>
                   </div>
 
-                  <div className="text-type-secondary text-sm ml-auto mr-3">
+                  <div className="text-type-secondary text-sm ml-24 sm:ml-auto mr-3">
                     Actions
                   </div>
                 </div>
 
                 {bounties.map((b) => {
                   return (
-                    <div className="flex mt-2 mb-3 pt-3" key={b.id}>
-                      <div className="w-1/4 flex divide-x divide-grey">
+                    <div className="flex mt-2 mb-3 pt-3 " key={b.id}>
+                      <div className="flex sm:w-1/4 divide-x divide-grey">
                         {b.amount.length > 1 ? (
-                          <div className="dropdown">
-                            <div className="flex">
+                          <div className="dropdown dropdown-top sm:dropdown-bottom">
+                            <div className="w-52 sm:w-full flex">
                               <div className="flex">
                                 <div className="ml-4 text-xs border-2 border-grey rounded-full p-1">
                                   1+
@@ -260,7 +260,7 @@ function RepositoryBountiesView(props) {
                                       height={24}
                                       width={24}
                                       src={coingeckoId[a.denom].icon}
-                                      className="ml-4"
+                                      className=" ml-4"
                                     />
 
                                     <div className="ml-2 text-sm uppercase">
@@ -277,7 +277,7 @@ function RepositoryBountiesView(props) {
                         ) : (
                           b.amount.map((a, index) => {
                             return (
-                              <div className="flex" key={index}>
+                              <div className="flex w-52 sn:w-full" key={index}>
                                 <img
                                   height={24}
                                   width={24}
@@ -294,13 +294,13 @@ function RepositoryBountiesView(props) {
                           })
                         )}
                       </div>
-                      <div className="ml-5 w-1/6">
+                      <div className="ml-10 sm:ml-5 w-48 sm:w-1/6">
                         <div className="text-sm">
                           {shrinkAddress(b.creator)}
                         </div>
                       </div>
-                      <div className="w-1/6">
-                        <div className="text-sm">
+                      <div className="ml-16 sm:ml-0 sm:w-1/6">
+                        <div className="text-sm w-32">
                           {b.state == "BOUNTY_STATE_REVERTEDBACK"
                             ? "--"
                             : dayjs
@@ -308,10 +308,10 @@ function RepositoryBountiesView(props) {
                                 .format("MMM D, YYYY")}
                         </div>
                       </div>
-                      <div className="w-1/6">
+                      <div className="sm:w-1/6">
                         {b.state == "BOUNTY_STATE_SRCDEBITTED" &&
                         b.expireAt > dayjs().unix() ? (
-                          <div>
+                          <div className="w-36 sm:w-0">
                             <div className="flex items-center rounded-full px-8 w-24 py-0.5 bg-purple text-xs uppercase mt-0.5">
                               Open
                             </div>
@@ -320,30 +320,36 @@ function RepositoryBountiesView(props) {
                           ""
                         )}
                         {b.state == "BOUNTY_STATE_DESTCREDITED" ? (
-                          <div className="flex items-center rounded-full px-4 w-24 py-0.5 bg-teal text-xs uppercase mt-0.5">
-                            Rewarded
+                          <div className="w-36 sm:w-0">
+                            <div className="flex items-center rounded-full px-4 w-24 py-0.5 bg-teal text-xs uppercase mt-0.5">
+                              Rewarded
+                            </div>
                           </div>
                         ) : (
                           ""
                         )}
                         {b.expireAt < dayjs().unix() &&
                         b.state != "BOUNTY_STATE_REVERTEDBACK" ? (
-                          <div className="flex items-center rounded-full px-7 w-24 py-0.5 bg-pink text-xs uppercase mt-0.5 ml-1">
-                            Expired
+                          <div className="w-36 sm:w-0">
+                            <div className="flex items-center rounded-full px-7 w-24 py-0.5 bg-pink text-xs uppercase mt-0.5 ml-1">
+                              Expired
+                            </div>
                           </div>
                         ) : (
                           ""
                         )}
                         {b.state == "BOUNTY_STATE_REVERTEDBACK" ? (
-                          <div className="flex items-center rounded-full px-5 w-24 py-0.5 bg-grey text-xs uppercase mt-0.5">
-                            Reverted
+                          <div className="w-36 sm:w-0">
+                            <div className="flex items-center rounded-full px-5 w-24 py-0.5 bg-grey text-xs uppercase mt-0.5">
+                              Reverted
+                            </div>
                           </div>
                         ) : (
                           ""
                         )}
                       </div>
 
-                      <div className="flex w-1/4 mr-3">
+                      <div className="flex sm:w-1/4 mr-3">
                         <div
                           className={
                             "btn btn-outline rounded text-xs border-green-900 btn-xs font-normal hover:bg-green hover:border-green-900 hover:text-white px-4 " +
@@ -358,7 +364,7 @@ function RepositoryBountiesView(props) {
                         <label
                           htmlFor="my-modal-2"
                           className={
-                            "ml-2 btn modal-button btn-outline rounded text-xs border-green-900 btn-xs font-normal hover:bg-green hover:border-green-900 hover:text-white px-4 "
+                            "ml-2 btn modal-button btn-outline rounded text-xs border-green-900 btn-xs font-normal hover:bg-green hover:border-green-900 hover:text-white px-4"
                           }
                           onClick={() => {
                             setBountyId(b.id);

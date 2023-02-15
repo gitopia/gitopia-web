@@ -18,7 +18,7 @@ function RepositoryIssuesTabs({ repository, active, issueId, ...props }) {
 
   return (
     <div className="mt-8">
-      <div className="tabs relative z-10">
+      <div className="tabs relative overflow-x-hidden overflow-y-hidden flex-nowrap z-10">
         <Link
           href={hrefBase}
           className={
@@ -38,7 +38,7 @@ function RepositoryIssuesTabs({ repository, active, issueId, ...props }) {
         <Link
           href={hrefBase + "/pulls"}
           className={
-            "tab tab-lifted" + (active === "linked-pulls" ? " tab-active" : "")
+            "tab tab-lifted " + (active === "linked-pulls" ? " tab-active" : "")
           }
         >
           <span>Linked Pull Requests</span>
