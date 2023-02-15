@@ -188,6 +188,8 @@ Promise.all([
       let b = filter(branches, { repositoryId: r.id }),
         t = filter(tags, { repositoryId: r.id });
       r.owner.username = owner?.username ? owner.username : r.owner.id;
+      r.owner.address = r.owner.id;
+      if (owner?.username) r.owner.id = r.owner.username;
       r.branches = b;
       r.tags = t;
       if (!/^temp-/.test(owner.username) && owner.address) {

@@ -103,7 +103,6 @@ a {
   cursor: pointer;
   outline: none;
   font-weight: 700;
-
 }
 .mde-header .mde-tabs button:first-child {
   margin-left: 0px;
@@ -213,7 +212,7 @@ a {
   overflow-y: auto;
   color: white;
   background: transparent;
-  border: 1px solid #747D96;
+  border: 1px solid #747d96;
   border-radius: 8px;
 }
 
@@ -1125,6 +1124,9 @@ ul.mde-suggestions li[aria-selected="true"] {
 }
 .btn-link:hover {
   text-decoration: underline;
+}
+.btn-outline:not(.btn-accent):not(.btn-primary):not(.btn-secondary) {
+  border-color: #747d96;
 }
 
 /* ----- react-calendar-heatmap ----- */

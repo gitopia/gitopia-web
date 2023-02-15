@@ -13,7 +13,13 @@ import useWindowSize from "../../../hooks/useWindowSize";
 import getAnyRepositoryAll from "../../../helpers/getAnyRepositoryAll";
 
 export async function getStaticProps() {
-  return { props: {} };
+  const fs = await import("fs");
+  const buildId = fs.readFileSync("./seo/build-id").toString();
+  return {
+    props: {
+      buildId,
+    },
+  };
 }
 
 export async function getStaticPaths() {
@@ -71,8 +77,11 @@ function DaoDashboard(props) {
             </div>
             <div>
               <div className="bg-footer-grad py-6">
-                <div className="text-xs text-type-secondary mx-8 mb-4">
+                <div className="text-xs text-type-secondary mx-8 mb-2">
                   &copy; Gitopia {new Date().getFullYear()}
+                </div>
+                <div className="text-xs text-type-tertiary sm:mx-8 mb-4 text-center sm:text-left">
+                  Build {props.buildId}
                 </div>
                 <div className="mx-6">
                   {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ? (
@@ -110,8 +119,11 @@ function DaoDashboard(props) {
         {isMobile ? (
           <div className="border-t border-grey mt-4">
             <div className="py-6 w-1/2 m-auto">
-              <div className="text-xs text-type-secondary text-center">
+              <div className="text-xs text-type-secondary text-center mb-2">
                 &copy; Gitopia {new Date().getFullYear()}
+              </div>
+              <div className="text-xs text-type-tertiary sm:mx-8 mb-4 text-center sm:text-left">
+                Build {props.buildId}
               </div>
               <div className="mx-6 flex">
                 {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ? (

@@ -217,8 +217,9 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
             prefix: chainInfo.prefix,
           }
         );
-        const [counterPartyAccount] =
-          await accountSignerSecondary.getAccounts();
+        const [
+          counterPartyAccount,
+        ] = await accountSignerSecondary.getAccounts();
         const counterPartyAddress = counterPartyAccount.address;
         wallet.counterPartyAddress = counterPartyAddress;
         wallet.counterPartyChain = chainId;
@@ -383,6 +384,7 @@ export const updateUserBalance = (showNotification = false) => {
 
 export const getBalance = (address) => {
   return async (dispatch, getState) => {
+    if (!address) return null;
     const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
     try {
       const res = await api.queryBalance(
@@ -554,8 +556,9 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
           prefix: chainInfo.prefix,
           ledgerAppName: "Cosmos",
         });
-        const [counterPartyAccount] =
-          await accountSignerSecondary.getAccounts();
+        const [
+          counterPartyAccount,
+        ] = await accountSignerSecondary.getAccounts();
         const counterPartyAddress = counterPartyAccount.address;
         console.log(accountSignerSecondary);
         newWallet.counterPartyAddress = counterPartyAddress;
@@ -793,8 +796,7 @@ export const getAddressforChain = (name, chainId) => {
               "osmo-test-4"
             );
             const accounts = await offlineSigner.getAccounts();
-            const counterPartyAccount =
-              await accountSignerSecondary.getAccounts();
+            const counterPartyAccount = await accountSignerSecondary.getAccounts();
             activeWallet.counterPartyAddress = counterPartyAccount[0].address;
             activeWallet.counterPartyChain = chainId;
             await dispatch({

@@ -20,6 +20,7 @@ const CurrentWallet = dynamic(() => import("./currentWallet"));
 import Drawer from "./drawer";
 import useWindowSize from "../hooks/useWindowSize";
 import WalletInfo from "./dashboard/walletInfo";
+import SearchBar from "./searchBar";
 // const NotificationsCard = dynamic(() =>
 //   import("./dashboard/notificationsButton")
 // );
@@ -180,34 +181,7 @@ function Header(props) {
             ></img>
           </Link>
         </div>
-        {/* <div className="flex-none mr-2">
-        <div className="form-control">
-          <div className="relative">
-            <input
-              name="search"
-              type="text"
-              placeholder="Search"
-              className="w-full pr-16 input input-sm input-ghost input-bordered"
-            />
-            <button className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div> */}
+        <SearchBar />
         {!isMobile ? (
           <div className="items-stretch">
             <a
@@ -359,10 +333,10 @@ function Header(props) {
                 </div>
               </div> */}
               {props.selectedAddress !== null ? (
-                <div className="mt-2">
+                <div className="flex items-center justify-center">
                   <div className="indicator flex-none mr-4">
                     <a
-                      className="btn btn-primary btn-circle btn-base btn-outline btn-sm w-10 h-10"
+                      className="btn btn-circle btn-outline btn-sm w-12 h-12"
                       href="#"
                       onClick={(e) => {
                         setUnread(false);
@@ -372,8 +346,8 @@ function Header(props) {
                       }}
                     >
                       <svg
-                        width="24"
-                        height="24"
+                        width="20"
+                        height="20"
                         viewBox="0 0 24 24"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -382,7 +356,7 @@ function Header(props) {
                           fillRule="evenodd"
                           clipRule="evenodd"
                           d="M4 5H20C21.1046 5 22 5.89543 22 7V9H14V16H22V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V7C2 5.89543 2.89543 5 4 5ZM22 14V11H16V14H22ZM24 16V18C24 20.2091 22.2091 22 20 22H4C1.79086 22 0 20.2091 0 18V7C0 4.79086 1.79086 3 4 3H20C22.2091 3 24 4.79086 24 7V9V16Z"
-                          fill="#ADBECB"
+                          fill="currentColor"
                         />
                       </svg>
                     </a>
@@ -400,7 +374,7 @@ function Header(props) {
                 <button
                   tabIndex="0"
                   className={
-                    "btn rounded-full px-4 relative " +
+                    "btn btn-outline rounded-full px-4 relative " +
                     (props.activeWallet ? "btn-ghost" : "btn-primary") +
                     (props.unlockingWallet ? " loading" : "")
                   }
