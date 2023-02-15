@@ -137,10 +137,10 @@ function RepositoryIssueLinkedPullsView(props) {
             active="linked-pulls"
           />
           {pulls.length > 0 ? (
-            <div className="border border-gray-700 rounded-lg mt-4 text-justify divide-y divide-gray-700">
+            <div className="border border-gray-700 rounded-lg mt-4 text-justify sm:divide-y sm:divide-gray-700 overflow-x-auto">
               <div className="flex mt-4 mb-4">
-                <div className="w-2/3 flex">
-                  <div className="text-type-secondary text-sm ml-4">
+                <div className="sm:w-2/3 flex">
+                  <div className="w-24 text-type-secondary text-sm ml-4">
                     Pull Requests
                   </div>
                   <svg
@@ -149,7 +149,7 @@ function RepositoryIssueLinkedPullsView(props) {
                     viewBox="0 0 8 4"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    className="mt-2.5 ml-2"
+                    className="mt-2.5"
                   >
                     <path
                       d="M0 -0.000106812H8L4 3.99989L0 -0.000106812Z"
@@ -158,7 +158,7 @@ function RepositoryIssueLinkedPullsView(props) {
                   </svg>
                 </div>
 
-                <div className="w-1/12 flex mr-4">
+                <div className="ml-20 sm:ml-0 sm:w-1/12 flex mr-4">
                   <div className="text-type-secondary text-sm">Creator</div>
                   <svg
                     width="8"
@@ -174,7 +174,7 @@ function RepositoryIssueLinkedPullsView(props) {
                     />
                   </svg>
                 </div>
-                <div className="w-1/12 flex mr-4">
+                <div className="ml-2 sm:ml-0 sm:w-1/12 flex mr-4">
                   <div className="text-type-secondary text-sm">Replies</div>
                   <svg
                     width="8"
@@ -190,7 +190,7 @@ function RepositoryIssueLinkedPullsView(props) {
                     />
                   </svg>
                 </div>
-                <div className="w-1/12 flex ml-auto mr-2">
+                <div className="sm:w-1/12 flex ml-3 sm:ml-auto mr-2">
                   <div className="text-type-secondary text-sm">Creation</div>
                   <svg
                     width="8"
@@ -225,9 +225,9 @@ function RepositoryIssueLinkedPullsView(props) {
                       }
                     }}
                   >
-                    <div className="w-2/3">
+                    <div className="sm:w-2/3">
                       {
-                        <div className="flex">
+                        <div className="w-52 sm:w-full flex">
                           <span
                             className={
                               "mr-3 mt-2 ml-4 h-2 w-2 rounded-md justify-self-end self-center inline-block bg-" +
@@ -239,7 +239,7 @@ function RepositoryIssueLinkedPullsView(props) {
                         </div>
                       }
                     </div>
-                    <div className="w-1/12 flex ml-3">
+                    <div className="w-32 sm:w-1/12 flex sm:ml-3">
                       <div className="avatar flex-none items-center">
                         <div className={"w-8 h-8 rounded-full"}>
                           <img
@@ -251,7 +251,7 @@ function RepositoryIssueLinkedPullsView(props) {
                         </div>
                       </div>
                     </div>
-                    <div className="w-1/12 flex mr-8 mt-1.5 ml-2">
+                    <div className="sm:w-1/12 flex mr-8 mt-1.5 ml-10 sm:ml-2">
                       <div className="text-sm mr-3 font-bold text-type-secondary">
                         {p.comments.length}
                       </div>
@@ -270,8 +270,10 @@ function RepositoryIssueLinkedPullsView(props) {
                         />
                       </svg>
                     </div>
-                    <div className="text-sm font-bold text-type-secondary mr-5 ml-auto mt-1.5">
-                      {dayjs.unix(parseInt(p.createdAt)).fromNow()}
+                    <div className="text-sm font-bold text-type-secondary mr-5 ml-6 sm:ml-auto mt-1.5 sm:w-1/12">
+                      <div className="w-24 sm:w-full">
+                        {dayjs.unix(parseInt(p.createdAt)).fromNow()}
+                      </div>
                     </div>
                   </div>
                 );
