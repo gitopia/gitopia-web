@@ -8,7 +8,7 @@ module.exports = {
       pattern: /(bg|text)-(red)-(800)/,
     },
     {
-      pattern: /(bg|text)-(yellow)/,
+      pattern: /(bg|text|border|w|h)-./,
     },
   ],
   darkMode: "media", // or 'media' or 'class'
