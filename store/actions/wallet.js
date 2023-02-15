@@ -33,7 +33,7 @@ const postWalletUnlocked = async (
   });
 
   if (accountSigner) {
-    const { queryClient, txClient } = await import("@gitopia/gitopia-js");
+    const { queryClient, txClient } = await import("@gitopia/gitopia-js/dist");
     if (accountSignerSecondary !== null) {
       const [tc, qc, tcs, qcs, amount] = await Promise.all([
         txClient(
@@ -84,7 +84,7 @@ const postWalletUnlocked = async (
       wallet.getPasswordPromise.resolve("Unlock success");
     }
   } else {
-    const { Api } = await import("@gitopia/gitopia-js/rest");
+    const { Api } = await import("@gitopia/gitopia-js/dist/rest");
 
     updateUserBalance()(dispatch, getState);
     dispatch({

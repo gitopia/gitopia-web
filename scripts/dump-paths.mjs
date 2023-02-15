@@ -1,6 +1,6 @@
 import find from "lodash/find.js";
 import fs from "fs";
-import { Api } from "@gitopia/gitopia-js/rest.js";
+import { Api } from "@gitopia/gitopia-js/dist/rest.js";
 import * as env from "@next/env";
 import globby from "globby";
 import filter from "lodash/filter.js";
