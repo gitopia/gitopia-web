@@ -363,7 +363,7 @@ function Header(props) {
                   </a>
                 </div>
               </div> */}
-              {props.selectedAddress !== null ? (
+              {props.selectedAddress !== null && !isMobile ? (
                 <div className="mt-2">
                   <div className="indicator flex-none mr-4">
                     <a
@@ -555,6 +555,21 @@ function Header(props) {
                                 : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                             </a>
                           </li>
+                          {isMobile ? (
+                            <li>
+                              <a
+                                href="#"
+                                onClick={(e) => {
+                                  setMenuState(6);
+                                  e.preventDefault();
+                                }}
+                              >
+                                IBC Transfer
+                              </a>
+                            </li>
+                          ) : (
+                            ""
+                          )}
                           <li>
                             <Link
                               href={

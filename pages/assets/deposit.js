@@ -80,10 +80,7 @@ function DepositIbcAsset(props) {
       </label>
 
       <input type="checkbox" id="my-modal-2" className="modal-toggle" />
-      <div
-        className="modal modal-bottom sm:modal-middle cursor-pointer"
-        htmlFor="my-modal-2"
-      >
+      <div className="modal modal-middle cursor-pointer" htmlFor="my-modal-2">
         <div className="modal-box relative bg-grey-500">
           <div className="flex mb-4">
             <div className="w-11/12 font-bold text-sm text-type">
@@ -202,7 +199,8 @@ function DepositIbcAsset(props) {
               <label
                 htmlFor="my-modal-2"
                 className={
-                  "btn w-96 px-56 flex-1 bg-green-900 text-xs ml-1 " + loading
+                  "btn w-72 sm:w-96 sm:px-56 flex-1 bg-green-900 text-xs ml-1 " +
+                  loading
                 }
                 onClick={(e) => {
                   setLoading(true);

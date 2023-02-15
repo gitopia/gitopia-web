@@ -31,7 +31,7 @@ function WalletInfo(props) {
   }, [props.selectedAddress]);
 
   return (
-    <div className="w-max p-4 flex flex-col bg-[#28313C] rounded-2xl">
+    <div className="w-80 sm:w-max p-4 flex flex-col bg-[#28313C] rounded-2xl">
       <div className="px-2 flex">
         <div className="text-type-primary text-xs font-bold uppercase">
           Account
@@ -130,148 +130,152 @@ function WalletInfo(props) {
         {assets.map((asset, index) => {
           return (
             <div
-              className="flex p-3 box-content h-7 bg-white bg-opacity-10 rounded-xl flex mb-3"
+              className="sm:flex p-3 box-content h-14 sm:h-7 bg-white bg-opacity-10 rounded-xl mb-3"
               key={index}
             >
-              <div className="mt-0.5">
-                <img height={"30"} width={"30"} src={asset.logo_URIs.png} />
+              <div className="flex justify-center">
+                <div className="mt-0.5">
+                  <img height={"30"} width={"30"} src={asset.logo_URIs.png} />
+                </div>
+                <div className="ml-1 text-sm mt-1">{asset.chain_name}</div>
               </div>
-              <div className="ml-1 text-sm mt-1">{asset.chain_name}</div>
-              <div className="ml-auto flex mr-2">
-                <div className="text-type-primary text-xs mr-1 mt-1.5">
-                  Deposit
-                </div>
-                <div
-                  className="mr-0.5 hover:cursor-pointer"
-                  onClick={() => {
-                    props
-                      .getAddressforChain(
-                        props.activeWallet.name,
-                        asset.chain_name
-                      )
-                      .then(() => {
-                        router.push("/assets/deposit");
-                      });
-                  }}
-                  id={index}
-                >
-                  <svg
-                    width="28"
-                    height="28"
-                    viewBox="0 0 32 32"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+              <div className="flex justify-center ml-2">
+                <div className="sm:ml-auto flex mr-3 sm:mr-2">
+                  <div className="text-type-primary text-xs mr-1 mt-1.5">
+                    Deposit
+                  </div>
+                  <div
+                    className="mr-0.5 hover:cursor-pointer"
+                    onClick={() => {
+                      props
+                        .getAddressforChain(
+                          props.activeWallet.name,
+                          asset.chain_name
+                        )
+                        .then(() => {
+                          router.push("/assets/deposit");
+                        });
+                    }}
+                    id={index}
                   >
-                    <g clipPath="url(#clip0_22_357)">
-                      <path
-                        d="M16 8.5V20.375"
-                        stroke="white"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M10.375 14.75L16 20.375L21.625 14.75"
-                        stroke="white"
-                        strokeWidth="1.2"
-                        strokeLinecap="square"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M9.125 22.875H22.875"
-                        stroke="white"
-                        strokeWidth="1.2"
-                        strokeLinecap="square"
-                        strokeLinejoin="round"
-                      />
-                    </g>
-                    <rect
-                      x="0.5"
-                      y="0.5"
-                      width="31"
-                      height="31"
-                      rx="15.5"
-                      stroke="white"
-                      strokeOpacity="0.2"
-                    />
-                    <defs>
-                      <clipPath id="clip0_22_357">
-                        <rect
-                          width="20"
-                          height="20"
-                          fill="white"
-                          transform="translate(6 6)"
+                    <svg
+                      width="28"
+                      height="28"
+                      viewBox="0 0 32 32"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g clipPath="url(#clip0_22_357)">
+                        <path
+                          d="M16 8.5V20.375"
+                          stroke="white"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
-                      </clipPath>
-                    </defs>
-                  </svg>
+                        <path
+                          d="M10.375 14.75L16 20.375L21.625 14.75"
+                          stroke="white"
+                          strokeWidth="1.2"
+                          strokeLinecap="square"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M9.125 22.875H22.875"
+                          stroke="white"
+                          strokeWidth="1.2"
+                          strokeLinecap="square"
+                          strokeLinejoin="round"
+                        />
+                      </g>
+                      <rect
+                        x="0.5"
+                        y="0.5"
+                        width="31"
+                        height="31"
+                        rx="15.5"
+                        stroke="white"
+                        strokeOpacity="0.2"
+                      />
+                      <defs>
+                        <clipPath id="clip0_22_357">
+                          <rect
+                            width="20"
+                            height="20"
+                            fill="white"
+                            transform="translate(6 6)"
+                          />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </div>
                 </div>
-              </div>
-              <div className="border-l-2 border-[#5A6068] h-8"></div>
-              <div className="ml-2 flex">
-                <div className="text-type-primary text-xs mr-1 mt-1.5">
-                  Withdraw
-                </div>
-                <div
-                  className="hover:cursor-pointer"
-                  onClick={() => {
-                    props
-                      .getAddressforChain(
-                        props.activeWallet.name,
-                        asset.chain_name
-                      )
-                      .then(() => {
-                        router.push("/assets/withdraw");
-                      });
-                  }}
-                  id={index}
-                >
-                  <svg
-                    width="28"
-                    height="28"
-                    viewBox="0 0 32 32"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                <div className="border-l-2 border-[#5A6068] h-7 sm:h-8"></div>
+                <div className="ml-3 sm:ml-2 flex">
+                  <div className="text-type-primary text-xs mr-1 mt-1.5">
+                    Withdraw
+                  </div>
+                  <div
+                    className="hover:cursor-pointer"
+                    onClick={() => {
+                      props
+                        .getAddressforChain(
+                          props.activeWallet.name,
+                          asset.chain_name
+                        )
+                        .then(() => {
+                          router.push("/assets/withdraw");
+                        });
+                    }}
+                    id={index}
                   >
-                    <g clipPath="url(#clip0_22_365)">
-                      <path
-                        d="M10.5757 20.5757L10.1515 21L11 21.8485L11.4243 21.4243L10.5757 20.5757ZM21.4243 11.4243C21.6586 11.1899 21.6586 10.8101 21.4243 10.5757C21.1899 10.3414 20.8101 10.3414 20.5757 10.5757L21.4243 11.4243ZM11.4243 21.4243L21.4243 11.4243L20.5757 10.5757L10.5757 20.5757L11.4243 21.4243Z"
-                        fill="white"
-                      />
-                      <path
-                        d="M12.875 11H21V19.125"
-                        stroke="white"
-                        strokeWidth="1.2"
-                        strokeLinecap="square"
-                        strokeLinejoin="round"
-                      />
-                    </g>
-                    <rect
-                      x="0.5"
-                      y="0.5"
-                      width="31"
-                      height="31"
-                      rx="15.5"
-                      stroke="white"
-                      strokeOpacity="0.2"
-                    />
-                    <defs>
-                      <clipPath id="clip0_22_365">
-                        <rect
-                          width="20"
-                          height="20"
+                    <svg
+                      width="28"
+                      height="28"
+                      viewBox="0 0 32 32"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g clipPath="url(#clip0_22_365)">
+                        <path
+                          d="M10.5757 20.5757L10.1515 21L11 21.8485L11.4243 21.4243L10.5757 20.5757ZM21.4243 11.4243C21.6586 11.1899 21.6586 10.8101 21.4243 10.5757C21.1899 10.3414 20.8101 10.3414 20.5757 10.5757L21.4243 11.4243ZM11.4243 21.4243L21.4243 11.4243L20.5757 10.5757L10.5757 20.5757L11.4243 21.4243Z"
                           fill="white"
-                          transform="translate(6 6)"
                         />
-                      </clipPath>
-                    </defs>
-                  </svg>
+                        <path
+                          d="M12.875 11H21V19.125"
+                          stroke="white"
+                          strokeWidth="1.2"
+                          strokeLinecap="square"
+                          strokeLinejoin="round"
+                        />
+                      </g>
+                      <rect
+                        x="0.5"
+                        y="0.5"
+                        width="31"
+                        height="31"
+                        rx="15.5"
+                        stroke="white"
+                        strokeOpacity="0.2"
+                      />
+                      <defs>
+                        <clipPath id="clip0_22_365">
+                          <rect
+                            width="20"
+                            height="20"
+                            fill="white"
+                            transform="translate(6 6)"
+                          />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>
           );
         })}
-        <div className="mt-10 border-b border-[#3E4051] w-[21rem]"></div>
+        <div className="mt-10 border-b border-[#3E4051] w-[17rem] sm:w-[21rem]"></div>
         <div className="text-type-primary text-xs font-bold uppercase mt-2 mb-2">
           LORE REWARDS
         </div>
