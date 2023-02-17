@@ -22,6 +22,8 @@ const CurrentWallet = dynamic(() => import("./currentWallet"));
 import Drawer from "./drawer";
 import useWindowSize from "../hooks/useWindowSize";
 import WalletInfo from "./dashboard/walletInfo";
+import DepositIbcAsset from "./assets/deposit";
+import WithdrawIbcAsset from "./assets/withdraw";
 // const NotificationsCard = dynamic(() =>
 //   import("./dashboard/notificationsButton")
 // );
@@ -52,6 +54,8 @@ function Header(props) {
     useState("");
   const { isMobile } = useWindowSize();
   const [isOpen, setIsOpen] = useState(false);
+  const [openDeposit, setOpenDeposit] = useState(false);
+  const [openWithdraw, setOpenWithdraw] = useState(false);
 
   const onUserMenuClose = () => {
     setMenuOpen(false);
@@ -469,6 +473,8 @@ function Header(props) {
                     <WalletInfo
                       setMenuOpen={setMenuOpen}
                       setMenuState={setMenuState}
+                      setOpenDeposit={setOpenDeposit}
+                      setOpenWithdraw={setOpenWithdraw}
                     />
                   )}
                   {/* {menuState === 6 && (
@@ -617,6 +623,14 @@ function Header(props) {
             </div>
           </ClickAwayListener>
         </div>
+        <DepositIbcAsset
+          openDeposit={openDeposit}
+          setOpenDeposit={setOpenDeposit}
+        />
+        <WithdrawIbcAsset
+          openWithdraw={openWithdraw}
+          setOpenWithdraw={setOpenWithdraw}
+        />
       </div>
     </>
   );

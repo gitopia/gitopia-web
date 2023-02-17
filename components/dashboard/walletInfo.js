@@ -153,7 +153,7 @@ function WalletInfo(props) {
                           asset.chain_name
                         )
                         .then(() => {
-                          router.push("/assets/deposit");
+                          props.setOpenDeposit(true);
                         });
                     }}
                     id={index}
@@ -224,7 +224,7 @@ function WalletInfo(props) {
                           asset.chain_name
                         )
                         .then(() => {
-                          router.push("/assets/withdraw");
+                          props.setOpenWithdraw(true);
                         });
                     }}
                     id={index}
