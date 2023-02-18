@@ -28,7 +28,7 @@ async function populate(
   populateObject,
   transformData = (d) => d
 ) {
-  const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
+  const api = new Api({ baseURL: process.env.NEXT_PUBLIC_API_URL });
   let nextKey = null,
     res;
 
@@ -45,7 +45,7 @@ async function populate(
       "pagination.key": nextKey,
       "pagination.limit": paginationLimit,
     });
-    if (res.ok) {
+    if (res.status === 200) {
       if (!res.data[dataField]) {
         console.log("Not found", dataField, res.data);
         return;

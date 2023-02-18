@@ -16,7 +16,7 @@ export default async function getRepositoryPullAll(
     }
     console.log(query);
     const res = await api.queryRepositoryPullRequestAll(id, repoName, query);
-    if (res.ok) {
+    if (res.status === 200) {
       return res.data;
     }
     return {};

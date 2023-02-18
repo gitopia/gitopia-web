@@ -7,7 +7,7 @@ export default async function getStorageBridgeAuthStatus(userAddress) {
       userAddress,
       process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS
     );
-    if (res.ok && res.data.haveAuthorization) {
+    if (res.status === 200 && res.data.haveAuthorization) {
       return true;
     } else {
       return false;

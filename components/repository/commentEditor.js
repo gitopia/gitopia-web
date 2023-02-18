@@ -159,7 +159,7 @@ function CommentEditor({
         {onCancel ? (
           <div className="inline-block w-28 sm:w-36 mr-4">
             <button
-              className="btn btn-sm btn-ghost btn-block"
+              className="btn btn-sm btn-outline btn-block"
               onClick={onCancel}
             >
               Cancel

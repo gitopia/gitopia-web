@@ -3,7 +3,7 @@ import api from "./getApi";
 export default async function getRepositoryReleaseAll(id, repoName) {
   try {
     const res = await api.queryRepositoryReleaseAll(id, repoName);
-    if (res.ok) {
+    if (res.status === 200) {
       return res.data.Release;
     }
   } catch (e) {

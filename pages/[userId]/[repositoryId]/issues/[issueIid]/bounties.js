@@ -206,10 +206,10 @@ function RepositoryBountiesView(props) {
               />
             </div>
             {bounties.length > 0 ? (
-              <div className="border border-gray-700 rounded mt-4 text-justify divide-y divide-gray-700">
-                <div className="flex mt-2 mb-2 ml-3">
+              <div className="border border-grey-50 rounded mt-4 text-justify divide-y divide-grey-50">
+                <div className="flex p-4">
                   <div className="w-1/4">
-                    <div className="text-type-secondary text-sm ml-3">
+                    <div className="text-type-secondary text-sm">
                       Amount
                     </div>
                   </div>
@@ -228,15 +228,15 @@ function RepositoryBountiesView(props) {
                     <div className="text-type-secondary text-sm ">Status</div>
                   </div>
 
-                  <div className="text-type-secondary text-sm ml-auto mr-3">
+                  <div className="w-1/4 text-type-secondary text-sm ml-auto">
                     Actions
                   </div>
                 </div>
 
                 {bounties.map((b) => {
                   return (
-                    <div className="flex mt-2 mb-3 pt-3" key={b.id}>
-                      <div className="w-1/4 flex divide-x divide-grey">
+                    <div className="flex p-4" key={b.id}>
+                      <div className="w-1/4 flex divide-x divide-grey-50">
                         {b.amount.length > 1 ? (
                           <div className="dropdown">
                             <div className="flex">
@@ -259,16 +259,15 @@ function RepositoryBountiesView(props) {
                             </div>
                             <div
                               tabIndex="0"
-                              className="flex dropdown-content py-4 bg-grey-500 rounded-md divide-x-2 divide-grey w-max ml-6 mt-2"
+                              className="flex dropdown-content py-4 bg-grey-500 rounded-md divide-x-2 divide-grey-50 w-max ml-6 mt-2"
                             >
                               {b.amount.map((a, key) => {
                                 return (
-                                  <div className="flex" key={key}>
+                                  <div className="flex items-center" key={key}>
                                     <img
                                       height={24}
                                       width={24}
                                       src={coingeckoId[a.denom].icon}
-                                      className="ml-4"
                                     />
 
                                     <div className="ml-2 text-sm uppercase">
@@ -285,12 +284,12 @@ function RepositoryBountiesView(props) {
                         ) : (
                           b.amount.map((a, index) => {
                             return (
-                              <div className="flex" key={index}>
+                              <div className="flex items-center" key={index}>
                                 <img
                                   height={24}
                                   width={24}
                                   src={coingeckoId[a.denom].icon}
-                                  className="ml-4"
+                                  className=""
                                 />
 
                                 <div className="ml-2 text-sm mr-1 uppercase">
@@ -302,7 +301,7 @@ function RepositoryBountiesView(props) {
                           })
                         )}
                       </div>
-                      <div className="ml-5 w-1/6">
+                      <div className="w-1/6">
                         <div className="text-sm">
                           {shrinkAddress(b.creator)}
                         </div>
@@ -351,28 +350,28 @@ function RepositoryBountiesView(props) {
                         )}
                       </div>
 
-                      <div className="flex w-1/4 mr-3">
+                      <div className="flex-none flex w-1/4">
                         <div
                           className={
-                            "btn btn-outline rounded text-xs border-green-900 btn-xs font-normal hover:bg-green hover:border-green-900 hover:text-white px-4 " +
-                            (closeBountyLoading ? "loading" : "")
+                            "btn btn-outline btn-xs px-4" +
+                            (closeBountyLoading ? " loading" : "")
                           }
                           onClick={() => {
                             props.closeBounty(b.id).then(refreshBounty);
                           }}
                         >
-                          CLOSE BOUNTY
+                          CLOSE
                         </div>
                         <label
                           htmlFor="my-modal-2"
                           className={
-                            "ml-2 btn modal-button btn-outline rounded text-xs border-green-900 btn-xs font-normal hover:bg-green hover:border-green-900 hover:text-white px-4 "
+                            "ml-2 btn btn-outline btn-xs px-4"
                           }
                           onClick={() => {
                             setBountyId(b.id);
                           }}
                         >
-                          EXTEND EXPIRY
+                          EXTEND
                         </label>
                         <ExtendExpiry
                           updatedExpiry={updatedExpiry}

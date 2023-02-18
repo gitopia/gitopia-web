@@ -10,7 +10,7 @@ export default async function getPullRequestCommentAll(
       repositoryId,
       pullRequestIid
     );
-    if (res.ok) {
+    if (res.status === 200) {
       let c = res.data.Comment;
       return c;
     }

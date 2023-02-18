@@ -8,7 +8,7 @@ export default async function getIssueComment(
   if (!repositoryId || !issueIid || !commentIid) return null;
   try {
     const res = await api.queryIssueComment(repositoryId, issueIid, commentIid);
-    if (res.ok) {
+    if (res.status === 200) {
       let c = res.data.Comment;
       return c;
     }

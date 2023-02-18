@@ -4,7 +4,7 @@ export default async function getAllRepositoryBranch(id, repositoryName) {
   if (!repositoryName || !id) return null;
   try {
     const res = await api.queryRepositoryBranchAll(id, repositoryName);
-    if (res.ok) {
+    if (res.status === 200) {
       let b = res.data.Branch;
       return b;
     }

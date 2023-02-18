@@ -4,7 +4,7 @@ export default async function getDao(daoId) {
   if (!daoId) return null;
   try {
     const res = await api.queryDao(daoId);
-    if (res.ok) {
+    if (res.status === 200) {
       let u = res.data.dao;
       return u;
     }

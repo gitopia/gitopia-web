@@ -23,7 +23,7 @@ export default async function getProposal(id) {
 
   try {
     const res = await api.queryProposal(id);
-    if (res.ok) {
+    if (res.status === 200) {
       let u = res.data.proposal;
       let obj = {
         msg: u,

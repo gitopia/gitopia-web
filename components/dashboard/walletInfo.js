@@ -10,21 +10,23 @@ import { useRouter } from "next/router";
 import { getAddressforChain } from "../../store/actions/wallet";
 
 function WalletInfo(props) {
-  const [balance, setBalance] = useState(0);
+  const [totalBalance, setTotalBalance] = useState(0);
+  const [tokenBalances, setTokenBalances] = useState({});
   const router = useRouter();
   useEffect(() => {
     async function getWalletbalance() {
-      let balance = await getBalanceInDollars(props.selectedAddress);
-      if (balance) {
-        setBalance(balance);
+      let a = await getBalanceInDollars(props.selectedAddress);
+      if (a) {
+        setTotalBalance(a.totalPrice);
+        setTokenBalances(a.TokenBalances);
       }
     }
     getWalletbalance();
-  });
+  }, []);
 
   return (
     <div className="w-96 p-4 flex flex-col bg-[#28313C] rounded-2xl">
-      <div className="px-2 flex">
+      <div className="flex">
         <div className="text-type-primary text-xs font-bold uppercase">
           Account
         </div>
@@ -80,8 +82,8 @@ function WalletInfo(props) {
           </div>
         </div>
       </div>
-      <div className="mt-2 box-content px-2">
-        <div className="mt-1 box-content h-24 w-full border border-[#404450] rounded-xl flex items-center">
+      <div className="mt-2 box-content">
+        <div className="mt-1 box-content h-20 w-full border border-grey-50 rounded-xl flex items-center">
           <svg
             width="36"
             height="37"
@@ -112,29 +114,76 @@ function WalletInfo(props) {
             />
           </svg>
           <div className="text-sm text-type-primary ml-4">Total Balance</div>
-          <div className="text-type-primary text-2xl font-bold ml-6">
-            ≈ ${balance}
+          <div className="text-type-primary text-2xl font-bold mx-6 text-right flex-1">
+            ${totalBalance}
           </div>
         </div>
         <div className="text-type-primary text-xs font-bold uppercase mt-6 mb-4">
           Tokens
         </div>
+        <div className="flex p-3 box-content bg-grey-50 rounded-xl mb-3 items-center justify-center text-sm group">
+          <div className="flex-none">
+            <img width={24} src={"/tokens/gitopia.svg"} />
+          </div>
+          <div className="mx-3 flex-1">{"Gitopia"}</div>
+
+          <div className="">
+            {props.loreBalance +
+              " " +
+              process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN}
+          </div>
+
+          <div className="flex transition-all items-center cursor-pointer text-type-secondary opacity-0 w-0 group-hover:opacity-100 group-hover:w-8 group-hover:ml-3">
+            <div
+              className="btn btn-circle btn-sm btn-outline tooltip tooltip-bottom tooltip-secondary"
+              data-tip="Send"
+              onClick={() => {
+                props.setMenuState(3);
+              }}
+            >
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 34 34"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g>
+                  <path
+                    d="M10.5757 20.5757L10.1515 21L11 21.8485L11.4243 21.4243L10.5757 20.5757ZM21.4243 11.4243C21.6586 11.1899 21.6586 10.8101 21.4243 10.5757C21.1899 10.3414 20.8101 10.3414 20.5757 10.5757L21.4243 11.4243ZM11.4243 21.4243L21.4243 11.4243L20.5757 10.5757L10.5757 20.5757L11.4243 21.4243Z"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M12.875 11H21V19.125"
+                    stroke="currentColor"
+                    strokeWidth="1.2"
+                    strokeLinecap="square"
+                    strokeLinejoin="round"
+                  />
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
         {assets.map((asset, index) => {
           return (
             <div
-              className="flex p-3 box-content h-7 bg-white bg-opacity-10 rounded-xl flex mb-3"
+              className="flex p-3 box-content bg-grey-50 rounded-xl mb-3 items-center justify-center text-sm group"
               key={index}
             >
               <div className="">
-                <img src={asset.icon} />
+                <img width={24} src={asset.icon} />
               </div>
-              <div className="ml-3">{asset.chain_name}</div>
-              <div className="ml-auto flex mr-3">
-                <div className="text-type-primary text-xs mr-2 mt-1.5">
-                  Deposit
-                </div>
+              <div className="mx-3 flex-1">{asset.chain_name}</div>
+              <div className="">
+                {(tokenBalances[asset.coin_minimal_denom] || 0) +
+                  " " +
+                  asset.coin_minimal_denom}
+              </div>
+              <div className="flex transition-all items-center cursor-pointer text-type-secondary opacity-0 w-0 group-hover:opacity-100 group-hover:w-20 group-hover:ml-3">
                 <div
-                  className="mr-1 hover:cursor-pointer"
+                  className="btn btn-circle btn-sm btn-outline mr-3 tooltip tooltip-bottom tooltip-secondary"
+                  data-tip="Deposit"
                   onClick={() => {
                     props
                       .getAddressforChain(
@@ -150,62 +199,39 @@ function WalletInfo(props) {
                   <svg
                     width="32"
                     height="32"
-                    viewBox="0 0 32 32"
+                    viewBox="0 0 34 34"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <g clipPath="url(#clip0_22_357)">
+                    <g>
                       <path
                         d="M16 8.5V20.375"
-                        stroke="white"
+                        stroke="currentColor"
                         strokeWidth="1.2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
                       <path
                         d="M10.375 14.75L16 20.375L21.625 14.75"
-                        stroke="white"
+                        stroke="currentColor"
                         strokeWidth="1.2"
                         strokeLinecap="square"
                         strokeLinejoin="round"
                       />
                       <path
                         d="M9.125 22.875H22.875"
-                        stroke="white"
+                        stroke="currentColor"
                         strokeWidth="1.2"
                         strokeLinecap="square"
                         strokeLinejoin="round"
                       />
                     </g>
-                    <rect
-                      x="0.5"
-                      y="0.5"
-                      width="31"
-                      height="31"
-                      rx="15.5"
-                      stroke="white"
-                      strokeOpacity="0.2"
-                    />
-                    <defs>
-                      <clipPath id="clip0_22_357">
-                        <rect
-                          width="20"
-                          height="20"
-                          fill="white"
-                          transform="translate(6 6)"
-                        />
-                      </clipPath>
-                    </defs>
                   </svg>
                 </div>
-              </div>
-              <div className="border-l-2 border-[#5A6068] h-8"></div>
-              <div className="ml-3 flex">
-                <div className="text-type-primary text-xs mr-2 mt-1.5">
-                  Withdraw
-                </div>
+
                 <div
-                  className="hover:cursor-pointer"
+                  className="btn btn-circle btn-sm btn-outline tooltip tooltip-bottom tooltip-secondary"
+                  data-tip="Withdraw"
                   onClick={() => {
                     props
                       .getAddressforChain(
@@ -221,57 +247,37 @@ function WalletInfo(props) {
                   <svg
                     width="32"
                     height="32"
-                    viewBox="0 0 32 32"
+                    viewBox="0 0 34 34"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <g clipPath="url(#clip0_22_365)">
+                    <g>
                       <path
                         d="M10.5757 20.5757L10.1515 21L11 21.8485L11.4243 21.4243L10.5757 20.5757ZM21.4243 11.4243C21.6586 11.1899 21.6586 10.8101 21.4243 10.5757C21.1899 10.3414 20.8101 10.3414 20.5757 10.5757L21.4243 11.4243ZM11.4243 21.4243L21.4243 11.4243L20.5757 10.5757L10.5757 20.5757L11.4243 21.4243Z"
-                        fill="white"
+                        fill="currentColor"
                       />
                       <path
                         d="M12.875 11H21V19.125"
-                        stroke="white"
+                        stroke="currentColor"
                         strokeWidth="1.2"
                         strokeLinecap="square"
                         strokeLinejoin="round"
                       />
                     </g>
-                    <rect
-                      x="0.5"
-                      y="0.5"
-                      width="31"
-                      height="31"
-                      rx="15.5"
-                      stroke="white"
-                      strokeOpacity="0.2"
-                    />
-                    <defs>
-                      <clipPath id="clip0_22_365">
-                        <rect
-                          width="20"
-                          height="20"
-                          fill="white"
-                          transform="translate(6 6)"
-                        />
-                      </clipPath>
-                    </defs>
                   </svg>
                 </div>
               </div>
             </div>
           );
         })}
-        <div className="mt-10 border-b border-[#3E4051] w-[21rem]"></div>
-        <div className="text-type-primary text-xs font-bold uppercase mt-2 mb-2">
+        <div className="text-type-primary text-xs font-bold uppercase mt-6 mb-4">
           LORE REWARDS
         </div>
-        <div className="mt-1 p-4 bg-grey box-content h-14 rounded-lg flex">
-          <div className="mt-1 border border-[#747D96] h-8 w-8 rounded-full">
+        <div className="mt-1 p-4 box-content h-14 rounded-lg flex bg-rewards-grad">
+          <div className="mt-1 border border-grey-300 h-8 w-8 rounded-full flex items-center justify-center">
             <svg
               width="11"
-              height="21"
+              height="18"
               viewBox="0 0 11 21"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -296,15 +302,15 @@ function WalletInfo(props) {
               />
             </svg>
           </div>
-          <div className="ml-2">
+          <div className="ml-2 flex-1">
             <div className="font-semibold text-3xl">0</div>
-            <div className="font-bold text-xs">≈$0.0</div>
+            <div className="font-bold text-xs text-type-tertiary">≈ $0.0</div>
           </div>
           <div
             disabled={true}
-            className="btn mt-4 ml-auto h-8 px-3.5 py-2 w-36 rounded text-white text-xs font-bold bg-green active:bg-green hover:bg-green-400 hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150 uppercase"
+            className="btn btn-primary btn-sm mt-3"
           >
-            claim rewards
+            Claim Rewards
           </div>
         </div>
       </div>

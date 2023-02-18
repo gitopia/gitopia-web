@@ -12,7 +12,7 @@ export default async function getPullRequestComment(
       pullRequestIid,
       commentIid
     );
-    if (res.ok) {
+    if (res.status === 200) {
       let c = res.data.Comment;
       return c;
     }

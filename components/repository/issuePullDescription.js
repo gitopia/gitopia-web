@@ -114,7 +114,7 @@ function IssuePullDescription({
             <div className="text-right mt-4">
               <div className="inline-block w-36 mr-4">
                 <button
-                  className={"btn btn-sm btn-block"}
+                  className={"btn btn-sm btn-outline btn-block"}
                   onClick={() => {
                     setIsEditing(false);
                     setNewDescription(issuePullObj.description);
@@ -141,13 +141,13 @@ function IssuePullDescription({
         ) : (
           <div className="">
             <div className="border border-grey rounded-lg flex-1">
-              <div className="flex text-xs px-4 py-2 rounded-t">
-                <div className="flex-none ml-auto">
+              <div className="text-xs px-2 rounded-t relative">
+                <div className="absolute right-2 top-1">
                   {issuePullObj.creator === props.selectedAddress ? (
                     <div className="dropdown dropdown-end">
                       <div
                         tabIndex="0"
-                        className="btn btn-square btn-xs btn-ghost"
+                        className="btn btn-square btn-xs btn-link"
                       >
                         <svg
                           width="21"
@@ -182,7 +182,7 @@ function IssuePullDescription({
                 </div>
               </div>
 
-              <div className="text-xs px-6 pb-6">
+              <div className="text-xs p-6">
                 <div className="text-white font-normal mb-3 markdown-body">
                   {issuePullObj.description.length ? (
                     <ReactMarkdown linkTarget="_blank">

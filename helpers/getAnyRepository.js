@@ -7,7 +7,7 @@ export default async function getAnyRepository(
   if (!usernameOrAddress || !repositoryName) return null;
   try {
     const res = await api.queryAnyRepository(usernameOrAddress, repositoryName);
-    if (res.ok) {
+    if (res.status === 200) {
       return res.data.Repository;
     }
     return {

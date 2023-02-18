@@ -7,7 +7,7 @@ export default async function getPullRequest(id, repositoryName, pullIid) {
       repositoryName,
       pullIid
     );
-    if (res.ok) {
+    if (res.status === 200) {
       let i = res.data.PullRequest;
       return i;
     }

@@ -44,7 +44,7 @@ function RepositoryIssuesTabs({ repository, active, issueId, ...props }) {
           <span>Linked Pull Requests</span>
         </Link>
       </div>
-      <div className="border-b border-grey relative -top-px z-0" />
+      <div className="border-b border-grey-50 relative -top-px z-0" />
     </div>
   );
 }

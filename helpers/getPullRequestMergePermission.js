@@ -11,7 +11,7 @@ export default async function getPullRequestMergePermission(
       repositoryId,
       pullIid
     );
-    if (res.ok) {
+    if (res.status === 200) {
       return res.data;
     }
   } catch (e) {

@@ -864,7 +864,6 @@ export const forkRepository = ({
       owner: ownerId,
       provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
     };
-    console.log("fork", repository);
     const { env } = getState();
 
     try {
@@ -996,7 +995,6 @@ export const createRelease = (
       release.id = releaseId;
     }
 
-    console.log("release", release, "edit", edit);
     try {
       const message = edit
         ? await env.txClient.msgUpdateRelease(release)
@@ -1006,7 +1004,6 @@ export const createRelease = (
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
-        console.log(result);
         return null;
       }
     } catch (e) {
@@ -1027,7 +1024,6 @@ export const deleteRelease = ({ releaseId }) => {
       id: releaseId,
     };
 
-    console.log("release", release);
     try {
       const message = await env.txClient.msgDeleteRelease(release);
       const result = await sendTransaction({ message })(dispatch, getState);
@@ -1035,7 +1031,6 @@ export const deleteRelease = ({ releaseId }) => {
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
-        console.log(result);
         return null;
       }
     } catch (e) {
@@ -1075,7 +1070,6 @@ export const createTag = ({
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
-        console.log(result);
         return null;
       }
     } catch (e) {
@@ -1111,7 +1105,6 @@ export const deleteTag = ({
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
-        console.log(result);
         return null;
       }
     } catch (e) {
@@ -1147,7 +1140,6 @@ export const deleteBranch = ({
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
-        console.log(result);
         return null;
       }
     } catch (e) {

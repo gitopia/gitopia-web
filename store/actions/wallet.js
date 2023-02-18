@@ -91,7 +91,7 @@ const postWalletUnlocked = async (
       type: envActions.SET_CLIENTS,
       payload: {
         txClient: null,
-        queryClient: new Api({ baseUrl: env.apiNode }),
+        queryClient: new Api({ baseURL: env.apiNode }),
       },
     });
   }
@@ -781,7 +781,7 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
   });
 };
 
-export const getAddressforChain = (name, chainId) => {
+  export const getAddressforChain = (name, chainId) => {
   return async (dispatch, getState) => {
     try {
       const { wallet } = getState();
