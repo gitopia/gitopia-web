@@ -349,34 +349,40 @@ function RepositoryBountiesView(props) {
                       </div>
 
                       {props.selectedAddress === b.creator ? (
-                        <div className="flex-none flex w-1/4">
-                          <div
-                            className={
-                              "btn btn-outline btn-xs px-4" +
-                              (closeBountyLoading ? " loading" : "")
-                            }
-                            onClick={() => {
-                              props.closeBounty(b.id).then(refreshBounty);
-                            }}
-                          >
-                            CLOSE
+                        b.state == "BOUNTY_STATE_SRCDEBITTED" ||
+                        (b.expireAt < dayjs().unix() &&
+                          b.state != "BOUNTY_STATE_REVERTEDBACK") ? (
+                          <div className="flex-none flex w-1/4">
+                            <div
+                              className={
+                                "btn btn-outline btn-xs px-4" +
+                                (closeBountyLoading ? " loading" : "")
+                              }
+                              onClick={() => {
+                                props.closeBounty(b.id).then(refreshBounty);
+                              }}
+                            >
+                              CLOSE
+                            </div>
+                            <label
+                              htmlFor="my-modal-2"
+                              className={"ml-2 btn btn-outline btn-xs px-4"}
+                              onClick={() => {
+                                setBountyId(b.id);
+                              }}
+                            >
+                              EXTEND
+                            </label>
+                            <ExtendExpiry
+                              updatedExpiry={updatedExpiry}
+                              setUpdatedExpiry={setUpdatedExpiry}
+                              bountyId={bountyId}
+                              onUpdate={refreshBounty}
+                            ></ExtendExpiry>
                           </div>
-                          <label
-                            htmlFor="my-modal-2"
-                            className={"ml-2 btn btn-outline btn-xs px-4"}
-                            onClick={() => {
-                              setBountyId(b.id);
-                            }}
-                          >
-                            EXTEND
-                          </label>
-                          <ExtendExpiry
-                            updatedExpiry={updatedExpiry}
-                            setUpdatedExpiry={setUpdatedExpiry}
-                            bountyId={bountyId}
-                            onUpdate={refreshBounty}
-                          ></ExtendExpiry>
-                        </div>
+                        ) : (
+                          ""
+                        )
                       ) : (
                         ""
                       )}
