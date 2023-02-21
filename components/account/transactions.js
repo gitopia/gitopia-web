@@ -1,45 +1,61 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import dayjs from "dayjs";
-import { getUserTransaction, txTypes } from "../../helpers/getUserTransactions";
+import QueryUserTransactions from "../../helpers/gql/queryUserTransactions";
+import { txTypes } from "../../helpers/transactionsTypes";
+import { ApolloProvider } from "@apollo/client";
+import { updatedClient } from "../../helpers/apolloClient";
 import classNames from "classnames";
 
 function AccountTransactions(props) {
   const [userTransactions, setUserTransactions] = useState([]);
-  const [pageTotal, setPageTotal] = useState(1);
+  const [showTransactions, setShowTransactions] = useState([]);
+  const [pageTotal, setPageTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [start, setStart] = useState(0);
+  const [end, setEnd] = useState(10);
 
   const loadPrevTransactions = async () => {
     setCurrentPage(currentPage - 1);
+    setStart(start - 10);
+    setEnd(end - 10);
+    setShowTransactions(userTransactions.slice(start, end));
   };
 
   const loadNextTransactions = async () => {
     setCurrentPage(currentPage + 1);
+    setStart(start + 10);
+    setEnd(end + 10);
+    setShowTransactions(userTransactions.slice(start, end));
   };
 
   useEffect(() => {
-    async function initTransactions() {
-      const data = await getUserTransaction(props.userId, 10, currentPage);
-      setUserTransactions(data.tx_responses);
-      setPageTotal(Math.ceil(data.total / 10));
+    if (userTransactions.length > 0) {
+      setPageTotal(Math.ceil(userTransactions.length / 10));
+      setShowTransactions(userTransactions.slice(start, end));
     }
-    initTransactions();
-  }, [props.userId, currentPage]);
+  }, [userTransactions]);
 
   return (
     <>
       <div className="mt-8">
-        {userTransactions?.map((txs) => {
+        <ApolloProvider client={updatedClient}>
+          <QueryUserTransactions
+            setUserTransactions={setUserTransactions}
+            creator={props.userId}
+          />
+        </ApolloProvider>
+        {showTransactions?.map((txs) => {
           return (
-            <div key={txs.txhash}>
+            <div key={txs.txHash}>
               <div className="card  bordered mb-5 bg-gray-800 h-27 overflow-x-auto">
                 <div className="flex">
                   {
                     <div
                       className={classNames(
                         "h-20 w-2 rounded-full mr-7 ml-2 my-2",
-                        txTypes[txs.tx.body.messages[0]["@type"]]?.bg_color
-                          ? txTypes[txs.tx.body.messages[0]["@type"]]?.bg_color
+                        txTypes[txs.message]?.bg_color
+                          ? txTypes[txs.message]?.bg_color
                           : "bg-gray-200"
                       )}
                     ></div>
@@ -47,20 +63,16 @@ function AccountTransactions(props) {
                   <div className="my-4">
                     <div>
                       <div className="text-2xl">
-                        {txTypes[txs?.tx.body.messages[0]["@type"]] ? (
+                        {txTypes[txs.message] ? (
                           <div
                             className={
-                              "text-sm " +
-                              txTypes[txs.tx.body.messages[0]["@type"]]
-                                ?.text_color
+                              "text-sm " + txTypes[txs.message]?.text_color
                             }
                           >
-                            {txTypes[txs.tx.body.messages[0]["@type"]]?.msg}
+                            {txTypes[txs.message]?.msg}
                           </div>
                         ) : (
-                          <div className="text-sm">
-                            {txs.tx.body.messages[0]["@type"]}
-                          </div>
+                          <div className="text-sm">{txs.message}</div>
                         )}
                       </div>
                     </div>
@@ -73,18 +85,20 @@ function AccountTransactions(props) {
                             window.open(
                               process.env.NEXT_PUBLIC_EXPLORER_URL +
                                 "/transactions/" +
-                                txs.txhash
+                                txs.txHash
                             );
                           }
                         }}
                       >
-                        {" " + txs.txhash}
+                        {" " + txs.txHash}
                       </a>
                     </div>
                     <div>
                       <p className="mt-2 text-xs text-type-secondary">
                         {"Timestamp: " +
-                          dayjs(txs.timestamp).format("DD-MM-YYYY HH:mm A")}
+                          dayjs
+                            .unix(txs.createdAt)
+                            .format("DD-MM-YYYY HH:mm A")}
                       </p>
                     </div>
                   </div>
