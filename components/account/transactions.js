@@ -10,31 +10,21 @@ import classNames from "classnames";
 function AccountTransactions(props) {
   const [userTransactions, setUserTransactions] = useState([]);
   const [showTransactions, setShowTransactions] = useState([]);
-  const [pageTotal, setPageTotal] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
   const [start, setStart] = useState(0);
-  const [end, setEnd] = useState(10);
 
   const loadPrevTransactions = async () => {
-    setCurrentPage(currentPage - 1);
     setStart(start - 10);
-    setEnd(end - 10);
-    setShowTransactions(userTransactions.slice(start, end));
   };
 
   const loadNextTransactions = async () => {
-    setCurrentPage(currentPage + 1);
     setStart(start + 10);
-    setEnd(end + 10);
-    setShowTransactions(userTransactions.slice(start, end));
   };
 
   useEffect(() => {
     if (userTransactions.length > 0) {
-      setPageTotal(Math.ceil(userTransactions.length / 10));
-      setShowTransactions(userTransactions.slice(start, end));
+      setShowTransactions(userTransactions.slice(start, start + 10));
     }
-  }, [userTransactions]);
+  }, [userTransactions, start]);
 
   return (
     <>
@@ -108,12 +98,12 @@ function AccountTransactions(props) {
           );
         })}
       </div>
-      {pageTotal > 0 ? (
+      {userTransactions.length > 0 ? (
         <div className="flex">
           <div className="">
             <button
               className={"btn btn-sm"}
-              disabled={currentPage < 2}
+              disabled={start === 0}
               onClick={() => {
                 loadPrevTransactions();
                 window.scrollTo(0, 0);
@@ -125,7 +115,7 @@ function AccountTransactions(props) {
           <div className="ml-auto self-center">
             <button
               className={"btn btn-sm"}
-              disabled={pageTotal == currentPage}
+              disabled={start + 10 >= userTransactions.length}
               onClick={() => {
                 loadNextTransactions();
                 window.scrollTo(0, 0);
