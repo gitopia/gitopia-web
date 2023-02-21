@@ -8,6 +8,7 @@ import userReducer from "./user";
 import daoReducer from "./dao";
 import userNotificationReducer from "./userNotification";
 import taskQueueReducer from "./taskQueue";
+import ibcAssetsReducer from "./ibcAssets";
 
 const rootReducer = combineReducers({
   //   hydrate: hydrateReducer,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   dao: daoReducer,
   userNotification: userNotificationReducer,
   taskQueue: taskQueueReducer,
+  ibcAssets: ibcAssetsReducer,
 });
 
 export default rootReducer;

@@ -1,12 +1,17 @@
 import Head from "next/head";
 import Header from "../../../components/header";
 import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { connect } from "react-redux";
 import dayjs from "dayjs";
 import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
 import useRepository from "../../../hooks/useRepository";
+import {
+  isCurrentUserEligibleToUpdate,
+  deleteBranch,
+} from "../../../store/actions/repository";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -22,6 +27,19 @@ export async function getStaticPaths() {
 function RepositoryBranchesView(props) {
   const router = useRouter();
   const { repository, refreshRepository } = useRepository();
+  const [currentUserEditPermission, setCurrentUserEditPermission] =
+    useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  useEffect(() => {
+    async function updatePermissions() {
+      setCurrentUserEditPermission(
+        await props.isCurrentUserEligibleToUpdate(repository)
+      );
+    }
+    updatePermissions();
+  }, [repository]);
   return (
     <div
       data-theme="dark"
@@ -44,7 +62,8 @@ function RepositoryBranchesView(props) {
                 router.query.repositoryId,
                 "branches",
               ].join("/")}
-              className="btn btn-sm btn-active">
+              className="btn btn-sm btn-active"
+            >
               Branches
             </Link>
             <Link
@@ -54,7 +73,8 @@ function RepositoryBranchesView(props) {
                 router.query.repositoryId,
                 "tags",
               ].join("/")}
-              className="btn btn-sm">
+              className="btn btn-sm"
+            >
               Tags
             </Link>
           </div>
@@ -62,17 +82,7 @@ function RepositoryBranchesView(props) {
             {repository.branches.map((b) => {
               return (
                 <div className="mt-8" key={b.name}>
-                  <a
-                    className="flex"
-                    href={
-                      "/" +
-                      repository.owner.id +
-                      "/" +
-                      repository.name +
-                      "/tree/" +
-                      b.name
-                    }
-                  >
+                  <a className="flex">
                     <div>
                       <svg
                         viewBox="0 0 24 24"
@@ -107,7 +117,19 @@ function RepositoryBranchesView(props) {
                         </g>
                       </svg>
                     </div>
-                    <div className="text-primary">{b.name}</div>
+                    <a
+                      className="text-primary"
+                      href={
+                        "/" +
+                        repository.owner.id +
+                        "/" +
+                        repository.name +
+                        "/tree/" +
+                        b.name
+                      }
+                    >
+                      {b.name}
+                    </a>
                     <button
                       className="btn btn-xs btn-ghost ml-1 mt-0.5"
                       onClick={(e) => {
@@ -129,6 +151,96 @@ function RepositoryBranchesView(props) {
                         />
                       </svg>
                     </button>
+                    {currentUserEditPermission ? (
+                      <div className=" ml-2 flex-none text-sm sm:text-base w-10 sm:w-20">
+                        <div
+                          onClick={() => {
+                            setConfirmDelete(true);
+                          }}
+                        >
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="hover:cursor-pointer stroke-type-secondary hover:stroke-green"
+                          >
+                            <rect
+                              x="6"
+                              y="9"
+                              width="12"
+                              height="12"
+                              strokeWidth="2"
+                            />
+                            <rect x="5.5" y="4.5" width="13" height="1" />
+                            <rect x="9.5" y="2.5" width="5" height="1" />
+                            <rect
+                              x="10.5"
+                              y="12.5"
+                              width="5"
+                              height="1"
+                              transform="rotate(90 10.5 12.5)"
+                            />
+                            <rect
+                              x="14.5"
+                              y="12.5"
+                              width="5"
+                              height="1"
+                              transform="rotate(90 14.5 12.5)"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                    <input
+                      type="checkbox"
+                      checked={confirmDelete}
+                      readOnly
+                      className="modal-toggle"
+                    />
+                    <div className="modal">
+                      <div className="modal-box">
+                        <p>Are you sure ?</p>
+                        <div className="modal-action">
+                          <label
+                            className="btn btn-sm"
+                            onClick={() => {
+                              setConfirmDelete(false);
+                            }}
+                          >
+                            Cancel
+                          </label>
+                          <label
+                            className={
+                              "btn btn-sm btn-primary " +
+                              (isDeleting ? "loading" : "")
+                            }
+                            onClick={async () => {
+                              setIsDeleting(true);
+
+                              props
+                                .deleteBranch({
+                                  repoOwnerId: repository.owner.id,
+                                  repositoryName: repository.name,
+                                  name: b.name,
+                                })
+                                .then((res) => {
+                                  if (res.code == 0) {
+                                    refreshRepository();
+                                    setConfirmDelete(false);
+                                    setIsDeleting(false);
+                                  }
+                                });
+                            }}
+                          >
+                            Delete
+                          </label>
+                        </div>
+                      </div>
+                    </div>
                   </a>
                   <div className="text-xs text-type-secondary mt-2">
                     {"last updated " + dayjs(b.updatedAt * 1000).fromNow()}
@@ -149,4 +261,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositoryBranchesView);
+export default connect(mapStateToProps, {
+  isCurrentUserEligibleToUpdate,
+  deleteBranch,
+})(RepositoryBranchesView);

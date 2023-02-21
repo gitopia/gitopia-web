@@ -4,7 +4,7 @@ export default async function getUser(userId) {
   if (!userId) return null;
   try {
     const res = await api.queryUser(userId);
-    if (res.ok) {
+    if (res.status === 200) {
       let u = res.data.User;
       return u;
     }

@@ -7,13 +7,14 @@ import { Api as ibcApi } from "../store/ibc.applications.transfer.v1/module/rest
 const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
 const ibc = new ibcApi({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
 export default async function getBalanceInDollars(address) {
-  if (!address) return null;
+  if (!address) return {};
   try {
-    let totalPrice = 0;
+    let totalPrice = 0, TokenBalances = {}, USDBalances={};
     const res = await api.queryAllBalances(address);
     if (res.ok) {
       let balance = res.data.balances;
       for (let i = 0; i < balance.length; i++) {
+        TokenBalances[balance[i].denom] = balance[i].amount;
         if (balance[i].denom.includes("ibc")) {
           const denomHash = balance[i].denom.slice(4, balance[i].denom.length);
           const result = await ibc.queryDenomTrace(denomHash);
@@ -31,6 +32,7 @@ export default async function getBalanceInDollars(address) {
                   balance[i].amount /
                   Math.pow(10, coingeckoId[denom].coinDecimals);
                 totalPrice = price * perCoinPrice;
+                USDBalances[denom] = price * perCoinPrice;
               })
               .catch((err) => {
                 console.error(err);
@@ -40,7 +42,12 @@ export default async function getBalanceInDollars(address) {
         }
       }
     }
-    return totalPrice < 1 ? totalPrice.toFixed(7) : totalPrice.toFixed(3);
+
+    return {
+      totalPrice: totalPrice === 0 ? 0 : (totalPrice< 1  ? totalPrice.toFixed(6) : totalPrice.toFixed(2)),
+      TokenBalances,
+      USDBalances
+    }
   } catch (e) {
     console.error(e);
   }

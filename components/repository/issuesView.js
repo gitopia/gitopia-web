@@ -16,7 +16,11 @@ function PullRequestIssueView(props) {
     async function fetchIssues() {
       const array = [];
       for (var i = 0; i < props.issues.length; i++) {
-        const res = await getIssue(props.issues[i].id);
+        const res = await getIssue(
+          props.repoOwner,
+          props.repositoryName,
+          props.issues[i].iid
+        );
         array.push(res);
       }
       setIssues(array);

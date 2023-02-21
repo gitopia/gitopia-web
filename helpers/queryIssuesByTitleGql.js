@@ -2,10 +2,10 @@ import { useQuery, gql } from "@apollo/client";
 import { connect } from "react-redux";
 const QUERY_ISSUES = gql`
   query issuesByTitle($substr: String!, $repoId: Int!) {
-    issues(where: { title_contains_nocase: $substr, repositoryid: $repoId }) {
+    issues(where: { title_contains_nocase: $substr, repositoryId: $repoId }) {
       creator
       title
-      repositoryid
+      repositoryId
       iid
       state
     }

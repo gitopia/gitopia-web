@@ -36,7 +36,6 @@ export default function useRepository(initialRepository = {}) {
         router.query.userId,
         router.query.repositoryId
       );
-
       if (r) {
         let ownerDetails = {};
 
@@ -44,7 +43,6 @@ export default function useRepository(initialRepository = {}) {
           getAllRepositoryBranch(r.owner.id, r.name),
           getAllRepositoryTag(r.owner.id, r.name),
         ]);
-
         if (r.owner.type === "USER") {
           ownerDetails = await getUser(r.owner.id);
           setRepository({

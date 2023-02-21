@@ -11,6 +11,7 @@ import Footer from "../../../components/footer";
 import RenameRepository from "../../../components/repository/renameRepository";
 import CollaboratorsList from "../../../components/repository/collaboratorsList";
 import TransferOwnership from "../../../components/repository/transferOwnership";
+import DeleteRepository from "../../../components/repository/deleteRepository";
 import useRepository from "../../../hooks/useRepository";
 import ToggleForking from "../../../components/repository/toggleForking";
 import useWindowSize from "../../../hooks/useWindowSize";
@@ -111,6 +112,15 @@ function RepositorySettingsView(props) {
                       }}
                     />
                   </div>
+                  {/* <div className="mt-6">
+                    <DeleteRepository
+                      currentOwnerId={repository.owner.id}
+                      repoName={repository.name}
+                      onSuccess={async () => {
+                        router.push("/home");
+                      }}
+                    />
+                  </div> */}
                 </div>
                 {/* <div className="flex py-6 items-center">
                   <div className="flex-1 mr-8">

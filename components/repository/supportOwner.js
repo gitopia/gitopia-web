@@ -296,7 +296,7 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
                   />
                 </svg>
                 <div className="pl-3">
-                  <div className="text-xs h-3/4">
+                  <div className="text-sm h-3/4">
                     {props.advanceUser === true
                       ? props.loreBalance
                       : props.loreBalance / 1000000}{" "}
@@ -307,52 +307,54 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
                 </div>
               </div>
             </div>
-            <div className="flex ml-auto self-center">
-              <div className="modal-action">
-                <label
-                  htmlFor="my-modal-2"
-                  className="btn btn-sm btn-primary flex-1 bg-green-900"
-                  onClick={(e) => {
-                    props
-                      .transferToWallet(
-                        props.selectedAddress,
-                        ownerAddress,
+          </div>
+          <div className="modal-action">
+            <div className="w-28 sm:w-36">
+              <label
+                htmlFor="my-modal-2"
+                className="btn btn-sm btn-block"
+                onClick={(e) => {
+                  amountRef.current.value = "";
+                  setAmount("");
+                  setValidateAmountError(null);
+                }}
+              >
+                Close
+              </label>
+            </div>
+            <div className="w-28 sm:w-36">
+              <label
+                htmlFor="my-modal-2"
+                className="btn btn-sm btn-primary flex-1 bg-green-900  btn-block"
+                onClick={(e) => {
+                  props
+                    .transferToWallet(
+                      props.selectedAddress,
+                      ownerAddress,
+                      props.advanceUser === true
+                        ? amount.toString()
+                        : (amount * 1000000).toString()
+                    )
+                    .then(async (res) => {
+                      amountRef.current.value = "";
+                      setAmount("");
+                      setValidateAmountError(null);
+                      const balance = await props.getBalance(ownerAddress);
+                      setOwnerBalance(
                         props.advanceUser === true
-                          ? amount.toString()
-                          : (amount * 1000000).toString()
-                      )
-                      .then(async (res) => {
-                        amountRef.current.value = "";
-                        setAmount("");
-                        setValidateAmountError(null);
-                        const balance = await props.getBalance(ownerAddress);
-                        setOwnerBalance(
-                          props.advanceUser === true
-                            ? balance +
-                                " " +
-                                process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-                            : balance / 1000000 +
-                                " " +
-                                process.env.NEXT_PUBLIC_CURRENCY_TOKEN
-                        );
-                      });
-                  }}
-                  disabled={validateAmountError !== null || amount.length <= 0}
-                >
-                  CONTRIBUTE
-                </label>
-                <label
-                  htmlFor="my-modal-2"
-                  className="btn btn-sm"
-                  onClick={(e) => {
-                    amountRef.current.value = "";
-                    setAmount("");
-                    setValidateAmountError(null);
-                  }}
-                >
-                  Close
-                </label>
-              </div>
+                          ? balance +
+                              " " +
+                              process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                          : balance / 1000000 +
+                              " " +
+                              process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+                      );
+                    });
+                }}
+                disabled={validateAmountError !== null || amount.length <= 0}
+              >
+                Contribute
+              </label>
             </div>
           </div>
         </div>

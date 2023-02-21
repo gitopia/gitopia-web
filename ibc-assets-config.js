@@ -1,6 +1,6 @@
 export const assets = [
   {
-    chain_name: "osmosis",
+    chain_name: "Osmosis",
     chain_id: {
       id: "osmo-test-4",
       version: 4,
@@ -16,7 +16,7 @@ export const assets = [
     prefix: "osmo",
     coin_minimal_denom: "uosmo",
     fee: "200",
-  },
+  }
 ];
 
 export const coingeckoId = {

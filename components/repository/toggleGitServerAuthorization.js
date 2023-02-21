@@ -39,7 +39,8 @@ function ToggleGitServerAuthorization({ address, onSuccess, ...props }) {
       </div>
       <div
         className={
-          "btn btn-disabled btn-sm btn-ghost" + (isToggling ? " loading" : "")
+          "btn btn-disabled btn-sm bg-transparent" +
+          (isToggling ? " loading" : "")
         }
       >
         <input

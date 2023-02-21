@@ -7,8 +7,8 @@ import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import find from "lodash/find";
 
-import getRepositoryIssue from "../../../../../helpers/getRepositoryIssue";
-import getComment from "../../../../../helpers/getComment";
+import getIssue from "../../../../../helpers/getIssue";
+import getIssueComment from "../../../../../helpers/getIssueComment";
 import shrinkAddress from "../../../../../helpers/shrinkAddress";
 import RepositoryHeader from "../../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
@@ -35,6 +35,7 @@ import IssuePullRequestView from "../../../../../components/repository/pullReque
 import IssueBountyView from "../../../../../components/repository/bountiesView";
 import Link from "next/link";
 import filter from "lodash/filter";
+import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
 
 export async function getStaticProps({ params }) {
   try {
@@ -105,14 +106,16 @@ function RepositoryIssueView(props) {
 
   useEffect(() => {
     async function initIssues() {
-      const [i] = await Promise.all([
-        getRepositoryIssue(
+      const [i, c] = await Promise.all([
+        getIssue(
           router.query.userId,
           router.query.repositoryId,
           router.query.issueIid
         ),
+        getIssueCommentAll(repository.id, router.query.issueIid),
       ]);
       if (i) {
+        i.comments = c;
         setIssue(i);
       } else {
         setErrorStatusCode(404);
@@ -123,18 +126,23 @@ function RepositoryIssueView(props) {
   }, [router.query.issueIid, repository.id]);
 
   const getAllComments = async () => {
-    const pr = issue.comments.map((c) => getComment(c));
-    const comments = await Promise.all(pr);
-    setAllComments(comments);
+    const comments = await getIssueCommentAll(repository.id, issue.iid);
+    if (comments) {
+      setAllComments(comments);
+    } else {
+      setAllComments([]);
+    }
   };
 
   const refreshIssue = async () => {
-    const i = await getRepositoryIssue(
-      repository.owner.id,
-      repository.name,
-      issue.iid
-    );
-    setIssue(i);
+    const [i, c] = await Promise.all([
+      getIssue(router.query.userId, repository.name, issue.iid),
+      getIssueCommentAll(repository.id, router.query.issueIid),
+    ]);
+    if (i) {
+      i.comments = c;
+      setIssue(i);
+    }
   };
 
   useEffect(() => {
@@ -187,7 +195,7 @@ function RepositoryIssueView(props) {
             <span className="text-xs text-type-secondary">
               {issue.comments?.length}
               <span className="ml-1">
-                {pluralize("comment", issue.comments.length)}
+                {pluralize("comment", issue.comments?.length)}
               </span>
             </span>
           </div>
@@ -213,15 +221,27 @@ function RepositoryIssueView(props) {
                     return (
                       <CommentView
                         comment={c}
+                        repositoryId={repository.id}
+                        parentIid={issue.iid}
+                        parent={"COMMENT_PARENT_ISSUE"}
                         userAddress={props.selectedAddress}
-                        onUpdate={async (id) => {
-                          const newComment = await getComment(id);
+                        onUpdate={async (iid) => {
+                          const newComment = await getIssueComment(
+                            repository.id,
+                            issue.iid,
+                            iid
+                          );
                           const newAllComments = [...allComments];
                           newAllComments[i] = newComment;
                           setAllComments(newAllComments);
                         }}
-                        onDelete={async (id) => {
-                          const res = await props.deleteComment({ id });
+                        onDelete={async (iid) => {
+                          const res = await props.deleteComment({
+                            repositoryId: repository.id,
+                            parentIid: issue.iid,
+                            parent: "COMMENT_PARENT_ISSUE",
+                            commentIid: iid,
+                          });
                           if (res && res.code === 0) {
                             const newAllComments = [...allComments];
                             newAllComments.splice(i, 1);
@@ -249,7 +269,9 @@ function RepositoryIssueView(props) {
                     </div>
                   </div>
                   <CommentEditor
-                    issueId={issue.id}
+                    repositoryId={repository.id}
+                    parentIid={issue.iid}
+                    parent={"COMMENT_PARENT_ISSUE"}
                     issueState={issue.state}
                     onSuccess={refreshIssue}
                   />
@@ -278,7 +300,8 @@ function RepositoryIssueView(props) {
                     );
 
                     const res = await props.updateIssueAssignees({
-                      issueId: issue.id,
+                      repositoryId: repository.id,
+                      iid: issue.iid,
                       addedAssignees,
                       removedAssignees,
                     });
@@ -316,7 +339,8 @@ function RepositoryIssueView(props) {
                     );
 
                     const res = await props.updateIssueLabels({
-                      issueId: issue.id,
+                      repositoryId: repository.id,
+                      iid: issue.iid,
                       addedLabels,
                       removedLabels,
                     });
@@ -344,11 +368,16 @@ function RepositoryIssueView(props) {
                 </div>
               </div>
               {issue.pullRequests.length > 0 ? (
-                <IssuePullRequestView pullRequests={issue.pullRequests} />
+                <IssuePullRequestView
+                  pullRequests={issue.pullRequests}
+                  repositoryId={repository.id}
+                  repositoryName={repository.name}
+                  repoOwner={repository.owner.id}
+                />
               ) : (
                 ""
               )}
-              {issue.bounties.length > 0 ? (
+              {issue.bounties?.length > 0 ? (
                 <IssueBountyView bounties={issue.bounties} />
               ) : (
                 ""

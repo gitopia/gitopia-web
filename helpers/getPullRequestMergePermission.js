@@ -2,11 +2,16 @@ import api from "./getApi";
 
 export default async function getPullRequestMergePermission(
   userAddress,
-  pullId
+  repositoryId,
+  pullIid
 ) {
   try {
-    const res = await api.queryPullRequestMergePermission(userAddress, pullId);
-    if (res.ok) {
+    const res = await api.queryPullRequestMergePermission(
+      userAddress,
+      repositoryId,
+      pullIid
+    );
+    if (res.status === 200) {
       return res.data;
     }
   } catch (e) {

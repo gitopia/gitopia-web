@@ -13,7 +13,7 @@ import {
 import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import getNodeInfo from "../../helpers/getNodeInfo";
-import { MsgSignData } from "@gitopia/gitopia-js/types/gitopia/offchain";
+import { MsgSignData } from "@gitopia/gitopia-js/dist/types/gitopia/offchain";
 import { v4 as uuidv4 } from "uuid";
 
 const handler = nextConnect({

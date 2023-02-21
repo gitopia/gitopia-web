@@ -1,6 +1,6 @@
 import { fromBase64 } from "@cosmjs/encoding";
 import { decodeTxRaw } from "@cosmjs/proto-signing";
-import { registry } from "@gitopia/gitopia-js";
+import { registry } from "@gitopia/gitopia-js/dist";
 
 export function decodeTx(tx) {
   try {

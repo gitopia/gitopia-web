@@ -9,6 +9,8 @@ import {
   signOut,
   unlockKeplrWallet,
 } from "../store/actions/wallet";
+import { setIbcAssets } from "../store/actions/ibcAssets";
+import { getAssetList } from "../helpers/getIbcAssetList";
 import shrinkAddress from "../helpers/shrinkAddress";
 import getHomeUrl from "../helpers/getHomeUrl";
 import { notify } from "reapop";
@@ -20,6 +22,9 @@ const CurrentWallet = dynamic(() => import("./currentWallet"));
 import Drawer from "./drawer";
 import useWindowSize from "../hooks/useWindowSize";
 import WalletInfo from "./dashboard/walletInfo";
+import SearchBar from "./searchBar";
+import DepositIbcAsset from "./assets/deposit";
+import WithdrawIbcAsset from "./assets/withdraw";
 // const NotificationsCard = dynamic(() =>
 //   import("./dashboard/notificationsButton")
 // );
@@ -40,18 +45,18 @@ function Header(props) {
   const [menuState, setMenuState] = useState(1);
   const [menuOpen, setMenuOpen] = useState(false);
   const [chainId, setChainId] = useState("");
+  const [assets, setAssets] = useState([]);
   const [unread, setUnread] = useState(false);
   const router = useRouter();
   const menuRef = useRef();
-  const [
-    formattedIssueNotifications,
-    setFormattedIssueNotifications,
-  ] = useState([]);
-  const [showNotificationListState, setShowNotificationListState] = useState(
-    ""
-  );
+  const [formattedIssueNotifications, setFormattedIssueNotifications] =
+    useState([]);
+  const [showNotificationListState, setShowNotificationListState] =
+    useState("");
   const { isMobile } = useWindowSize();
   const [isOpen, setIsOpen] = useState(false);
+  const [openDeposit, setOpenDeposit] = useState(false);
+  const [openWithdraw, setOpenWithdraw] = useState(false);
 
   const onUserMenuClose = () => {
     setMenuOpen(false);
@@ -63,7 +68,7 @@ function Header(props) {
   let addressToShow = "",
     avatarUrl = "";
   if (props.selectedAddress) {
-    addressToShow = shrinkAddress(props.selectedAddress);
+    addressToShow = "gitopia"+ shrinkAddress(props.selectedAddress);
     if (props.avatarUrl) {
       avatarUrl = props.avatarUrl;
     } else {
@@ -117,6 +122,11 @@ function Header(props) {
         setChainId(info.default_node_info.network);
       }
     };
+    const getIbcAssets = async () => {
+      const assets = await getAssetList();
+      setAssets(assets);
+    };
+    getIbcAssets();
     updateNetworkName();
   }, []);
 
@@ -180,34 +190,7 @@ function Header(props) {
             ></img>
           </Link>
         </div>
-        {/* <div className="flex-none mr-2">
-        <div className="form-control">
-          <div className="relative">
-            <input
-              name="search"
-              type="text"
-              placeholder="Search"
-              className="w-full pr-16 input input-sm input-ghost input-bordered"
-            />
-            <button className="absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div> */}
+        <SearchBar />
         {!isMobile ? (
           <div className="items-stretch">
             <a
@@ -251,49 +234,6 @@ function Header(props) {
           ""
         )}
         <div className="flex-1"></div>
-        {props.activeWallet && !isMobile ? (
-          <div className="flex-none mr-8">
-            <svg
-              width="8"
-              height="14"
-              viewBox="0 0 10 17"
-              fill="none"
-              className="mr-1 mt-px text-purple-50"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M5.00061 8.51845C6.33523 8.51845 7.41715 7.43653 7.41715 6.10192C7.41715 4.7673 6.33523 3.68538 5.00061 3.68538C3.666 3.68538 2.58408 4.7673 2.58408 6.10192C2.58408 7.43653 3.666 8.51845 5.00061 8.51845ZM5.00061 10.2314C7.28128 10.2314 9.13013 8.38259 9.13013 6.10192C9.13013 3.82125 7.28128 1.9724 5.00061 1.9724C2.71994 1.9724 0.871094 3.82125 0.871094 6.10192C0.871094 8.38259 2.71994 10.2314 5.00061 10.2314Z"
-                fill="currentColor"
-              />
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M2.58408 11.1195C2.58408 11.7593 2.84059 12.3714 3.29468 12.8215C3.74849 13.2713 4.36229 13.5225 5.00061 13.5225C5.63893 13.5225 6.25273 13.2713 6.70655 12.8215C7.16063 12.3714 7.41715 11.7593 7.41715 11.1195H9.13013C9.13013 12.2004 8.69698 13.2386 7.92343 14.0053C7.14962 14.7723 6.09841 15.2046 5.00061 15.2046C3.90281 15.2046 2.8516 14.7723 2.07779 14.0053C1.30425 13.2386 0.871094 12.2004 0.871094 11.1195H2.58408Z"
-                fill="currentColor"
-              />
-              <path
-                d="M4.19727 0.743828H5.8455V2.39206H4.19727V0.743828Z"
-                fill="currentColor"
-              />
-              <path
-                d="M4.19727 14.7537H5.8455V16.4019H4.19727V14.7537Z"
-                fill="currentColor"
-              />
-            </svg>
-            <div className="text-purple-50 uppercase">
-              {props.advanceUser === true
-                ? props.loreBalance
-                : props.loreBalance / 1000000}{" "}
-              {props.advanceUser === true
-                ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-                : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
-            </div>
-          </div>
-        ) : (
-          ""
-        )}
         {process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES && !isMobile ? (
           <div className="flex-col mr-8 items-end">
             <div
@@ -358,22 +298,22 @@ function Header(props) {
                   </a>
                 </div>
               </div> */}
-              {props.selectedAddress !== null ? (
-                <div className="mt-2">
+              {props.selectedAddress !== null && !isMobile ? (
+                <div>
                   <div className="indicator flex-none mr-4">
                     <a
-                      className="btn btn-primary btn-circle btn-base btn-outline btn-sm w-10 h-10"
+                      className="btn btn-circle btn-outline btn-sm w-12 h-12"
                       href="#"
                       onClick={(e) => {
-                        setUnread(false);
                         setMenuOpen(true);
                         setMenuState(6);
                         e.preventDefault();
+                        props.setIbcAssets(assets);
                       }}
                     >
                       <svg
-                        width="24"
-                        height="24"
+                        width="20"
+                        height="20"
                         viewBox="0 0 24 24"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -382,7 +322,7 @@ function Header(props) {
                           fillRule="evenodd"
                           clipRule="evenodd"
                           d="M4 5H20C21.1046 5 22 5.89543 22 7V9H14V16H22V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V7C2 5.89543 2.89543 5 4 5ZM22 14V11H16V14H22ZM24 16V18C24 20.2091 22.2091 22 20 22H4C1.79086 22 0 20.2091 0 18V7C0 4.79086 1.79086 3 4 3H20C22.2091 3 24 4.79086 24 7V9V16Z"
-                          fill="#ADBECB"
+                          fill="currentColor"
                         />
                       </svg>
                     </a>
@@ -400,7 +340,7 @@ function Header(props) {
                 <button
                   tabIndex="0"
                   className={
-                    "btn rounded-full px-4 relative " +
+                    "btn btn-outline rounded-full px-4 relative " +
                     (props.activeWallet ? "btn-ghost" : "btn-primary") +
                     (props.unlockingWallet ? " loading" : "")
                   }
@@ -464,6 +404,8 @@ function Header(props) {
                     <WalletInfo
                       setMenuOpen={setMenuOpen}
                       setMenuState={setMenuState}
+                      setOpenDeposit={setOpenDeposit}
+                      setOpenWithdraw={setOpenWithdraw}
                     />
                   )}
                   {/* {menuState === 6 && (
@@ -550,6 +492,21 @@ function Header(props) {
                                 : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                             </a>
                           </li>
+                          {isMobile ? (
+                            <li>
+                              <a
+                                href="#"
+                                onClick={(e) => {
+                                  setMenuState(6);
+                                  e.preventDefault();
+                                }}
+                              >
+                                IBC Transfer
+                              </a>
+                            </li>
+                          ) : (
+                            ""
+                          )}
                           <li>
                             <Link
                               href={
@@ -597,6 +554,14 @@ function Header(props) {
             </div>
           </ClickAwayListener>
         </div>
+        <DepositIbcAsset
+          openDeposit={openDeposit}
+          setOpenDeposit={setOpenDeposit}
+        />
+        <WithdrawIbcAsset
+          openWithdraw={openWithdraw}
+          setOpenWithdraw={setOpenWithdraw}
+        />
       </div>
     </>
   );
@@ -624,4 +589,5 @@ export default connect(mapStateToProps, {
   signOut,
   notify,
   unlockKeplrWallet,
+  setIbcAssets,
 })(Header);

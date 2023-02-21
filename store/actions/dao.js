@@ -4,7 +4,7 @@ import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import { userActions, daoActions } from "./actionTypes";
 import { validatePostingEligibility } from "./repository";
 import { updateUserBalance } from "./wallet";
-import { MemberRole } from "@gitopia/gitopia-js/types/gitopia/member";
+import { MemberRole } from "@gitopia/gitopia-js/dist/types/gitopia/member";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getDaoMember from "../../helpers/getUserDaoMember";
 

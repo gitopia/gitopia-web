@@ -1,6 +1,6 @@
 import find from "lodash/find.js";
 import fs from "fs";
-import { Api } from "@gitopia/gitopia-js/rest.js";
+import { Api } from "@gitopia/gitopia-js/dist/rest.js";
 import * as env from "@next/env";
 import globby from "globby";
 import filter from "lodash/filter.js";
@@ -28,7 +28,7 @@ async function populate(
   populateObject,
   transformData = (d) => d
 ) {
-  const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
+  const api = new Api({ baseURL: process.env.NEXT_PUBLIC_API_URL });
   let nextKey = null,
     res;
 
@@ -45,7 +45,7 @@ async function populate(
       "pagination.key": nextKey,
       "pagination.limit": paginationLimit,
     });
-    if (res.ok) {
+    if (res.status === 200) {
       if (!res.data[dataField]) {
         console.log("Not found", dataField, res.data);
         return;
@@ -188,6 +188,8 @@ Promise.all([
       let b = filter(branches, { repositoryId: r.id }),
         t = filter(tags, { repositoryId: r.id });
       r.owner.username = owner?.username ? owner.username : r.owner.id;
+      r.owner.address = r.owner.id;
+      if (owner?.username) r.owner.id = r.owner.username;
       r.branches = b;
       r.tags = t;
       if (!/^temp-/.test(owner.username) && owner.address) {
