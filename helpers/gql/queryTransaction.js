@@ -10,7 +10,7 @@ function QueryTransaction(props) {
     query UserEvents(
       $address: String = ""
       $types: [String!] = [""]
-      $createdAtStart: Int
+      $createdAtStart: String = ""
     ) {
       userEvents(
         orderBy: createdAt
@@ -42,7 +42,7 @@ function QueryTransaction(props) {
         "CreatePullRequest",
         "CreateComment",
       ],
-      createdAtStart: dayjs(dayjs().subtract(1, "year")).unix(),
+      createdAtStart: dayjs(dayjs().subtract(1, "year")).unix().toString(),
     },
   });
   let contributionValues = [];
@@ -73,7 +73,6 @@ function QueryTransaction(props) {
     contributionValues.push({ date: i, count: contributions[i] });
     count = count + contributions[i];
   }
-  console.log(contributionValues, count);
   return null;
 }
 

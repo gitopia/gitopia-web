@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import Link from "next/link";
 import { ApolloProvider } from "@apollo/client";
 import QueryTransaction from "../../helpers/gql/queryTransaction";
-import { updatedClient } from "../../helpers/apolloClient";
+import client from "../../helpers/apolloClient";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import ReactTooltip from "react-tooltip";
@@ -116,7 +116,7 @@ function AccountOverview(props) {
       </div>
       {!props.dao.address ? (
         <div className="">
-          <ApolloProvider client={updatedClient}>
+          <ApolloProvider client={client}>
             <QueryTransaction
               setContributions={setContributions}
               setTotalContributions={setTotalContributions}

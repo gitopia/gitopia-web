@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import QueryUserTransactions from "../../helpers/gql/queryUserTransactions";
 import { txTypes } from "../../helpers/transactionsTypes";
 import { ApolloProvider } from "@apollo/client";
-import { updatedClient } from "../../helpers/apolloClient";
+import client from "../../helpers/apolloClient";
 import classNames from "classnames";
 
 function AccountTransactions(props) {
@@ -39,7 +39,7 @@ function AccountTransactions(props) {
   return (
     <>
       <div className="mt-8">
-        <ApolloProvider client={updatedClient}>
+        <ApolloProvider client={client}>
           <QueryUserTransactions
             setUserTransactions={setUserTransactions}
             creator={props.userId}
