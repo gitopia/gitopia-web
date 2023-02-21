@@ -19,8 +19,7 @@ import shrinkAddress from "../../../../../helpers/shrinkAddress";
 import dayjs from "dayjs";
 import { ApolloProvider } from "@apollo/client";
 import { updatedClient } from "../../../../../helpers/apolloClient";
-import QueryIssues from "../../../../../helpers/queryIssuesByTitleGql";
-import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
+import QueryIssues from "../../../../../helpers/gql/queryIssuesByTitleGql";
 
 export async function getStaticProps() {
   return { props: {} };

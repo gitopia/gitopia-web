@@ -30,7 +30,7 @@ import getAllRepositoryBranch from "../../../../helpers/getAllRepositoryBranch";
 import getAllRepositoryTag from "../../../../helpers/getAllRepositoryTag";
 import getPullRequestCommits from "../../../../helpers/getPullRequestCommits";
 import { ApolloProvider } from "@apollo/client";
-import QueryIssues from "../../../../helpers/queryIssuesByTitleGql";
+import QueryIssues from "../../../../helpers/gql/queryIssuesByTitleGql";
 import { updatedClient } from "../../../../helpers/apolloClient";
 import { notify } from "reapop";
 
