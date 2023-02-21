@@ -1,12 +1,12 @@
 import axios from "./axiosFetch";
-export default async function getChainInfo(chainName) {
+export default async function getChainAssetList(chainName) {
   let info = [];
   await axios
     .get(
       process.env.NEXT_PUBLIC_OBJECTS_URL +
         "raw/gitopia/ibc-assets/master/chain-registry/testnets/" +
         chainName +
-        "/chain.json"
+        "/assetlist.json"
     )
     .then((response) => {
       info = response.data;

@@ -228,9 +228,9 @@ function RepositoryPullIssuesView(props) {
             </button>
           </div>
           {issues.length > 0 ? (
-            <div className="border border-gray-700 rounded-lg mt-4 text-justify divide-y divide-gray-700">
+            <div className="border border-gray-700 rounded-lg mt-4 text-justify sm:divide-y sm:divide-gray-700 overflow-x-auto">
               <div className="flex mt-4 mb-4">
-                <div className="w-3/5 flex">
+                <div className="sm:w-3/5 flex">
                   <div className="text-type-secondary text-sm ml-4">Issue</div>
                   <svg
                     width="8"
@@ -247,7 +247,7 @@ function RepositoryPullIssuesView(props) {
                   </svg>
                 </div>
 
-                <div className="w-1/12 flex ml-4 mr-4">
+                <div className="ml-32 sm:w-1/12 flex sm:ml-4 mr-4">
                   <div className="text-type-secondary text-sm">Assigne</div>
                   <svg
                     width="8"
@@ -263,7 +263,7 @@ function RepositoryPullIssuesView(props) {
                     />
                   </svg>
                 </div>
-                <div className="w-1/12 flex mr-4">
+                <div className="ml-2 sm:ml-0 sm:w-1/12 flex mr-4">
                   <div className="text-type-secondary text-sm ml-2">
                     Replies
                   </div>
@@ -281,7 +281,7 @@ function RepositoryPullIssuesView(props) {
                     />
                   </svg>
                 </div>
-                <div className="w-1/6 flex">
+                <div className="sm:w-1/6 flex sm:ml-auto">
                   <div className="text-type-secondary text-sm ml-3">
                     Creation
                   </div>
@@ -308,7 +308,7 @@ function RepositoryPullIssuesView(props) {
                     key={k}
                   >
                     <div
-                      className="w-3/5"
+                      className="sm:w-3/5"
                       onClick={() => {
                         if (window) {
                           window.open(
@@ -323,7 +323,7 @@ function RepositoryPullIssuesView(props) {
                       }}
                     >
                       {
-                        <div className="flex">
+                        <div className="w-52 sm:w-full flex">
                           <span
                             className={
                               "mr-3 ml-4 mt-2 h-2 w-2 rounded-md justify-self-end self-center inline-block " +
@@ -339,8 +339,10 @@ function RepositoryPullIssuesView(props) {
 
                     <div
                       className={
-                        "w-1/12 flex " +
-                        (i.assignees.length > 1 ? "mr-7 ml-0" : "mr-4 ml-3")
+                        "w-32 sm:w-1/12 flex " +
+                        (i.assignees.length > 1
+                          ? "sm:mr-7 sm:ml-0"
+                          : "sm:mr-4 sm:ml-3")
                       }
                     >
                       {i.assignees.length > 1 ? (
@@ -404,7 +406,7 @@ function RepositoryPullIssuesView(props) {
                         })
                       )}
                     </div>
-                    <div className="w-1/12 flex mr-4 mt-1">
+                    <div className="sm:w-1/12 flex mr-4 mt-1 ml-14 sm:ml-0">
                       <div className="text-sm mr-3 font-bold text-type-secondary">
                         {i.commentsCount}
                       </div>
@@ -423,12 +425,14 @@ function RepositoryPullIssuesView(props) {
                         />
                       </svg>
                     </div>
-                    <div className="w-1/6 text-sm font-bold text-type-secondary mt-1.5">
-                      {dayjs.unix(parseInt(i.createdAt)).fromNow()}
+                    <div className="sm:w-1/6 text-sm font-bold text-type-secondary mt-1.5 ml-6 sm:ml-0">
+                      <div className="w-24 sm:w-full">
+                        {dayjs.unix(parseInt(i.createdAt)).fromNow()}
+                      </div>
                     </div>
-                    <div className="text-sm font-bold text-type-secondary mr-4 ml-auto mt-1.5">
+                    <div className="text-sm font-bold text-type-secondary ml-auto mt-1.5">
                       <button
-                        className="link link-primary text-xs uppercase no-underline"
+                        className="link link-primary text-xs uppercase no-underline mr-4"
                         onClick={() => {
                           props.unlinkPullIssuebyIid(
                             repository.id,

@@ -9,6 +9,8 @@ import {
   signOut,
   unlockKeplrWallet,
 } from "../store/actions/wallet";
+import { setIbcAssets } from "../store/actions/ibcAssets";
+import { getAssetList } from "../helpers/getIbcAssetList";
 import shrinkAddress from "../helpers/shrinkAddress";
 import getHomeUrl from "../helpers/getHomeUrl";
 import { notify } from "reapop";
@@ -21,6 +23,8 @@ import Drawer from "./drawer";
 import useWindowSize from "../hooks/useWindowSize";
 import WalletInfo from "./dashboard/walletInfo";
 import SearchBar from "./searchBar";
+import DepositIbcAsset from "./assets/deposit";
+import WithdrawIbcAsset from "./assets/withdraw";
 // const NotificationsCard = dynamic(() =>
 //   import("./dashboard/notificationsButton")
 // );
@@ -41,18 +45,18 @@ function Header(props) {
   const [menuState, setMenuState] = useState(1);
   const [menuOpen, setMenuOpen] = useState(false);
   const [chainId, setChainId] = useState("");
+  const [assets, setAssets] = useState([]);
   const [unread, setUnread] = useState(false);
   const router = useRouter();
   const menuRef = useRef();
-  const [
-    formattedIssueNotifications,
-    setFormattedIssueNotifications,
-  ] = useState([]);
-  const [showNotificationListState, setShowNotificationListState] = useState(
-    ""
-  );
+  const [formattedIssueNotifications, setFormattedIssueNotifications] =
+    useState([]);
+  const [showNotificationListState, setShowNotificationListState] =
+    useState("");
   const { isMobile } = useWindowSize();
   const [isOpen, setIsOpen] = useState(false);
+  const [openDeposit, setOpenDeposit] = useState(false);
+  const [openWithdraw, setOpenWithdraw] = useState(false);
 
   const onUserMenuClose = () => {
     setMenuOpen(false);
@@ -118,6 +122,11 @@ function Header(props) {
         setChainId(info.default_node_info.network);
       }
     };
+    const getIbcAssets = async () => {
+      const assets = await getAssetList();
+      setAssets(assets);
+    };
+    getIbcAssets();
     updateNetworkName();
   }, []);
 
@@ -289,17 +298,17 @@ function Header(props) {
                   </a>
                 </div>
               </div> */}
-              {props.selectedAddress !== null ? (
-                <div className="flex items-center justify-center">
+              {props.selectedAddress !== null && !isMobile ? (
+                <div className="mt-2">
                   <div className="indicator flex-none mr-4">
                     <a
                       className="btn btn-circle btn-outline btn-sm w-12 h-12"
                       href="#"
                       onClick={(e) => {
-                        setUnread(false);
                         setMenuOpen(true);
                         setMenuState(6);
                         e.preventDefault();
+                        props.setIbcAssets(assets);
                       }}
                     >
                       <svg
@@ -395,6 +404,8 @@ function Header(props) {
                     <WalletInfo
                       setMenuOpen={setMenuOpen}
                       setMenuState={setMenuState}
+                      setOpenDeposit={setOpenDeposit}
+                      setOpenWithdraw={setOpenWithdraw}
                     />
                   )}
                   {/* {menuState === 6 && (
@@ -481,6 +492,21 @@ function Header(props) {
                                 : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
                             </a>
                           </li>
+                          {isMobile ? (
+                            <li>
+                              <a
+                                href="#"
+                                onClick={(e) => {
+                                  setMenuState(6);
+                                  e.preventDefault();
+                                }}
+                              >
+                                IBC Transfer
+                              </a>
+                            </li>
+                          ) : (
+                            ""
+                          )}
                           <li>
                             <Link
                               href={
@@ -528,6 +554,14 @@ function Header(props) {
             </div>
           </ClickAwayListener>
         </div>
+        <DepositIbcAsset
+          openDeposit={openDeposit}
+          setOpenDeposit={setOpenDeposit}
+        />
+        <WithdrawIbcAsset
+          openWithdraw={openWithdraw}
+          setOpenWithdraw={setOpenWithdraw}
+        />
       </div>
     </>
   );
@@ -555,4 +589,5 @@ export default connect(mapStateToProps, {
   signOut,
   notify,
   unlockKeplrWallet,
+  setIbcAssets,
 })(Header);

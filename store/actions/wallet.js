@@ -3,6 +3,7 @@ import {
   envActions,
   userActions,
   daoActions,
+  ibcAssetsActions,
 } from "./actionTypes";
 import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
@@ -10,9 +11,12 @@ import find from "lodash/find";
 import { notify } from "reapop";
 import { setupTxClients, sendTransaction } from "./env";
 import getNodeInfo from "../../helpers/getNodeInfo";
+import getAnyNodeInfo from "../../helpers/getAnyNodeInfo";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getUser from "../../helpers/getUser";
 import getChainInfo from "../../helpers/getChainInfo";
+import getChainAssetList from "../../helpers/getChainAssetList";
+import getChainIbcAsset from "../../helpers/getChainIbcAssets";
 import dayjs from "dayjs";
 import { calculateFee, GasPrice } from "@cosmjs/stargate";
 
@@ -22,10 +26,9 @@ const postWalletUnlocked = async (
   accountSigner,
   dispatch,
   getState,
-  accountSignerSecondary = null,
-  chainInfo = null
+  accountSignerSecondary = null
 ) => {
-  const { env, wallet } = getState();
+  const { env, wallet, ibcAssets } = getState();
 
   dispatch({
     type: walletActions.SET_SELECTED_ADDRESS,
@@ -45,12 +48,12 @@ const postWalletUnlocked = async (
         txClient(
           accountSignerSecondary,
           {
-            addr: chainInfo.rpc_node,
+            addr: ibcAssets.chainInfo.chain.apis.rpc[3].address,
             gasPrice: wallet.gasPrice,
           },
-          chainInfo.prefix
+          ibcAssets.chainInfo.chain.bech32_prefix
         ),
-        queryClient({ addr: chainInfo.api_node }),
+        queryClient({ addr: ibcAssets.chainInfo.chain.apis.rest[3].address }),
         updateUserBalance()(dispatch, getState),
       ]);
       dispatch({
@@ -181,10 +184,24 @@ export const setWallet = ({ wallet }) => {
 export const unlockWallet = ({ name, password, chainId = null }) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
-    let chainInfo;
     let accountSignerSecondary;
-    if (chainId !== null) {
-      chainInfo = await getChainInfo(chainId);
+    let chainInfo, chainAsset, chainIbc;
+    if (chainId !== null && chainId !== undefined) {
+      [chainInfo, chainAsset, chainIbc] = await Promise.all([
+        getChainInfo(chainId),
+        getChainAssetList(chainId),
+        getChainIbcAsset(chainId),
+      ]);
+      if (chainInfo && chainAsset && chainIbc) {
+        await dispatch({
+          type: ibcAssetsActions.SET_CHAIN_INFO,
+          payload: {
+            chain: chainInfo,
+            assets: chainAsset,
+            ibc: chainIbc,
+          },
+        });
+      }
     }
     let encryptedWallet =
       state.wallets[state.wallets.findIndex((x) => x.name === name)].wallet;
@@ -214,7 +231,7 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
         accountSignerSecondary = await DirectSecp256k1HdWallet.fromMnemonic(
           wallet.mnemonic,
           {
-            prefix: chainInfo.prefix,
+            prefix: chainInfo.bech32_prefix,
           }
         );
         const [
@@ -274,8 +291,7 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
             accountSigner,
             dispatch,
             getState,
-            accountSignerSecondary,
-            chainInfo
+            accountSignerSecondary
           );
         } else {
           await postWalletUnlocked(accountSigner, dispatch, getState);
@@ -523,10 +539,24 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
     let accountSigner;
     let encryptedWallet =
       wallet.wallets[wallet.wallets.findIndex((x) => x.name === name)].wallet;
-    let chainInfo;
     let accountSignerSecondary;
+    let chainInfo, chainAsset, chainIbc;
     if (chainId !== null) {
-      chainInfo = await getChainInfo(chainId);
+      [chainInfo, chainAsset, chainIbc] = await Promise.all([
+        getChainInfo(chainId),
+        getChainAssetList(chainId),
+        getChainIbcAsset(chainId),
+      ]);
+      if (chainInfo && chainAsset && chainIbc) {
+        await dispatch({
+          type: ibcAssetsActions.SET_CHAIN_INFO,
+          payload: {
+            chain: chainInfo,
+            assets: chainAsset,
+            ibc: chainIbc,
+          },
+        });
+      }
     }
     dispatch({ type: walletActions.START_UNLOCKING_WALLET });
     try {
@@ -549,11 +579,10 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
           CryptoJS.enc.Utf8
         )
       );
-      console.log(chainId);
       if (chainId !== null) {
         accountSignerSecondary = new LedgerSigner(ledgerTransport, {
           hdPaths: [path],
-          prefix: chainInfo.prefix,
+          prefix: chainInfo.bech32_prefix,
           ledgerAppName: "Cosmos",
         });
         const [
@@ -613,8 +642,7 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
           accountSigner,
           dispatch,
           getState,
-          accountSignerSecondary,
-          chainInfo
+          accountSignerSecondary
         );
       } else {
         await postWalletUnlocked(accountSigner, dispatch, getState);
@@ -789,11 +817,32 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
       if (activeWallet.isKeplr) {
         if (window.keplr && window.getOfflineSigner) {
           try {
+            let chainInfo, chainAsset, chainIbc;
+            if (chainId !== null && chainId !== undefined) {
+              [chainInfo, chainAsset, chainIbc] = await Promise.all([
+                getChainInfo(chainId),
+                getChainAssetList(chainId),
+                getChainIbcAsset(chainId),
+              ]);
+              if (chainInfo && chainAsset && chainIbc) {
+                await dispatch({
+                  type: ibcAssetsActions.SET_CHAIN_INFO,
+                  payload: {
+                    chain: chainInfo,
+                    assets: chainAsset,
+                    ibc: chainIbc,
+                  },
+                });
+              }
+            }
             const info = await getNodeInfo();
+            const counterPartyChainInfo = await getAnyNodeInfo(
+              chainInfo.apis.rest[3].address
+            );
             const chain = info.default_node_info.network;
             const offlineSigner = await window.getOfflineSignerAuto(chain);
             const accountSignerSecondary = await window.getOfflineSignerAuto(
-              "osmo-test-4"
+              counterPartyChainInfo.default_node_info.network
             );
             const accounts = await offlineSigner.getAccounts();
             const counterPartyAccount = await accountSignerSecondary.getAccounts();
@@ -809,8 +858,7 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
               offlineSigner,
               dispatch,
               getState,
-              accountSignerSecondary,
-              chainId
+              accountSignerSecondary
             );
             return accounts[0];
           } catch (e) {

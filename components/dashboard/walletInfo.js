@@ -4,14 +4,16 @@ import { connect } from "react-redux";
 import { updateUserBalance } from "../../store/actions/wallet";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import { signOut } from "../../store/actions/wallet";
-import { assets } from "../../ibc-assets-config";
 import getBalanceInDollars from "../../helpers/getWalletBalanceInDollars";
 import { useRouter } from "next/router";
 import { getAddressforChain } from "../../store/actions/wallet";
+import { getAssetList } from "../../helpers/getIbcAssetList";
 
 function WalletInfo(props) {
   const [totalBalance, setTotalBalance] = useState(0);
   const [tokenBalances, setTokenBalances] = useState({});
+  const [balance, setBalance] = useState(0);
+  const [assets, setAssets] = useState([]);
   const router = useRouter();
   useEffect(() => {
     async function getWalletbalance() {
@@ -21,12 +23,19 @@ function WalletInfo(props) {
         setTokenBalances(a.TokenBalances);
       }
     }
+    async function getAssets() {
+      let assets = await getAssetList();
+      if (assets) {
+        setAssets(assets);
+      }
+    }
     getWalletbalance();
-  }, []);
+    getAssets();
+  }, [props.selectedAddress]);
 
   return (
-    <div className="w-96 p-4 flex flex-col bg-[#28313C] rounded-2xl">
-      <div className="flex">
+    <div className="w-96 sm:w-[164] p-4 flex flex-col bg-[#28313C] rounded-2xl">
+      <div className="px-2 flex">
         <div className="text-type-primary text-xs font-bold uppercase">
           Account
         </div>
@@ -128,9 +137,9 @@ function WalletInfo(props) {
           <div className="mx-3 flex-1">{"Gitopia"}</div>
 
           <div className="">
-            {props.loreBalance +
+            {props.loreBalance/1000000 +
               " " +
-              process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN}
+              process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
           </div>
 
           <div className="flex transition-all items-center cursor-pointer text-type-secondary opacity-0 w-0 group-hover:opacity-100 group-hover:w-8 group-hover:ml-3">
@@ -172,13 +181,13 @@ function WalletInfo(props) {
               key={index}
             >
               <div className="">
-                <img width={24} src={asset.icon} />
+                <img width={24} src={asset.logo_URIs?.png} />
               </div>
               <div className="mx-3 flex-1">{asset.chain_name}</div>
               <div className="">
-                {(tokenBalances[asset.coin_minimal_denom] || 0) +
+                {(tokenBalances[asset.base_denom] || 0) +
                   " " +
-                  asset.coin_minimal_denom}
+                  asset.base_denom}
               </div>
               <div className="flex transition-all items-center cursor-pointer text-type-secondary opacity-0 w-0 group-hover:opacity-100 group-hover:w-20 group-hover:ml-3">
                 <div
@@ -186,13 +195,17 @@ function WalletInfo(props) {
                   data-tip="Deposit"
                   onClick={() => {
                     props
-                      .getAddressforChain(
-                        props.activeWallet.name,
-                        asset.chain_name
-                      )
-                      .then(() => {
-                        router.push("/assets/deposit");
-                      });
+                        .getAddressforChain(
+                          props.activeWallet.name,
+                          asset.chain_name
+                        )
+                      .then((res) => {
+                        if (res?.error) {
+                          props.notify(res.message, "error");
+                        } else {
+                          props.setOpenDeposit(true);
+                        }
+                        });
                   }}
                   id={index}
                 >
@@ -233,14 +246,19 @@ function WalletInfo(props) {
                   className="btn btn-circle btn-sm btn-outline tooltip tooltip-bottom tooltip-secondary"
                   data-tip="Withdraw"
                   onClick={() => {
-                    props
-                      .getAddressforChain(
-                        props.activeWallet.name,
-                        asset.chain_name
-                      )
-                      .then(() => {
-                        router.push("/assets/withdraw");
-                      });
+                     props
+                        .getAddressforChain(
+                          props.activeWallet.name,
+                          asset.chain_name
+                        )
+                       .then((res) => {
+                          if (res?.error) {
+                          props.notify(res.message, "error");
+                        } else {
+                          props.setOpenWithdraw(true);
+                        }
+                          
+                        });
                   }}
                   id={index}
                 >
