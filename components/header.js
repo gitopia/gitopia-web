@@ -299,7 +299,7 @@ function Header(props) {
                 </div>
               </div> */}
               {props.selectedAddress !== null && !isMobile ? (
-                <div className="mt-2">
+                <div>
                   <div className="indicator flex-none mr-4">
                     <a
                       className="btn btn-circle btn-outline btn-sm w-12 h-12"

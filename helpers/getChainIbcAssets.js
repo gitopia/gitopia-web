@@ -5,12 +5,10 @@ export default async function getChainIbcAsset(chainName) {
   let ibc = [];
   await axios
     .get(
-      process.env.NEXT_PUBLIC_OBJECTS_URL +
-        "raw/gitopia/ibc-assets/master/chain-registry/_IBC/" +
+      process.env.NEXT_PUBLIC_SERVER_URL+"/api/ibc/" +
         chains[0] +
-        "-" +
-        chains[1] +
-        ".json"
+        "/bridge/" +
+        chains[1]
     )
     .then((response) => {
       ibc = response.data;

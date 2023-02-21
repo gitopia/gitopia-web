@@ -3,10 +3,8 @@ export default async function getChainAssetList(chainName) {
   let info = [];
   await axios
     .get(
-      process.env.NEXT_PUBLIC_OBJECTS_URL +
-        "raw/gitopia/ibc-assets/master/chain-registry/testnets/" +
-        chainName +
-        "/assetlist.json"
+      process.env.NEXT_PUBLIC_SERVER_URL+"/api/ibc/" +
+        chainName + "/assets"
     )
     .then((response) => {
       info = response.data;

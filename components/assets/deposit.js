@@ -3,28 +3,29 @@ import { useEffect, useState } from "react";
 import { ibcDeposit } from "../../store/actions/wallet";
 import { useRouter } from "next/router";
 import { getBalanceForChain } from "../../helpers/getBalanceForChain";
+import { notify, dismissNotification } from "reapop";
 
 function DepositIbcAsset(props) {
   const [amount, setAmount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [validateAmountError, setValidateAmountError] = useState(null);
   const [balance, setBalance] = useState(0);
-  const [token, setToken] = useState("");
+  const [tokenDenom, setTokenDenom] = useState("");
   const [tokenDecimals, setTokenDecimals] = useState(0);
-  const router = useRouter();
-  useEffect(() => {
-    if (
-      props.activeWallet?.counterPartyAddress === undefined ||
-      props.activeWallet.counterPartyChain === null
-    ) {
-      router.push("/home");
-    }
-  }, []);
+  // const router = useRouter();
+  // useEffect(() => {
+  //   if (
+  //     props.activeWallet?.counterPartyAddress === undefined ||
+  //     props.activeWallet.counterPartyChain === null
+  //   ) {
+  //     router.push("/home");
+  //   }
+  // }, []);
 
   useEffect(() => {
     async function getChain() {
       if (props.ibcAssets.chainInfo.chain.chain_name) {
-        setToken(
+        setTokenDenom(
           props.ibcAssets.chainInfo.asset.assets[0].denom_units[1].denom
         );
         let b = await getBalanceForChain(
@@ -150,7 +151,7 @@ function DepositIbcAsset(props) {
             <div className="text-white mt-5">Amount to Deposit</div>
             <div className="border border-gray-700 rounded-xl p-3 text-xs mt-2">
               <div className="font-bold">
-                Available Balance : {balance} {token?.toUpperCase()}
+                Available Balance : {balance} {tokenDenom?.toUpperCase()}
               </div>
               <div className="border border-gray-700 rounded-xl p-3 bg-grey-900 mt-2">
                 <div className="flex">
@@ -208,7 +209,18 @@ function DepositIbcAsset(props) {
                     loading
                   }
                   onClick={(e) => {
+                    let notifId;
                     setLoading(true);
+                    const loadingMessage = props.
+                      notify(
+                        "Depositing " + amount + tokenDenom + "...",
+                        "loading",
+                        {
+                          dismissible: false,
+                          dismissAfter: 0,
+                        }
+                      );
+                    notifId = loadingMessage.payload.id;
                     props
                       .ibcDeposit(
                         props.ibcAssets.chainInfo.ibc.chain_1.chain_name.includes(
@@ -231,10 +243,14 @@ function DepositIbcAsset(props) {
                         props.ibcAssets.chainInfo.asset.assets[0].denom_units[0]
                           .denom
                       )
-                      .then(() => {
+                      .then((res) => {
+                        if (res) {
+                          props.notify("Deposit " + amount + tokenDenom  + " successful", "info");
+                        }
                         setLoading(false);
+                        props.dismissNotification(notifId);
                       });
-                    props.setOpenDeposit(false);
+                      props.setOpenDeposit(false);
                   }}
                   disabled={false}
                 >
@@ -260,4 +276,6 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   ibcDeposit,
+  notify,
+  dismissNotification
 })(DepositIbcAsset);

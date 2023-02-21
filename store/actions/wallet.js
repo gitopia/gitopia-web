@@ -8,7 +8,7 @@ import {
 import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import find from "lodash/find";
-import { notify } from "reapop";
+import { notify, dismissNotification } from "reapop";
 import { setupTxClients, sendTransaction } from "./env";
 import getNodeInfo from "../../helpers/getNodeInfo";
 import getAnyNodeInfo from "../../helpers/getAnyNodeInfo";
@@ -871,8 +871,9 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
           );
         }
       } else {
-        await setupTxClients(dispatch, getState, chainId);
+        return await setupTxClients(dispatch, getState, chainId);
       }
+      return {}
     } catch (e) {
       return e;
     }
@@ -884,7 +885,7 @@ export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(dispatch, getState, wallet.activeWallet.counterPartyChain);
         const { env } = getState();
         const send = {
           sourcePort: sourcePort,
@@ -901,8 +902,6 @@ export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
         const result = await sendTransaction({ message })(dispatch, getState);
         updateUserBalance()(dispatch, getState);
         if (result && result.code === 0) {
-          updateUserBalance()(dispatch, getState);
-          dispatch(notify("Transfer Successful", "info"));
           return true;
         } else {
           dispatch(notify(result.rawLog, "error"));
@@ -922,7 +921,7 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(dispatch, getState, wallet.activeWallet.counterPartyChain);
         const { env } = getState();
         const send = {
           sourcePort: sourcePort,
@@ -935,6 +934,7 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
             denom: denom,
           },
         };
+      
         const msg = await env.txClientSecondary.msgTransfer(send);
         const memo = "";
         let fees = await estimateOsmoFee(
@@ -952,9 +952,9 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
           fee,
           memo,
         });
+        updateUserBalance()(dispatch, getState);
+        
         if (result && result.code === 0) {
-          updateUserBalance()(dispatch, getState);
-          dispatch(notify("Transaction Successful", "info"));
           return true;
         } else {
           dispatch(notify(result.rawLog, "error"));
