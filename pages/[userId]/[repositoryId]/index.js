@@ -25,6 +25,11 @@ import getCommitHistory from "../../../helpers/getCommitHistory";
 import pluralize from "../../../helpers/pluralize";
 import useWindowSize from "../../../hooks/useWindowSize";
 import find from "lodash/find";
+import getAnyRepository from "../../../helpers/getAnyRepository";
+import getAllRepositoryBranch from "../../../helpers/getAllRepositoryBranch";
+import getAllRepositoryTag from "../../../helpers/getAllRepositoryTag";
+import getUser from "../../../helpers/getUser";
+import getDao from "../../../helpers/getDao";
 
 const atob = (base64) => {
   return Buffer.from(base64, "base64").toString("binary");
@@ -80,6 +85,82 @@ export async function getStaticProps({ params }) {
     props: {},
   };
 }
+
+// export async function getServerSideProps({ params }) {
+//   try {
+//     let r = await getAnyRepository(params.userId, params.repositoryId);
+
+//     let ownerDetails = {};
+
+//     const [branches, tags] = await Promise.all([
+//       getAllRepositoryBranch(r.owner.id, r.name),
+//       getAllRepositoryTag(r.owner.id, r.name),
+//     ]);
+//     if (r.owner.type === "USER") {
+//       ownerDetails = await getUser(r.owner.id);
+//       r = {
+//         ...r,
+//         owner: {
+//           type: r.owner.type,
+//           id: ownerDetails.username !== "" ? ownerDetails.username : r.owner.id,
+//           address: r.owner.id,
+//           username: ownerDetails.username,
+//           avatarUrl: ownerDetails.avatarUrl,
+//         },
+//         branches: branches,
+//         tags: tags,
+//       };
+//     } else if (r.owner.type === "DAO") {
+//       ownerDetails = await getDao(r.owner.id);
+//       r = {
+//         ...r,
+//         owner: {
+//           type: r.owner.type,
+//           id: ownerDetails.name,
+//           address: r.owner.id,
+//           username: ownerDetails.name,
+//           avatarUrl: ownerDetails.avatarUrl,
+//         },
+//         branches: branches,
+//         tags: tags,
+//       };
+//     }
+
+//     if (r) {
+//       let branchSha = getBranchSha(r.defaultBranch, r.branches, r.tags);
+
+//       const entitiesRes = await getContent(r.id, branchSha, null, null);
+
+//       const commitHistory = await getCommitHistory(r.id, branchSha, null, 1);
+
+//       const readmeRegex = new RegExp(/^README/gi);
+//       let readmeFile = null;
+//       for (let i = 0; i < entitiesRes?.content?.length; i++) {
+//         if (readmeRegex.test(entitiesRes.content[i].name)) {
+//           const readme = await getContent(
+//             r.id,
+//             branchSha,
+//             entitiesRes.content[i].name
+//           );
+//           if (readme?.content[0]) {
+//             readmeFile = atob(readme.content[0].content);
+//           }
+//         }
+//       }
+//       return {
+//         props: {
+//           repository: r,
+//           entitiesRes,
+//           commitHistory: { commits: [{}], ...commitHistory },
+//           readmeFile,
+//         },
+//       };
+//     }
+//   } catch (e) {}
+//   return {
+//     props: {},
+//   };
+// }
 
 export async function getStaticPaths() {
   let paths = [];

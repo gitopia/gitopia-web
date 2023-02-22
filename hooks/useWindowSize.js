@@ -5,7 +5,7 @@ export default function useWindowSize() {
 
   function detectWindowSize() {
     if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
+      window.screen.width <= 760 ? setIsMobile(true) : setIsMobile(false);
     }
   }
 
