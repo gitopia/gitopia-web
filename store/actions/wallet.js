@@ -477,6 +477,7 @@ export const downloadWallet = (password) => {
         saveAs(blob, wallet.name + ".json");
         if (state.getPasswordPromise.resolve) {
           state.getPasswordPromise.resolve("Download success");
+          dispatch({ type: walletActions.SET_BACKUP_STATE, payload: {backupState: true} });
         }
         return true;
       }

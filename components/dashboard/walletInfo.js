@@ -35,7 +35,7 @@ function WalletInfo(props) {
 
   return (
     <div className="w-96 sm:w-[164] p-4 flex flex-col bg-[#28313C] rounded-2xl">
-      <div className="px-2 flex">
+      <div className="flex">
         <div className="text-type-primary text-xs font-bold uppercase">
           Account
         </div>

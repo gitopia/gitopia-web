@@ -127,7 +127,6 @@ export const setupTxClients = async (dispatch, getState, chainId = null) => {
   const { env, wallet } = getState();
 
   if (wallet.activeWallet) {
-    console.log(wallet.activeWallet, chainId);
     if (!env.txClient || chainId != wallet.activeWallet.counterPartyChain) {
       return new Promise((resolve, reject) => {
         dispatch({
