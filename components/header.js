@@ -140,7 +140,7 @@ function Header(props) {
   return (
     <>
       {headerMessage && headerMessage !== "" ? (
-        <div className="flex bg-purple-900 justify-center items-center text-xs p-1 text-purple-50">
+        <div className="flex bg-purple-900 justify-center items-center text-xs px-6 py-2 sm:p-2 text-purple-50">
           <span>{headerMessage}</span>
         </div>
       ) : (
@@ -180,7 +180,7 @@ function Header(props) {
           chainId={chainId}
         ></Drawer>
         <div
-          className={"flex-none px-6 transition-all ease-out delay-150 sm:w-42"}
+          className={"flex-none sm:px-6 transition-all ease-out delay-150 sm:w-42"}
         >
           <Link href={homeUrl}>
             <img
@@ -190,7 +190,8 @@ function Header(props) {
             ></img>
           </Link>
         </div>
-        <SearchBar />
+        {!isMobile ? (
+          <SearchBar />) : ""}
         {!isMobile ? (
           <div className="items-stretch">
             <a

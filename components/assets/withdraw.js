@@ -26,7 +26,6 @@ function WithdrawIbcAsset(props) {
   useEffect(() => {
     async function getChain() {
       if (props.ibcAssets.chainInfo.chain.chain_name) {
-        console.log(props.ibcAssets.chainInfo);
         setTokenDenom(
           props.ibcAssets.chainInfo.asset.assets[0].denom_units[1].denom
         );
@@ -35,7 +34,6 @@ function WithdrawIbcAsset(props) {
         );
 
         let res = await getBalances(props.selectedAddress);
-        console.log(res);
         if (res) {
           let b = res.balances;
           for (let i = 0; i < b.length; i++) {
