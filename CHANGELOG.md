@@ -1,6 +1,11 @@
 ## Changelog
 
-### v1.4.0 - 7th Feb 2022
+### v1.4.1 - 22nd Feb 2023
+
+- Added a prompt to backup wallet
+- Disabled cssnano, build fixed
+
+### v1.4.0 - 22nd Feb 2023
 
 - New wallet panel in header showing all assets
 - Deposit and Withdraw from IBC chains
