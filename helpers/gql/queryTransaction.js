@@ -1,5 +1,4 @@
 import { useQuery, gql } from "@apollo/client";
-import { useEffect } from "react";
 import { connect } from "react-redux";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
@@ -7,25 +6,14 @@ function QueryTransaction(props) {
   const router = useRouter();
 
   const QUERY_TRANSACTIONS = gql`
-    query UserEvents(
-      $address: String = ""
-      $types: [String!] = [""]
-      $createdAtStart: String = ""
-    ) {
-      userEvents(
-        orderBy: createdAt
+    query MyQuery($creatorId: String!, $startDate: String!) {
+      dailyUserEventCounts(
+        orderBy: date
         orderDirection: desc
-        where: {
-          creator: $address
-          message_in: $types
-          createdAt_gt: $createdAtStart
-        }
+        where: { creator: $creatorId, date_gt: $startDate }
       ) {
-        id
-        txHash
-        creator
-        message
-        createdAt
+        count
+        date
       }
     }
   `;
@@ -34,24 +22,13 @@ function QueryTransaction(props) {
   dayjs.extend(localizedFormat);
   const { loading, error, data } = useQuery(QUERY_TRANSACTIONS, {
     variables: {
-      address: props.address,
-      types: [
-        "MultiSetRepositoryBranch",
-        "MultiSetRepositoryTag",
-        "CreateIssue",
-        "CreatePullRequest",
-        "CreateComment",
-      ],
-      createdAtStart: dayjs(dayjs().subtract(1, "year")).unix().toString(),
+      creatorId: props.address,
+      startDate: dayjs(dayjs().subtract(1, "year"))
+        .format("YYYY-MM-DD")
+        .toString(),
     },
   });
-  let contributionValues = [];
   let count = 0;
-  useEffect(() => {
-    props.setContributions(contributionValues);
-    props.setTotalContributions(count);
-  }, [data]);
-
   if (loading) {
     return null;
   }
@@ -59,20 +36,11 @@ function QueryTransaction(props) {
     console.error(error);
     return null;
   }
-  console.log(data);
-  let contributions = {};
-  data.userEvents.map((tx) => {
-    let date = dayjs.unix(tx.createdAt).format("YYYY-MM-DD");
-    if (date in contributions) {
-      contributions[date]++;
-    } else {
-      contributions[date] = 1;
-    }
+  props.setContributions(data?.dailyUserEventCounts);
+  data?.dailyUserEventCounts.map((tx) => {
+    count = count + tx.count;
   });
-  for (let i in contributions) {
-    contributionValues.push({ date: i, count: contributions[i] });
-    count = count + contributions[i];
-  }
+  props.setTotalContributions(count);
   return null;
 }
 
