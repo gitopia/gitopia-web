@@ -1,35 +1,48 @@
-import { useQuery, useSubscription, gql } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 import { useEffect } from "react";
 import { connect } from "react-redux";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
 function QueryTransaction(props) {
   const router = useRouter();
+
   const QUERY_TRANSACTIONS = gql`
-    query UserContributionsByBlockTime(
-      $addresses: _text = ""
-      $types: _text = ""
+    query UserEvents(
+      $address: String = ""
+      $types: [String!] = [""]
+      $createdAtStart: String = ""
     ) {
-      messages_by_address(
-        args: { limit: "10", offset: "0", addresses: $addresses, types: $types }
-        order_by: { transaction: { block: { timestamp: desc } } }
-      ) {
-        transaction {
-          block {
-            timestamp
-          }
+      userEvents(
+        orderBy: createdAt
+        orderDirection: desc
+        where: {
+          creator: $address
+          message_in: $types
+          createdAt_gt: $createdAtStart
         }
-        value
+      ) {
+        id
+        txHash
+        creator
+        message
+        createdAt
       }
     }
   `;
+
   var localizedFormat = require("dayjs/plugin/localizedFormat");
   dayjs.extend(localizedFormat);
   const { loading, error, data } = useQuery(QUERY_TRANSACTIONS, {
     variables: {
-      addresses: "{" + props.address + "}",
-      types:
-        '{"gitopia.gitopia.gitopia.MsgMultiSetBranch","gitopia.gitopia.gitopia.MsgMultiSetTag", "gitopia.gitopia.gitopia.MsgCreatePullRequest", "gitopia.gitopia.gitopia.MsgCreateIssue", "gitopia.gitopia.gitopia.MsgCreateComment"}',
+      address: props.address,
+      types: [
+        "MultiSetRepositoryBranch",
+        "MultiSetRepositoryTag",
+        "CreateIssue",
+        "CreatePullRequest",
+        "CreateComment",
+      ],
+      createdAtStart: dayjs(dayjs().subtract(1, "year")).unix().toString(),
     },
   });
   let contributionValues = [];
@@ -46,9 +59,10 @@ function QueryTransaction(props) {
     console.error(error);
     return null;
   }
+  console.log(data);
   let contributions = {};
-  data.messages_by_address.map((tx) => {
-    let date = dayjs(tx.transaction.block.timestamp).format("YYYY-MM-DD");
+  data.userEvents.map((tx) => {
+    let date = dayjs.unix(tx.createdAt).format("YYYY-MM-DD");
     if (date in contributions) {
       contributions[date]++;
     } else {
@@ -59,7 +73,6 @@ function QueryTransaction(props) {
     contributionValues.push({ date: i, count: contributions[i] });
     count = count + contributions[i];
   }
-
   return null;
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ApolloProvider, useQuery, useLazyQuery, gql } from "@apollo/client";
-import { updatedClient } from "../helpers/apolloClient";
+import client from "../helpers/apolloClient";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { useRouter } from "next/router";
 import find from "lodash/find";
@@ -44,11 +44,11 @@ export default function SearchBar() {
 
   const { loading, error, data } = useQuery(QUERY_TRANSACTIONS, {
     variables: { search: searchText },
-    client: updatedClient,
+    client: client,
   });
 
   const [getUserInfo, userInfo] = useLazyQuery(QUERY_USERS, {
-    client: updatedClient,
+    client: client,
   });
 
   const pickUsername = (address) => {

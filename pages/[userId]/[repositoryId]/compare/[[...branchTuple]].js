@@ -30,8 +30,8 @@ import getAllRepositoryBranch from "../../../../helpers/getAllRepositoryBranch";
 import getAllRepositoryTag from "../../../../helpers/getAllRepositoryTag";
 import getPullRequestCommits from "../../../../helpers/getPullRequestCommits";
 import { ApolloProvider } from "@apollo/client";
-import QueryIssues from "../../../../helpers/queryIssuesByTitleGql";
-import { updatedClient } from "../../../../helpers/apolloClient";
+import QueryIssues from "../../../../helpers/gql/queryIssuesByTitleGql";
+import client from "../../../../helpers/apolloClient";
 import { notify } from "reapop";
 
 export async function getStaticProps() {
@@ -321,17 +321,17 @@ function RepositoryCompareView(props) {
         >
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs repository={repository} active="pulls" />
-          {repository.branches.length ?
+          {repository.branches.length ? (
             <div>
               <div className="mt-8">
                 <div className="text-lg">Compare revisions</div>
                 <div className="mt-2 text-sm text-type-secondary">
-                  Choose a branch/tag (e.g. master) to see what&apos;s changed or to
-                  create a pull request.
+                  Choose a branch/tag (e.g. master) to see what&apos;s changed
+                  or to create a pull request.
                 </div>
                 <div className="text-sm text-type-secondary">
-                  Changes are shown as if the source revision was being merged into
-                  the target revision.
+                  Changes are shown as if the source revision was being merged
+                  into the target revision.
                 </div>
               </div>
               <div className="mt-8 sm:flex items-center">
@@ -343,7 +343,9 @@ function RepositoryCompareView(props) {
                     <RepositorySelector
                       repositories={[repository, ...forkedRepos]}
                       currentRepo={
-                        forkedRepos.length ? compare.source.repository : repository
+                        forkedRepos.length
+                          ? compare.source.repository
+                          : repository
                       }
                       onClick={(repo) => {
                         router.push(
@@ -439,7 +441,7 @@ function RepositoryCompareView(props) {
                 <div className="text-base">Link Issue</div>
                 <div className="form-control flex-1 mt-3">
                   <div className="relative">
-                    <ApolloProvider client={updatedClient}>
+                    <ApolloProvider client={client}>
                       <QueryIssues
                         substr={textEntered}
                         repoId={Number(repository.id)}
@@ -538,7 +540,8 @@ function RepositoryCompareView(props) {
                           key={index}
                         >
                           {issue.title.split(" ").length > 4
-                            ? issue.title.split(" ").splice(0, 4).join(" ") + "..."
+                            ? issue.title.split(" ").splice(0, 4).join(" ") +
+                              "..."
                             : issue.title}
                           <div
                             className="link ml-4 mt-1 no-underline"
@@ -614,11 +617,13 @@ function RepositoryCompareView(props) {
                                     description,
                                     baseRepoOwner:
                                       compare.target.repository.owner.address,
-                                    baseRepoName: compare.target.repository.name,
+                                    baseRepoName:
+                                      compare.target.repository.name,
                                     baseBranch: compare.target.name,
                                     headRepoOwner:
                                       compare.source.repository.owner.address,
-                                    headRepoName: compare.source.repository.name,
+                                    headRepoName:
+                                      compare.source.repository.name,
                                     headBranch: compare.source.name,
                                     reviewers: reviewers,
                                     assignees: assignees,
@@ -628,11 +633,11 @@ function RepositoryCompareView(props) {
                                   if (res && res.code === 0) {
                                     router.push(
                                       "/" +
-                                      repository.owner.id +
-                                      "/" +
-                                      repository.name +
-                                      "/pulls/" +
-                                      (Number(repository.pullsCount) + 1)
+                                        repository.owner.id +
+                                        "/" +
+                                        repository.name +
+                                        "/pulls/" +
+                                        (Number(repository.pullsCount) + 1)
                                     );
                                   }
                                   setCreatingPull(false);
@@ -710,24 +715,24 @@ function RepositoryCompareView(props) {
                           <div className="text-xs px-3 mt-2 flex flex-wrap">
                             {labels.length
                               ? labels.map((l, i) => {
-                                let label = find(repository.labels, {
-                                  id: l,
-                                }) || {
-                                  name: "",
-                                  color: "",
-                                };
-                                return (
-                                  <span
-                                    className="pr-2 pb-2 whitespace-nowrap"
-                                    key={"label" + i}
-                                  >
-                                    <Label
-                                      color={label.color}
-                                      name={label.name}
-                                    />
-                                  </span>
-                                );
-                              })
+                                  let label = find(repository.labels, {
+                                    id: l,
+                                  }) || {
+                                    name: "",
+                                    color: "",
+                                  };
+                                  return (
+                                    <span
+                                      className="pr-2 pb-2 whitespace-nowrap"
+                                      key={"label" + i}
+                                    >
+                                      <Label
+                                        color={label.color}
+                                        name={label.name}
+                                      />
+                                    </span>
+                                  );
+                                })
                               : "None yet"}
                           </div>
                         </div>
@@ -775,17 +780,17 @@ function RepositoryCompareView(props) {
                       </svg>
                       <span>
                         {compare.source.repository.id ===
-                          compare.target.repository.id
+                        compare.target.repository.id
                           ? compare.target.name +
-                          " is ahead of  " +
-                          compare.source.name
+                            " is ahead of  " +
+                            compare.source.name
                           : shrinkAddress(compare.target.repository.owner.id) +
-                          "/" +
-                          compare.target.name +
-                          " is ahead of " +
-                          shrinkAddress(compare.source.repository.owner.id) +
-                          "/" +
-                          compare.source.name}
+                            "/" +
+                            compare.target.name +
+                            " is ahead of " +
+                            shrinkAddress(compare.source.repository.owner.id) +
+                            "/" +
+                            compare.source.name}
                       </span>
                     </div>
                   </div>
@@ -808,27 +813,30 @@ function RepositoryCompareView(props) {
                       />
                     </svg>
                     <span>
-                      {compare.source.repository.id === compare.target.repository.id
+                      {compare.source.repository.id ===
+                      compare.target.repository.id
                         ? "There isn't anything to compare. " +
-                        compare.source.name +
-                        " and " +
-                        compare.target.name +
-                        " are the same."
+                          compare.source.name +
+                          " and " +
+                          compare.target.name +
+                          " are the same."
                         : "There isn't anything to compare. " +
-                        shrinkAddress(compare.source.repository.owner.id) +
-                        "/" +
-                        compare.source.name +
-                        " and " +
-                        shrinkAddress(compare.target.repository.owner.id) +
-                        "/" +
-                        compare.target.name +
-                        " are the same."}
+                          shrinkAddress(compare.source.repository.owner.id) +
+                          "/" +
+                          compare.source.name +
+                          " and " +
+                          shrinkAddress(compare.target.repository.owner.id) +
+                          "/" +
+                          compare.target.name +
+                          " are the same."}
                     </span>
                   </div>
                 </div>
               )}
             </div>
-            : <div className="pt-8 text-type-secondary">Empty repository</div> }
+          ) : (
+            <div className="pt-8 text-type-secondary">Empty repository</div>
+          )}
         </main>
       </div>
       <Footer />

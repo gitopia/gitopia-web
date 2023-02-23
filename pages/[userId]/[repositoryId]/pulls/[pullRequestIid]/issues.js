@@ -18,9 +18,8 @@ import usePullRequest from "../../../../../hooks/usePullRequest";
 import shrinkAddress from "../../../../../helpers/shrinkAddress";
 import dayjs from "dayjs";
 import { ApolloProvider } from "@apollo/client";
-import { updatedClient } from "../../../../../helpers/apolloClient";
-import QueryIssues from "../../../../../helpers/queryIssuesByTitleGql";
-import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
+import client from "../../../../../helpers/apolloClient";
+import QueryIssues from "../../../../../helpers/gql/queryIssuesByTitleGql";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -131,7 +130,7 @@ function RepositoryPullIssuesView(props) {
                     }}
                   />
 
-                  <ApolloProvider client={updatedClient}>
+                  <ApolloProvider client={client}>
                     <QueryIssues
                       substr={textEntered}
                       repoId={Number(repository.id)}
