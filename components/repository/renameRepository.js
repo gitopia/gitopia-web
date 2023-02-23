@@ -140,8 +140,8 @@ function RenameRepository({
       <div className="modal">
         <div className="modal-box">
           <p>
-            The remote url will also change and anyone using current repository
-            will have to update their settings. Are you sure ?
+            All the existing links shared for this repository will be invalid
+            and remote url will also change. Are you sure ?
           </p>
           <div className="modal-action">
             <label

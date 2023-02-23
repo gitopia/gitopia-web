@@ -36,18 +36,21 @@ function DeleteRepository({
       />
       <div className="modal">
         <div className="modal-box">
-          <p>Are you sure? </p>
+          <p>
+            This is a non-reversible action and all the associated issues, pull
+            requests, etc will be permanently deleted from Gitopia.
+          </p>
           <div className="flex mt-0.5">
             Please type
             <div className="px-1 font-bold">
               {currentOwnerId + "/" + repoName}
             </div>
-            to confirm.
+            to confirm deletion.
           </div>
           <input
             type="text"
             className={
-              "input input-lg input-bordered text-xs h-8 focus:outline-none focus:border-type mt-2 " +
+              "input input-lg input-bordered text-xs h-8 focus:outline-none focus:border-type mt-4 " +
               (typedData.length > 0 ? "border-green" : "")
             }
             value={typedData}
