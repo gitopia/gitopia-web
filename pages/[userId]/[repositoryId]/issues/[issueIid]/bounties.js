@@ -206,7 +206,7 @@ function RepositoryBountiesView(props) {
               />
             </div>
             {bounties.length > 0 ? (
-              <div className="border border-gray-50 rounded mt-4 text-justify sm:divide-y sm:divide-gray-700 overflow-x-auto">
+              <div className="border border-grey-50 rounded mt-4 text-justify sm:divide-y sm:divide-gray-700 overflow-x-auto">
                 <div className="flex mt-2 mb-2 ml-3">
                   <div className="sm:w-1/4">
                     <div className="w-56 sm:w-full text-type-secondary text-sm ml-3">

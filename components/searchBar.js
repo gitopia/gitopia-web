@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ApolloProvider, useQuery, useLazyQuery, gql } from "@apollo/client";
-import { updatedClient } from "../helpers/apolloClient";
+import client from "../helpers/apolloClient";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { useRouter } from "next/router";
 import find from "lodash/find";
+import ClickAwayListener from "react-click-away-listener";
+import debounce from "lodash/debounce";
 
 export default function SearchBar() {
   const [searchText, setSearchText] = useState("");
@@ -14,7 +16,7 @@ export default function SearchBar() {
 
   const QUERY_TRANSACTIONS = gql`
     query SearchQuery($search: String = "") {
-      explore_repo(text: $search) {
+      explore_repo(text: $search, first: 5) {
         id
         name
         description
@@ -22,11 +24,12 @@ export default function SearchBar() {
         ownerType
         __typename
       }
-      explore_user(text: $search) {
+      explore_user(text: $search, first: 5) {
         username
         name
         creator
         avatarurl
+        __typename
       }
     }
   `;
@@ -42,13 +45,14 @@ export default function SearchBar() {
     }
   `;
 
-  const { loading, error, data } = useQuery(QUERY_TRANSACTIONS, {
-    variables: { search: searchText },
-    client: updatedClient,
+  const [getSuggestions, newSuggestionsRes] = useLazyQuery(QUERY_TRANSACTIONS, {
+    client: client,
   });
 
+  const getSuggestionsDebounced = useCallback(debounce(getSuggestions, 400),[]);
+
   const [getUserInfo, userInfo] = useLazyQuery(QUERY_USERS, {
-    client: updatedClient,
+    client: client,
   });
 
   const pickUsername = (address) => {
@@ -56,15 +60,13 @@ export default function SearchBar() {
       creator: address,
     });
     if (u) {
-      console.log(u);
       return u.username ? u.username : shrinkAddress(address);
     }
     return shrinkAddress(address);
   };
 
-  const actOnSuggestion = () => {
-    let item = suggestions[selectedIndex];
-    console.log(item);
+  const actOnItem = (item) => {
+    if (!item) return;
     if (item.__typename === "Repository") {
       let u = find(userInfo?.data?.users, {
         creator: item.owner,
@@ -80,192 +82,214 @@ export default function SearchBar() {
   useEffect(() => {
     let newSuggestions = [],
       users = [];
-    data?.explore_repo?.map((e) => {
+    newSuggestionsRes?.data?.explore_repo?.map((e) => {
       users.push(e.owner);
       newSuggestions.push(e);
     });
-    data?.explore_user?.map((e) => newSuggestions.push(e));
+    newSuggestionsRes?.data?.explore_user?.map((e) => newSuggestions.push(e));
     setSuggestions(newSuggestions);
     if (users.length) getUserInfo({ variables: { creator_in: users } });
-  }, [data]);
+  }, [newSuggestionsRes?.data]);
+
+  useEffect(() => {
+    getSuggestionsDebounced({ variables: { search: searchText } });
+  }, [searchText]);
 
   return (
-    <div
-      className={
-        "flex-none mr-2 dropdown" + (showSuggestions ? " dropdown-open" : "")
-      }
+    <ClickAwayListener
+      onClickAway={() => {
+        setShowSuggestions(false);
+      }}
     >
-      <div className="form-control">
-        <div className="relative">
-          <input
-            name="search"
-            type="text"
-            placeholder="Search"
-            autoComplete="off"
-            className={
-              "w-64 pr-16 input input-sm input-ghost input-bordered transition-[width]" +
-              (showSuggestions ? " w-96" : "")
-            }
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-            }}
-            onKeyUp={(e) => {
-              if (e.code === "ArrowDown") {
-                setSelectedIndex(
-                  selectedIndex === suggestions.length ? 0 : selectedIndex + 1
-                );
-              } else if (e.code === "ArrowUp") {
-                setSelectedIndex(
-                  selectedIndex === 0 ? suggestions.length : selectedIndex - 1
-                );
-              } else if (e.code === "Enter") {
-                actOnSuggestion();
+      <div
+        className={
+          "flex-none mr-2 dropdown" + (showSuggestions ? " dropdown-open" : "")
+        }
+      >
+        <div className="form-control">
+          <div className="relative">
+            <input
+              name="search"
+              type="text"
+              placeholder="Search"
+              autoComplete="off"
+              className={
+                "w-64 pr-16 input input-sm input-ghost input-bordered transition-[width]" +
+                (showSuggestions ? " w-96" : "")
               }
-            }}
-            onFocus={() => {
-              setShowSuggestions(true);
-            }}
-            onBlur={() => {
-              setTimeout(() => {
-                setShowSuggestions(false);
-              }, 100);
-            }}
-          />
-          <button
-            className={
-              "absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost" +
-              (loading ? " loading" : "")
-            }
-            onClick={(e) => {
-              setSearchText("");
-            }}
-          >
-            {searchText === "" ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            )}
-          </button>
-        </div>
-      </div>
-
-      <div className="shadow-xl dropdown-content bg-base-300 rounded w-full mt-2 text-sm">
-        <ul className="menu bg-base-300 rounded-md">
-          {data?.explore_repo?.map((e, i) => {
-            return (
-              <li onClick={actOnSuggestion} key={"suggestion" + i}>
-                <a className={i === selectedIndex ? "active" : ""}>
-                  <div className="flex w-full">
-                    <div className="flex-1">
-                      <div>
-                        {pickUsername(e.owner)}
-                        {/* {e.ownerUsername
-                          ? e.ownerUsername
-                          : shrinkAddress(e.owner)} */}
-                        /{e.name}
-                      </div>
-                      <div className="nowrap ellipsis text-type-secondary text-xs">
-                        {e.description}
-                      </div>
-                    </div>
-                    <div
-                      className={
-                        "text-right text-type-tertiary text-xs" +
-                        (i === selectedIndex ? " text-green-300" : "")
-                      }
-                    >
-                      {e.__typename}
-                    </div>
-                  </div>
-                </a>
-              </li>
-            );
-          })}
-
-          {data?.explore_user?.map((e, i) => {
-            return (
-              <li
-                onClick={actOnSuggestion}
-                key={"suggestion" + ((data?.explore_repo?.length || 0) + i)}
-              >
-                <a
-                  className={
-                    i === selectedIndex + (data?.explore_repo?.length || 0)
-                      ? "active"
-                      : ""
-                  }
+              value={searchText}
+              onChange={(e) => {
+                setSearchText(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onKeyUp={(e) => {
+                if (e.code === "ArrowDown") {
+                  setSelectedIndex(
+                    selectedIndex === suggestions.length - 1
+                      ? 0
+                      : selectedIndex + 1
+                  );
+                } else if (e.code === "ArrowUp") {
+                  setSelectedIndex(
+                    selectedIndex === 0
+                      ? suggestions.length - 1
+                      : selectedIndex - 1
+                  );
+                } else if (e.code === "Enter") {
+                  actOnItem(suggestions[selectedIndex]);
+                  setShowSuggestions(false);
+                }
+              }}
+              onFocus={() => {
+                setShowSuggestions(true);
+              }}
+            />
+            <button
+              className={
+                "absolute right-0 top-0 rounded-l-none btn btn-sm btn-ghost" +
+                (newSuggestionsRes?.loading ? " loading" : "")
+              }
+              onClick={() => {
+                setSearchText("");
+              }}
+            >
+              {searchText === "" ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  <div className="flex w-full">
-                    <div className="flex-none mr-4">
-                      <div className="avatar">
-                        <div className="rounded-full w-10 h-10">
-                          <img
-                            src={
-                              e.avatarUrl ||
-                              "https://2.bp.blogspot.com/-v5XKcgrpJE0/UAV-gcZZaSI/AAAAAAAAB7o/-HhDZVVV_zo/s1600/gordan-ramsay.gif"
-                            }
-                          />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="shadow-xl dropdown-content bg-base-300 rounded w-full mt-2 text-sm">
+          <ul className="menu menu-compact bg-base-300 rounded-md">
+            {suggestions?.map((e, i) => {
+              if (e.__typename === "Repository") {
+                return (
+                  <li
+                    key={"suggestion" + i}
+                    onClick={() => {
+                      actOnItem(e);
+                    }}
+                  >
+                    <a className={i === selectedIndex ? "active" : ""}>
+                      <div className="flex w-full items-center">
+                        <div className="flex-none mr-2 flex items-center justify-center">
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-6 w-6"
+                            stroke="currentColor"
+                          >
+                            <path d="M9.5 7L4.5 12L9.5 17" strokeWidth="2" />
+                            <path d="M14.5 7L19.5 12L14.5 17" strokeWidth="2" />
+                          </svg>
+                        </div>
+                        <div className="flex-1 break-all pr-4">
+                          <div>
+                            {pickUsername(e.owner)}/{e.name}
+                          </div>
+                          <div className="nowrap ellipsis text-type-secondary text-xs">
+                            {e.description}
+                          </div>
+                        </div>
+                        <div className={"text-right text-xs text-green-400"}>
+                          {e.__typename}
                         </div>
                       </div>
-                    </div>
-                    <div className="flex-1">
-                      <div>{shrinkAddress(e.name)}</div>
-                      <div className="text-xs">{e.username}</div>
-                    </div>
-                    <div
-                      className={
-                        "text-right text-type-tertiary text-xs" +
-                        (i === selectedIndex ? " text-green-300" : "")
-                      }
-                    >
-                      {e.__typename}
-                    </div>
-                  </div>
-                </a>
-              </li>
-            );
-          })}
+                    </a>
+                  </li>
+                );
+              } else if (e.__typename === "User") {
+                return (
+                  <li
+                    key={"suggestion" + i}
+                    onClick={() => {
+                      actOnItem(e);
+                    }}
+                  >
+                    <a className={i === selectedIndex ? "active" : ""}>
+                      <div className="flex w-full items-center">
+                        <div className="flex-none mr-2 flex items-center justify-center">
+                          {e.avatarurl ? (
+                            <div className="avatar">
+                              <div className="rounded-full w-10 h-10">
+                                <img src={e.avatarurl} />
+                              </div>
+                            </div>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-6 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                              />
+                            </svg>
+                          )}
+                        </div>
+                        <div className="flex-1 break-all pr-4">
+                          <div>{shrinkAddress(e.name)}</div>
+                          <div className="text-xs">{e.username}</div>
+                        </div>
+                        <div className={"text-right text-xs text-green-400"}>
+                          {e.__typename}
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                );
+              }
+            })}
 
-          {!suggestions.length ? (
-            <li key="no-suggestion">
-              <span className="text-type-tertiary">
-                {searchText === ""
-                  ? "Search something like a user or repository"
-                  : "No Results"}
-              </span>
-            </li>
-          ) : (
-            ""
-          )}
-        </ul>
+            {!suggestions.length ? (
+              <li key="no-suggestion">
+                <span className="text-type-tertiary">
+                  {searchText === ""
+                    ? "Search something like a user or repository"
+                    : "No Results"}
+                </span>
+              </li>
+            ) : (
+              ""
+            )}
+          </ul>
+        </div>
       </div>
-    </div>
+    </ClickAwayListener>
   );
 }

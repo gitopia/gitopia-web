@@ -10,6 +10,7 @@ function DeleteRepository({
 }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [typedData, setTypedData] = useState("");
 
   return (
     <div className="flex items-center">
@@ -35,12 +36,36 @@ function DeleteRepository({
       />
       <div className="modal">
         <div className="modal-box">
-          <p>Are you sure ?</p>
+          <p>
+            This is a non-reversible action and all the associated issues, pull
+            requests, etc will be permanently deleted from Gitopia.
+          </p>
+          <div className="flex mt-0.5">
+            Please type
+            <div className="px-1 font-bold">
+              {currentOwnerId + "/" + repoName}
+            </div>
+            to confirm deletion.
+          </div>
+          <input
+            type="text"
+            className={
+              "input input-lg input-bordered text-xs h-8 focus:outline-none focus:border-type mt-4 " +
+              (typedData.length > 0 ? "border-green" : "")
+            }
+            value={typedData}
+            onChange={(e) => {
+              setTypedData(e.target.value);
+            }}
+          />
+
           <div className="modal-action">
             <label
               className="btn btn-sm"
               onClick={() => {
                 setConfirmDelete(false);
+                setIsDeleting(false);
+                setTypedData("");
               }}
             >
               Cancel
@@ -51,20 +76,23 @@ function DeleteRepository({
               }
               onClick={async () => {
                 setIsDeleting(true);
-
                 props
                   .deleteRepository({
-                    repoOwnerId: currentOwnerId,
-                    repositoryName: repoName,
+                    ownerId: currentOwnerId,
+                    name: repoName,
                   })
                   .then(async (res) => {
                     if (res.code == 0) {
                       if (onSuccess) await onSuccess;
                       setConfirmDelete(false);
                       setIsDeleting(false);
+                      setTypedData("");
                     }
                   });
               }}
+              disabled={
+                typedData !== (currentOwnerId + "/" + repoName).toString()
+              }
             >
               Delete
             </label>

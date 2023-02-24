@@ -112,7 +112,7 @@ function RepositorySettingsView(props) {
                       }}
                     />
                   </div>
-                  {/* <div className="mt-6">
+                  <div className="mt-6">
                     <DeleteRepository
                       currentOwnerId={repository.owner.id}
                       repoName={repository.name}
@@ -120,7 +120,7 @@ function RepositorySettingsView(props) {
                         router.push("/home");
                       }}
                     />
-                  </div> */}
+                  </div>
                 </div>
                 {/* <div className="flex py-6 items-center">
                   <div className="flex-1 mr-8">

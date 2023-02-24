@@ -19,6 +19,7 @@ function RenameRepository({
     message: "",
   });
   const [isChanging, setIsChanging] = useState(false);
+  const [renaming, setRenaming] = useState(false);
   const [startRename, setStartRename] = useState(false);
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
@@ -62,63 +63,108 @@ function RenameRepository({
     }
     setIsChanging(false);
     setStartRename(false);
+    setRenaming(false);
   };
 
-  return startRename ? (
-    <div className="sm:flex items-top">
-      <div className="flex-1 mr-8">
-        <TextInput
-          type="text"
-          name="repository_name"
-          placeholder="Repository Name"
-          label="Rename Repository"
-          value={name}
-          setValue={(v) => {
-            if (sanitizedNameTest.test(v)) {
-              setNameHint({
-                type: "info",
-                shown: true,
-                message:
-                  "Your repository would be named as " +
-                  v.replace(sanitizedNameTest, "-"),
-              });
-            } else {
-              setNameHint({ shown: false });
-            }
-            setName(v);
-          }}
-          hint={nameHint}
-          size="sm"
-        />
-      </div>
-      <div className="flex-none w-48 pt-4 sm:pt-9">
-        <button
-          className={
-            "btn btn-sm btn-block btn-outline " + (isChanging ? "loading" : "")
-          }
-          disabled={name === currentName || name.trim() === "" || isChanging}
-          onClick={changeName}
-        >
-          Rename
-        </button>
-      </div>
-    </div>
-  ) : (
-    <div className="sm:flex items-center">
-      <div className="flex-1 mr-8">
-        <div className="label-text">Rename Repository</div>
-        <div className="label-text-alt text-type-secondary">
-          The remote url will also change and anyone using current repository
-          will have to update their settings
+  return (
+    <div>
+      {startRename ? (
+        <div className="sm:flex items-top">
+          <div className="flex-1 mr-8">
+            <TextInput
+              type="text"
+              name="repository_name"
+              placeholder="Repository Name"
+              label="Rename Repository"
+              value={name}
+              setValue={(v) => {
+                if (sanitizedNameTest.test(v)) {
+                  setNameHint({
+                    type: "info",
+                    shown: true,
+                    message:
+                      "Your repository would be named as " +
+                      v.replace(sanitizedNameTest, "-"),
+                  });
+                } else {
+                  setNameHint({ shown: false });
+                }
+                setName(v);
+              }}
+              hint={nameHint}
+              size="sm"
+            />
+          </div>
+          <div className="flex-none w-48 pt-4 sm:pt-9">
+            <button
+              className={
+                "btn btn-sm btn-block btn-outline " +
+                (isChanging ? "loading" : "")
+              }
+              disabled={
+                name === currentName || name.trim() === "" || isChanging
+              }
+              onClick={() => {
+                setRenaming(true);
+              }}
+            >
+              Rename
+            </button>
+          </div>
         </div>
-      </div>
-      <div className="flex-none w-48 pt-4 sm:pt-0">
-        <button
-          className="btn btn-sm btn-block btn-accent btn-outline"
-          onClick={() => setStartRename(true)}
-        >
-          Rename
-        </button>
+      ) : (
+        <div className="sm:flex items-center">
+          <div className="flex-1 mr-8">
+            <div className="label-text">Rename Repository</div>
+            <div className="label-text-alt text-type-secondary">
+              The remote url will also change and anyone using current
+              repository will have to update their settings
+            </div>
+          </div>
+          <div className="flex-none w-48 pt-4 sm:pt-0">
+            <button
+              className="btn btn-sm btn-block btn-accent btn-outline"
+              onClick={() => setStartRename(true)}
+            >
+              Rename
+            </button>
+          </div>
+        </div>
+      )}
+      <input
+        type="checkbox"
+        checked={renaming}
+        readOnly
+        className="modal-toggle"
+      />
+      <div className="modal">
+        <div className="modal-box">
+          <p>
+            All the existing links shared for this repository will be invalid
+            and remote url will also change. Are you sure ?
+          </p>
+          <div className="modal-action">
+            <label
+              className="btn btn-sm"
+              onClick={() => {
+                setRenaming(false);
+                setStartRename(false);
+                setName(currentName);
+              }}
+            >
+              Cancel
+            </label>
+            <label
+              className={
+                "btn btn-sm btn-primary " + (isChanging ? "loading" : "")
+              }
+              onClick={changeName}
+              disabled={isChanging}
+            >
+              Rename
+            </label>
+          </div>
+        </div>
       </div>
     </div>
   );

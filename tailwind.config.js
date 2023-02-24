@@ -11,7 +11,6 @@ module.exports = {
       pattern: /(bg|text|border|w|h)-./,
     },
   ],
-  darkMode: "media", // or 'media' or 'class'
   theme: {
     fontFamily: {
       sans: ["SegoeUI", "sans-serif"],
@@ -93,11 +92,6 @@ module.exports = {
       animation: {
         "spin-slow": "spin 3s linear infinite",
       },
-    },
-  },
-  variants: {
-    extend: {
-      backgroundColor: ["active"],
     },
   },
   plugins: [require("daisyui")],

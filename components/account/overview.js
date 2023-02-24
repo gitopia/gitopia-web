@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Link from "next/link";
 import { ApolloProvider } from "@apollo/client";
-import QueryTransaction from "../../helpers/queryTransaction";
+import QueryTransaction from "../../helpers/gql/queryTransaction";
 import client from "../../helpers/apolloClient";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
