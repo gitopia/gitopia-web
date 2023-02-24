@@ -21,8 +21,8 @@ function AccountTransactions(props) {
   };
 
   useEffect(() => {
-    if (userTransactions.length > 0) {
-      setShowTransactions(userTransactions.slice(start, start + 10));
+    if (userTransactions?.length > 0) {
+      setShowTransactions(userTransactions?.slice(start, start + 10));
     }
   }, [userTransactions, start]);
 
@@ -98,7 +98,7 @@ function AccountTransactions(props) {
           );
         })}
       </div>
-      {userTransactions.length > 0 ? (
+      {userTransactions?.length > 0 ? (
         <div className="flex">
           <div className="">
             <button
@@ -115,7 +115,7 @@ function AccountTransactions(props) {
           <div className="ml-auto self-center">
             <button
               className={"btn btn-sm"}
-              disabled={start + 10 >= userTransactions.length}
+              disabled={start + 10 >= userTransactions?.length}
               onClick={() => {
                 loadNextTransactions();
                 window.scrollTo(0, 0);

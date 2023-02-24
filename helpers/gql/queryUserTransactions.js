@@ -1,5 +1,6 @@
 import { useQuery, gql } from "@apollo/client";
 import dayjs from "dayjs";
+import { useEffect } from "react";
 import { connect } from "react-redux";
 
 const QUERY_USER_TRANSACTIONS = gql`
@@ -23,6 +24,10 @@ function QueryUserTransactions(props) {
     variables: { creator: props.creator },
   });
 
+  useEffect(() => {
+    props.setUserTransactions(data?.userEvents);
+  }, [data]);
+
   if (loading) {
     return null;
   }
@@ -30,7 +35,6 @@ function QueryUserTransactions(props) {
     console.log(error);
     return null;
   }
-  props.setUserTransactions(data.userEvents);
 
   return null;
 }
