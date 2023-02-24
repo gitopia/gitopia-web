@@ -835,7 +835,7 @@ function RepositoryCompareView(props) {
               )}
             </div>
           ) : (
-            <div className="pt-8 text-type-secondary">Empty repository</div>
+            <div className="pt-8 text-type-secondary">Repository has no branches</div>
           )}
         </main>
       </div>
