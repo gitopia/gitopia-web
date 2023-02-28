@@ -222,7 +222,7 @@ function RepositoryBountiesView(props) {
                   </div>
 
                   <div className="sm:w-1/6 ">
-                    <div className="w-32 sm:w-full text-type-secondary text-sm">
+                    <div className="w-28 sm:w-full mr-2 sm:mr-0 text-type-secondary text-sm">
                       Wallet Address
                     </div>
                   </div>
@@ -246,9 +246,9 @@ function RepositoryBountiesView(props) {
                       <div className="flex sm:w-1/4 divide-x divide-grey-50">
                         {b.amount.length > 1 ? (
                           <div className="dropdown dropdown-top sm:dropdown-bottom">
-                            <div className="w-52 sm:w-full flex">
+                            <div className="w-60 sm:w-full flex">
                               <div className="flex">
-                                <div className="ml-2 sm:ml-0 text-xs border-2 border-grey rounded-full p-1">
+                                <div className="text-xs border-2 border-grey rounded-full p-1">
                                   1+
                                 </div>
                                 <div className="text-sm ml-2 mt-0.5">
@@ -293,7 +293,7 @@ function RepositoryBountiesView(props) {
                           b.amount.map((a, index) => {
                             return (
                               <div
-                                className="flex items-center w-52 sm:w-full"
+                                className="flex items-center w-60 sm:w-full"
                                 key={index}
                               >
                                 <img
@@ -312,13 +312,13 @@ function RepositoryBountiesView(props) {
                           })
                         )}
                       </div>
-                      <div className="w-48 sm:w-1/6">
-                        <div className="text-sm">
+                      <div className="sm:w-1/6">
+                        <div className="text-sm w-28 sm:w-0">
                           {shrinkAddress(b.creator)}
                         </div>
                       </div>
                       <div className="sm:w-1/6">
-                        <div className="text-sm w-32">
+                        <div className="text-sm w-36">
                           {b.state == "BOUNTY_STATE_REVERTEDBACK" ||
                           b.state == "BOUNTY_STATE_DESTCREDITED"
                             ? "--"
