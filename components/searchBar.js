@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
-import { ApolloProvider, useQuery, useLazyQuery, gql } from "@apollo/client";
+import { useLazyQuery, gql } from "@apollo/client";
 import client from "../helpers/apolloClient";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { useRouter } from "next/router";
 import find from "lodash/find";
 import ClickAwayListener from "react-click-away-listener";
 import debounce from "lodash/debounce";
+import { validUserAddress, validDaoAddress } from "../helpers/validAddress";
 
 export default function SearchBar() {
   const [searchText, setSearchText] = useState("");
@@ -29,15 +30,12 @@ export default function SearchBar() {
         name
         creator
         avatarUrl
-        bio
         __typename
       }
       explore_dao(text: $search, first: 5) {
         name
         address
         description
-        location
-        website
         avatarUrl
         __typename
       }
@@ -55,6 +53,17 @@ export default function SearchBar() {
     }
   `;
 
+  const QUERY_DAOS = gql`
+    query DaosQuery($address_in: [String!] = "") {
+      daos(where: { address_in: $address_in }) {
+        avatarUrl
+        name
+        description
+        address
+      }
+    }
+  `;
+
   const [getSuggestions, newSuggestionsRes] = useLazyQuery(QUERY_TRANSACTIONS, {
     client: client,
   });
@@ -67,13 +76,25 @@ export default function SearchBar() {
   const [getUserInfo, userInfo] = useLazyQuery(QUERY_USERS, {
     client: client,
   });
+  const [getDaoInfo, daoInfo] = useLazyQuery(QUERY_DAOS, {
+    client: client,
+  });
 
   const pickUsername = (address) => {
-    let u = find(userInfo?.data?.users, {
-      creator: address,
-    });
-    if (u) {
-      return u.username ? u.username : shrinkAddress(address);
+    if (validUserAddress.test(address)) {
+      let u = find(userInfo?.data?.users, {
+        creator: address,
+      });
+      if (u) {
+        return u.username ? u.username : shrinkAddress(address);
+      }
+    } else if (validDaoAddress.test(address)) {
+      let d = find(daoInfo?.data?.daos, {
+        address: address,
+      });
+      if (d) {
+        return d.name ? d.name : shrinkAddress(address);
+      }
     }
     return shrinkAddress(address);
   };
@@ -81,28 +102,44 @@ export default function SearchBar() {
   const actOnItem = (item) => {
     if (!item) return;
     if (item.__typename === "Repository") {
-      let u = find(userInfo?.data?.users, {
-        creator: item.owner,
-      });
-      router.push(
-        "/" + (u.username ? u.username : item.owner) + "/" + item.name
-      );
+      let id = item.owner;
+      if (validUserAddress.test(item.owner)) {
+        let u = find(userInfo?.data?.users, {
+          creator: item.owner,
+        });
+        if (u?.username) id = u.username;
+      } else if (validDaoAddress.test(item.owner)) {
+        let d = find(daoInfo?.data?.daos, {
+          address: item.owner,
+        });
+        if (d?.name) id = d.name.toLowerCase();
+      }
+      router.push("/" + id + "/" + item.name);
     } else if (item.__typename === "User") {
       router.push("/" + item.username);
+    } else if (item.__typename === "Dao") {
+      router.push("/" + item.name.toLowerCase());
     }
   };
 
   useEffect(() => {
     let newSuggestions = [],
-      users = [];
+      users = [],
+      daos = [];
     newSuggestionsRes?.data?.explore_repo?.map((e) => {
-      users.push(e.owner);
+      if (validUserAddress.test(e.owner)) users.push(e.owner);
+      else if (validDaoAddress.test(e.owner)) daos.push(e.owner);
       newSuggestions.push(e);
     });
     newSuggestionsRes?.data?.explore_user?.map((e) => newSuggestions.push(e));
     newSuggestionsRes?.data?.explore_dao?.map((e) => newSuggestions.push(e));
     setSuggestions(newSuggestions);
-    if (users.length) getUserInfo({ variables: { creator_in: users } });
+    if (users.length) {
+      getUserInfo({ variables: { creator_in: users } });
+    }
+    if (daos.length) {
+      getDaoInfo({ variables: { address_in: daos } });
+    }
   }, [newSuggestionsRes?.data]);
 
   useEffect(() => {
