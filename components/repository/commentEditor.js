@@ -83,7 +83,7 @@ function CommentEditor({
   };
 
   return (
-    <div className="ml-4 flex-1">
+    <div className="flex-1">
       <MarkdownEditor
         value={comment}
         setValue={setComment}
