@@ -1,5 +1,4 @@
-const validUserAddress = new RegExp("^gitopia([a-z0-9]{39})$");
-const validDaoAddress = new RegExp("^gitopia([a-z0-9]{59})$");
+import { validUserAddress, validDaoAddress } from "./validAddress";
 export default function shrinkAddress(address) {
   if (validUserAddress.test(address)) {
     let trimText = address.slice(11, 42);
