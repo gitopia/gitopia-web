@@ -319,7 +319,8 @@ function RepositoryBountiesView(props) {
                       </div>
                       <div className="sm:w-1/6">
                         <div className="text-sm w-32">
-                          {b.state == "BOUNTY_STATE_REVERTEDBACK"
+                          {b.state == "BOUNTY_STATE_REVERTEDBACK" ||
+                          b.state == "BOUNTY_STATE_DESTCREDITED"
                             ? "--"
                             : dayjs
                                 .unix(parseInt(b.expireAt))
@@ -339,7 +340,7 @@ function RepositoryBountiesView(props) {
                         )}
                         {b.state == "BOUNTY_STATE_DESTCREDITED" ? (
                           <div className="w-36 sm:w-0">
-                            <div className="flex items-center rounded-full px-4 w-24 py-0.5 bg-teal text-xs uppercase mt-0.5">
+                            <div className="flex items-center rounded-full px-4 w-24 py-0.5 bg-[#AD731D] text-xs uppercase mt-0.5">
                               Rewarded
                             </div>
                           </div>
@@ -347,7 +348,7 @@ function RepositoryBountiesView(props) {
                           ""
                         )}
                         {b.expireAt < dayjs().unix() &&
-                        b.state != "BOUNTY_STATE_REVERTEDBACK" ? (
+                        b.state == "BOUNTY_STATE_SRCDEBITTED" ? (
                           <div className="w-36 sm:w-0">
                             <div className="flex items-center rounded-full px-7 w-24 py-0.5 bg-pink text-xs uppercase mt-0.5 ml-1">
                               Expired
@@ -368,9 +369,7 @@ function RepositoryBountiesView(props) {
                       </div>
 
                       {props.selectedAddress === b.creator ? (
-                        b.state == "BOUNTY_STATE_SRCDEBITTED" ||
-                        (b.expireAt < dayjs().unix() &&
-                          b.state != "BOUNTY_STATE_REVERTEDBACK") ? (
+                        b.state == "BOUNTY_STATE_SRCDEBITTED" ? (
                           <div className="flex-none flex sm:w-1/4">
                             <div
                               className={
