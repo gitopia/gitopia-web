@@ -8,6 +8,7 @@ import getBalanceInDollars from "../../helpers/getWalletBalanceInDollars";
 import { useRouter } from "next/router";
 import { getAddressforChain } from "../../store/actions/wallet";
 import { getAssetList } from "../../helpers/getIbcAssetList";
+import { coingeckoId } from "../../ibc-assets-config";
 
 function WalletInfo(props) {
   const [totalBalance, setTotalBalance] = useState(0);
@@ -137,7 +138,7 @@ function WalletInfo(props) {
           <div className="mx-3 flex-1">{"Gitopia"}</div>
 
           <div className="">
-            {props.loreBalance/1000000 +
+            {props.loreBalance / 1000000 +
               " " +
               process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
           </div>
@@ -185,7 +186,9 @@ function WalletInfo(props) {
               </div>
               <div className="mx-3 flex-1">{asset.chain_name}</div>
               <div className="">
-                {(tokenBalances[asset.base_denom] || 0) +
+                {(tokenBalances[asset.base_denom] /
+                  Math.pow(10, coingeckoId[asset.base_denom].coinDecimals) ||
+                  0) +
                   " " +
                   asset.base_denom}
               </div>
@@ -195,17 +198,17 @@ function WalletInfo(props) {
                   data-tip="Deposit"
                   onClick={() => {
                     props
-                        .getAddressforChain(
-                          props.activeWallet.name,
-                          asset.chain_name
-                        )
+                      .getAddressforChain(
+                        props.activeWallet.name,
+                        asset.chain_name
+                      )
                       .then((res) => {
                         if (res?.error) {
                           props.notify(res.message, "error");
                         } else {
                           props.setOpenDeposit(true);
                         }
-                        });
+                      });
                   }}
                   id={index}
                 >
@@ -246,19 +249,18 @@ function WalletInfo(props) {
                   className="btn btn-circle btn-sm btn-outline tooltip tooltip-bottom tooltip-secondary"
                   data-tip="Withdraw"
                   onClick={() => {
-                     props
-                        .getAddressforChain(
-                          props.activeWallet.name,
-                          asset.chain_name
-                        )
-                       .then((res) => {
-                          if (res?.error) {
+                    props
+                      .getAddressforChain(
+                        props.activeWallet.name,
+                        asset.chain_name
+                      )
+                      .then((res) => {
+                        if (res?.error) {
                           props.notify(res.message, "error");
                         } else {
                           props.setOpenWithdraw(true);
                         }
-                          
-                        });
+                      });
                   }}
                   id={index}
                 >
@@ -324,10 +326,7 @@ function WalletInfo(props) {
             <div className="font-semibold text-3xl">0</div>
             <div className="font-bold text-xs text-type-tertiary">≈ $0.0</div>
           </div>
-          <div
-            disabled={true}
-            className="btn btn-primary btn-sm mt-3"
-          >
+          <div disabled={true} className="btn btn-primary btn-sm mt-3">
             Claim Rewards
           </div>
         </div>

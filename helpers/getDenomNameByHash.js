@@ -1,5 +1,5 @@
 import { Api } from "../store/ibc.applications.transfer.v1/module/rest";
-const api = new Api({ baseURL: process.env.NEXT_PUBLIC_API_URL });
+const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
 export default async function getDenomNameByHash(denom) {
   if (!denom) return null;
   try {

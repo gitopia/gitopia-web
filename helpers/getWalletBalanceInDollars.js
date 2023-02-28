@@ -9,7 +9,9 @@ const ibc = new ibcApi({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
 export default async function getBalanceInDollars(address) {
   if (!address) return {};
   try {
-    let totalPrice = 0, TokenBalances = {}, USDBalances={};
+    let totalPrice = 0,
+      TokenBalances = {},
+      USDBalances = {};
     const res = await api.queryAllBalances(address);
     if (res.ok) {
       let balance = res.data.balances;
@@ -20,6 +22,8 @@ export default async function getBalanceInDollars(address) {
           const result = await ibc.queryDenomTrace(denomHash);
           if (result.ok) {
             let denom = result.data.denom_trace.base_denom;
+            delete TokenBalances[balance[i].denom];
+            TokenBalances[denom] = balance[i].amount;
             await axios
               .get(
                 "https://api.coingecko.com/api/v3/simple/price?ids=" +
@@ -44,10 +48,15 @@ export default async function getBalanceInDollars(address) {
     }
 
     return {
-      totalPrice: totalPrice === 0 ? 0 : (totalPrice< 1  ? totalPrice.toFixed(6) : totalPrice.toFixed(2)),
+      totalPrice:
+        totalPrice === 0
+          ? 0
+          : totalPrice < 1
+          ? totalPrice.toFixed(6)
+          : totalPrice.toFixed(2),
       TokenBalances,
-      USDBalances
-    }
+      USDBalances,
+    };
   } catch (e) {
     console.error(e);
   }
