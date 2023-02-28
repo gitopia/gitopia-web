@@ -345,6 +345,40 @@ export const renameRepository = ({
   };
 };
 
+export const changeDefaultBranch = ({
+  repoOwner = null,
+  repoName = null,
+  branchName = "",
+}) => {
+  return async (dispatch, getState) => {
+    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+      return null;
+    const { env, wallet } = getState();
+    const data = {
+      creator: wallet.selectedAddress,
+      repositoryId: { id: repoOwner, name: repoName },
+      branch: branchName,
+    };
+
+    try {
+      const message = await env.txClient.msgSetDefaultBranch(data);
+      const result = await sendTransaction({ message })(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
+      if (result && result.code === 0) {
+        getUserDetailsForSelectedAddress()(dispatch, getState);
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
+
 export const updateCollaborator = ({
   repoOwner = null,
   repoName = null,
