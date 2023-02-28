@@ -26,6 +26,7 @@ import getBounty from "../../../../../helpers/getBounty";
 import getDenomNameByHash from "../../../../../helpers/getDenomNameByHash";
 import { coingeckoId } from "../../../../../ibc-assets-config";
 import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
+import useWindowSize from "../../../../../hooks/useWindowSize";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -58,6 +59,7 @@ function RepositoryBountiesView(props) {
   const [bounties, setBounties] = useState([]);
   const [closeBountyLoading, setCloseBountyLoading] = useState(false);
   const [bountyAmount, setBountyAmount] = useState([]);
+  const { isMobile } = useWindowSize();
 
   useEffect(() => {
     async function fetchBounty() {
@@ -206,7 +208,12 @@ function RepositoryBountiesView(props) {
               />
             </div>
             {bounties.length > 0 ? (
-              <div className="border border-grey-50 rounded mt-4 text-justify sm:divide-y sm:divide-gray-700 overflow-x-auto">
+              <div
+                className={
+                  "border border-grey-50 rounded mt-4 text-justify sm:divide-y sm:divide-gray-700 overflow-y-visible " +
+                  (isMobile ? "overflow-x-auto" : "")
+                }
+              >
                 <div className="flex mt-2 mb-2 ml-3">
                   <div className="sm:w-1/4">
                     <div className="w-56 sm:w-full text-type-secondary text-sm ml-3">
@@ -241,7 +248,7 @@ function RepositoryBountiesView(props) {
                           <div className="dropdown dropdown-top sm:dropdown-bottom">
                             <div className="w-52 sm:w-full flex">
                               <div className="flex">
-                                <div className="ml-4 text-xs border-2 border-grey rounded-full p-1">
+                                <div className="ml-2 sm:ml-0 text-xs border-2 border-grey rounded-full p-1">
                                   1+
                                 </div>
                                 <div className="text-sm ml-2 mt-0.5">
@@ -268,6 +275,7 @@ function RepositoryBountiesView(props) {
                                       height={24}
                                       width={24}
                                       src={coingeckoId[a.denom].icon}
+                                      className="ml-4"
                                     />
 
                                     <div className="ml-2 text-sm uppercase">
@@ -284,7 +292,10 @@ function RepositoryBountiesView(props) {
                         ) : (
                           b.amount.map((a, index) => {
                             return (
-                              <div className="flex items-center w-52 sm:w-full" key={index}>
+                              <div
+                                className="flex items-center w-52 sm:w-full"
+                                key={index}
+                              >
                                 <img
                                   height={24}
                                   width={24}
