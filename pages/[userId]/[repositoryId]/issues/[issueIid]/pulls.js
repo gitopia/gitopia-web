@@ -270,7 +270,7 @@ function RepositoryIssueLinkedPullsView(props) {
                         </div>
                       </div>
                     </div>
-                    <div className="sm:w-1/12 flex mr-8 mt-1.5 ml-10 sm:ml-2">
+                    <div className="sm:w-1/12 flex mr-8 mt-1.5 ml-12 sm:ml-2">
                       <div className="text-sm mr-3 font-bold text-type-secondary">
                         {p.commentsCount}
                       </div>
