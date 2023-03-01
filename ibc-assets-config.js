@@ -12,9 +12,20 @@ export const coingeckoId = {
     icon: "/tokens/gitopia.svg",
   },
   uatom: {
-    id: "",
+    id: "cosmos",
     coinDecimals: 6,
     coinDenom: "ATOM",
-    icon: "",
+    icon: "/tokens/atom.svg",
+  },
+};
+
+export const gasConfig = {
+  osmosistestnet: {
+    gasPrice: "0.025uosmo",
+    multiplier: 1.3,
+  },
+  cosmoshubtestnet: {
+    gasPrice: "0.1uatom",
+    multiplier: 1.5,
   },
 };
