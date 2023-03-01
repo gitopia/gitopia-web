@@ -11,6 +11,12 @@ export const coingeckoId = {
     coinDenom: "TLORE",
     icon: "/tokens/gitopia.svg",
   },
+  uatom: {
+    id: "",
+    coinDecimals: 6,
+    coinDenom: "ATOM",
+    icon: "",
+  },
 };
 export const gitopiaIbc = {
   chain_name: "gitopia",
