@@ -151,6 +151,8 @@ function IssueBountyView(props) {
                                     ? coingeckoId[a.showDenom].icon
                                     : coingeckoId[a.denom].icon
                                 }
+                                width={30}
+                                height={30}
                                 className={
                                   "absolute left-" +
                                   index * 4 +
@@ -169,6 +171,8 @@ function IssueBountyView(props) {
                             ? coingeckoId[b.amount[0].showDenom].icon
                             : coingeckoId[b.amount[0].denom].icon
                         }
+                        width={33}
+                        height={33}
                       />
                     )}
 
