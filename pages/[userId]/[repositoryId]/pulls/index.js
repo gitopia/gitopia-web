@@ -176,6 +176,7 @@ function RepositoryPullsView(props) {
                   "/" + repository.owner.id + "/" + repository.name + "/compare"
                 }
                 className="btn btn-primary btn-sm btn-block"
+                data-test="new-pull-request"
               >
                 New Pull Request
               </Link>
@@ -601,6 +602,7 @@ function RepositoryPullsView(props) {
                               i.iid
                             }
                             className="btn-neutral"
+                            data-test="select-open-pr"
                           >
                             {i.title}
                           </Link>

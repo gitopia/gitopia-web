@@ -121,6 +121,7 @@ function RepositoryIssueCreateView(props) {
                     onChange={(e) => {
                       setTitle(e.target.value);
                     }}
+                    data-test="issue_title"
                   />
                 </div>
                 <CreateBounty
@@ -139,6 +140,7 @@ function RepositoryIssueCreateView(props) {
                       }
                       disabled={title.trim().length === 0 || postingIssue}
                       onClick={createIssue}
+                      data-test="create_issue"
                     >
                       Create Issue
                     </button>

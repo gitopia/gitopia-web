@@ -175,6 +175,7 @@ function RepositoryReleaseNewView(props) {
                   <input
                     type="text"
                     placeholder="Tag Name"
+                    data-test="tag-name"
                     className={
                       "input input-sm input-bordered focus:outline-none focus:border-type " +
                       (tagName.length > 0 ? "border-green" : "border-pink")
@@ -242,6 +243,7 @@ function RepositoryReleaseNewView(props) {
                           }
                           setCreatingTag(false);
                         }}
+                        data-test="create-tag"
                       >
                         Create Tag
                       </button>
@@ -286,6 +288,7 @@ function RepositoryReleaseNewView(props) {
                 <div className="form-control mb-4">
                   <input
                     type="text"
+                    data-test="release-title"
                     placeholder="Release Title"
                     className="input input-md input-bordered"
                     value={title}
@@ -400,6 +403,7 @@ function RepositoryReleaseNewView(props) {
                       }
                       disabled={title.trim().length === 0 || postingIssue}
                       onClick={createIssue}
+                      data-test="create-release"
                     >
                       Create Release
                     </button>

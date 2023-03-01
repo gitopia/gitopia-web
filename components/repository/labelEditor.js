@@ -187,7 +187,11 @@ function LabelEditor({
           </div>
         </div>
         <div className="flex flex-none w-60 btn-group">
-          <button className={"flex-1 btn btn-sm btn-block "} onClick={onCancel}>
+          <button 
+          className={"flex-1 btn btn-sm btn-block "} 
+          onClick={onCancel} 
+          data-test="cancel_label"
+          >
             Cancel
           </button>
           <button
@@ -197,6 +201,7 @@ function LabelEditor({
             }
             onClick={isEdit ? onUpdateLabel : onCreateLabel}
             disabled={isSaving}
+            data-test="save_label"
           >
             {isEdit ? "Update" : "Save"}
           </button>
@@ -208,7 +213,7 @@ function LabelEditor({
             Common labels
           </span>
           {defaultLabels.map((dl, i) => (
-            <span className="mr-2" key={"suggestedLabel" + i}>
+            <span className="mr-2" key={"suggestedLabel" + i} data-test="common_labels">
               <Label
                 color={dl.color}
                 name={dl.name}

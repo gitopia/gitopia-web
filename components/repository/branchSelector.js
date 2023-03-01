@@ -56,6 +56,7 @@ export default function BranchSelector({
     >
       <div
         className="btn btn-sm btn-outline items-center"
+        data-test="select-branch"
         onClick={() => {
           if (searchInput) searchInput.current.focus();
         }}
@@ -196,7 +197,7 @@ export default function BranchSelector({
             className="menu-container  overflow-y-scroll"
             style={{ maxHeight: "320px" }}
           >
-            <ul className="menu menu-vertical text-xs mt-2">
+            <ul className="menu menu-vertical text-xs mt-2" data-test="branch_selector">
               {filteredList.map((b, i) => {
                 return (
                   <li key={"branch-selector" + i}>
@@ -234,6 +235,7 @@ export default function BranchSelector({
               onClick={() => {
                 onCreateTag(searchText);
               }}
+              data-test="create-tag"
             >
               Create Tag
             </button>

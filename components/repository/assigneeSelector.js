@@ -69,6 +69,7 @@ function AssigneeSelector({
   return (
     <div
       className={"dropdown dropdown-end w-full"}
+      data-test="assignee"
       tabIndex="0"
       ref={menuDiv}
       onClick={() => {
@@ -97,6 +98,7 @@ function AssigneeSelector({
       <div className="dropdown-content shadow-lg bg-base-300 rounded w-56 p-4 mt-1">
         <div className="form-control mb-2">
           <input
+            data-test="assignee_search"
             name="search"
             type="text"
             placeholder="Search By Address"
@@ -192,6 +194,7 @@ function AssigneeSelector({
             className={
               "btn btn-sm btn-primary flex-1 " + (isSaving ? "loading" : "")
             }
+            data-test="assignee_save"
             onClick={(e) => {
               updateAssignees();
               if (menuDiv.current) {

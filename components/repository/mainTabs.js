@@ -30,6 +30,7 @@ function RepositoryMainTabs({ repository, active, ...props }) {
           className={
             "tab tab-md tab-bordered" + (active === "code" ? " tab-active" : "")
           }
+          data-test="code"
         >
           <span className="icon mr-2">
             <svg
@@ -51,6 +52,7 @@ function RepositoryMainTabs({ repository, active, ...props }) {
             "tab tab-md tab-bordered" +
             (active === "issues" ? " tab-active" : "")
           }
+          data-test="issues"
         >
           <span className="icon mr-2">
             <svg
@@ -75,6 +77,7 @@ function RepositoryMainTabs({ repository, active, ...props }) {
             "tab tab-md tab-bordered" +
             (active === "pulls" ? " tab-active" : "")
           }
+          data-test="pull-requests"
         >
           <svg
             viewBox="0 0 24 24"
@@ -129,6 +132,7 @@ function RepositoryMainTabs({ repository, active, ...props }) {
               "tab tab-md tab-bordered" +
               (active === "settings" ? " tab-active" : "")
             }
+            data-test="settings"
           >
             <span className="icon mr-2">
               <svg

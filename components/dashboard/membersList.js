@@ -89,6 +89,7 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
                     target="_blank"
                     rel="noreferrer"
                     className="link link-primary text-sm no-underline hover:underline"
+                    data-test="mem_address"
                   >
                     {shrinkAddress(c.address)}
                   </a>
@@ -104,6 +105,7 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
                 }
                 disabled={isRemoving === i}
                 onClick={() => removeMember(c.address, i)}
+                data-test="remove"
               >
                 Remove
               </button>
@@ -131,6 +133,7 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
               }
               value={collabRole}
               onChange={(e) => setCollabRole(e.target.value)}
+              data-test="member_role"
             >
               <option value="MEMBER">Member</option>
               <option value="OWNER">Owner</option>
@@ -142,6 +145,7 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
                 "btn btn-sm btn-outline btn-block " +
                 (isAdding ? "loading" : "")
               }
+              data-test="add"
               onClick={addMember}
               disabled={collabAddress.trim() === "" || isAdding}
             >

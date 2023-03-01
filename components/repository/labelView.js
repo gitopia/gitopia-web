@@ -15,7 +15,7 @@ function LabelView({
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
-    <div key={"label" + label.id} className="p-4">
+    <div key={"label" + label.id} className="p-4"  data-test="label">
       {isEditing ? (
         <LabelEditor
           isEdit={true}
@@ -44,6 +44,7 @@ function LabelView({
               onClick={() => {
                 setIsEditing(true);
               }}
+              data-test="edit_label"
             >
               Edit
             </button>
@@ -54,6 +55,7 @@ function LabelView({
               onClick={() => {
                 setConfirmDelete(true);
               }}
+              data-test="delete_label"
             >
               Delete
             </button>
@@ -88,6 +90,7 @@ function LabelView({
                 setConfirmDelete(false);
                 setIsDeleting(false);
               }}
+              data-test="del_label"
             >
               Delete
             </label>

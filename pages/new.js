@@ -199,6 +199,7 @@ function NewRepository(props) {
                 }
                 disabled={repositoryCreating}
                 onClick={createRepository}
+                data-test="create-repo-button"
               >
                 Create Repository
               </button>

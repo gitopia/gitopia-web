@@ -50,12 +50,19 @@ function CommentView({
           }}
         />
       ) : (
-        <div className="border border-grey rounded-lg flex-1">
+        <div
+          className="border border-grey rounded-lg flex-1"
+          data-test="comment_view"
+        >
           <div className="text-xs px-2 rounded-t relative">
             <div className="absolute right-2 top-1">
               {comment.creator === userAddress ? (
                 <div className="dropdown dropdown-end">
-                  <div tabIndex="0" className="btn btn-square btn-xs btn-link">
+                  <div
+                    tabIndex="0"
+                    className="btn btn-square btn-xs btn-link"
+                    data-test="comment_options"
+                  >
                     <svg
                       width="21"
                       height="5"
@@ -77,6 +84,7 @@ function CommentView({
                         onClick={() => {
                           setIsEditing(true);
                         }}
+                        data-test="edit_comment"
                       >
                         Edit
                       </a>
@@ -86,6 +94,7 @@ function CommentView({
                         onClick={() => {
                           setConfirmDelete(true);
                         }}
+                        data-test="delete_comment"
                       >
                         Delete
                       </a>
@@ -130,6 +139,7 @@ function CommentView({
               onClick={() => {
                 setConfirmDelete(false);
               }}
+              data-test="cancel_delete_comment"
             >
               Cancel
             </label>
@@ -143,6 +153,7 @@ function CommentView({
                 setConfirmDelete(false);
                 setIsDeleting(false);
               }}
+              data-test="del_comment"
             >
               Delete
             </label>

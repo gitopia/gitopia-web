@@ -44,7 +44,11 @@ function TopRepositories({ repositories = [] }) {
       </ul>
       {hasMore ? (
         <div className="mx-6 my-2">
-          <Link href={"/" + repos[0].username} className="btn btn-xs btn-link">
+          <Link
+            href={"/" + repos[0].username}
+            className="btn btn-xs btn-link"
+            data-test="all_repositories"
+          >
             All Repositories
           </Link>
         </div>

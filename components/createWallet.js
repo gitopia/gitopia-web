@@ -206,7 +206,12 @@ function CreateWallet(props) {
           <div className="max-w-2xl w-full p-4 mb-5">
             <ul className="grid grid-cols-4 grid-rows-6 sm:grid-cols-6 sm:grid-rows-4 gap-5 list-decimal list-inside text-xs sm:text-base">
               {mnemonic.split(" ").map((word, i) => {
-                return <li key={i}>{word}</li>;
+                console.log(word);
+                return (
+                  <li key={i} data-test="mnemonic">
+                    {word}
+                  </li>
+                );
               })}
             </ul>
           </div>
@@ -217,7 +222,12 @@ function CreateWallet(props) {
             >
               Download Backup
             </button>
-            <button className="btn btn-secondary btn-block" onClick={() => {}}>
+            <button
+              className="btn btn-secondary btn-block"
+              onClick={() => {
+                router.push("/home");
+              }}
+            >
               Done
             </button>
           </div>
@@ -267,6 +277,7 @@ function CreateWallet(props) {
               <button
                 className="btn btn-secondary btn-block"
                 onClick={createWallet}
+                data-test="create_wallet"
               >
                 Create
               </button>

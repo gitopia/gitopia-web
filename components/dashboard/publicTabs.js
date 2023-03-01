@@ -13,8 +13,8 @@ export default function PublicTabs({
         className={
           "tab tab-md tab-bordered" +
           (active === "overview" ? " tab-active" : "")
-        }>
-
+        }
+      >
         <span className="icon mr-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -33,7 +33,6 @@ export default function PublicTabs({
           </svg>
         </span>
         <span>Overview</span>
-
       </Link>
 
       <Link
@@ -41,8 +40,9 @@ export default function PublicTabs({
         className={
           "tab tab-md tab-bordered" +
           (active === "repositories" ? " tab-active" : "")
-        }>
-
+        }
+        data-test="repositories_tab"
+      >
         <span className="icon mr-2">
           <svg
             width="20"
@@ -63,16 +63,15 @@ export default function PublicTabs({
           </svg>
         </span>
         <span>Repositories</span>
-
       </Link>
       {!showPeople ? (
-        (<Link
+        <Link
           href={hrefBase + "?tab=transactions"}
           className={
             "tab tab-md tab-bordered" +
             (active === "transactions" ? " tab-active" : "")
-          }>
-
+          }
+        >
           <span className="icon mr-2">
             <svg
               height={16}
@@ -95,19 +94,18 @@ export default function PublicTabs({
             </svg>
           </span>
           <span>Transactions</span>
-
-        </Link>)
+        </Link>
       ) : (
         ""
       )}
       {showPeople ? (
-        (<Link
+        <Link
           href={hrefBase + "?tab=people"}
           className={
             "tab  tab-md tab-bordered" +
             (active === "people" ? " tab-active" : "")
-          }>
-
+          }
+        >
           <span className="icon mr-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -126,19 +124,18 @@ export default function PublicTabs({
             </svg>
           </span>
           <span>People</span>
-
-        </Link>)
+        </Link>
       ) : (
         ""
       )}
       {showProposal ? (
-        (<Link
+        <Link
           href={hrefBase + "?tab=proposals"}
           className={
             "tab  tab-md tab-bordered" +
             (active === "proposals" ? " tab-active" : "")
-          }>
-
+          }
+        >
           <span className="icon mr-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -157,8 +154,7 @@ export default function PublicTabs({
             </svg>
           </span>
           <span>Proposals</span>
-
-        </Link>)
+        </Link>
       ) : (
         ""
       )}

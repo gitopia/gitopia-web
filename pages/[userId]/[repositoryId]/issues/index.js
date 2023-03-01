@@ -181,6 +181,7 @@ function RepositoryIssueView(props) {
                   "/issues/new"
                 }
                 className="btn btn-primary btn-sm btn-block"
+                data-test="new-issue"
               >
                 New Issue
               </Link>
@@ -206,6 +207,7 @@ function RepositoryIssueView(props) {
                         setFilterText(newFilterText);
                         setFilters(parseFilters(newFilterText));
                       }}
+                      data-test="open_issues"
                     >
                       <span
                         className={
@@ -231,6 +233,7 @@ function RepositoryIssueView(props) {
                         setFilterText(newFilterText);
                         setFilters(parseFilters(newFilterText));
                       }}
+                      data-test="closed_issues"
                     >
                       <span
                         className={

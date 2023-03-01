@@ -10,7 +10,8 @@
     "start": "next start",
     "lint": "next lint",
     "analyze": "cross-env ANALYZE=true next build",
-    "pm2": "pm2"
+    "pm2": "pm2",
+    "test": "cypress open"
   },
   "dependencies": {
     "@apollo/client": "^3.5.10",
@@ -29,6 +30,7 @@
     "bip39": "^3.0.3",
     "classnames": "^2.3.1",
     "crypto-js": "^4.0.0",
+    "cypress": "^10.8.0",
     "daisyui": "^2.50.2",
     "dayjs": "^1.11.6",
     "dexie": "^3.2.1",

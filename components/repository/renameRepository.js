@@ -107,6 +107,7 @@ function RenameRepository({
               onClick={() => {
                 setRenaming(true);
               }}
+              data-test="rename"
             >
               Rename
             </button>
@@ -125,6 +126,7 @@ function RenameRepository({
             <button
               className="btn btn-sm btn-block btn-accent btn-outline"
               onClick={() => setStartRename(true)}
+              data-test="rename"
             >
               Rename
             </button>

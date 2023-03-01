@@ -201,6 +201,7 @@ function AutoLogin(props) {
                 }
                 onClick={unlockLocalWallet}
                 disabled={props.unlockingWallet}
+                data-test={props.getPassword}
               >
                 {props.getPassword}
               </button>

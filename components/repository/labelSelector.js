@@ -41,6 +41,7 @@ function LabelSelector({
         className={
           "btn btn-sm btn-block btn-ghost " + (isSaving ? "loading" : "")
         }
+        data-test="labels"
       >
         <div className="flex-1 text-left">Labels</div>
         <svg
@@ -58,7 +59,11 @@ function LabelSelector({
       </button>
       <div className="dropdown-content shadow-lg bg-base-300 rounded w-56 p-4 mt-1">
         <div className="mb-2">
-          <Link href={editLabels} className="btn btn-block btn-ghost btn-sm">
+          <Link
+            href={editLabels}
+            className="btn btn-block btn-ghost btn-sm"
+            data-test="edit_labels"
+          >
             Edit Labels
           </Link>
         </div>
@@ -66,7 +71,10 @@ function LabelSelector({
           {repoLabels.map((l, i) => {
             return (
               <div className="form-control" key={"label" + i}>
-                <label className="cursor-pointer label justify-start">
+                <label
+                  className="cursor-pointer label justify-start"
+                  data-test="select_label"
+                >
                   <input
                     type="checkbox"
                     checked={checkMap[l.id]}
@@ -92,6 +100,7 @@ function LabelSelector({
                 menuDiv.current.blur();
               }
             }}
+            data-test="cancel_label"
           >
             Cancel
           </a>
@@ -106,6 +115,7 @@ function LabelSelector({
               }
             }}
             disabled={isSaving}
+            data-test="save_label"
           >
             Save
           </button>

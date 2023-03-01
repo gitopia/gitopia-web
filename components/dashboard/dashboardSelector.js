@@ -47,6 +47,7 @@ function DashboardSelector(props) {
           className={
             "dropdown dropdown-end w-full " + (menuOpen ? "dropdown-open" : "")
           }
+          data-test="select_user_dao"
         >
           <div
             tabIndex="0"
@@ -83,7 +84,7 @@ function DashboardSelector(props) {
               </svg>
             )}
             <div className="flex-1 text-left">
-              <div className="text-md">
+              <div className="text-md" data-test="selected_user">
                 {selected.name?.includes("untitled-wallet") ||
                 selected.name?.includes("untitled-ledger")
                   ? shrinkAddress(selected.id)

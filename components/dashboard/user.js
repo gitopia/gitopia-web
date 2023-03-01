@@ -39,7 +39,11 @@ function UserDashboard(props) {
             <div className="text-xs mb-4 sm:mb-8 text-type-secondary">
               Begin from scratch or import an existing repository
             </div>
-            <Link href="/new" className="btn btn-outline btn-sm mt-4">
+            <Link
+              href="/new"
+              className="btn btn-outline btn-sm mt-4"
+              data-test="create-new-repo"
+            >
               Create a Repository
             </Link>
           </div>
@@ -54,7 +58,11 @@ function UserDashboard(props) {
               A DAO is a self-organizing online community that uses Gitopia to
               manage its development securely
             </div>
-            <Link href="/account/daos/new" className="btn btn-outline btn-sm">
+            <Link
+              href="/account/daos/new"
+              className="btn btn-outline btn-sm"
+              data-test="create_dao"
+            >
               Create a DAO
             </Link>
           </div>

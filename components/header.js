@@ -340,6 +340,7 @@ function Header(props) {
               >
                 <button
                   tabIndex="0"
+                  data-test="wallet-menu"
                   className={
                     "btn btn-outline rounded-full px-4 relative " +
                     (props.activeWallet ? "btn-ghost" : "btn-primary") +
@@ -371,7 +372,9 @@ function Header(props) {
                     {props.activeWallet ? (
                       <>
                         <div className="text-xs text-left">
-                          <span>{props.activeWallet.name}</span>
+                          <span data-test="current_wallet_name">
+                            {props.activeWallet.name}
+                          </span>
                           {props.activeWallet.isLedger ||
                           props.activeWallet.isKeplr ? (
                             <span
@@ -391,7 +394,10 @@ function Header(props) {
                             ""
                           )}
                         </div>
-                        <div className="text-xs text-left text-type-tertiary">
+                        <div
+                          className="text-xs text-left text-type-tertiary"
+                          data-test="current_wallet_address"
+                        >
                           {addressToShow}
                         </div>
                       </>
@@ -474,6 +480,7 @@ function Header(props) {
                                     menuRef.current.blur();
                                   }
                                 }}
+                                data-test="download_wallet"
                               >
                                 Download Wallet
                               </a>
@@ -540,6 +547,7 @@ function Header(props) {
                                 setMenuOpen(false);
                                 props.signOut();
                               }}
+                              data-test="log-out"
                             >
                               Log Out
                             </a>

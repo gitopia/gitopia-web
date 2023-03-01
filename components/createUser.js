@@ -145,6 +145,7 @@ function CreateUser(props) {
             setValue={setUsername}
             hint={usernameHint}
             required={true}
+            data-test="username"
           />
         </div>
         <div className="mb-4">
@@ -155,6 +156,7 @@ function CreateUser(props) {
             value={name}
             setValue={setName}
             hint={nameHint}
+            data-test="full name"
           />
         </div>
         <div className="mb-8">
@@ -166,6 +168,7 @@ function CreateUser(props) {
             value={bio}
             setValue={setBio}
             hint={bioHint}
+            data-test="bio"
           />
         </div>
         <div className="">
@@ -175,6 +178,7 @@ function CreateUser(props) {
             }
             onClick={createProfile}
             disabled={loading}
+            data-test="create_profile"
           >
             Finish
           </button>

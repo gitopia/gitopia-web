@@ -105,6 +105,7 @@ function CommentEditor({
                   "btn btn-sm btn-accent btn-outline btn-block " +
                   (togglingIssue ? "loading" : "")
                 }
+                data-test="close_issue"
                 disabled={togglingIssue || postingComment}
                 onClick={async () => {
                   setTogglingIssue(true);
@@ -146,6 +147,7 @@ function CommentEditor({
                   }
                   setTogglingIssue(false);
                 }}
+                data-test="close_pr"
               >
                 {"Close Pull Request"}
               </button>
@@ -161,6 +163,7 @@ function CommentEditor({
             <button
               className="btn btn-sm btn-outline btn-block"
               onClick={onCancel}
+              data-test="cancel_comment"
             >
               Cancel
             </button>
@@ -176,6 +179,7 @@ function CommentEditor({
             }
             disabled={postingComment || togglingIssue}
             onClick={() => (isEdit ? updateComment() : createComment())}
+            data-test="comment"
           >
             {isEdit ? "Update" : "Comment"}
           </button>

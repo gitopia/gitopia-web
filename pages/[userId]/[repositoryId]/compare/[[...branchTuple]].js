@@ -335,7 +335,10 @@ function RepositoryCompareView(props) {
                 </div>
               </div>
               <div className="mt-8 sm:flex items-center">
-                <div className="flex-1 sm:mr-2 border border-grey p-4 rounded-lg">
+                <div
+                  className="flex-1 sm:mr-2 border border-grey p-4 rounded-lg"
+                  data-test="source_branch"
+                >
                   <div className="text-xs font-bold uppercase text-type-secondary">
                     Source
                   </div>
@@ -394,7 +397,10 @@ function RepositoryCompareView(props) {
                     />
                   </svg>
                 </div>
-                <div className="flex-1 sm:ml-2 border border-grey p-4 rounded-lg">
+                <div
+                  className="flex-1 sm:ml-2 border border-grey p-4 rounded-lg"
+                  data-test="target_branch"
+                >
                   <div className="text-xs font-bold uppercase text-type-secondary">
                     Target
                   </div>
@@ -597,6 +603,7 @@ function RepositoryCompareView(props) {
                               onChange={(e) => {
                                 setTitle(e.target.value);
                               }}
+                              data-test="pr-title"
                             />
                           </div>
                           <MarkdownEditor
@@ -643,6 +650,7 @@ function RepositoryCompareView(props) {
                                   setCreatingPull(false);
                                 }}
                                 disabled={creatingPull || !title.trim().length}
+                                data-test="create-pr"
                               >
                                 Create Pull Request
                               </button>
@@ -745,6 +753,7 @@ function RepositoryCompareView(props) {
                       className="btn btn-sm btn-primary btn-block"
                       onClick={() => setStartCreatingPull(true)}
                       disabled={!commits.length}
+                      data-test="create-pr"
                     >
                       Create Pull Request
                     </button>
@@ -835,7 +844,9 @@ function RepositoryCompareView(props) {
               )}
             </div>
           ) : (
-            <div className="pt-8 text-type-secondary">Repository has no branches</div>
+            <div className="pt-8 text-type-secondary">
+              Repository has no branches
+            </div>
           )}
         </main>
       </div>

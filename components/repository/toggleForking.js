@@ -47,6 +47,7 @@ function ToggleForking({
           checked={currentState}
           onChange={toggleForking}
           disabled={isToggling}
+          data-test="allow-forking"
         />
       </div>
     </label>

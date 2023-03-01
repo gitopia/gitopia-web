@@ -184,7 +184,7 @@ function MergePullRequestView({
               />
             </svg>
           )}
-          <div className="flex-1 text-xs sm:text-base">{message}</div>
+          <div className="flex-1 text-xs sm:text-base" data-test="pr_state">{message}</div>
         </div>
         {pullRequest.state === "OPEN" ? (
           <div className="sm:ml-auto">
@@ -193,6 +193,7 @@ function MergePullRequestView({
                 "btn btn-xs sm:btn-sm btn-primary sm:ml-4 m-0.5 h-10" +
                 (isMerging ? " loading" : "")
               }
+              data-test="merge-pr"
               onClick={mergePull}
               disabled={isMerging || stateClass === "warning"}
             >

@@ -214,6 +214,7 @@ function NewDao(props) {
               }
               disabled={daoCreating}
               onClick={createDao}
+              data-test="create_dao"
             >
               Create DAO
             </button>

@@ -110,6 +110,7 @@ function CollaboratorsList({
                     }
                     disabled={isRemoving === i}
                     onClick={() => removeCollaborator(c.id, i)}
+                    data-test="remove"
                   >
                     Remove
                   </button>
@@ -123,6 +124,7 @@ function CollaboratorsList({
             <td>
               <TextInput
                 value={collabAddress}
+                data-test="collab_address"
                 placeholder="User address"
                 setValue={(v) => {
                   setCollabAddress(v);
@@ -134,6 +136,7 @@ function CollaboratorsList({
             </td>
             <td style={{ verticalAlign: "top" }}>
               <select
+                data-test="permissions"
                 className={
                   "select select-bordered w-full select-sm focus:outline-none focus:border-type " +
                   (collabRole.length > 0 ? "border-green" : "")
@@ -156,6 +159,7 @@ function CollaboratorsList({
                 }
                 onClick={addCollaborator}
                 disabled={collabAddress.trim() === "" || isAdding}
+                data-test="add"
               >
                 Add
               </button>

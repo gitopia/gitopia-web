@@ -382,6 +382,7 @@ function RepositoryView(props) {
                   <div className="flex items-center">
                     <a
                       className="flex-1 text-left"
+                      data-test="releases"
                       href={
                         "/" +
                         repository.owner.id +
