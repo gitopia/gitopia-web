@@ -18,14 +18,3 @@ export const coingeckoId = {
     icon: "",
   },
 };
-export const gitopiaIbc = {
-  chain_name: "gitopia",
-  chain_id: {
-    id: "gitopia-janus-devnet-4",
-    version: 4,
-  },
-  client_id: "07-tendermint-3",
-  connection_id: "connection-0",
-  channel_id: "channel-0",
-  port_id: "transfer",
-};
