@@ -193,29 +193,37 @@ export default function BranchSelector({
         </div>
 
         {filteredList.length ? (
-          <ul className="menu text-xs mt-2 max-h-80 overflow-auto" data-test="branch_selector">
-            {filteredList.map((b, i) => {
-              return (
-                <li key={"branch-selector" + i}>
-                  {baseUrl ? (
-                    <Link href={baseUrl + "/" + b.name} className="whitespace-nowrap">
-                      {b.name}
-                    </Link>
-                  ) : (
-                    <a
-                      className="whitespace-nowrap"
-                      onClick={() => {
-                        onChange(b);
-                        if (mainEl.current) mainEl.current.blur();
-                      }}
-                    >
-                      {b.name}
-                    </a>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+          <div
+            className="menu-container  overflow-y-scroll"
+            style={{ maxHeight: "320px" }}
+          >
+            <ul className="menu menu-vertical text-xs mt-2" data-test="branch_selector">
+              {filteredList.map((b, i) => {
+                return (
+                  <li key={"branch-selector" + i}>
+                    {baseUrl ? (
+                      <Link
+                        href={baseUrl + "/" + b.name}
+                        className="whitespace-nowrap"
+                      >
+                        {b.name}
+                      </Link>
+                    ) : (
+                      <a
+                        className="whitespace-nowrap"
+                        onClick={() => {
+                          onChange(b);
+                          if (mainEl.current) mainEl.current.blur();
+                        }}
+                      >
+                        {b.name}
+                      </a>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         ) : (
           <div className="text-xs p-5 text-type-secondary">{"No " + tab}</div>
         )}

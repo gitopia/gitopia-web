@@ -34,11 +34,12 @@ export async function getStaticPaths() {
 
 function RepositoryPullIssuesView(props) {
   const { repository } = useRepository();
-  const { pullRequest } = usePullRequest(repository);
+  const { pullRequest, refreshPullRequest } = usePullRequest(repository);
   const [issues, setIssues] = useState([]);
   const [issue, setIssue] = useState({ title: "", iid: "" });
   const [textEntered, setEnteredText] = useState("");
   const [issueList, setIssueList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function fetchIssues() {
@@ -213,12 +214,18 @@ function RepositoryPullIssuesView(props) {
               </div>
             )}
             <button
-              className="ml-auto btn btn-primary text-xs btn-sm mt-4"
+              className={
+                "ml-auto btn btn-primary text-xs btn-sm mt-4 " +
+                (loading ? "loading" : "")
+              }
               onClick={() => {
+                setLoading(true);
                 props
                   .linkPullIssuebyIid(repository.id, pullRequest.iid, issue.iid)
                   .then(() => {
                     setIssue({ title: "", iid: "" });
+                    refreshPullRequest();
+                    setLoading(false);
                   });
               }}
               disabled={issue.iid === ""}
@@ -344,6 +351,11 @@ function RepositoryPullIssuesView(props) {
                           : "sm:mr-4 sm:ml-3")
                       }
                     >
+                      {i.assignees.length === 0 ? (
+                        <div className="w-8 sm:hidden"></div>
+                      ) : (
+                        ""
+                      )}
                       {i.assignees.length > 1 ? (
                         <div className="dropdown">
                           <div className="">
@@ -433,11 +445,15 @@ function RepositoryPullIssuesView(props) {
                       <button
                         className="link link-primary text-xs uppercase no-underline mr-4"
                         onClick={() => {
-                          props.unlinkPullIssuebyIid(
-                            repository.id,
-                            pullRequest.iid,
-                            i.iid
-                          );
+                          props
+                            .unlinkPullIssuebyIid(
+                              repository.id,
+                              pullRequest.iid,
+                              i.iid
+                            )
+                            .then(() => {
+                              refreshPullRequest();
+                            });
                         }}
                       >
                         Unlink

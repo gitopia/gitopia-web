@@ -9,12 +9,14 @@ import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
 import Footer from "../../../components/footer";
 import RenameRepository from "../../../components/repository/renameRepository";
+import ChangeDefaultBranch from "../../../components/repository/changeDefaultBranch";
 import CollaboratorsList from "../../../components/repository/collaboratorsList";
 import TransferOwnership from "../../../components/repository/transferOwnership";
 import DeleteRepository from "../../../components/repository/deleteRepository";
 import useRepository from "../../../hooks/useRepository";
 import ToggleForking from "../../../components/repository/toggleForking";
 import useWindowSize from "../../../hooks/useWindowSize";
+import { notify } from "reapop";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -109,6 +111,20 @@ function RepositorySettingsView(props) {
                         ].join("/");
                         console.log("goto", url);
                         router.push(url);
+                      }}
+                    />
+                  </div>
+                  <div className="mt-6">
+                    <ChangeDefaultBranch
+                      repoId={repository.id}
+                      repoName={repository.name}
+                      repoOwner={repository.owner.id}
+                      repoDefaultBranch={repository.defaultBranch}
+                      onSuccess={(name) => {
+                        props.notify(
+                          "updated default branch to " + name,
+                          "info"
+                        );
                       }}
                     />
                   </div>
@@ -233,4 +249,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(RepositorySettingsView);
+export default connect(mapStateToProps, { notify })(RepositorySettingsView);

@@ -87,6 +87,23 @@ function CurrentWallet(props) {
     <div className="card max-w-sm w-full p-4">
       {isUnlocking ? (
         <div className="w-48 relative">
+          <label
+            className="flex btn btn-sm btn-circle btn-ghost left-0 top-0 text-pink-900"
+            onClick={() => {
+              setIsUnlocking(false);
+            }}
+          >
+            <svg
+              width="8"
+              height="11"
+              viewBox="0 0 8 11"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              stroke="currentColor"
+            >
+              <path d="M7 1L2 5.5L7 10" strokeWidth="2" />
+            </svg>
+          </label>
           <button
             className="btn btn-sm btn-circle btn-ghost absolute right-0 top-0 text-pink-900"
             onClick={removeWallet}
