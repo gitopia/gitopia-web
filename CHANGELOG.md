@@ -1,5 +1,18 @@
 ## Changelog
 
+### v1.4.1 - 22nd Feb 2023
+
+- Added a prompt to backup wallet
+- Disabled cssnano, build fixed
+
+### v1.4.0 - 22nd Feb 2023
+
+- New wallet panel in header showing all assets
+- Deposit and Withdraw from IBC chains
+- New bounties workflow inside issues which can use any IBC token
+- Issues can be interlinked with Pull Requets
+- Reward bounties to pull request owner when closing an issue
+
 ### v1.3.2 - 20th Dec 2022
 
 - Fix ledger wallet onboarding

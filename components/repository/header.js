@@ -191,7 +191,7 @@ function RepositoryHeader({ repository, ...props }) {
         */}
           <div className="btn-group">
             <button
-              className="btn btn-xs btn-outline border-grey"
+              className="btn btn-xs btn-ghost border-grey-50"
               data-test="fork-repo"
               onClick={() => {
                 setForkTargetShown(true);
@@ -218,7 +218,7 @@ function RepositoryHeader({ repository, ...props }) {
               <span>FORKS</span>
             </button>
             <button
-              className="btn btn-xs btn-outline border-grey"
+              className="btn btn-xs btn-ghost border-grey-50"
               onClick={() => {
                 router.push(
                   "/" +

@@ -9,8 +9,10 @@ import {
 } from "../../store/actions/repository";
 
 function CommentEditor({
-  commentId = null,
-  issueId = null,
+  commentIid = null,
+  repositoryId = null,
+  parent = null,
+  parentIid = null,
   initialComment = "",
   isEdit = false,
   onSuccess = null,
@@ -49,9 +51,10 @@ function CommentEditor({
     setPostingComment(true);
     if (validateComment()) {
       const res = await props.createComment({
-        parentId: issueId,
+        repositoryId: repositoryId,
+        parentIid: parentIid,
+        parent: parent,
         body: comment,
-        commentType: commentType,
       });
       if (res && res.code === 0) {
         setComment("");
@@ -65,19 +68,22 @@ function CommentEditor({
     setPostingComment(true);
     if (validateComment()) {
       const res = await props.updateComment({
-        id: commentId,
+        repositoryId: repositoryId,
+        parentIid: parentIid,
+        parent: parent,
+        commentIid: commentIid,
         body: comment,
       });
       if (res && res.code === 0) {
         setComment("");
-        if (onSuccess) await onSuccess(commentId);
+        if (onSuccess) await onSuccess(commentIid);
       }
     }
     setPostingComment(false);
   };
 
   return (
-    <div className="ml-4 flex-1">
+    <div className="flex-1">
       <MarkdownEditor
         value={comment}
         setValue={setComment}
@@ -103,7 +109,10 @@ function CommentEditor({
                 disabled={togglingIssue || postingComment}
                 onClick={async () => {
                   setTogglingIssue(true);
-                  const res = await props.toggleIssueState({ id: issueId });
+                  const res = await props.toggleIssueState({
+                    repositoryId: repositoryId,
+                    iid: parentIid,
+                  });
                   if (res && res.code === 0) {
                     if (onSuccess) {
                       await onSuccess();
@@ -127,7 +136,8 @@ function CommentEditor({
                 onClick={async () => {
                   setTogglingIssue(true);
                   const res = await props.updatePullRequestState({
-                    id: issueId,
+                    repositoryId: repositoryId,
+                    iid: parentIid,
                     state: "CLOSED",
                   });
                   if (res && res.code === 0) {
@@ -151,7 +161,7 @@ function CommentEditor({
         {onCancel ? (
           <div className="inline-block w-28 sm:w-36 mr-4">
             <button
-              className="btn btn-sm btn-ghost btn-block"
+              className="btn btn-sm btn-outline btn-block"
               onClick={onCancel}
               data-test="cancel_comment"
             >

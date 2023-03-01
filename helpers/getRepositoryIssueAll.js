@@ -16,7 +16,7 @@ export default async function getRepositoryIssueAll(
     }
     console.log(query);
     const res = await api.queryRepositoryIssueAll(id, repoName, query);
-    if (res.ok) {
+    if (res.status === 200) {
       return res.data;
     }
     return {};

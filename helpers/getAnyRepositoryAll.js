@@ -4,7 +4,7 @@ export default async function getAnyRepositoryAll(usernameOrAddress) {
   if (!usernameOrAddress) return null;
   try {
     const res = await api.queryAnyRepositoryAll(usernameOrAddress);
-    if (res.ok) {
+    if (res.status === 200) {
       return res.data.Repository;
     }
     return [];

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import getRepositoryPull from "../helpers/getRepositoryPull";
+import getPullRequest from "../helpers/getPullRequest";
 import { useRouter } from "next/router";
 import { useErrorStatus } from "./errorHandler";
 import getPullRepoInfo from "../helpers/getPullRepoInfo";
@@ -26,8 +26,8 @@ export default function usePullRequest(repository, initialPullRequest = {}) {
     setRefreshIndex((prevIndex) => prevIndex + 1);
 
   useEffect(() => {
-    const initRepository = async () => {
-      const p = await getRepositoryPull(
+    async function initRepository() {
+      const p = await getPullRequest(
         router.query.userId,
         router.query.repositoryId,
         router.query.pullRequestIid
@@ -37,7 +37,7 @@ export default function usePullRequest(repository, initialPullRequest = {}) {
       } else {
         setErrorStatusCode(404);
       }
-    };
+    }
     initRepository();
   }, [router.query, repository.id, refreshIndex]);
 

@@ -18,6 +18,7 @@ import Label from "../../../../components/repository/label";
 import parseFilters from "../../../../helpers/parseFilters";
 import pullRequestStateClass from "../../../../helpers/pullRequestStateClass";
 import useWindowSize from "../../../../hooks/useWindowSize";
+import getPullRequestCommentAll from "../../../../helpers/getPullRequestCommentAll";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -91,7 +92,20 @@ function RepositoryPullsView(props) {
       );
       console.log(data);
       if (data) {
-        if (data.PullRequest) setAllPulls(data.PullRequest);
+        if (data.PullRequest) {
+          for (let i = 0; i < data.PullRequest.length; i++) {
+            const c = await getPullRequestCommentAll(
+              repository.id,
+              data.PullRequest[i].iid
+            );
+            if (c) {
+              data.PullRequest[i].comments = c;
+            } else {
+              data.PullRequest[i].comments = [];
+            }
+          }
+        }
+        setAllPulls(data.PullRequest);
         if (data.pagination)
           setPagination({ ...pagination, ...data.pagination });
       }

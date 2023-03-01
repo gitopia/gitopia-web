@@ -232,10 +232,10 @@ function CreateBounty(props) {
       )}
 
       <input type="checkbox" id="my-modal" className="modal-toggle" />
-      <label htmlFor="my-modal" className="modal cursor-pointer">
+      <label htmlFor="my-modal" className="modal modal-middle cursor-pointer">
         <label className="modal-box relative bg-grey-500">
           <div className="flex mb-4">
-            <div className="w-11/12 font-bold text-sm text-type">
+            <div className="sm:w-11/12 font-bold text-sm text-type">
               Add bounty
             </div>
             <label
@@ -269,13 +269,13 @@ function CreateBounty(props) {
             </label>
           </div>
 
-          <div className="card w-full bg-grey-900 shadow-xl p-4">
+          <div className="card sm:w-full bg-grey-900 shadow-xl p-4">
             <div className="card-body p-3">
               <div className="mb-2 text-grey-200">AMOUNT</div>
               <div className="flex mb-2">
                 <div>
                   <input
-                    className="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 leading-tight focus:outline-none text-2xl font-bold"
+                    className="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 leading-tight focus:outline-none sm:text-2xl font-bold"
                     type="text"
                     placeholder="Enter Amount"
                     aria-label="Amount"
@@ -299,7 +299,7 @@ function CreateBounty(props) {
                   )}
                 </div>
                 <select
-                  className="select w-fit max-w-xs ml-auto h-10"
+                  className="select text-xs sm:text-sm w-28 sm:w-fit sm:max-w-xs ml-auto h-6 sm:h-10"
                   onChange={async (e) => {
                     handleTokenDenomOnChange(e.target.value);
                     handleMaxAmountOnChange(e.target.value);
@@ -361,12 +361,12 @@ function CreateBounty(props) {
             ""
           )}
           {props.bountyAmount.length > 0 ? (
-            <div className="grid grid-cols-2 w-5/6">
+            <div className="grid grid-cols-2 w-full sm:w-5/6">
               {props.bountyAmount.map((a, i) => {
                 return (
                   <div
                     className={
-                      "flex text-sm box-border bg-grey-900 mr-2 h-11 px-2 rounded-lg uppercase mt-2"
+                      "flex text-sm box-border bg-grey-900 mr-2 h-9 sm:h-11 px-2 rounded-lg uppercase mt-2"
                     }
                     key={i}
                   >
@@ -378,12 +378,12 @@ function CreateBounty(props) {
                             : a.denom
                         ].icon
                       }
-                      className="py-1"
+                      className="py-1 sm:py-1 mt-0.5 h-8 w-8 sm:h-10 sm:w-10"
                     />
-                    <div className="ml-2 mr-2 py-3">
+                    <div className="ml-1 sm:ml-2 mr-2 py-2 sm:py-3 text-xs sm:text-sm">
                       {tokenKV[a.denom].standardDenom}
                     </div>
-                    <div className="py-3">
+                    <div className="py-2 sm:py-3 text-xs sm:text-sm">
                       {a.amount /
                         Math.pow(
                           10,
@@ -395,7 +395,7 @@ function CreateBounty(props) {
                         )}
                     </div>
                     <div
-                      className="link ml-auto mt-1 no-underline py-3 mr-1"
+                      className="link ml-auto mt-1 no-underline py-2 sm:py-3 sm:mr-1"
                       onClick={() => {
                         handleDelete(i);
                       }}
@@ -467,11 +467,11 @@ function CreateBounty(props) {
               </div>
             </div>
           </div>
-          <div className="flex ml-auto self-center">
+          <div className="flex justify-center">
             <div className="modal-action">
               <label
                 htmlFor="my-modal"
-                className="btn w-96 px-56 flex-1 bg-green-900 text-xs ml-1"
+                className="btn w-72 sm:w-96 sm:px-56 flex-1 bg-green-900 text-xs ml-1"
                 onClick={(e) => {
                   {
                     props.issue
@@ -479,8 +479,9 @@ function CreateBounty(props) {
                           .createBounty(
                             props.bountyAmount,
                             dayjs(expiry.toString()).unix(),
-                            props.issue.id,
-                            "issue"
+                            props.issue.iid,
+                            "issue",
+                            props.repository.id
                           )
                           .then((res) => {
                             setAmount([]);

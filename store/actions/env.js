@@ -13,7 +13,7 @@ export const sendTransaction = ({
     let notifId, result;
     if (wallet.activeWallet && wallet.activeWallet.isLedger) {
       const msg = dispatch(
-        notify("Please sign the transaction on your ledger", "loading", {
+        notify("Please sign the transaction on your ledger", "waiting-for-input", {
           dismissible: false,
           dismissAfter: 0,
         })
@@ -127,7 +127,7 @@ export const setupTxClients = async (dispatch, getState, chainId = null) => {
   const { env, wallet } = getState();
 
   if (wallet.activeWallet) {
-    if (!env.txClient) {
+    if (!env.txClient || chainId != wallet.activeWallet.counterPartyChain) {
       return new Promise((resolve, reject) => {
         dispatch({
           type: walletActions.GET_PASSWORD_FOR_UNLOCK_WALLET,
@@ -143,7 +143,7 @@ export const setupTxClients = async (dispatch, getState, chainId = null) => {
               dispatch({
                 type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
               });
-              reject({ message: reason });
+              reject({ message: reason, error: true });
             },
             chainId: chainId,
           },

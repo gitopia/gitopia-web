@@ -3,16 +3,20 @@ import {
   envActions,
   userActions,
   daoActions,
+  ibcAssetsActions,
 } from "./actionTypes";
 import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import find from "lodash/find";
-import { notify } from "reapop";
+import { notify, dismissNotification } from "reapop";
 import { setupTxClients, sendTransaction } from "./env";
 import getNodeInfo from "../../helpers/getNodeInfo";
+import getAnyNodeInfo from "../../helpers/getAnyNodeInfo";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getUser from "../../helpers/getUser";
 import getChainInfo from "../../helpers/getChainInfo";
+import getChainAssetList from "../../helpers/getChainAssetList";
+import getChainIbcAsset from "../../helpers/getChainIbcAssets";
 import dayjs from "dayjs";
 import { calculateFee, GasPrice } from "@cosmjs/stargate";
 
@@ -22,10 +26,9 @@ const postWalletUnlocked = async (
   accountSigner,
   dispatch,
   getState,
-  accountSignerSecondary = null,
-  chainInfo = null
+  accountSignerSecondary = null
 ) => {
-  const { env, wallet } = getState();
+  const { env, wallet, ibcAssets } = getState();
 
   dispatch({
     type: walletActions.SET_SELECTED_ADDRESS,
@@ -33,7 +36,7 @@ const postWalletUnlocked = async (
   });
 
   if (accountSigner) {
-    const { queryClient, txClient } = await import("@gitopia/gitopia-js");
+    const { queryClient, txClient } = await import("@gitopia/gitopia-js/dist");
     if (accountSignerSecondary !== null) {
       const [tc, qc, tcs, qcs, amount] = await Promise.all([
         txClient(
@@ -45,12 +48,12 @@ const postWalletUnlocked = async (
         txClient(
           accountSignerSecondary,
           {
-            addr: chainInfo.rpc_node,
+            addr: ibcAssets.chainInfo.chain.apis.rpc[3].address,
             gasPrice: wallet.gasPrice,
           },
-          chainInfo.prefix
+          ibcAssets.chainInfo.chain.bech32_prefix
         ),
-        queryClient({ addr: chainInfo.api_node }),
+        queryClient({ addr: ibcAssets.chainInfo.chain.apis.rest[3].address }),
         updateUserBalance()(dispatch, getState),
       ]);
       dispatch({
@@ -84,14 +87,14 @@ const postWalletUnlocked = async (
       wallet.getPasswordPromise.resolve("Unlock success");
     }
   } else {
-    const { Api } = await import("@gitopia/gitopia-js/rest");
+    const { Api } = await import("@gitopia/gitopia-js/dist/rest");
 
     updateUserBalance()(dispatch, getState);
     dispatch({
       type: envActions.SET_CLIENTS,
       payload: {
         txClient: null,
-        queryClient: new Api({ baseUrl: env.apiNode }),
+        queryClient: new Api({ baseURL: env.apiNode }),
       },
     });
   }
@@ -181,10 +184,24 @@ export const setWallet = ({ wallet }) => {
 export const unlockWallet = ({ name, password, chainId = null }) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
-    let chainInfo;
     let accountSignerSecondary;
-    if (chainId !== null) {
-      chainInfo = await getChainInfo(chainId);
+    let chainInfo, chainAsset, chainIbc;
+    if (chainId !== null && chainId !== undefined) {
+      [chainInfo, chainAsset, chainIbc] = await Promise.all([
+        getChainInfo(chainId),
+        getChainAssetList(chainId),
+        getChainIbcAsset(chainId),
+      ]);
+      if (chainInfo && chainAsset && chainIbc) {
+        await dispatch({
+          type: ibcAssetsActions.SET_CHAIN_INFO,
+          payload: {
+            chain: chainInfo,
+            assets: chainAsset,
+            ibc: chainIbc,
+          },
+        });
+      }
     }
     let encryptedWallet =
       state.wallets[state.wallets.findIndex((x) => x.name === name)].wallet;
@@ -214,11 +231,12 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
         accountSignerSecondary = await DirectSecp256k1HdWallet.fromMnemonic(
           wallet.mnemonic,
           {
-            prefix: chainInfo.prefix,
+            prefix: chainInfo.bech32_prefix,
           }
         );
-        const [counterPartyAccount] =
-          await accountSignerSecondary.getAccounts();
+        const [
+          counterPartyAccount,
+        ] = await accountSignerSecondary.getAccounts();
         const counterPartyAddress = counterPartyAccount.address;
         wallet.counterPartyAddress = counterPartyAddress;
         wallet.counterPartyChain = chainId;
@@ -273,8 +291,7 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
             accountSigner,
             dispatch,
             getState,
-            accountSignerSecondary,
-            chainInfo
+            accountSignerSecondary
           );
         } else {
           await postWalletUnlocked(accountSigner, dispatch, getState);
@@ -383,6 +400,7 @@ export const updateUserBalance = (showNotification = false) => {
 
 export const getBalance = (address) => {
   return async (dispatch, getState) => {
+    if (!address) return null;
     const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
     try {
       const res = await api.queryBalance(
@@ -459,6 +477,7 @@ export const downloadWallet = (password) => {
         saveAs(blob, wallet.name + ".json");
         if (state.getPasswordPromise.resolve) {
           state.getPasswordPromise.resolve("Download success");
+          dispatch({ type: walletActions.SET_BACKUP_STATE, payload: {backupState: true} });
         }
         return true;
       }
@@ -521,10 +540,24 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
     let accountSigner;
     let encryptedWallet =
       wallet.wallets[wallet.wallets.findIndex((x) => x.name === name)].wallet;
-    let chainInfo;
     let accountSignerSecondary;
+    let chainInfo, chainAsset, chainIbc;
     if (chainId !== null) {
-      chainInfo = await getChainInfo(chainId);
+      [chainInfo, chainAsset, chainIbc] = await Promise.all([
+        getChainInfo(chainId),
+        getChainAssetList(chainId),
+        getChainIbcAsset(chainId),
+      ]);
+      if (chainInfo && chainAsset && chainIbc) {
+        await dispatch({
+          type: ibcAssetsActions.SET_CHAIN_INFO,
+          payload: {
+            chain: chainInfo,
+            assets: chainAsset,
+            ibc: chainIbc,
+          },
+        });
+      }
     }
     dispatch({ type: walletActions.START_UNLOCKING_WALLET });
     try {
@@ -547,15 +580,15 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
           CryptoJS.enc.Utf8
         )
       );
-      console.log(chainId);
       if (chainId !== null) {
         accountSignerSecondary = new LedgerSigner(ledgerTransport, {
           hdPaths: [path],
-          prefix: chainInfo.prefix,
+          prefix: chainInfo.bech32_prefix,
           ledgerAppName: "Cosmos",
         });
-        const [counterPartyAccount] =
-          await accountSignerSecondary.getAccounts();
+        const [
+          counterPartyAccount,
+        ] = await accountSignerSecondary.getAccounts();
         const counterPartyAddress = counterPartyAccount.address;
         console.log(accountSignerSecondary);
         newWallet.counterPartyAddress = counterPartyAddress;
@@ -610,8 +643,7 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
           accountSigner,
           dispatch,
           getState,
-          accountSignerSecondary,
-          chainInfo
+          accountSignerSecondary
         );
       } else {
         await postWalletUnlocked(accountSigner, dispatch, getState);
@@ -778,7 +810,7 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
   });
 };
 
-export const getAddressforChain = (name, chainId) => {
+  export const getAddressforChain = (name, chainId) => {
   return async (dispatch, getState) => {
     try {
       const { wallet } = getState();
@@ -786,15 +818,35 @@ export const getAddressforChain = (name, chainId) => {
       if (activeWallet.isKeplr) {
         if (window.keplr && window.getOfflineSigner) {
           try {
+            let chainInfo, chainAsset, chainIbc;
+            if (chainId !== null && chainId !== undefined) {
+              [chainInfo, chainAsset, chainIbc] = await Promise.all([
+                getChainInfo(chainId),
+                getChainAssetList(chainId),
+                getChainIbcAsset(chainId),
+              ]);
+              if (chainInfo && chainAsset && chainIbc) {
+                await dispatch({
+                  type: ibcAssetsActions.SET_CHAIN_INFO,
+                  payload: {
+                    chain: chainInfo,
+                    assets: chainAsset,
+                    ibc: chainIbc,
+                  },
+                });
+              }
+            }
             const info = await getNodeInfo();
+            const counterPartyChainInfo = await getAnyNodeInfo(
+              chainInfo.apis.rest[3].address
+            );
             const chain = info.default_node_info.network;
             const offlineSigner = await window.getOfflineSignerAuto(chain);
             const accountSignerSecondary = await window.getOfflineSignerAuto(
-              "osmo-test-4"
+              counterPartyChainInfo.default_node_info.network
             );
             const accounts = await offlineSigner.getAccounts();
-            const counterPartyAccount =
-              await accountSignerSecondary.getAccounts();
+            const counterPartyAccount = await accountSignerSecondary.getAccounts();
             activeWallet.counterPartyAddress = counterPartyAccount[0].address;
             activeWallet.counterPartyChain = chainId;
             await dispatch({
@@ -807,8 +859,7 @@ export const getAddressforChain = (name, chainId) => {
               offlineSigner,
               dispatch,
               getState,
-              accountSignerSecondary,
-              chainId
+              accountSignerSecondary
             );
             return accounts[0];
           } catch (e) {
@@ -821,8 +872,9 @@ export const getAddressforChain = (name, chainId) => {
           );
         }
       } else {
-        await setupTxClients(dispatch, getState, chainId);
+        return await setupTxClients(dispatch, getState, chainId);
       }
+      return {}
     } catch (e) {
       return e;
     }
@@ -834,7 +886,7 @@ export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(dispatch, getState, wallet.activeWallet.counterPartyChain);
         const { env } = getState();
         const send = {
           sourcePort: sourcePort,
@@ -851,8 +903,6 @@ export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
         const result = await sendTransaction({ message })(dispatch, getState);
         updateUserBalance()(dispatch, getState);
         if (result && result.code === 0) {
-          updateUserBalance()(dispatch, getState);
-          dispatch(notify("Transfer Successful", "info"));
           return true;
         } else {
           dispatch(notify(result.rawLog, "error"));
@@ -872,7 +922,7 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(dispatch, getState, wallet.activeWallet.counterPartyChain);
         const { env } = getState();
         const send = {
           sourcePort: sourcePort,
@@ -885,9 +935,14 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
             denom: denom,
           },
         };
+      
         const msg = await env.txClientSecondary.msgTransfer(send);
         const memo = "";
-        let fees = await estimateOsmoFee([msg], memo)(getState);
+        let fees = await estimateOsmoFee(
+          wallet.activeWallet.counterPartyAddress,
+          [msg],
+          memo
+        )(getState);
         const fee = {
           amount: [
             { amount: fees.amount[0].amount, denom: fees.amount[0].denom },
@@ -898,9 +953,9 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
           fee,
           memo,
         });
+        updateUserBalance()(dispatch, getState);
+        
         if (result && result.code === 0) {
-          updateUserBalance()(dispatch, getState);
-          dispatch(notify("Transaction Successful", "info"));
           return true;
         } else {
           dispatch(notify(result.rawLog, "error"));
@@ -915,11 +970,15 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
   };
 };
 
-export const estimateOsmoFee = (msg, memo) => {
+export const estimateOsmoFee = (address, msg, memo) => {
   return async (getState) => {
     const { env } = getState();
     const gasPrice = GasPrice.fromString("0.025uosmo");
-    const gasEstimation = await env.txClientSecondary.simulate(msg, memo);
+    const gasEstimation = await env.txClientSecondary.simulate(
+      address,
+      msg,
+      memo
+    );
     const fees = calculateFee(Math.round(gasEstimation * 1.3), gasPrice);
     return fees;
   };

@@ -6,7 +6,7 @@ const initialState = {
   activeWallet: null,
   selectedAddress: null,
   gasPrice: process.env.NEXT_PUBLIC_GAS_PRICE,
-  backupState: false,
+  backupState: get('backupState') || false,
   loreBalance: 0,
   getPassword: false,
   getPasswordPromise: {},
@@ -75,6 +75,7 @@ const reducer = (state = initialState, action) => {
 
     case walletActions.STORE_WALLETS: {
       set("wallets", state.wallets);
+      set("backupState", false);
       return {
         ...state,
         backupState: false,
@@ -83,6 +84,7 @@ const reducer = (state = initialState, action) => {
 
     case walletActions.SET_BACKUP_STATE: {
       let { backupState } = action.payload;
+      set("backupState", backupState);
       return {
         ...state,
         backupState,

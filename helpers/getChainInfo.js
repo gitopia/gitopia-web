@@ -1,7 +1,14 @@
-import { assets } from "../ibc-assets-config";
+import axios from "./axiosFetch";
 export default async function getChainInfo(chainName) {
-  let info = assets.filter((asset) => {
-    return asset.chain_name === chainName;
-  });
-  return info[0];
+  let info = [];
+  await axios
+    .get(
+      process.env.NEXT_PUBLIC_SERVER_URL+ "/api/ibc/" + chainName + "/info"
+    )
+    .then((response) => {
+      info = response.data;
+    })
+    .catch((err) => console.error(err));
+
+  return info;
 }

@@ -35,11 +35,5 @@ const client = new ApolloClient({
   link: httpLink,
   cache: new InMemoryCache(),
 });
-export const updatedClient = new ApolloClient({
-  link: new HttpLink({
-    uri: process.env.NEXT_PUBLIC_UPDATED_GRAPHQL_HTTP_URL,
-  }),
-  cache: new InMemoryCache(),
-});
 
 export default client;

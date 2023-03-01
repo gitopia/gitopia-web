@@ -7,7 +7,7 @@ export default async function getGitServerAuthStatus(userAddress) {
       userAddress,
       process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS
     );
-    if (res.ok && res.data.haveAuthorization) {
+    if (res.status === 200 && res.data.haveAuthorization) {
       return true;
     } else {
       return false;

@@ -5,7 +5,7 @@ export default async function getWhois(id) {
   let lId = String(id).toLowerCase();
   try {
     const res = await api.queryWhois(lId);
-    if (res.ok) {
+    if (res.status === 200) {
       let u = res.data.Whois;
       return u;
     }

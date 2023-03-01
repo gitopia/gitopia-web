@@ -58,3 +58,8 @@ export const userNotificationActions = {
   ADD_USER_NOTIFICATIONS: "ADD_USER_NOTIFICATIONS",
   MARK_AS_READ: "MARK_AS_READ",
 };
+
+export const ibcAssetsActions = {
+  SET_CHAIN_INFO: "SET_CHAIN_INFO",
+  SET_ASSET_LIST: "SET_ASSET_LIST",
+};

@@ -59,11 +59,13 @@ function IssuePullTitle({
       const res = isPull
         ? await props.updatePullRequestTitle({
             title: newTitle,
-            id: issuePullObj.id,
+            repositoryId: repository.id,
+            iid: issuePullObj.iid,
           })
         : await props.updateIssueTitle({
             title: newTitle,
-            id: issuePullObj.id,
+            repositoryId: repository.id,
+            iid: issuePullObj.iid,
           });
       if (res && res.code === 0) {
         if (onUpdate) await onUpdate(newTitle);

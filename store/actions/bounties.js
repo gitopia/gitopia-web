@@ -1,8 +1,14 @@
 import { notify } from "reapop";
 import { sendTransaction, setupTxClients } from "./env";
 import { updateUserBalance } from "./wallet";
-import { BountyParent } from "@gitopia/gitopia-js/types/gitopia/bounty";
-export const createBounty = (amount, expiry, parentId, parent) => {
+import { BountyParent } from "@gitopia/gitopia-js/dist/types/gitopia/bounty";
+export const createBounty = (
+  amount,
+  expiry,
+  parentIid,
+  parent,
+  repositoryId
+) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
@@ -13,7 +19,8 @@ export const createBounty = (amount, expiry, parentId, parent) => {
           creator: wallet.selectedAddress,
           amount: amount,
           expiry: expiry,
-          parentId: parentId,
+          parentIid: parentIid,
+          repositoryId: repositoryId,
           parent: parent === "issue" ? BountyParent.BOUNTY_PARENT_ISSUE : "",
         };
         console.log(send);
@@ -130,7 +137,7 @@ export const deleteBounty = (id) => {
   };
 };
 
-export const linkPullIssuebyIid = (id, issueIid) => {
+export const linkPullIssuebyIid = (repositoryId, pullRequestIid, issueIid) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
@@ -139,7 +146,8 @@ export const linkPullIssuebyIid = (id, issueIid) => {
         const { env } = getState();
         const send = {
           creator: wallet.selectedAddress,
-          id: id,
+          repositoryId: repositoryId,
+          pullRequestIid: pullRequestIid,
           issueIid: issueIid,
         };
         const message = await env.txClient.msgLinkPullRequestIssueByIid(send);
@@ -160,7 +168,11 @@ export const linkPullIssuebyIid = (id, issueIid) => {
   };
 };
 
-export const unlinkPullIssuebyIid = (id, issueIid) => {
+export const unlinkPullIssuebyIid = (
+  repositoryId,
+  pullRequestIid,
+  issueIid
+) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
@@ -169,7 +181,8 @@ export const unlinkPullIssuebyIid = (id, issueIid) => {
         const { env } = getState();
         const send = {
           creator: wallet.selectedAddress,
-          id: id,
+          repositoryId: repositoryId,
+          pullRequestIid: pullRequestIid,
           issueIid: issueIid,
         };
         const message = await env.txClient.msgUnlinkPullRequestIssueByIid(send);
