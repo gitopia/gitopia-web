@@ -50,10 +50,9 @@ function WithdrawIbcAsset(props) {
                     )
                 );
                 setIbcTokenDenom(b[i]?.denom);
-                setTokenDecimals(
-                  props.ibcAssets.chainInfo.asset.assets[0].denom_units[1]
-                    .exponent
-                );
+                break;
+              } else {
+                setBalance(0);
               }
             }
           }
@@ -61,7 +60,7 @@ function WithdrawIbcAsset(props) {
       }
     }
     getChain();
-  }, [props.activeWallet]);
+  }, [props.activeWallet, props.ibcAssets]);
 
   function fillAmount(amount) {
     document.getElementById("amount").value = amount;
