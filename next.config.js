@@ -61,6 +61,16 @@ module.exports = withBundleAnalyzer({
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+  ...(process.env.NODE_ENV === "production"
+    ? {
+        compiler: {
+          removeConsole: {
+            exclude: ["error"],
+          },
+          reactRemoveProperties: { properties: ["^data-test$"] },
+        },
+      }
+    : {}),
   async rewrites() {
     return [
       {
@@ -105,20 +115,28 @@ module.exports = withBundleAnalyzer({
       },
       {
         source: "/api/ibc/all-assets",
-        destination: process.env.NEXT_PUBLIC_IBC_ASSETS_REPO + "/gitopia-janus-devnet-4/gitopia.json"
+        destination:
+          process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
+          "/gitopia-janus-devnet-4/gitopia.json",
       },
       {
         source: "/api/ibc/:chain/bridge/:otherChain",
-        destination: process.env.NEXT_PUBLIC_IBC_ASSETS_REPO  + "/chain-registry/_IBC/:chain-:otherChain.json"
+        destination:
+          process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
+          "/chain-registry/_IBC/:chain-:otherChain.json",
       },
       {
         source: "/api/ibc/:chain/assets",
-        destination: process.env.NEXT_PUBLIC_IBC_ASSETS_REPO + "/chain-registry/testnets/:chain/assetlist.json"
+        destination:
+          process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
+          "/chain-registry/testnets/:chain/assetlist.json",
       },
       {
         source: "/api/ibc/:chain/info",
-        destination: process.env.NEXT_PUBLIC_IBC_ASSETS_REPO + "/chain-registry/testnets/:chain/chain.json"
-      }
+        destination:
+          process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
+          "/chain-registry/testnets/:chain/chain.json",
+      },
     ];
   },
   async headers() {

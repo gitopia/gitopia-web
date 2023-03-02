@@ -3,7 +3,7 @@ const initialState = [];
 const reducer = (state = initialState, action) => {
   let index = -2;
   if (action.payload && action.payload.id) {
-    index = state.findIndex((x) => x.id === action.payload.id);
+    index = state.findIndex((x) => x.id === Number(action.payload.id));
   }
   switch (action.type) {
     case "ADD_TASK_TO_QUEUE":

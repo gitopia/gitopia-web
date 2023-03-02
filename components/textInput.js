@@ -66,7 +66,7 @@ const TextInput = React.forwardRef(
               (props.hint.shown && props.hint.type == "error"
                 ? "border-pink text-pink input-" + props.hint.type
                 : props.value.length > 0
-                ? "border-green"
+                ? "border-green-900"
                 : "")
             }
             value={props.value}
