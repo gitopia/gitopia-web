@@ -283,7 +283,7 @@ export const deleteComment = ({
   };
 };
 
-export const toggleIssueState = ({ repositoryId = null, iid = null }) => {
+export const toggleIssueState = ({ repositoryId = null, iid = null, commentBody = null }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "comment")))
       return null;
@@ -293,6 +293,7 @@ export const toggleIssueState = ({ repositoryId = null, iid = null }) => {
       creator: wallet.selectedAddress,
       repositoryId,
       iid,
+      commentBody
     };
     try {
       const message = await env.txClient.msgToggleIssueState(comment);
@@ -886,19 +887,28 @@ export const forkRepository = ({
   ownerId = null,
   repoOwner = null,
   repoName = null,
+  repoBranch = null,
+  forkRepositoryName = null,
+  forkRepositoryDescription = null
 }) => {
   return async (dispatch, getState) => {
+    console.log("DSADSDSD");
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
 
-    const { wallet, user } = getState();
+    const { wallet, env } = getState();
     const repository = {
       creator: wallet.selectedAddress,
       repositoryId: { id: repoOwner, name: repoName },
       owner: ownerId,
       provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+      forkRepositoryName,
+      forkRepositoryDescription
     };
-    const { env } = getState();
+    if (repoBranch) {
+      repository.branch = repoBranch
+    }
+    console.log("forking", repository);
 
     try {
       const message = await env.txClient.msgInvokeForkRepository(repository);
@@ -910,7 +920,7 @@ export const forkRepository = ({
           log[0].events[0].attributes[
             log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
           ].value;
-        const res = await watchTask(taskId)(dispatch, getState);
+        const res = await watchTask(taskId, "Forking repository " + repoName)(dispatch, getState);
         console.log("Watch task result", res);
         if (res.TaskState === "TASK_STATE_SUCCESS") {
           getUserDetailsForSelectedAddress()(dispatch, getState);
@@ -1373,6 +1383,7 @@ export const updatePullRequestState = ({
   iid = null,
   state,
   mergeCommitSha,
+  commentBody,
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
@@ -1385,6 +1396,7 @@ export const updatePullRequestState = ({
       iid,
       state,
       mergeCommitSha,
+      commentBody
     };
 
     try {
@@ -1403,7 +1415,7 @@ export const updatePullRequestState = ({
   };
 };
 
-export const mergePullRequest = ({ repositoryId, iid }) => {
+export const mergePullRequest = ({ repositoryId, iid, branchName }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
       return null;
@@ -1427,7 +1439,7 @@ export const mergePullRequest = ({ repositoryId, iid }) => {
           log[0].events[0].attributes[
             log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
           ].value;
-        const res = await watchTask(taskId)(dispatch, getState);
+        const res = await watchTask(taskId, "Merging branch " + branchName )(dispatch, getState);
         console.log("Watch task result", res);
         getUserDetailsForSelectedAddress()(dispatch, getState);
         return res;
