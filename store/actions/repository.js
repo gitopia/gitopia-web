@@ -892,7 +892,6 @@ export const forkRepository = ({
   forkRepositoryDescription = null
 }) => {
   return async (dispatch, getState) => {
-    console.log("DSADSDSD");
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
       return null;
 
