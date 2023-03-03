@@ -10,7 +10,10 @@ import getRepository from "../../../helpers/getRepository";
 import shrinkAddress from "../../../helpers/shrinkAddress";
 import useRepository from "../../../hooks/useRepository";
 import TextInput from "../../../components/textInput";
-import { forkRepository, authorizeGitServer } from "../../../store/actions/repository";
+import {
+  forkRepository,
+  authorizeGitServer,
+} from "../../../store/actions/repository";
 import { useRouter } from "next/router";
 import getGitServerAuthorization from "../../../helpers/getGitServerAuthStatus";
 
@@ -30,7 +33,12 @@ function RepositoryInvokeForkView(props) {
   const [childRepos, setChildRepos] = useState([]);
   const [parentRepo, setParentRepo] = useState(null);
 
-  const [ownerId, setOwnerId] = useState(props.currentDashboard);
+  const [ownerId, setOwnerId] = useState(props.currentDashboard || "");
+  const [ownerIdHint, setOwnerIdHint] = useState({
+    shown: false,
+    type: "error",
+    message: "",
+  });
   const [forkRepositoryName, setForkRepositoryName] = useState(
     repository?.name || ""
   );
@@ -69,6 +77,7 @@ function RepositoryInvokeForkView(props) {
       ...forkRepositoryDescriptionHint,
       shown: false,
     });
+    setOwnerIdHint({ ...ownerIdHint, shwon: false });
   };
 
   const validateRepository = async () => {
@@ -86,6 +95,14 @@ function RepositoryInvokeForkView(props) {
         type: "error",
         shown: true,
         message: "Repository name must have atleat 3 characters",
+      });
+      return false;
+    }
+    if (ownerId === "") {
+      setOwnerIdHint({
+        type: "error",
+        shown: true,
+        message: "Already owner of this repository",
       });
       return false;
     }
@@ -160,7 +177,7 @@ function RepositoryInvokeForkView(props) {
     } else {
       setOwnerId(props.currentDashboard);
     }
-  }, [repository]);
+  }, [repository, props.currentDashboard]);
 
   useEffect(() => {
     refreshForkingAccess();
@@ -194,7 +211,14 @@ function RepositoryInvokeForkView(props) {
                     <span className="label-text text-sm">Owner</span>
                   </label>
                   <select
-                    className="select select-bordered select-primary select-sm text-xs h-8 focus:outline-none focus:border-type"
+                    className={
+                      "select select-bordered select-primary select-sm text-xs h-8 focus:outline-none focus:border-type " +
+                      (ownerIdHint.shown && ownerIdHint.type == "error"
+                        ? "border-pink text-pink input-" + ownerIdHint.type
+                        : ownerId.length > 0
+                        ? "border-green-900"
+                        : "")
+                    }
                     value={ownerId}
                     onChange={(e) => {
                       setOwnerId(e.target.value);
@@ -212,6 +236,15 @@ function RepositoryInvokeForkView(props) {
                       );
                     })}
                   </select>
+                  {ownerIdHint.shown && (
+                    <label className="label">
+                      <span
+                        className={"label-text-alt text-" + ownerIdHint.type}
+                      >
+                        {ownerIdHint.message}
+                      </span>
+                    </label>
+                  )}
                 </div>
                 <div className="mx-2 mt-10 text-sm text-type-tertiary">/</div>
                 <div className="flex-1">
