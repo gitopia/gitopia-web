@@ -68,7 +68,7 @@ function Header(props) {
   let addressToShow = "",
     avatarUrl = "";
   if (props.selectedAddress) {
-    addressToShow = "gitopia"+ shrinkAddress(props.selectedAddress);
+    addressToShow = "gitopia" + shrinkAddress(props.selectedAddress);
     if (props.avatarUrl) {
       avatarUrl = props.avatarUrl;
     } else {
@@ -180,7 +180,9 @@ function Header(props) {
           chainId={chainId}
         ></Drawer>
         <div
-          className={"flex-none sm:px-6 transition-all ease-out delay-150 sm:w-42"}
+          className={
+            "flex-none sm:px-6 transition-all ease-out delay-150 sm:w-42"
+          }
         >
           <Link href={homeUrl}>
             <img
@@ -190,8 +192,7 @@ function Header(props) {
             ></img>
           </Link>
         </div>
-        {!isMobile ? (
-          <SearchBar />) : ""}
+        {!isMobile ? <SearchBar /> : ""}
         {!isMobile ? (
           <div className="items-stretch">
             <a
@@ -486,20 +487,6 @@ function Header(props) {
                               </a>
                             </li>
                           )}
-                          <li>
-                            <a
-                              href="#"
-                              onClick={(e) => {
-                                setMenuState(3);
-                                e.preventDefault();
-                              }}
-                            >
-                              Send{" "}
-                              {props.advanceUser === true
-                                ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
-                                : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
-                            </a>
-                          </li>
                           {isMobile ? (
                             <li>
                               <a
