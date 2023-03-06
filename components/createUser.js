@@ -122,8 +122,12 @@ function CreateUser(props) {
 
   return (
     <>
-      <div className="text-2xl mt-16 sm:mt-0 mb-6">Setup Your Profile</div>
-      <div className="text-base mb-8">On chain profile</div>
+      <div className="text-4xl mt-16 sm:mt-0 sm:text-6xl mb-6">
+            Setup Your Profile
+          </div>
+          <div className="text-xs text-type-secondary mb-8">
+            This information is visible publicly and will be used to interact with other gitopia users
+          </div>
 
       <div>
         <AccountAvatar

@@ -123,62 +123,9 @@ function CreateWallet(props) {
 
   useEffect(() => {
     if (walletCreated) {
-      setTimeout(getTokens, 2000);
       router.push("/login?step=5");
     }
   }, [walletCreated]);
-
-  // const newCreateWallet = () => {
-  //   hideHints();
-  //   setName("");
-  //   setPassword("");
-  //   setConfirmPassword("");
-  //   setMnemonic(bip39.generateMnemonic(256));
-  //   setWalletCreated(false);
-  // };
-
-  const getTokens = () => {
-    if (!props.selectedAddress) {
-      props.notify("Please sign in before claiming tokens", "error");
-      return;
-    }
-    // setLoading(amount);
-
-    axios
-      .post(
-        process.env.NODE_ENV === "development"
-          ? "/api/faucet"
-          : process.env.NEXT_PUBLIC_FAUCET_URL,
-        {
-          address: props.selectedAddress,
-        },
-        { timeout: 10000 }
-      )
-      .then((res) => {
-        if (
-          res?.data?.transfers &&
-          res?.data?.transfers.length &&
-          res.data.transfers[0].status === "error"
-        ) {
-          props.notify(res.data.transfers[0].error, "error");
-          // setLoading(0);
-        } else {
-          setTimeout(() => {
-            props.updateUserBalance(true);
-            // setLoading(0);
-          }, 2000);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        if (err?.response?.data?.error) {
-          props.notify(err.response.data.error, "error");
-        } else {
-          props.notify("Unable to reach faucet", "error");
-        }
-        // setLoading(0);
-      });
-  };
 
   useEffect(() => {
     let highest = 0;
@@ -235,24 +182,13 @@ function CreateWallet(props) {
       ) : (
         <>
           <div className="text-4xl mt-16 sm:mt-0 sm:text-6xl mb-6">
-            Create Wallet
+            Create Local Wallet
           </div>
-          <div className="text-xs mb-8">
-            Your wallet is your login information to access the app
+          <div className="text-xs text-type-secondary mb-8">
+            Set a password for your new wallet
           </div>
 
           <div className="max-w-md w-full p-4">
-            {/* <div className="mb-4">
-              <TextInput
-                type="text"
-                name="wallet_name"
-                placeholder="Wallet Name"
-                readOnly={true}
-                value={name}
-                setValue={setName}
-                hint={nameHint}
-              />
-            </div> */}
             <div className="mb-4">
               <TextInput
                 type="password"
@@ -261,6 +197,7 @@ function CreateWallet(props) {
                 value={password}
                 setValue={setPassword}
                 hint={passwordHint}
+                autoFocus={true}  
               />
             </div>
             <div className="mb-8">
@@ -271,6 +208,7 @@ function CreateWallet(props) {
                 value={confirmPassword}
                 setValue={setConfirmPassword}
                 hint={confirmPasswordHint}
+                onEnter={createWallet}
               />
             </div>
             <div className="">

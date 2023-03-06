@@ -152,8 +152,10 @@ function RecoverWallet(props) {
     <>
       {mnemonicValidated ? (
         <>
-          <div className="text-6xl mb-6">Recover Wallet</div>
-          <div className="text-sm mb-8">
+          <div className="text-4xl mt-16 sm:mt-0 sm:text-6xl mb-6">
+            Recover Local Wallet
+          </div>
+          <div className="text-xs text-type-secondary mb-8">
             Enter a password for your recovered wallet
           </div>
 
@@ -176,6 +178,7 @@ function RecoverWallet(props) {
                 value={password}
                 setValue={setPassword}
                 hint={passwordHint}
+                autoFocus={true}
               />
             </div>
             <div className="mb-8">
@@ -186,6 +189,7 @@ function RecoverWallet(props) {
                 value={confirmPassword}
                 setValue={setConfirmPassword}
                 hint={confirmPasswordHint}
+                onEnter={createWallet}
               />
             </div>
             <div className="">
@@ -202,9 +206,9 @@ function RecoverWallet(props) {
       ) : (
         <>
           <div className="text-4xl mt-16 sm:mt-0 sm:text-6xl mb-6">
-            Recover Wallet
+            Recover Local Wallet
           </div>
-          <div className="text-xs mb-8">
+          <div className="text-xs text-type-secondary mb-8">
             Enter your wallet recovery phrase to log in
           </div>
           <div className="max-w-md w-full p-4">

@@ -16,7 +16,8 @@ const TextInput = React.forwardRef(
       required: false,
       className: "",
       size: "md",
-      onEnter: () => {},
+      onEnter: () => { },
+      autoFocus: false,
     },
     ref
   ) => {
@@ -78,6 +79,7 @@ const TextInput = React.forwardRef(
             onChange={(e) => {
               props.setValue(e.target.value);
             }}
+            autoFocus={props.autoFocus}
             data-test={props.name}
           />
         )}

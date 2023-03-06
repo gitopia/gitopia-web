@@ -59,7 +59,7 @@ function ConnectLedger(props) {
             router.push("/home");
           } else if (a === "WALLET_ADDED") {
             setTimeout(getTokens, 2000);
-            router.push("/login?step=5");
+            router.push("/login?step=6");
           }
         } else {
           setVerifyError("Unable to confirm on ledger");

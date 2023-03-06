@@ -3,7 +3,7 @@ import getNodeInfo from "./getNodeInfo";
 export default async function initKeplr() {
   if (typeof window === "undefined") return;
   if (!window.keplr) {
-    alert("Please install keplr extension");
+    
   } else {
     const info = await getNodeInfo();
 
