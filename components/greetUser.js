@@ -93,7 +93,7 @@ function GreetUser(props) {
                 </div>
                 <div className="flex-none w-60 mr-8 mt-4 sm:mt-0">
                   <Link
-                    href={"/login?step=5"}
+                    href={"/login?step=6"}
                     className="btn btn-primary btn-block btn-sm"
                   >
                     Create Profile

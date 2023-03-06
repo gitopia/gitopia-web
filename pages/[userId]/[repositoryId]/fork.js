@@ -122,7 +122,8 @@ function RepositoryInvokeForkView(props) {
     return true;
   };
 
-  const forkRepository = async () => {
+  const invokeForkRepository = async () => {
+    let forkingAccess = await getGitServerAuthorization(props.selectedAddress);
     if (!forkingAccess) {
       setGrantAccessDialogShown(true);
       return;
@@ -140,36 +141,13 @@ function RepositoryInvokeForkView(props) {
         forkRepositoryDescription,
       });
       if (res?.url) {
-        router.push(url);
+        router.push(res.url);
       }
     }
     setIsForking(false);
   };
 
-  const refreshForkingAccess = async () => {
-    let access = await getGitServerAuthorization(props.selectedAddress);
-    setForkingAccess(access);
-    return access;
-  };
-
-  const refreshRepositoryForks = async () => {
-    if (repository.id) {
-      if (repository.forks.length) {
-        const pr = repository.forks.map((r) => getRepository(r));
-        const repos = await Promise.all(pr);
-        setChildRepos(repos);
-      }
-      if (repository.parent !== "0") {
-        const repo = await getRepository(repository.parent);
-        if (repo) {
-          setParentRepo(repo);
-        }
-      }
-    }
-  };
-
   useEffect(() => {
-    // refreshRepositoryForks();
     setForkRepositoryName(repository?.name || "");
     setForkRepositoryDescription(repository?.description || "");
     if (repository?.owner?.address === props.currentDashboard) {
@@ -178,10 +156,6 @@ function RepositoryInvokeForkView(props) {
       setOwnerId(props.currentDashboard);
     }
   }, [repository, props.currentDashboard]);
-
-  useEffect(() => {
-    refreshForkingAccess();
-  }, [props.selectedAddress]);
 
   return (
     <div
@@ -331,7 +305,7 @@ function RepositoryInvokeForkView(props) {
                     "btn btn-primary btn-wide btn-sm" +
                     (isForking ? " loading" : "")
                   }
-                  onClick={forkRepository}
+                  onClick={invokeForkRepository}
                   disabled={isForking}
                 >
                   Create Fork
@@ -405,24 +379,19 @@ function RepositoryInvokeForkView(props) {
                     const res = await props.authorizeGitServer();
                     setIsGrantingAccess(false);
                     if (res && res.code === 0) {
-                      let access = await refreshForkingAccess();
-                      if (
-                        props.selectedAddress &&
-                        access &&
-                        repository?.allowForking
-                      ) {
-                        setGrantAccessDialogShown(false);
-                        router.push(
-                          [
-                            "",
-                            repository.owner.id,
-                            repository.name,
-                            "fork",
-                          ].join("/")
-                        );
-                      } else {
-                        setGrantAccessDialogShown(true);
-                      }
+                      // let access = await refreshForkingAccess();
+                      // console.log (props.selectedAddress,
+                      //   access,
+                      //   repository?.allowForking)
+                      // if (
+                      //   props.selectedAddress &&
+                      //   access &&
+                      //   repository?.allowForking
+                      // ) {
+                      //   setTimeout(invokeForkRepository,100);
+                      // }
+                      setGrantAccessDialogShown(false);
+                      invokeForkRepository();
                     }
                   }}
                   disabled={isGrantingAccess}

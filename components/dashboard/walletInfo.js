@@ -186,10 +186,10 @@ function WalletInfo(props) {
               <div className="mx-3 flex-1">{asset.chain_name}</div>
               <div className="lowercase">
                 {(tokenBalances[asset.base_denom] /
-                  Math.pow(10, coingeckoId[asset.base_denom].coinDecimals) ||
+                  Math.pow(10, coingeckoId[asset.base_denom]?.coinDecimals) ||
                   0) +
                   " " +
-                  coingeckoId[asset.base_denom].coinDenom}
+                  coingeckoId[asset.base_denom]?.coinDenom}
               </div>
               <div className="flex transition-all items-center cursor-pointer text-type-secondary opacity-0 w-0 group-hover:opacity-100 group-hover:w-20 group-hover:ml-3">
                 <div
