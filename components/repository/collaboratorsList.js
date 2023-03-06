@@ -7,6 +7,7 @@ import {
 } from "../../store/actions/repository";
 import getUser from "../../helpers/getUser";
 import shrinkAddress from "../../helpers/shrinkAddress";
+import { notify } from "reapop";
 
 function CollaboratorsList({
   repoOwnerId,
@@ -22,8 +23,11 @@ function CollaboratorsList({
     message: "",
   });
   const [collabRole, setCollabRole] = useState("TRIAGE");
+  const [updatedCollabRole, setUpdatedCollabRole] = useState(collabRole);
   const [isAdding, setIsAdding] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [startUpdate, setStartUpdate] = useState("");
 
   const validateCollaborator = async () => {
     const res = await getUser(collabAddress);
@@ -63,6 +67,18 @@ function CollaboratorsList({
     setIsRemoving(false);
   };
 
+  const updateCollaborator = async (address, role, index) => {
+    setIsUpdating(index);
+    await props.updateCollaborator({
+      repoName: repoName,
+      repoOwner: repoOwnerId,
+      user: address,
+      role: role,
+    });
+    if (refreshRepository) await refreshRepository();
+    setIsUpdating(false);
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="table sm:w-full">
@@ -99,21 +115,86 @@ function CollaboratorsList({
                     </a>
                   </div>
                 </div>
-              </td>
-              <td className="text-sm">{c.permission}</td>
+              </td>{" "}
+              {startUpdate === c.id ? (
+                <td style={{ verticalAlign: "top" }}>
+                  <select
+                    data-test="permissions"
+                    className={
+                      "select select-bordered w-full select-sm focus:outline-none focus:border-type " +
+                      (updatedCollabRole.length > 0 ? "border-green" : "")
+                    }
+                    value={updatedCollabRole}
+                    onChange={(e) => setUpdatedCollabRole(e.target.value)}
+                  >
+                    <option value="READ">Read</option>
+                    <option value="TRIAGE">Triage</option>
+                    <option value="WRITE">Write</option>
+                    <option value="MAINTAIN">Maintain</option>
+                    <option value="ADMIN">Admin</option>
+                  </select>
+                </td>
+              ) : (
+                <td className="text-sm">{c.permission}</td>
+              )}
               <td>
                 {c.permission !== "CREATOR" ? (
-                  <button
-                    className={
-                      "btn btn-sm btn-accent btn-outline btn-block " +
-                      (isRemoving === i ? "loading" : "")
-                    }
-                    disabled={isRemoving === i}
-                    onClick={() => removeCollaborator(c.id, i)}
-                    data-test="remove"
-                  >
-                    Remove
-                  </button>
+                  <div>
+                    {startUpdate === c.id ? (
+                      <div>
+                        <button
+                          className={
+                            "btn btn-sm btn-outline btn-block w-24 mr-2 " +
+                            (isUpdating === i ? "loading" : "")
+                          }
+                          disabled={isUpdating === i}
+                          onClick={() =>
+                            updateCollaborator(c.id, updatedCollabRole, i).then(
+                              () => {
+                                props.notify("Updated member role", "info");
+                                setStartUpdate(false);
+                              }
+                            )
+                          }
+                        >
+                          Update
+                        </button>
+                        <button
+                          className={
+                            "btn btn-sm btn-outline btn-block w-24 mr-2 "
+                          }
+                          onClick={() => setStartUpdate(false)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <button
+                          className={
+                            "btn btn-sm btn-accent btn-outline btn-block w-24 mr-2 "
+                          }
+                          onClick={() => {
+                            setStartUpdate(c.id);
+                            setUpdatedCollabRole(c.permission);
+                          }}
+                        >
+                          Update
+                        </button>
+                        <button
+                          className={
+                            "btn btn-sm btn-accent btn-outline btn-block w-24 " +
+                            (isRemoving === i ? "loading" : "")
+                          }
+                          disabled={isRemoving === i}
+                          onClick={() => removeCollaborator(c.id, i)}
+                          data-test="remove"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   ""
                 )}
@@ -180,4 +261,5 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   updateCollaborator,
   removeCollaborator,
+  notify,
 })(CollaboratorsList);
