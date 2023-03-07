@@ -2,8 +2,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { ibcWithdraw } from "../../store/actions/wallet";
-import { gitopiaIbc } from "../../ibc-assets-config";
-import { useRouter } from "next/router";
 import getBalances from "../../helpers/getAllBalances";
 import getDenomNameByHash from "../../helpers/getDenomNameByHash";
 import { notify, dismissNotification } from "reapop";
@@ -52,10 +50,9 @@ function WithdrawIbcAsset(props) {
                     )
                 );
                 setIbcTokenDenom(b[i]?.denom);
-                setTokenDecimals(
-                  props.ibcAssets.chainInfo.asset.assets[0].denom_units[1]
-                    .exponent
-                );
+                break;
+              } else {
+                setBalance(0);
               }
             }
           }
@@ -63,7 +60,7 @@ function WithdrawIbcAsset(props) {
       }
     }
     getChain();
-  }, [props.activeWallet]);
+  }, [props.activeWallet, props.ibcAssets]);
 
   function fillAmount(amount) {
     document.getElementById("amount").value = amount;
@@ -241,8 +238,20 @@ function WithdrawIbcAsset(props) {
                       notifId = loadingMessage.payload.id;
                       props
                         .ibcWithdraw(
-                          gitopiaIbc.port_id,
-                          gitopiaIbc.channel_id,
+                          props.ibcAssets.chainInfo.ibc.chain_1.chain_name.includes(
+                            "gitopia"
+                          )
+                            ? props.ibcAssets.chainInfo.ibc.channels[0].chain_1
+                                .port_id
+                            : props.ibcAssets.chainInfo.ibc.channels[0].chain_2
+                                .port_id,
+                          props.ibcAssets.chainInfo.ibc.chain_1.chain_name.includes(
+                            "gitopia"
+                          )
+                            ? props.ibcAssets.chainInfo.ibc.channels[0].chain_1
+                                .channel_id
+                            : props.ibcAssets.chainInfo.ibc.channels[0].chain_2
+                                .channel_id,
                           (
                             Number(amount) * Math.pow(10, tokenDecimals)
                           ).toString(),

@@ -16,6 +16,7 @@ import DeleteRepository from "../../../components/repository/deleteRepository";
 import useRepository from "../../../hooks/useRepository";
 import ToggleForking from "../../../components/repository/toggleForking";
 import useWindowSize from "../../../hooks/useWindowSize";
+import BranchProtectionRules from "../../../components/repository/branchProtectionRules";
 import { notify } from "reapop";
 
 export async function getStaticProps() {
@@ -55,6 +56,11 @@ function RepositorySettingsView(props) {
                   <li>
                     <a className="rounded" href="#repository">
                       Repository
+                    </a>
+                  </li>
+                  <li>
+                    <a className="rounded" href="#branches">
+                      Branches
                     </a>
                   </li>
                   <li>
@@ -115,20 +121,6 @@ function RepositorySettingsView(props) {
                     />
                   </div>
                   <div className="mt-6">
-                    <ChangeDefaultBranch
-                      repoId={repository.id}
-                      repoName={repository.name}
-                      repoOwner={repository.owner.id}
-                      repoDefaultBranch={repository.defaultBranch}
-                      onSuccess={(name) => {
-                        props.notify(
-                          "updated default branch to " + name,
-                          "info"
-                        );
-                      }}
-                    />
-                  </div>
-                  <div className="mt-6">
                     <DeleteRepository
                       currentOwnerId={repository.owner.id}
                       repoName={repository.name}
@@ -151,6 +143,35 @@ function RepositorySettingsView(props) {
                     </button>
                   </div>
                 </div> */}
+              </div>
+              <div className="mt-2 sm:mt-8 divide-y divide-grey">
+                <div className="text-lg sm:text-2xl py-4 sm:py-6" id="branches">
+                  Branches
+                </div>
+                <div className="sm:px-4 py-4 sm:py-6">
+                  <ChangeDefaultBranch
+                    repoId={repository.id}
+                    repoName={repository.name}
+                    repoOwner={repository.owner.id}
+                    repoDefaultBranch={repository.defaultBranch}
+                    onSuccess={(name) => {
+                      props.notify("updated default branch to " + name, "info");
+                    }}
+                  />
+                  <div className="mt-6">
+                    <BranchProtectionRules
+                      repoId={repository.id}
+                      repoName={repository.name}
+                      repoOwner={repository.owner.id}
+                      onSuccess={async (branch) => {
+                        props.notify(
+                          "Disabled forch push in " + branch + " branch",
+                          "info"
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
               <div className="mt-2 sm:mt-8 divide-y divide-grey">
                 <div

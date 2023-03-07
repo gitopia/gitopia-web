@@ -1,9 +1,14 @@
 import TextInput from "../textInput";
 import { useState } from "react";
 import { connect } from "react-redux";
-import { addMember, removeMember } from "../../store/actions/dao";
+import {
+  addMember,
+  removeMember,
+  updateMemberRole,
+} from "../../store/actions/dao";
 import getUser from "../../helpers/getUser";
 import shrinkAddress from "../../helpers/shrinkAddress";
+import { notify } from "reapop";
 
 function MembersList({ daoId, members = [], refreshDao, ...props }) {
   const [collabAddress, setCollabAddress] = useState("");
@@ -13,8 +18,11 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
     message: "",
   });
   const [collabRole, setCollabRole] = useState("MEMBER");
+  const [updatedCollabRole, setUpdatedCollabRole] = useState(collabRole);
   const [isAdding, setIsAdding] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [startUpdate, setStartUpdate] = useState("");
 
   const validateMember = async () => {
     setCollabHint({
@@ -59,6 +67,17 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
     setIsRemoving(false);
   };
 
+  const updateCollaborator = async (address, role, index) => {
+    setIsUpdating(index);
+    await props.updateMemberRole({
+      daoId: daoId,
+      userId: address,
+      role: role,
+    });
+    if (refreshDao) await refreshDao();
+    setIsUpdating(false);
+  };
+
   return (
     <table className="table sm:w-full">
       <thead>
@@ -96,19 +115,83 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
                 </div>
               </div>
             </td>
-            <td className="text-sm">{c.role}</td>
+            {startUpdate === c.id ? (
+              <td style={{ verticalAlign: "top" }}>
+                <select
+                  className={
+                    "select select-bordered w-full select-sm focus:outline-none focus:border-type " +
+                    (updatedCollabRole?.length > 0 ? "border-green" : "")
+                  }
+                  value={updatedCollabRole}
+                  onChange={(e) => setUpdatedCollabRole(e.target.value)}
+                  data-test="member_role"
+                >
+                  <option value="MEMBER">Member</option>
+                  <option value="OWNER">Owner</option>
+                </select>
+              </td>
+            ) : (
+              <td className="text-sm">{c.role}</td>
+            )}
             <td>
-              <button
-                className={
-                  "btn btn-sm btn-accent btn-outline btn-block " +
-                  (isRemoving === i ? "loading" : "")
-                }
-                disabled={isRemoving === i}
-                onClick={() => removeMember(c.address, i)}
-                data-test="remove"
-              >
-                Remove
-              </button>
+              <div>
+                {startUpdate === c.id ? (
+                  <div>
+                    <button
+                      className={
+                        "btn btn-sm btn-outline btn-block w-24 mr-2 " +
+                        (isUpdating === i ? "loading" : "")
+                      }
+                      disabled={isUpdating === i}
+                      onClick={() =>
+                        updateCollaborator(
+                          c.address,
+                          updatedCollabRole,
+                          i
+                        ).then((res) => {
+                          if (res) {
+                            props.notify("Updated member role", "info");
+                          }
+                          setStartUpdate(false);
+                        })
+                      }
+                    >
+                      Update
+                    </button>
+                    <button
+                      className={"btn btn-sm btn-outline btn-block w-24 mr-2 "}
+                      onClick={() => setStartUpdate(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <button
+                      className={
+                        "btn btn-sm btn-accent btn-outline btn-block w-24 mr-2 "
+                      }
+                      onClick={() => {
+                        setStartUpdate(c.id);
+                        setUpdatedCollabRole(c.permission);
+                      }}
+                    >
+                      Update
+                    </button>
+                    <button
+                      className={
+                        "btn btn-sm btn-accent btn-outline btn-block w-24 " +
+                        (isRemoving === i ? "loading" : "")
+                      }
+                      disabled={isRemoving === i}
+                      onClick={() => removeMember(c.address, i)}
+                      data-test="remove"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
             </td>
           </tr>
         ))}
@@ -167,4 +250,6 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   addMember,
   removeMember,
+  updateMemberRole,
+  notify,
 })(MembersList);

@@ -19,6 +19,7 @@ import getChainAssetList from "../../helpers/getChainAssetList";
 import getChainIbcAsset from "../../helpers/getChainIbcAssets";
 import dayjs from "dayjs";
 import { calculateFee, GasPrice } from "@cosmjs/stargate";
+import { gasConfig } from "../../ibc-assets-config";
 
 let ledgerTransport;
 
@@ -234,9 +235,8 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
             prefix: chainInfo.bech32_prefix,
           }
         );
-        const [
-          counterPartyAccount,
-        ] = await accountSignerSecondary.getAccounts();
+        const [counterPartyAccount] =
+          await accountSignerSecondary.getAccounts();
         const counterPartyAddress = counterPartyAccount.address;
         wallet.counterPartyAddress = counterPartyAddress;
         wallet.counterPartyChain = chainId;
@@ -477,7 +477,10 @@ export const downloadWallet = (password) => {
         saveAs(blob, wallet.name + ".json");
         if (state.getPasswordPromise.resolve) {
           state.getPasswordPromise.resolve("Download success");
-          dispatch({ type: walletActions.SET_BACKUP_STATE, payload: {backupState: true} });
+          dispatch({
+            type: walletActions.SET_BACKUP_STATE,
+            payload: { backupState: true },
+          });
         }
         return true;
       }
@@ -586,9 +589,8 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
           prefix: chainInfo.bech32_prefix,
           ledgerAppName: "Cosmos",
         });
-        const [
-          counterPartyAccount,
-        ] = await accountSignerSecondary.getAccounts();
+        const [counterPartyAccount] =
+          await accountSignerSecondary.getAccounts();
         const counterPartyAddress = counterPartyAccount.address;
         console.log(accountSignerSecondary);
         newWallet.counterPartyAddress = counterPartyAddress;
@@ -810,7 +812,7 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
   });
 };
 
-  export const getAddressforChain = (name, chainId) => {
+export const getAddressforChain = (name, chainId) => {
   return async (dispatch, getState) => {
     try {
       const { wallet } = getState();
@@ -846,7 +848,8 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
               counterPartyChainInfo.default_node_info.network
             );
             const accounts = await offlineSigner.getAccounts();
-            const counterPartyAccount = await accountSignerSecondary.getAccounts();
+            const counterPartyAccount =
+              await accountSignerSecondary.getAccounts();
             activeWallet.counterPartyAddress = counterPartyAccount[0].address;
             activeWallet.counterPartyChain = chainId;
             await dispatch({
@@ -874,7 +877,7 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
       } else {
         return await setupTxClients(dispatch, getState, chainId);
       }
-      return {}
+      return {};
     } catch (e) {
       return e;
     }
@@ -886,7 +889,11 @@ export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState, wallet.activeWallet.counterPartyChain);
+        await setupTxClients(
+          dispatch,
+          getState,
+          wallet.activeWallet.counterPartyChain
+        );
         const { env } = getState();
         const send = {
           sourcePort: sourcePort,
@@ -922,7 +929,11 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState, wallet.activeWallet.counterPartyChain);
+        await setupTxClients(
+          dispatch,
+          getState,
+          wallet.activeWallet.counterPartyChain
+        );
         const { env } = getState();
         const send = {
           sourcePort: sourcePort,
@@ -935,11 +946,12 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
             denom: denom,
           },
         };
-      
+
         const msg = await env.txClientSecondary.msgTransfer(send);
         const memo = "";
-        let fees = await estimateOsmoFee(
+        let fees = await estimateFee(
           wallet.activeWallet.counterPartyAddress,
+          wallet.activeWallet.counterPartyChain,
           [msg],
           memo
         )(getState);
@@ -954,7 +966,7 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
           memo,
         });
         updateUserBalance()(dispatch, getState);
-        
+
         if (result && result.code === 0) {
           return true;
         } else {
@@ -970,16 +982,19 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
   };
 };
 
-export const estimateOsmoFee = (address, msg, memo) => {
+export const estimateFee = (address, chain, msg, memo) => {
   return async (getState) => {
     const { env } = getState();
-    const gasPrice = GasPrice.fromString("0.025uosmo");
+    const gasPrice = GasPrice.fromString(gasConfig[chain].gasPrice);
     const gasEstimation = await env.txClientSecondary.simulate(
       address,
       msg,
       memo
     );
-    const fees = calculateFee(Math.round(gasEstimation * 1.3), gasPrice);
+    const fees = calculateFee(
+      Math.round(gasEstimation * gasConfig[chain].multiplier),
+      gasPrice
+    );
     return fees;
   };
 };

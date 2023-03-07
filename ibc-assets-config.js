@@ -11,15 +11,21 @@ export const coingeckoId = {
     coinDenom: "TLORE",
     icon: "/tokens/gitopia.svg",
   },
-};
-export const gitopiaIbc = {
-  chain_name: "gitopia",
-  chain_id: {
-    id: "gitopia-janus-devnet-4",
-    version: 4,
+  uatom: {
+    id: "cosmos",
+    coinDecimals: 6,
+    coinDenom: "ATOM",
+    icon: "/tokens/atom.svg",
   },
-  client_id: "07-tendermint-3",
-  connection_id: "connection-0",
-  channel_id: "channel-0",
-  port_id: "transfer",
+};
+
+export const gasConfig = {
+  osmosistestnet: {
+    gasPrice: "0.025uosmo",
+    multiplier: 1.3,
+  },
+  cosmoshubtestnet: {
+    gasPrice: "0.1uatom",
+    multiplier: 1.5,
+  },
 };

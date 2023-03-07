@@ -40,12 +40,14 @@ function DeleteRepository({
             This is a non-reversible action and all the associated issues, pull
             requests, etc will be permanently deleted from Gitopia.
           </p>
-          <div className="flex mt-0.5">
-            Please type
-            <div className="px-1 font-bold">
-              {currentOwnerId + "/" + repoName}
+          <div className="mt-0.5 inline-block whitespace-nowrap overflow-hidden text-ellipsis">
+            <div className="inline-block whitespace-normal">
+              Please type&nbsp;
+              <div className="font-bold inline">
+                {currentOwnerId}/{repoName}
+              </div>
+              &nbsp;to confirm deletion.
             </div>
-            to confirm deletion.
           </div>
           <input
             type="text"
