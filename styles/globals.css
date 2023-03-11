@@ -105,7 +105,7 @@ a {
   font-weight: 700;
 }
 .mde-header .mde-tabs button:first-child {
-  margin-left: 0px;
+  margin-left: 2px;
 }
 .mde-header .mde-tabs button.selected {
   color: white;

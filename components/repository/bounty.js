@@ -19,9 +19,10 @@ function CreateBounty(props) {
   const [validateAmountError, setValidateAmountError] = useState(null);
   const [click, setClick] = useState(false);
   const [tokenKV, setTokenKV] = useState({});
+  const [isAddingNewToken, setIsAddingNewToken] = useState(false);
   const ref1 = useRef(null);
   const ref2 = useRef(null);
-  const ref3 = useRef("dd/mm/yyyy");
+  // const ref3 = useRef("dd/mm/yyyy");
 
   useEffect(() => {
     async function getBalance() {
@@ -61,11 +62,13 @@ function CreateBounty(props) {
   }, [props.selectedAddress]);
 
   useEffect(() => {
+    console.log("bountyAmount", props);
     if (props.bountyAmount.length < 1) {
       setClick(false);
       setCounter(0);
+      setIsAddingNewToken(true);
     }
-  });
+  }, [props.bountyAmount]);
 
   const handleClick = () => {
     let arr = props.bountyAmount.slice();
@@ -81,8 +84,9 @@ function CreateBounty(props) {
     });
     props.setBountyAmount(arr);
     setCounter(counter + 1);
+    setIsAddingNewToken(false);
     ref1.current.value = "";
-    ref2.current.value = "Select Token";
+    ref2.current.value = "select-token";
   };
 
   const handleDelete = (index) => {
@@ -105,6 +109,7 @@ function CreateBounty(props) {
   const handleAmountOnChange = (value) => {
     const array = amount.slice();
     array[counter] = value;
+    console.log(array);
     setAmount(array);
   };
 
@@ -163,6 +168,19 @@ function CreateBounty(props) {
         <label
           className="ml-auto btn btn-primary text-xs btn-sm modal-button"
           htmlFor="my-modal"
+          onClick={() => {
+            setAmount([]);
+            setCounter(0);
+            setTokenDenom([]);
+            setMaxAmount([]);
+            props.setBountyAmount([]);
+            let da = dayjs().add(7, 'D').format('YYYY-MM-DD');
+            setExpiry(da);
+            // ref3.current.value = da;
+            ref2.current.value = "select-token";
+            ref1.current.value = "";
+            setValidateAmountError(null);
+          }}
         >
           NEW BOUNTY
         </label>
@@ -170,53 +188,91 @@ function CreateBounty(props) {
         <div className="flex">
           {click ? (
             <div className="flex">
+              {props.bountyAmount.length ? (
+                <label
+                  htmlFor="my-modal"
+                  className={
+                    "flex link link-primary text-xs no-underline font-bold mx-2"
+                  }
+                >
+                  <div className="flex items-center">
+                    <div className="mr-2 font-bold text-white">BOUNTY</div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-3 h-3"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+                      />
+                    </svg>
+                  </div>
+                </label>
+              ) : (
+                ""
+              )}
               {props.bountyAmount.map((a, i) => {
                 return (
-                  <div
-                    className={
-                      "flex text-sm box-border bg-grey-500 mr-2 h-11 p-3 rounded-lg uppercase"
-                    }
-                    key={i}
-                  >
-                    <div className="mr-2">{a.denom}</div>
-                    <div>{a.amount}</div>
+                  <div className="flex" key={"bounty-token-" + i}>
                     <div
-                      className="link ml-8 mt-1 no-underline"
-                      onClick={() => {
-                        handleDelete(i);
-                      }}
+                      className="flex text-xs sm:text-sm uppercase items-center"
+                      key={i}
                     >
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 14 14"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M13.5303 1.5304C13.8231 1.23751 13.8231 0.762637 13.5303 0.469744C13.2374 0.176851 12.7625 0.176851 12.4696 0.469744L13.5303 1.5304ZM0.46967 12.4697C0.176777 12.7626 0.176777 13.2374 0.46967 13.5303C0.762563 13.8232 1.23744 13.8232 1.53033 13.5303L0.46967 12.4697ZM12.4696 13.5303C12.7625 13.8231 13.2374 13.8231 13.5303 13.5303C13.8231 13.2374 13.8231 12.7625 13.5303 12.4696L12.4696 13.5303ZM1.53033 0.46967C1.23744 0.176777 0.762563 0.176777 0.46967 0.46967C0.176777 0.762563 0.176777 1.23744 0.46967 1.53033L1.53033 0.46967ZM12.4696 0.469744L0.46967 12.4697L1.53033 13.5303L13.5303 1.5304L12.4696 0.469744ZM13.5303 12.4696L1.53033 0.46967L0.46967 1.53033L12.4696 13.5303L13.5303 12.4696Z"
-                          fill="#E5EDF5"
-                        />
-                      </svg>
+                      <img
+                        src={
+                          coingeckoId[
+                            a.denom.includes("ibc")
+                              ? tokenKV[a.denom].denom
+                              : a.denom
+                          ].icon
+                        }
+                        className="py-1 h-4 w-4 sm:h-6 sm:w-6"
+                      />
+                      <div className="mx-1">
+                        {tokenKV[a.denom].standardDenom}
+                      </div>
+                      <div>
+                        {a.amount /
+                          Math.pow(
+                            10,
+                            coingeckoId[
+                              a.denom.includes("ibc")
+                                ? tokenKV[a.denom].denom
+                                : a.denom
+                            ].coinDecimals
+                          )}
+                      </div>
                     </div>
                   </div>
                 );
               })}
+              {props.bountyExpiry !== "" ? (
+                <div className="flex text-xs sm:text-sm items-center mx-2">
+                  Expires{" "}
+                  {dayjs(props.bountyExpiry * 1000).format("MMM D, YYYY")}
+                </div>
+              ) : (
+                ""
+              )}
             </div>
           ) : (
             <label
-              className="link link-primary no-underline modal-button mt-3.5 ml-1"
+              className="link link-primary no-underline modal-button ml-2"
               htmlFor="my-modal"
             >
-              <div className="flex">
-                <div className="mr-2 font-bold text-white">ADD BOUNTY</div>
+              <div className="flex items-center">
+                <div className="mr-2 font-bold text-white">ATTACH BOUNTY</div>
                 <svg
                   width="10"
                   height="10"
                   viewBox="0 0 10 10"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="mt-1"
                 >
                   <path d="M5 0V10" stroke="#66CE67" strokeWidth="2" />
                   <path
@@ -232,27 +288,15 @@ function CreateBounty(props) {
       )}
 
       <input type="checkbox" id="my-modal" className="modal-toggle" />
-      <label htmlFor="my-modal" className="modal modal-middle cursor-pointer">
-        <label className="modal-box relative bg-grey-500">
+      <div className="modal modal-middle">
+        <div className="modal-box relative bg-grey-500 min-h-[20rem]">
           <div className="flex mb-4">
-            <div className="sm:w-11/12 font-bold text-sm text-type">
-              Add bounty
+            <div className="flex-1 font-bold text-lg text-type">
+              Attach Bounty
             </div>
             <label
               htmlFor="my-modal"
-              className="ml-auto hover:opacity-25"
-              onClick={() => {
-                setAmount([]);
-                setCounter(0);
-                setTokenDenom([]);
-                setMaxAmount([]);
-                props.setBountyAmount([]);
-                setExpiry("dd/mm/yyyy");
-                ref3.current.value = "";
-                ref2.current.value = "Select Token";
-                ref1.current.value = "";
-                setValidateAmountError(null);
-              }}
+              className="btn btn-circle btn-sm btn-ghost"
             >
               <svg
                 width="14"
@@ -269,13 +313,133 @@ function CreateBounty(props) {
             </label>
           </div>
 
-          <div className="card sm:w-full bg-grey-900 shadow-xl p-4">
-            <div className="card-body p-3">
-              <div className="mb-2 text-grey-200">AMOUNT</div>
+          {props.bountyAmount.length > 0 ? (
+            <div>
+              <div className="font-bold uppercase text-type-tertiary text-xs mt-4 ml-1">
+                Tokens added (Multiple allowed)
+              </div>
+              <div className="grid gap-2 grid-flow-col">
+                {props.bountyAmount.map((a, i) => {
+                  return (
+                    <div className="flex" key={"bounty-token-staged-" + i}>
+                      <div
+                        className={
+                          "flex text-xs sm:text-sm bg-grey-900 mr-2 px-2 py-1 rounded-lg uppercase mt-2 items-center"
+                        }
+                      >
+                        <img
+                          src={
+                            coingeckoId[
+                              a.denom.includes("ibc")
+                                ? tokenKV[a.denom].denom
+                                : a.denom
+                            ].icon
+                          }
+                          className="py-1 h-8 w-8 sm:h-10 sm:w-10"
+                        />
+                        <div className="ml-2 mr-2">
+                          {tokenKV[a.denom].standardDenom}
+                        </div>
+                        <div>
+                          {a.amount /
+                            Math.pow(
+                              10,
+                              coingeckoId[
+                                a.denom.includes("ibc")
+                                  ? tokenKV[a.denom].denom
+                                  : a.denom
+                              ].coinDecimals
+                            )}
+                        </div>
+                        <div
+                          className="btn btn-sm btn-circle btn-outline border-none ml-2"
+                          onClick={() => {
+                            handleDelete(i);
+                          }}
+                        >
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 12 12"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M1 1L11 11"
+                              stroke="#3E4051"
+                              strokeWidth="2"
+                            />
+                            <path
+                              d="M1 11L11 1"
+                              stroke="#3E4051"
+                              strokeWidth="2"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+                <div className="flex justify-end">
+                  <button
+                    className={
+                      "flex link link-primary text-xs no-underline font-bold mt-8 mr-2"
+                    }
+                    onClick={() => {
+                      setIsAddingNewToken(!isAddingNewToken);
+                    }}
+                  >
+                    {isAddingNewToken ? (
+                      <span>Cancel</span>
+                    ) : (
+                      <span>Add Token</span>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
+          <div
+            className={
+              "bg-grey-900 shadow-xl rounded-lg transition-all" +
+              (isAddingNewToken
+                ? " p-4 mt-4 h-44 opacity-100"
+                : " h-0 opacity-0 pointer-events-none")
+            }
+          >
+            <div>
               <div className="flex mb-2">
+                <select
+                  className="select text-xs sm:text-sm w-28 sm:w-fit sm:max-w-xs ml-auto h-6 sm:h-10"
+                  onChange={async (e) => {
+                    handleTokenDenomOnChange(e.target.value);
+                    handleMaxAmountOnChange(e.target.value);
+                  }}
+                  ref={ref2}
+                  defaultValue="select-token"
+                >
+                  <option value="select-token">Select Token</option>
+                  {balances.map((t, i) => {
+                    return !tokenDenom.includes(t.denom) ? (
+                      <option key={"token-" + i} value={t.denom}>
+                        {t.showDenom}
+                      </option>
+                    ) : (
+                      <option
+                        key={"token-" + i}
+                        value={t.denom}
+                        disabled={true}
+                      >
+                        {t.showDenom}
+                      </option>
+                    );
+                  })}
+                </select>
                 <div>
                   <input
-                    className="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-1 leading-tight focus:outline-none sm:text-2xl font-bold"
+                    className="appearance-none bg-transparent border-none w-full text-gray-200 mr-3 py-2 leading-tight focus:outline-none sm:text-2xl font-bold text-right"
                     type="text"
                     placeholder="Enter Amount"
                     aria-label="Amount"
@@ -288,54 +452,49 @@ function CreateBounty(props) {
                       handleAmountOnChange(e.target.value);
                     }}
                   ></input>
-                  {validateAmountError ? (
-                    <label className="label">
-                      <span className="label-text-alt text-error">
-                        {validateAmountError}
-                      </span>
-                    </label>
-                  ) : (
-                    ""
-                  )}
                 </div>
-                <select
-                  className="select text-xs sm:text-sm w-28 sm:w-fit sm:max-w-xs ml-auto h-6 sm:h-10"
-                  onChange={async (e) => {
-                    handleTokenDenomOnChange(e.target.value);
-                    handleMaxAmountOnChange(e.target.value);
-                  }}
-                  ref={ref2}
-                >
-                  <option selected>Select Token</option>
-                  {balances.map((t, i) => {
-                    return !tokenDenom.includes(t.denom) ? (
-                      <option key={i} value={t.denom}>
-                        {t.showDenom}
-                      </option>
-                    ) : (
-                      <option key={i} value={t.denom} disabled={true}>
-                        {t.showDenom}
-                      </option>
-                    );
-                  })}
-                </select>
               </div>
-              <div className="flex ml-auto text-grey-200">
-                <div className="text-xs mr-1">Balance:</div>
-                <div className="text-xs mr-2">{maxAmount[counter]}</div>
-                <div
-                  className="link link-primary text-xs text-primary font-bold no-underline"
-                  onClick={(e) => {
-                    fillAmount(maxAmount[counter]);
-                    handleAmountOnChange(maxAmount[counter]);
-                  }}
-                >
-                  Max
-                </div>
+              <div className="flex ml-auto text-grey-200 min-h-[24px] items-center">
+                {ref2?.current?.value !== "select-token" ? (
+                  <div className="flex flex-none ml-1">
+                    <div className="text-xs mr-1">Balance:</div>
+                    <div className="text-xs mr-2">{maxAmount[counter]}</div>
+                    <div
+                      className="link link-primary text-xs text-primary font-bold no-underline mr-2"
+                      onClick={(e) => {
+                        fillAmount(maxAmount[counter] * 0.5);
+                        handleAmountOnChange(maxAmount[counter] * 0.5);
+                      }}
+                    >
+                      Half
+                    </div>
+                    <div
+                      className="link link-primary text-xs text-primary font-bold no-underline mr-2"
+                      onClick={(e) => {
+                        fillAmount(maxAmount[counter]);
+                        handleAmountOnChange(maxAmount[counter]);
+                      }}
+                    >
+                      Max
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
+                <div className="flex-1"></div>
+                {validateAmountError ? (
+                  <label>
+                    <span className="label-text-alt text-error">
+                      {validateAmountError}
+                    </span>
+                  </label>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
 
-            <div className="mt-6 text-right">
+            <div className="mt-4 text-right">
               <button
                 className={"btn btn-secondary btn-block"}
                 onClick={handleClick}
@@ -348,80 +507,11 @@ function CreateBounty(props) {
                 ADD TOKEN TO BOUNTY
               </button>
             </div>
-            <div className="font-bold text-xs text-type-tertiary text-center mt-2">
-              You can add multiple tokens to the same pool
-            </div>
           </div>
-
-          {props.bountyAmount.length > 0 ? (
-            <div className="font-bold text-xs text-type-tertiary mt-4 uppercase ml-1">
-              Bounties added
-            </div>
-          ) : (
-            ""
-          )}
-          {props.bountyAmount.length > 0 ? (
-            <div className="grid grid-cols-2 w-full sm:w-5/6">
-              {props.bountyAmount.map((a, i) => {
-                return (
-                  <div
-                    className={
-                      "flex text-sm box-border bg-grey-900 mr-2 h-9 sm:h-11 px-2 rounded-lg uppercase mt-2"
-                    }
-                    key={i}
-                  >
-                    <img
-                      src={
-                        coingeckoId[
-                          a.denom.includes("ibc")
-                            ? tokenKV[a.denom].denom
-                            : a.denom
-                        ].icon
-                      }
-                      className="py-1 sm:py-1 mt-0.5 h-8 w-8 sm:h-10 sm:w-10"
-                    />
-                    <div className="ml-1 sm:ml-2 mr-2 py-2 sm:py-3 text-xs sm:text-sm">
-                      {tokenKV[a.denom].standardDenom}
-                    </div>
-                    <div className="py-2 sm:py-3 text-xs sm:text-sm">
-                      {a.amount /
-                        Math.pow(
-                          10,
-                          coingeckoId[
-                            a.denom.includes("ibc")
-                              ? tokenKV[a.denom].denom
-                              : a.denom
-                          ].coinDecimals
-                        )}
-                    </div>
-                    <div
-                      className="link ml-auto mt-1 no-underline py-2 sm:py-3 sm:mr-1"
-                      onClick={() => {
-                        handleDelete(i);
-                      }}
-                    >
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 12 12"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M1 1L11 11" stroke="#3E4051" strokeWidth="2" />
-                        <path d="M1 11L11 1" stroke="#3E4051" strokeWidth="2" />
-                      </svg>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            ""
-          )}
-          <div className="card w-full bg-grey-900 shadow-xl mt-6">
-            <div className="card-body p-3">
-              <div className="flex">
-                <div className="" onClick={() => {}}>
+          <div className="w-full bg-grey-900 shadow-xl mt-6 rounded-lg">
+            <div className="">
+              <div className="flex items-center">
+                <div className="pl-3">
                   <svg
                     width="24"
                     height="24"
@@ -454,66 +544,68 @@ function CreateBounty(props) {
                     />
                   </svg>
                 </div>
-                <div className="flex text-xs mt-1 ml-1.5">Expiry date</div>
+                <div className="flex-none text-sm ml-2">Expiry Date</div>
                 <input
                   type="date"
-                  className="appearance-none bg-transparent border-none leading-tight focus:outline-none ml-auto text-grey-200 text-xs"
-                  ref={ref3}
-                  onKeyUp={async (e) => {}}
+                  className="flex-1 p-3.5 appearance-none bg-transparent border-none leading-tight focus:outline-none ml-auto text-grey-200 text-sm text-right"
+                  value={expiry}
                   onChange={(e) => {
-                    setExpiry(e.target.value);
+                    setExpiry(dayjs(e.target.valueAsDate).format('YYYY-MM-DD'));
                   }}
                 ></input>
               </div>
             </div>
           </div>
           <div className="flex justify-center">
-            <div className="modal-action">
+            <div className="modal-action w-full">
               <label
                 htmlFor="my-modal"
-                className="btn w-72 sm:w-96 sm:px-56 flex-1 bg-green-900 text-xs ml-1"
+                className="btn btn-primary btn-block"
                 onClick={(e) => {
-                  {
-                    props.issue
-                      ? props
-                          .createBounty(
-                            props.bountyAmount,
-                            dayjs(expiry.toString()).unix(),
-                            props.issue.iid,
-                            "issue",
-                            props.repository.id
-                          )
-                          .then((res) => {
-                            setAmount([]);
-                            setCounter(0);
-                            setTokenDenom([]);
-                            setMaxAmount([]);
-                            props.setBountyAmount([]);
-                            setExpiry("");
-                            ref3.current.value = "dd/mm/yyyy";
-                            ref2.current.value = "Select Token";
-                            ref1.current.value = "";
-                            setValidateAmountError(null);
-                            if (res && res.code === 0) {
-                              props.onUpdate() ? props.onUpdate() : "";
-                            }
-                          })
-                      : handleAdd(dayjs(expiry.toString()).unix());
-                  }
-                  setAmount([]);
-                  setCounter(1);
-                  setTokenDenom([]);
-                  setMaxAmount([]);
-                  setExpiry("");
+                  props.issue
+                    ? props
+                        .createBounty(
+                          props.bountyAmount,
+                          dayjs(expiry.toString()).unix(),
+                          props.issue.iid,
+                          "issue",
+                          props.repository.id
+                        )
+                        .then((res) => {
+                          setAmount([]);
+                          setCounter(0);
+                          setTokenDenom([]);
+                          setMaxAmount([]);
+                          props.setBountyAmount([]);
+                          // setExpiry("");
+                          // ref3.current.value = "dd/mm/yyyy";
+                          ref2.current.value = "select-token";
+                          ref1.current.value = "";
+                          setValidateAmountError(null);
+                          if (res && res.code === 0) {
+                            props.onUpdate() ? props.onUpdate() : "";
+                          }
+                        })
+                    : handleAdd(dayjs(expiry.toString()).unix());
+
+                  // setAmount([]);
+                  // setCounter(1);
+                  // setTokenDenom([]);
+                  // setMaxAmount([]);
+                  // setExpiry("");
                 }}
-                disabled={props.bountyAmount.length == 0 || expiry == ""}
+                disabled={
+                  props.bountyAmount.length == 0 ||
+                  expiry == "" ||
+                  expiry == "dd/mm/yyyy"
+                }
               >
-                ADD
+                ATTACH BOUNTY
               </label>
             </div>
           </div>
-        </label>
-      </label>
+        </div>
+      </div>
     </div>
   );
 }
