@@ -24,6 +24,8 @@ import useWindowSize from "../../../../hooks/useWindowSize";
 import vscDarkPlus from "react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus";
 import SyntaxHighlighter from "react-syntax-highlighter/dist/cjs/prism";
 import extensionMap from "../../../../helpers/extensionMap";
+import { AutoSizer, List } from "react-virtualized";
+import { createElement } from "react-syntax-highlighter";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -34,6 +36,36 @@ export async function getStaticPaths() {
     paths: [],
     fallback: "blocking",
   };
+}
+
+function rowRenderer({ rows, stylesheet, useInlineStyles }) {
+  return ({ index, key, style }) =>
+    createElement({
+      node: rows[index],
+      stylesheet,
+      style,
+      useInlineStyles,
+      key,
+    });
+}
+
+function virtualizedRenderer({ overscanRowCount = 10, rowHeight = 15 } = {}) {
+  return ({ rows, stylesheet, useInlineStyles }) => (
+    <div style={{ height: rowHeight * rows.length + "px" }}>
+      <AutoSizer>
+        {({ height, width }) => (
+          <List
+            height={height}
+            width={width}
+            rowHeight={rowHeight}
+            rowRenderer={rowRenderer({ rows, stylesheet, useInlineStyles })}
+            rowCount={rows.length}
+            overscanRowCount={overscanRowCount}
+          />
+        )}
+      </AutoSizer>
+    </div>
+  );
 }
 
 function RepositoryTreeView(props) {
@@ -458,9 +490,13 @@ function RepositoryTreeView(props) {
                     ) : (
                       <SyntaxHighlighter
                         style={vscDarkPlus}
+                        renderer={virtualizedRenderer({
+                          rowHeight: 20,
+                        })}
                         language={fileSyntax}
-                        showLineNumbers
                         customStyle={{ margin: 0, background: "transparent" }}
+                        showLineNumbers={true}
+                        showInlineLineNumbers={true}
                       >
                         {file}
                       </SyntaxHighlighter>
