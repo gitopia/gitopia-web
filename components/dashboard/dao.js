@@ -21,7 +21,7 @@ function DaoDashboard({ dao = {}, ...props }) {
             <div className="text-xs mb-4 sm:mb-8 text-type-secondary">
               Begin from scratch or import an existing repository
             </div>
-            <Link href="/new" className="btn btn-outline btn-sm">
+            <Link href="/new" className="btn btn-outline btn-sm" data-test="create_repo">
               Create a Repository
             </Link>
           </div>

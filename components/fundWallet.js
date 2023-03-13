@@ -17,7 +17,9 @@ function FundWallet(props) {
       props.notify("Please sign in before claiming tokens", "error");
       return;
     }
-    if (!isBalanceLow) { return }
+    if (!isBalanceLow) {
+      return;
+    }
     setGettingFaucetTokens(true);
 
     axios
@@ -55,7 +57,7 @@ function FundWallet(props) {
         setGettingFaucetTokens(false);
       });
   };
-  
+
   useEffect(() => {
     getTokens();
   }, []);
@@ -135,11 +137,21 @@ function FundWallet(props) {
           )}
         </div>
         <div className="mb-4 flex gap-4">
-          <button className={"btn btn-outline flex-1"}>
+          <a
+            className={"btn btn-outline flex-1"}
+            href="https://osmosis.zone"
+            target="_blank"
+            rel="noreferrer"
+          >
             <img src="/tokens/osmo.svg" className="w-4 h-4 mr-2"></img>
             Buy on Osmosis Dex
-          </button>
-          <button className={"btn btn-outline flex-1"}>
+          </a>
+          <a
+            className={"btn btn-outline flex-1"}
+            href="https://discord.gg/aqsKW3hUHD"
+            target="_blank"
+            rel="noreferrer"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 127.14 96.36"
@@ -157,15 +169,16 @@ function FundWallet(props) {
               </g>
             </svg>
             Ask out at Discord
-          </button>
+          </a>
         </div>
         <div className="">
           <button
             className={"btn btn-secondary btn-block"}
             disabled={isBalanceLow}
             onClick={() => {
-              router.push("/login?step=6")
+              router.push("/login?step=6");
             }}
+            data-test="fund_wallet_next"
           >
             Next
           </button>

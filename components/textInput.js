@@ -51,7 +51,7 @@ const TextInput = React.forwardRef(
             onChange={(e) => {
               props.setValue(e.target.value);
             }}
-            data-test={props.name}
+            data-test={props.name?.replace(' ', '_')}
           />
         ) : (
           <input
@@ -80,7 +80,7 @@ const TextInput = React.forwardRef(
               props.setValue(e.target.value);
             }}
             autoFocus={props.autoFocus}
-            data-test={props.name}
+            data-test={props.name?.replace(' ', '_')}
           />
         )}
 
