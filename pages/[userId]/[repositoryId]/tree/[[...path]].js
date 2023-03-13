@@ -14,22 +14,15 @@ import FileBrowser from "../../../../components/repository/fileBrowser";
 import Footer from "../../../../components/footer";
 import getBranchSha from "../../../../helpers/getBranchSha";
 import useRepository from "../../../../hooks/useRepository";
-import dynamic from "next/dynamic";
 import MarkdownWrapper from "../../../../components/markdownWrapper";
 import getContent from "../../../../helpers/getContent";
 import getCommitHistory from "../../../../helpers/getCommitHistory";
 import { useErrorStatus } from "../../../../hooks/errorHandler";
 import formatBytes from "../../../../helpers/formatBytes";
+import useWindowSize from "../../../../hooks/useWindowSize";
 
-// let vscdarkplus;
-import vscdarkplus from "react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus";
-
-const SyntaxHighlighter = dynamic(async () => {
-  // vscdarkplus = (
-  //   await import("react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus")
-  // ).default;
-  return (await import("react-syntax-highlighter")).Prism;
-});
+import vscDarkPlus from "react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus";
+import SyntaxHighlighter from "react-syntax-highlighter/dist/cjs/prism";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -67,25 +60,7 @@ function RepositoryTreeView(props) {
   const [branchName, setBranchName] = useState("");
   const [isTag, setIsTag] = useState(false);
   const [readmeFile, setReadmeFile] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  function detectWindowSize() {
-    if (typeof window !== "undefined") {
-      window.innerWidth <= 760 ? setIsMobile(true) : setIsMobile(false);
-    }
-  }
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", detectWindowSize);
-    }
-    detectWindowSize();
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", detectWindowSize);
-      }
-    };
-  }, []);
+  const { isMobile } = useWindowSize();
 
   useEffect(() => {
     async function initBranch() {
@@ -411,7 +386,7 @@ function RepositoryTreeView(props) {
                             type="radio"
                             name="options"
                             data-title="Source"
-                            className="btn btn-xs"
+                            className="btn btn-xs btn-outline"
                             checked={!showRenderedFile}
                             onChange={() => {
                               setShowRenderedFile(!showRenderedFile);
@@ -421,19 +396,31 @@ function RepositoryTreeView(props) {
                             type="radio"
                             name="options"
                             data-title="Rendered"
-                            className="btn btn-xs"
+                            className="btn btn-xs btn-outline"
                             checked={showRenderedFile}
                             onChange={() => {
                               setShowRenderedFile(!showRenderedFile);
                             }}
                           />
                         </div>
+                      ) : !isImageFile ? (
+                        <select
+                          className="select select-xs select-outline border border-grey-300 w-20"
+                          onChange={(e) => {
+                            setFileSyntax(e.target.value);
+                          }}
+                          value={fileSyntax}
+                        >
+                          {SyntaxHighlighter.supportedLanguages.map((l) => {
+                            return <option value={l}>{l}</option>;
+                          })}
+                        </select>
                       ) : (
                         ""
                       )}
                       <button
                         onClick={downloadFile}
-                        className="btn btn-xs ml-2"
+                        className="btn btn-xs btn-outline ml-2"
                       >
                         Raw
                       </button>
@@ -460,7 +447,7 @@ function RepositoryTreeView(props) {
                       </div>
                     ) : (
                       <SyntaxHighlighter
-                        style={vscdarkplus}
+                        style={vscDarkPlus}
                         language={fileSyntax}
                         showLineNumbers
                         customStyle={{ margin: 0, background: "transparent" }}
