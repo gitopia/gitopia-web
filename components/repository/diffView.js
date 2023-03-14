@@ -176,19 +176,33 @@ function DiffView({
             (fileHidden[index] ? "transform scale-y-0 h-0" : "")
           }
         >
-          <Diff
-            key={oldRevision + "-" + newRevision}
-            viewType={viewType}
-            optimizeSelection={true}
-            diffType={type}
-            hunks={hunks}
-            renderGutter={renderGutter}
-            widgets={getWidgets(hunks, filename)}
-          >
-            {(hunks) =>
-              hunks.map((hunk) => <Hunk key={hunk.content} hunk={hunk} />)
-            }
-          </Diff>
+          {parentIid ? (
+            <Diff
+              key={oldRevision + "-" + newRevision}
+              viewType={viewType}
+              optimizeSelection={true}
+              diffType={type}
+              hunks={hunks}
+              renderGutter={renderGutter}
+              widgets={getWidgets(hunks, filename)}
+            >
+              {(hunks) =>
+                hunks.map((hunk) => <Hunk key={hunk.content} hunk={hunk} />)
+              }
+            </Diff>
+          ) : (
+            <Diff
+              key={oldRevision + "-" + newRevision}
+              viewType={viewType}
+              optimizeSelection={true}
+              diffType={type}
+              hunks={hunks}
+            >
+              {(hunks) =>
+                hunks.map((hunk) => <Hunk key={hunk.content} hunk={hunk} />)
+              }
+            </Diff>
+          )}
         </div>
       </div>
     );
