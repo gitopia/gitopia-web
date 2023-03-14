@@ -95,6 +95,7 @@ function RepositoryPullFilesView(props) {
               baseRepoId={pullRequest.base.repositoryId}
               currentSha={pullRequest.head.sha}
               previousSha={pullRequest.base.sha}
+              parentIid={pullRequest.iid}
               onViewTypeChange={(v) => setViewType(v)}
             />
           </div>
