@@ -181,6 +181,7 @@ export const createComment = ({
   attachments = [],
   diffHunk = "",
   path = "",
+  position = null,
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "comment")))
@@ -203,6 +204,9 @@ export const createComment = ({
     }
     if (path.trim() !== "") {
       comment.path = path;
+    }
+    if (position !== null) {
+      comment.position = position;
     }
     console.log("comment", comment);
 

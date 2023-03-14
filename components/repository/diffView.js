@@ -64,7 +64,6 @@ function DiffView({
   };
 
   const getWidgets = (hunks, filename) => {
-    console.log(hunks);
     const changes = hunks.reduce(
       (result, { changes }) => [...result, ...changes],
       []
@@ -72,11 +71,12 @@ function DiffView({
     const longLines = changes.filter((c) => c === change);
     return longLines.reduce((widgets, change) => {
       const changeKey = getChangeKey(change);
-      let diffHunk;
+      let diffHunk, position;
       hunks.map((h) => {
-        h.changes.map((c) => {
+        h.changes.map((c, index = 0) => {
           if (change === c) {
             diffHunk = h;
+            position = index;
           }
         });
       });
@@ -101,8 +101,9 @@ function DiffView({
                       parentIid: parentIid,
                       parent: "COMMENT_PARENT_PULLREQUEST",
                       body: comment,
-                      diffHunk: diffHunk,
+                      diffHunk: diffHunk.content,
                       path: filename,
+                      position: position,
                     })
                     .then(() => {
                       setComment("");
