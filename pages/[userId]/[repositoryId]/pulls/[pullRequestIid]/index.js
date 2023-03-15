@@ -167,7 +167,7 @@ function RepositoryPullView(props) {
   const renderFile = ({ diff }, position, creator, body, createdAt, hunks) => {
     const { oldRevision, newRevision, type } = diff[0];
     return (
-      <div className="mt-8 ml-14 border border-grey rounded-lg w-11/12">
+      <div className="mt-8 border border-grey rounded-lg w-11/12">
         <div className={"text-sm transition-transform origin-top "}>
           <Diff
             key={oldRevision + "-" + newRevision}
@@ -281,17 +281,29 @@ function RepositoryPullView(props) {
                         }
                       });
                       return (
-                        <div className="relative">
-                          {[fileDiff].map((diff) =>
-                            renderFile(
-                              diff,
-                              c.position,
-                              c.creator,
-                              c.body,
-                              c.createdAt,
-                              hunks
-                            )
-                          )}
+                        <div className="flex w-full" key={c.id}>
+                          <div className="flex-none mr-4 w-10"></div>
+                          <div className="flex-none w-12 relative pt-5 flex justify-center">
+                            <div className="border border-grey rounded-full w-6 h-6 bg-base-100 z-10"></div>
+                            <div className="border-l border-grey h-full absolute left-1/2 top-0 z-0"></div>
+                          </div>
+                          <div>
+                            <div className="text-xs text-type-secondary pr-4 pt-6">
+                              {c.creator +
+                                " reviewed " +
+                                dayjs(c.createdAt * 1000).fromNow()}
+                            </div>
+                            {[fileDiff].map((diff) =>
+                              renderFile(
+                                diff,
+                                c.position,
+                                c.creator,
+                                c.body,
+                                c.createdAt,
+                                hunks
+                              )
+                            )}
+                          </div>
                         </div>
                       );
                     }
