@@ -32,6 +32,11 @@ import getBranchSha from "../../../../../helpers/getBranchSha";
 import filter from "lodash/filter";
 import PullRequestIssueView from "../../../../../components/repository/issuesView";
 import getPullRequestCommentAll from "../../../../../helpers/getPullRequestCommentAll";
+import { parseDiff, Diff, Hunk, getChangeKey } from "react-diff-view";
+import getDiff from "../../../../../helpers/getDiff";
+import ReactMarkdown from "react-markdown";
+import shrinkAddress from "../../../../../helpers/shrinkAddress";
+import dayjs from "dayjs";
 
 export async function getStaticProps({ params }) {
   try {
@@ -116,6 +121,7 @@ function RepositoryPullView(props) {
     props.pullRequest
   );
   const [allComments, setAllComments] = useState(props.comments || []);
+  const [files, setFiles] = useState([]);
 
   const getAllComments = async () => {
     const comments = await getPullRequestCommentAll(
@@ -127,8 +133,87 @@ function RepositoryPullView(props) {
     }
   };
 
+  const getWidgets = (hunks, position, creator, body, createdAt) => {
+    const longLines = [hunks[0].changes[position]];
+    return longLines.reduce((widgets, change) => {
+      const changeKey = getChangeKey(change);
+
+      return {
+        ...widgets,
+        [changeKey]: (
+          <div className="text-right my-4 sm:justify-end mx-4">
+            <div
+              className="border border-grey rounded-lg flex-1"
+              data-test="comment_view"
+            >
+              <div className="p-4">
+                <div className="flex uppercase text-xs font-bold">
+                  <div className="">{shrinkAddress(creator)}</div>
+                  <div className="pl-3 text-type-tertiary">
+                    {dayjs(createdAt * 1000).fromNow()}
+                  </div>
+                </div>
+                <div className="text-left text-white font-normal markdown-body mt-4">
+                  <ReactMarkdown linkTarget="_blank">{body}</ReactMarkdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+      };
+    }, {});
+  };
+
+  const renderFile = ({ diff }, position, creator, body, createdAt, hunks) => {
+    const { oldRevision, newRevision, type } = diff[0];
+    return (
+      <div className="mt-8 ml-14 border border-grey rounded-lg w-11/12">
+        <div className={"text-sm transition-transform origin-top "}>
+          <Diff
+            key={oldRevision + "-" + newRevision}
+            viewType={"unified"}
+            optimizeSelection={true}
+            diffType={type}
+            hunks={hunks}
+            widgets={getWidgets(hunks, position, creator, body, createdAt)}
+          >
+            {(hunks) =>
+              hunks.map((hunk) => <Hunk key={hunk.content} hunk={hunk} />)
+            }
+          </Diff>
+        </div>
+      </div>
+    );
+  };
+
+  const loadDiff = async () => {
+    let data = await getDiff(
+      repository.id,
+      pullRequest.head.sha,
+      null,
+      pullRequest.base.sha,
+      false,
+      null
+    );
+
+    let newFiles = [];
+    if (data && data.diff) {
+      data.diff.map(({ file_name, patch, stat }) => {
+        const diff = parseDiff(patch);
+        newFiles.push({
+          filename: file_name,
+          diff,
+          patch,
+          stat,
+        });
+      });
+    }
+    setFiles([...newFiles]);
+  };
+
   useEffect(() => {
     getAllComments();
+    loadDiff();
   }, [pullRequest]);
 
   return (
@@ -178,6 +263,26 @@ function RepositoryPullView(props) {
                     return (
                       <SystemCommentView comment={c} key={"comment" + i} />
                     );
+                  } else if (c.commentType === "COMMENT_TYPE_REVIEW") {
+                    let fileDiff = files.find((d) => d.filename === c.path);
+                    let hunks = [];
+                    if (fileDiff && fileDiff.diff && fileDiff.diff.length > 0) {
+                      fileDiff.diff[0].hunks.map((hunk) => {
+                        if (hunk.content === c.diffHunk) {
+                          hunks = [hunk];
+                        }
+                      });
+                      return [fileDiff].map((diff) =>
+                        renderFile(
+                          diff,
+                          c.position,
+                          c.creator,
+                          c.body,
+                          c.createdAt,
+                          hunks
+                        )
+                      );
+                    }
                   } else {
                     return (
                       <CommentView

@@ -83,7 +83,7 @@ function DiffView({
       return {
         ...widgets,
         [changeKey]: (
-          <div className="text-right my-4 sm:justify-end">
+          <div className="text-right my-4 sm:justify-end mx-4">
             <MarkdownEditor
               value={comment}
               setValue={setComment}
@@ -107,6 +107,7 @@ function DiffView({
                     })
                     .then(() => {
                       setComment("");
+                      setChange({});
                       props.notify("comment added", "info");
                     });
                 }}

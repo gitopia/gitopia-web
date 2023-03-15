@@ -6,7 +6,8 @@ export default async function getDiff(
   commitSha = null,
   nextKey = null,
   prevCommitSha,
-  onlyStat
+  onlyStat,
+  limit = 10
 ) {
   let obj = {},
     numRepoId = Number(repoId);
@@ -23,10 +24,14 @@ export default async function getDiff(
   let params = {
     repository_id: numRepoId,
     commit_sha: commitSha,
-    pagination: {
-      limit: 10,
-    },
   };
+
+  if (limit !== null) {
+    params.pagination = {
+      limit: limit,
+    };
+  }
+
   if (prevCommitSha) {
     if (!validSha.test(prevCommitSha)) {
       return obj;
