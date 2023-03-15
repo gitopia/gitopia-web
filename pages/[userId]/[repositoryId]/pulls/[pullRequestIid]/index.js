@@ -133,8 +133,8 @@ function RepositoryPullView(props) {
     }
   };
 
-  const getWidgets = (hunks, position, creator, body, createdAt) => {
-    const longLines = [hunks[0].changes[position]];
+  const getWidgets = (hunks, creator, body, createdAt) => {
+    const longLines = [hunks[0].changes[hunks[0].changes.length - 1]];
     return longLines.reduce((widgets, change) => {
       const changeKey = getChangeKey(change);
 
@@ -175,11 +175,9 @@ function RepositoryPullView(props) {
             optimizeSelection={true}
             diffType={type}
             hunks={hunks}
-            widgets={getWidgets(hunks, position, creator, body, createdAt)}
+            widgets={getWidgets(hunks, creator, body, createdAt)}
           >
-            {(hunks) =>
-              hunks.map((hunk) => <Hunk key={hunk.content} hunk={hunk} />)
-            }
+            {(hunks) => <Hunk key={hunks[0].content} hunk={hunks[0]} />}
           </Diff>
         </div>
       </div>
@@ -269,18 +267,32 @@ function RepositoryPullView(props) {
                     if (fileDiff && fileDiff.diff && fileDiff.diff.length > 0) {
                       fileDiff.diff[0].hunks.map((hunk) => {
                         if (hunk.content === c.diffHunk) {
-                          hunks = [hunk];
+                          hunks = [
+                            {
+                              ...hunk,
+                              changes: hunk.changes.slice(
+                                parseInt(c.position) > 2
+                                  ? parseInt(c.position) - 2
+                                  : 0,
+                                parseInt(c.position) + 1
+                              ),
+                            },
+                          ];
                         }
                       });
-                      return [fileDiff].map((diff) =>
-                        renderFile(
-                          diff,
-                          c.position,
-                          c.creator,
-                          c.body,
-                          c.createdAt,
-                          hunks
-                        )
+                      return (
+                        <div className="relative">
+                          {[fileDiff].map((diff) =>
+                            renderFile(
+                              diff,
+                              c.position,
+                              c.creator,
+                              c.body,
+                              c.createdAt,
+                              hunks
+                            )
+                          )}
+                        </div>
                       );
                     }
                   } else {
