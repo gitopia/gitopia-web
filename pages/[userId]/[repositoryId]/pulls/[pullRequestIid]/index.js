@@ -167,7 +167,7 @@ function RepositoryPullView(props) {
   const renderFile = ({ diff }, position, creator, body, createdAt, hunks) => {
     const { oldRevision, newRevision, type } = diff[0];
     return (
-      <div className="mt-8 border border-grey rounded-lg w-11/12">
+      <div className="mt-8 border border-grey rounded-lg w-11/12 sm:w-full">
         <div className={"text-sm transition-transform origin-top "}>
           <Diff
             key={oldRevision + "-" + newRevision}
@@ -288,7 +288,7 @@ function RepositoryPullView(props) {
                             <div className="border-l border-grey h-full absolute left-1/2 top-0 z-0"></div>
                           </div>
                           <div>
-                            <div className="text-xs text-type-secondary pr-4 pt-6">
+                            <div className="text-xs text-type-secondary pr-4 pt-6 w-11/12 sm:w-full">
                               {c.creator +
                                 " reviewed " +
                                 dayjs(c.createdAt * 1000).fromNow()}
