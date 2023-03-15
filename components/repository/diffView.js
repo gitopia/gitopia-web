@@ -89,31 +89,44 @@ function DiffView({
               setValue={setComment}
               classes={{ preview: ["markdown-body"] }}
             />
-            <div className="inline-block w-28 sm:w-52 ml-auto mr-4">
-              <button
-                className={
-                  "btn btn-sm btn-primary rounded-md btn-block mt-2 uppercase text-xs "
-                }
-                onClick={() => {
-                  props
-                    .createComment({
-                      repositoryId: repoId,
-                      parentIid: parentIid,
-                      parent: "COMMENT_PARENT_PULLREQUEST",
-                      body: comment,
-                      diffHunk: diffHunk.content,
-                      path: filename,
-                      position: position,
-                    })
-                    .then(() => {
-                      setComment("");
-                      setChange({});
-                      props.notify("comment added", "info");
-                    });
-                }}
-              >
-                Comment
-              </button>
+            <div className="flextext-right sm:justify-end">
+              <div className="inline-block w-28 sm:w-52 mr-2 ">
+                <button
+                  className={"btn btn-sm rounded-md btn-block mt-2 uppercase "}
+                  onClick={() => {
+                    setComment("");
+                    setChange({});
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+              <div className="inline-block w-28 sm:w-52 ">
+                <button
+                  className={
+                    "btn btn-sm btn-primary rounded-md btn-block mt-2 uppercase "
+                  }
+                  onClick={() => {
+                    props
+                      .createComment({
+                        repositoryId: repoId,
+                        parentIid: parentIid,
+                        parent: "COMMENT_PARENT_PULLREQUEST",
+                        body: comment,
+                        diffHunk: diffHunk.content,
+                        path: filename,
+                        position: position,
+                      })
+                      .then(() => {
+                        setComment("");
+                        setChange({});
+                        props.notify("comment added", "info");
+                      });
+                  }}
+                >
+                  Comment
+                </button>
+              </div>
             </div>
           </div>
         ),
