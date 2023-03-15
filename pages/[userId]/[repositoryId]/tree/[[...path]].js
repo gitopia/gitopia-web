@@ -23,6 +23,7 @@ import useWindowSize from "../../../../hooks/useWindowSize";
 
 import vscDarkPlus from "react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus";
 import SyntaxHighlighter from "react-syntax-highlighter/dist/cjs/prism";
+import extensionMap from "../../../../helpers/extensionMap";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -136,7 +137,15 @@ function RepositoryTreeView(props) {
             try {
               let filename = repoPath[repoPath.length - 1] || "";
               let extension = filename.split(".").pop() || "";
-              setFileSyntax(extension);
+              if (extensionMap[extension]) {
+                setFileSyntax(extensionMap[extension]);
+              } else if (
+                SyntaxHighlighter.supportedLanguages.includes(extension)
+              ) {
+                setFileSyntax(extension);
+              } else {
+                setFileSyntax("");
+              }
               setFileSize(res.content[0].size);
 
               if (res.content[0].content) {
@@ -411,6 +420,7 @@ function RepositoryTreeView(props) {
                           }}
                           value={fileSyntax}
                         >
+                          <option value="">text</option>
                           {SyntaxHighlighter.supportedLanguages.map((l) => {
                             return <option value={l}>{l}</option>;
                           })}
