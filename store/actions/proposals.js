@@ -38,7 +38,13 @@ export const submitGovernanceProposal = (
           content: msgAny,
           initialDeposit:
             initialDeposit != 0
-              ? [{ amount: initialDeposit, denom: "utlore" }]
+              ? [
+                  {
+                    amount: initialDeposit,
+                    denom:
+                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+                  },
+                ]
               : [],
           proposer: wallet.selectedAddress,
         };
@@ -95,7 +101,13 @@ export const chainUpgradeProposal = (
           content: msgAny,
           initialDeposit:
             initialDeposit != 0
-              ? [{ amount: initialDeposit, denom: "utlore" }]
+              ? [
+                  {
+                    amount: initialDeposit,
+                    denom:
+                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+                  },
+                ]
               : [],
           proposer: wallet.selectedAddress,
         };
@@ -138,14 +150,13 @@ export const communityPoolSpendProposal = (
             denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
           },
         ];
-        const communityPoolSpendProposal = CommunityPoolSpendProposal.fromPartial(
-          {
+        const communityPoolSpendProposal =
+          CommunityPoolSpendProposal.fromPartial({
             title: title,
             description: description,
             recipient: address,
             amount: amountToSend,
-          }
-        );
+          });
         const msgAny = Any.fromPartial({
           typeUrl: "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal",
           value: Uint8Array.from(
@@ -158,7 +169,13 @@ export const communityPoolSpendProposal = (
           content: msgAny,
           initialDeposit:
             initialDeposit != 0
-              ? [{ amount: initialDeposit, denom: "utlore" }]
+              ? [
+                  {
+                    amount: initialDeposit,
+                    denom:
+                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+                  },
+                ]
               : [],
           proposer: wallet.selectedAddress,
         };
@@ -221,7 +238,13 @@ export const paramChangeProposal = (
           content: msgAny,
           initialDeposit:
             initialDeposit != 0
-              ? [{ amount: initialDeposit, denom: "utlore" }]
+              ? [
+                  {
+                    amount: initialDeposit,
+                    denom:
+                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+                  },
+                ]
               : [],
           proposer: wallet.selectedAddress,
         };

@@ -120,7 +120,7 @@ function IssueBountyView(props) {
                     {c.amount}
                   </div>
                   <div className="ml-2 font-bold text-xs text-type-tertiary mt-1.5">
-                    {c.denom !== "utlore" ? "≈$" + c.dollarAmount + "USD" : ""}
+                    {c.dollarAmount ? "≈$" + c.dollarAmount + "USD" : ""}
                   </div>
                 </div>
               </div>
