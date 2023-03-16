@@ -107,7 +107,7 @@ function BranchProtectionRules({
                             branchName: b.name,
                           })
                           .then(async (res) => {
-                            if (res.code == 0) {
+                            if (res?.code == 0) {
                               refreshBranches();
                               props.notify(
                                 "Deleted rule for " + b.name + " branch",
@@ -195,12 +195,12 @@ function BranchProtectionRules({
                     branchName: branch,
                   })
                   .then(async (res) => {
-                    if (res.code == 0) {
+                    if (res?.code == 0) {
                       if (onSuccess) await onSuccess(branch);
-                      setIsAdding(false);
                       setBranch("");
                       refreshBranches();
                     }
+                    setIsAdding(false);
                   });
               }}
               disabled={branch.length === 0}

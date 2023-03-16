@@ -1,5 +1,17 @@
 ## Changelog
 
+### v1.5.0 - 16th Mar 2023
+
+- Added branch protection rules
+- Update DAO member role
+- Funding page while onboarding new user
+- Better autodetection of code syntax highlighting
+- Updated forking flow with branch selection and repository name change
+- Added back button in wallet selection
+- Bounty and balance related fixes
+- Minor design improvements 
+- Testing suite updated for ux changes
+
 ### v1.4.1 - 22nd Feb 2023
 
 - Added a prompt to backup wallet

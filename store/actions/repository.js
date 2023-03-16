@@ -2,7 +2,6 @@ import { notify } from "reapop";
 import { sendTransaction, setupTxClients } from "./env";
 import { createUser, getUserDetailsForSelectedAddress } from "./user";
 import { updateUserBalance } from "./wallet";
-import dayjs from "dayjs";
 import { watchTask } from "./taskQueue";
 
 export const validatePostingEligibility = async (
@@ -192,8 +191,9 @@ export const createComment = ({
       creator: wallet.selectedAddress,
       repositoryId,
       parentIid,
-      parent: parent === "COMMENT_PARENT_ISSUE" ? 0 : 1,
+      parent: parent === "COMMENT_PARENT_ISSUE" ? 1 : 2,
       body,
+      commentType: 1,
     };
     if (attachments.length) {
       comment.attachments = attachments;
@@ -235,7 +235,7 @@ export const updateComment = ({
       creator: wallet.selectedAddress,
       repositoryId,
       parentIid,
-      parent: parent === "COMMENT_PARENT_ISSUE" ? 0 : 1,
+      parent: parent === "COMMENT_PARENT_ISSUE" ? 1 : 2,
       commentIid,
       body,
       attachments,
@@ -268,7 +268,7 @@ export const deleteComment = ({
       creator: wallet.selectedAddress,
       repositoryId,
       parentIid,
-      parent: parent === "COMMENT_PARENT_ISSUE" ? 0 : 1,
+      parent: parent === "COMMENT_PARENT_ISSUE" ? 1 : 2,
       commentIid,
     };
     try {
@@ -1013,7 +1013,7 @@ export const createPullRequest = ({
       pull.labelIds = labelIds;
     }
     if (issues.length) {
-      pull.issues = issues;
+      pull.issueIids = issues;
     }
 
     try {
