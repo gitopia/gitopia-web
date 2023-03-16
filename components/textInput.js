@@ -16,7 +16,8 @@ const TextInput = React.forwardRef(
       required: false,
       className: "",
       size: "md",
-      onEnter: () => {},
+      onEnter: () => { },
+      autoFocus: false,
     },
     ref
   ) => {
@@ -66,7 +67,7 @@ const TextInput = React.forwardRef(
               (props.hint.shown && props.hint.type == "error"
                 ? "border-pink text-pink input-" + props.hint.type
                 : props.value.length > 0
-                ? "border-green"
+                ? "border-green-900"
                 : "")
             }
             value={props.value}
@@ -78,6 +79,7 @@ const TextInput = React.forwardRef(
             onChange={(e) => {
               props.setValue(e.target.value);
             }}
+            autoFocus={props.autoFocus}
             data-test={props.name}
           />
         )}

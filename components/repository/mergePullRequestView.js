@@ -78,6 +78,7 @@ function MergePullRequestView({
       const res = await props.mergePullRequest({
         repositoryId: repositoryId,
         iid: pullRequest.iid,
+        branchName: pullRequest.head.branch
       });
       if (res) {
         if (res.TaskState === "TASK_STATE_SUCCESS") refreshPullRequest();

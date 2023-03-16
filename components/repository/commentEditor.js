@@ -112,11 +112,13 @@ function CommentEditor({
                   const res = await props.toggleIssueState({
                     repositoryId: repositoryId,
                     iid: parentIid,
+                    commentBody: comment
                   });
                   if (res && res.code === 0) {
                     if (onSuccess) {
                       await onSuccess();
                     }
+                    setComment("");
                   }
                   setTogglingIssue(false);
                 }}
@@ -139,6 +141,7 @@ function CommentEditor({
                     repositoryId: repositoryId,
                     iid: parentIid,
                     state: "CLOSED",
+                    commentBody: comment
                   });
                   if (res && res.code === 0) {
                     if (onSuccess) {

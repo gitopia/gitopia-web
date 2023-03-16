@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import initKeplr from "../helpers/keplr";
 import { unlockKeplrWallet } from "../store/actions/wallet";
 import { connect } from "react-redux";
+import FundWallet from "../components/fundWallet";
 
 /*
 Wizard Steps
@@ -26,6 +27,7 @@ function Login(props) {
   useEffect(() => {
     setStep(Number(query.step) || 1);
   }, [query.step]);
+
   return (
     <div
       data-theme="dark"
@@ -36,21 +38,21 @@ function Login(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="mt-4 sm:mt-12 px-4 container mx-auto flex flex-1 flex-col justify-center items-center min-h-full relative">
+      <div className="mt-4 sm:mt-12 px-4 container mx-auto flex flex-1 flex-col justify-start items-center min-h-full relative">
         {step === 1 ? (
           <>
-            <div className="text-xs uppercase text-green mt-12 mb-2">
-              Welcome to Gitopia
-            </div>
-            <div className="text-4xl sm:text-6xl mb-8 sm:mb-16">
+            <div className="text-4xl mt-16 sm:mt-0 sm:text-6xl mb-6">
               Access Gitopia
+            </div>
+            <div className="text-xs text-type-secondary mb-8">
+              Please select a type of wallet to store your login information
             </div>
             <div className="max-w-lg w-full p-4">
               <div className="flex flex-col gap-2">
                 <button
                   className="flex-1 border-2 border-primary rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost w-full focus:outline-none hover:border-primary flex items-center"
                   onClick={(e) => {
-                    setStep(2);
+                    push("/login?step=2");
                   }}
                 >
                   <img src="/new-wallet-ledger.svg" className="w-20 h-20" />
@@ -64,7 +66,7 @@ function Login(props) {
                 <button
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
                   onClick={(e) => {
-                    setStep(3);
+                    push("/login?step=3");
                   }}
                   data-test="create-new-local-wallet"
                 >
@@ -74,12 +76,12 @@ function Login(props) {
                 <button
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
                   onClick={(e) => {
-                    setStep(4);
+                    push("/login?step=4");
                   }}
                   data-test="recover-local-wallet"
                 >
                   <img src="/existing-wallet.svg" className="w-20 h-20" />
-                  <div className="ml-8">Recover exisiting wallet</div>
+                  <div className="ml-8">Recover exisiting local wallet</div>
                 </button>
                 <button
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
@@ -96,17 +98,17 @@ function Login(props) {
                 </button>
               </div>
             </div>
-            <div className="text-sm mt-2 mb-16 max-w-md text-center">
-              In order to use Gitopia, you need to use a wallet to sign in. You
-              can use an existing one or create an entirely new one here
-            </div>
           </>
         ) : (
           <div>
             <button
               className="btn btn-ghost btn-circle absolute left-4 top-0"
               onClick={(e) => {
-                setStep(1);
+                if (step === 6) {
+                  push("/login?step=5");
+                } else {
+                  push("/login?step=1");
+                }
               }}
             >
               <svg
@@ -129,7 +131,8 @@ function Login(props) {
         {step === 2 && <ConnectLedger />}
         {step === 3 && <CreateWallet />}
         {step === 4 && <RecoverWallet />}
-        {step === 5 && <CreateUser />}
+        {step === 5 && <FundWallet />}
+        {step === 6 && <CreateUser />}
       </div>
       <Footer />
     </div>
