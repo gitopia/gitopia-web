@@ -399,10 +399,10 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@gitopia/gitopia-js@1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@gitopia/gitopia-js/-/gitopia-js-1.4.0.tgz#4ac8e10dcb90012cca0a0e7e1b1a63ddc3319e25"
-  integrity sha512-NoNIKN2dkFkhNpDMAorRuRxQvgiGIUFee2Potk4q4EazFzs+I/DSFDPiWLqdEC67y4KsFP5duJyThwO8Pctsgw==
+"@gitopia/gitopia-js@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@gitopia/gitopia-js/-/gitopia-js-1.6.0.tgz#20120daa6ce39cc52c2c94204c7324aba64c2a7e"
+  integrity sha512-gk+ecszVZGz/lFLw5xV+LdIGG/ikYCw4QspKgqFYa6H8W/xidn5QTp1Sxbo1YM/misp0MiYzrLcpZRaCWMi18w==
   dependencies:
     long "^5.2.1"
     protobufjs "^7.2.2"
