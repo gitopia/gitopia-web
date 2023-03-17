@@ -1,7 +1,7 @@
 import axios from "./axiosFetch";
 import { coingeckoId } from "../ibc-assets-config";
 import { Api } from "../store/ibc.applications.transfer.v1/module/rest";
-const api = new Api({ baseURL: process.env.NEXT_PUBLIC_API_URL });
+const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
 export default async function getBountyValueInDollars(bounty) {
   if (!bounty) return null;
   let totalPrice = 0;
@@ -24,7 +24,27 @@ export default async function getBountyValueInDollars(bounty) {
               let perCoinPrice =
                 amount[i].amount /
                 Math.pow(10, coingeckoId[denom].coinDecimals);
-              totalPrice = price * perCoinPrice;
+              totalPrice = totalPrice + price * perCoinPrice;
+            })
+            .catch((err) => {
+              console.error(err);
+              notify("Unable to get price", "error");
+            });
+        }
+      } else {
+        if (coingeckoId[amount[i].denom].id !== "") {
+          await axios
+            .get(
+              "https://api.coingecko.com/api/v3/simple/price?ids=" +
+                coingeckoId[amount[i].denom].id +
+                "&vs_currencies=usd"
+            )
+            .then(({ data }) => {
+              let price = data[coingeckoId[amount[i].denom].id]["usd"];
+              let perCoinPrice =
+                amount[i].amount /
+                Math.pow(10, coingeckoId[amount[i].denom].coinDecimals);
+              totalPrice = totalPrice + price * perCoinPrice;
             })
             .catch((err) => {
               console.error(err);
