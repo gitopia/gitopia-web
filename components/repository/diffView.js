@@ -7,6 +7,9 @@ import MarkdownEditor from "../markdownEditor";
 import { createComment } from "../../store/actions/repository";
 import { connect } from "react-redux";
 import { notify } from "reapop";
+import ReactMarkdown from "react-markdown";
+import shrinkAddress from "../../helpers/shrinkAddress";
+import dayjs from "dayjs";
 
 function DiffView({
   stats,
@@ -15,6 +18,8 @@ function DiffView({
   currentSha,
   previousSha,
   parentIid,
+  comments,
+  refreshComments,
   onViewTypeChange = () => {},
   ...props
 }) {
@@ -68,9 +73,70 @@ function DiffView({
       (result, { changes }) => [...result, ...changes],
       []
     );
+    let commentChange = {};
+    comments.map((c) => {
+      hunks.map((h) => {
+        if (h.content === c.diffHunk) {
+          if (
+            commentChange.hasOwnProperty(getChangeKey(h.changes[c.position]))
+          ) {
+            commentChange[getChangeKey(h.changes[c.position])] = (
+              <div>
+                {commentChange[getChangeKey(h.changes[c.position])]}
+                <div className="text-right my-4 sm:justify-end mx-4">
+                  <div
+                    className="border border-grey rounded-lg flex-1"
+                    data-test="comment_view"
+                  >
+                    <div className="p-4">
+                      <div className="flex uppercase text-xs font-bold">
+                        <div className="">{shrinkAddress(c.creator)}</div>
+                        <div className="pl-3 text-type-tertiary">
+                          {dayjs(c.createdAt * 1000).fromNow()}
+                        </div>
+                      </div>
+                      <div className="text-left text-white font-normal markdown-body mt-4">
+                        <ReactMarkdown linkTarget="_blank">
+                          {c.body}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          } else {
+            commentChange[getChangeKey(h.changes[c.position])] = (
+              <div>
+                <div className="text-right my-4 sm:justify-end mx-4">
+                  <div
+                    className="border border-grey rounded-lg flex-1"
+                    data-test="comment_view"
+                  >
+                    <div className="p-4">
+                      <div className="flex uppercase text-xs font-bold">
+                        <div className="">{shrinkAddress(c.creator)}</div>
+                        <div className="pl-3 text-type-tertiary">
+                          {dayjs(c.createdAt * 1000).fromNow()}
+                        </div>
+                      </div>
+                      <div className="text-left text-white font-normal markdown-body mt-4">
+                        <ReactMarkdown linkTarget="_blank">
+                          {c.body}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+        }
+      });
+    });
     const longLines = changes.filter((c) => c === change);
-    return longLines.reduce((widgets, change) => {
-      const changeKey = getChangeKey(change);
+    if (longLines.length > 0) {
+      const changeKey = getChangeKey(longLines[0]);
       let diffHunk, position;
       hunks.map((h) => {
         h.changes.map((c, index = 0) => {
@@ -80,58 +146,71 @@ function DiffView({
           }
         });
       });
-      return {
-        ...widgets,
+      commentChange = {
+        ...commentChange,
         [changeKey]: (
-          <div className="text-right my-4 sm:justify-end mx-4">
-            <MarkdownEditor
-              value={comment}
-              setValue={setComment}
-              classes={{ preview: ["markdown-body"] }}
-            />
-            <div className="flextext-right sm:justify-end">
-              <div className="inline-block w-28 sm:w-52 mr-2 ">
-                <button
-                  className={"btn btn-sm rounded-md btn-block mt-2 uppercase "}
-                  onClick={() => {
-                    setComment("");
-                    setChange({});
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-              <div className="inline-block w-28 sm:w-52 ">
-                <button
-                  className={
-                    "btn btn-sm btn-primary rounded-md btn-block mt-2 uppercase "
-                  }
-                  onClick={() => {
-                    props
-                      .createComment({
-                        repositoryId: repoId,
-                        parentIid: parentIid,
-                        parent: "COMMENT_PARENT_PULLREQUEST",
-                        body: comment,
-                        diffHunk: diffHunk.content,
-                        path: filename,
-                        position: position,
-                      })
-                      .then(() => {
-                        setComment("");
-                        setChange({});
-                        props.notify("comment added", "info");
-                      });
-                  }}
-                >
-                  Comment
-                </button>
+          <div>
+            {commentChange.hasOwnProperty(changeKey) ? (
+              <div>{commentChange[changeKey]}</div>
+            ) : (
+              ""
+            )}
+            <div className="text-right my-4 sm:justify-end mx-4">
+              <MarkdownEditor
+                value={comment}
+                setValue={setComment}
+                classes={{ preview: ["markdown-body"] }}
+              />
+              <div className="flextext-right sm:justify-end">
+                <div className="inline-block w-28 sm:w-52 mr-2 ">
+                  <button
+                    className={
+                      "btn btn-sm rounded-md btn-block mt-2 uppercase "
+                    }
+                    onClick={() => {
+                      setComment("");
+                      setChange({});
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+                <div className="inline-block w-28 sm:w-52 ">
+                  <button
+                    className={
+                      "btn btn-sm btn-primary rounded-md btn-block mt-2 uppercase "
+                    }
+                    onClick={() => {
+                      props
+                        .createComment({
+                          repositoryId: repoId,
+                          parentIid: parentIid,
+                          parent: "COMMENT_PARENT_PULLREQUEST",
+                          body: comment,
+                          diffHunk: diffHunk.content,
+                          path: filename,
+                          position: position,
+                        })
+                        .then(() => {
+                          setComment("");
+                          setChange({});
+                          props.notify("comment added", "info");
+                          if (refreshComments) {
+                            refreshComments();
+                          }
+                        });
+                    }}
+                  >
+                    Comment
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         ),
       };
-    }, {});
+    }
+    return commentChange;
   };
 
   const renderFile = ({ filename, stat, diff }, index) => {

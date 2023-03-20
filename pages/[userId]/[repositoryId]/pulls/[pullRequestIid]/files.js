@@ -18,6 +18,7 @@ import getPullDiff from "../../../../../helpers/getPullDiff";
 import getDiff from "../../../../../helpers/getDiff";
 import useRepository from "../../../../../hooks/useRepository";
 import usePullRequest from "../../../../../hooks/usePullRequest";
+import getPullRequestCommentAll from "../../../../../helpers/getPullRequestCommentAll";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -35,6 +36,7 @@ function RepositoryPullFilesView(props) {
   const { pullRequest } = usePullRequest(repository);
   const [stats, setStats] = useState({ stat: {} });
   const [viewType, setViewType] = useState("unified");
+  const [allComments, setAllComments] = useState(props.comments || []);
 
   useEffect(() => {
     async function initDiff() {
@@ -50,6 +52,38 @@ function RepositoryPullFilesView(props) {
     }
     initDiff();
   }, [pullRequest]);
+
+  useEffect(() => {
+    const getAllComments = async () => {
+      const comments = await getPullRequestCommentAll(
+        repository.id,
+        pullRequest.iid
+      );
+      if (comments) {
+        const reviewComments = comments.filter(
+          (c) => c.commentType === "COMMENT_TYPE_REVIEW"
+        );
+        setAllComments(reviewComments);
+      }
+    };
+    getAllComments();
+  }, [pullRequest]);
+
+  const refreshComments = async () => {
+    const getAllComments = async () => {
+      const comments = await getPullRequestCommentAll(
+        repository.id,
+        pullRequest.iid
+      );
+      if (comments) {
+        const reviewComments = comments.filter(
+          (c) => c.commentType === "COMMENT_TYPE_REVIEW"
+        );
+        setAllComments(reviewComments);
+      }
+    };
+    getAllComments();
+  };
 
   return (
     <div
@@ -96,6 +130,8 @@ function RepositoryPullFilesView(props) {
               currentSha={pullRequest.head.sha}
               previousSha={pullRequest.base.sha}
               parentIid={pullRequest.iid}
+              comments={allComments}
+              refreshComments={refreshComments}
               onViewTypeChange={(v) => setViewType(v)}
             />
           </div>
