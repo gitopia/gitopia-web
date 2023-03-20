@@ -30,6 +30,7 @@ function DiffView({
   const [loadingMore, setLoadingMore] = useState(false);
   const [change, setChange] = useState({});
   const [comment, setComment] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const renderGutter = ({
     side,
@@ -45,6 +46,7 @@ function DiffView({
           className="w-10"
           onClick={() => {
             setChange(change);
+            setComment("");
           }}
         >
           <svg
@@ -178,9 +180,11 @@ function DiffView({
                 <div className="inline-block w-28 sm:w-52 ">
                   <button
                     className={
-                      "btn btn-sm btn-primary rounded-md btn-block mt-2 uppercase "
+                      "btn btn-sm btn-primary rounded-md btn-block mt-2 uppercase " +
+                      (loading ? "loading" : "")
                     }
                     onClick={() => {
+                      setLoading(true);
                       props
                         .createComment({
                           repositoryId: repoId,
@@ -192,6 +196,7 @@ function DiffView({
                           position: position,
                         })
                         .then(() => {
+                          setLoading(false);
                           setComment("");
                           setChange({});
                           props.notify("comment added", "info");
