@@ -194,6 +194,7 @@ function DiffView({
                           diffHunk: diffHunk.content,
                           path: filename,
                           position: position,
+                          commentType: 15,
                         })
                         .then(() => {
                           setLoading(false);
