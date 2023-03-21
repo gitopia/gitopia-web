@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
-import getDiff from "../../../../helpers/getDiff";
+import getDiffStats from "../../../../helpers/getDiffStats";
 import useRepository from "../../../../hooks/useRepository";
 import CommitDetailRow from "../../../../components/repository/commitDetailRow";
 import DiffView from "../../../../components/repository/diffView";
@@ -46,12 +46,9 @@ function RepositoryCommitDiffView(props) {
       if (repository.id) {
         const c = await getCommit(repository.id, router.query.commitId);
         if (c && c.id) {
-          const data = await getDiff(
+          const data = await getDiffStats(
             Number(repository.id),
             router.query.commitId,
-            null,
-            null,
-            true
           );
           if (data) {
             setCommit({ ...c, ...data });
