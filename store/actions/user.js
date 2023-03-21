@@ -334,11 +334,11 @@ if (typeof window !== "undefined") {
   window.toBase64 = toBase64;
 }
 
-export const calculateGithubRewards = (rewardToken) => {
+export const calculateGithubRewards = (code) => {
   return async (dispatch, getState) => {
     const data = {
       // Any arbitrary object
-      rewardToken,
+      code,
     };
     try {
       let s = await signMessage({ data })(dispatch, getState);

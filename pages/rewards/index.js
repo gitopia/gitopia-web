@@ -98,7 +98,7 @@ function Rewards(props) {
     const res = await props.calculateGithubRewards(code);
     await axios
       .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/rewards", {
-        code: res,
+        payload: res,
       })
       .then(({ data }) => {
         setStatus(data.status);
