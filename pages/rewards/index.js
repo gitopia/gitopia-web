@@ -115,9 +115,9 @@ function Rewards(props) {
         process.env.NEXT_PUBLIC_GITHUB_OAUTH_CLIENT_ID
     );
   }
-  if (status === 0) {
+  if (status === 1) {
     return <LoadingRewards setStatus={setStatus} status={status} />;
-  } else if (status === 1) {
+  } else if (status === 2) {
     return <ClaimRewards />;
   } else
     return (
