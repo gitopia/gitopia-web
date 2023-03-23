@@ -9,8 +9,17 @@ import { connect } from "react-redux";
 import { notify } from "reapop";
 import { calculateGithubRewards } from "../store/actions/user";
 import { updateUserBalance } from "../store/actions/wallet";
-import { getTasks } from "../store/actions/wallet";
+import getTasks from "../helpers/getTasks";
 import { error } from "daisyui/src/colors";
+
+const dayjs = require("dayjs");
+const duration = require("dayjs/plugin/duration");
+const customParseFormat = require("dayjs/plugin/customParseFormat");
+
+// add plugins to dayjs
+dayjs.extend(duration);
+dayjs.extend(customParseFormat);
+
 function ClaimRewards(props) {
   const [loading, setLoading] = useState(false);
   const [totalToken, setTotalToken] = useState(false);
@@ -22,13 +31,15 @@ function ClaimRewards(props) {
   const [tasks, setTasks] = useState([]);
   const [tasksCompleted, setTasksCompleted] = useState(0);
 
-  const deadline = "December, 31, 2022";
+  const deadlineUnix = process.env.NEXT_PUBLIC_REWARD_DEADLINE;
 
   const getTime = () => {
-    const time = Date.parse(deadline) - Date.now();
-    setDays(Math.floor(time / (1000 * 60 * 60 * 24)));
-    setHours(Math.floor((time / (1000 * 60 * 60)) % 24));
-    setMinutes(Math.floor((time / 1000 / 60) % 60));
+    const deadline = dayjs.unix(deadlineUnix);
+    const now = dayjs();
+    const diff = dayjs.duration(deadline.diff(now));
+    setDays(diff.days());
+    setHours(diff.hours());
+    setMinutes(diff.minutes());
   };
 
   const calculateTasksPercentage = () => {
@@ -42,19 +53,19 @@ function ClaimRewards(props) {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => getTime(deadline), 60000);
+    const interval = setInterval(() => getTime(deadlineUnix), 1000);
     return () => clearInterval(interval);
   });
 
   useEffect(() => {
-    async function getTasks() {
-      const tasks = await props.getTasks(props.selectedAddress);
+    async function fetchTasks() {
+      const tasks = await getTasks(props.selectedAddress);
       if (tasks !== undefined) {
         setTasks(tasks);
       }
       calculateTasksPercentage();
     }
-    getTasks();
+    fetchTasks();
   }, [props.selectedAddress]);
 
   async function getTokens() {
@@ -296,5 +307,4 @@ export default connect(mapStateToProps, {
   notify,
   calculateGithubRewards,
   updateUserBalance,
-  getTasks,
 })(ClaimRewards);
