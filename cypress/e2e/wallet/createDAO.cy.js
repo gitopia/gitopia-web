@@ -17,7 +17,7 @@ describe("Create DAO", () => {
         testData.mnemonic
         );
         cy.get('[data-test="recover_wallet_button"]').click();
-        cy.get('[data-test="wallet_name"]').type(testData.walletname);
+        // cy.get('[data-test="wallet_name"]').type(testData.walletname);
         cy.get('[data-test="wallet_password"]').type(testData.walletpass);
         cy.get('[data-test="wallet_confirm_password"]').type(testData.walletpass);
         cy.get('[data-test="recover_wallet_button"]').click();
@@ -46,7 +46,7 @@ describe("Create DAO", () => {
         testData.mnemonic
         );
         cy.get('[data-test="recover_wallet_button"]').click();
-        cy.get('[data-test="wallet_name"]').type(testData.walletname);
+        // cy.get('[data-test="wallet_name"]').type(testData.walletname);
         cy.get('[data-test="wallet_password"]').type(testData.walletpass);
         cy.get('[data-test="wallet_confirm_password"]').type(testData.walletpass);
         cy.get('[data-test="recover_wallet_button"]').click();
@@ -55,12 +55,12 @@ describe("Create DAO", () => {
         cy.contains("test-dao").click();
         cy.get('[data-test="selected_user"]').should("has.text","test-dao");
         
-        cy.get('.input').type("gitopia1dsud9wjd6z90c6wclxyu0yam3805w3wxavw86c");
+        cy.get('[data-test="user_address"').type("gitopia1dsud9wjd6z90c6wclxyu0yam3805w3wxavw86c");
         cy.get('[data-test="member_role"]').select("Member");
         cy.get('[data-test="add"]').click();
         cy.wait(6000);
         
-        cy.get(':nth-child(2) > :nth-child(3) > [data-test="remove"]').click();
+        cy.get('[data-test="remove"]').last().click();
         cy.wait(6000);
     })
 
@@ -72,7 +72,7 @@ describe("Create DAO", () => {
         testData.mnemonic
         );
         cy.get('[data-test="recover_wallet_button"]').click();
-        cy.get('[data-test="wallet_name"]').type(testData.walletname);
+        // cy.get('[data-test="wallet_name"]').type(testData.walletname);
         cy.get('[data-test="wallet_password"]').type(testData.walletpass);
         cy.get('[data-test="wallet_confirm_password"]').type(testData.walletpass);
         cy.get('[data-test="recover_wallet_button"]').click();
@@ -104,7 +104,7 @@ describe("Create DAO", () => {
         testData.mnemonic
         );
         cy.get('[data-test="recover_wallet_button"]').click();
-        cy.get('[data-test="wallet_name"]').type(testData.walletname);
+        // cy.get('[data-test="wallet_name"]').type(testData.walletname);
         cy.get('[data-test="wallet_password"]').type(testData.walletpass);
         cy.get('[data-test="wallet_confirm_password"]').type(testData.walletpass);
         cy.get('[data-test="recover_wallet_button"]').click();

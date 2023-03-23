@@ -14,11 +14,12 @@ import {
 import PullRequestTabs from "../../../../../components/repository/pullRequestTabs";
 import PullRequestHeader from "../../../../../components/repository/pullRequestHeader";
 import DiffView from "../../../../../components/repository/diffView";
-import getPullDiff from "../../../../../helpers/getPullDiff";
-import getDiff from "../../../../../helpers/getDiff";
 import useRepository from "../../../../../hooks/useRepository";
 import usePullRequest from "../../../../../hooks/usePullRequest";
 import getPullRequestCommentAll from "../../../../../helpers/getPullRequestCommentAll";
+import FileTreeView from "../../../../../components/repository/fileTreeView";
+import getPullDiffStats from "../../../../../helpers/getPullDiffStats";
+import Sticky from "react-stickynode";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -37,16 +38,15 @@ function RepositoryPullFilesView(props) {
   const [stats, setStats] = useState({ stat: {} });
   const [viewType, setViewType] = useState("unified");
   const [allComments, setAllComments] = useState(props.comments || []);
+  const [showFile, setShowFile] = useState(null);
 
   useEffect(() => {
     async function initDiff() {
-      const diff = await getPullDiff(
+      const diff = await getPullDiffStats(
         pullRequest.base.repositoryId,
         pullRequest.head.repositoryId,
         pullRequest.base.sha,
-        pullRequest.head.sha,
-        null,
-        true
+        pullRequest.head.sha
       );
       setStats(diff);
     }
@@ -122,18 +122,29 @@ function RepositoryPullFilesView(props) {
               active="files"
             />
           </div>
-          <div className="mt-8">
-            <DiffView
-              stats={stats}
-              repoId={pullRequest.head.repositoryId}
-              baseRepoId={pullRequest.base.repositoryId}
-              currentSha={pullRequest.head.sha}
-              previousSha={pullRequest.base.sha}
-              parentIid={pullRequest.iid}
-              comments={allComments}
-              refreshComments={refreshComments}
-              onViewTypeChange={(v) => setViewType(v)}
-            />
+          <div className="mt-8 flex gap-2">
+            <div className="w-64">
+              <Sticky top={0}>
+                <FileTreeView
+                  pathList={stats?.file_names}
+                  onShowFile={(filename) => setShowFile(filename)}
+                />
+              </Sticky>
+            </div>
+            <div className="flex-1">
+              <DiffView
+                stats={stats}
+                repoId={pullRequest.head.repositoryId}
+                baseRepoId={pullRequest.base.repositoryId}
+                currentSha={pullRequest.head.sha}
+                previousSha={pullRequest.base.sha}
+                parentIid={pullRequest.iid}
+                comments={allComments}
+                refreshComments={refreshComments}
+                onViewTypeChange={(v) => setViewType(v)}
+                showFile={showFile}
+              />
+            </div>
           </div>
         </main>
       </div>

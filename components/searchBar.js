@@ -115,10 +115,13 @@ export default function SearchBar() {
         if (d?.name) id = d.name.toLowerCase();
       }
       router.push("/" + id + "/" + item.name);
+      setShowSuggestions(false);
     } else if (item.__typename === "User") {
       router.push("/" + item.username);
+      setShowSuggestions(false);
     } else if (item.__typename === "Dao") {
       router.push("/" + item.name.toLowerCase());
+      setShowSuggestions(false);
     }
   };
 

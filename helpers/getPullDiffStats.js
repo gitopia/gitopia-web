@@ -1,13 +1,11 @@
 import isNumber from "lodash/isNumber";
 const validSha = new RegExp(/^[a-f0-9]{40}$/);
 
-export default async function getPullDiff(
+export default async function getPullDiffStats(
   baseRepoId = null,
   headRepoId = null,
   baseCommitSha = null,
   headCommitSha = null,
-  offset = 0,
-  limit = 10,
 ) {
   let obj = {},
     baseRepoIdNum = Number(baseRepoId),
@@ -27,10 +25,7 @@ export default async function getPullDiff(
     head_repository_id: headRepoIdNum,
     base_commit_sha: baseCommitSha,
     head_commit_sha: headCommitSha,
-    pagination: {
-      offset,
-      limit,
-    },
+    only_stat: true,
   };
   await fetch(baseUrl, {
     method: "POST", // *GET, POST, PUT, DELETE, etc.

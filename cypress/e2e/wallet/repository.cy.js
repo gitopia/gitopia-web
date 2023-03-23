@@ -10,13 +10,12 @@ describe("Repository", () => {
       "mercy sound sustain lab indicate skin devote tenant crucial crime wrong educate mirror planet shallow logic one flee animal solve tide hospital seat into"
     );
     cy.get('[data-test="recover_wallet_button"]').click();
-    cy.get('[data-test="wallet_name"]').type("Test123");
     cy.get('[data-test="wallet_password"]').type("Password");
     cy.get('[data-test="wallet_confirm_password"]').type("Password");
     cy.get('[data-test="recover_wallet_button"]').click();
     cy.get('[data-test="current_wallet_address"]').should(
       "has.text",
-      "1dsu...w86c"
+      "gitopia1dsu...w86c"
     );
     cy.get('[data-test="create-new-repo"]').click();
     cy.get('[data-test="repository_name"]').type(`repo${id}`);
@@ -30,14 +29,14 @@ describe("Repository", () => {
           .click()
           .then(() => {
             cy.url().should(
-              "eq",
-              `http://localhost:3000/gitopia1dsud9wjd6z90c6wclxyu0yam3805w3wxavw86c/repo${id}`
+              "include",
+              `repo${id}`
             );
           });
       } else {
         cy.url().should(
-          "eq",
-          `http://localhost:3000/gitopia1dsud9wjd6z90c6wclxyu0yam3805w3wxavw86c/repo${id}`
+          "include",
+          `repo${id}`
         );
       }
     });

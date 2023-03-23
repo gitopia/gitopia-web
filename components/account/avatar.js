@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { connect } from "react-redux";
 import {
   updateUserAvatar,
@@ -7,6 +7,7 @@ import {
 import { updateDaoAvatar } from "../../store/actions/dao";
 import { notify } from "reapop";
 import formatBytes from "../../helpers/formatBytes";
+import debounce from "lodash/debounce";
 
 function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
   const name = isDao
@@ -29,6 +30,7 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
   const imageFileInput = useRef();
   const [imageFileHash, setImageFileHash] = useState(null);
   const [imageUploading, setImageUploading] = useState(0);
+  // var image = new Image();
 
   useEffect(() => {
     setValidateImageUrlError("");
@@ -45,40 +47,22 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
     setImageFileHash(null);
   }, [isDao ? props.dao?.id : props.user?.id]);
 
-  const validateImageUrl = (url, setImageUrlAfterSuccess) => {
-    if (url == "") {
-      setValidateImageUrlError(null);
-      setPreviewAvatarText("Nothing to preview");
-      setPreviewAvatarUrl(null);
-      return;
-    }
+  const validateImageUrl = (url) => {
+    setPreviewAvatarUrl(url);
     setValidateImageUrlError(null);
     setPreviewLoading(true);
     setPreviewAvatarText("Loading...");
-    setPreviewAvatarUrl(null);
-    var image = new Image();
-    image.onload = function () {
-      if (this.width > 0) {
-        setPreviewLoading(false);
-        setValidateImageUrlError(null);
-        setPreviewAvatarText("");
-        setPreviewAvatarUrl(url);
-        if (setImageUrlAfterSuccess) {
-          setImageUrl(url);
-        }
-      }
-    };
-    image.onerror = function () {
-      setPreviewLoading(false);
-      setValidateImageUrlError("Unable to preview");
-      setPreviewAvatarText("");
-      if (setImageUrlAfterSuccess) {
-        setImageUrl("");
-      }
-      setPreviewAvatarUrl("");
-    };
-    image.src = url;
+    if (url == "") {
+      setPreviewAvatarUrl(null);
+      setPreviewAvatarText("Nothing to preview");
+      return;
+    }
   };
+
+  const validateImageUrlDebounced = useCallback(
+    debounce(setPreviewAvatarUrl, 400),
+    []
+  );
 
   const uploadImage = async () => {
     if (imageFile) {
@@ -108,7 +92,8 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
         else return response.text();
       });
       if (res && res.url) {
-        validateImageUrl(res.url, true);
+        validateImageUrl(res.url);
+        setImageUrl(res.url);
         setImageUploading(2);
       } else if (res) {
         setValidateImageUrlError(res);
@@ -137,7 +122,22 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                   (isDao ? " rounded-md" : " rounded-full")
                 }
               >
-                {previewAvatarUrl ? <img src={previewAvatarUrl} /> : ""}
+                {previewAvatarUrl ?
+                <img
+                  src={previewAvatarUrl}
+                  onLoad={(e) => {
+                    if (e.target.width > 0) {
+                      setPreviewLoading(false);
+                      setValidateImageUrlError(null);
+                      setPreviewAvatarText("");
+                    }
+                  }}
+                  onError={() => {
+                    setPreviewLoading(false);
+                    setValidateImageUrlError("Unable to preview");
+                    setPreviewAvatarText("");
+                  }}
+                /> : ""}
                 <div className="absolute w-full bottom-16 text-center italic text-grey-300 text-sm">
                   {previewAvatarText}
                 </div>
@@ -152,6 +152,7 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                 onClick={() => {
                   setCurrentTab("upload");
                 }}
+                data-test="avatar_image_upload_tab"
               >
                 Upload File
               </div>
@@ -163,6 +164,7 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                 onClick={() => {
                   setCurrentTab("url");
                 }}
+                data-test="avatar_image_url_tab"
               >
                 Image Url
               </div>
@@ -227,13 +229,14 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                   placeholder="Enter Url"
                   autoComplete="off"
                   value={imageUrl}
-                  onKeyUp={async (e) => {
-                    validateImageUrl(e.target.value);
+                  onKeyUp={(e) => {
+                    validateImageUrlDebounced(e.target.value);
                   }}
                   onChange={(e) => {
                     setImageUrl(e.target.value);
                   }}
                   className="w-full h-11 input input-xs input-ghost input-bordered "
+                  data-test="avatar_image_url"
                 />
               </div>
             ) : (
@@ -309,6 +312,7 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                   previewLoading == true ||
                   imageUrl == ""
                 }
+                data-test="avatar_popup_update"
               >
                 UPDATE
               </label>
@@ -317,7 +321,10 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
         </div>
         {isEditable ? (
           <label htmlFor="avatar-url-modal" className="modal-button">
-            <div className="indicator-item indicator-bottom mr-6 mb-6 h-7.5 w-7.5 bg-base-100 rounded-full p-2 border border-grey-300 cursor-pointer hover:text-primary">
+            <div
+              className="indicator-item indicator-bottom mr-6 mb-6 h-7.5 w-7.5 bg-base-100 rounded-full p-2 border border-grey-300 cursor-pointer hover:text-primary"
+              data-test="avatar_image_popup"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4"
