@@ -5,8 +5,7 @@ export default async function getTasks(address) {
   try {
     const res = await api.queryTasks(address);
     if (res.ok) {
-      console.log(data);
-      return res.data;
+      return res.data.tasks;
     }
   } catch (e) {
     console.error(e);

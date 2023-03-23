@@ -10,21 +10,21 @@ import { notify } from "reapop";
 import { calculateGithubRewards } from "../store/actions/user";
 import { updateUserBalance } from "../store/actions/wallet";
 import getTasks from "../helpers/getTasks";
+import { tasksToMessage } from "../helpers/tasksTypes";
 import { error } from "daisyui/src/colors";
 
 const dayjs = require("dayjs");
 const duration = require("dayjs/plugin/duration");
 const customParseFormat = require("dayjs/plugin/customParseFormat");
 
-// add plugins to dayjs
 dayjs.extend(duration);
 dayjs.extend(customParseFormat);
 
 function ClaimRewards(props) {
   const [loading, setLoading] = useState(false);
-  const [totalToken, setTotalToken] = useState(false);
+  const [totalToken, setTotalToken] = useState(null);
   const [claimedToken, setClaimedToken] = useState(null);
-  const [unclaimedToken, setUnclaimedToken] = useState(false);
+  const [unclaimedToken, setUnclaimedToken] = useState(null);
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
@@ -53,7 +53,7 @@ function ClaimRewards(props) {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => getTime(deadlineUnix), 1000);
+    const interval = setInterval(() => getTime(deadlineUnix), 60000);
     return () => clearInterval(interval);
   });
 
@@ -66,6 +66,8 @@ function ClaimRewards(props) {
       calculateTasksPercentage();
     }
     fetchTasks();
+    getTime(deadlineUnix);
+    getTokens();
   }, [props.selectedAddress]);
 
   async function getTokens() {
@@ -78,7 +80,7 @@ function ClaimRewards(props) {
       .then(({ data }) => {
         setTotalToken(data.total_amount);
         setClaimedToken(data.claimed_amount);
-        setUnclaimedToken(data.claimable_amount);
+        setUnclaimedToken(data.unclaimed_amount);
       })
       .catch((err) => {
         console.error(err);
@@ -135,19 +137,9 @@ function ClaimRewards(props) {
             <div className="opacity-50 font-bold">Total Token Available</div>
             <div className="text-4xl">{totalToken} tLore</div>
             <div className="opacity-50 font-bold mt-8">Unclaimed</div>
-            <div className="text-4xl">
-              {
-                //claimedToken
-              }{" "}
-              tLore
-            </div>
+            <div className="text-4xl">{claimedToken} tLore</div>
             <div className="opacity-50 font-bold mt-8">Claimed Airdrop</div>
-            <div className="text-4xl">
-              {
-                //unclaimedToken
-              }{" "}
-              tLore
-            </div>
+            <div className="text-4xl">{unclaimedToken} tLore</div>
           </div>
         </div>
 
@@ -187,7 +179,7 @@ function ClaimRewards(props) {
               <div
                 className={"my-3 ml-4 " + (t.isComplete ? "text-green" : "")}
               >
-                {t.type}
+                {tasksToMessage[t.type]}
               </div>
               {t.isComplete ? (
                 <img
