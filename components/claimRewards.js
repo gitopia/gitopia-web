@@ -137,9 +137,9 @@ function ClaimRewards(props) {
             <div className="opacity-50 font-bold">Total Token Available</div>
             <div className="text-4xl">{totalToken} tLore</div>
             <div className="opacity-50 font-bold mt-8">Unclaimed</div>
-            <div className="text-4xl">{claimedToken} tLore</div>
-            <div className="opacity-50 font-bold mt-8">Claimed Airdrop</div>
             <div className="text-4xl">{unclaimedToken} tLore</div>
+            <div className="opacity-50 font-bold mt-8">Claimed Airdrop</div>
+            <div className="text-4xl">{claimedToken} tLore</div>
           </div>
         </div>
 
