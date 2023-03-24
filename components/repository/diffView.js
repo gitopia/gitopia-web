@@ -19,7 +19,8 @@ function DiffView({
   currentSha,
   previousSha,
   parentIid,
-  comments,
+  commentsAllowed = true,
+  comments = [],
   refreshComments,
   onViewTypeChange = () => {},
   showFile = null,
@@ -43,34 +44,39 @@ function DiffView({
     change,
   }) => {
     const canComment = inHoverState && (viewType === "split" || side === "new");
-    if (canComment) {
-      return (
-        <div
-          className="w-6"
-          onClick={() => {
-            setChange(change);
-            setComment("");
-          }}
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 32 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect width="32" height="32" rx="4" fill="#29B7E4" />
-            <path
-              d="M14.5789 21.2222H8V10H24V21.2222H21.2105H20.2105V22.2222V24.2795L15.0739 21.3533L14.8438 21.2222H14.5789Z"
-              stroke="white"
-              strokeWidth="2"
-            />
-          </svg>
-        </div>
-      );
+    if (!commentsAllowed) {
+      return renderDefault()
     }
-
-    return wrapInAnchor(renderDefault());
+    return (
+      <div className="relative">
+        {wrapInAnchor(renderDefault())}
+        {canComment ? (
+          <div
+            className="absolute -right-6 bottom-0 btn btn-xs btn-square btn-icon btn-secondary hover:scale-125"
+            onClick={() => {
+              if (change) setChange(change);
+              else setChange({});
+              setComment("");
+            }}
+          >
+            <svg
+              viewBox="0 0 32 42"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-8"
+            >
+              <path
+                d="M14.5789 21.2222H8V10H24V21.2222H21.2105H20.2105V22.2222V24.2795L15.0739 21.3533L14.8438 21.2222H14.5789Z"
+                stroke="white"
+                strokeWidth="2"
+              />
+            </svg>
+          </div>
+        ) : (
+          ""
+        )}
+      </div>
+    );
   };
 
   const getWidgets = (hunks, filename) => {
@@ -232,7 +238,7 @@ function DiffView({
         }}
       >
         <div
-          className="mt-8 border border-grey rounded-md"
+          className={"mt-8 border border-grey " + (fileHidden[index] ?  "rounded-md" : "rounded-t-md border-b-0")}
           key={filename}
           id={"file-" + index}
         >
@@ -288,7 +294,7 @@ function DiffView({
         </div>
         <div
           className={
-            "text-sm transition-transform origin-top " +
+            "text-sm border border-grey border-t-0 rounded-b-md origin-top " +
             (fileHidden[index] ? "transform scale-y-0 h-0" : "")
           }
         >
@@ -355,7 +361,6 @@ function DiffView({
       });
     }
     setFiles(newFiles);
-    console.log(newFiles);
     setLoadingMore(false);
   };
 
@@ -363,19 +368,16 @@ function DiffView({
     let totalFiles = stats?.file_names?.length;
     let index = stats?.file_names?.indexOf(filename);
     if (index < 0 || index > totalFiles - 1) {
-      console.log("Index out of bounds", index, totalFiles);
       return;
     }
 
     setScrollingToFile(true);
     if (!files[index]?.diff) {
-      console.log("loading file", index);
       await loadDiffs(files, repoId, index, 1);
     }
 
     setTimeout(() => {
       let elem = document.querySelector("#file-" + index);
-      console.log("elem", elem);
       if (elem) {
         elem.scrollIntoView();
         setTimeout(() => {
@@ -390,18 +392,15 @@ function DiffView({
   const loadFileBatch = useCallback(
     (index) => {
       if (scrollingToFile) {
-        console.log("scrollingToFile", scrollingToFile);
         return;
       }
       if (loadingMore) return;
       if (index < 0 || index > files.length - 1) {
-        console.log("Index out of bounds", index, files.length);
         return;
       }
       let offset = Math.floor(index / paginationLimit) * paginationLimit;
 
       if (!files[offset]?.diff) {
-        console.log("loading batch", offset, offset + paginationLimit);
         loadDiffs(files, repoId, offset);
       }
     },
