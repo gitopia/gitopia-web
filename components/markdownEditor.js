@@ -21,7 +21,7 @@ function MarkdownEditor(props) {
         toolbarCommands={toolbarCommands}
         generateMarkdownPreview={(markdown) => {
           return Promise.resolve(
-            <div className="markdown-body px-2 py-4">
+            <div className="markdown-body text-left border border-grey rounded-lg p-4 min-h-[120px]">
               <ReactMarkdown linkTarget="_blank">{markdown}</ReactMarkdown>
             </div>
           );

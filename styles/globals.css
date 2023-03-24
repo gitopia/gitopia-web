@@ -206,13 +206,13 @@ a {
 .mde-textarea-wrapper textarea.mde-text {
   width: 100%;
   border: 0;
-  padding: 10px;
+  padding: 1rem;
   vertical-align: top;
   resize: vertical;
   overflow-y: auto;
   color: white;
   background: transparent;
-  border: 1px solid #747d96;
+  border: 1px solid #333B45;
   border-radius: 8px;
 }
 

@@ -591,7 +591,7 @@ function RepositoryCompareView(props) {
                             </div>
                           </div>
                         </div>
-                        <div className="border border-grey rounded flex-1 p-4">
+                        <div className="flex-1">
                           <div className="form-control mb-4">
                             <input
                               type="text"
@@ -767,6 +767,7 @@ function RepositoryCompareView(props) {
                     currentSha={compare.source.sha}
                     previousSha={compare.target.sha}
                     onViewTypeChange={(v) => setViewType(v)}
+                    commentsAllowed={false}
                   />
                 ) : (
                   <div className="alert alert-warning">
