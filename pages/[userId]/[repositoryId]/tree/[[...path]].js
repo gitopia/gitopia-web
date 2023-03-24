@@ -51,7 +51,7 @@ function rowRenderer({ rows, stylesheet, useInlineStyles }) {
 
 function virtualizedRenderer({ overscanRowCount = 10, rowHeight = 15 } = {}) {
   return ({ rows, stylesheet, useInlineStyles }) => (
-    <div style={{ height: rowHeight * rows.length + "px" }}>
+    <div style={{ height: (rows.length > 1000 ? "max(40rem, calc(100vh - 40rem))" : rowHeight * rows.length + "px") }}>
       <AutoSizer>
         {({ height, width }) => (
           <List
@@ -491,7 +491,7 @@ function RepositoryTreeView(props) {
                       <SyntaxHighlighter
                         style={vscDarkPlus}
                         renderer={virtualizedRenderer({
-                          rowHeight: 20,
+                          rowHeight: 19.5,
                         })}
                         language={fileSyntax}
                         customStyle={{ margin: 0, background: "transparent" }}
