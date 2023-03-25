@@ -199,6 +199,7 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
           <td>
             <TextInput
               value={collabAddress}
+              name="user address"
               placeholder="User address"
               setValue={(v) => {
                 setCollabAddress(v);

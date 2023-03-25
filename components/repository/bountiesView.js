@@ -61,11 +61,16 @@ function IssueBountyView(props) {
             coinArray[i].dollarAmount = dollarAmount;
           }
         } else {
+          let dollarAmount = await getTokenValueInDollars(
+            coinArray[i].denom,
+            coinArray[i].amount
+          );
           let standardDenomName = coingeckoId[coinArray[i].denom].coinDenom;
           coinArray[i].standardDenomName = standardDenomName;
           coinArray[i].amount =
             coinArray[i].amount /
             Math.pow(10, coingeckoId[coinArray[i].denom].coinDecimals);
+          coinArray[i].dollarAmount = dollarAmount;
         }
       }
       setCoins(coinArray);
@@ -120,7 +125,7 @@ function IssueBountyView(props) {
                     {c.amount}
                   </div>
                   <div className="ml-2 font-bold text-xs text-type-tertiary mt-1.5">
-                    {c.denom !== "utlore" ? "≈$" + c.dollarAmount + "USD" : ""}
+                    {c.dollarAmount > 0 ? "≈$" + c.dollarAmount + "USD" : ""}
                   </div>
                 </div>
               </div>

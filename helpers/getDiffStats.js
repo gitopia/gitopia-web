@@ -1,12 +1,10 @@
 import isNumber from "lodash/isNumber";
 const validSha = new RegExp(/^[a-f0-9]{40}$/);
 
-export default async function getDiff(
+export default async function getDiffStats(
   repoId = null,
   commitSha = null,
-  prevCommitSha = null,
-  offset = 0,
-  limit = 10,
+  prevCommitSha,
 ) {
   let obj = {},
     numRepoId = Number(repoId);
@@ -23,12 +21,8 @@ export default async function getDiff(
   let params = {
     repository_id: numRepoId,
     commit_sha: commitSha,
-    pagination: {
-      offset,
-      limit,
-    },
+    only_stat: true,
   };
-
   if (prevCommitSha) {
     if (!validSha.test(prevCommitSha)) {
       return obj;

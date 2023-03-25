@@ -5,10 +5,10 @@ export const coingeckoId = {
     coinDenom: "OSMO",
     icon: "/tokens/osmosis.svg",
   },
-  utlore: {
+  [process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN]: {
     id: "",
     coinDecimals: 6,
-    coinDenom: "TLORE",
+    coinDenom: process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toString(),
     icon: "/tokens/gitopia.svg",
   },
   uatom: {

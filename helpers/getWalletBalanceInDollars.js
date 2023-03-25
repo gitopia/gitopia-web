@@ -35,7 +35,28 @@ export default async function getBalanceInDollars(address) {
                 let perCoinPrice =
                   balance[i].amount /
                   Math.pow(10, coingeckoId[denom].coinDecimals);
-                totalPrice = price * perCoinPrice;
+                totalPrice = totalPrice + price * perCoinPrice;
+                USDBalances[denom] = price * perCoinPrice;
+              })
+              .catch((err) => {
+                console.error(err);
+                notify("Unable to get price", "error");
+              });
+          }
+        } else {
+          if (coingeckoId[balance[i].denom].id !== "") {
+            await axios
+              .get(
+                "https://api.coingecko.com/api/v3/simple/price?ids=" +
+                  coingeckoId[balance[i].denom].id +
+                  "&vs_currencies=usd"
+              )
+              .then(({ data }) => {
+                let price = data[coingeckoId[balance[i].denom].id]["usd"];
+                let perCoinPrice =
+                  balance[i].amount /
+                  Math.pow(10, coingeckoId[balance[i].denom].coinDecimals);
+                totalPrice = totalPrice + price * perCoinPrice;
                 USDBalances[denom] = price * perCoinPrice;
               })
               .catch((err) => {

@@ -181,6 +181,8 @@ export const createComment = ({
   attachments = [],
   diffHunk = "",
   path = "",
+  position = null,
+  commentType = 1,
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "comment")))
@@ -193,7 +195,7 @@ export const createComment = ({
       parentIid,
       parent: parent === "COMMENT_PARENT_ISSUE" ? 1 : 2,
       body,
-      commentType: 1,
+      commentType: commentType,
     };
     if (attachments.length) {
       comment.attachments = attachments;
@@ -203,6 +205,9 @@ export const createComment = ({
     }
     if (path.trim() !== "") {
       comment.path = path;
+    }
+    if (position !== null) {
+      comment.position = position;
     }
     console.log("comment", comment);
 
@@ -283,7 +288,11 @@ export const deleteComment = ({
   };
 };
 
-export const toggleIssueState = ({ repositoryId = null, iid = null, commentBody = null }) => {
+export const toggleIssueState = ({
+  repositoryId = null,
+  iid = null,
+  commentBody = null,
+}) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "comment")))
       return null;
@@ -293,7 +302,7 @@ export const toggleIssueState = ({ repositoryId = null, iid = null, commentBody 
       creator: wallet.selectedAddress,
       repositoryId,
       iid,
-      commentBody
+      commentBody,
     };
     try {
       const message = await env.txClient.msgToggleIssueState(comment);
@@ -922,7 +931,7 @@ export const forkRepository = ({
   repoName = null,
   repoBranch = null,
   forkRepositoryName = null,
-  forkRepositoryDescription = null
+  forkRepositoryDescription = null,
 }) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "repository")))
@@ -935,10 +944,10 @@ export const forkRepository = ({
       owner: ownerId,
       provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
       forkRepositoryName,
-      forkRepositoryDescription
+      forkRepositoryDescription,
     };
     if (repoBranch) {
-      repository.branch = repoBranch
+      repository.branch = repoBranch;
     }
     console.log("forking", repository);
 
@@ -952,7 +961,10 @@ export const forkRepository = ({
           log[0].events[0].attributes[
             log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
           ].value;
-        const res = await watchTask(taskId, "Forking repository " + repoName)(dispatch, getState);
+        const res = await watchTask(taskId, "Forking repository " + repoName)(
+          dispatch,
+          getState
+        );
         console.log("Watch task result", res);
         if (res.TaskState === "TASK_STATE_SUCCESS") {
           getUserDetailsForSelectedAddress()(dispatch, getState);
@@ -1428,7 +1440,7 @@ export const updatePullRequestState = ({
       iid,
       state,
       mergeCommitSha,
-      commentBody
+      commentBody,
     };
 
     try {
@@ -1471,7 +1483,10 @@ export const mergePullRequest = ({ repositoryId, iid, branchName }) => {
           log[0].events[0].attributes[
             log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
           ].value;
-        const res = await watchTask(taskId, "Merging branch " + branchName )(dispatch, getState);
+        const res = await watchTask(taskId, "Merging branch " + branchName)(
+          dispatch,
+          getState
+        );
         console.log("Watch task result", res);
         getUserDetailsForSelectedAddress()(dispatch, getState);
         return res;

@@ -1,5 +1,13 @@
 ## Changelog
 
+### v1.6.0 - 24th Mar 2023
+
+- Added comments in diffs of pull requests and commits
+- Files changed tree view added
+- Updated behaviour for syntax highlighting of large files
+- Updated bounty design, expiry date check
+ 
+
 ### v1.5.0 - 16th Mar 2023
 
 - Added branch protection rules

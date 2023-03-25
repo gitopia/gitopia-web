@@ -8,7 +8,7 @@ export default function parseFilters(text = "") {
       key,
       value,
     });
-    removedText = text.replace(fullMatch, "").trim();
+    removedText = removedText.replace(fullMatch, "").trim();
   }
   // for (const [fullMatch] of text.matchAll(searchTest)) {
   //   pairs.push({

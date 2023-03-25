@@ -188,7 +188,7 @@ function MergePullRequestView({
           <div className="flex-1 text-xs sm:text-base" data-test="pr_state">{message}</div>
         </div>
         {pullRequest.state === "OPEN" ? (
-          <div className="sm:ml-auto">
+          <div className="sm:ml-auto flex-none">
             <button
               className={
                 "btn btn-xs sm:btn-sm btn-primary sm:ml-4 m-0.5 h-10" +

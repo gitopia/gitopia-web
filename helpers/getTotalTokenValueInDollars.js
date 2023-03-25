@@ -4,6 +4,7 @@ import { notify } from "reapop";
 export default async function getTokenValueInDollars(denom, amount) {
   let totalPrice = 0;
   if (!denom || !amount) return null;
+  if (coingeckoId[denom].id === "") return 0;
   await axios
     .get(
       "https://api.coingecko.com/api/v3/simple/price?ids=" +

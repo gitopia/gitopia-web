@@ -356,7 +356,7 @@ function Header(props) {
                   <div className="avatar absolute left-1">
                     <div className="rounded-full w-10 h-10">
                       {props.activeWallet && !props.unlockingWallet ? (
-                        <img src={avatarUrl} />
+                        <img src={avatarUrl} data-test="current_wallet_avatar" />
                       ) : (
                         ""
                       )}

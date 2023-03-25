@@ -20,7 +20,7 @@ import AssigneeSelector from "../../../../components/repository/assigneeSelector
 import LabelSelector from "../../../../components/repository/labelSelector";
 import Label from "../../../../components/repository/label";
 import AssigneeGroup from "../../../../components/repository/assigneeGroup";
-import getPullDiff from "../../../../helpers/getPullDiff";
+import getPullDiffStats from "../../../../helpers/getPullDiffStats";
 import getRepository from "../../../../helpers/getRepository";
 import getUser from "../../../../helpers/getUser";
 import getDao from "../../../../helpers/getDao";
@@ -276,13 +276,11 @@ function RepositoryCompareView(props) {
   useEffect(() => {
     async function initStats() {
       const [diff, commits] = await Promise.all([
-        getPullDiff(
+        getPullDiffStats(
           compare.target.repository.id,
           compare.source.repository.id,
           compare.target.sha,
           compare.source.sha,
-          null,
-          true
         ),
         await getPullRequestCommits(
           compare.target.repository.id,
@@ -593,7 +591,7 @@ function RepositoryCompareView(props) {
                             </div>
                           </div>
                         </div>
-                        <div className="border border-grey rounded flex-1 p-4">
+                        <div className="flex-1">
                           <div className="form-control mb-4">
                             <input
                               type="text"
@@ -769,6 +767,7 @@ function RepositoryCompareView(props) {
                     currentSha={compare.source.sha}
                     previousSha={compare.target.sha}
                     onViewTypeChange={(v) => setViewType(v)}
+                    commentsAllowed={false}
                   />
                 ) : (
                   <div className="alert alert-warning">

@@ -137,7 +137,7 @@ handler.post(async (request, response) => {
           amount: [
             {
               amount: "0",
-              denom: "utlore",
+              denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
             },
           ],
           gas: "0",

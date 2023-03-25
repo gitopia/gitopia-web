@@ -35,7 +35,7 @@ function TopRepositories({ repositories = [] }) {
         {repos.map((r) => {
           return (
             <li className="" key={r.id}>
-              <Link href={"/" + r.username + "/" + r.name} className="rounded">
+              <Link href={"/" + r.username + "/" + r.name} className="rounded" data-test="top_repositories">
                 {r.name}
               </Link>
             </li>
