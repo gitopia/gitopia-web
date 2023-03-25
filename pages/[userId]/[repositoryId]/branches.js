@@ -27,8 +27,9 @@ export async function getStaticPaths() {
 function RepositoryBranchesView(props) {
   const router = useRouter();
   const { repository, refreshRepository } = useRepository();
-  const [currentUserEditPermission, setCurrentUserEditPermission] =
-    useState(false);
+  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
+    false
+  );
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -131,7 +132,7 @@ function RepositoryBranchesView(props) {
                       {b.name}
                     </a>
                     <button
-                      className="btn btn-xs btn-ghost ml-1 mt-0.5"
+                      className="btn btn-xs btn-ghost btn-square ml-4 mt-0.5"
                       onClick={(e) => {
                         navigator.clipboard.writeText(b.name);
                       }}
@@ -152,46 +153,44 @@ function RepositoryBranchesView(props) {
                       </svg>
                     </button>
                     {currentUserEditPermission ? (
-                      <div className=" ml-2 flex-none text-sm sm:text-base w-10 sm:w-20">
-                        <div
-                          onClick={() => {
-                            setConfirmDelete(true);
-                          }}
+                      <button
+                        className="btn btn-xs btn-ghost btn-square ml-1 mt-0.5"
+                        onClick={() => {
+                          setConfirmDelete(true);
+                        }}
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          stroke="#fff"
+                          className="h-4 w-4"
                         >
-                          <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="hover:cursor-pointer stroke-type-secondary hover:stroke-green"
-                          >
-                            <rect
-                              x="6"
-                              y="9"
-                              width="12"
-                              height="12"
-                              strokeWidth="2"
-                            />
-                            <rect x="5.5" y="4.5" width="13" height="1" />
-                            <rect x="9.5" y="2.5" width="5" height="1" />
-                            <rect
-                              x="10.5"
-                              y="12.5"
-                              width="5"
-                              height="1"
-                              transform="rotate(90 10.5 12.5)"
-                            />
-                            <rect
-                              x="14.5"
-                              y="12.5"
-                              width="5"
-                              height="1"
-                              transform="rotate(90 14.5 12.5)"
-                            />
-                          </svg>
-                        </div>
-                      </div>
+                          <rect
+                            x="6"
+                            y="9"
+                            width="12"
+                            height="12"
+                            strokeWidth="2"
+                          />
+                          <rect x="5.5" y="4.5" width="13" height="1" />
+                          <rect x="9.5" y="2.5" width="5" height="1" />
+                          <rect
+                            x="10.5"
+                            y="12.5"
+                            width="5"
+                            height="1"
+                            transform="rotate(90 10.5 12.5)"
+                          />
+                          <rect
+                            x="14.5"
+                            y="12.5"
+                            width="5"
+                            height="1"
+                            transform="rotate(90 14.5 12.5)"
+                          />
+                        </svg>
+                      </button>
                     ) : (
                       ""
                     )}
