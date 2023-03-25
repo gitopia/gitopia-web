@@ -174,7 +174,7 @@ function CreateBounty(props) {
             setTokenDenom([]);
             setMaxAmount([]);
             props.setBountyAmount([]);
-            let da = dayjs().add(7, 'D').format('YYYY-MM-DD');
+            let da = dayjs().add(7, "D").format("YYYY-MM-DD");
             setExpiry(da);
             // ref3.current.value = da;
             ref2.current.value = "select-token";
@@ -198,18 +198,15 @@ function CreateBounty(props) {
                   <div className="flex items-center">
                     <div className="mr-2 font-bold text-white">BOUNTY</div>
                     <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
                       viewBox="0 0 24 24"
-                      strokeWidth={1.5}
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      strokeWidth={2}
                       stroke="currentColor"
                       className="w-3 h-3"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
-                      />
+                      <path d="M14.1211 4.22183L19.7779 9.87869L9.46424 20.1924L3.80738 20.1924L3.80738 14.5355L14.1211 4.22183Z" />
+                      <path d="M15.1816 9.5249L11.6461 13.0604" />
                     </svg>
                   </div>
                 </label>
@@ -549,8 +546,9 @@ function CreateBounty(props) {
                   type="date"
                   className="flex-1 p-3.5 appearance-none bg-transparent border-none leading-tight focus:outline-none ml-auto text-grey-200 text-sm text-right"
                   value={expiry}
+                  min={dayjs().format("YYYY-MM-DD")}
                   onChange={(e) => {
-                    setExpiry(dayjs(e.target.valueAsDate).format('YYYY-MM-DD'));
+                    setExpiry(dayjs(e.target.valueAsDate).format("YYYY-MM-DD"));
                   }}
                 ></input>
               </div>
