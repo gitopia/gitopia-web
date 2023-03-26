@@ -182,10 +182,19 @@ function ClaimRewards(props) {
               className="flex p-2 sm:p-4 box-border bg-[#222932] w-80 sm:w-3/4 rounded-xl mt-4 text-xs sm:text-base"
               key={i}
             >
-              <div
-                className={"my-3 ml-4 " + (t.isComplete ? "text-green" : "")}
-              >
-                {tasksToMessage[t.type]}
+              <div className="sm:flex">
+                <div
+                  className={"my-3 ml-4 " + (t.isComplete ? "text-green" : "")}
+                >
+                  {tasksToMessage[t.type]}
+                </div>
+                <div
+                  className={
+                    "ml-4 sm:ml-2 flex items-center rounded-full px-2.5 py-0.5 bg-purple text-xs mt-3 h-6 w-20 mb-4 sm:mb-0"
+                  }
+                >
+                  {"weight " + t.weight}
+                </div>
               </div>
               {t.isComplete ? (
                 <img
