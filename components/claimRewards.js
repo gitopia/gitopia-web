@@ -11,7 +11,7 @@ import { calculateGithubRewards } from "../store/actions/user";
 import { updateUserBalance } from "../store/actions/wallet";
 import getTasks from "../helpers/getTasks";
 import { tasksToMessage } from "../helpers/tasksTypes";
-import { error } from "daisyui/src/colors";
+import { useRouter } from "next/router";
 
 const dayjs = require("dayjs");
 const duration = require("dayjs/plugin/duration");
@@ -30,7 +30,9 @@ function ClaimRewards(props) {
   const [minutes, setMinutes] = useState(0);
   const [tasks, setTasks] = useState([]);
   const [tasksCompleted, setTasksCompleted] = useState(0);
+  const [code, setCode] = useState(null);
 
+  const router = useRouter();
   const deadlineUnix = process.env.NEXT_PUBLIC_REWARD_DEADLINE;
 
   const getTime = () => {
@@ -46,10 +48,10 @@ function ClaimRewards(props) {
     let count = 0;
     for (let i = 0; i < tasks?.length; i++) {
       if (tasks[i].isComplete === true) {
-        count++;
+        count = count + tasks[i].weight;
       }
     }
-    setTasksCompleted(count / 6);
+    setTasksCompleted(count);
   };
 
   useEffect(() => {
@@ -63,12 +65,12 @@ function ClaimRewards(props) {
       if (tasks !== undefined) {
         setTasks(tasks);
       }
-      calculateTasksPercentage();
     }
     fetchTasks();
+    calculateTasksPercentage();
     getTime(deadlineUnix);
     getTokens();
-  }, [props.selectedAddress]);
+  }, [props.selectedAddress, unclaimedToken]);
 
   async function getTokens() {
     await axios
@@ -88,6 +90,14 @@ function ClaimRewards(props) {
   }
   setInterval(getTokens, 120000);
 
+  useEffect(() => {
+    const query = window.location.search;
+    const urlParameters = new URLSearchParams(query);
+    const codeValue = urlParameters.get("code");
+    setCode(codeValue);
+    router.push("/rewards");
+  }, []);
+
   const claimTokens = async () => {
     if (loading) return;
     if (!props.selectedAddress) {
@@ -95,7 +105,11 @@ function ClaimRewards(props) {
       return;
     }
     setLoading(true);
-    const res = await props.calculateGithubRewards("ASDASDASD");
+    window.location.assign(
+      "https://github.com/login/oauth/authorize?client_id=" +
+        process.env.NEXT_PUBLIC_GITHUB_OAUTH_CLIENT_ID
+    );
+    const res = await props.calculateGithubRewards(code);
     await axios
       .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/claim", {
         payload: res,
@@ -103,6 +117,7 @@ function ClaimRewards(props) {
       .then((res) => {
         updateUserBalance();
         getTokens();
+        calculateTasksPercentage();
         notify("Reward Claimed", info);
       })
       .catch(({ err }) => {
@@ -124,14 +139,18 @@ function ClaimRewards(props) {
             <div className="text-4xl lg:text-7xl font-bold w-96 tracking-tight lg:leading-[4rem]">
               Claim Airdrop
             </div>
-            <div>
-              <Link
-                className="btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-60 rounded-md mt-10"
-                href="/login"
-              >
-                Connect Wallet
-              </Link>
-            </div>
+            {props.activeWallet === null ? (
+              <div>
+                <Link
+                  className="btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-60 rounded-md mt-10"
+                  href="/login"
+                >
+                  Connect Wallet
+                </Link>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
           <div className="sm:ml-auto w-60 mt-10">
             <div className="opacity-50 font-bold">Total Token Available</div>
