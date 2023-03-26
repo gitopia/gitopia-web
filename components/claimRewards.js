@@ -30,7 +30,6 @@ function ClaimRewards(props) {
   const [minutes, setMinutes] = useState(0);
   const [tasks, setTasks] = useState([]);
   const [tasksCompleted, setTasksCompleted] = useState(0);
-  const [code, setCode] = useState(null);
 
   const router = useRouter();
   const deadlineUnix = process.env.NEXT_PUBLIC_REWARD_DEADLINE;
@@ -90,14 +89,6 @@ function ClaimRewards(props) {
   }
   setInterval(getTokens, 120000);
 
-  useEffect(() => {
-    const query = window.location.search;
-    const urlParameters = new URLSearchParams(query);
-    const codeValue = urlParameters.get("code");
-    setCode(codeValue);
-    router.push("/rewards");
-  }, []);
-
   const claimTokens = async () => {
     if (loading) return;
     if (!props.selectedAddress) {
@@ -105,16 +96,12 @@ function ClaimRewards(props) {
       return;
     }
     setLoading(true);
-    window.location.assign(
-      "https://github.com/login/oauth/authorize?client_id=" +
-        process.env.NEXT_PUBLIC_GITHUB_OAUTH_CLIENT_ID
-    );
-    const res = await props.calculateGithubRewards(code);
+    const res = await props.calculateGithubRewards(props.code);
     await axios
       .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/claim", {
         payload: res,
       })
-      .then((res) => {
+      .then(() => {
         updateUserBalance();
         getTokens();
         calculateTasksPercentage();
@@ -221,9 +208,14 @@ function ClaimRewards(props) {
               "btn btn-primary bg-green h-14 py-3 w-72 rounded-md " +
               (loading ? "loading" : "")
             }
-            disabled={""}
             onClick={() => {
-              claimTokens();
+              if (process.env.NEXT_PUBLIC_REWARD_DEADLINE < dayjs().unix()) {
+                props.notify("Claim airdrop period ended", "error");
+              } else if (unclaimedToken <= 0) {
+                props.notify("You don't have any unclaimed tokens", "error");
+              } else {
+                claimTokens();
+              }
             }}
           >
             Claim Now
