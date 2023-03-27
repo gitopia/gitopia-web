@@ -8,7 +8,7 @@ import {
 import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import find from "lodash/find";
-import { notify, dismissNotification } from "reapop";
+import { notify } from "reapop";
 import { setupTxClients, sendTransaction } from "./env";
 import getNodeInfo from "../../helpers/getNodeInfo";
 import getAnyNodeInfo from "../../helpers/getAnyNodeInfo";
@@ -18,7 +18,6 @@ import getChainInfo from "../../helpers/getChainInfo";
 import getChainAssetList from "../../helpers/getChainAssetList";
 import getChainIbcAsset from "../../helpers/getChainIbcAssets";
 import dayjs from "dayjs";
-import { calculateFee, GasPrice } from "@cosmjs/stargate";
 import { gasConfig } from "../../ibc-assets-config";
 
 let ledgerTransport;
@@ -985,6 +984,7 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
 export const estimateFee = (address, chain, msg, memo) => {
   return async (getState) => {
     const { env } = getState();
+    const { calculateFee, GasPrice } = await import("@cosmjs/stargate");
     const gasPrice = GasPrice.fromString(gasConfig[chain].gasPrice);
     const gasEstimation = await env.txClientSecondary.simulate(
       address,

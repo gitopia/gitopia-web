@@ -1,17 +1,5 @@
 import { notify } from "reapop";
-import { TextProposal, VoteOption } from "cosmjs-types/cosmos/gov/v1beta1/gov";
-import { Any } from "cosmjs-types/google/protobuf/any";
-import {
-  SoftwareUpgradeProposal,
-  Plan,
-} from "cosmjs-types/cosmos/upgrade/v1beta1/upgrade";
-import { CommunityPoolSpendProposal } from "cosmjs-types/cosmos/distribution/v1beta1/distribution";
 import { sendTransaction, setupTxClients } from "./env";
-import { longify } from "@cosmjs/stargate/build/queryclient/utils";
-import {
-  ParameterChangeProposal,
-  ParamChange,
-} from "cosmjs-types/cosmos/params/v1beta1/params";
 import { updateUserBalance } from "./wallet";
 
 export const submitGovernanceProposal = (
@@ -26,6 +14,10 @@ export const submitGovernanceProposal = (
       try {
         await setupTxClients(dispatch, getState);
         const { env } = getState();
+        const TextProposal = (
+          await import("cosmjs-types/cosmos/gov/v1beta1/gov")
+        ).TextProposal;
+        const Any = (await import("cosmjs-types/google/protobuf/any")).Any;
         const textProposal = TextProposal.fromPartial({
           title: title,
           description: description,
@@ -41,8 +33,7 @@ export const submitGovernanceProposal = (
               ? [
                   {
                     amount: initialDeposit,
-                    denom:
-                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+                    denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
                   },
                 ]
               : [],
@@ -81,6 +72,13 @@ export const chainUpgradeProposal = (
       try {
         await setupTxClients(dispatch, getState);
         const { env } = getState();
+        const Any = (await import("cosmjs-types/google/protobuf/any")).Any;
+        const { SoftwareUpgradeProposal, Plan } = await import(
+          "cosmjs-types/cosmos/upgrade/v1beta1/upgrade"
+        );
+        const longify = (
+          await import("@cosmjs/stargate/build/queryclient/utils")
+        ).longify;
         const msgPlan = Plan.fromPartial({
           name: releaseVersionTag,
           height: longify(height),
@@ -104,8 +102,7 @@ export const chainUpgradeProposal = (
               ? [
                   {
                     amount: initialDeposit,
-                    denom:
-                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+                    denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
                   },
                 ]
               : [],
@@ -144,19 +141,24 @@ export const communityPoolSpendProposal = (
       try {
         await setupTxClients(dispatch, getState);
         const { env } = getState();
+        const Any = (await import("cosmjs-types/google/protobuf/any")).Any;
+        const CommunityPoolSpendProposal = import(
+          "cosmjs-types/cosmos/distribution/v1beta1/distribution"
+        ).CommunityPoolSpendProposal;
         const amountToSend = [
           {
             amount: amount,
             denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
           },
         ];
-        const communityPoolSpendProposal =
-          CommunityPoolSpendProposal.fromPartial({
+        const communityPoolSpendProposal = CommunityPoolSpendProposal.fromPartial(
+          {
             title: title,
             description: description,
             recipient: address,
             amount: amountToSend,
-          });
+          }
+        );
         const msgAny = Any.fromPartial({
           typeUrl: "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal",
           value: Uint8Array.from(
@@ -172,8 +174,7 @@ export const communityPoolSpendProposal = (
               ? [
                   {
                     amount: initialDeposit,
-                    denom:
-                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+                    denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
                   },
                 ]
               : [],
@@ -213,6 +214,10 @@ export const paramChangeProposal = (
       try {
         await setupTxClients(dispatch, getState);
         const { env } = getState();
+        const Any = (await import("cosmjs-types/google/protobuf/any")).Any;
+        const { ParameterChangeProposal, ParamChange } = await import(
+          "cosmjs-types/cosmos/params/v1beta1/params"
+        );
         const changes = [];
 
         for (let i = 0; i < paramSubspaces.length; i++) {
@@ -241,8 +246,7 @@ export const paramChangeProposal = (
               ? [
                   {
                     amount: initialDeposit,
-                    denom:
-                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+                    denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
                   },
                 ]
               : [],
@@ -274,6 +278,9 @@ export const proposalDeposit = (proposalId, amount) => {
       try {
         await setupTxClients(dispatch, getState);
         const { env } = getState();
+        const longify = (
+          await import("@cosmjs/stargate/build/queryclient/utils")
+        ).longify;
         const send = {
           proposalId: longify(proposalId),
           depositor: wallet.selectedAddress,
@@ -307,6 +314,8 @@ export const proposalDeposit = (proposalId, amount) => {
 export const proposalVote = (proposalId, option) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
+    const VoteOption = (await import("cosmjs-types/cosmos/gov/v1beta1/gov"))
+      .VoteOption;
     let choice;
     if (option === "VOTE_OPTION_YES") {
       choice = VoteOption.VOTE_OPTION_YES;
@@ -324,7 +333,9 @@ export const proposalVote = (proposalId, option) => {
       try {
         await setupTxClients(dispatch, getState);
         const { env } = getState();
-
+        const longify = (
+          await import("@cosmjs/stargate/build/queryclient/utils")
+        ).longify;
         const send = {
           proposalId: longify(proposalId),
           voter: wallet.selectedAddress,
