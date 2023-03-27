@@ -1,6 +1,5 @@
 import ReconnectingWebSocket from "reconnecting-websocket";
-import { decodeTx } from "../helpers/blockParser";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { connect } from "react-redux";
 import getRepository from "../helpers/getRepository";
 import getIssue from "../helpers/getIssue";
@@ -9,7 +8,7 @@ import { notify } from "reapop";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { createNotification } from "../store/actions/userNotification";
 import { addCompletedTask } from "../store/actions/taskQueue";
-import db from "../helpers/db";
+// import db from "../helpers/db";
 
 function Notifications(props) {
   async function addNotification(

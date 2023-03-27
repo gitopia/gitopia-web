@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { readNotification } from "../../store/actions/userNotification";
 import { connect } from "react-redux";
-import db from "../../helpers/db";
+// import db from "../../helpers/db";
 
 function NotificationsCard(props) {
   const [issueNotifications, setIssueNotifications] = useState(0);
