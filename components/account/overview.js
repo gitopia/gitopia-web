@@ -5,10 +5,9 @@ import { ApolloProvider } from "@apollo/client";
 import QueryTransaction from "../../helpers/gql/queryTransaction";
 import client from "../../helpers/apolloClient";
 import CalendarHeatmap from "react-calendar-heatmap";
-import "react-calendar-heatmap/dist/styles.css";
 import ReactTooltip from "react-tooltip";
 import dayjs from "dayjs";
-import { sortBy } from "lodash";
+import sortBy from "lodash/sortBy";
 import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
 
 function AccountOverview(props) {
