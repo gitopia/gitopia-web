@@ -29,7 +29,7 @@ function DepositIbcAsset(props) {
           props.ibcAssets.chainInfo.asset.assets[0].denom_units[1].denom
         );
         let b = await getBalanceForChain(
-          props.ibcAssets.chainInfo.chain.apis.rest[3].address,
+          props.ibcAssets.chainInfo.chain.apis.rest,
           props.activeWallet?.counterPartyAddress,
           props.ibcAssets.chainInfo.asset.assets[0].denom_units[0].denom
         );
@@ -211,15 +211,14 @@ function DepositIbcAsset(props) {
                   onClick={(e) => {
                     let notifId;
                     setLoading(true);
-                    const loadingMessage = props.
-                      notify(
-                        "Depositing " + amount + tokenDenom + "...",
-                        "loading",
-                        {
-                          dismissible: false,
-                          dismissAfter: 0,
-                        }
-                      );
+                    const loadingMessage = props.notify(
+                      "Depositing " + amount + tokenDenom + "...",
+                      "loading",
+                      {
+                        dismissible: false,
+                        dismissAfter: 0,
+                      }
+                    );
                     notifId = loadingMessage.payload.id;
                     props
                       .ibcDeposit(
@@ -245,12 +244,15 @@ function DepositIbcAsset(props) {
                       )
                       .then((res) => {
                         if (res) {
-                          props.notify("Deposit " + amount + tokenDenom  + " successful", "info");
+                          props.notify(
+                            "Deposit " + amount + tokenDenom + " successful",
+                            "info"
+                          );
                         }
                         setLoading(false);
                         props.dismissNotification(notifId);
                       });
-                      props.setOpenDeposit(false);
+                    props.setOpenDeposit(false);
                   }}
                   disabled={false}
                 >
@@ -277,5 +279,5 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   ibcDeposit,
   notify,
-  dismissNotification
+  dismissNotification,
 })(DepositIbcAsset);
