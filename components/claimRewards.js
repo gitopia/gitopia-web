@@ -90,7 +90,7 @@ function ClaimRewards(props) {
       );
     }
   }
-  setInterval(getTokens, 120000);
+  setInterval(getTokens, 60000);
   setInterval(fetchTasks, 60000);
 
   const claimTokens = async () => {
@@ -134,18 +134,24 @@ function ClaimRewards(props) {
               ""
             )}
           </div>
-          <div className="sm:ml-auto w-60 mt-10">
+          <div className="sm:ml-auto w-80 mt-10">
             <div className="opacity-50 font-bold">Total Tokens Available</div>
             <div className="text-4xl uppercase">
-              {totalToken + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+              {totalToken / 1000000 +
+                " " +
+                process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
             </div>
             <div className="opacity-50 font-bold mt-8">Claimable</div>
             <div className="text-4xl uppercase">
-              {unclaimedToken + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+              {unclaimedToken / 1000000 +
+                " " +
+                process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
             </div>
             <div className="opacity-50 font-bold mt-8">Claimed</div>
             <div className="text-4xl uppercase">
-              {claimedToken + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+              {claimedToken / 1000000 +
+                " " +
+                process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
             </div>
           </div>
         </div>
