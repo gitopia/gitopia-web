@@ -7,11 +7,12 @@ import styles from "../styles/landing.module.css";
 import Link from "next/link";
 import { connect } from "react-redux";
 import { notify } from "reapop";
-import { calculateGithubRewards } from "../store/actions/user";
+import { calculateGithubRewards, claimRewards } from "../store/actions/user";
 import { updateUserBalance } from "../store/actions/wallet";
 import getTasks from "../helpers/getTasks";
 import { tasksToMessage } from "../helpers/tasksTypes";
 import { useRouter } from "next/router";
+import getRewardToken from "../helpers/getRewardTokens";
 
 const dayjs = require("dayjs");
 const duration = require("dayjs/plugin/duration");
@@ -57,37 +58,40 @@ function ClaimRewards(props) {
     const interval = setInterval(() => getTime(deadlineUnix), 60000);
     return () => clearInterval(interval);
   });
-
-  useEffect(() => {
-    async function fetchTasks() {
-      const tasks = await getTasks(props.selectedAddress);
-      if (tasks !== undefined) {
-        setTasks(tasks);
-      }
+  async function fetchTasks() {
+    const tasks = await getTasks(props.selectedAddress);
+    if (tasks !== undefined) {
+      setTasks(tasks);
+      calculateTasksPercentage();
     }
+  }
+  useEffect(() => {
     fetchTasks();
     calculateTasksPercentage();
     getTime(deadlineUnix);
     getTokens();
-  }, [props.selectedAddress, unclaimedToken]);
+  }, [props.selectedAddress]);
 
   async function getTokens() {
-    await axios
-      .get(
-        process.env.NEXT_PUBLIC_REWARD_SERVICE_URL +
-          "/rewards?addr=" +
-          props.selectedAddress
-      )
-      .then(({ data }) => {
-        setTotalToken(data.total_amount);
-        setClaimedToken(data.claimed_amount);
-        setUnclaimedToken(data.unclaimed_amount);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    let res = await getRewardToken(props.selectedAddress);
+    if (res) {
+      setTotalToken(
+        res.reward?.amount.length > 0 ? res.reward.amount[0].amount : 0
+      );
+      setClaimedToken(
+        res.reward?.claimedAmount.length > 0
+          ? res.reward.claimedAmount[0].amount
+          : 0
+      );
+      setUnclaimedToken(
+        res.claimableRewardAmount.length > 0
+          ? res.claimableRewardAmount[0].amount
+          : 0
+      );
+    }
   }
   setInterval(getTokens, 120000);
+  setInterval(fetchTasks, 60000);
 
   const claimTokens = async () => {
     if (loading) return;
@@ -96,20 +100,11 @@ function ClaimRewards(props) {
       return;
     }
     setLoading(true);
-    const res = await props.calculateGithubRewards(props.code);
-    await axios
-      .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/claim", {
-        payload: res,
-      })
-      .then(() => {
-        updateUserBalance();
-        getTokens();
-        calculateTasksPercentage();
-        notify("Reward Claimed", info);
-      })
-      .catch(({ err }) => {
-        console.error(err);
-      });
+    const res = await props.claimRewards();
+    if (res) {
+      getTokens();
+      props.notify("reward claimed", "info");
+    }
     setLoading(false);
   };
 
@@ -146,11 +141,11 @@ function ClaimRewards(props) {
             </div>
             <div className="opacity-50 font-bold mt-8">Claimable</div>
             <div className="text-4xl uppercase">
-              {unclaimedToken + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN}{" "}
+              {unclaimedToken + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
             </div>
             <div className="opacity-50 font-bold mt-8">Claimed</div>
             <div className="text-4xl uppercase">
-              {claimedToken + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN}{" "}
+              {claimedToken + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
             </div>
           </div>
         </div>
@@ -325,4 +320,5 @@ export default connect(mapStateToProps, {
   notify,
   calculateGithubRewards,
   updateUserBalance,
+  claimRewards,
 })(ClaimRewards);
