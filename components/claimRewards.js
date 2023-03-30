@@ -140,12 +140,18 @@ function ClaimRewards(props) {
             )}
           </div>
           <div className="sm:ml-auto w-60 mt-10">
-            <div className="opacity-50 font-bold">Total Token Available</div>
-            <div className="text-4xl">{totalToken} tLore</div>
-            <div className="opacity-50 font-bold mt-8">Unclaimed</div>
-            <div className="text-4xl">{unclaimedToken} tLore</div>
-            <div className="opacity-50 font-bold mt-8">Claimed Airdrop</div>
-            <div className="text-4xl">{claimedToken} tLore</div>
+            <div className="opacity-50 font-bold">Total Tokens Available</div>
+            <div className="text-4xl uppercase">
+              {totalToken + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+            </div>
+            <div className="opacity-50 font-bold mt-8">Claimable</div>
+            <div className="text-4xl uppercase">
+              {unclaimedToken + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN}{" "}
+            </div>
+            <div className="opacity-50 font-bold mt-8">Claimed</div>
+            <div className="text-4xl uppercase">
+              {claimedToken + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN}{" "}
+            </div>
           </div>
         </div>
 
