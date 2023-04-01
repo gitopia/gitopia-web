@@ -4,13 +4,30 @@ import { Api } from "@gitopia/gitopia-js/dist/rest.js";
 import * as env from "@next/env";
 import globby from "globby";
 import filter from "lodash/filter.js";
+import knex from "knex";
+import path from "path";
 
 env.default.loadEnvConfig(process.cwd());
+
+const dbPath = path.join(process.cwd(), "seo/db.sqlite3");
+
+const db = knex({
+  client: "better-sqlite3",
+  connection: {
+    filename: dbPath,
+  },
+  useNullAsDefault: true,
+  migrations: {
+    tableName: "knex_migrations",
+  },
+});
 
 const paginationLimit = 200,
   workingDir = "./seo";
 
 let owners = [],
+  users = [],
+  daos = [],
   repositories = [],
   issues = [],
   pulls = [],
@@ -20,7 +37,8 @@ let owners = [],
   releases = [],
   whois = [],
   dynamicPaths = [],
-  dynamicPathParams = [];
+  dynamicPathParams = [],
+  blacklist = {};
 
 async function populate(
   queryFunc,
@@ -61,7 +79,7 @@ async function populate(
   console.log("Found", dataField, populateObject.length);
 }
 
-function addPath(params, urlParts) {
+function addPath(params, urlParts, data) {
   dynamicPaths.push("/" + urlParts.join("/"));
   dynamicPathParams.push({ params });
 }
@@ -107,23 +125,98 @@ function saveParamsForPaths(filename) {
   dynamicPathParams = [];
 }
 
-function dumpData() {
-  fs.writeFileSync(workingDir + "/dump-owners.json", JSON.stringify(owners));
-  fs.writeFileSync(
-    workingDir + "/dump-repositories.json",
-    JSON.stringify(repositories)
+async function updateBlacklist() {
+  // Remove case insensetive duplicate names from repositories by same owner
+  const duplicateRepos = await db.raw(`
+    select id from Repositories where UPPER(name) in
+    (select UPPER(name) from Repositories group by UPPER(name), ownerAddress having count(*)>1)
+    and ownerAddress in
+    (select ownerAddress from Repositories group by UPPER(name), ownerAddress having count(*)>1)
+  `);
+  blacklist["Repository"] = duplicateRepos.map((r) => Number(r.id));
+  console.log(
+    "Blacklisted duplicate repository names",
+    blacklist["Repository"].length
   );
-  fs.writeFileSync(workingDir + "/dump-issues.json", JSON.stringify(issues));
-  fs.writeFileSync(workingDir + "/dump-pulls.json", JSON.stringify(pulls));
-  fs.writeFileSync(
-    workingDir + "/dump-comments.json",
-    JSON.stringify(comments)
-  );
-  fs.writeFileSync(workingDir + "/dump-whois.json", JSON.stringify(whois));
-  fs.writeFileSync(
-    workingDir + "/dump-releases.json",
-    JSON.stringify(releases)
-  );
+}
+
+async function dumpData() {
+  for (let i = 0; i < whois.length; i++) {
+    let o = whois[i];
+    await db("Whois").insert(o).onConflict("id").merge();
+  }
+  for (let i = 0; i < users.length; i++) {
+    let o = users[i];
+    await db("Users")
+      .insert({
+        address: o.creator,
+        data: JSON.stringify(o),
+      })
+      .onConflict("address")
+      .merge();
+  }
+  for (let i = 0; i < daos.length; i++) {
+    let o = daos[i];
+    await db("Daos")
+      .insert({
+        address: o.address,
+        data: JSON.stringify(o),
+      })
+      .onConflict("address")
+      .merge();
+  }
+  for (let i = 0; i < repositories.length; i++) {
+    let o = repositories[i];
+    await db("Repositories")
+      .insert({
+        id: o.id,
+        name: o.name,
+        ownerUsername: o.owner.username,
+        ownerAddress: o.owner.address,
+        ownerType: o.owner.type,
+        updatedAt: o.updatedAt,
+        data: JSON.stringify(o),
+      })
+      .onConflict("id")
+      .merge();
+  }
+  for (let i = 0; i < issues.length; i++) {
+    let o = issues[i];
+    await db("Issues")
+      .insert({
+        id: o.id,
+        iid: o.iid,
+        repositoryId: o.repositoryId,
+        data: JSON.stringify(o),
+      })
+      .onConflict("id")
+      .merge();
+  }
+  for (let i = 0; i < pulls.length; i++) {
+    let o = pulls[i];
+    await db("PullRequests")
+      .insert({
+        id: o.id,
+        iid: o.iid,
+        baseRepositoryId: o.base.repositoryId,
+        data: JSON.stringify(o),
+      })
+      .onConflict("id")
+      .merge();
+  }
+  for (let i = 0; i < comments.length; i++) {
+    let o = comments[i];
+    await db("Comments")
+      .insert({
+        id: o.id,
+        repositoryId: o.repositoryId,
+        parentIid: o.parentIid,
+        parent: o.parent,
+        data: JSON.stringify(o),
+      })
+      .onConflict("id")
+      .merge();
+  }
 }
 
 async function saveSitemap() {
@@ -153,12 +246,14 @@ console.log("SERVER_URL", process.env.NEXT_PUBLIC_SERVER_URL);
 
 Promise.all([
   populate("queryUserAll", "User", owners, (u) => {
+    users.push(u);
     return {
       address: u.creator,
       ...u,
     };
   }),
   populate("queryDaoAll", "dao", owners, (d) => {
+    daos.push(d);
     return {
       username: d.name.toLowerCase(),
       ...d,
@@ -174,16 +269,19 @@ Promise.all([
   populate("queryWhoisAll", "Whois", whois),
   getStaticPaths(),
 ])
-  .then(() => {
-    owners.forEach((u) => {
+  .then(async () => {
+    await updateBlacklist();
+    for (let i = 0; i < owners.length; i++) {
+      let u = owners[i];
       if (!/^temp-/.test(u.username) && u.address)
         addPath({ userId: u.username ? u.username : u.address }, [
           u.username ? u.username : u.address,
         ]);
-    });
+    }
     console.log("Saving Owners", dynamicPathParams.length);
     saveParamsForPaths(workingDir + "/paths-owners.json");
-    repositories.forEach((r) => {
+    for (let i = 0; i < repositories.length; i++) {
+      let r = repositories[i];
       let owner = find(owners, { address: r.owner.id });
       let b = filter(branches, { repositoryId: r.id }),
         t = filter(tags, { repositoryId: r.id });
@@ -192,7 +290,11 @@ Promise.all([
       if (owner?.username) r.owner.id = r.owner.username;
       r.branches = b;
       r.tags = t;
-      if (!/^temp-/.test(owner.username) && owner.address) {
+      if (
+        !/^temp-/.test(owner.username) &&
+        owner.address &&
+        !blacklist.Repository?.includes(Number(r.id))
+      ) {
         addPath(
           {
             userId: r.owner.username,
@@ -201,16 +303,18 @@ Promise.all([
           [owner?.username, r.name]
         );
       }
-    });
+    }
     console.log("Saving Repositories", dynamicPathParams.length);
     saveParamsForPaths(workingDir + "/paths-repositories.json");
-    issues.forEach((i) => {
+    for (let j = 0; j < issues.length; j++) {
+      let i = issues[j];
       let repo = find(repositories, { id: i.repositoryId });
       if (
         !/^temp-/.test(repo?.owner?.username) &&
         repo?.owner?.username &&
         repo?.name &&
-        i.iid
+        i.iid &&
+        !blacklist.Repository?.includes(Number(repo.id))
       ) {
         addPath(
           {
@@ -221,16 +325,18 @@ Promise.all([
           [repo?.owner.username, repo?.name, "issues", i.iid]
         );
       }
-    });
+    }
     console.log("Saving Issues", dynamicPathParams.length);
     saveParamsForPaths(workingDir + "/paths-issues.json");
-    pulls.forEach((p) => {
+    for (let i = 0; i < pulls.length; i++) {
+      let p = pulls[i];
       let repo = find(repositories, { id: p.base.repositoryId });
       if (
         !/^temp-/.test(repo?.owner?.username) &&
         repo?.owner?.username &&
         repo?.name &&
-        p.iid
+        p.iid &&
+        !blacklist.Repository?.includes(Number(repo.id))
       ) {
         addPath(
           {
@@ -241,9 +347,11 @@ Promise.all([
           [repo?.owner.username, repo?.name, "pulls", p.iid]
         );
       }
-    });
+    }
     console.log("Saving Pull Requests", dynamicPathParams.length);
     saveParamsForPaths(workingDir + "/paths-pulls.json");
-    dumpData();
+    await dumpData();
+    console.log("Data dumped to", dbPath);
+    db.destroy();
   })
   .then(saveSitemap);

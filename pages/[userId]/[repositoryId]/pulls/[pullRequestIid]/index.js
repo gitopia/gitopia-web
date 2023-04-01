@@ -36,28 +36,41 @@ import { parseDiff, Diff, Hunk, getChangeKey } from "react-diff-view";
 import getDiff from "../../../../../helpers/getDiff";
 import ReactMarkdown from "react-markdown";
 import shrinkAddress from "../../../../../helpers/shrinkAddress";
+import validAddress from "../../../../../helpers/validAddress";
 import dayjs from "dayjs";
 
 export async function getStaticProps({ params }) {
   try {
-    const fs = (await import("fs")).default;
-    const repositories = JSON.parse(
-        fs.readFileSync("./seo/dump-repositories.json")
-      ),
-      pulls = JSON.parse(fs.readFileSync("./seo/dump-pulls.json")),
-      comments = JSON.parse(fs.readFileSync("./seo/dump-comments.json"));
-
-    const r = find(
-      repositories,
-      (r) =>
-        r.name === params.repositoryId &&
-        (r.owner.id === params.userId || r.owner.username === params.userId)
-    );
+    const db = (await import("../../../../../helpers/getSeoDatabase")).default;
+    let r;
+    if (validAddress.test(params.userId)) {
+      r = JSON.parse(
+        (
+          await db
+            .first("*")
+            .from("Repositories")
+            .where({ name: params.repositoryId, ownerAddress: params.userId })
+        ).data
+      );
+    } else {
+      r = JSON.parse(
+        (
+          await db
+            .first("*")
+            .from("Repositories")
+            .where({ name: params.repositoryId, ownerUsername: params.userId })
+        ).data
+      );
+    }
 
     if (r) {
-      const p = find(
-        pulls,
-        (t) => t.iid === params.pullRequestIid && t.base?.repositoryId === r.id
+      const p = JSON.parse(
+        (
+          await db
+            .first("*")
+            .from("PullRequests")
+            .where({ iid: params.pullRequestIid, baseRepositoryId: r.id })
+        ).data
       );
       if (p) {
         if (p.base.repositoryId === p.head.repositoryId) {
@@ -70,7 +83,14 @@ export async function getStaticProps({ params }) {
             p.head.sha = p.head.commitSha;
           }
         } else {
-          const forkRepo = find(repositories, { id: p.head.repositoryId });
+          const forkRepo = JSON.parse(
+            (
+              await db
+                .first("*")
+                .from("Repositories")
+                .where({ id: p.head.repositoryId })
+            ).data
+          );
           if (forkRepo) {
             p.head.repository = forkRepo;
             p.base.repository = r;
@@ -87,14 +107,23 @@ export async function getStaticProps({ params }) {
             }
           }
         }
-        const cs = filter(comments, (c) => p.comments.includes(c.id));
+        let cs;
+        if (p.commentsCount) {
+          const csJsons = await db
+            .select("*")
+            .from("Comments")
+            .where({repositoryId: r.id, parentIid: p.iid, parent: "COMMENT_PARENT_PULL_REQUEST"})
+          cs = csJsons.map((j) => JSON.parse(j.data));
+        }
         return {
-          props: { repository: r, pullRequest: p, comments: cs },
+          props: { repository: r, pullRequest: p, comments: cs || [] },
           revalidate: 1,
         };
       }
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error(e);
+  }
   return { props: {} };
 }
 

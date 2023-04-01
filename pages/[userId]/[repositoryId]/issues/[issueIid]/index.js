@@ -36,37 +36,59 @@ import IssueBountyView from "../../../../../components/repository/bountiesView";
 import Link from "next/link";
 import filter from "lodash/filter";
 import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
+import validAddress from "../../../../../helpers/validAddress";
 
 export async function getStaticProps({ params }) {
   try {
-    const fs = (await import("fs")).default;
-    const issues = JSON.parse(fs.readFileSync("./seo/dump-issues.json")),
-      repositories = JSON.parse(
-        fs.readFileSync("./seo/dump-repositories.json")
-      ),
-      comments = JSON.parse(fs.readFileSync("./seo/dump-comments.json"));
-
-    const r = find(
-      repositories,
-      (r) =>
-        r.name === params.repositoryId &&
-        (r.owner.id === params.userId || r.owner.username === params.userId)
-    );
+    const db = (await import("../../../../../helpers/getSeoDatabase")).default;
+    let r;
+    if (validAddress.test(params.userId)) {
+      r = JSON.parse(
+        (
+          await db
+            .first("*")
+            .from("Repositories")
+            .where({ name: params.repositoryId, ownerAddress: params.userId })
+        ).data
+      );
+    } else {
+      r = JSON.parse(
+        (
+          await db
+            .first("*")
+            .from("Repositories")
+            .where({ name: params.repositoryId, ownerUsername: params.userId })
+        ).data
+      );
+    }
 
     if (r) {
-      const i = find(
-        issues,
-        (t) => t.iid === params.issueIid && t.repositoryId === r.id
+      const i = JSON.parse(
+        (
+          await db
+            .first("*")
+            .from("Issues")
+            .where({ iid: params.issueIid, repositoryId: r.id })
+        ).data
       );
       if (i) {
-        const cs = filter(comments, (c) => i.comments.includes(c.id));
+        let cs;
+        if (i.commentsCount) {
+          const csJsons = await db
+            .select("*")
+            .from("Comments")
+            .where({repositoryId: r.id, parentIid: i.iid, parent: "COMMENT_PARENT_ISSUE"})
+          cs = csJsons.map((j) => JSON.parse(j.data));
+        }
         return {
-          props: { repository: r, issue: i, comments: cs },
+          props: { repository: r, issue: i, comments: cs || [] },
           revalidate: 1,
         };
       }
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error(e);
+  }
   return { props: {} };
 }
 
