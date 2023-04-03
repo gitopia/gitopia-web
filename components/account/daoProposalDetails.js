@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { proposalDeposit } from "../../store/actions/proposals";
 import { proposalVote } from "../../store/actions/proposals";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
 import getTally from "../../helpers/getTally";
 import Link from "next/dist/client/link";
 import getDepositor from "../../helpers/getDepositor";

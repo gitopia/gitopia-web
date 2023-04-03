@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../helpers/axiosFetch";
 
 export default async function getTally(id) {
   let obj = {};

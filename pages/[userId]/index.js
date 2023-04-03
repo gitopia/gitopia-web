@@ -19,9 +19,6 @@ import DaoProposalList from "../../components/account/daoProposalList";
 import DaoProposalCreate from "../../components/account/daoProposalCreate";
 import DaoProposalDetails from "../../components/account/daoProposalDetails";
 import validAddress from "../../helpers/validAddress";
-import sortBy from "lodash/sortBy";
-import find from "lodash/find";
-import filter from "lodash/filter";
 
 export async function getStaticProps({ params }) {
   let data,
@@ -29,27 +26,37 @@ export async function getStaticProps({ params }) {
     d,
     allRepos = [];
   try {
-    const fs = (await import("fs")).default;
-    let whois = JSON.parse(fs.readFileSync("./seo/dump-whois.json")),
-      repositories = JSON.parse(
-        fs.readFileSync("./seo/dump-repositories.json")
-      ),
-      owners = JSON.parse(fs.readFileSync("./seo/dump-owners.json"));
+    const db = (await import('../../helpers/getSeoDatabase')).default;
     if (validAddress.test(params.userId)) {
-      data = find(whois, { address: params.userId });
+      data = await db
+        .first("*")
+        .from("Whois")
+        .where({ address: params.userId });
     } else {
-      data = find(whois, { name: params.userId });
+      data = await db.first("*").from("Whois").where({ name: params.userId });
     }
     if (data?.ownerType === "USER") {
-      u = find(owners, { address: data.address });
-      const pr = filter(repositories, (r) => r.owner.id === u.creator);
-      allRepos = sortBy(pr, (r) => -Number(r.updatedAt));
+      u = JSON.parse((await db.first("*").from("Users").where({ address: data.address })).data);
+      let repoJsons = await db
+        .select("*")
+        .from("Repositories")
+        .where({ownerAddress: data.address})
+        .orderBy("updatedAt", "desc")
+        .limit(10);
+      allRepos = repoJsons.map((j) => JSON.parse(j.data));
     } else if (data?.ownerType === "DAO") {
-      d = find(owners, { address: data.address });
-      const pr = filter(repositories, (r) => r.owner.id === d.address);
-      allRepos = sortBy(pr, (r) => -Number(r.updatedAt));
+      d = JSON.parse((await db.first("*").from("Daos").where({ address: data.address })).data);
+      let repoJsons = await db
+        .select("*")
+        .from("Repositories")
+        .where({ownerAddress: data.address})
+        .orderBy("updatedAt", "desc")
+        .limit(10);
+      allRepos = repoJsons.map((j) => JSON.parse(j.data));
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error(e);
+  }
 
   return {
     props: { user: u || {}, dao: d || {}, allRepos },

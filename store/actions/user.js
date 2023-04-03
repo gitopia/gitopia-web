@@ -9,8 +9,7 @@ import { updateUserBalance, refreshCurrentDashboard } from "./wallet";
 import { notify } from "reapop";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getNodeInfo from "../../helpers/getNodeInfo";
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import { toBase64 } from "@cosmjs/encoding";
+
 
 export const createUser = ({ username, name, bio, avatarUrl }) => {
   return async (dispatch, getState) => {
@@ -318,6 +317,8 @@ export const signUploadFileMessage = (name, size, md5) => {
       md5,
     };
     try {
+      let TxRaw = (await import("cosmjs-types/cosmos/tx/v1beta1/tx")).TxRaw;
+      let toBase64 = (await import("@cosmjs/encoding")).toBase64;
       let s = await signMessage({ data })(dispatch, getState);
       let raw = TxRaw.encode(s).finish();
       let msg = toBase64(raw);
@@ -330,10 +331,6 @@ export const signUploadFileMessage = (name, size, md5) => {
   };
 };
 
-if (typeof window !== "undefined") {
-  window.toBase64 = toBase64;
-}
-
 export const calculateGithubRewards = (code) => {
   return async (dispatch, getState) => {
     const data = {
@@ -341,6 +338,8 @@ export const calculateGithubRewards = (code) => {
       code,
     };
     try {
+      let TxRaw = (await import("cosmjs-types/cosmos/tx/v1beta1/tx")).TxRaw;
+      let toBase64 = (await import("@cosmjs/encoding")).toBase64;
       let s = await signMessage({ data })(dispatch, getState);
       let raw = TxRaw.encode(s).finish();
       let msg = toBase64(raw);

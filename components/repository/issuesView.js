@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import getIssue from "../../helpers/getIssue";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import dayjs from "dayjs";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import { notify } from "reapop";
 import { useRouter } from "next/router";
 

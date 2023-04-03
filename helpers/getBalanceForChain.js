@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../helpers/axiosFetch";
 
 export async function getBalanceForChain(apiEndpoints, address, denom) {
   let balance = 0;

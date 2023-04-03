@@ -1,5 +1,10 @@
 ## Changelog
 
+### v1.7.0 - 3rd Mar 2023
+
+- Claim rewards page updated
+- Build and code improvements
+
 ### v1.6.0 - 24th Mar 2023
 
 - Added comments in diffs of pull requests and commits

@@ -1,5 +1,5 @@
 import api from "./getProposalApi";
-import axios from "axios";
+import axios from "../helpers/axiosFetch";
 
 export default async function getProposal(id) {
   let proposer = "";
