@@ -9,10 +9,14 @@ import { useRouter } from "next/router";
 import { getAddressforChain } from "../../store/actions/wallet";
 import { getAssetList } from "../../helpers/getIbcAssetList";
 import { coingeckoId } from "../../ibc-assets-config";
+import getRewardToken from "../../helpers/getRewardTokens";
+import getTokenValueInDollars from "../../helpers/getTotalTokenValueInDollars";
 
 function WalletInfo(props) {
   const [totalBalance, setTotalBalance] = useState(0);
   const [tokenBalances, setTokenBalances] = useState({});
+  const [rewards, setRewards] = useState(0);
+  const [rewardsDollarValue, setRewardsDollarValue] = useState(0);
   const [assets, setAssets] = useState([]);
   const router = useRouter();
   useEffect(() => {
@@ -29,8 +33,23 @@ function WalletInfo(props) {
         setAssets(assets);
       }
     }
+    async function getRewards() {
+      let tokens = await getRewardToken(props.selectedAddress);
+      if (tokens) {
+        setRewards(tokens.reward.claimedAmount[0].amount);
+        let dollar = await getTokenValueInDollars(
+          tokens.reward.claimedAmount[0].denom,
+          tokens.reward.claimedAmount[0].amount
+        );
+        if (dollar) {
+          setRewardsDollarValue(dollar);
+        }
+      }
+    }
+
     getWalletbalance();
     getAssets();
+    getRewards();
   }, [props.selectedAddress]);
 
   return (
@@ -184,14 +203,17 @@ function WalletInfo(props) {
                 <img width={24} src={asset.logo_URIs?.png} />
               </div>
               <div className="mx-3 flex-1">{asset.chain_name}</div>
-              <div className="lowercase">
+              <div className="font-bold text-xs text-type-tertiary">
+                coming soon
+              </div>
+              {/* <div className="lowercase">
                 {(tokenBalances[asset.base_denom] /
                   Math.pow(10, coingeckoId[asset.base_denom]?.coinDecimals) ||
                   0) +
                   " " +
                   coingeckoId[asset.base_denom]?.coinDenom}
-              </div>
-              <div className="flex transition-all items-center cursor-pointer text-type-secondary opacity-0 w-0 group-hover:opacity-100 group-hover:w-20 group-hover:ml-3">
+              </div> */}
+              {/* <div className="flex transition-all items-center cursor-pointer text-type-secondary opacity-0 w-0 group-hover:opacity-100 group-hover:w-20 group-hover:ml-3">
                 <div
                   className="btn btn-circle btn-sm btn-outline mr-3 tooltip tooltip-bottom tooltip-secondary"
                   data-tip="Deposit"
@@ -285,7 +307,7 @@ function WalletInfo(props) {
                     </g>
                   </svg>
                 </div>
-              </div>
+              </div> */}
             </div>
           );
         })}
@@ -322,10 +344,21 @@ function WalletInfo(props) {
             </svg>
           </div>
           <div className="ml-2 flex-1">
-            <div className="font-semibold text-3xl">0</div>
-            <div className="font-bold text-xs text-type-tertiary">≈ $0.0</div>
+            <div className="font-semibold text-xl mt-1">
+              {rewards / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+            </div>
+            <div className="font-bold text-xs text-type-tertiary">
+              {rewardsDollarValue}
+            </div>
           </div>
-          <div disabled={true} className="btn btn-primary btn-sm mt-3">
+          <div
+            onClick={() => {
+              if (window) {
+                window.open("/rewards");
+              }
+            }}
+            className="btn btn-primary btn-sm mt-3"
+          >
             Claim Rewards
           </div>
         </div>
