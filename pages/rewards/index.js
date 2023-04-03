@@ -57,12 +57,18 @@ function Rewards(props) {
           props.selectedAddress
       )
       .then(({ data }) => {
-        return data.status;
+        setStatus(data.status);
       })
       .catch((e) => {
         setStatus(404);
       });
   }
+  useEffect(() => {
+    const id = setInterval(fetchStatus, 1000);
+    return () => {
+      clearInterval(id);
+    };
+  });
 
   useEffect(() => {
     const query = window.location.search;
@@ -88,10 +94,6 @@ function Rewards(props) {
       props.notify("Please sign in before claiming tokens", "error");
       return;
     }
-    const rewardStatus = fetchStatus();
-    if (rewardStatus === 1 || rewardStatus == 2) {
-      setStatus(rewardStatus);
-    }
     setLoading(true);
     const res = await props.calculateGithubRewards(code);
     await axios
@@ -113,10 +115,10 @@ function Rewards(props) {
         process.env.NEXT_PUBLIC_GITHUB_OAUTH_CLIENT_ID
     );
   }
-  if (status === 1 && code !== null) {
+  if (status === 1) {
     return <LoadingRewards setStatus={setStatus} status={status} />;
-  } else if (status === 2 && code !== null) {
-    return <ClaimRewards code={code} />;
+  } else if (status === 2) {
+    return <ClaimRewards />;
   } else
     return (
       <div className={styles.wrapper}>
@@ -196,6 +198,7 @@ function Rewards(props) {
                 onClick={() => {
                   githubLogin();
                 }}
+                disabled={activeWallet === null}
               >
                 Connect Github
               </div>

@@ -352,3 +352,33 @@ export const calculateGithubRewards = (code) => {
     }
   };
 };
+
+export const claimRewards = () => {
+  return async (dispatch, getState) => {
+    try {
+      await setupTxClients(dispatch, getState);
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+    const { wallet, env } = getState();
+    let msg = {
+      creator: wallet.selectedAddress,
+    };
+    try {
+      const message = await env.txClient.msgClaim(msg);
+      const result = await sendTransaction({ message })(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};

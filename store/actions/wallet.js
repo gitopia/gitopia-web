@@ -20,6 +20,7 @@ import getChainIbcAsset from "../../helpers/getChainIbcAssets";
 import dayjs from "dayjs";
 import { calculateFee, GasPrice } from "@cosmjs/stargate";
 import { gasConfig } from "../../ibc-assets-config";
+import { getEndpoint } from "../../helpers/getEndpoints";
 
 let ledgerTransport;
 
@@ -39,6 +40,15 @@ const postWalletUnlocked = async (
   if (accountSigner) {
     const { queryClient, txClient } = await import("@gitopia/gitopia-js/dist");
     if (accountSignerSecondary !== null) {
+      const getRpcEndPointSecondary = await getEndpoint(
+        "rpc",
+        ibcAssets.chainInfo.chain.apis.rpc
+      );
+      const getRestEndPointSecondary = await getEndpoint(
+        "rest",
+        ibcAssets.chainInfo.chain.apis.rest,
+        wallet.activeWallet.counterPartyAddress
+      );
       const [tc, qc, tcs, qcs, amount] = await Promise.all([
         txClient(
           accountSigner,
@@ -49,12 +59,12 @@ const postWalletUnlocked = async (
         txClient(
           accountSignerSecondary,
           {
-            addr: ibcAssets.chainInfo.chain.apis.rpc[3].address,
+            addr: getRpcEndPointSecondary,
             gasPrice: wallet.gasPrice,
           },
           ibcAssets.chainInfo.chain.bech32_prefix
         ),
-        queryClient({ addr: ibcAssets.chainInfo.chain.apis.rest[3].address }),
+        queryClient({ addr: getRestEndPointSecondary }),
         updateUserBalance()(dispatch, getState),
       ]);
       dispatch({

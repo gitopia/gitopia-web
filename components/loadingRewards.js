@@ -23,8 +23,8 @@ function LoadingRewards(props) {
       });
   }
   useEffect(() => {
-    const id = setInterval(fetchStatus, 1000);
-    if (props.status === 1) {
+    const id = setInterval(fetchStatus, 60000);
+    if (props.status === 2) {
       clearInterval(id);
       router.push("/rewards");
     }
