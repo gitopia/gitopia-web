@@ -23,7 +23,7 @@ dayjs.extend(customParseFormat);
 
 function ClaimRewards(props) {
   const [loading, setLoading] = useState(false);
-  const [totalToken, setTotalToken] = useState(null);
+  const [token, setToken] = useState(null);
   const [claimedToken, setClaimedToken] = useState(null);
   const [unclaimedToken, setUnclaimedToken] = useState(null);
   const [days, setDays] = useState(0);
@@ -85,7 +85,13 @@ function ClaimRewards(props) {
   async function getTokens() {
     let res = await getRewardToken(props.selectedAddress);
     if (res) {
-      setTotalToken(res.amount.amount);
+      res.claimed_amount.amount +
+        res.claimable_amount.amount +
+        res.remaining_claimable_amount.amount <
+      1000000
+        ? setToken(process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN)
+        : setToken(process.env.NEXT_PUBLIC_CURRENCY_TOKEN);
+
       setClaimedToken(res.claimed_amount.amount);
       setUnclaimedToken(res.claimable_amount.amount);
       setRemainingClaimableToken(res.remaining_claimable_amount.amount);
@@ -162,7 +168,7 @@ function ClaimRewards(props) {
                 >
                   Claim Now
                 </button>
-                <div className="tooltip" data-tip="Decays by 1% everyday">
+                <div className="tooltip" data-tip="decays by 1% everyday">
                   <svg
                     width="16"
                     height="16"
@@ -178,14 +184,16 @@ function ClaimRewards(props) {
                 </div>
               </div>
               <div className="text-4xl uppercase">
-                {unclaimedToken +
+                {(token === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                  ? unclaimedToken
+                  : unclaimedToken / 1000000) +
                   " " +
-                  process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN}
+                  token}
               </div>
             </div>
             <div className="flex mt-8">
               <div className="opacity-70 font-bold">Locked Rewards</div>
-              <div className="tooltip" data-tip="Decays by 1% everyday">
+              <div className="tooltip" data-tip="decays by 1% everyday">
                 <svg
                   width="16"
                   height="16"
@@ -201,16 +209,20 @@ function ClaimRewards(props) {
               </div>
             </div>
             <div className="text-4xl uppercase">
-              {remainingClaimableToken +
+              {(token === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                ? remainingClaimableToken
+                : remainingClaimableToken / 1000000) +
                 " " +
-                process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN}
+                token}
             </div>
 
-            <div className="opacity-70 font-bold mt-8">Claimed</div>
+            <div className="opacity-70 font-bold mt-8">Claimed Rewards</div>
             <div className="text-4xl uppercase">
-              {claimedToken +
+              {(token === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                ? claimedToken
+                : claimedToken / 1000000) +
                 " " +
-                process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN}
+                token}
             </div>
           </div>
         </div>
@@ -256,13 +268,19 @@ function ClaimRewards(props) {
                 </div>
                 <div
                   className={
-                    "ml-4 lg:ml-2 flex items-center rounded-full px-4 py-0.5 bg-purple text-xs mt-3 h-6 w-28 mb-4 sm:mb-0 " +
+                    "ml-4 lg:ml-2 flex items-center justify-center rounded-full bg-purple text-xs mt-3 h-6 w-28 mb-4 sm:mb-0 " +
                     (t.isComplete ? "hidden" : "")
                   }
                 >
-                  {(t.weight / tasksTotal) * remainingClaimableToken +
+                  {(token === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                    ? (t.weight / tasksTotal) * remainingClaimableToken
+                    : Math.floor(
+                        (((t.weight / tasksTotal) * remainingClaimableToken) /
+                          1000000) *
+                          100
+                      ) / 100) +
                     " " +
-                    process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN}
+                    token}
                 </div>
               </div>
               {t.isComplete ? (
