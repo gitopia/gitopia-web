@@ -45,14 +45,16 @@ function ClaimRewards(props) {
     setMinutes(diff.minutes());
   };
 
-  const calculateTasksPercentage = () => {
+  const calculateTasksPercentage = (t) => {
     let count = 0;
-    for (let i = 0; i < tasks?.length; i++) {
-      if (tasks[i].isComplete) {
-        count = count + tasks[i].weight;
+    if (t.length > 0) {
+      for (let i = 0; i < t?.length; i++) {
+        if (t[i].isComplete) {
+          count = count + t[i].weight;
+        }
       }
     }
-    setTasksCompleted(count);
+    return count;
   };
 
   useEffect(() => {
@@ -60,15 +62,18 @@ function ClaimRewards(props) {
     return () => clearInterval(interval);
   });
   async function fetchTasks() {
-    const tasks = await getTasks(props.selectedAddress);
-    if (tasks !== undefined) {
-      setTasks(tasks);
-      calculateTasksPercentage();
+    const t = await getTasks(props.selectedAddress);
+    if (t !== undefined) {
+      setTasks(t);
+      if (tasks) {
+        const percentage = await calculateTasksPercentage(t);
+        setTasksCompleted(percentage);
+      }
     }
   }
+
   useEffect(() => {
     fetchTasks();
-    calculateTasksPercentage();
     getTime(deadlineUnix);
     getTokens();
   }, [props.selectedAddress]);
@@ -76,7 +81,6 @@ function ClaimRewards(props) {
   async function getTokens() {
     let res = await getRewardToken(props.selectedAddress);
     if (res) {
-      console.log(res);
       setTotalToken(res.amount.amount);
       setClaimedToken(res.claimed_amount.amount);
       setUnclaimedToken(res.claimable_amount.amount);

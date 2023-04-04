@@ -36,10 +36,10 @@ function WalletInfo(props) {
     async function getRewards() {
       let tokens = await getRewardToken(props.selectedAddress);
       if (tokens) {
-        setRewards(tokens.reward.claimedAmount[0].amount);
+        setRewards(tokens.claimed_amount.amount);
         let dollar = await getTokenValueInDollars(
-          tokens.reward.claimedAmount[0].denom,
-          tokens.reward.claimedAmount[0].amount
+          tokens.claimed_amount.denom,
+          tokens.claimed_amount.amount
         );
         if (dollar) {
           setRewardsDollarValue(dollar);
