@@ -31,6 +31,7 @@ function ClaimRewards(props) {
   const [minutes, setMinutes] = useState(0);
   const [tasks, setTasks] = useState([]);
   const [tasksCompleted, setTasksCompleted] = useState(0);
+  const [remainingClaimableToken, setRemainingClaimableToken] = useState(0);
 
   const router = useRouter();
   const deadlineUnix = process.env.NEXT_PUBLIC_REWARD_DEADLINE;
@@ -47,7 +48,7 @@ function ClaimRewards(props) {
   const calculateTasksPercentage = () => {
     let count = 0;
     for (let i = 0; i < tasks?.length; i++) {
-      if (tasks[i].isComplete === true) {
+      if (tasks[i].isComplete) {
         count = count + tasks[i].weight;
       }
     }
@@ -75,19 +76,11 @@ function ClaimRewards(props) {
   async function getTokens() {
     let res = await getRewardToken(props.selectedAddress);
     if (res) {
-      setTotalToken(
-        res.reward?.amount.length > 0 ? res.reward.amount[0].amount : 0
-      );
-      setClaimedToken(
-        res.reward?.claimedAmount.length > 0
-          ? res.reward.claimedAmount[0].amount
-          : 0
-      );
-      setUnclaimedToken(
-        res.claimableRewardAmount.length > 0
-          ? res.claimableRewardAmount[0].amount
-          : 0
-      );
+      console.log(res);
+      setTotalToken(res.amount.amount);
+      setClaimedToken(res.claimed_amount.amount);
+      setUnclaimedToken(res.claimable_amount.amount);
+      setRemainingClaimableToken(res.remaining_claimable_amount.amount);
     }
   }
   setInterval(getTokens, 60000);
@@ -135,21 +128,55 @@ function ClaimRewards(props) {
             )}
           </div>
           <div className="sm:ml-auto w-80 mt-10">
-            <div className="opacity-50 font-bold">Total Tokens Available</div>
+            <div className="opacity-70 font-bold">Total Tokens Available</div>
             <div className="text-4xl uppercase">
               {totalToken / 1000000 +
                 " " +
                 process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
             </div>
-            <div className="opacity-50 font-bold mt-8">Claimable</div>
+            <div className="mt-8">
+              <div className="flex">
+                <div className="opacity-70 font-bold">Claimable</div>
+                <button
+                  className={
+                    "btn btn-primary btn-xs bg-green w-24 rounded-md ml-2 " +
+                    (loading ? "loading" : "")
+                  }
+                  onClick={() => {
+                    if (
+                      process.env.NEXT_PUBLIC_REWARD_DEADLINE < dayjs().unix()
+                    ) {
+                      props.notify("Claim airdrop period ended", "error");
+                    } else if (unclaimedToken <= 0) {
+                      props.notify(
+                        "You don't have any unclaimed tokens",
+                        "error"
+                      );
+                    } else {
+                      claimTokens();
+                    }
+                  }}
+                >
+                  Claim Now
+                </button>
+              </div>
+              <div className="text-4xl uppercase">
+                {unclaimedToken / 1000000 +
+                  " " +
+                  process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+              </div>
+            </div>
+            <div className="opacity-70 font-bold mt-8">Claimed</div>
             <div className="text-4xl uppercase">
-              {unclaimedToken / 1000000 +
+              {claimedToken / 1000000 +
                 " " +
                 process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
             </div>
-            <div className="opacity-50 font-bold mt-8">Claimed</div>
+            <div className="opacity-70 font-bold mt-8">
+              Remaining Claimable Amount
+            </div>
             <div className="text-4xl uppercase">
-              {claimedToken / 1000000 +
+              {remainingClaimableToken / 1000000 +
                 " " +
                 process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
             </div>
@@ -242,7 +269,7 @@ function ClaimRewards(props) {
         </div>
         <img
           className={
-            "absolute pointer-events-none -z-10 left-1/3 -top-20 opacity-30 lg:opacity-100 invisible lg:visible"
+            "absolute pointer-events-none -z-30 left-1/3 -top-20 opacity-30 lg:opacity-100 invisible lg:visible"
           }
           src="/rewards/drop-mid.svg"
           width={"622"}

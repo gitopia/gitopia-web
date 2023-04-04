@@ -5,7 +5,7 @@ export default async function getRewardToken(address) {
   try {
     const res = await api.queryReward(address);
     if (res) {
-      return res.data;
+      return res.data.reward;
     }
   } catch (e) {
     console.error(e);
