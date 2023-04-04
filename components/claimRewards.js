@@ -30,6 +30,7 @@ function ClaimRewards(props) {
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [tasks, setTasks] = useState([]);
+  const [tasksTotal, setTasksTotal] = useState(1);
   const [tasksCompleted, setTasksCompleted] = useState(0);
   const [remainingClaimableToken, setRemainingClaimableToken] = useState(0);
 
@@ -47,13 +48,16 @@ function ClaimRewards(props) {
 
   const calculateTasksPercentage = (t) => {
     let count = 0;
+    let total = 0;
     if (t.length > 0) {
       for (let i = 0; i < t?.length; i++) {
+        total = total + t[i].weight;
         if (t[i].isComplete) {
           count = count + t[i].weight;
         }
       }
     }
+    setTasksTotal(total);
     return count;
   };
 
@@ -134,7 +138,7 @@ function ClaimRewards(props) {
           <div className="sm:ml-auto w-80 mt-10">
             <div className="opacity-70 font-bold">Total Tokens Available</div>
             <div className="text-4xl uppercase">
-              {totalToken / 1000000 +
+              {Math.floor((totalToken / 1000000) * 100) / 100 +
                 " " +
                 process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
             </div>
@@ -146,6 +150,7 @@ function ClaimRewards(props) {
                     "btn btn-primary btn-xs bg-green w-24 rounded-md ml-2 " +
                     (loading ? "loading" : "")
                   }
+                  disabled={unclaimedToken <= 0}
                   onClick={() => {
                     if (
                       process.env.NEXT_PUBLIC_REWARD_DEADLINE < dayjs().unix()
@@ -165,14 +170,14 @@ function ClaimRewards(props) {
                 </button>
               </div>
               <div className="text-4xl uppercase">
-                {unclaimedToken / 1000000 +
+                {Math.floor((unclaimedToken / 1000000) * 100) / 100 +
                   " " +
                   process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
               </div>
             </div>
             <div className="opacity-70 font-bold mt-8">Claimed</div>
             <div className="text-4xl uppercase">
-              {claimedToken / 1000000 +
+              {Math.floor((claimedToken / 1000000) * 100) / 100 +
                 " " +
                 process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
             </div>
@@ -180,7 +185,7 @@ function ClaimRewards(props) {
               Remaining Claimable Amount
             </div>
             <div className="text-4xl uppercase">
-              {remainingClaimableToken / 1000000 +
+              {Math.floor((remainingClaimableToken / 1000000) * 100) / 100 +
                 " " +
                 process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
             </div>
@@ -228,10 +233,17 @@ function ClaimRewards(props) {
                 </div>
                 <div
                   className={
-                    "ml-4 lg:ml-2 flex items-center rounded-full px-2.5 py-0.5 bg-purple text-xs mt-3 h-6 w-20 mb-4 sm:mb-0"
+                    "ml-4 lg:ml-2 flex items-center rounded-full px-4 py-0.5 bg-purple text-xs mt-3 h-6 w-24 mb-4 sm:mb-0 " +
+                    (t.isComplete ? "hidden" : "")
                   }
                 >
-                  {"weight " + t.weight}
+                  {"tokens " +
+                    Math.floor(
+                      (((t.weight / tasksTotal) * remainingClaimableToken) /
+                        1000000) *
+                        100
+                    ) /
+                      100}
                 </div>
               </div>
               {t.isComplete ? (
