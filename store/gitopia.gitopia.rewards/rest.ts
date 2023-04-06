@@ -15,7 +15,16 @@ export interface ProtobufAny {
 
 export type RewardsMsgClaimResponse = object;
 
-export type RewardsMsgCreateRewardResponse = object;
+export interface RewardsMsgCreateRewardResponse {
+  /**
+   * actual granted amount
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  amount?: V1Beta1Coin;
+}
 
 export interface RewardsQueryAllRewardsResponse {
   rewards?: RewardsReward[];
@@ -32,8 +41,46 @@ export interface RewardsQueryAllRewardsResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface RewardsQueryGetRewardsResponse {
-  rewards?: RewardsReward;
+export interface RewardsQueryGetRewardResponse {
+  reward?: RewardsQueryGetRewardResponseReward;
+}
+
+export interface RewardsQueryGetRewardResponseReward {
+  recipient?: string;
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  amount?: V1Beta1Coin;
+
+  /**
+   * not required in the response
+   * string creator = 3;
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  claimed_amount?: V1Beta1Coin;
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  claimable_amount?: V1Beta1Coin;
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  remaining_claimable_amount?: V1Beta1Coin;
 }
 
 export interface RewardsQueryTasksResponse {
@@ -42,9 +89,31 @@ export interface RewardsQueryTasksResponse {
 
 export interface RewardsReward {
   recipient?: string;
-  amount?: V1Beta1Coin[];
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  amount?: V1Beta1Coin;
   creator?: string;
-  claimedAmount?: V1Beta1Coin[];
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  claimed_amount?: V1Beta1Coin;
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  claimed_amount_with_decay?: V1Beta1Coin;
 }
 
 export interface RewardsTask {
@@ -349,7 +418,7 @@ export class Api<
    * @request GET:/gitopia/gitopia/rewards/rewards/{recipient}
    */
   queryReward = (recipient: string, params: RequestParams = {}) =>
-    this.request<RewardsQueryGetRewardsResponse, RpcStatus>({
+    this.request<RewardsQueryGetRewardResponse, RpcStatus>({
       path: `/gitopia/gitopia/rewards/rewards/${recipient}`,
       method: "GET",
       format: "json",
