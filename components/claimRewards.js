@@ -23,14 +23,16 @@ dayjs.extend(customParseFormat);
 
 function ClaimRewards(props) {
   const [loading, setLoading] = useState(false);
-  const [totalToken, setTotalToken] = useState(null);
+  const [token, setToken] = useState(null);
   const [claimedToken, setClaimedToken] = useState(null);
   const [unclaimedToken, setUnclaimedToken] = useState(null);
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [tasks, setTasks] = useState([]);
+  const [tasksTotal, setTasksTotal] = useState(1);
   const [tasksCompleted, setTasksCompleted] = useState(0);
+  const [remainingClaimableToken, setRemainingClaimableToken] = useState(0);
 
   const router = useRouter();
   const deadlineUnix = process.env.NEXT_PUBLIC_REWARD_DEADLINE;
@@ -44,14 +46,19 @@ function ClaimRewards(props) {
     setMinutes(diff.minutes());
   };
 
-  const calculateTasksPercentage = () => {
+  const calculateTasksPercentage = (t) => {
     let count = 0;
-    for (let i = 0; i < tasks?.length; i++) {
-      if (tasks[i].isComplete === true) {
-        count = count + tasks[i].weight;
+    let total = 0;
+    if (t.length > 0) {
+      for (let i = 0; i < t?.length; i++) {
+        total = total + t[i].weight;
+        if (t[i].isComplete) {
+          count = count + t[i].weight;
+        }
       }
     }
-    setTasksCompleted(count);
+    setTasksTotal(total);
+    return count;
   };
 
   useEffect(() => {
@@ -59,15 +66,18 @@ function ClaimRewards(props) {
     return () => clearInterval(interval);
   });
   async function fetchTasks() {
-    const tasks = await getTasks(props.selectedAddress);
-    if (tasks !== undefined) {
-      setTasks(tasks);
-      calculateTasksPercentage();
+    const t = await getTasks(props.selectedAddress);
+    if (t !== undefined) {
+      setTasks(t);
+      if (tasks) {
+        const percentage = await calculateTasksPercentage(t);
+        setTasksCompleted(percentage);
+      }
     }
   }
+
   useEffect(() => {
     fetchTasks();
-    calculateTasksPercentage();
     getTime(deadlineUnix);
     getTokens();
   }, [props.selectedAddress]);
@@ -75,19 +85,16 @@ function ClaimRewards(props) {
   async function getTokens() {
     let res = await getRewardToken(props.selectedAddress);
     if (res) {
-      setTotalToken(
-        res.reward?.amount.length > 0 ? res.reward.amount[0].amount : 0
-      );
-      setClaimedToken(
-        res.reward?.claimedAmount.length > 0
-          ? res.reward.claimedAmount[0].amount
-          : 0
-      );
-      setUnclaimedToken(
-        res.claimableRewardAmount.length > 0
-          ? res.claimableRewardAmount[0].amount
-          : 0
-      );
+      res.claimed_amount.amount +
+        res.claimable_amount.amount +
+        res.remaining_claimable_amount.amount <
+      1000000
+        ? setToken(process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN)
+        : setToken(process.env.NEXT_PUBLIC_CURRENCY_TOKEN);
+
+      setClaimedToken(res.claimed_amount.amount);
+      setUnclaimedToken(res.claimable_amount.amount);
+      setRemainingClaimableToken(res.remaining_claimable_amount.amount);
     }
   }
   setInterval(getTokens, 60000);
@@ -135,23 +142,87 @@ function ClaimRewards(props) {
             )}
           </div>
           <div className="sm:ml-auto w-80 mt-10">
-            <div className="opacity-50 font-bold">Total Tokens Available</div>
-            <div className="text-4xl uppercase">
-              {totalToken / 1000000 +
-                " " +
-                process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+            <div className="mt-8">
+              <div className="flex">
+                <div className="opacity-70 font-bold">Unlocked Rewards</div>
+                <button
+                  className={
+                    "btn btn-primary btn-xs bg-green w-24 rounded-md ml-2 " +
+                    (loading ? "loading" : "")
+                  }
+                  disabled={unclaimedToken <= 0}
+                  onClick={() => {
+                    if (
+                      process.env.NEXT_PUBLIC_REWARD_DEADLINE < dayjs().unix()
+                    ) {
+                      props.notify("Claim airdrop period ended", "error");
+                    } else if (unclaimedToken <= 0) {
+                      props.notify(
+                        "You don't have any unclaimed tokens",
+                        "error"
+                      );
+                    } else {
+                      claimTokens();
+                    }
+                  }}
+                >
+                  Claim Now
+                </button>
+                <div className="tooltip" data-tip="decays by 1% everyday">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="ml-2 mt-1"
+                  >
+                    <circle cx="8" cy="8" r="7.5" stroke="#8D97A7" />
+                    <path d="M8 3L8 5" stroke="#8D97A7" strokeWidth="2" />
+                    <path d="M8 7L8 13" stroke="#8D97A7" strokeWidth="2" />
+                  </svg>
+                </div>
+              </div>
+              <div className="text-4xl uppercase">
+                {(token === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                  ? unclaimedToken
+                  : unclaimedToken / 1000000) +
+                  " " +
+                  token}
+              </div>
             </div>
-            <div className="opacity-50 font-bold mt-8">Claimable</div>
-            <div className="text-4xl uppercase">
-              {unclaimedToken / 1000000 +
-                " " +
-                process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+            <div className="flex mt-8">
+              <div className="opacity-70 font-bold">Locked Rewards</div>
+              <div className="tooltip" data-tip="decays by 1% everyday">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="ml-2 mt-1"
+                >
+                  <circle cx="8" cy="8" r="7.5" stroke="#8D97A7" />
+                  <path d="M8 3L8 5" stroke="#8D97A7" strokeWidth="2" />
+                  <path d="M8 7L8 13" stroke="#8D97A7" strokeWidth="2" />
+                </svg>
+              </div>
             </div>
-            <div className="opacity-50 font-bold mt-8">Claimed</div>
             <div className="text-4xl uppercase">
-              {claimedToken / 1000000 +
+              {(token === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                ? remainingClaimableToken
+                : remainingClaimableToken / 1000000) +
                 " " +
-                process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+                token}
+            </div>
+
+            <div className="opacity-70 font-bold mt-8">Claimed Rewards</div>
+            <div className="text-4xl uppercase">
+              {(token === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                ? claimedToken
+                : claimedToken / 1000000) +
+                " " +
+                token}
             </div>
           </div>
         </div>
@@ -197,10 +268,19 @@ function ClaimRewards(props) {
                 </div>
                 <div
                   className={
-                    "ml-4 lg:ml-2 flex items-center rounded-full px-2.5 py-0.5 bg-purple text-xs mt-3 h-6 w-20 mb-4 sm:mb-0"
+                    "ml-4 lg:ml-2 flex items-center justify-center rounded-full bg-purple text-xs mt-3 h-6 w-28 mb-4 sm:mb-0 " +
+                    (t.isComplete ? "hidden" : "")
                   }
                 >
-                  {"weight " + t.weight}
+                  {(token === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                    ? (t.weight / tasksTotal) * remainingClaimableToken
+                    : Math.floor(
+                        (((t.weight / tasksTotal) * remainingClaimableToken) /
+                          1000000) *
+                          100
+                      ) / 100) +
+                    " " +
+                    token}
                 </div>
               </div>
               {t.isComplete ? (
@@ -209,10 +289,21 @@ function ClaimRewards(props) {
                   src="/rewards/checkmark.svg"
                 />
               ) : (
-                <img
-                  className="ml-auto mr-3 sm:mt-2"
-                  src="/rewards/unchecked-mark.svg"
-                />
+                <div className="ml-auto mr-6 sm:mt-4">
+                  <svg
+                    viewBox="0 0 12 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-3 h-4"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M4 6H8V4C8 2.89539 7.10461 2 6 2C4.89539 2 4 2.89539 4 4V6ZM10 6H11C11.5522 6 12 6.44775 12 7V15C12 15.5522 11.5522 16 11 16H1C0.447754 16 0 15.5522 0 15V7C0 6.44775 0.447754 6 1 6H2V4C2 1.79089 3.79089 0 6 0C8.20911 0 10 1.79089 10 4V6ZM6 9C4.89539 9 4 9.89539 4 11C4 12.1046 4.89539 13 6 13C7.10461 13 8 12.1046 8 11C8 9.89539 7.10461 9 6 9Z"
+                      fill="#36404C"
+                    />
+                  </svg>
+                </div>
               )}
             </div>
           );
@@ -242,7 +333,7 @@ function ClaimRewards(props) {
         </div>
         <img
           className={
-            "absolute pointer-events-none -z-10 left-1/3 -top-20 opacity-30 lg:opacity-100 invisible lg:visible"
+            "absolute pointer-events-none -z-30 left-1/3 -top-20 opacity-30 lg:opacity-100 invisible lg:visible"
           }
           src="/rewards/drop-mid.svg"
           width={"622"}
