@@ -238,17 +238,6 @@ describe("Issue Workflows", () => {
     });
   });
 
-  it("Is able to close issue", () => {
-    cy.contains(`issue${testData.issueid}`).click();
-    cy.wait(1500);
-    cy.get('[data-test="close_issue"]')
-      .should("has.text", "Close Issue")
-      .click();
-    cy.unlock(testData.walletpass);
-    cy.wait(8000);
-    cy.get('[data-test="close_issue"]').should("has.text", "Re-Open Issue");
-  });
-
   it("Is able to create bounty", () => {
     cy.contains(`issue${testData.issueid}`).click();
     cy.wait(1500);
@@ -278,6 +267,50 @@ describe("Issue Workflows", () => {
     cy.unlock(testData.walletpass);
     cy.wait(10000);
     cy.get('[data-test="bounty-amount"]').should("contain", "0.000002");
+  });
+
+  it("Is able to extend bounty", () => {
+    cy.contains(`issue${testData.issueid}`).click();
+    cy.wait(1500);
+    cy.get('[data-test="bounty_tab"]').click();
+    cy.get("[data-test=bounty_extend_button]").click();
+    cy.dayjs().then((dayjsObj) => {
+      const currentTime = dayjsObj;
+      const time = currentTime.add(2, "day").format("YYYY-MM-DD");
+      cy.get('input[data-test="extend_expiry_date"]')
+        .clear()
+        .type(time)
+        .should("have.value", time);
+    });
+    cy.get('[data-test="extend_bounty"]').click();
+    cy.unlock(testData.walletpass);
+    cy.wait(6000);
+    cy.dayjs().then((dayjsObj) => {
+      const currentTime = dayjsObj;
+      const time = currentTime.add(2, "day").format("MMM D, YYYY");
+      cy.get('[data-test="bounty-expiry"]').should("contain", time);
+    });
+  });
+
+  it("Is able to close bounty", () => {
+    cy.contains(`issue${testData.issueid}`).click();
+    cy.wait(1500);
+    cy.get('[data-test="bounty_tab"]').click();
+    cy.get("[data-test=bounty_close_button]").click();
+    cy.unlock(testData.walletpass);
+    cy.wait(6000);
+    cy.get("[data-test=bounty_reverted]").should("be.visible");
+  });
+
+  it("Is able to close issue", () => {
+    cy.contains(`issue${testData.issueid}`).click();
+    cy.wait(1500);
+    cy.get('[data-test="close_issue"]')
+      .should("has.text", "Close Issue")
+      .click();
+    cy.unlock(testData.walletpass);
+    cy.wait(8000);
+    cy.get('[data-test="close_issue"]').should("has.text", "Re-Open Issue");
   });
 
   it("Is able to reopen issue", () => {

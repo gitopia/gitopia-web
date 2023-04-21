@@ -323,7 +323,7 @@ function RepositoryBountiesView(props) {
                         </div>
                       </div>
                       <div className="sm:w-1/6">
-                        <div className="text-sm w-36">
+                        <div className="text-sm w-36" data-test="bounty-expiry">
                           {b.state == "BOUNTY_STATE_REVERTEDBACK" ||
                           b.state == "BOUNTY_STATE_DESTCREDITED"
                             ? "--"
@@ -364,7 +364,10 @@ function RepositoryBountiesView(props) {
                         )}
                         {b.state == "BOUNTY_STATE_REVERTEDBACK" ? (
                           <div className="w-36 sm:w-0">
-                            <div className="flex items-center rounded-full px-5 w-24 py-0.5 bg-grey text-xs uppercase mt-0.5">
+                            <div
+                              className="flex items-center rounded-full px-5 w-24 py-0.5 bg-grey text-xs uppercase mt-0.5"
+                              data-test="bounty_reverted"
+                            >
                               Reverted
                             </div>
                           </div>
@@ -384,6 +387,7 @@ function RepositoryBountiesView(props) {
                               onClick={() => {
                                 props.closeBounty(b.id).then(refreshBounty);
                               }}
+                              data-test="bounty_close_button"
                             >
                               CLOSE
                             </div>
@@ -393,6 +397,7 @@ function RepositoryBountiesView(props) {
                               onClick={() => {
                                 setBountyId(b.id);
                               }}
+                              data-test="bounty_extend_button"
                             >
                               EXTEND
                             </label>

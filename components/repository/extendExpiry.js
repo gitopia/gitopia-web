@@ -36,6 +36,7 @@ function ExtendExpiry(props) {
             placeholder="Enter Date"
             className="appearance-none bg-transparent border-none leading-tight focus:outline-none ml-auto text-grey-200 text-md mt-2"
             ref={ref1}
+            data-test="extend_expiry_date"
             onChange={(e) => {
               props.setUpdatedExpiry(e.target.value);
             }}
@@ -58,6 +59,7 @@ function ExtendExpiry(props) {
                     }
                   });
               }}
+              data-test="extend_bounty"
             >
               Extend
             </label>
