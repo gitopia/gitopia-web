@@ -168,6 +168,7 @@ function CreateBounty(props) {
         <label
           className="ml-auto btn btn-primary text-xs btn-sm modal-button"
           htmlFor="my-modal"
+          data-test="new_bounty"
           onClick={() => {
             setAmount([]);
             setCounter(0);
@@ -262,7 +263,7 @@ function CreateBounty(props) {
               className="link link-primary no-underline modal-button ml-2"
               htmlFor="my-modal"
             >
-              <div className="flex items-center">
+              <div className="flex items-center" data-test="attach_bounty">
                 <div className="mr-2 font-bold text-white">ATTACH BOUNTY</div>
                 <svg
                   width="10"
@@ -416,6 +417,7 @@ function CreateBounty(props) {
                   }}
                   ref={ref2}
                   defaultValue="select-token"
+                  data-test="select_token"
                 >
                   <option value="select-token">Select Token</option>
                   {balances.map((t, i) => {
@@ -428,6 +430,7 @@ function CreateBounty(props) {
                         key={"token-" + i}
                         value={t.denom}
                         disabled={true}
+                        //data-test={`token_option_${i}`}
                       >
                         {t.showDenom}
                       </option>
@@ -442,6 +445,7 @@ function CreateBounty(props) {
                     aria-label="Amount"
                     ref={ref1}
                     id="amount"
+                    data-type="amount_entered"
                     onKeyUp={async (e) => {
                       await validateAmount(e.target.value);
                     }}
@@ -495,6 +499,7 @@ function CreateBounty(props) {
               <button
                 className={"btn btn-secondary btn-block"}
                 onClick={handleClick}
+                data-type="add_token"
                 disabled={
                   amount[counter] == undefined ||
                   tokenDenom[counter] == undefined ||
@@ -544,6 +549,7 @@ function CreateBounty(props) {
                 <div className="flex-none text-sm ml-2">Expiry Date</div>
                 <input
                   type="date"
+                  data-type="expiry_date"
                   className="flex-1 p-3.5 appearance-none bg-transparent border-none leading-tight focus:outline-none ml-auto text-grey-200 text-sm text-right"
                   value={expiry}
                   min={dayjs().format("YYYY-MM-DD")}
@@ -559,6 +565,7 @@ function CreateBounty(props) {
               <label
                 htmlFor="my-modal"
                 className="btn btn-primary btn-block"
+                data-type="attach_bounty"
                 onClick={(e) => {
                   props.issue
                     ? props

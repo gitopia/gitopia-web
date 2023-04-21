@@ -306,7 +306,12 @@ function RepositoryBountiesView(props) {
                                 <div className="ml-2 text-sm mr-1 uppercase">
                                   {a.standardDenomName}
                                 </div>
-                                <div className="text-sm mr-4">{a.amount}</div>
+                                <div
+                                  className="text-sm mr-4"
+                                  data-test={"bounty-amount"}
+                                >
+                                  {a.amount}
+                                </div>
                               </div>
                             );
                           })

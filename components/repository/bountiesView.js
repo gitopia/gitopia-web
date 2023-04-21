@@ -85,7 +85,7 @@ function IssueBountyView(props) {
         setIsHovering(false);
       }, 100)}
     >
-      <div className="ml-1 font-semibold mb-4">Bounties</div>
+      <div className="ml-1 font-semibold mb-4" data-type="issue_bounty_view">Bounties</div>
       <div className="">
         {coins.map((c, index) => {
           return (
