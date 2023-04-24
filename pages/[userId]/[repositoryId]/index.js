@@ -405,7 +405,7 @@ function RepositoryView(props) {
                   <div className="pb-8">
                     <div className="flex">
                       <div className="flex-1 text-left">About</div>
-                      {!editDescription ? (
+                      {!editDescription && currentUserEditPermission ? (
                         <div
                           className="flex-1 text-left mt-1 text-xs link link-primary uppercase no-underline"
                           onClick={() => {
@@ -860,7 +860,10 @@ function RepositoryView(props) {
               </div>
             </div>
           ) : currentUserEditPermission ? (
-            <EmptyRepository repository={repository} />
+            <EmptyRepository
+              repository={repository}
+              refreshRepository={refreshRepository}
+            />
           ) : (
             <div className="pt-8 text-type-secondary">Empty repository</div>
           )}
