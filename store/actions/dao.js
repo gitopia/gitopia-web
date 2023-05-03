@@ -110,7 +110,7 @@ export const addMember = ({ daoId = null, userId = null, role = null }) => {
       creator: wallet.selectedAddress,
       daoId: daoId,
       userId: userId,
-      role: choice,
+      role: Number(choice),
     };
 
     try {

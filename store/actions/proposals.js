@@ -22,9 +22,13 @@ export const submitGovernanceProposal = (
           title: title,
           description: description,
         });
+        // const msgAny = Any.fromPartial({
+        //   typeUrl: "/cosmos.gov.v1beta1.TextProposal",
+        //   value: Uint8Array.from(TextProposal.encode(textProposal).finish()),
+        // });
         const msgAny = Any.fromPartial({
           typeUrl: "/cosmos.gov.v1beta1.TextProposal",
-          value: Uint8Array.from(TextProposal.encode(textProposal).finish()),
+          value: TextProposal.encode(textProposal).finish(),
         });
         const send = {
           content: msgAny,
@@ -91,9 +95,9 @@ export const chainUpgradeProposal = (
         });
         const msgAny = Any.fromPartial({
           typeUrl: "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal",
-          value: Uint8Array.from(
+          value: 
             SoftwareUpgradeProposal.encode(softwareUpgradeProposal).finish()
-          ),
+          ,
         });
         const send = {
           content: msgAny,
@@ -142,9 +146,9 @@ export const communityPoolSpendProposal = (
         await setupTxClients(dispatch, getState);
         const { env } = getState();
         const Any = (await import("cosmjs-types/google/protobuf/any")).Any;
-        const CommunityPoolSpendProposal = import(
+        const CommunityPoolSpendProposal = (await import(
           "cosmjs-types/cosmos/distribution/v1beta1/distribution"
-        ).CommunityPoolSpendProposal;
+        )).CommunityPoolSpendProposal;
         const amountToSend = [
           {
             amount: amount,
@@ -161,11 +165,10 @@ export const communityPoolSpendProposal = (
         );
         const msgAny = Any.fromPartial({
           typeUrl: "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal",
-          value: Uint8Array.from(
+          value: 
             CommunityPoolSpendProposal.encode(
               communityPoolSpendProposal
-            ).finish()
-          ),
+            ).finish(),
         });
         const send = {
           content: msgAny,
@@ -235,9 +238,8 @@ export const paramChangeProposal = (
         });
         const msgAny = Any.fromPartial({
           typeUrl: "/cosmos.params.v1beta1.ParameterChangeProposal",
-          value: Uint8Array.from(
-            ParameterChangeProposal.encode(paramChangeProposal).finish()
-          ),
+          value: 
+            ParameterChangeProposal.encode(paramChangeProposal).finish(),
         });
         const send = {
           content: msgAny,

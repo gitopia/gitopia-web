@@ -430,7 +430,7 @@ function RepositoryPullView(props) {
                     );
 
                     const res = await props.updatePullRequestReviewers({
-                      repositoryId: repository,
+                      repositoryId: repository.id,
                       pullIid: pullRequest.iid,
                       addedReviewers,
                       removedReviewers,
