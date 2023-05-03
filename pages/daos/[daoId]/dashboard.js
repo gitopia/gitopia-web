@@ -65,7 +65,7 @@ function DaoDashboard(props) {
                 ""
               ) : (
                 <TopRepositories
-                  repositories={allRepository.map((r) => {
+                  repositories={allRepository?.map((r) => {
                     return {
                       owner: props.currentDashboard,
                       username: props.username,

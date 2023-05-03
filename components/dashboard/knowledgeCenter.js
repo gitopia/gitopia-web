@@ -2,7 +2,7 @@ export default function KnowledgeCenter() {
   return (
     <div className="">
       <div className="flex mb-6 items-center">
-        <div className="border border-grey rounded-full w-12 h-12 sm:w-14 sm:h-14 p-3 sm:mr-10 mr-2">
+        <div className="flex-none border border-grey rounded-full w-12 h-12 sm:w-14 sm:h-14 p-3 sm:mr-10 mr-2">
           <img src="/logo-g.svg"></img>
         </div>
         <div className="sm:flex w-full">

@@ -13,20 +13,24 @@ export const sendTransaction = ({
     let notifId, result;
     if (wallet.activeWallet && wallet.activeWallet.isLedger) {
       const msg = dispatch(
-        notify("Please sign the transaction on your ledger", "waiting-for-input", {
-          dismissible: false,
-          dismissAfter: 0,
-        })
+        notify(
+          "Please sign the transaction on your ledger",
+          "waiting-for-input",
+          {
+            dismissible: false,
+            dismissAfter: 0,
+          }
+        )
       );
       notifId = msg.payload.id;
     }
     try {
       const msgArr = Array.isArray(message) ? message : [message];
       console.log(msgArr);
-      result = await env.txClient.signAndBroadcast(msgArr, {
-        fee: "auto",
-        memo,
-      });
+      result = await env.txClient.signAndBroadcast(
+        msgArr,
+        { fee: "auto", memo }
+      );
       dispatch(dismissNotification(notifId));
       return result;
     } catch (e) {
