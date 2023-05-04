@@ -250,12 +250,16 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
             prefix: chainInfo.bech32_prefix,
           }
         );
-        const [
-          counterPartyAccount,
-        ] = await accountSignerSecondary.getAccounts();
+        const [counterPartyAccount] =
+          await accountSignerSecondary.getAccounts();
         const counterPartyAddress = counterPartyAccount.address;
         wallet.counterPartyAddress = counterPartyAddress;
         wallet.counterPartyChain = chainId;
+      }
+
+      if (state.getPassword === "Approve") {
+        state.getPasswordPromise.resolve(password);
+        return true;
       }
 
       // Check if user exists, rename the old wallet to correct username
@@ -280,18 +284,16 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
 
           await dispatch({
             type: walletActions.ADD_WALLET,
-            payload: { wallet, encryptedWallet, index: oldWalletIndex },
-          });
-
-          dispatch({
-            type: walletActions.STORE_WALLETS,
+            payload: {
+              wallet: wallet,
+              encryptedWallet,
+              index: oldWalletIndex,
+            },
           });
         } else {
           dispatch({
             type: walletActions.SET_ACTIVE_WALLET,
-            payload: {
-              wallet,
-            },
+            payload: { wallet },
           });
         }
       } else {
@@ -302,16 +304,12 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
       }
 
       try {
-        if (chainId !== null) {
-          await postWalletUnlocked(
-            accountSigner,
-            dispatch,
-            getState,
-            accountSignerSecondary
-          );
-        } else {
-          await postWalletUnlocked(accountSigner, dispatch, getState);
-        }
+        await postWalletUnlocked(
+          accountSigner,
+          dispatch,
+          getState,
+          chainId !== null ? accountSignerSecondary : null
+        );
       } catch (e) {
         console.error(e);
       }
@@ -323,7 +321,6 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
 export const removeWallet = ({ name }) => {
   return async (dispatch, getState) => {
     dispatch({ type: walletActions.REMOVE_WALLET, payload: { name } });
-    dispatch({ type: walletActions.STORE_WALLETS });
     return true;
   };
 };
@@ -380,7 +377,6 @@ export const createWalletWithMnemonic = ({
     } catch (e) {
       console.error(e);
     }
-    dispatch({ type: walletActions.STORE_WALLETS });
   };
 };
 
@@ -578,96 +574,96 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
     }
     dispatch({ type: walletActions.START_UNLOCKING_WALLET });
     try {
-    const path = stringToPath("m/44'/118'/0'/0/0");
+      const path = stringToPath("m/44'/118'/0'/0/0");
 
-    if (!ledgerTransport) {
-      ledgerTransport = await TransportWebUSB.create();
-    }
+      if (!ledgerTransport) {
+        ledgerTransport = await TransportWebUSB.create();
+      }
 
-    accountSigner = new LedgerSigner(ledgerTransport, {
-      hdPaths: [path],
-      prefix: "gitopia",
-      ledgerAppName: "Cosmos",
-    });
-    const addr = (await accountSigner.getAccounts())[0].address;
-
-    const CryptoJS = (await import("crypto-js")).default;
-    let newWallet = JSON.parse(
-      CryptoJS.AES.decrypt(encryptedWallet, "STRONG_LEDGER").toString(
-        CryptoJS.enc.Utf8
-      )
-    );
-    if (chainId !== null) {
-      accountSignerSecondary = new LedgerSigner(ledgerTransport, {
+      accountSigner = new LedgerSigner(ledgerTransport, {
         hdPaths: [path],
-        prefix: chainInfo.bech32_prefix,
+        prefix: "gitopia",
         ledgerAppName: "Cosmos",
       });
-      const [counterPartyAccount] = await accountSignerSecondary.getAccounts();
-      const counterPartyAddress = counterPartyAccount.address;
-      console.log(accountSignerSecondary);
-      newWallet.counterPartyAddress = counterPartyAddress;
-      newWallet.counterPartyChain = chainId;
-    }
-    if (addr !== newWallet.accounts[0].address) {
-      dispatch(notify("Wallet address not matching Ledger's address", "error"));
-      if (!wallet.selectedAddress) {
-        dispatch({ type: walletActions.SIGN_OUT });
-      } else {
-        dispatch({ type: walletActions.STOP_UNLOCKING_WALLET });
-      }
-      return null;
-    }
+      const addr = (await accountSigner.getAccounts())[0].address;
 
-    // Check if user exists, rename the old wallet to correct username
-
-    let user = await getUser(addr),
-      oldWalletName,
-      oldWalletIndex = wallet.wallets.findIndex(
-        (x) => x.name === newWallet.name
-      );
-    if (user?.username) {
       const CryptoJS = (await import("crypto-js")).default;
-      oldWalletName = newWallet.name;
-      newWallet.name = user.username;
-      encryptedWallet = CryptoJS.AES.encrypt(
-        JSON.stringify(newWallet),
-        "STRONG_LEDGER"
-      ).toString();
-    }
-
-    await dispatch({
-      type: walletActions.REMOVE_WALLET,
-      payload: { name: oldWalletName },
-    });
-
-    await dispatch({
-      type: walletActions.ADD_WALLET,
-      payload: {
-        wallet: newWallet,
-        encryptedWallet,
-        isLedger: true,
-        index: oldWalletIndex,
-      },
-    });
-
-    if (chainId !== null) {
-      await postWalletUnlocked(
-        accountSigner,
-        dispatch,
-        getState,
-        accountSignerSecondary
+      let newWallet = JSON.parse(
+        CryptoJS.AES.decrypt(encryptedWallet, "STRONG_LEDGER").toString(
+          CryptoJS.enc.Utf8
+        )
       );
-    } else {
-      await postWalletUnlocked(accountSigner, dispatch, getState);
-    }
+      if (chainId !== null) {
+        accountSignerSecondary = new LedgerSigner(ledgerTransport, {
+          hdPaths: [path],
+          prefix: chainInfo.bech32_prefix,
+          ledgerAppName: "Cosmos",
+        });
+        const [counterPartyAccount] =
+          await accountSignerSecondary.getAccounts();
+        const counterPartyAddress = counterPartyAccount.address;
+        console.log(accountSignerSecondary);
+        newWallet.counterPartyAddress = counterPartyAddress;
+        newWallet.counterPartyChain = chainId;
+      }
+      if (addr !== newWallet.accounts[0].address) {
+        dispatch(
+          notify("Wallet address not matching Ledger's address", "error")
+        );
+        if (!wallet.selectedAddress) {
+          dispatch({ type: walletActions.SIGN_OUT });
+        } else {
+          dispatch({ type: walletActions.STOP_UNLOCKING_WALLET });
+        }
+        return null;
+      }
 
-    dispatch({ type: walletActions.STOP_UNLOCKING_WALLET });
-    dispatch({
-      type: walletActions.STORE_WALLETS,
-    });
+      // Check if user exists, rename the old wallet to correct username
 
-    return true;
+      let user = await getUser(addr),
+        oldWalletName,
+        oldWalletIndex = wallet.wallets.findIndex(
+          (x) => x.name === newWallet.name
+        );
+      if (user?.username) {
+        const CryptoJS = (await import("crypto-js")).default;
+        oldWalletName = newWallet.name;
+        newWallet.name = user.username;
+        encryptedWallet = CryptoJS.AES.encrypt(
+          JSON.stringify(newWallet),
+          "STRONG_LEDGER"
+        ).toString();
+      }
+
+      await dispatch({
+        type: walletActions.REMOVE_WALLET,
+        payload: { name: oldWalletName },
+      });
+
+      await dispatch({
+        type: walletActions.ADD_WALLET,
+        payload: {
+          wallet: newWallet,
+          encryptedWallet,
+          isLedger: true,
+          index: oldWalletIndex,
+        },
+      });
+
+      if (chainId !== null) {
+        await postWalletUnlocked(
+          accountSigner,
+          dispatch,
+          getState,
+          accountSignerSecondary
+        );
+      } else {
+        await postWalletUnlocked(accountSigner, dispatch, getState);
+      }
+
+      dispatch({ type: walletActions.STOP_UNLOCKING_WALLET });
+
+      return true;
     } catch (e) {
       let error = e;
       switch (e.message) {
@@ -799,7 +795,6 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
       });
 
       await postWalletUnlocked(ledgerSigner, dispatch, getState);
-      dispatch({ type: walletActions.STORE_WALLETS });
 
       return user?.username ? "USER_CREATED" : "WALLET_ADDED";
     } catch (e) {
@@ -859,7 +854,8 @@ export const getAddressforChain = (name, chainId) => {
               counterPartyChainInfo.default_node_info.network
             );
             const accounts = await offlineSigner.getAccounts();
-            const counterPartyAccount = await accountSignerSecondary.getAccounts();
+            const counterPartyAccount =
+              await accountSignerSecondary.getAccounts();
             activeWallet.counterPartyAddress = counterPartyAccount[0].address;
             activeWallet.counterPartyChain = chainId;
             await dispatch({

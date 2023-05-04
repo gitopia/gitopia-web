@@ -1,5 +1,6 @@
 import { walletActions } from "../actions/actionTypes";
 import { set, get, del } from "../persist";
+import omit from "lodash/omit";
 
 const initialState = {
   wallets: get("wallets") || [],
@@ -17,7 +18,7 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case walletActions.SET_ACTIVE_WALLET: {
       const { wallet } = action.payload;
-      set("lastWallet", wallet);
+      set("lastWallet", omit(wallet, ["mnemonic", "password"]));
       return {
         ...state,
         activeWallet: wallet,
@@ -35,24 +36,29 @@ const reducer = (state = initialState, action) => {
       if (isLedger) {
         item.isLedger = true;
       }
-      set("lastWallet", wallet);
       if (index >= 0 && index <= wallets.length) {
         wallets.splice(index, 0, item);
       } else {
         wallets.push(item);
       }
+      set("lastWallet", omit(wallet, ["mnemonic", "password"]));
+      set("wallets", wallets);
+      set("backupState", false);
       return {
         ...state,
         activeWallet: wallet,
         wallets: wallets,
+        backupState: false,
       };
     }
 
     case walletActions.REMOVE_WALLET: {
       let { name } = action.payload;
+      const updatedWallets = state.wallets.filter((x) => x.name !== name);
+      set("wallets", updatedWallets);
       return {
         ...state,
-        wallets: state.wallets.filter((x) => x.name !== name),
+        wallets: updatedWallets,
       };
     }
 
@@ -115,10 +121,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         getPassword: usedFor,
-        getPasswordPromise:
-          chainId !== undefined
-            ? { resolve, reject, chainId }
-            : { resolve, reject },
+        getPasswordPromise: { resolve, reject, chainId },
       };
     }
 
