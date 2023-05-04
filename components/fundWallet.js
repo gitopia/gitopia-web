@@ -81,7 +81,7 @@ function FundWallet(props) {
       <div className="text-xs text-type-secondary mb-12">
         Please get some{" "}
         {(process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()} to
-        proceed with creating profile
+        proceed with profile creation
       </div>
       <div className="max-w-md w-full px-4 mb-4 text-center">
         <div className="relative">

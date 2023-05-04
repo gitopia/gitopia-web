@@ -87,32 +87,32 @@ a {
   flex-wrap: wrap;
   align-items: stretch;
   background: transparent;
+  margin-bottom: 0.5rem;
 }
 .mde-header .mde-tabs {
   display: flex;
   flex-direction: row;
   flex-grow: 1;
   font-size: 12px;
-  margin-bottom: 10px;
 }
 .mde-header .mde-tabs button {
-  margin: 0px 3px;
-  padding: 0px 6px;
+  margin: 0px 0.5rem;
+  padding: 0px;
   background-color: transparent;
   text-transform: uppercase;
   cursor: pointer;
   outline: none;
   font-weight: 700;
+  border-bottom: 2px solid transparent;
 }
-.mde-header .mde-tabs button:first-child {
-  margin-left: 2px;
-}
+
 .mde-header .mde-tabs button.selected {
   color: white;
+  border-bottom: 2px solid #33ab34;
 }
 .mde-header .svg-icon {
-  width: 1em;
-  height: 1em;
+  width: 0.8em;
+  height: 0.8em;
   display: inline-block;
   font-size: inherit;
   overflow: visible;
@@ -120,7 +120,7 @@ a {
 }
 .mde-header ul.mde-header-group {
   margin: 0;
-  padding: 6px;
+  padding: 0 0.5rem;
   list-style: none;
   display: flex;
   flex-wrap: nowrap;
@@ -136,8 +136,7 @@ a {
 .mde-header ul.mde-header-group li.mde-header-item button {
   text-align: left;
   cursor: pointer;
-  height: 22px;
-  padding: 4px;
+  padding: 0 0.25rem;
   margin: 0;
   border: none;
   background: none;
@@ -1089,7 +1088,7 @@ ul.mde-suggestions li[aria-selected="true"] {
   color: #33ab34;
 }
 
-.tab.tab-bordered.tab-active {
+.tab.tab-bordered.tab-active:not(.tab-disabled):not([disabled]) {
   border-color: #33ab34;
   border-bottom-width: 2px;
 }
