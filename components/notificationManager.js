@@ -9,7 +9,7 @@ import NotificationsSystem, {
 // run this function when your application starts before creating any notifications
 setUpNotifications({
   defaultProps: {
-    position: "top-right",
+    position: "bottom-right",
     dismissible: true,
     dismissAfter: 5000,
   },
@@ -130,16 +130,16 @@ export default function NotificationManager() {
                 "var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)",
             };
           },
-          container: (c) => {
-            if (c === "top-right")
-              return {
-                position: "fixed",
-                zIndex: "999999",
-                top: "100px",
-                right: "20px",
-              };
-            return {};
-          },
+          // container: (c) => {
+          //   if (c === "top-right")
+          //     return {
+          //       position: "fixed",
+          //       zIndex: "999999",
+          //       top: "100px",
+          //       right: "20px",
+          //     };
+          //   return {};
+          // },
         }}
         smallScreenBreakpoint={() => 0}
       />
