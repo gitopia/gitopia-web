@@ -10,7 +10,6 @@ import { notify } from "reapop";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getNodeInfo from "../../helpers/getNodeInfo";
 
-
 export const createUser = ({ username, name, bio, avatarUrl }) => {
   return async (dispatch, getState) => {
     try {
@@ -34,11 +33,11 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
         let newWallet = { ...wallet.activeWallet };
         newWallet.name = username;
 
-        if (newWallet.password || newWallet.isLedger) {
+        if (newWallet.isLedger) {
           const CryptoJS = (await import("crypto-js")).default;
           const encryptedWallet = CryptoJS.AES.encrypt(
             JSON.stringify(newWallet),
-            newWallet.isLedger ? "STRONG_LEDGER" : newWallet.password
+            "STRONG_LEDGER"
           ).toString();
           await dispatch({
             type: walletActions.REMOVE_WALLET,
@@ -52,11 +51,8 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
               wallet: newWallet,
               encryptedWallet,
               index: oldWalletIndex,
-              isLedger: newWallet.isLedger,
+              isLedger: true,
             },
-          });
-          await dispatch({
-            type: walletActions.STORE_WALLETS,
           });
           await setCurrentDashboard(newWallet.accounts[0].address)(
             dispatch,
@@ -79,6 +75,59 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
             getState
           );
           await refreshCurrentDashboard(dispatch, getState);
+        } else {
+          // local wallet
+          const continueAfterUnlockingWallet = new Promise(
+            (resolve, reject) => {
+              dispatch({
+                type: walletActions.GET_PASSWORD_FOR_UNLOCK_WALLET,
+                payload: {
+                  usedFor: "Approve",
+                  resolve: (password) => {
+                    const afterGettingPassword = async () => {
+                      const CryptoJS = (await import("crypto-js")).default;
+                      const encryptedWallet = CryptoJS.AES.encrypt(
+                        JSON.stringify(newWallet),
+                        password
+                      ).toString();
+                      await dispatch({
+                        type: walletActions.REMOVE_WALLET,
+                        payload: {
+                          name: oldWalletName,
+                        },
+                      });
+                      await dispatch({
+                        type: walletActions.ADD_WALLET,
+                        payload: {
+                          wallet: newWallet,
+                          encryptedWallet,
+                          index: oldWalletIndex,
+                        },
+                      });
+                      await setCurrentDashboard(newWallet.accounts[0].address)(
+                        dispatch,
+                        getState
+                      );
+                      await refreshCurrentDashboard(dispatch, getState);
+                      await dispatch({
+                        type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
+                      });
+                    };
+                    afterGettingPassword();
+                    resolve({ message: "Approved" });
+                  },
+                  reject: (reason) => {
+                    dispatch({
+                      type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
+                    });
+                    reject({ message: reason, error: true });
+                  },
+                  chainId: wallet.activeWallet.counterPartyChain,
+                },
+              });
+            }
+          );
+          await continueAfterUnlockingWallet;
         }
       }
       return result;
@@ -217,10 +266,10 @@ export const updateUserUsername = (username) => {
               daos: daos,
             },
           });
-        } else {
+        } else if (newWallet.isLedger) {
           let encryptedWallet = CryptoJS.AES.encrypt(
             JSON.stringify(newWallet),
-            newWallet.isLedger ? "STRONG_LEDGER" : newWallet.password
+            "STRONG_LEDGER"
           ).toString();
 
           await dispatch({
@@ -233,15 +282,60 @@ export const updateUserUsername = (username) => {
             payload: {
               wallet: newWallet,
               encryptedWallet,
-              isLedger: newWallet.isLedger,
+              isLedger: true,
               index: oldWalletIndex,
             },
           });
+        } else {
+          // local wallet
+          const continueAfterUnlockingWallet = new Promise(
+            (resolve, reject) => {
+              dispatch({
+                type: walletActions.GET_PASSWORD_FOR_UNLOCK_WALLET,
+                payload: {
+                  usedFor: "Approve",
+                  resolve: (password) => {
+                    const afterGettingPassword = async () => {
+                      let encryptedWallet = CryptoJS.AES.encrypt(
+                        JSON.stringify(newWallet),
+                        password
+                      ).toString();
+
+                      await dispatch({
+                        type: walletActions.REMOVE_WALLET,
+                        payload: { name: oldWalletName },
+                      });
+
+                      await dispatch({
+                        type: walletActions.ADD_WALLET,
+                        payload: {
+                          wallet: newWallet,
+                          encryptedWallet,
+                          index: oldWalletIndex,
+                        },
+                      });
+                      await dispatch({
+                        type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
+                      });
+                    };
+                    afterGettingPassword();
+                    resolve({ message: "Approved" });
+                  },
+                  reject: (reason) => {
+                    dispatch({
+                      type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
+                    });
+                    reject({ message: reason, error: true });
+                  },
+                  chainId: wallet.activeWallet.counterPartyChain,
+                },
+              });
+            }
+          );
+          await continueAfterUnlockingWallet;
+          
         }
 
-        dispatch({
-          type: walletActions.STORE_WALLETS,
-        });
         await getUserDetailsForSelectedAddress()(dispatch, getState);
         const daos = await getUserDaoAll(newWallet.accounts[0].address);
         await dispatch({

@@ -88,7 +88,7 @@ function AutoLogin(props) {
 
   const unlockLocalWallet = async () => {
     let res;
-    if (props.getPassword === "Unlock") {
+    if (props.getPassword === "Unlock" || props.getPassword === "Approve") {
       if (props.getPasswordPromise.chainId !== undefined) {
         res = await props.unlockWallet({
           name: walletName,
