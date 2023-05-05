@@ -74,7 +74,7 @@ function DaoProposalCreate({ dao, ...props }) {
       setValidateAmountError("Enter a valid amount");
     }
 
-    // let balance = props.loreBalance;
+    // let balance = props.balance;
     if (props.advanceUser === false) {
       Vamount = Vamount * 1000000;
     }
@@ -93,7 +93,7 @@ function DaoProposalCreate({ dao, ...props }) {
     if (amount == "") {
       setValidateInitialAmountError("Enter a valid amount");
     }
-    let balance = props.loreBalance;
+    let balance = props.balance;
     if (props.advanceUser === false) {
       Vamount = Vamount * 1000000;
     }
@@ -688,7 +688,7 @@ const mapStateToProps = (state) => {
   return {
     currentDashboard: state.user.currentDashboard,
     advanceUser: state.user.advanceUser,
-    loreBalance: state.wallet.loreBalance,
+    balance: state.wallet.balance,
     dashboards: state.user.dashboards,
   };
 };

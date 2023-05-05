@@ -28,7 +28,7 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
       setValidateAmountError("Enter Valid Amount");
     }
 
-    let balance = props.loreBalance;
+    let balance = props.balance;
     if (props.advanceUser === false) {
       Vamount = Vamount * 1000000;
     }
@@ -298,8 +298,8 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
                 <div className="pl-3">
                   <div className="text-sm h-3/4">
                     {props.advanceUser === true
-                      ? props.loreBalance
-                      : props.loreBalance / 1000000}{" "}
+                      ? props.balance
+                      : props.balance / 1000000}{" "}
                     {props.advanceUser === true
                       ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
                       : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
@@ -365,7 +365,7 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
 
 const mapStateToProps = (state) => {
   return {
-    loreBalance: state.wallet.loreBalance,
+    balance: state.wallet.balance,
     selectedAddress: state.wallet.selectedAddress,
     advanceUser: state.user.advanceUser,
   };

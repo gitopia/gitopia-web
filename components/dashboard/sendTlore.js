@@ -34,7 +34,7 @@ function SendTlore(props) {
       setValidateAmountError("Enter a valid amount");
     }
 
-    let balance = props.loreBalance;
+    let balance = props.balance;
     if (props.advanceUser === false) {
       Vamount = Vamount * 1000000;
     }
@@ -166,7 +166,7 @@ function SendTlore(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
-    loreBalance: state.wallet.loreBalance,
+    balance: state.wallet.balance,
     advanceUser: state.user.advanceUser,
   };
 };

@@ -1,6 +1,6 @@
 import { notify } from "reapop";
 import { sendTransaction, setupTxClients } from "./env";
-import { createUser, getUserDetailsForSelectedAddress } from "./user";
+import { getUserDetailsForSelectedAddress } from "./user";
 import { updateUserBalance } from "./wallet";
 import { watchTask } from "./taskQueue";
 
@@ -17,30 +17,42 @@ export const validatePostingEligibility = async (
     return false;
   }
 
-  const { wallet, env, user } = getState();
+  const { wallet, user } = getState();
 
   if (!wallet.selectedAddress) {
     dispatch(notify("Please sign in to create " + msgType, "error"));
     return false;
   }
 
-  if (!user.creator) {
-    if (wallet.loreBalance <= 0.000005) {
-      dispatch(notify("Balance low for creating " + msgType, "error"));
-      return false;
+  let balance = wallet.balance;
+  if (balance <= 500 * numberOfTransactions) {
+    const getAllowance = (await import("../../helpers/getAllowance")).default;
+    let res = await getAllowance(wallet.selectedAddress);
+    if (res?.allowance?.spend_limit) {
+      let limit = res?.allowance?.spend_limit[0];
+      if (limit.denom === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN) {
+        dispatch({
+          type: "UPDATE_ALLOWANCE",
+          payload: { allowance: Number(limit.amount) },
+        });
+        if (limit.amount <= 500 * numberOfTransactions) {
+          dispatch(notify("Allowance low for creating " + msgType, "error"));
+          return false;
+        }
+      }
     } else {
-      dispatch(
-        notify(
-          "You need to create a profile before performing any action, please go back to the dashboard and setup your profile first",
-          "error"
-        )
-      );
+      dispatch(notify("Balance low for creating " + msgType, "error"));
       return false;
     }
   }
 
-  if (wallet.loreBalance <= 0.0000025 * numberOfTransactions) {
-    dispatch(notify("Balance low for creating " + msgType, "error"));
+  if (!user.creator) {
+    dispatch(
+      notify(
+        "You need to create a profile before performing any action, please go back to the dashboard and setup your profile first",
+        "error"
+      )
+    );
     return false;
   }
 

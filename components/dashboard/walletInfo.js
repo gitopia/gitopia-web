@@ -149,18 +149,22 @@ function WalletInfo(props) {
         <div className="text-type-primary text-xs font-bold uppercase mt-6 mb-4">
           Tokens
         </div>
-        <div className="flex p-3 box-content bg-grey-50 rounded-xl mb-3 items-center justify-center text-sm group">
+        <div
+          className={
+            "flex p-3 box-content bg-grey-50 items-center justify-center text-sm group" +
+            (props.allowance ? " rounded-t-xl" : " rounded-xl mb-3")
+          }
+        >
           <div className="flex-none">
             <img width={24} src={"/tokens/gitopia.svg"} />
           </div>
           <div className="mx-3 flex-1">{"Gitopia"}</div>
 
           <div className="">
-            {props.loreBalance / 1000000 +
+            {props.balance / 1000000 +
               " " +
-              process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+              (process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
           </div>
-
           <div className="flex transition-all items-center cursor-pointer text-type-secondary opacity-0 w-0 group-hover:opacity-100 group-hover:w-8 group-hover:ml-3">
             <div
               className="btn btn-circle btn-sm btn-outline tooltip tooltip-bottom tooltip-secondary"
@@ -193,6 +197,18 @@ function WalletInfo(props) {
             </div>
           </div>
         </div>
+        {props.allowance ? (
+          <div className="flex px-3 py-1 box-content bg-repo-grad-v bg-grey-50 rounded-b-xl mb-3 items-center justify-center text-sm group">
+            <div className="mx-3 flex-1 pl-6">{"Fee Grants"}</div>
+            <div className="ml-2">
+              {props.allowance / 1000000 +
+                " " +
+                (process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
         {assets.map((asset, index) => {
           return (
             <div
@@ -316,8 +332,8 @@ function WalletInfo(props) {
         <div className="text-type-primary text-xs font-bold uppercase mt-6 mb-4">
           LORE REWARDS
         </div>
-        <div className="mt-1 p-4 box-content h-14 rounded-lg flex bg-rewards-grad">
-          <div className="mt-1 border border-grey-300 h-8 w-8 rounded-full flex items-center justify-center">
+        <div className="mt-1 p-4 box-content h-14 rounded-lg flex bg-rewards-grad items-center">
+          <div className="border border-grey-300 h-8 w-8 rounded-full flex items-center justify-center">
             <svg
               width="11"
               height="18"
@@ -345,13 +361,19 @@ function WalletInfo(props) {
               />
             </svg>
           </div>
-          <div className="ml-2 flex-1">
-            <div className="font-semibold text-xl mt-1">
-              {rewards / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
+          <div className="mx-2 flex-1">
+            <div className="font-semibold text-xl">
+              {rewards / 1000000 +
+                " " +
+                (process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
             </div>
-            <div className="font-bold text-xs text-type-tertiary">
-              {rewardsDollarValue}
-            </div>
+            {rewardsDollarValue ? (
+              <div className="font-bold text-xs text-type-tertiary">
+                &#8776;{"$" + rewardsDollarValue}
+              </div>
+            ) : (
+              ""
+            )}
           </div>
           <div
             onClick={() => {
@@ -359,9 +381,9 @@ function WalletInfo(props) {
                 window.open("/rewards");
               }
             }}
-            className="btn btn-primary btn-sm mt-3"
+            className="btn btn-primary btn-sm px-4"
           >
-            Claim Rewards
+            {rewards ? "Claim Rewards" : "Check Eligibility"}
           </div>
         </div>
       </div>
@@ -372,7 +394,8 @@ function WalletInfo(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
-    loreBalance: state.wallet.loreBalance,
+    balance: state.wallet.balance,
+    allowance: state.wallet.allowance,
     advanceUser: state.user.advanceUser,
     avatarUrl: state.user.avatarUrl,
     activeWallet: state.wallet.activeWallet,

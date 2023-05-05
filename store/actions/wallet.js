@@ -383,6 +383,10 @@ export const createWalletWithMnemonic = ({
 export const updateUserBalance = (showNotification = false) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
+    if (!state.balance) {
+      await updateUserAllowance()(dispatch, getState);
+      return;
+    }
     const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
     try {
       const res = await api.queryBalance(
@@ -406,6 +410,42 @@ export const updateUserBalance = (showNotification = false) => {
         },
       });
       console.error("Unable to update lore balance", e);
+    }
+  };
+};
+
+export const updateUserAllowance = (showNotification = false) => {
+  return async (dispatch, getState) => {
+    const state = getState().wallet;
+    const getAllowance = (await import("../../helpers/getAllowance")).default;
+
+    try {
+      const res = await getAllowance(state.selectedAddress);
+      let limit = res?.allowance?.spend_limit[0];
+      if (limit.denom === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN) {
+        dispatch({
+          type: walletActions.UPDATE_ALLOWANCE,
+          payload: { allowance: Number(limit.amount) },
+        });
+      } else {
+        dispatch({
+          type: walletActions.UPDATE_ALLOWANCE,
+          payload: {
+            allowance: 0,
+          },
+        });
+      }
+      if (showNotification) {
+        dispatch(notify("Allowance updated", "info"));
+      }
+    } catch (e) {
+      dispatch({
+        type: walletActions.UPDATE_ALLOWANCE,
+        payload: {
+          allowance: 0,
+        },
+      });
+      console.error("Unable to update lore allowance", e);
     }
   };
 };
@@ -970,7 +1010,7 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
         const result = await env.txClientSecondary.signAndBroadcast([msg], {
           fee,
           memo,
-        });
+        }, wallet.allowance ? process.env.NEXT_PUBLIC_FEE_GRANTER : null);
         updateUserBalance()(dispatch, getState);
 
         if (result && result.code === 0) {

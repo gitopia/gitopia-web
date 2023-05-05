@@ -4,12 +4,11 @@ import { updateUserBalance } from "../store/actions/wallet";
 import axios from "../helpers/axiosFetch";
 import { useRouter } from "next/router";
 import { notify } from "reapop";
-import { router } from "websocket";
 
 function FundWallet(props) {
   const [gettingFaucetTokens, setGettingFaucetTokens] = useState(false);
   const balanceElem = useRef();
-  const isBalanceLow = Number(props.loreBalance) <= 100;
+  const isBalanceLow = Number(props.balance) <= 100;
   const router = useRouter();
 
   const getTokens = () => {
@@ -71,7 +70,7 @@ function FundWallet(props) {
         }, 2000);
       }
     }
-  }, [props.loreBalance]);
+  }, [props.balance]);
 
   return (
     <>
@@ -120,7 +119,7 @@ function FundWallet(props) {
       </div>
       <div className="max-w-md w-full px-4 text-center text-md">
         <div className="confetti text-accent-focus" ref={balanceElem}>
-          {props.loreBalance / 1000000 +
+          {props.balance / 1000000 +
             " " +
             (process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
         </div>
@@ -192,7 +191,7 @@ const mapStateToProps = (state) => {
   return {
     wallets: state.wallet.wallets,
     selectedAddress: state.wallet.selectedAddress,
-    loreBalance: state.wallet.loreBalance,
+    balance: state.wallet.balance,
   };
 };
 

@@ -7,8 +7,9 @@ const initialState = {
   activeWallet: null,
   selectedAddress: null,
   gasPrice: process.env.NEXT_PUBLIC_GAS_PRICE,
-  backupState: get('backupState') || false,
-  loreBalance: 0,
+  backupState: get("backupState") || false,
+  balance: 0,
+  allowance: 0,
   getPassword: false,
   getPasswordPromise: {},
   unlockingWallet: false,
@@ -101,7 +102,7 @@ const reducer = (state = initialState, action) => {
       state.selectedAddress = null;
       state.activeWallet = null;
       state.unlockingWallet = false;
-      state.loreBalance = 0;
+      state.balance = 0;
       del("lastWallet");
       return {
         ...state,
@@ -112,7 +113,15 @@ const reducer = (state = initialState, action) => {
       let { balance } = action.payload;
       return {
         ...state,
-        loreBalance: balance,
+        balance: balance,
+      };
+    }
+
+    case walletActions.UPDATE_ALLOWANCE: {
+      let { allowance } = action.payload;
+      return {
+        ...state,
+        allowance,
       };
     }
 
