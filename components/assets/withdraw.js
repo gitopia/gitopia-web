@@ -287,7 +287,7 @@ function WithdrawIbcAsset(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
-    loreBalance: state.wallet.loreBalance,
+    balance: state.wallet.balance,
     activeWallet: state.wallet.activeWallet,
     advanceUser: state.user.advanceUser,
     ibcAssets: state.ibcAssets,

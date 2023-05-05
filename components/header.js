@@ -568,7 +568,7 @@ const mapStateToProps = (state) => {
     wallets: state.wallet.wallets,
     activeWallet: state.wallet.activeWallet,
     selectedAddress: state.wallet.selectedAddress,
-    loreBalance: state.wallet.loreBalance,
+    balance: state.wallet.balance,
     currentDashboard: state.user.currentDashboard,
     dashboards: state.user.dashboards,
     advanceUser: state.user.advanceUser,

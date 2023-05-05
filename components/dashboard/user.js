@@ -1,6 +1,6 @@
 import Link from "next/link";
 import FaucetReceiver from "../faucetReceiver";
-import GithubRewards from "../githubRewards";
+import AllowanceReceiver from "../allowanceReceiver";
 import GreetUser from "../greetUser";
 import PromptBackupWallet from "../promptBackupWallet";
 import KnowledgeCenter from "./knowledgeCenter";
@@ -23,7 +23,11 @@ function UserDashboard(props) {
           </select>
         </div>
       </div> */}
-      <FaucetReceiver />
+      {process.env.NEXT_PUBLIC_FEE_GRANTER ? (
+        <AllowanceReceiver />
+      ) : (
+        <FaucetReceiver />
+      )}
       <div className="mb-8">
         <GreetUser />
       </div>

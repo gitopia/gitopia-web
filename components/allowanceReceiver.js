@@ -1,32 +1,30 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import axios from "../helpers/axiosFetch";
-import { calculateGithubRewards } from "../store/actions/user";
+import { updateUserAllowance } from "../store/actions/wallet";
 import { notify } from "reapop";
 
-function GithubRewards(props) {
+function AllowanceReceiver(props) {
   const [loading, setLoading] = useState(false);
-  const [tokenReceived, setTokenReceived] = useState(
-    parseFloat(props.balance) !== 0
+  const [allowanceGranted, setAllowanceGranted] = useState(
+    parseInt(props.allowance) !== 0
   );
 
   useEffect(() => {
-    setTokenReceived(parseFloat(props.balance) !== 0);
-  }, [props.balance]);
+    setAllowanceGranted(parseInt(props.allowance) !== 0);
+  }, [props.allowance]);
 
-  const getTokens = async () => {
+  const checkAllowance = async () => {
     if (loading) return;
     if (!props.selectedAddress) {
       props.notify("Please sign in before claiming tokens", "error");
       return;
     }
     setLoading(true);
-    const res = await props.calculateGithubRewards("ASDASDASD");
-    console.log(res);
+    await props.updateUserAllowance();
     setLoading(false);
   };
 
-  return (
+  return !allowanceGranted ? (
     <div className="sm:flex bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md mb-8">
       <div className="flex">
         <div
@@ -50,46 +48,37 @@ function GithubRewards(props) {
           </svg>
         </div>
         <div className="flex-1 mr-8">
-          <div className="text-lg">
-            Get Github reward tokens{" "}
-            {props.advanceUser === true
-              ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
-              : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
-          </div>
+          <div className="text-lg">Get Fee Grant</div>
           <div className="text-xs mt-2 text-type-secondary">
-            These are distributed based on your contributions to Open Source
-            repositories
+            You can ask for a fee grant to start using Gitopia without buying any {(process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
           </div>
         </div>
       </div>
       <div className="flex-none w-60 mr-8 mt-4 sm:mt-0">
-        <button
-          className={
-            "btn btn-sm btn-accent btn-outline btn-block " +
-            (loading ? "loading" : "")
-          }
-          onClick={getTokens}
-          disabled={loading}
+        <a
+          className={"btn btn-sm btn-primary btn-outline btn-block"}
+          href="https://discord.gg/aqsKW3hUHD"
+          target="_blank"
+          rel="noreferrer"
         >
-          {"Get Reward "}
-          {props.advanceUser === true
-            ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
-            : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
-        </button>
+          Ask on Discord
+        </a>
       </div>
     </div>
+  ) : (
+    ""
   );
 }
 
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
-    balance: state.wallet.balance,
+    allowance: state.wallet.allowance,
     advanceUser: state.user.advanceUser,
   };
 };
 
 export default connect(mapStateToProps, {
-  calculateGithubRewards,
+  updateUserAllowance,
   notify,
-})(GithubRewards);
+})(AllowanceReceiver);

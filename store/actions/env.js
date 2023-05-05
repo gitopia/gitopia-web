@@ -29,7 +29,8 @@ export const sendTransaction = ({
       console.log(msgArr);
       result = await env.txClient.signAndBroadcast(
         msgArr,
-        { fee: "auto", memo }
+        { fee: 1.5, memo },
+        wallet.allowance ? process.env.NEXT_PUBLIC_FEE_GRANTER : null
       );
       dispatch(dismissNotification(notifId));
       return result;

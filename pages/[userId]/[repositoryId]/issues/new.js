@@ -231,7 +231,7 @@ function RepositoryIssueCreateView(props) {
 
 const mapStateToProps = (state) => {
   return {
-    loreBalance: state.wallet.loreBalance,
+    balance: state.wallet.balance,
     selectedAddress: state.wallet.selectedAddress,
     advanceUser: state.user.advanceUser,
   };
