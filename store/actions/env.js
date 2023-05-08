@@ -1,6 +1,10 @@
 import { walletActions, envActions } from "./actionTypes";
 import { notify, dismissNotification } from "reapop";
-import { initLedgerTransport, updateUserBalance } from "./wallet";
+import {
+  initLedgerTransport,
+  closeLedgerTransport,
+  updateUserBalance,
+} from "./wallet";
 import getNodeInfo from "../../helpers/getNodeInfo";
 
 export const sendTransaction = ({
@@ -11,7 +15,7 @@ export const sendTransaction = ({
   return async (dispatch, getState) => {
     const { env, wallet } = getState();
     let notifId, result;
-    if (wallet.activeWallet && wallet.activeWallet.isLedger) {
+    if (wallet.activeWallet?.isLedger) {
       const msg = dispatch(
         notify(
           "Please sign the transaction on your ledger",
@@ -32,34 +36,32 @@ export const sendTransaction = ({
         { fee: 1.5, memo },
         wallet.allowance ? process.env.NEXT_PUBLIC_FEE_GRANTER : null
       );
-      dispatch(dismissNotification(notifId));
+      if (wallet.activeWallet?.isLedger) {
+        dispatch(dismissNotification(notifId));
+        await closeLedgerTransport()(dispatch, getState);
+      }
       return result;
     } catch (e) {
       let error = e;
+      if (wallet.activeWallet?.isLedger) {
+        dispatch(dismissNotification(notifId));
+        await closeLedgerTransport()(dispatch, getState);
+      }
       switch (e.message) {
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: The device was disconnected.":
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: Failed to execute 'transferOut' on 'USBDevice': The device was disconnected.":
-          initLedgerTransport({ force: true })(dispatch, getState);
-          dispatch({
-            type: envActions.SET_CLIENTS,
-            payload: {
-              txClient: null,
-              queryClient: env.queryClient,
-            },
-          });
+        case "Ledger Native Error: InvalidStateError: Failed to execute 'transferOut' on 'USBDevice': The device must be opened first.":
+        case "Ledger was disconneced during operation, please try again":
           error = {
-            message:
-              "Ledger was disconneced during operation, please try again",
+            message: "Ledger disconneced, please try again",
           };
-          await setupTxClients(dispatch, getState);
           break;
         case "Please close BOLOS and open the Cosmos Ledger app on your Ledger device.":
           error = {
             message: "Please open Cosmos app on your Ledger",
           };
       }
-      dispatch(dismissNotification(notifId));
-      throw new Error(error);
+      throw new Error(error.message);
     }
   };
 };
@@ -107,22 +109,31 @@ export const signMessage = ({ data = {} }) => {
           chainId: info.default_node_info.network,
         }
       );
-      dispatch(dismissNotification(notifId));
+      if (wallet.activeWallet?.isLedger) {
+        dispatch(dismissNotification(notifId));
+        await closeLedgerTransport()(dispatch, getState);
+      }
       return res;
     } catch (e) {
       switch (e.message) {
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: The device was disconnected.":
-          initLedgerTransport({ force: true })(dispatch, getState);
-          dispatch({
-            type: envActions.SET_CLIENTS,
-            payload: {
-              txClient: null,
-              queryClient: env.queryClient,
-            },
-          });
-          setupTxClients(dispatch, getState);
+        case "Ledger Native Error: DisconnectedDeviceDuringOperation: Failed to execute 'transferOut' on 'USBDevice': The device was disconnected.":
+        case "Ledger Native Error: InvalidStateError: Failed to execute 'transferOut' on 'USBDevice': The device must be opened first.":
+        case "Ledger was disconnected during operation, please try again":
+        case "Failed to execute 'releaseInterface' on 'USBDevice': The device was disconnected.":
+          error = {
+            message: "Ledger disconnected, please try again",
+          };
+          break;
+        case "Please close BOLOS and open the Cosmos Ledger app on your Ledger device.":
+          error = {
+            message: "Please open Cosmos app on your Ledger",
+          };
       }
-      dispatch(dismissNotification(notifId));
+      if (wallet.activeWallet?.isLedger) {
+        dispatch(dismissNotification(notifId));
+        await closeLedgerTransport()(dispatch, getState);
+      }
       throw new Error(e.message);
     }
   };

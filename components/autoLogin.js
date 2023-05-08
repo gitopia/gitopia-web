@@ -24,6 +24,7 @@ function AutoLogin(props) {
   const [showDialog, setShowDialog] = useState(false);
   const [externalWalletMsg, setExternalWalletMsg] = useState(null);
   const inputEl = useRef();
+  const okayRef = useRef();
 
   useEffect(() => {
     async function setWallet() {
@@ -76,7 +77,8 @@ function AutoLogin(props) {
     if (showDialog)
       setTimeout(() => {
         if (inputEl.current) inputEl.current.focus();
-      }, 0);
+        if (props.activeWallet?.isLedger && okayRef.current) okayRef.current.click();
+      }, 100);
   }, [showDialog]);
 
   useEffect(() => {
@@ -199,6 +201,7 @@ function AutoLogin(props) {
                   "btn btn-sm btn-block btn-primary flex-1" +
                   (props.unlockingWallet ? " loading" : "")
                 }
+                ref={okayRef}
                 onClick={unlockLocalWallet}
                 disabled={props.unlockingWallet}
                 data-test={props.getPassword}

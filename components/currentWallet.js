@@ -62,7 +62,7 @@ function CurrentWallet(props) {
     const wallet =
       props.wallets[props.wallets.findIndex((x) => x.name === walletName)];
     if (wallet && wallet.isLedger) {
-      props.unlockLedgerWallet({ name: wallet.name });
+      props.unlockLedgerWallet({ name: wallet.name, justUnlock: true });
       setExternalWalletMsg("Please open Cosmos app on your ledger to verify");
     } else {
       setExternalWalletMsg(null);

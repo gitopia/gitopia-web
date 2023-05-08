@@ -90,7 +90,7 @@ export const createRepository = ({
       }
     } catch (e) {
       console.error(e);
-      dispatch(notify(e.message, "error"));
+      dispatch(notify(e['message'], "error"));
       return null;
     }
   };
