@@ -389,7 +389,7 @@ export const updateUserBalance = (showNotification = false) => {
         state.selectedAddress,
         process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
       );
-      if (res?.data?.balance?.amount === 0) {
+      if (Number(res?.data?.balance?.amount) <= 500) {
         await updateUserAllowance()(dispatch, getState);
         return;
       }

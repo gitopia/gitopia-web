@@ -30,12 +30,6 @@ function WalletInfo(props) {
         setTokenBalances(a.TokenBalances);
       }
     }
-    async function getAssets() {
-      let assets = await getAssetList();
-      if (assets) {
-        setAssets(assets);
-      }
-    }
     async function getRewards() {
       let tokens = await getRewardToken(props.selectedAddress);
       if (tokens) {
@@ -51,7 +45,6 @@ function WalletInfo(props) {
     }
 
     getWalletbalance();
-    getAssets();
     getRewards();
   }, [props.selectedAddress]);
 
@@ -290,7 +283,7 @@ function WalletInfo(props) {
         ) : (
           ""
         )}
-        {assets.map((asset, index) => {
+        {props.ibcAssetList?.map((asset, index) => {
           return (
             <div
               className="flex p-3 box-content bg-grey-50 rounded-xl mb-3 items-center justify-center text-sm group"
@@ -440,7 +433,7 @@ function WalletInfo(props) {
               />
             </svg>
           </div>
-          <div className="mx-2 flex-1">
+          <div className="mx-4 flex-1">
             <div className="font-semibold text-xl">
               {rewards / 1000000 +
                 " " +
@@ -454,16 +447,13 @@ function WalletInfo(props) {
               ""
             )}
           </div>
-          <div
-            onClick={() => {
-              if (window) {
-                window.open("/rewards");
-              }
-            }}
+          <a
+            href="/rewards"
+            target="_blank"
             className="btn btn-primary btn-sm px-4"
           >
             {rewards ? "Claim Rewards" : "Check Eligibility"}
-          </div>
+          </a>
         </div>
       </div>
     </div>
@@ -480,6 +470,7 @@ const mapStateToProps = (state) => {
     userUsername: state.user.username,
     userName: state.user.name,
     activeWallet: state.wallet.activeWallet,
+    ibcAssetList: state.ibcAssets.assetList,
   };
 };
 
