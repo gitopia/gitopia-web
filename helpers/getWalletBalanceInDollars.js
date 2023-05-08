@@ -13,7 +13,7 @@ export default async function getBalanceInDollars(address) {
       TokenBalances = {},
       USDBalances = {};
     const res = await api.queryAllBalances(address);
-    if (res.ok) {
+    if (res.status === 200) {
       let balance = res.data.balances;
       for (let i = 0; i < balance.length; i++) {
         TokenBalances[balance[i].denom] = balance[i].amount;

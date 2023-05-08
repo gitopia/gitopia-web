@@ -30,12 +30,12 @@ export const validatePostingEligibility = async (
     let res = await getAllowance(wallet.selectedAddress);
     if (res?.allowance?.spend_limit) {
       let limit = res?.allowance?.spend_limit[0];
-      if (limit.denom === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN) {
+      if (limit?.denom === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN) {
         dispatch({
           type: "UPDATE_ALLOWANCE",
           payload: { allowance: Number(limit.amount) },
         });
-        if (limit.amount <= 500 * numberOfTransactions) {
+        if (limit?.amount <= 500 * numberOfTransactions) {
           dispatch(notify("Allowance low for creating " + msgType, "error"));
           return false;
         }

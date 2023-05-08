@@ -268,15 +268,14 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
         oldWalletIndex = state.wallets.findIndex((x) => x.name === name);
 
       if (user?.username) {
-        const CryptoJS = (await import("crypto-js")).default;
         oldWalletName = name;
         wallet.name = user.username;
-        encryptedWallet = CryptoJS.AES.encrypt(
-          JSON.stringify(wallet),
-          password
-        ).toString();
-
-        if (name !== user.username) {
+        if (name !== user.username || state.wallets[oldWalletIndex].avatarUrl !== user.avatarUrl) {
+          const CryptoJS = (await import("crypto-js")).default;
+          encryptedWallet = CryptoJS.AES.encrypt(
+            JSON.stringify(wallet),
+            password
+          ).toString();
           await dispatch({
             type: walletActions.REMOVE_WALLET,
             payload: { name: oldWalletName },
@@ -288,6 +287,7 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
               wallet: wallet,
               encryptedWallet,
               index: oldWalletIndex,
+              avatarUrl: user.avatarUrl
             },
           });
         } else {
@@ -383,16 +383,16 @@ export const createWalletWithMnemonic = ({
 export const updateUserBalance = (showNotification = false) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
-    if (!state.balance) {
-      await updateUserAllowance()(dispatch, getState);
-      return;
-    }
     const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
     try {
       const res = await api.queryBalance(
         state.selectedAddress,
         process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
       );
+      if (res?.data?.balance?.amount === 0) {
+        await updateUserAllowance()(dispatch, getState);
+        return;
+      }
       dispatch({
         type: walletActions.UPDATE_BALANCE,
         payload: {
@@ -422,7 +422,7 @@ export const updateUserAllowance = (showNotification = false) => {
     try {
       const res = await getAllowance(state.selectedAddress);
       let limit = res?.allowance?.spend_limit[0];
-      if (limit.denom === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN) {
+      if (limit?.denom === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN) {
         dispatch({
           type: walletActions.UPDATE_ALLOWANCE,
           payload: { allowance: Number(limit.amount) },
@@ -459,7 +459,7 @@ export const getBalance = (address) => {
         address,
         process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
       );
-      if (res && res.ok) return res.data.balance.amount;
+      if (res?.status === 200) return res.data.balance.amount;
       else console.error(res.error);
     } catch (e) {
       console.error("Unable to get balance", e);
@@ -661,7 +661,7 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
       // Check if user exists, rename the old wallet to correct username
 
       let user = await getUser(addr),
-        oldWalletName,
+        oldWalletName = newWallet.name,
         oldWalletIndex = wallet.wallets.findIndex(
           (x) => x.name === newWallet.name
         );
@@ -687,6 +687,7 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
           encryptedWallet,
           isLedger: true,
           index: oldWalletIndex,
+          avatarUrl: user?.avatarUrl
         },
       });
 
@@ -831,6 +832,7 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
           wallet,
           encryptedWallet,
           index: oldWalletIndex,
+          avatarUrl: user?.avatarUrl
         },
       });
 

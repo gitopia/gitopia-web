@@ -42,6 +42,8 @@ function ConnectLedger(props) {
   }, []);
   const createWallet = async () => {
     setCreatingWallet(true);
+    setAppError(null);
+    setConnectError(null);
     let res = await props.initLedgerTransport();
     if (res.transport) {
       setConnectPermission(true);
@@ -58,8 +60,7 @@ function ConnectLedger(props) {
           if (a === "USER_CREATED") {
             router.push("/home");
           } else if (a === "WALLET_ADDED") {
-            setTimeout(getTokens, 2000);
-            router.push("/login?step=6");
+            router.push("/login?step=5");
           }
         } else {
           setVerifyError("Unable to confirm on ledger");
@@ -72,48 +73,6 @@ function ConnectLedger(props) {
     }
 
     setCreatingWallet(false);
-  };
-  const getTokens = () => {
-    if (!props.selectedAddress) {
-      props.notify("Please sign in before claiming tokens", "error");
-      return;
-    }
-    // setLoading(amount);
-
-    axios
-      .post(
-        process.env.NODE_ENV === "development"
-          ? "/api/faucet"
-          : process.env.NEXT_PUBLIC_FAUCET_URL,
-        {
-          address: props.selectedAddress,
-        },
-        { timeout: 10000 }
-      )
-      .then((res) => {
-        if (
-          res?.data?.transfers &&
-          res?.data?.transfers.length &&
-          res.data.transfers[0].status === "error"
-        ) {
-          props.notify(res.data.transfers[0].error, "error");
-          // setLoading(0);
-        } else {
-          setTimeout(() => {
-            props.updateUserBalance(true);
-            // setLoading(0);
-          }, 2000);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        if (err?.response?.data?.error) {
-          props.notify(err.response.data.error, "error");
-        } else {
-          props.notify("Unable to reach faucet", "error");
-        }
-        // setLoading(0);
-      });
   };
   return (
     <>

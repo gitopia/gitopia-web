@@ -60,7 +60,7 @@ function FaucetReceiver(props) {
   };
 
   return !tokenReceived ? (
-    <div className="sm:flex bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md mb-8">
+    <div className="sm:flex bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md mb-4">
       <div className="flex">
         <div
           className={

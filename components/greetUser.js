@@ -6,7 +6,7 @@ function GreetUser(props) {
     <div>
       {props.user.username ? (
         <div>
-          <div className="text-xs uppercase">Welcome</div>
+          <div className="text-xs">Welcome</div>
           <div className="text-lg">
             <Link href={"/" + props.user.username} className="btn-link">
               {props.user.name ? props.user.name : props.user.username}

@@ -25,7 +25,7 @@ function AllowanceReceiver(props) {
   };
 
   return !allowanceGranted ? (
-    <div className="sm:flex bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md mb-8">
+    <div className="sm:flex bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md mb-4">
       <div className="flex">
         <div
           className={
@@ -56,7 +56,7 @@ function AllowanceReceiver(props) {
       </div>
       <div className="flex-none w-60 mr-8 mt-4 sm:mt-0">
         <a
-          className={"btn btn-sm btn-primary btn-outline btn-block"}
+          className={"btn btn-sm btn-primary btn-block"}
           href="https://discord.gg/aqsKW3hUHD"
           target="_blank"
           rel="noreferrer"
