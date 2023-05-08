@@ -96,7 +96,7 @@ function UserUsername(props = { isEditable: false }) {
           if (props.isEditable) setModalOpen(true);
         }}
         className={
-          "modal-button py-1 border-b mr-2" +
+          "modal-button py-1 border-b" +
           (props.isEditable
             ? " border-grey-300 hover:text-primary cursor-pointer"
             : " border-transparent") +

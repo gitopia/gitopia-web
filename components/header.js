@@ -65,17 +65,9 @@ function Header(props) {
     }
   };
 
-  let addressToShow = "",
-    avatarUrl = "";
+  let addressToShow = "";
   if (props.selectedAddress) {
     addressToShow = "gitopia" + shrinkAddress(props.selectedAddress);
-    if (props.avatarUrl) {
-      avatarUrl = props.avatarUrl;
-    } else {
-      avatarUrl =
-        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&background=c52a7d&caps=1&name=" +
-        addressToShow.slice(-1);
-    }
   }
 
   function unreadNotification() {
@@ -300,7 +292,7 @@ function Header(props) {
                   </a>
                 </div>
               </div> */}
-              {props.selectedAddress !== null && !isMobile ? (
+              {/* {props.selectedAddress !== null && !isMobile ? (
                 <div>
                   <div className="indicator flex-none mr-4">
                     <a
@@ -332,7 +324,7 @@ function Header(props) {
                 </div>
               ) : (
                 ""
-              )}
+              )} */}
 
               <div
                 className={
@@ -343,20 +335,32 @@ function Header(props) {
                   tabIndex="0"
                   data-test="wallet-menu"
                   className={
-                    "btn btn-outline rounded-full px-4 relative " +
+                    "btn btn-outline rounded-full px-4 relative hover:bg-base-300 hover:text-white " +
                     (props.activeWallet ? "btn-ghost" : "btn-primary") +
-                    (props.unlockingWallet ? " loading" : "")
+                    (props.unlockingWallet ? " loading" : "") +
+                    (menuOpen ? " bg-base-300" : "")
                   }
                   onClick={(e) => {
                     setMenuOpen(true);
                     if (props.activeWallet) setMenuState(1);
+                    e.preventDefault();
+                    props.setIbcAssets(assets);
                   }}
                   ref={menuRef}
                 >
                   <div className="avatar absolute left-1">
                     <div className="rounded-full w-10 h-10">
                       {props.activeWallet && !props.unlockingWallet ? (
-                        <img src={avatarUrl} data-test="current_wallet_avatar" />
+                        props.avatarUrl ? (
+                          <img
+                            src={props.avatarUrl}
+                            data-test="current_wallet_avatar"
+                          />
+                        ) : (
+                          <span className="bg-purple-900 flex items-center justify-center text-xl uppercase h-full">
+                            {props.activeWallet.name[0]}
+                          </span>
+                        )
                       ) : (
                         ""
                       )}
@@ -408,7 +412,7 @@ function Header(props) {
                   </div>
                 </button>
                 <div className="shadow-xl dropdown-content bg-base-300 rounded mt-1">
-                  {menuState === 6 && menuOpen && (
+                  {menuState === 1 && menuOpen && (
                     <WalletInfo
                       setMenuOpen={setMenuOpen}
                       setMenuState={setMenuState}
@@ -440,7 +444,7 @@ function Header(props) {
                     }
                   />
                 )} */}
-                  {menuState === 2 && <CurrentWallet />}
+                  {menuState === 2 && <CurrentWallet setMenuOpen={setMenuOpen} />}
                   {menuState === 3 && menuOpen && (
                     <SendTlore
                       setMenuOpen={setMenuOpen}
@@ -448,7 +452,7 @@ function Header(props) {
                       setMenuState={setMenuState}
                     />
                   )}
-                  {menuState === 1 && (
+                  {/* {menuState === 1 && (
                     <ul className="menu compact w-48 rounded">
                       {props.activeWallet ? (
                         <>
@@ -492,7 +496,7 @@ function Header(props) {
                               <a
                                 href="#"
                                 onClick={(e) => {
-                                  setMenuState(6);
+                                  setMenuState(1);
                                   e.preventDefault();
                                 }}
                               >
@@ -544,7 +548,7 @@ function Header(props) {
                         ""
                       )}
                     </ul>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>

@@ -76,7 +76,7 @@ export const signMessage = ({ data = {} }) => {
     let notifId;
     if (wallet.activeWallet && wallet.activeWallet.isLedger) {
       const msg = dispatch(
-        notify("Please sign the message on your ledger", "loading", {
+        notify("Please sign the message on your ledger", "waiting-for-input", {
           dismissible: false,
           dismissAfter: 0,
         })

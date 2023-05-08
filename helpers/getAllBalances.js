@@ -5,7 +5,7 @@ export default async function getBalances(address) {
   if (!address) return null;
   try {
     const res = await api.queryAllBalances(address);
-    if (res.ok) {
+    if (res.status === 200) {
       let u = res.data;
       return u;
     }

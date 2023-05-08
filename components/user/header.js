@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { getUserDetailsForSelectedAddress } from "../../store/actions/user";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import { notify } from "reapop";
 import AccountAvatar from "../account/avatar";
@@ -14,7 +13,6 @@ function UserHeader(props) {
 
   const refresh = async (updatedUserName) => {
     await props.refresh(updatedUserName);
-    await props.getUserDetailsForSelectedAddress();
   };
 
   useEffect(() => {
@@ -131,6 +129,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  getUserDetailsForSelectedAddress,
   notify,
 })(UserHeader);

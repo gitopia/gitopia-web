@@ -11,20 +11,19 @@ import debounce from "lodash/debounce";
 
 function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
   const name = isDao
-    ? props.dao.name
+    ? props.dao?.name
       ? props.dao.name
       : "."
-    : props.user.creator
-    ? props.user.creator
-    : ".";
+    : props.user?.name
+    ? props.user.name
+    : props.user.username || ".";
   const [validateImageUrlError, setValidateImageUrlError] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewAvatarUrl, setPreviewAvatarUrl] = useState(null);
-  const [previewAvatarText, setPreviewAvatarText] = useState(
-    "Nothing to preview"
-  );
+  const [previewAvatarText, setPreviewAvatarText] =
+    useState("Nothing to preview");
   const [currentTab, setCurrentTab] = useState("upload");
   const [imageFile, setImageFile] = useState(null);
   const imageFileInput = useRef();
@@ -341,7 +340,7 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                   strokeLinejoin="round"
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
-</svg>
+              </svg>
             </div>
           </label>
         ) : (
@@ -355,19 +354,21 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
               (isEditable ? " border-grey-300" : " border-transparent")
             }
           >
-            <img
-              src={
-                isDao
-                  ? props.dao.avatarUrl == ""
-                    ? "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                      name.slice(-1)
-                    : props.dao.avatarUrl
-                  : props.user.avatarUrl == ""
-                  ? "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                    name.slice(-1)
-                  : props.user.avatarUrl
-              }
-            />
+            {isDao ? (
+              props.dao?.avatarUrl == "" ? (
+                <span className="bg-purple-900 flex items-center justify-center text-8xl uppercase h-full">
+                  {name[0]}
+                </span>
+              ) : (
+                <img src={props.dao?.avatarUrl} />
+              )
+            ) : props.user.avatarUrl == "" ? (
+              <span className="bg-purple-900 flex items-center justify-center text-8xl uppercase h-full">
+                {name[0]}
+              </span>
+            ) : (
+              <img src={props.user.avatarUrl} />
+            )}
           </div>
         </div>
       </div>

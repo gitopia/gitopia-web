@@ -288,7 +288,7 @@ export const isCurrentUserEligibleToUpdate = (members) => {
   return async (dispatch, getState) => {
     let permission = false;
     const { wallet } = getState();
-    members.every((c) => {
+    members?.every((c) => {
       if (wallet.selectedAddress === c.address && c.role === "OWNER") {
         permission = true;
         return false;

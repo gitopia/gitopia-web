@@ -28,10 +28,12 @@ const reducer = (state = initialState, action) => {
     }
 
     case walletActions.ADD_WALLET: {
-      let { wallet, isLedger, encryptedWallet, index } = action.payload;
+      let { wallet, isLedger, encryptedWallet, index, avatarUrl } = action.payload;
       let wallets = state.wallets;
       const item = {
         name: wallet.name,
+        address: wallet.accounts[0].address,
+        avatarUrl,
         wallet: encryptedWallet,
       };
       if (isLedger) {
