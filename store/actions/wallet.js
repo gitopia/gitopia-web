@@ -270,7 +270,10 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
       if (user?.username) {
         oldWalletName = name;
         wallet.name = user.username;
-        if (name !== user.username || state.wallets[oldWalletIndex].avatarUrl !== user.avatarUrl) {
+        if (
+          name !== user.username ||
+          state.wallets[oldWalletIndex].avatarUrl !== user.avatarUrl
+        ) {
           const CryptoJS = (await import("crypto-js")).default;
           encryptedWallet = CryptoJS.AES.encrypt(
             JSON.stringify(wallet),
@@ -287,7 +290,7 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
               wallet: wallet,
               encryptedWallet,
               index: oldWalletIndex,
-              avatarUrl: user.avatarUrl
+              avatarUrl: user.avatarUrl,
             },
           });
         } else {
@@ -581,10 +584,12 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
   };
 };
 
-export const unlockLedgerWallet = ({ name, chainId = null }) => {
+export const unlockLedgerWallet = ({
+  name,
+  chainId = null,
+  justUnlock = false,
+}) => {
   return async (dispatch, getState) => {
-    const TransportWebUSB = (await import("@ledgerhq/hw-transport-webusb"))
-      .default;
     // const TransportWebHID = (await import("@ledgerhq/hw-transport-webhid"))
     //   .default;
     const LedgerSigner = (await import("@cosmjs/ledger-amino")).LedgerSigner;
@@ -616,11 +621,10 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
 
-      if (!ledgerTransport) {
-        ledgerTransport = await TransportWebUSB.create();
-      }
+      let tp = (await initLedgerTransport({ force: true })(dispatch, getState))
+        .transport;
 
-      accountSigner = new LedgerSigner(ledgerTransport, {
+      accountSigner = new LedgerSigner(tp, {
         hdPaths: [path],
         prefix: "gitopia",
         ledgerAppName: "Cosmos",
@@ -634,7 +638,7 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
         )
       );
       if (chainId !== null) {
-        accountSignerSecondary = new LedgerSigner(ledgerTransport, {
+        accountSignerSecondary = new LedgerSigner(tp, {
           hdPaths: [path],
           prefix: chainInfo.bech32_prefix,
           ledgerAppName: "Cosmos",
@@ -687,7 +691,7 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
           encryptedWallet,
           isLedger: true,
           index: oldWalletIndex,
-          avatarUrl: user?.avatarUrl
+          avatarUrl: user?.avatarUrl,
         },
       });
 
@@ -702,18 +706,24 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
         await postWalletUnlocked(accountSigner, dispatch, getState);
       }
 
+      console.log("justUnlock", justUnlock);
+      if (justUnlock) {
+        await closeLedgerTransport()(dispatch, getState);
+      }
       dispatch({ type: walletActions.STOP_UNLOCKING_WALLET });
 
       return true;
     } catch (e) {
       let error = e;
+      console.error(error);
       switch (e.message) {
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: The device was disconnected.":
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: Failed to execute 'transferOut' on 'USBDevice': The device was disconnected.":
-          ledgerTransport = null;
+        case "Ledger Native Error: InvalidStateError: Failed to execute 'transferOut' on 'USBDevice': The device must be opened first.":
+        case "Ledger was disconnected during operation, please try again":
+          await closeLedgerTransport()(dispatch, getState);
           error = {
-            message:
-              "Ledger was disconneced during operation, please try again",
+            message: "Ledger disconnected, please try again",
           };
           break;
         case "Please close BOLOS and open the Cosmos Ledger app on your Ledger device.":
@@ -726,6 +736,9 @@ export const unlockLedgerWallet = ({ name, chainId = null }) => {
         dispatch({ type: walletActions.SIGN_OUT });
       } else {
         dispatch({ type: walletActions.STOP_UNLOCKING_WALLET });
+      }
+      if (justUnlock) {
+        await closeLedgerTransport()(dispatch, getState);
       }
       return error;
     }
@@ -744,6 +757,23 @@ export const initLedgerTransport = ({ force } = { force: false }) => {
     } catch (e) {
       return e;
     }
+  };
+};
+
+export const closeLedgerTransport = () => {
+  return async (dispatch, getState) => {
+    const { env } = getState();
+    await ledgerTransport?.close();
+    ledgerTransport = null;
+    dispatch({
+      type: envActions.SET_CLIENTS,
+      payload: {
+        txClient: null,
+        queryClient: env.queryClient,
+        txClientSecondary: null,
+        queryClientSecondary: env.queryClientSecondary,
+      },
+    });
   };
 };
 
@@ -766,10 +796,11 @@ export const getLedgerSigner = () => {
       switch (e.message) {
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: The device was disconnected.":
         case "Ledger Native Error: DisconnectedDeviceDuringOperation: Failed to execute 'transferOut' on 'USBDevice': The device was disconnected.":
-          ledgerTransport = null;
+        case "Ledger Native Error: InvalidStateError: Failed to execute 'transferOut' on 'USBDevice': The device must be opened first.":
+        case "Ledger was disconnected during operation, please try again":
+          await closeLedgerTransport()(dispatch, getState);
           error = {
-            message:
-              "Ledger was disconneced during operation, please try again",
+            message: "Ledger disconnected, please try again",
           };
           break;
         case "Please close BOLOS and open the Cosmos Ledger app on your Ledger device.":
@@ -832,12 +863,13 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
           wallet,
           encryptedWallet,
           index: oldWalletIndex,
-          avatarUrl: user?.avatarUrl
+          avatarUrl: user?.avatarUrl,
         },
       });
 
       await postWalletUnlocked(ledgerSigner, dispatch, getState);
-
+      await closeLedgerTransport()(dispatch, getState);
+      
       return user?.username ? "USER_CREATED" : "WALLET_ADDED";
     } catch (e) {
       console.error(e);
@@ -1009,10 +1041,14 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
           ],
           gas: fees.gas,
         };
-        const result = await env.txClientSecondary.signAndBroadcast([msg], {
-          fee,
-          memo,
-        }, wallet.allowance ? process.env.NEXT_PUBLIC_FEE_GRANTER : null);
+        const result = await env.txClientSecondary.signAndBroadcast(
+          [msg],
+          {
+            fee,
+            memo,
+          },
+          wallet.allowance ? process.env.NEXT_PUBLIC_FEE_GRANTER : null
+        );
         updateUserBalance()(dispatch, getState);
 
         if (result && result.code === 0) {

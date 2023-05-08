@@ -126,7 +126,7 @@ function CommentEditor({
               >
                 {issueState === "OPEN" ? "Close" : "Re-Open"}
                 {" issue"}
-                {comment.trim().length !== 0 ? " with comment" : ""}
+                {(issueState === "OPEN" && comment.trim().length !== 0) ? " with comment" : ""}
               </button>
             </div>
           ) : issueState === "OPEN" ? (
