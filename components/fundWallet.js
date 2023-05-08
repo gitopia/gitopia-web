@@ -12,7 +12,7 @@ function FundWallet(props) {
   const [gettingFaucetTokens, setGettingFaucetTokens] = useState(false);
   const balanceElem = useRef();
   const isBalanceLow =
-    Number(props.balance) <= 100 && Number(props.allowance) <= 100;
+    Number(props.balance) <= 500 && Number(props.allowance) <= 500;
   const router = useRouter();
 
   const getTokens = () => {

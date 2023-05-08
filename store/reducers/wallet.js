@@ -28,7 +28,8 @@ const reducer = (state = initialState, action) => {
     }
 
     case walletActions.ADD_WALLET: {
-      let { wallet, isLedger, encryptedWallet, index, avatarUrl } = action.payload;
+      let { wallet, isLedger, encryptedWallet, index, avatarUrl } =
+        action.payload;
       let wallets = state.wallets;
       const item = {
         name: wallet.name,
