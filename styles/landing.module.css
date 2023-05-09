@@ -874,11 +874,6 @@
   font-size: 18px;
 }
 
-.teamWrapper {
-  margin-top: 100px;
-  width: 1000px;
-}
-
 .joining {
   margin-top: 350px;
   margin-left: 50px;
@@ -1085,10 +1080,7 @@
   .backers {
     width: 180px;
   }
-  .teamWrapper {
-    gap: 10px;
-    width: 800px;
-  }
+
   .teamImage {
     height: 300px;
     width: 350px;
@@ -1357,12 +1349,6 @@
   .joining {
     margin-left: 0px;
     margin-top: 240px;
-  }
-
-  .teamWrapper {
-    width: auto;
-    height: 1200px;
-    margin-top: 0px;
   }
 
   .teamCard {
