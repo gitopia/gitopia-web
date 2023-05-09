@@ -1092,10 +1092,16 @@ ul.mde-suggestions li[aria-selected="true"] {
   border-color: #33ab34;
   border-bottom-width: 2px;
 }
-
+/* 
 .tab.tab-active-alt {
   color: hsla(var(--bc));
+} */
+
+.tab.tab-active-alt:not(.tab-disabled):not([disabled]) {
+  background-color: #3d4451;
+  color: hsla(var(--bc));
 }
+
 
 .tab-md,
 .tab-lg {
@@ -1107,6 +1113,12 @@ ul.mde-suggestions li[aria-selected="true"] {
 .tab-sm {
   --tab-padding: 0;
   margin-right: 1rem;
+}
+
+.tab-xs {
+  height: auto;
+  padding: 0.4rem 0.6rem;
+  border-bottom-width: 0px;
 }
 
 .tab-lifted.tab-active:last-child:after {
