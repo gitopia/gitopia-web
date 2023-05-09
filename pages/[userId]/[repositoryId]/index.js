@@ -15,7 +15,10 @@ import CommitDetailRow from "../../../components/repository/commitDetailRow";
 import FileBrowser from "../../../components/repository/fileBrowser";
 import Footer from "../../../components/footer";
 import getBranchSha from "../../../helpers/getBranchSha";
-import { isCurrentUserEligibleToUpdate } from "../../../store/actions/repository";
+import {
+  isCurrentUserEligibleToUpdate,
+  updateRepositoryDescription,
+} from "../../../store/actions/repository";
 import AssigneeGroup from "../../../components/repository/assigneeGroup";
 import useRepository from "../../../hooks/useRepository";
 import CloneRepoInfo from "../../../components/repository/cloneRepoInfo";
@@ -31,6 +34,8 @@ import getAllRepositoryTag from "../../../helpers/getAllRepositoryTag";
 import getUser from "../../../helpers/getUser";
 import getDao from "../../../helpers/getDao";
 import validAddress from "../../../helpers/validAddress";
+import TextInput from "../../../components/textInput";
+import { useRef } from "react";
 
 const atob = (base64) => {
   return Buffer.from(base64, "base64").toString("binary");
@@ -192,7 +197,9 @@ export async function getStaticPaths() {
 }
 
 function RepositoryView(props) {
-  const { repository, firstFetchLoading } = useRepository(props.repository);
+  const { repository, refreshRepository, firstFetchLoading } = useRepository(
+    props.repository
+  );
 
   const [entityList, setEntityList] = useState(
     props.entitiesRes?.content || []
@@ -201,6 +208,16 @@ function RepositoryView(props) {
     props.entitiesRes?.pagination?.next_key
   );
   const [loadingEntities, setLoadingEntities] = useState(false);
+  const [editDescription, setEditDescription] = useState(false);
+  const [newDescription, setNewDescription] = useState("");
+  const [newDescriptionHint, setNewDescriptionHint] = useState({
+    shown: false,
+    type: "info",
+    message: "",
+  });
+  const [savingDescription, setSavingDescription] = useState(false);
+  const input = useRef();
+
   const [readmeFile, setReadmeFile] = useState(props.readmeFile);
   const [commitDetail, setCommitDetail] = useState({
     author: {},
@@ -215,9 +232,8 @@ function RepositoryView(props) {
   const [selectedBranch, setSelectedBranch] = useState(
     repository.defaultBranch
   );
-  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
-    false
-  );
+  const [currentUserEditPermission, setCurrentUserEditPermission] =
+    useState(false);
   const { isMobile } = useWindowSize();
 
   const loadEntities = async (currentEntities = [], firstTime = false) => {
@@ -317,6 +333,53 @@ function RepositoryView(props) {
     updatePermissions();
   }, [props.user, repository]);
 
+  const validateDescription = (description) => {
+    setNewDescriptionHint({
+      ...newDescriptionHint,
+      shown: false,
+    });
+
+    if (description === repository.description) {
+      setNewDescriptionHint({
+        shown: true,
+        type: "error",
+        message: "Description is same as earlier",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const updateDescription = async () => {
+    setSavingDescription(true);
+    if (validateDescription(newDescription)) {
+      console.log(repository);
+      const res = await props.updateRepositoryDescription({
+        name: repository.name,
+        ownerId: repository.owner.id,
+        description: newDescription,
+      });
+
+      if (res && res.code === 0) {
+        if (refreshRepository) await refreshRepository();
+        setEditDescription(false);
+      } else {
+      }
+    }
+    setSavingDescription(false);
+  };
+
+  useEffect(() => {
+    setNewDescription(repository.description);
+    setNewDescriptionHint({ shown: false });
+  }, [repository]);
+
+  useEffect(() => {
+    if (editDescription && input?.current) {
+      input.current.focus();
+    }
+  }, [editDescription]);
+
   return (
     <div
       data-theme="dark"
@@ -340,9 +403,62 @@ function RepositoryView(props) {
               <div className="flex-none sm:w-64 sm:pr-8 divide-y divide-grey order-2 sm:order-1 mt-4 sm:mt-0">
                 {!isMobile ? (
                   <div className="pb-8">
-                    <div className="flex-1 text-left">About</div>
-
-                    <div className="text-xs mt-3">{repository.description}</div>
+                    <div className="flex">
+                      <div className="flex-1 text-left">About</div>
+                      {!editDescription && currentUserEditPermission ? (
+                        <div
+                          className="flex-1 text-left mt-1 text-xs link link-primary uppercase no-underline"
+                          onClick={() => {
+                            setEditDescription(true);
+                          }}
+                        >
+                          Edit
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                    {editDescription ? (
+                      <div className="py-1">
+                        <TextInput
+                          type="text"
+                          name="Description"
+                          placeholder="Description"
+                          multiline={true}
+                          value={newDescription}
+                          setValue={setNewDescription}
+                          hint={newDescriptionHint}
+                          size="xs"
+                          ref={input}
+                        />
+                        <div className="flex flex-none w-56 btn-group mt-2">
+                          <button
+                            className="flex-1 btn btn-sm text-xs "
+                            onClick={() => {
+                              setEditDescription(false);
+                              setNewDescription(repository.description);
+                              setNewDescriptionHint({ shown: false });
+                            }}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            className={
+                              "flex-1 btn btn-sm btn-primary text-xs " +
+                              (savingDescription ? "loading" : "")
+                            }
+                            onClick={updateDescription}
+                            disabled={savingDescription}
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-xs mt-3">
+                        {repository.description}
+                      </div>
+                    )}
                     {readmeFile ? (
                       <Link
                         href={
@@ -744,7 +860,10 @@ function RepositoryView(props) {
               </div>
             </div>
           ) : currentUserEditPermission ? (
-            <EmptyRepository repository={repository} />
+            <EmptyRepository
+              repository={repository}
+              refreshRepository={refreshRepository}
+            />
           ) : (
             <div className="pt-8 text-type-secondary">Empty repository</div>
           )}
@@ -765,4 +884,5 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   notify,
   isCurrentUserEligibleToUpdate,
+  updateRepositoryDescription,
 })(RepositoryView);

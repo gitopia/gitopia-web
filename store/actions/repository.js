@@ -115,6 +115,44 @@ export const deleteRepository = ({ name = null, ownerId = null }) => {
   };
 };
 
+export const updateRepositoryDescription = ({
+  name = null,
+  ownerId = null,
+  description = null,
+}) => {
+  return async (dispatch, getState) => {
+    const { wallet } = getState();
+    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+      return null;
+    const repository = {
+      creator: wallet.selectedAddress,
+      repositoryId: {
+        id: ownerId,
+        name: name,
+      },
+      description: description,
+    };
+    const { env } = getState();
+    try {
+      const message = await env.txClient.msgUpdateRepositoryDescription(
+        repository
+      );
+      const result = await sendTransaction({ message })(dispatch, getState);
+      updateUserBalance()(dispatch, getState);
+      if (result && result.code === 0) {
+        return result;
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
+
 export const createIssue = ({
   title = "",
   description = "",

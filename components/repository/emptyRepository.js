@@ -1,21 +1,152 @@
 import { notify } from "reapop";
 import { downloadWalletForRemoteHelper } from "../../store/actions/wallet";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, connect } from "react-redux";
+import TextInput from "../textInput";
+import { useRef } from "react";
+import { useEffect, useState } from "react";
+import { updateRepositoryDescription } from "../../store/actions/repository";
+import { isCurrentUserEligibleToUpdate } from "../../store/actions/repository";
 
-export default function EmptyRepository(props) {
-  const { repository } = props;
+function EmptyRepository(props) {
+  const { repository, refreshepository } = props;
   const remoteUrl = "gitopia://" + repository.owner.id + "/" + repository.name;
   const dispatch = useDispatch();
   const activeWallet = useSelector((state) => state.wallet.activeWallet);
   let shouldShowDownloadWallet = false;
+  const [currentUserEditPermission, setCurrentUserEditPermission] =
+    useState(false);
+  const [editDescription, setEditDescription] = useState(false);
+  const [newDescription, setNewDescription] = useState("");
+  const [newDescriptionHint, setNewDescriptionHint] = useState({
+    shown: false,
+    type: "info",
+    message: "",
+  });
+  const [savingDescription, setSavingDescription] = useState(false);
+  const input = useRef();
+
   if (activeWallet) {
     if (activeWallet.isKeplr || activeWallet.isLedger) {
     } else {
       shouldShowDownloadWallet = true;
     }
   }
+  useEffect(() => {
+    async function updatePermissions() {
+      setCurrentUserEditPermission(
+        await props.isCurrentUserEligibleToUpdate(repository)
+      );
+    }
+    updatePermissions();
+  }, [props.user, repository]);
+
+  const validateDescription = (description) => {
+    setNewDescriptionHint({
+      ...newDescriptionHint,
+      shown: false,
+    });
+
+    if (description === repository.description) {
+      setNewDescriptionHint({
+        shown: true,
+        type: "error",
+        message: "Description is same as earlier",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const updateDescription = async () => {
+    setSavingDescription(true);
+    if (validateDescription(newDescription)) {
+      console.log(repository);
+      const res = await props.updateRepositoryDescription({
+        name: repository.name,
+        ownerId: repository.owner.id,
+        description: newDescription,
+      });
+
+      if (res && res.code === 0) {
+        if (refreshRepository) await refreshRepository();
+        setEditDescription(false);
+      } else {
+      }
+    }
+    setSavingDescription(false);
+  };
+
+  useEffect(() => {
+    setNewDescription(repository.description);
+    setNewDescriptionHint({ shown: false });
+  }, [repository]);
+
+  useEffect(() => {
+    if (editDescription && input?.current) {
+      input.current.focus();
+    }
+  }, [editDescription]);
+
   return (
     <>
+      <div className="mt-16">
+        <div className="flex">
+          <div className="flex-1 text-left text-xl">About</div>
+          {!editDescription && currentUserEditPermission ? (
+            <div className="flex-none w-44">
+              <button
+                className="btn btn-outline btn-sm btn-block ml-auto w-54"
+                onClick={() => {
+                  setEditDescription(true);
+                }}
+              >
+                Edit
+              </button>
+            </div>
+          ) : (
+            ""
+          )}
+        </div>
+        {editDescription ? (
+          <div className="py-1">
+            <TextInput
+              type="text"
+              name="Description"
+              placeholder="Description"
+              multiline={true}
+              value={newDescription}
+              setValue={setNewDescription}
+              hint={newDescriptionHint}
+              size="xs"
+              ref={input}
+            />
+            <div className="flex flex-none w-56 btn-group mt-2">
+              <button
+                className="flex-1 btn btn-sm text-xs "
+                onClick={() => {
+                  setEditDescription(false);
+                  setNewDescription(repository.description);
+                  setNewDescriptionHint({ shown: false });
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className={
+                  "flex-1 btn btn-sm btn-primary text-xs " +
+                  (savingDescription ? "loading" : "")
+                }
+                onClick={updateDescription}
+                disabled={savingDescription}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-3">{repository.description}</div>
+        )}
+      </div>
       <div className="sm:flex rounded-md py-2 mt-16 items-center">
         <div className="flex-none w-72 text-xl">Quick Setup</div>
         <div className="mt-8 sm:mt-0 flex-1 flex items-center">
@@ -215,3 +346,15 @@ export default function EmptyRepository(props) {
     </>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    selectedAddress: state.wallet.selectedAddress,
+    user: state.user,
+  };
+};
+
+export default connect(mapStateToProps, {
+  isCurrentUserEligibleToUpdate,
+  updateRepositoryDescription,
+})(EmptyRepository);

@@ -104,7 +104,9 @@ export default function BranchSelector({
         ) : (
           ""
         )}
-        <div className="flex-1 text-left px-2">{branchName}</div>
+        <div className="flex-1 text-left px-2" data-test="branch_name">
+          {branchName}
+        </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5"
@@ -197,7 +199,10 @@ export default function BranchSelector({
             className="menu-container  overflow-y-scroll"
             style={{ maxHeight: "320px" }}
           >
-            <ul className="menu menu-vertical text-xs mt-2" data-test="branch_selector">
+            <ul
+              className="menu menu-vertical text-xs mt-2"
+              data-test="branch_selector"
+            >
               {filteredList.map((b, i) => {
                 return (
                   <li key={"branch-selector" + i}>

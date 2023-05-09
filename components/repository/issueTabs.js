@@ -29,6 +29,7 @@ function RepositoryIssuesTabs({ repository, active, issueId, ...props }) {
         </Link>
         <Link
           href={hrefBase + "/bounties"}
+          data-test="bounty_tab"
           className={
             "tab tab-lifted" + (active === "bounties" ? " tab-active" : "")
           }
