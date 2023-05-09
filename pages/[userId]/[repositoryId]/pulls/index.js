@@ -185,11 +185,11 @@ function RepositoryPullsView(props) {
           <div className="mt-8">
             <div className="sm:bg-base-200 px-2 sm:px-4  py-2 rounded">
               <div className="text-left sm:flex">
-                <div className="tabs flex-1 relative -top-1">
+                <div className="tabs tabs-boxed flex-1">
                   <div
                     className={
-                      "tab tab-xs " +
-                      (filterText.match(/is:open/) ? "tab-active-alt" : "")
+                      "tab tab-xs" +
+                      (filterText.match(/is:open/) ? " tab-active-alt" : "")
                     }
                   >
                     <button
@@ -217,8 +217,8 @@ function RepositoryPullsView(props) {
                   </div>
                   <div
                     className={
-                      "tab tab-xs " +
-                      (filterText.match(/is:merged/) ? "tab-active-alt" : "")
+                      "tab tab-xs" +
+                      (filterText.match(/is:merged/) ? " tab-active-alt" : "")
                     }
                   >
                     <button
@@ -246,8 +246,8 @@ function RepositoryPullsView(props) {
                   </div>
                   <div
                     className={
-                      "tab tab-xs " +
-                      (filterText.match(/is:closed/) ? "tab-active-alt" : "")
+                      "tab tab-xs" +
+                      (filterText.match(/is:closed/) ? " tab-active-alt" : "")
                     }
                   >
                     <button
