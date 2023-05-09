@@ -407,7 +407,7 @@ function RepositoryView(props) {
                       <div className="flex-1 text-left">About</div>
                       {!editDescription && currentUserEditPermission ? (
                         <div
-                          className="flex-1 text-left mt-1 text-xs link link-primary uppercase no-underline"
+                          className="flex-1 text-left mt-1 text-xs link link-primary uppercase no-underline text-right"
                           onClick={() => {
                             setEditDescription(true);
                           }}
@@ -429,6 +429,7 @@ function RepositoryView(props) {
                           setValue={setNewDescription}
                           hint={newDescriptionHint}
                           size="xs"
+                          className="text-xs"
                           ref={input}
                         />
                         <div className="flex flex-none w-56 btn-group mt-2">
@@ -635,7 +636,8 @@ function RepositoryView(props) {
                 style={{ maxWidth: "calc(1024px - 18rem)" }}
               >
                 <SupportOwner
-                  ownerAddress={repository.owner.address}
+                    ownerAddress={repository.owner.address}
+                    repository={repository}
                   isMobile={isMobile}
                 />
                 <div className="mt-8 sm:flex justify-start">
