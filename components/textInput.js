@@ -45,13 +45,14 @@ const TextInput = React.forwardRef(
                 ? "border-pink text-pink input-" + props.hint.type
                 : props.value.length > 0
                 ? "border-green"
-                : "")
+                : "") +
+              (" input-" + props.size)
             }
             value={props.value}
             onChange={(e) => {
               props.setValue(e.target.value);
             }}
-            data-test={props.name?.replace(' ', '_')}
+            data-test={props.name?.replace(" ", "_")}
           />
         ) : (
           <input
@@ -80,7 +81,7 @@ const TextInput = React.forwardRef(
               props.setValue(e.target.value);
             }}
             autoFocus={props.autoFocus}
-            data-test={props.name?.replace(' ', '_')}
+            data-test={props.name?.replace(" ", "_")}
           />
         )}
 
