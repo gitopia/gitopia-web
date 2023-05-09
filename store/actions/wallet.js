@@ -394,12 +394,11 @@ export const updateUserBalance = (showNotification = false) => {
       );
       if (Number(res?.data?.balance?.amount) <= 500) {
         await updateUserAllowance()(dispatch, getState);
-        return;
       }
       dispatch({
         type: walletActions.UPDATE_BALANCE,
         payload: {
-          balance: res.data.balance.amount,
+          balance: res.data.balance.amount || 0,
         },
       });
       if (showNotification) {
