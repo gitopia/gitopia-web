@@ -766,69 +766,6 @@
   letter-spacing: -0.02em;
 }
 
-.backers {
-  width: 220px;
-  height: 136px;
-  background: #222933;
-  border-radius: 17px;
-  padding: 20px;
-  position: relative;
-  margin-top: 60px;
-}
-
-.backersImg {
-  align-items: center;
-}
-
-.backersTitle {
-  top: 85%;
-  font-size: 10px;
-  line-height: 100.27%;
-  letter-spacing: -0.02em;
-  opacity: 0.5;
-  position: absolute;
-}
-
-.backers2Section {
-  margin-top: 24px;
-}
-
-.backersSectionEnd {
-  margin-bottom: 180px;
-}
-
-.backers2 {
-  width: 250px;
-  height: 99px;
-  background: #222933;
-  border-radius: 17px;
-  position: relative;
-  padding: 15px 15px;
-}
-
-.backers2Name {
-  position: absolute;
-  width: 118px;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 100.27%;
-  letter-spacing: -0.02em;
-  color: #ffffff;
-  top: 30px;
-}
-
-.backers2Title {
-  position: absolute;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 100.27%;
-  letter-spacing: -0.02em;
-  color: #ffffff;
-  opacity: 0.5;
-  top: 50px;
-  padding-right: 10px;
-}
-
 .teamCard {
   width: 350px;
   height: 450px;
@@ -1077,10 +1014,6 @@
     margin-top: 480px;
   }
 
-  .backers {
-    width: 180px;
-  }
-
   .teamImage {
     height: 300px;
     width: 350px;
@@ -1316,36 +1249,7 @@
     width: 270px;
     margin-left: 15%;
   }
-  .backers {
-    width: 180px;
-    height: 106px;
-    padding: 10px;
-    margin-top: 0px;
-  }
-
-  .backers2Section {
-    margin-top: 8px;
-  }
-
-  .backersSectionEnd {
-    margin-bottom: 90px;
-  }
-
-  .backers2 {
-    width: 180px;
-    height: 106px;
-    padding: 25px 5px;
-  }
-
-  .backers2Name {
-    top: 30px;
-    font-size: 12px;
-  }
-
-  .backers2Title {
-    top: 47px;
-  }
-
+  
   .joining {
     margin-left: 0px;
     margin-top: 240px;
