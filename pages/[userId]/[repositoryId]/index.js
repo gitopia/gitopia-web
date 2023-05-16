@@ -19,7 +19,6 @@ import {
   isCurrentUserEligibleToUpdate,
   updateRepositoryDescription,
 } from "../../../store/actions/repository";
-import AssigneeGroup from "../../../components/repository/assigneeGroup";
 import useRepository from "../../../hooks/useRepository";
 import CloneRepoInfo from "../../../components/repository/cloneRepoInfo";
 import SupportOwner from "../../../components/repository/supportOwner";
@@ -35,6 +34,7 @@ import getUser from "../../../helpers/getUser";
 import getDao from "../../../helpers/getDao";
 import validAddress from "../../../helpers/validAddress";
 import TextInput from "../../../components/textInput";
+import AccountCard from "../../../components/account/card";
 import { useRef } from "react";
 
 const atob = (base64) => {
@@ -622,12 +622,19 @@ function RepositoryView(props) {
                   </div>
 
                   <div className="text-xs mt-3">
-                    <AssigneeGroup
-                      assignees={[
-                        repository.owner.id,
-                        ...repository.collaborators.map((c) => c.id),
-                      ]}
-                    />
+                    {[
+                      repository.owner.id,
+                      ...repository.collaborators.map((c) => c.id),
+                    ].map((a, i) => (
+                      <div key={"collaborator" + i}>
+                        <AccountCard
+                          id={a}
+                          showAvatar={true}
+                          showId={false}
+                          avatarSize="sm"
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -636,8 +643,8 @@ function RepositoryView(props) {
                 style={{ maxWidth: "calc(1024px - 18rem)" }}
               >
                 <SupportOwner
-                    ownerAddress={repository.owner.address}
-                    repository={repository}
+                  ownerAddress={repository.owner.address}
+                  repository={repository}
                   isMobile={isMobile}
                 />
                 <div className="mt-8 sm:flex justify-start">

@@ -21,7 +21,6 @@ import {
 import AssigneeSelector from "../../../../../components/repository/assigneeSelector";
 import LabelSelector from "../../../../../components/repository/labelSelector";
 import Label from "../../../../../components/repository/label";
-import AssigneeGroup from "../../../../../components/repository/assigneeGroup";
 import PullRequestTabs from "../../../../../components/repository/pullRequestTabs";
 import PullRequestHeader from "../../../../../components/repository/pullRequestHeader";
 import useRepository from "../../../../../hooks/useRepository";
@@ -29,8 +28,8 @@ import usePullRequest from "../../../../../hooks/usePullRequest";
 import MergePullRequestView from "../../../../../components/repository/mergePullRequestView";
 import IssuePullDescription from "../../../../../components/repository/issuePullDescription";
 import getBranchSha from "../../../../../helpers/getBranchSha";
-import filter from "lodash/filter";
 import PullRequestIssueView from "../../../../../components/repository/issuesView";
+import AccountCard from "../../../../../components/account/card";
 import getPullRequestCommentAll from "../../../../../helpers/getPullRequestCommentAll";
 import { parseDiff, Diff, Hunk, getChangeKey } from "react-diff-view";
 import getDiff from "../../../../../helpers/getDiff";
@@ -109,10 +108,11 @@ export async function getStaticProps({ params }) {
         }
         let cs;
         if (p.commentsCount) {
-          const csJsons = await db
-            .select("*")
-            .from("Comments")
-            .where({repositoryId: r.id, parentIid: p.iid, parent: "COMMENT_PARENT_PULL_REQUEST"})
+          const csJsons = await db.select("*").from("Comments").where({
+            repositoryId: r.id,
+            parentIid: p.iid,
+            parent: "COMMENT_PARENT_PULL_REQUEST",
+          });
           cs = csJsons.map((j) => JSON.parse(j.data));
         }
         return {
@@ -382,18 +382,11 @@ function RepositoryPullView(props) {
                 />
                 <div className="flex w-full mt-8">
                   <div className="flex-none mr-4">
-                    <div className="avatar">
-                      <div className="mb-8 rounded-full w-10 h-10">
-                        <img
-                          src={
-                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                            (props.selectedAddress
-                              ? props.selectedAddress.slice(-1)
-                              : "")
-                          }
-                        />
-                      </div>
-                    </div>
+                    <AccountCard
+                      id={props.selectedAddress}
+                      showAvatar={true}
+                      showId={false}
+                    />
                   </div>
                   <CommentEditor
                     repositoryId={repository.id}
@@ -440,11 +433,17 @@ function RepositoryPullView(props) {
                   }}
                 />
                 <div className="text-xs px-3 mt-2">
-                  {pullRequest.reviewers.length ? (
-                    <AssigneeGroup assignees={pullRequest.reviewers} />
-                  ) : (
-                    "No one"
-                  )}
+                  {pullRequest.reviewers.length
+                    ? pullRequest.reviewers.map((a, i) => (
+                        <div key={"reviewer" + i}>
+                          <AccountCard
+                            id={a}
+                            showAvatar={true}
+                            showId={false}
+                          />
+                        </div>
+                      ))
+                    : "No one"}
                 </div>
               </div>
               <div className="py-8">
@@ -478,11 +477,17 @@ function RepositoryPullView(props) {
                   }}
                 />
                 <div className="text-xs px-3 mt-2">
-                  {pullRequest.assignees.length ? (
-                    <AssigneeGroup assignees={pullRequest.assignees} />
-                  ) : (
-                    "No one"
-                  )}
+                  {pullRequest.assignees.length
+                    ? pullRequest.assignees.map((a, i) => (
+                        <div key={"assignee" + i}>
+                          <AccountCard
+                            id={a}
+                            showAvatar={true}
+                            showId={false}
+                          />
+                        </div>
+                      ))
+                    : "No one"}
                 </div>
               </div>
               <div className="py-8">

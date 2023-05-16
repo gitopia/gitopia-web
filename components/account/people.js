@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import AccountCard from "../account/card";
 import getDaoMember from "../../helpers/getUserDaoMember";
 
 function AccountPeople(props) {
@@ -24,25 +24,7 @@ function AccountPeople(props) {
             return (
               <li className="p-4" key={m.id}>
                 <div className="flex items-center">
-                  <div className="avatar mr-2">
-                    <div className="w-8 h-8 rounded-full">
-                      <img
-                        src={
-                          "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                          m.address.slice(-1)
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="mr-8">
-                    <Link
-                      href={"/" + m.address}
-                      className="text-sm btn-link"
-                      legacyBehavior
-                    >
-                      {m.address}
-                    </Link>
-                  </div>
+                  <AccountCard id={m.address} showAvatar={true} />
                   <div className="flex-1 text-right text-sm">
                     {allMembers[i].role}
                   </div>

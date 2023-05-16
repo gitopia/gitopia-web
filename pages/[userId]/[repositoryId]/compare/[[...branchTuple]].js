@@ -19,7 +19,7 @@ import MarkdownEditor from "../../../../components/markdownEditor";
 import AssigneeSelector from "../../../../components/repository/assigneeSelector";
 import LabelSelector from "../../../../components/repository/labelSelector";
 import Label from "../../../../components/repository/label";
-import AssigneeGroup from "../../../../components/repository/assigneeGroup";
+import AccountCard from "../../../../components/account/card";
 import getPullDiffStats from "../../../../helpers/getPullDiffStats";
 import getRepository from "../../../../helpers/getRepository";
 import getUser from "../../../../helpers/getUser";
@@ -280,7 +280,7 @@ function RepositoryCompareView(props) {
           compare.target.repository.id,
           compare.source.repository.id,
           compare.target.sha,
-          compare.source.sha,
+          compare.source.sha
         ),
         await getPullRequestCommits(
           compare.target.repository.id,
@@ -580,16 +580,11 @@ function RepositoryCompareView(props) {
                     <div className="sm:flex">
                       <div className="flex flex-1">
                         <div className="flex-none mr-4">
-                          <div className="avatar">
-                            <div className="mb-8 rounded-full w-10 h-10">
-                              <img
-                                src={
-                                  "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                                  username
-                                }
-                              />
-                            </div>
-                          </div>
+                          <AccountCard
+                            id={props.selectedAddress}
+                            showAvatar={true}
+                            showId={false}
+                          />
                         </div>
                         <div className="flex-1">
                           <div className="form-control mb-4">
@@ -673,11 +668,17 @@ function RepositoryCompareView(props) {
                             title="Reviewers"
                           />
                           <div className="text-xs px-3 mt-2">
-                            {reviewers.length ? (
-                              <AssigneeGroup assignees={reviewers} />
-                            ) : (
-                              "No one"
-                            )}
+                            {reviewers.length
+                              ? reviewers.map((a, i) => (
+                                  <div key={"reviewers" + i}>
+                                    <AccountCard
+                                      id={a}
+                                      showAvatar={true}
+                                      showId={false}
+                                    />
+                                  </div>
+                                ))
+                              : "No one"}
                           </div>
                         </div>
                         <div className="w-full py-8">
@@ -695,11 +696,17 @@ function RepositoryCompareView(props) {
                             }}
                           />
                           <div className="text-xs px-3 mt-2">
-                            {assignees.length ? (
-                              <AssigneeGroup assignees={assignees} />
-                            ) : (
-                              "No one"
-                            )}
+                            {assignees.length
+                              ? assignees.map((a, i) => (
+                                  <div key={"assignee" + i}>
+                                    <AccountCard
+                                      id={a}
+                                      showAvatar={true}
+                                      showId={false}
+                                    />
+                                  </div>
+                                ))
+                              : "No one"}
                           </div>
                         </div>
                         <div className="py-8">

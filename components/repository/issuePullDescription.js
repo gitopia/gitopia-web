@@ -2,13 +2,12 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { connect } from "react-redux";
-import shrinkAddress from "../../helpers/shrinkAddress";
 import {
   updateIssueDescription,
   updatePullRequestDescription,
 } from "../../store/actions/repository";
 import MarkdownEditor from "../markdownEditor";
-import Link from "next/link";
+import AccountCard from "../account/card";
 
 function IssuePullDescription({
   issuePullObj,
@@ -83,16 +82,7 @@ function IssuePullDescription({
   return (
     <div className="flex w-full">
       <div className="flex-none mr-4">
-        <div className="avatar">
-          <div className="mb-8 rounded-full w-10 h-10">
-            <img
-              src={
-                "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                issuePullObj.creator.slice(-1)
-              }
-            />
-          </div>
-        </div>
+        <AccountCard id={issuePullObj.creator} showAvatar={true} showId={false} />
       </div>
       <div className="flex-1">
         {isEditing ? (
@@ -192,10 +182,8 @@ function IssuePullDescription({
                     <ReactMarkdown>{"*No description given*"}</ReactMarkdown>
                   )}
                 </div>
-                <div className="flex-1 font-bold text-xs uppercase text-type-tertiary">
-                  {shrinkAddress(issuePullObj.creator) +
-                    " commented " +
-                    dayjs(issuePullObj.createdAt * 1000).fromNow()}
+                <div className="flex-1 text-xs text-type-tertiary">
+                  {dayjs(issuePullObj.createdAt * 1000).fromNow()}
                 </div>
               </div>
             </div>

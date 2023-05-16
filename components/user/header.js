@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import { notify } from "reapop";
 import AccountAvatar from "../account/avatar";
+import AccountCard from "../account/card";
 import UserBio from "./bio";
 import UserName from "./name";
 import UserUsername from "./username";
@@ -63,21 +64,12 @@ function UserHeader(props) {
         {daos?.length > 0 ? (
           <div className="mb-8">
             <div className="text-xl">Daos</div>
-            <div className="flex mt-4">
+            <div className="flex mt-4 gap-1">
               {daos.map((dao, index) => {
                 return index < 2 ? (
-                  <a className="flex" key={dao.id} href={"/" + dao.name}>
-                    <div className="avatar flex-none mr-2 items-center">
-                      <div className={"w-9 h-9 rounded-full"}>
-                        <img
-                          src={
-                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                            dao.name.slice(0)
-                          }
-                        />
-                      </div>
-                    </div>
-                  </a>
+                  <div key={dao.id}>
+                    <AccountCard id={dao.address} showAvatar={true} showId={false} />
+                  </div>
                 ) : (
                   ""
                 );

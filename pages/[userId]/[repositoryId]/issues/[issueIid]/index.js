@@ -9,7 +9,6 @@ import find from "lodash/find";
 
 import getIssue from "../../../../../helpers/getIssue";
 import getIssueComment from "../../../../../helpers/getIssueComment";
-import shrinkAddress from "../../../../../helpers/shrinkAddress";
 import RepositoryHeader from "../../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../../components/repository/mainTabs";
 import Footer from "../../../../../components/footer";
@@ -24,7 +23,6 @@ import {
 import AssigneeSelector from "../../../../../components/repository/assigneeSelector";
 import LabelSelector from "../../../../../components/repository/labelSelector";
 import Label from "../../../../../components/repository/label";
-import AssigneeGroup from "../../../../../components/repository/assigneeGroup";
 import useRepository from "../../../../../hooks/useRepository";
 import IssuePullTitle from "../../../../../components/repository/issuePullTitle";
 import IssuePullDescription from "../../../../../components/repository/issuePullDescription";
@@ -33,10 +31,9 @@ import pluralize from "../../../../../helpers/pluralize";
 import IssueTabs from "../../../../../components/repository/issueTabs";
 import IssuePullRequestView from "../../../../../components/repository/pullRequestView";
 import IssueBountyView from "../../../../../components/repository/bountiesView";
-import Link from "next/link";
-import filter from "lodash/filter";
 import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
 import validAddress from "../../../../../helpers/validAddress";
+import AccountCard from "../../../../../components/account/card";
 
 export async function getStaticProps({ params }) {
   try {
@@ -208,9 +205,7 @@ function RepositoryIssueView(props) {
               <span className="text-type text-sm uppercase">{issue.state}</span>
             </span>
             <span className="text-xs mr-2 text-type-secondary">
-              <Link href={"/" + issue.creator} className="btn-link">
-                {shrinkAddress(issue.creator)}
-              </Link>
+              <AccountCard id={issue.creator} />
               {" opened this issue " + dayjs(issue.createdAt * 1000).fromNow()}
             </span>
             <span className="text-xl mr-2 text-type-secondary">&middot;</span>
@@ -277,18 +272,7 @@ function RepositoryIssueView(props) {
                 })}
                 <div className="flex w-full mt-8">
                   <div className="flex-none mr-4">
-                    <div className="avatar">
-                      <div className="mb-8 rounded-full w-10 h-10">
-                        <img
-                          src={
-                            "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                            (props.selectedAddress
-                              ? props.selectedAddress.slice(-1)
-                              : "")
-                          }
-                        />
-                      </div>
-                    </div>
+                    <AccountCard id={props.selectedAddress} showAvatar={true} showId={false} />
                   </div>
                   <CommentEditor
                     repositoryId={repository.id}
@@ -331,9 +315,13 @@ function RepositoryIssueView(props) {
                     if (res) refreshIssue();
                   }}
                 />
-                <div className="text-xs px-3 mt-2">
+                <div className="text-xs px-3 mt-2 flex gap-2">
                   {issue.assignees.length ? (
-                    <AssigneeGroup assignees={issue.assignees} />
+                    issue.assignees.map((a, i) =>
+                      <div key={"assignee" + i}>
+                        <AccountCard id={a} showAvatar={true} showId={false} />
+                      </div>
+                    )
                   ) : (
                     "No one"
                   )}

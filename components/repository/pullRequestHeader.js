@@ -2,6 +2,7 @@ import Link from "next/link";
 import pullRequestStateClass from "../../helpers/pullRequestStateClass";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import IssuePullTitle from "./issuePullTitle";
+import AccountCard from "../account/card";
 
 export default function PullRequestHeader({
   repository,
@@ -57,9 +58,7 @@ export default function PullRequestHeader({
           </span>
         </span>
         <span className="text-xs mr-2 text-type-secondary">
-          <Link href={"/" + pullRequest.creator} className="btn-link">
-            {shrinkAddress(pullRequest.creator)}
-          </Link>
+          <AccountCard id={pullRequest.creator} />
           {" wants to merge "}
           <Link
             href={headLink}

@@ -15,7 +15,7 @@ import { notify } from "reapop";
 import AssigneeSelector from "../../../../components/repository/assigneeSelector";
 import LabelSelector from "../../../../components/repository/labelSelector";
 import Label from "../../../../components/repository/label";
-import AssigneeGroup from "../../../../components/repository/assigneeGroup";
+import AccountCard from "../../../../components/account/card";
 import useRepository from "../../../../hooks/useRepository";
 import CreateBounty from "../../../../components/repository/bounty";
 import { createBounty } from "../../../../store/actions/bounties";
@@ -82,7 +82,6 @@ function RepositoryIssueCreateView(props) {
     }
   }, [repository.id]);
 
-  const username = props.selectedAddress ? props.selectedAddress.slice(-1) : "";
   return (
     <div
       data-theme="dark"
@@ -100,16 +99,11 @@ function RepositoryIssueCreateView(props) {
           <div className="sm:flex mt-8">
             <div className="flex flex-1">
               <div className="flex-none mr-4">
-                <div className="avatar">
-                  <div className="mb-8 rounded-full w-10 h-10">
-                    <img
-                      src={
-                        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                        username
-                      }
-                    />
-                  </div>
-                </div>
+                <AccountCard
+                  id={props.selectedAddress}
+                  showAvatar={true}
+                  showId={false}
+                />
               </div>
               <div className="flex-1">
                 <div className="form-control mb-4">
@@ -161,11 +155,17 @@ function RepositoryIssueCreateView(props) {
                   }}
                 />
                 <div className="text-xs px-3 mt-2">
-                  {assignees.length ? (
-                    <AssigneeGroup assignees={assignees} />
-                  ) : (
-                    "No one"
-                  )}
+                  {assignees.length
+                    ? assignees.map((a, i) => (
+                        <div key={"assignee" + i}>
+                          <AccountCard
+                            id={a}
+                            showAvatar={true}
+                            showId={false}
+                          />
+                        </div>
+                      ))
+                    : "No one"}
                 </div>
               </div>
               <div className="py-8">

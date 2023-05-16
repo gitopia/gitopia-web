@@ -27,7 +27,7 @@ function DaoDashboard({ dao = {}, ...props }) {
           </div>
         </div>
       </div>
-      <div className="mt-12 overflow-x-scroll">
+      <div className="my-12">
         <MembersList
           members={dao.members}
           daoId={dao.address}

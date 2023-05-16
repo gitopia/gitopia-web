@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import RepositoryHeader from "../components/repository/header";
 import RepositoryMainTabs from "../components/repository/mainTabs";
 import pluralize from "./pluralize";
-import AssigneeGroup from "../components/repository/assigneeGroup";
+import AccountCard from "../components/account/card";
 import SupportOwner from "../components/repository/supportOwner";
 import BranchSelector from "../components/repository/branchSelector";
 import CloneRepoInfo from "../components/repository/cloneRepoInfo";
@@ -52,8 +52,8 @@ function GitopiaLive(props) {
                   props.repository.name +
                   "#readme"
                 }
-                className="mt-6 flex items-center text-xs text-type-secondary font-semibold hover:text-green">
-
+                className="mt-6 flex items-center text-xs text-type-secondary font-semibold hover:text-green"
+              >
                 <svg
                   width="24"
                   height="24"
@@ -80,7 +80,6 @@ function GitopiaLive(props) {
                   />
                 </svg>
                 <span>README</span>
-
               </Link>
             </div>
           ) : (
@@ -132,18 +131,17 @@ function GitopiaLive(props) {
                         props.repository.releases.length - 1
                       ].tagName
                     }
-                    className="link link-primary no-underline hover:underline">
-
+                    className="link link-primary no-underline hover:underline"
+                  >
                     {props.repository.name +
                       " " +
                       props.repository.releases[
                         props.repository.releases.length - 1
                       ].tagName}
-
                   </Link>
                 </div>
               ) : (
-                (<Link
+                <Link
                   href={
                     "/" +
                     props.repository.owner.id +
@@ -151,8 +149,8 @@ function GitopiaLive(props) {
                     props.repository.name +
                     "/releases/new"
                   }
-                  className="mt-6 flex items-center text-xs text-type-secondary font-semibold uppercase hover:text-green">
-
+                  className="mt-6 flex items-center text-xs text-type-secondary font-semibold uppercase hover:text-green"
+                >
                   <svg
                     width="24"
                     height="24"
@@ -161,16 +159,8 @@ function GitopiaLive(props) {
                     className="w-4 h-4 mr-2"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <path
-                      d="M12 7V17"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
-                    <path
-                      d="M17 12H7"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
+                    <path d="M12 7V17" stroke="currentColor" strokeWidth="2" />
+                    <path d="M17 12H7" stroke="currentColor" strokeWidth="2" />
                     <circle
                       cx="12"
                       cy="12"
@@ -180,8 +170,7 @@ function GitopiaLive(props) {
                     />
                   </svg>
                   <span>Create a release</span>
-
-                </Link>)
+                </Link>
               )}
             </div>
           </div>
@@ -202,12 +191,14 @@ function GitopiaLive(props) {
             </div>
 
             <div className="text-xs mt-3">
-              <AssigneeGroup
-                assignees={[
-                  props.repository.owner.id,
-                  ...props.repository.collaborators.map((c) => c.id),
-                ]}
-              />
+              {[
+                props.repository.owner.id,
+                ...props.repository.collaborators.map((c) => c.id),
+              ].map((a, i) => (
+                <div key={"assignee" + i}>
+                  <AccountCard id={a} showAvatar={true} showId={false} />
+                </div>
+              ))}
             </div>
           </div>
         </div>

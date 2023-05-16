@@ -13,7 +13,7 @@ import getRepositoryIssueAll from "../../../../helpers/getRepositoryIssueAll";
 import getIssueCommentAll from "../../../../helpers/getIssueCommentAll";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import Footer from "../../../../components/footer";
-import AssigneeGroup from "../../../../components/repository/assigneeGroup";
+import AccountCard from "../../../../components/account/card";
 import useRepository from "../../../../hooks/useRepository";
 import parseFilters from "../../../../helpers/parseFilters";
 import renderPagination from "../../../../helpers/renderPagination";
@@ -312,15 +312,7 @@ function RepositoryIssueView(props) {
                               }}
                               key={"author" + i}
                             >
-                              <a className="avatar">
-                                <div className="w-6 h-6 rounded-full mr-2">
-                                  <img
-                                    src={
-                                      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                                      c.id.slice(-1)
-                                    }
-                                  />
-                                </div>
+                              <a>
                                 {shrinkAddress(c.id)}
                               </a>
                             </li>
@@ -440,15 +432,7 @@ function RepositoryIssueView(props) {
                               }}
                               key={"assignee" + i}
                             >
-                              <a className="avatar">
-                                <div className="w-6 h-6 rounded-full mr-2">
-                                  <img
-                                    src={
-                                      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                                      c.id.slice(-1)
-                                    }
-                                  />
-                                </div>
+                              <a>
                                 {shrinkAddress(c.id)}
                               </a>
                             </li>
@@ -551,23 +535,9 @@ function RepositoryIssueView(props) {
                               dayjs(i.closedAt * 1000).fromNow() +
                               " by "}
                           {i.state === "OPEN" ? (
-                            <a
-                              className="link no-underline hover:underline"
-                              href={"/" + i.creator}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              {shrinkAddress(i.creator)}
-                            </a>
+                            <AccountCard id={i.creator} />
                           ) : (
-                            <a
-                              className="link no-underline hover:underline"
-                              href={"/" + i.closedBy}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              {shrinkAddress(i.closedBy)}
-                            </a>
+                            <AccountCard id={i.closedBy} />
                           )}
                         </div>
                       </div>
@@ -632,8 +602,17 @@ function RepositoryIssueView(props) {
                         ""
                       )}
                       {!isMobile ? (
-                        <div className={"mt-1 "}>
-                          <AssigneeGroup assignees={i.assignees} />
+                        <div className={"mt-1 flex gap-1"}>
+                          {i.assignees.map((a, i) => (
+                            <div key={"assignee" + i}>
+                              <AccountCard
+                                id={a}
+                                showAvatar={true}
+                                showId={false}
+                                avatarSize="sm"
+                              />
+                            </div>
+                          ))}
                         </div>
                       ) : (
                         ""
