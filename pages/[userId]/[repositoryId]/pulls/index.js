@@ -525,30 +525,12 @@ function RepositoryPullsView(props) {
                   case "OPEN":
                     message =
                       "opened " + dayjs(i.createdAt * 1000).fromNow() + " by ";
-                    link = (
-                      <a
-                        className="link no-underline hover:underline"
-                        href={"/" + i.creator}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {shrinkAddress(i.creator)}
-                      </a>
-                    );
+                    link = <AccountCard id={i.creator} />
                     break;
                   case "MERGED":
                     message =
                       "merged " + dayjs(i.mergedAt * 1000).fromNow() + " by ";
-                    link = (
-                      <a
-                        className="link no-underline hover:underline"
-                        href={"/" + i.mergedBy}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {shrinkAddress(i.mergedBy)}
-                      </a>
-                    );
+                    link =  <AccountCard id={i.mergedBy} />
                     break;
 
                   case "CLOSED":
@@ -606,6 +588,7 @@ function RepositoryPullsView(props) {
                                 id={a}
                                 showAvatar={true}
                                 showId={false}
+                                avatarSize="sm"
                               />
                             </div>
                           ))}
