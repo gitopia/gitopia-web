@@ -202,7 +202,9 @@ function WalletInfo(props) {
               <div className="">
                 <img width={24} src={asset.logo_URIs?.png} />
               </div>
-              <div className="mx-3 flex-1">{asset.chain_name}</div>
+              <div className="mx-3 flex-1">
+                {asset.chain_name === "osmosistestnet" ? "osmosis" : "atom"}
+              </div>
               <div className="font-bold text-xs text-type-tertiary">
                 coming soon
               </div>
