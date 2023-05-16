@@ -1,10 +1,10 @@
 import Link from "next/link";
 import dayjs from "dayjs";
-import shrinkAddress from "../../helpers/shrinkAddress";
 import formatBytes from "../../helpers/formatBytes";
 import shrinkSha from "../../helpers/shrinkSha";
 import { useState } from "react";
 import MarkdownWrapper from "../markdownWrapper";
+import AccountCard from "../account/card";
 
 export default function ReleaseView({
   release,
@@ -65,23 +65,8 @@ export default function ReleaseView({
           </Link>
         </div>
       </div>
-      <div className="flex items-center mt-4">
-        <div className="avatar mr-1">
-          <div className="w-5 h-5 rounded-full">
-            <img
-              src={
-                "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                release.creator.slice(-1)
-              }
-            />
-          </div>
-        </div>
-        <Link
-          href={"/" + release.creator}
-          className="text-sm link no-underline hover:underline text-type-secondary"
-        >
-          {shrinkAddress(release.creator)}
-        </Link>
+      <div className="flex items-center mt-4 text-sm">
+        <AccountCard id={release.creator} showAvatar={true} avatarSize="xs" />
         <div className="ml-1 text-sm text-type-secondary">
           {"released this on " +
             dayjs(release.publishedAt * 1000).format("DD-MM-YYYY")}

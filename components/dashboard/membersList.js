@@ -9,6 +9,7 @@ import {
 import getUser from "../../helpers/getUser";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import { notify } from "reapop";
+import AccountCard from "../account/card";
 
 function MembersList({ daoId, members = [], refreshDao, ...props }) {
   const [collabAddress, setCollabAddress] = useState("");
@@ -79,7 +80,7 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
   };
 
   return (
-    <table className="table sm:w-full">
+    <table className="table sm:w-full min-h-fit">
       <thead>
         <tr>
           <th>Member</th>
@@ -90,30 +91,8 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
       <tbody>
         {members.map((c, i) => (
           <tr key={"member" + i}>
-            <td className="text-sm">
-              <div className="flex items-center">
-                <div className="avatar mr-2">
-                  <div className="w-8 h-8 rounded-full">
-                    <img
-                      src={
-                        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                        c.id.slice(-1)
-                      }
-                    />
-                  </div>
-                </div>
-                <div>
-                  <a
-                    href={"/" + c.address}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="link link-primary text-sm no-underline hover:underline"
-                    data-test="mem_address"
-                  >
-                    {shrinkAddress(c.address)}
-                  </a>
-                </div>
-              </div>
+            <td className="text-sm">              
+              <AccountCard id={c.address} showAvatar={true} avatarSize="xs" dataTest="mem_address" />
             </td>
             {startUpdate === c.id ? (
               <td style={{ verticalAlign: "top" }}>

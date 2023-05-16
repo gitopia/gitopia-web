@@ -1,9 +1,8 @@
-import shrinkAddress from "../../helpers/shrinkAddress";
 import dayjs from "dayjs";
 import ReactMarkdown from "react-markdown";
 import { useState } from "react";
 import CommentEditor from "./commentEditor";
-import Link from "next/link";
+import AccountCard from "../account/card";
 
 function CommentView({
   comment = { creator: "" },
@@ -22,16 +21,7 @@ function CommentView({
   return (
     <div className="flex w-full mt-8" key={"comment" + comment.id}>
       <div className="flex-none mr-4">
-        <div className="avatar">
-          <div className="mb-8 rounded-full w-10 h-10">
-            <img
-              src={
-                "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                comment.creator.slice(-1)
-              }
-            />
-          </div>
-        </div>
+        <AccountCard id={comment.creator} showAvatar={true} showId={false} />
       </div>
       {isEditing ? (
         <CommentEditor
@@ -64,7 +54,7 @@ function CommentView({
                     data-test="comment_options"
                   >
                     <svg
-                      width="21"
+                      width="16"
                       height="5"
                       viewBox="0 0 21 5"
                       fill="none"
@@ -116,10 +106,8 @@ function CommentView({
                 <ReactMarkdown>{"*No description given*"}</ReactMarkdown>
               )}
             </div>
-            <div className="flex-1 font-bold text-xs uppercase text-type-tertiary">
-              {shrinkAddress(comment.creator) +
-                " commented " +
-                dayjs(comment.createdAt * 1000).fromNow()}
+            <div className="flex-1 text-xs text-type-tertiary">
+              {dayjs(comment.createdAt * 1000).fromNow()}
             </div>
           </div>
         </div>

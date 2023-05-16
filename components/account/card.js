@@ -1,0 +1,285 @@
+import { useEffect, useState } from "react";
+import { validUserAddress, validDaoAddress } from "../../helpers/validAddress";
+import getUser from "../../helpers/getUser";
+import getDao from "../../helpers/getDao";
+import getWhois from "../../helpers/getWhois";
+import shrinkAddress from "../../helpers/shrinkAddress";
+import Link from "next/link";
+import { connect } from "react-redux";
+
+function AccountCard({
+  id,
+  initailData,
+  showAvatar = false,
+  showId = true,
+  avatarSize = "md",
+  autoLoad = true,
+  ...props
+}) {
+  const [accountData, setAccountData] = useState(initailData || {});
+  const [loading, setLoading] = useState(0);
+
+  const getAccountData = async () => {
+    if (loading) return;
+    if (accountData?.id) return;
+    if (props.user?.creator === id || props.user?.username === id) {
+      setAccountData(props.user);
+      return;
+    } else if (props.dao?.address === id || props.dao?.name === id) {
+      setAccountData(props.dao);
+      return;
+    }
+    setLoading(1);
+    if (validUserAddress.test(id)) {
+      let u = await getUser(id);
+      setAccountData(u);
+    } else if (validDaoAddress.test(id)) {
+      let d = await getDao(id);
+      setAccountData(d);
+    } else if (id && id !== "") {
+      let data = await getWhois(id);
+      console.log(data);
+      if (data?.ownerType === "USER") {
+        let u = await getUser(id);
+        setAccountData(u);
+      } else if (data?.ownerType === "DAO") {
+        let d = await getDao(id);
+        setAccountData(d);
+      } else {
+        setLoading(-1); // error in resolving whois
+        return;
+      }
+    }
+    setLoading(0);
+  };
+
+  useEffect(() => {
+    if (props.user?.creator === id || props.user?.username === id) {
+      setAccountData(props.user);
+    } else if (props.dao?.address === id || props.dao?.name === id) {
+      setAccountData(props.dao);
+    }
+  }, [id, props.user, props.dao]);
+
+  useEffect(() => {
+    if (autoLoad) {
+      getAccountData();
+    }
+  }, []);
+
+  const getAvatarSize = () => {
+    switch (avatarSize) {
+      case "xs":
+        return "w-6 h-6";
+      case "sm":
+        return "w-8 h-8";
+      default:
+        return "w-10 h-10";
+    }
+  };
+
+  const getAvatarTextSize = () => {
+    switch (avatarSize) {
+      case "xs":
+        return "text-sm";
+      case "sm":
+        return "text-lg";
+      default:
+        return "text-xl";
+    }
+  };
+
+  return (
+    <div
+      className={"dropdown dropdown-hover " + (props.className || "")}
+      onMouseEnter={getAccountData}
+    >
+      <label tabIndex={0} className="flex gap-2 items-center">
+        {showAvatar ? (
+          <div className="avatar">
+            <div
+              className={
+                (accountData?.address ? "rounded-md " : "rounded-full ") +
+                getAvatarSize()
+              }
+            >
+              {accountData?.avatarUrl ? (
+                <img src={accountData?.avatarUrl} />
+              ) : (
+                <span
+                  className={
+                    "bg-purple-900 flex items-center justify-center uppercase h-full text-white pointer-events-none " +
+                    getAvatarTextSize()
+                  }
+                >
+                  {accountData?.name
+                    ? accountData?.name[0]
+                    : accountData?.username?.[0]
+                    ? accountData?.username?.[0]
+                    : id
+                    ? id[0]
+                    : "."}
+                </span>
+              )}
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
+        {showId ? (
+          <div className="link link-primary no-underline">
+            {accountData?.name
+              ? accountData?.name
+              : accountData?.username ? accountData?.username : shrinkAddress(id)}
+          </div>
+        ) : (
+          ""
+        )}
+      </label>
+      <div
+        tabIndex={0}
+        className="dropdown-content p-4 shadow-xl border border-neutral bg-base-100 rounded-md w-48 relative mt-2"
+      >
+        <div className="absolute rotate-45 w-4 h-4 border border-neutral rounded-md -top-2 left-3"></div>
+        <div className="absolute rotate-45 w-4 h-4 mt-[2px] bg-base-100 rounded-md -top-2 left-3"></div>
+        <div className="absolute w-16 h-6 mt-[2px] bg-transparent rounded-md -top-3 -left-1"></div>
+        <div className="avatar">
+          <div
+            className={
+              (accountData?.address ? "rounded-md " : "rounded-full ") +
+              "w-16 h-16"
+            }
+          >
+            {accountData?.avatarUrl ? (
+              <img src={accountData?.avatarUrl} />
+            ) : (
+              <span className="bg-purple-900 flex items-center justify-center text-4xl uppercase h-full text-white pointer-events-none">
+                {accountData?.name
+                  ? accountData?.name[0]
+                  : accountData?.username?.[0]
+                  ? accountData?.username?.[0]
+                  : id
+                  ? id[0]
+                  : "."}
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="mt-2">
+          <div className="flex gap-1">
+            <Link
+              href={props.link ? props.link : "/" + id}
+              className="link text-lg link-primary no-underline"
+              data-test={props.dataTest}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {accountData?.name
+                ? accountData?.name
+                : accountData?.username
+                ? accountData?.username
+                : accountData?.creator
+                ? accountData?.creator
+                : id}
+            </Link>
+            {accountData?.verified ? (
+              <svg
+                viewBox="0 0 23 23"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="mt-2 w-4 h-4"
+              >
+                <mask
+                  id="path-1-outside-1_3204_13419"
+                  maskUnits="userSpaceOnUse"
+                  x="0"
+                  y="0"
+                  width="23"
+                  height="23"
+                  fill="black"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M13.6114 3.63007C14.2904 2.93966 15.3742 2.76597 16.2518 3.27266C17.1301 3.77977 17.5215 4.80641 17.2618 5.74031C18.1961 5.47986 19.2235 5.87118 19.7309 6.74996C20.2381 7.62846 20.0635 8.71348 19.3714 9.39241C20.3087 9.6354 21.0008 10.487 21.0008 11.5003C21.0008 12.5128 20.3096 13.3639 19.3734 13.6076C20.066 14.2865 20.2408 15.3719 19.7334 16.2506C19.2259 17.1297 18.1979 17.521 17.2634 17.26C17.5232 18.194 17.1318 19.2208 16.2534 19.7279C15.3753 20.2349 14.2907 20.0607 13.6118 19.3692C13.3695 20.3076 12.5174 21.0008 11.5033 21.0008C10.4887 21.0008 9.6362 20.3068 9.3945 19.3676C8.71563 20.0604 7.63018 20.2352 6.75139 19.7278C5.87332 19.2209 5.48192 18.1947 5.74111 17.261C4.80782 17.5194 3.78243 17.128 3.27573 16.2503C2.76887 15.3724 2.94284 14.2883 3.63382 13.6093C2.6943 13.3678 2 12.5151 2 11.5003C2 10.4847 2.69528 9.63151 3.6358 9.39075C2.9453 8.7117 2.77157 7.62791 3.27829 6.75025C3.78481 5.87294 4.80965 5.48146 5.74268 5.7393C5.48363 4.80571 5.87504 3.77968 6.75303 3.27277C7.63127 2.76572 8.71592 2.94002 9.39488 3.63166C9.63708 2.69324 10.4893 2 11.5033 2C12.5168 2 13.3686 2.69246 13.6114 3.63007Z"
+                  />
+                </mask>
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M13.6114 3.63007C14.2904 2.93966 15.3742 2.76597 16.2518 3.27266C17.1301 3.77977 17.5215 4.80641 17.2618 5.74031C18.1961 5.47986 19.2235 5.87118 19.7309 6.74996C20.2381 7.62846 20.0635 8.71348 19.3714 9.39241C20.3087 9.6354 21.0008 10.487 21.0008 11.5003C21.0008 12.5128 20.3096 13.3639 19.3734 13.6076C20.066 14.2865 20.2408 15.3719 19.7334 16.2506C19.2259 17.1297 18.1979 17.521 17.2634 17.26C17.5232 18.194 17.1318 19.2208 16.2534 19.7279C15.3753 20.2349 14.2907 20.0607 13.6118 19.3692C13.3695 20.3076 12.5174 21.0008 11.5033 21.0008C10.4887 21.0008 9.6362 20.3068 9.3945 19.3676C8.71563 20.0604 7.63018 20.2352 6.75139 19.7278C5.87332 19.2209 5.48192 18.1947 5.74111 17.261C4.80782 17.5194 3.78243 17.128 3.27573 16.2503C2.76887 15.3724 2.94284 14.2883 3.63382 13.6093C2.6943 13.3678 2 12.5151 2 11.5003C2 10.4847 2.69528 9.63151 3.6358 9.39075C2.9453 8.7117 2.77157 7.62791 3.27829 6.75025C3.78481 5.87294 4.80965 5.48146 5.74268 5.7393C5.48363 4.80571 5.87504 3.77968 6.75303 3.27277C7.63127 2.76572 8.71592 2.94002 9.39488 3.63166C9.63708 2.69324 10.4893 2 11.5033 2C12.5168 2 13.3686 2.69246 13.6114 3.63007Z"
+                  fill="#6487FF"
+                />
+                <path
+                  d="M16.2518 3.27266L16.9517 2.06036V2.06036L16.2518 3.27266ZM13.6114 3.63007L12.2562 3.98093L12.8758 6.37422L14.6094 4.61167L13.6114 3.63007ZM17.2618 5.74031L15.9131 5.36532L15.2488 7.75471L17.6377 7.08874L17.2618 5.74031ZM19.7309 6.74996L18.5186 7.44988V7.44988L19.7309 6.74996ZM19.3714 9.39241L18.3911 8.39306L16.6242 10.1263L19.0201 10.7475L19.3714 9.39241ZM19.3734 13.6076L19.0208 12.2529L16.627 12.8759L18.3935 14.6073L19.3734 13.6076ZM19.7334 16.2506L20.9457 16.9506L19.7334 16.2506ZM17.2634 17.26L17.6399 15.9118L15.2496 15.2442L15.9147 17.6352L17.2634 17.26ZM16.2534 19.7279L15.5535 18.5156L15.5535 18.5156L16.2534 19.7279ZM13.6118 19.3692L14.6106 18.3885L12.8754 16.6213L12.2563 19.0193L13.6118 19.3692ZM9.3945 19.3676L10.7502 19.0188L10.1317 16.6155L8.39473 18.3878L9.3945 19.3676ZM6.75139 19.7278L7.45131 18.5155H7.45131L6.75139 19.7278ZM5.74111 17.261L7.08995 17.6355L7.75165 15.2518L5.36759 15.9119L5.74111 17.261ZM3.27573 16.2503L2.06343 16.9503H2.06343L3.27573 16.2503ZM3.63382 13.6093L4.61498 14.6077L6.38288 12.8704L3.98225 12.2535L3.63382 13.6093ZM3.6358 9.39075L3.98295 10.7469L6.38576 10.1318L4.61733 8.39267L3.6358 9.39075ZM3.27829 6.75025L4.49059 7.45017L4.49059 7.45017L3.27829 6.75025ZM5.74268 5.7393L5.3698 7.08858L7.75249 7.74704L7.09156 5.36504L5.74268 5.7393ZM6.75303 3.27277L7.45295 4.48507L7.45295 4.48507L6.75303 3.27277ZM9.39488 3.63166L8.39593 4.6123L10.1313 6.38004L10.7503 3.98149L9.39488 3.63166ZM16.9517 2.06036C15.5082 1.22695 13.7287 1.51444 12.6134 2.64848L14.6094 4.61167C14.8521 4.36488 15.2401 4.30499 15.5519 4.48497L16.9517 2.06036ZM18.6105 6.11529C19.037 4.58131 18.3964 2.89444 16.9517 2.06036L15.5519 4.48497C15.8638 4.6651 16.0059 5.03151 15.9131 5.36532L18.6105 6.11529ZM20.9432 6.05003C20.1087 4.60463 18.4205 3.96406 16.8859 4.39188L17.6377 7.08874C17.9717 6.99565 18.3384 7.13772 18.5186 7.44988L20.9432 6.05003ZM20.3516 10.3917C21.4885 9.27657 21.7774 7.49498 20.9432 6.05003L18.5186 7.44988C18.6987 7.76193 18.6385 8.1504 18.3911 8.39306L20.3516 10.3917ZM22.4006 11.5003C22.4006 9.83366 21.2622 8.43648 19.7227 8.03736L19.0201 10.7475C19.3551 10.8343 19.6009 11.1404 19.6009 11.5003H22.4006ZM19.7259 14.9623C21.2638 14.5621 22.4006 13.1657 22.4006 11.5003H19.6009C19.6009 11.8599 19.3555 12.1658 19.0208 12.2529L19.7259 14.9623ZM20.9457 16.9506C21.7802 15.5052 21.4909 13.723 20.3532 12.6079L18.3935 14.6073C18.6411 14.85 18.7014 15.2386 18.5211 15.5507L20.9457 16.9506ZM16.8868 18.6083C18.4219 19.037 20.1109 18.3965 20.9457 16.9506L18.5211 15.5507C18.3409 15.863 17.9739 16.005 17.6399 15.9118L16.8868 18.6083ZM16.9533 20.9402C18.3982 20.1061 19.0388 18.419 18.612 16.8848L15.9147 17.6352C16.0076 17.969 15.8655 18.3355 15.5535 18.5156L16.9533 20.9402ZM12.6129 20.35C13.7282 21.4858 15.5089 21.7741 16.9533 20.9402L15.5535 18.5156C15.2416 18.6957 14.8533 18.6356 14.6106 18.3885L12.6129 20.35ZM12.2563 19.0193C12.1698 19.3547 11.8635 19.6009 11.5033 19.6009V22.4006C13.1712 22.4006 14.5693 21.2605 14.9672 19.7191L12.2563 19.0193ZM11.5033 19.6009C11.1429 19.6009 10.8366 19.3545 10.7502 19.0188L8.03883 19.7165C8.43583 21.2592 9.83452 22.4006 11.5033 22.4006V19.6009ZM6.05147 20.9401C7.49688 21.7746 9.27916 21.4853 10.3943 20.3475L8.39473 18.3878C8.15209 18.6354 7.76347 18.6957 7.45131 18.5155L6.05147 20.9401ZM4.39228 16.8866C3.96654 18.4202 4.60722 20.1063 6.05147 20.9401L7.45131 18.5155C7.13942 18.3354 6.99731 17.9692 7.08995 17.6355L4.39228 16.8866ZM2.06343 16.9503C2.89684 18.3938 4.58167 19.0345 6.11464 18.6101L5.36759 15.9119C5.03398 16.0043 4.66802 15.8622 4.48803 15.5504L2.06343 16.9503ZM2.65266 12.6108C1.5177 13.7261 1.22975 15.5063 2.06343 16.9503L4.48803 15.5504C4.30799 15.2386 4.36799 14.8504 4.61498 14.6077L2.65266 12.6108ZM0.600153 11.5003C0.600153 13.1695 1.74215 14.5685 3.28539 14.9651L3.98225 12.2535C3.64645 12.1672 3.39985 11.8608 3.39985 11.5003H0.600153ZM3.28865 8.03463C1.74375 8.43011 0.600153 9.82987 0.600153 11.5003H3.39985C3.39985 11.1395 3.6468 10.8329 3.98295 10.7469L3.28865 8.03463ZM2.06599 6.05033C1.23254 7.4939 1.5201 9.27346 2.65426 10.3888L4.61733 8.39267C4.37051 8.14994 4.3106 7.76192 4.49059 7.45017L2.06599 6.05033ZM6.11555 4.39003C4.58303 3.96651 2.8991 4.60732 2.06599 6.05033L4.49059 7.45017C4.67051 7.13855 5.03627 6.99641 5.3698 7.08858L6.11555 4.39003ZM6.0531 2.06047C4.609 2.89422 3.9683 4.58009 4.39379 6.11357L7.09156 5.36504C6.99897 5.03133 7.14108 4.66513 7.45295 4.48507L6.0531 2.06047ZM10.3938 2.65102C9.2786 1.51495 7.49763 1.22647 6.0531 2.06047L7.45295 4.48507C7.76491 4.30496 8.15324 4.36508 8.39593 4.6123L10.3938 2.65102ZM10.7503 3.98149C10.8369 3.64606 11.1431 3.39985 11.5033 3.39985V0.600153C9.83538 0.600153 8.43728 1.74041 8.03945 3.28183L10.7503 3.98149ZM11.5033 3.39985C11.8633 3.39985 12.1694 3.64578 12.2562 3.98093L14.9665 3.27921C14.5678 1.73914 13.1704 0.600153 11.5033 0.600153V3.39985Z"
+                  fill="#2A313B"
+                  mask="url(#path-1-outside-1_3204_13419)"
+                />
+                <path
+                  d="M8.32031 12.9518L9.22815 13.8676C9.49025 14.132 9.91765 14.132 10.1798 13.8676L14.6851 9.32275"
+                  stroke="white"
+                  stroke-width="1.67493"
+                  stroke-linecap="round"
+                />
+              </svg>
+            ) : (
+              ""
+            )}
+          </div>
+          {/* {accountData?.address ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 ml-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
+                clipRule="evenodd"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 ml-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                clipRule="evenodd"
+              />
+            </svg>
+          )} */}
+          <div className="text-sm text-type">{accountData?.username}</div>
+          {accountData?.address || accountData?.creator ? (
+            <div className="text-sm text-type-secondary">
+              {"gitopia" +
+                shrinkAddress(
+                  accountData?.address
+                    ? accountData?.address
+                    : accountData?.creator
+                )}
+            </div>
+          ) : (
+            ""
+          )}
+          <div className="mt-4 text-xs text-type">
+            {accountData?.bio ? accountData?.bio : accountData?.description}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+    dao: state.dao,
+  };
+};
+
+export default connect(mapStateToProps, {})(AccountCard);

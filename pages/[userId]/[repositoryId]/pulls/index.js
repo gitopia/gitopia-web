@@ -10,7 +10,7 @@ import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
 import getRepositoryPullAll from "../../../../helpers/getRepositoryPullAll";
-import AssigneeGroup from "../../../../components/repository/assigneeGroup";
+import AccountCard from "../../../../components/account/card";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import useRepository from "../../../../hooks/useRepository";
 import renderPagination from "../../../../helpers/renderPagination";
@@ -339,15 +339,7 @@ function RepositoryPullsView(props) {
                               }}
                               key={"author" + i}
                             >
-                              <a className="avatar">
-                                <div className="w-6 h-6 rounded-full mr-2">
-                                  <img
-                                    src={
-                                      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                                      c.id.slice(-1)
-                                    }
-                                  />
-                                </div>
+                              <a>
                                 {shrinkAddress(c.id)}
                               </a>
                             </li>
@@ -462,15 +454,7 @@ function RepositoryPullsView(props) {
                               }}
                               key={"assignee" + i}
                             >
-                              <a className="avatar">
-                                <div className="w-6 h-6 rounded-full mr-2">
-                                  <img
-                                    src={
-                                      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                                      c.id.slice(-1)
-                                    }
-                                  />
-                                </div>
+                              <a>
                                 {shrinkAddress(c.id)}
                               </a>
                             </li>
@@ -616,7 +600,15 @@ function RepositoryPullsView(props) {
                     <div className="flex items-center">
                       {!isMobile ? (
                         <div className="mt-1">
-                          <AssigneeGroup assignees={i.assignees} />
+                          {i.assignees.map((a, i) => (
+                            <div key={"assignee" + i}>
+                              <AccountCard
+                                id={a}
+                                showAvatar={true}
+                                showId={false}
+                              />
+                            </div>
+                          ))}
                         </div>
                       ) : (
                         ""

@@ -8,7 +8,7 @@ import { updateRepositoryDescription } from "../../store/actions/repository";
 import { isCurrentUserEligibleToUpdate } from "../../store/actions/repository";
 
 function EmptyRepository(props) {
-  const { repository, refreshepository } = props;
+  const { repository } = props;
   const remoteUrl = "gitopia://" + repository.owner.id + "/" + repository.name;
   const dispatch = useDispatch();
   const activeWallet = useSelector((state) => state.wallet.activeWallet);
@@ -68,7 +68,7 @@ function EmptyRepository(props) {
       });
 
       if (res && res.code === 0) {
-        if (refreshRepository) await refreshRepository();
+        if (props.refreshRepository) await props.refreshRepository();
         setEditDescription(false);
       } else {
       }

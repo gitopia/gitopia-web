@@ -56,12 +56,13 @@ export default function CommitDetailRow({
         <div className="flex-1 flex items-center">
           <div className="avatar">
             <div className="rounded-full w-6 h-6 mr-2">
-              <img
-                src={
-                  "https://avatar.oxro.io/avatar.svg?length=1&height=40&width=40&fontSize=18&caps=1&name=" +
-                  author.initial
+              <span
+                className={
+                  "bg-purple-900 flex items-center justify-center uppercase h-full text-white pointer-events-none text-sm"
                 }
-              />
+              >
+                {author.initial}
+              </span>
             </div>
           </div>
           <span className="pr-4 sm:border-r sm:border-grey text-sm">
