@@ -433,7 +433,7 @@ const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
     advanceUser: state.user.advanceUser,
-    loreBalance: state.wallet.loreBalance,
+    balance: state.wallet.balance,
   };
 };
 

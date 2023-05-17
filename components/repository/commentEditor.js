@@ -99,11 +99,12 @@ function CommentEditor({
       <div className="flex text-right mt-4 sm:justify-end">
         {!isEdit ? (
           commentType === "ISSUE" ? (
-            <div className="inline-block w-28 sm:w-36 mr-4">
+            <div className="inline-block mr-4">
               <button
                 className={
-                  "btn btn-sm btn-accent btn-outline btn-block " +
-                  (togglingIssue ? "loading" : "")
+                  "btn btn-sm btn-outline btn-block px-6" +
+                  (issueState === "OPEN" ? " btn-accent" : "") +
+                  (togglingIssue ? " loading" : "")
                 }
                 data-test="close_issue"
                 disabled={togglingIssue || postingComment}
@@ -112,7 +113,7 @@ function CommentEditor({
                   const res = await props.toggleIssueState({
                     repositoryId: repositoryId,
                     iid: parentIid,
-                    commentBody: comment
+                    commentBody: comment,
                   });
                   if (res && res.code === 0) {
                     if (onSuccess) {
@@ -124,7 +125,8 @@ function CommentEditor({
                 }}
               >
                 {issueState === "OPEN" ? "Close" : "Re-Open"}
-                {" Issue"}
+                {" issue"}
+                {(issueState === "OPEN" && comment.trim().length !== 0) ? " with comment" : ""}
               </button>
             </div>
           ) : issueState === "OPEN" ? (
@@ -141,7 +143,7 @@ function CommentEditor({
                     repositoryId: repositoryId,
                     iid: parentIid,
                     state: "CLOSED",
-                    commentBody: comment
+                    commentBody: comment,
                   });
                   if (res && res.code === 0) {
                     if (onSuccess) {

@@ -1,5 +1,15 @@
 ## Changelog
 
+### v1.8.0 - 16th May 2023
+
+- Add feegrants support
+- Updated wallet selection dropdown
+- Repository description edit transcation supported
+- Fixed ledger transport always connected issue
+- Removed localstorage saving of plain wallet
+- Account popup info card added
+- Design changes for repository page, landing page
+
 ### v1.7.0 - 3rd Mar 2023
 
 - Claim rewards page updated

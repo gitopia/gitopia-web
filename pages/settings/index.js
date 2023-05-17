@@ -23,18 +23,19 @@ function AccountView(props) {
       <div className="flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
           <div className="flex">
-            <div className="avatar flex-none items-center">
-              <div
-                className={"w-16 h-16 rounded-full border border-transparent"}
-              >
-                <img
-                  src={
-                    props.user.avatarUrl == ""
-                      ? "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                        props.user.username.slice(-1)
-                      : props.user.avatarUrl
-                  }
-                />
+            <div className="avatar">
+              <div className="rounded-full w-16 h-16">
+                {props.user?.avatarUrl ? (
+                  <img src={props.user.avatarUrl} />
+                ) : (
+                  <span className="bg-purple-900 flex items-center justify-center text-4xl uppercase h-full text-white pointer-events-none">
+                    {props.user?.name
+                      ? props.user.name[0]
+                      : props.user?.username
+                      ? props.user.username?.[0]
+                      : "."}
+                  </span>
+                )}
               </div>
             </div>
             <div className="pl-4">

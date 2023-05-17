@@ -11,6 +11,7 @@ import MarkdownEditor from "../../../../components/markdownEditor";
 
 import { createRelease, createTag } from "../../../../store/actions/repository";
 import BranchSelector from "../../../../components/repository/branchSelector";
+import AccountCard from "../../../../components/account/card";
 import formatBytes from "../../../../helpers/formatBytes";
 import shrinkSha from "../../../../helpers/shrinkSha";
 
@@ -120,8 +121,6 @@ function RepositoryReleaseNewView(props) {
     }
   };
   useEffect(updateTags, [repository]);
-
-  const username = props.selectedAddress ? props.selectedAddress.slice(-1) : "";
 
   const LogProgress = () => {
     useItemStartListener((item) => {
@@ -273,16 +272,7 @@ function RepositoryReleaseNewView(props) {
           <div className="sm:flex mt-8">
             <div className="flex flex-1">
               <div className="flex-none mr-4">
-                <div className="avatar">
-                  <div className="mb-8 rounded-full w-10 h-10">
-                    <img
-                      src={
-                        "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                        username
-                      }
-                    />
-                  </div>
-                </div>
+                <AccountCard id={props.selectedAddress} showAvatar={true} showId={false} />
               </div>
               <div className="border border-grey rounded flex-1 p-4">
                 <div className="form-control mb-4">

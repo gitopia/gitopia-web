@@ -10,7 +10,7 @@ import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import Footer from "../../../../components/footer";
 import getRepositoryPullAll from "../../../../helpers/getRepositoryPullAll";
-import AssigneeGroup from "../../../../components/repository/assigneeGroup";
+import AccountCard from "../../../../components/account/card";
 import shrinkAddress from "../../../../helpers/shrinkAddress";
 import useRepository from "../../../../hooks/useRepository";
 import renderPagination from "../../../../helpers/renderPagination";
@@ -185,11 +185,11 @@ function RepositoryPullsView(props) {
           <div className="mt-8">
             <div className="sm:bg-base-200 px-2 sm:px-4  py-2 rounded">
               <div className="text-left sm:flex">
-                <div className="tabs flex-1 relative -top-1">
+                <div className="tabs tabs-boxed flex-1">
                   <div
                     className={
-                      "tab tab-xs " +
-                      (filterText.match(/is:open/) ? "tab-active-alt" : "")
+                      "tab tab-xs" +
+                      (filterText.match(/is:open/) ? " tab-active-alt" : "")
                     }
                   >
                     <button
@@ -217,8 +217,8 @@ function RepositoryPullsView(props) {
                   </div>
                   <div
                     className={
-                      "tab tab-xs " +
-                      (filterText.match(/is:merged/) ? "tab-active-alt" : "")
+                      "tab tab-xs" +
+                      (filterText.match(/is:merged/) ? " tab-active-alt" : "")
                     }
                   >
                     <button
@@ -246,8 +246,8 @@ function RepositoryPullsView(props) {
                   </div>
                   <div
                     className={
-                      "tab tab-xs " +
-                      (filterText.match(/is:closed/) ? "tab-active-alt" : "")
+                      "tab tab-xs" +
+                      (filterText.match(/is:closed/) ? " tab-active-alt" : "")
                     }
                   >
                     <button
@@ -339,15 +339,7 @@ function RepositoryPullsView(props) {
                               }}
                               key={"author" + i}
                             >
-                              <a className="avatar">
-                                <div className="w-6 h-6 rounded-full mr-2">
-                                  <img
-                                    src={
-                                      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                                      c.id.slice(-1)
-                                    }
-                                  />
-                                </div>
+                              <a>
                                 {shrinkAddress(c.id)}
                               </a>
                             </li>
@@ -462,15 +454,7 @@ function RepositoryPullsView(props) {
                               }}
                               key={"assignee" + i}
                             >
-                              <a className="avatar">
-                                <div className="w-6 h-6 rounded-full mr-2">
-                                  <img
-                                    src={
-                                      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                                      c.id.slice(-1)
-                                    }
-                                  />
-                                </div>
+                              <a>
                                 {shrinkAddress(c.id)}
                               </a>
                             </li>
@@ -541,30 +525,12 @@ function RepositoryPullsView(props) {
                   case "OPEN":
                     message =
                       "opened " + dayjs(i.createdAt * 1000).fromNow() + " by ";
-                    link = (
-                      <a
-                        className="link no-underline hover:underline"
-                        href={"/" + i.creator}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {shrinkAddress(i.creator)}
-                      </a>
-                    );
+                    link = <AccountCard id={i.creator} />
                     break;
                   case "MERGED":
                     message =
                       "merged " + dayjs(i.mergedAt * 1000).fromNow() + " by ";
-                    link = (
-                      <a
-                        className="link no-underline hover:underline"
-                        href={"/" + i.mergedBy}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {shrinkAddress(i.mergedBy)}
-                      </a>
-                    );
+                    link =  <AccountCard id={i.mergedBy} />
                     break;
 
                   case "CLOSED":
@@ -616,7 +582,16 @@ function RepositoryPullsView(props) {
                     <div className="flex items-center">
                       {!isMobile ? (
                         <div className="mt-1">
-                          <AssigneeGroup assignees={i.assignees} />
+                          {i.assignees.map((a, i) => (
+                            <div key={"assignee" + i}>
+                              <AccountCard
+                                id={a}
+                                showAvatar={true}
+                                showId={false}
+                                avatarSize="sm"
+                              />
+                            </div>
+                          ))}
                         </div>
                       ) : (
                         ""

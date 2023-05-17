@@ -70,8 +70,8 @@ function Drawer(props) {
                 </svg>
                 <div className="text-purple-50 uppercase text-xl mb-3">
                   {props.advanceUser === true
-                    ? props.loreBalance
-                    : props.loreBalance / 1000000}{" "}
+                    ? props.balance
+                    : props.balance / 1000000}{" "}
                   {props.advanceUser === true
                     ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
                     : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}
@@ -158,7 +158,7 @@ const mapStateToProps = (state) => {
   return {
     activeWallet: state.wallet.activeWallet,
     selectedAddress: state.wallet.selectedAddress,
-    loreBalance: state.wallet.loreBalance,
+    balance: state.wallet.balance,
     advanceUser: state.user.advanceUser,
   };
 };

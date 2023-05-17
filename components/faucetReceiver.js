@@ -7,12 +7,12 @@ import { notify } from "reapop";
 function FaucetReceiver(props) {
   const [loading, setLoading] = useState(0);
   const [tokenReceived, setTokenReceived] = useState(
-    parseFloat(props.loreBalance) !== 0
+    parseFloat(props.balance) !== 0
   );
 
   useEffect(() => {
-    setTokenReceived(parseFloat(props.loreBalance) !== 0);
-  }, [props.loreBalance]);
+    setTokenReceived(parseFloat(props.balance) !== 0);
+  }, [props.balance]);
 
   const getTokens = (amount) => {
     if (loading !== 0) return;
@@ -60,7 +60,7 @@ function FaucetReceiver(props) {
   };
 
   return !tokenReceived ? (
-    <div className="sm:flex bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md mb-8">
+    <div className="sm:flex bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md mb-4">
       <div className="flex">
         <div
           className={
@@ -84,10 +84,11 @@ function FaucetReceiver(props) {
         </div>
         <div className="flex-1 mr-8">
           <div className="text-lg">
-            Get testnet tokens{" "}
+            Get{" "}
             {props.advanceUser === true
               ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
-              : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
+              : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}{" "}
+            tokens
           </div>
           <div className="text-xs mt-2 text-type-secondary">
             Use them to test Gitopia. Based on your activity you might get
@@ -120,7 +121,8 @@ function FaucetReceiver(props) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
-    loreBalance: state.wallet.loreBalance,
+    balance: state.wallet.balance,
+    allowance: state.wallet.allowance,
     advanceUser: state.user.advanceUser,
   };
 };

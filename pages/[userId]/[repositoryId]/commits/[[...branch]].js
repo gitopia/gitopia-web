@@ -51,7 +51,10 @@ function RepositoryCommitTreeView(props) {
             let path = joinedPath.replace(branch, "").split("/");
             path = path.filter((p) => p !== "");
             setBranchName(branch);
-            if (branchName !== branch) setCommits([]);
+            if (branchName !== branch) {
+              setCommits([]);
+              setNextKey(null);
+            }
             console.log("branch", branch);
             return false;
           }

@@ -1,13 +1,15 @@
 import { walletActions } from "../actions/actionTypes";
 import { set, get, del } from "../persist";
+import omit from "lodash/omit";
 
 const initialState = {
   wallets: get("wallets") || [],
   activeWallet: null,
   selectedAddress: null,
   gasPrice: process.env.NEXT_PUBLIC_GAS_PRICE,
-  backupState: get('backupState') || false,
-  loreBalance: 0,
+  backupState: get("backupState") || false,
+  balance: 0,
+  allowance: 0,
   getPassword: false,
   getPasswordPromise: {},
   unlockingWallet: false,
@@ -17,7 +19,7 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case walletActions.SET_ACTIVE_WALLET: {
       const { wallet } = action.payload;
-      set("lastWallet", wallet);
+      set("lastWallet", omit(wallet, ["mnemonic", "password"]));
       return {
         ...state,
         activeWallet: wallet,
@@ -26,33 +28,41 @@ const reducer = (state = initialState, action) => {
     }
 
     case walletActions.ADD_WALLET: {
-      let { wallet, isLedger, encryptedWallet, index } = action.payload;
+      let { wallet, isLedger, encryptedWallet, index, avatarUrl } =
+        action.payload;
       let wallets = state.wallets;
       const item = {
         name: wallet.name,
+        address: wallet.accounts[0].address,
+        avatarUrl,
         wallet: encryptedWallet,
       };
       if (isLedger) {
         item.isLedger = true;
       }
-      set("lastWallet", wallet);
       if (index >= 0 && index <= wallets.length) {
         wallets.splice(index, 0, item);
       } else {
         wallets.push(item);
       }
+      set("lastWallet", omit(wallet, ["mnemonic", "password"]));
+      set("wallets", wallets);
+      set("backupState", false);
       return {
         ...state,
         activeWallet: wallet,
         wallets: wallets,
+        backupState: false,
       };
     }
 
     case walletActions.REMOVE_WALLET: {
       let { name } = action.payload;
+      const updatedWallets = state.wallets.filter((x) => x.name !== name);
+      set("wallets", updatedWallets);
       return {
         ...state,
-        wallets: state.wallets.filter((x) => x.name !== name),
+        wallets: updatedWallets,
       };
     }
 
@@ -95,7 +105,7 @@ const reducer = (state = initialState, action) => {
       state.selectedAddress = null;
       state.activeWallet = null;
       state.unlockingWallet = false;
-      state.loreBalance = 0;
+      state.balance = 0;
       del("lastWallet");
       return {
         ...state,
@@ -106,7 +116,15 @@ const reducer = (state = initialState, action) => {
       let { balance } = action.payload;
       return {
         ...state,
-        loreBalance: balance,
+        balance: balance,
+      };
+    }
+
+    case walletActions.UPDATE_ALLOWANCE: {
+      let { allowance } = action.payload;
+      return {
+        ...state,
+        allowance,
       };
     }
 
@@ -115,10 +133,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         getPassword: usedFor,
-        getPasswordPromise:
-          chainId !== undefined
-            ? { resolve, reject, chainId }
-            : { resolve, reject },
+        getPasswordPromise: { resolve, reject, chainId },
       };
     }
 

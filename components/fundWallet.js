@@ -1,15 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import { updateUserBalance } from "../store/actions/wallet";
+import {
+  updateUserBalance,
+  updateUserAllowance,
+} from "../store/actions/wallet";
 import axios from "../helpers/axiosFetch";
 import { useRouter } from "next/router";
 import { notify } from "reapop";
-import { router } from "websocket";
 
 function FundWallet(props) {
   const [gettingFaucetTokens, setGettingFaucetTokens] = useState(false);
   const balanceElem = useRef();
-  const isBalanceLow = Number(props.loreBalance) <= 100;
+  const isBalanceLow =
+    Number(props.balance) <= 500 && Number(props.allowance) <= 500;
   const router = useRouter();
 
   const getTokens = () => {
@@ -60,6 +63,7 @@ function FundWallet(props) {
 
   useEffect(() => {
     getTokens();
+    props.updateUserAllowance();
   }, []);
 
   useEffect(() => {
@@ -71,7 +75,7 @@ function FundWallet(props) {
         }, 2000);
       }
     }
-  }, [props.loreBalance]);
+  }, [props.balance, props.allowance]);
 
   return (
     <>
@@ -81,7 +85,7 @@ function FundWallet(props) {
       <div className="text-xs text-type-secondary mb-12">
         Please get some{" "}
         {(process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()} to
-        proceed with creating profile
+        proceed with profile creation
       </div>
       <div className="max-w-md w-full px-4 mb-4 text-center">
         <div className="relative">
@@ -119,11 +123,22 @@ function FundWallet(props) {
         </div>
       </div>
       <div className="max-w-md w-full px-4 text-center text-md">
-        <div className="confetti text-accent-focus" ref={balanceElem}>
-          {props.loreBalance / 1000000 +
-            " " +
-            (process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
-        </div>
+        {props.allowance ? (
+          <div className="confetti text-accent-focus" ref={balanceElem}>
+            <div>
+              {props.allowance / 1000000 +
+                " " +
+                (process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
+            </div>
+            <div className="text-xs">(Fee Grant)</div>
+          </div>
+        ) : (
+          <div className="confetti text-accent-focus" ref={balanceElem}>
+            {props.balance / 1000000 +
+              " " +
+              (process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
+          </div>
+        )}
       </div>
 
       <div className="max-w-md w-full p-4 pt-0">
@@ -192,11 +207,13 @@ const mapStateToProps = (state) => {
   return {
     wallets: state.wallet.wallets,
     selectedAddress: state.wallet.selectedAddress,
-    loreBalance: state.wallet.loreBalance,
+    balance: state.wallet.balance,
+    allowance: state.wallet.allowance,
   };
 };
 
 export default connect(mapStateToProps, {
   updateUserBalance,
+  updateUserAllowance,
   notify,
 })(FundWallet);

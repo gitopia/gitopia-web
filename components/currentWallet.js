@@ -5,10 +5,12 @@ import {
   removeWallet,
   unlockLedgerWallet,
   unlockKeplrWallet,
+  signOut,
 } from "../store/actions/wallet";
 import initKeplr from "../helpers/keplr";
 import TextInput from "./textInput";
 import Link from "next/link";
+import shrinkAddress from "../helpers/shrinkAddress";
 
 function CurrentWallet(props) {
   const [isUnlocking, setIsUnlocking] = useState(false);
@@ -60,11 +62,12 @@ function CurrentWallet(props) {
     const wallet =
       props.wallets[props.wallets.findIndex((x) => x.name === walletName)];
     if (wallet && wallet.isLedger) {
-      props.unlockLedgerWallet({ name: wallet.name });
+      props.unlockLedgerWallet({ name: wallet.name, justUnlock: true });
       setExternalWalletMsg("Please open Cosmos app on your ledger to verify");
     } else {
       setExternalWalletMsg(null);
     }
+    props.setMenuOpen(true);
 
     setTimeout(() => {
       if (inputEl.current) inputEl.current.focus();
@@ -186,35 +189,72 @@ function CurrentWallet(props) {
             return (
               <button
                 onClick={(e) => {
-                  startUnlockingWallet(wallet.name);
+                  isSelected
+                    ? props.signOut()
+                    : startUnlockingWallet(wallet.name);
                 }}
                 className={
-                  "btn rounded-full px-4 mb-2 avatar relative justify-start " +
-                  (isSelected ? "btn-disabled" : "btn-ghost")
+                  "btn rounded-full px-4 mb-2 relative justify-start" +
+                  (isSelected ? " btn-primary" : " btn-ghost")
                 }
                 key={i}
               >
-                <div className="rounded-full w-10 h-10 absolute left-1">
-                  <img
-                    src={
-                      "https://avatar.oxro.io/avatar.svg?length=1&height=100&width=100&fontSize=52&caps=1&name=" +
-                      wallet.name
-                    }
-                  />
+                <div className="avatar absolute left-1">
+                  <div className="rounded-full w-10 h-10">
+                    {wallet.avatarUrl ? (
+                      <img src={wallet.avatarUrl} />
+                    ) : (
+                      <span className="bg-base-200 flex items-center justify-center text-xl uppercase h-full">
+                        {wallet.name[0]}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <span className="ml-10 mr-2 whitespace-nowrap">
-                  <span>{wallet.name}</span>
-                  {wallet.isLedger ? (
-                    <span
-                      style={{ fontSize: "0.7em" }}
-                      className="rounded-md relative -top-px border border-secondary text-purple-50 ml-2 px-2 py-0.5"
+                <div className={"ml-10" + (isSelected ? " mr-6" : " mr-2")}>
+                  <div className="text-xs text-left whitespace-nowrap">
+                    <span>{wallet.name}</span>
+                    {wallet.isLedger ? (
+                      <span
+                        style={{ fontSize: "0.7em" }}
+                        className="rounded-md relative -top-px border border-secondary text-purple-50 ml-2 px-2 py-0.5"
+                      >
+                        Ledger
+                      </span>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                  {wallet.address ? (
+                    <div
+                      className={
+                        "text-xs text-left" +
+                        (isSelected ? " text-green-50" : " text-type-tertiary")
+                      }
                     >
-                      Ledger
-                    </span>
+                      {"gitopia" + shrinkAddress(wallet.address)}
+                    </div>
                   ) : (
                     ""
                   )}
-                </span>
+                </div>
+                {isSelected ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5 absolute right-3 top-3 mt-px"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+                    />
+                  </svg>
+                ) : (
+                  ""
+                )}
               </button>
             );
           })}
@@ -273,4 +313,5 @@ export default connect(mapStateToProps, {
   unlockLedgerWallet,
   removeWallet,
   unlockKeplrWallet,
+  signOut,
 })(CurrentWallet);
