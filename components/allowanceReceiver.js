@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { updateUserAllowance } from "../store/actions/wallet";
 import { notify } from "reapop";
+import Link from "next/link";
 
 function AllowanceReceiver(props) {
   const [loading, setLoading] = useState(false);
@@ -55,14 +56,13 @@ function AllowanceReceiver(props) {
         </div>
       </div>
       <div className="flex-none w-60 mr-8 mt-4 sm:mt-0">
-        <a
+        <Link
           className={"btn btn-sm btn-primary btn-block"}
-          href="https://discord.gg/aqsKW3hUHD"
-          target="_blank"
+          href="/login?step=5"
           rel="noreferrer"
         >
-          Ask on Discord
-        </a>
+          Request Grant
+        </Link>
       </div>
     </div>
   ) : (
