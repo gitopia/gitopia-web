@@ -143,77 +143,115 @@ function LabelEditor({
   };
 
   return (
-    <div>
-      <div className="ml-1">
-        <span className="text-xs uppercase text-type-secondary mr-4 font-bold">
-          Preview
-        </span>
-        <Label name={name} color={color} />
-      </div>
-      <div className="sm:flex mt-4">
-        <div className="flex-none w-68 sm:w-60 mr-4">
-          <TextInput
-            type="text"
-            name="label_name"
-            placeholder="Name"
-            value={name}
-            setValue={setName}
-            hint={nameHint}
-            size="sm"
-          />
+    <div className="w-full">
+      <div>
+        <div className="mb-2">
+          <div className="text-type-primary uppercase text-xs font-bold">
+            Create New
+          </div>
         </div>
-        <div className={"flex " + (isMobile ? "mt-3 mb-3" : "w-full")}>
-          <div className="flex-1 mr-4">
-            <TextInput
+        <div className="ml-1">
+          <span className="text-xs uppercase text-type-secondary mr-4 font-bold">
+            Preview
+          </span>
+          <Label name={name} color={color} />
+        </div>
+        <div className="sm:flex mt-5 border border-[#747D96] rounded-lg">
+          <div className="ml-2 w-96 mt-1">
+            <input
+              className="appearance-none bg-transparent border-none text-gray-200 mr-3 py-2 leading-tight focus:outline-none sm:text-sm w-20"
               type="text"
-              name="label_description"
-              placeholder="Description"
-              value={description}
-              setValue={setDescription}
-              hint={descriptionHint}
-              size="sm"
-            />
+              name="label_name"
+              placeholder="Name"
+              aria-label="Name"
+              onKeyUp={async (e) => {
+                await validateLabel(e.target.value);
+              }}
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+            ></input>
+            {nameHint.shown && (
+              <label className="label">
+                <span className={"label-text-alt text-" + nameHint.type}>
+                  {nameHint.message}
+                </span>
+              </label>
+            )}
           </div>
-          <div className="flex-none mr-4">
-            <TextInput
-              type="color"
-              name="label_color"
-              placeholder="Color"
-              value={color}
-              setValue={setColor}
-              hint={colorHint}
-              size="sm"
-            />
+          <div className={"flex " + (isMobile ? "mt-3 mb-3" : "")}>
+            <div className="flex-1 mr-4 mt-1">
+              <input
+                className="appearance-none bg-transparent border-none text-gray-200 mr-3 py-2 leading-tight focus:outline-none sm:text-sm w-20"
+                type="text"
+                name="label_description"
+                placeholder="Description"
+                aria-label="Description"
+                onKeyUp={async (e) => {
+                  await validateLabel(e.target.value);
+                }}
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                }}
+              ></input>
+              {descriptionHint.shown && (
+                <label className="label">
+                  <span
+                    className={"label-text-alt text-" + descriptionHint.type}
+                  >
+                    {descriptionHint.message}
+                  </span>
+                </label>
+              )}
+            </div>
+            <div className="flex-none mr-4 mt-2">
+              <input
+                className="appearance-none bg-transparent border-none focus:outline-none h-7 w-6"
+                type="color"
+                name="label_color"
+                placeholder="Color"
+                aria-label="Color"
+                onChange={(e) => {
+                  setColor(e.target.value);
+                }}
+              ></input>
+              {colorHint.shown && (
+                <label className="label">
+                  <span className={"label-text-alt text-" + colorHint.type}>
+                    {colorHint.message}
+                  </span>
+                </label>
+              )}
+            </div>
           </div>
-        </div>
-        <div className="flex flex-none w-60 btn-group">
-          <button 
-          className={"flex-1 btn btn-sm btn-block "} 
-          onClick={onCancel} 
-          data-test="cancel_label"
-          >
-            Cancel
-          </button>
-          <button
-            className={
-              "flex-1 btn btn-sm btn-primary btn-block " +
-              (isSaving ? "loading" : "")
-            }
-            onClick={isEdit ? onUpdateLabel : onCreateLabel}
-            disabled={isSaving}
-            data-test="save_label"
-          >
-            {isEdit ? "Update" : "Save"}
-          </button>
+          <div className="flex flex-none w-60 btn-group mb-2">
+            <button
+              className={
+                "link text-xs uppercase no-underline font-bold text-primary mt-3 " +
+                (isSaving ? "loading" : "")
+              }
+              onClick={isEdit ? onUpdateLabel : onCreateLabel}
+              disabled={isSaving}
+              data-test="save_label"
+            >
+              {isEdit ? "Update Label" : "Create Label"}
+            </button>
+          </div>
         </div>
       </div>
       {shouldShowSuggestions ? (
-        <div className="mt-6 ml-1">
-          <span className="text-xs uppercase text-type-secondary mr-4 font-bold">
-            Common labels
-          </span>
+        <div className="mt-6 ml-1 mb-10">
+          <div className="mb-2">
+            <div className="text-type-primary uppercase text-xs font-bold">
+              Common Labels
+            </div>
+          </div>
           {defaultLabels.map((dl, i) => (
-            <span className="mr-2" key={"suggestedLabel" + i} data-test="common_labels">
+            <span
+              className="mr-2"
+              key={"suggestedLabel" + i}
+              data-test="common_labels"
+            >
               <Label
                 color={dl.color}
                 name={dl.name}

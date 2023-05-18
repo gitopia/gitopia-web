@@ -74,10 +74,11 @@ export async function getStaticProps({ params }) {
       if (i) {
         let cs;
         if (i.commentsCount) {
-          const csJsons = await db
-            .select("*")
-            .from("Comments")
-            .where({repositoryId: r.id, parentIid: i.iid, parent: "COMMENT_PARENT_ISSUE"})
+          const csJsons = await db.select("*").from("Comments").where({
+            repositoryId: r.id,
+            parentIid: i.iid,
+            parent: "COMMENT_PARENT_ISSUE",
+          });
           cs = csJsons.map((j) => JSON.parse(j.data));
         }
         return {
@@ -370,7 +371,7 @@ function RepositoryIssueView(props) {
                     if (res) refreshIssue();
                   }}
                 />
-                <div className="text-xs px-3 mt-2 flex flex-wrap">
+                <div className="text-xs px-3 mt-2 flex flex-wrap ml-1.5">
                   {issue.labels.length
                     ? issue.labels.map((l, i) => {
                         let label = find(allLabels, { id: l }) || {

@@ -15,7 +15,7 @@ function LabelView({
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
-    <div key={"label" + label.id} className="p-4"  data-test="label">
+    <div key={"label" + label.id} className="p-4" data-test="label">
       {isEditing ? (
         <LabelEditor
           isEdit={true}
@@ -86,7 +86,14 @@ function LabelView({
               }
               onClick={async () => {
                 setIsDeleting(true);
-                if (onDelete) await onDelete(label.id);
+                const res = await props.deleteRepositoryLabel({
+                  repoOwner: repository.owner.id,
+                  repoName: repository.name,
+                  labelId: l.id,
+                });
+                if (res && res.code === 0) {
+                  refreshRepository();
+                }
                 setConfirmDelete(false);
                 setIsDeleting(false);
               }}
