@@ -6,13 +6,15 @@ import Link from "next/link";
 
 function AllowanceReceiver(props) {
   const [loading, setLoading] = useState(false);
-  const [allowanceGranted, setAllowanceGranted] = useState(
-    parseInt(props.allowance) !== 0
+  const [isBalanceLow, setIsBalanceLow] = useState(
+    Number(props.balance) <= 500 && Number(props.allowance) <= 500
   );
 
   useEffect(() => {
-    setAllowanceGranted(parseInt(props.allowance) !== 0);
-  }, [props.allowance]);
+    setIsBalanceLow(
+      Number(props.balance) <= 500 && Number(props.allowance) <= 500
+    );
+  }, [props.balance, props.allowance]);
 
   const checkAllowance = async () => {
     if (loading) return;
@@ -25,7 +27,7 @@ function AllowanceReceiver(props) {
     setLoading(false);
   };
 
-  return !allowanceGranted ? (
+  return isBalanceLow ? (
     <div className="sm:flex bg-box-grad-tl bg-base-200 px-4 py-8 justify-between items-center rounded-md mb-4">
       <div className="flex">
         <div
@@ -51,7 +53,8 @@ function AllowanceReceiver(props) {
         <div className="flex-1 mr-8">
           <div className="text-lg">Get Fee Grant</div>
           <div className="text-xs mt-2 text-type-secondary">
-            You can ask for a fee grant to start using Gitopia without buying any {(process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
+            You can ask for a fee grant to start using Gitopia without buying
+            any {(process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
           </div>
         </div>
       </div>
@@ -74,6 +77,7 @@ const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
     allowance: state.wallet.allowance,
+    balance: state.wallet.balance,
     advanceUser: state.user.advanceUser,
   };
 };
