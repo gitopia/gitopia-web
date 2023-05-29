@@ -142,14 +142,13 @@ function LabelEditor({
     setIsSaving(false);
   };
 
+  function fillLabel(name, description) {
+    document.getElementById("description").value = amount;
+  }
+
   return (
     <div className="w-full">
       <div>
-        <div className="mb-2">
-          <div className="text-type-primary uppercase text-xs font-bold">
-            Create New
-          </div>
-        </div>
         <div className="ml-1">
           <span className="text-xs uppercase text-type-secondary mr-4 font-bold">
             Preview
@@ -157,13 +156,14 @@ function LabelEditor({
           <Label name={name} color={color} />
         </div>
         <div className="sm:flex mt-5 border border-[#747D96] rounded-lg">
-          <div className="ml-2 w-96 mt-1">
+          <div className="ml-2 w-full">
             <input
               className="appearance-none bg-transparent border-none text-gray-200 mr-3 py-2 leading-tight focus:outline-none sm:text-sm w-20"
               type="text"
               name="label_name"
               placeholder="Name"
               aria-label="Name"
+              value={name}
               onKeyUp={async (e) => {
                 await validateLabel(e.target.value);
               }}
@@ -171,22 +171,16 @@ function LabelEditor({
                 setName(e.target.value);
               }}
             ></input>
-            {nameHint.shown && (
-              <label className="label">
-                <span className={"label-text-alt text-" + nameHint.type}>
-                  {nameHint.message}
-                </span>
-              </label>
-            )}
           </div>
           <div className={"flex " + (isMobile ? "mt-3 mb-3" : "")}>
-            <div className="flex-1 mr-4 mt-1">
+            <div className="flex-1 mr-4">
               <input
-                className="appearance-none bg-transparent border-none text-gray-200 mr-3 py-2 leading-tight focus:outline-none sm:text-sm w-20"
+                className="appearance-none bg-transparent border-none text-gray-200 mr-3 py-2 leading-tight focus:outline-none sm:text-sm w-44"
                 type="text"
                 name="label_description"
                 placeholder="Description"
                 aria-label="Description"
+                value={description}
                 onKeyUp={async (e) => {
                   await validateLabel(e.target.value);
                 }}
@@ -194,40 +188,25 @@ function LabelEditor({
                   setDescription(e.target.value);
                 }}
               ></input>
-              {descriptionHint.shown && (
-                <label className="label">
-                  <span
-                    className={"label-text-alt text-" + descriptionHint.type}
-                  >
-                    {descriptionHint.message}
-                  </span>
-                </label>
-              )}
             </div>
-            <div className="flex-none mr-4 mt-2">
+            <div className="flex-none mr-4 mt-1">
               <input
                 className="appearance-none bg-transparent border-none focus:outline-none h-7 w-6"
                 type="color"
                 name="label_color"
                 placeholder="Color"
                 aria-label="Color"
+                value={color}
                 onChange={(e) => {
                   setColor(e.target.value);
                 }}
               ></input>
-              {colorHint.shown && (
-                <label className="label">
-                  <span className={"label-text-alt text-" + colorHint.type}>
-                    {colorHint.message}
-                  </span>
-                </label>
-              )}
             </div>
           </div>
           <div className="flex flex-none w-60 btn-group mb-2">
             <button
               className={
-                "link text-xs uppercase no-underline font-bold text-primary mt-3 " +
+                "link text-xs uppercase no-underline font-bold text-primary mt-2 " +
                 (isSaving ? "loading" : "")
               }
               onClick={isEdit ? onUpdateLabel : onCreateLabel}
@@ -238,6 +217,27 @@ function LabelEditor({
             </button>
           </div>
         </div>
+        {nameHint.shown && (
+          <label className="label">
+            <span className={"label-text-alt text-" + nameHint.type}>
+              {nameHint.message}
+            </span>
+          </label>
+        )}
+        {descriptionHint.shown && (
+          <label className="label">
+            <span className={"label-text-alt text-" + descriptionHint.type}>
+              {descriptionHint.message}
+            </span>
+          </label>
+        )}
+        {colorHint.shown && (
+          <label className="label">
+            <span className={"label-text-alt text-" + colorHint.type}>
+              {colorHint.message}
+            </span>
+          </label>
+        )}
       </div>
       {shouldShowSuggestions ? (
         <div className="mt-6 ml-1 mb-10">
