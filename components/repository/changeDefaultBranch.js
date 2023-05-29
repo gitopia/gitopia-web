@@ -117,7 +117,10 @@ function ChangeDefaultBranch({ onSuccess, ...props }) {
               </div>
             ) : (
               <div className="form-control flex-1 mt-4">
-                <div className="relative">
+                <div className="flex-1 mr-8">
+                  <div className="label-text">Change Default Branch</div>
+                </div>
+                <div className="relative mt-2">
                   <input
                     type="text"
                     name="branch_name"
