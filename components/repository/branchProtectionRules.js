@@ -14,11 +14,15 @@ function BranchProtectionRules({
   const [addRule, setAddRule] = useState(false);
   const [branch, setBranch] = useState("");
   const [branches, setBranches] = useState([]);
+  const [protectedBranches, setProtectedBranches] = useState({});
+
   useEffect(() => {
     async function getRepositoryBranch() {
       const res = await getAllRepositoryBranch(repoOwner, repoName);
       if (res) {
         setBranches(res);
+        let b = res.filter((b) => b.allowForcePush === false);
+        setProtectedBranches(b);
       }
     }
     getRepositoryBranch();
@@ -29,6 +33,8 @@ function BranchProtectionRules({
       const res = await getAllRepositoryBranch(repoOwner, repoName);
       if (res) {
         setBranches(res);
+        let b = res.filter((b) => b.allowForcePush === false);
+        setProtectedBranches(b);
       }
     }
     getRepositoryBranch();
@@ -90,73 +96,82 @@ function BranchProtectionRules({
           <div className="text-sm text-type-secondary">
             Prevent force pushes on your branch from users
           </div>
-          <div className="flex mt-2 whitespace-normal">Protected Branches</div>
-          <div className="border border-grey-50 rounded sm:divide-y sm:divide-gray-700 mt-2">
-            {branches.map((b) => {
-              {
-                return b.allowForcePush === false ? (
-                  <div className="flex p-1" key={b.id}>
-                    <div className="ml-2 text-xs mt-0.5"> {b.name}</div>
-                    <div
-                      className={"px-4 ml-auto"}
-                      onClick={async () => {
-                        props
-                          .toggleForcePush({
-                            repoOwner: repoOwner,
-                            repoName: repoName,
-                            branchName: b.name,
-                          })
-                          .then(async (res) => {
-                            if (res?.code == 0) {
-                              refreshBranches();
-                              props.notify(
-                                "Deleted rule for " + b.name + " branch",
-                                "info"
-                              );
-                            }
-                          });
-                      }}
-                    >
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="hover:cursor-pointer stroke-type-secondary hover:stroke-green"
+
+          {protectedBranches.length > 0 ? (
+            <div>
+              <div className="flex mt-2 whitespace-normal">
+                Protected Branches
+              </div>
+              {protectedBranches.map((b, i) => {
+                return (
+                  <div
+                    className="border border-grey-50 rounded sm:divide-y sm:divide-gray-700 mt-2"
+                    key={i}
+                  >
+                    <div className="flex p-1" key={b.id}>
+                      <div className="ml-2 text-xs mt-0.5"> {b.name}</div>
+                      <div
+                        className={"px-4 ml-auto"}
+                        onClick={async () => {
+                          props
+                            .toggleForcePush({
+                              repoOwner: repoOwner,
+                              repoName: repoName,
+                              branchName: b.name,
+                            })
+                            .then(async (res) => {
+                              if (res?.code == 0) {
+                                refreshBranches();
+                                props.notify(
+                                  "Deleted rule for " + b.name + " branch",
+                                  "info"
+                                );
+                              }
+                            });
+                        }}
                       >
-                        <rect
-                          x="6"
-                          y="9"
-                          width="12"
-                          height="12"
-                          strokeWidth="2"
-                        />
-                        <rect x="5.5" y="4.5" width="13" height="1" />
-                        <rect x="9.5" y="2.5" width="5" height="1" />
-                        <rect
-                          x="10.5"
-                          y="12.5"
-                          width="5"
-                          height="1"
-                          transform="rotate(90 10.5 12.5)"
-                        />
-                        <rect
-                          x="14.5"
-                          y="12.5"
-                          width="5"
-                          height="1"
-                          transform="rotate(90 14.5 12.5)"
-                        />
-                      </svg>
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="hover:cursor-pointer stroke-type-secondary hover:stroke-green"
+                        >
+                          <rect
+                            x="6"
+                            y="9"
+                            width="12"
+                            height="12"
+                            strokeWidth="2"
+                          />
+                          <rect x="5.5" y="4.5" width="13" height="1" />
+                          <rect x="9.5" y="2.5" width="5" height="1" />
+                          <rect
+                            x="10.5"
+                            y="12.5"
+                            width="5"
+                            height="1"
+                            transform="rotate(90 10.5 12.5)"
+                          />
+                          <rect
+                            x="14.5"
+                            y="12.5"
+                            width="5"
+                            height="1"
+                            transform="rotate(90 14.5 12.5)"
+                          />
+                        </svg>
+                      </div>
                     </div>
                   </div>
-                ) : (
-                  ""
                 );
-              }
-            })}
-          </div>
+              })}
+            </div>
+          ) : (
+            ""
+          )}
+
           <div className="flex mt-2 whitespace-normal">Branch</div>
           <select
             className={
