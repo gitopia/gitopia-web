@@ -1,11 +1,10 @@
 import { useEffect, useState, useRef } from "react";
-import getIssueAllLabels from "../../helpers/getIssueAllLabels";
 import Label from "./label";
-import Link from "next/link";
 import LabelEditor from "./labelEditor";
 import useRepository from "../../hooks/useRepository";
 import { deleteRepositoryLabel } from "../../store/actions/repository";
 import { connect } from "react-redux";
+import { notify } from "reapop";
 
 function LabelSelector({
   onChange,
@@ -26,22 +25,23 @@ function LabelSelector({
   const updateLabels = async () => {
     setIsSaving(true);
     const list = [];
-    repoLabels.map((l) => {
+    repository.labels.map((l) => {
       if (checkMap[l.id]) list.push(l.id);
     });
     if (onChange) await onChange(list);
+    await resetLabels();
     setIsSaving(false);
   };
 
   const resetLabels = () => {
     const newCheckMap = {};
-    repoLabels.map((l) => {
+    repository.labels.map((l) => {
       newCheckMap[l.id] = labels.includes(l.id);
     });
     setCheckMap(newCheckMap);
   };
 
-  useEffect(resetLabels, [repoLabels, labels]);
+  useEffect(resetLabels, [repository, labels]);
 
   return (
     <div className={"dropdown dropdown-end w-full"} tabIndex="0" ref={menuDiv}>
@@ -74,6 +74,7 @@ function LabelSelector({
                 if (menuDiv.current) {
                   menuDiv.current.blur();
                 }
+                setCreating(false);
               }}
             >
               <svg
@@ -97,9 +98,10 @@ function LabelSelector({
                 repoOwner={repository.owner.id}
                 repoName={repository.name}
                 onSuccess={async (label) => {
-                  console.log(label);
-                  refreshRepository();
-                  await resetLabels();
+                  await refreshRepository();
+                  console.log(repository);
+                  await updateLabels();
+                  props.notify("label updated", "info");
                 }}
               />
             </div>
@@ -124,8 +126,12 @@ function LabelSelector({
                   className={
                     "ml-2 link text-xs uppercase no-underline font-bold text-green "
                   }
-                  onClick={() => {
+                  onClick={async () => {
                     setCreating(false);
+                    await resetLabels();
+                    if (menuDiv.current) {
+                      menuDiv.current.blur();
+                    }
                   }}
                 >
                   Done
@@ -134,7 +140,7 @@ function LabelSelector({
             )}
           </div>
           <div className="mt-5 max-h-60 overflow-auto">
-            {repoLabels.map((l, i) => {
+            {repository.labels.map((l, i) => {
               return (
                 <div className="form-control" key={"label" + i}>
                   <label
@@ -162,10 +168,7 @@ function LabelSelector({
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                       className="ml-auto link text-xs uppercase no-underline"
-                      onClick={() => {
-                        setConfirmEdit(true);
-                        setLabelId(l.id);
-                      }}
+                      onClick={() => {}}
                     >
                       <path
                         d="M14.1211 4.22183L19.7779 9.87869L9.46424 20.1924L3.80738 20.1924L3.80738 14.5355L14.1211 4.22183Z"
@@ -186,8 +189,8 @@ function LabelSelector({
                       xmlns="http://www.w3.org/2000/svg"
                       className="ml-2 link text-xs uppercase no-underline mr-2"
                       onClick={() => {
-                        // setConfirmDelete(true);
-                        // setLabelId(l.id);
+                        setConfirmDelete(true);
+                        setLabelId(l.id);
                       }}
                     >
                       <rect
@@ -286,7 +289,8 @@ function LabelSelector({
                   labelId: labelId,
                 });
                 if (res && res.code === 0) {
-                  refreshRepository();
+                  await refreshRepository();
+                  console.log(repository);
                   await updateLabels();
                 }
                 setConfirmDelete(false);
@@ -309,6 +313,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { deleteRepositoryLabel })(
+export default connect(mapStateToProps, { deleteRepositoryLabel, notify })(
   LabelSelector
 );

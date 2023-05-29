@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import TextInput from "../textInput";
+
 import { connect } from "react-redux";
 import Label from "./label";
 import {
@@ -113,6 +113,10 @@ function LabelEditor({
       });
       if (res && res.code === 0) {
         if (onSuccess) await onSuccess({ name, description, color });
+        setName(initialLabel.name);
+        setDescription(initialLabel.description);
+        setColor(initialLabel.color);
+        resetHints();
       } else {
         if (onError) await onError(res);
       }
@@ -141,10 +145,6 @@ function LabelEditor({
     }
     setIsSaving(false);
   };
-
-  function fillLabel(name, description) {
-    document.getElementById("description").value = amount;
-  }
 
   return (
     <div className="w-full">
