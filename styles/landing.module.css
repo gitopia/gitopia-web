@@ -89,7 +89,7 @@
   background: #13181e;
   position: relative;
   z-index: 1;
-  overflow-x: hidden;
+  overflow: hidden;
   color: #e2ebf2;
 }
 
