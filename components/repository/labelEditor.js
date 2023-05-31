@@ -147,18 +147,32 @@ function LabelEditor({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full pt-2 pb-4">
       <div>
-        <div className="ml-1">
-          <span className="text-xs uppercase text-type-secondary mr-4 font-bold">
+        <div className="flex ml-1">
+          <span className="text-xs uppercase text-type-secondary mr-4 mt-1 font-bold">
             Preview
           </span>
           <Label name={name} color={color} />
+          <div className="ml-auto mr-1">
+            <label
+              className={
+                "ml-2 link text-xs uppercase no-underline font-bold text-green "
+              }
+              onClick={() => {
+                if (onCancel) {
+                  onCancel();
+                }
+              }}
+            >
+              Cancel
+            </label>
+          </div>
         </div>
         <div className="sm:flex mt-5 border border-[#747D96] rounded-lg">
           <div className="ml-2 w-full">
             <input
-              className="appearance-none bg-transparent border-none text-gray-200 mr-3 py-2 leading-tight focus:outline-none sm:text-sm w-20"
+              className="appearance-none bg-transparent border-none text-gray-200 mr-3 py-2 leading-tight focus:outline-none sm:text-sm w-24"
               type="text"
               name="label_name"
               placeholder="Name"
@@ -175,7 +189,7 @@ function LabelEditor({
           <div className={"flex " + (isMobile ? "mt-3 mb-3" : "")}>
             <div className="flex-1 mr-4">
               <input
-                className="appearance-none bg-transparent border-none text-gray-200 mr-3 py-2 leading-tight focus:outline-none sm:text-sm w-44"
+                className="appearance-none bg-transparent border-none text-gray-200 mr-3 py-2 leading-tight focus:outline-none sm:text-sm w-40"
                 type="text"
                 name="label_description"
                 placeholder="Description"
@@ -203,11 +217,11 @@ function LabelEditor({
               ></input>
             </div>
           </div>
-          <div className="flex flex-none w-60 btn-group mb-2">
+          <div className="flex flex-none w-24 btn-group mb-2">
             <button
               className={
-                "link text-xs uppercase no-underline font-bold text-primary mt-2 " +
-                (isSaving ? "loading" : "")
+                "link text-xs uppercase no-underline font-bold mt-2 " +
+                (isSaving ? "loading text-grey" : "text-primary")
               }
               onClick={isEdit ? onUpdateLabel : onCreateLabel}
               disabled={isSaving}
@@ -240,9 +254,9 @@ function LabelEditor({
         )}
       </div>
       {shouldShowSuggestions ? (
-        <div className="mt-6 ml-1 mb-10">
+        <div className="mt-4 ml-1">
           <div className="mb-2">
-            <div className="text-type-primary uppercase text-xs font-bold">
+            <div className="text-type-secondary uppercase text-xs font-bold">
               Common Labels
             </div>
           </div>

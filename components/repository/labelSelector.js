@@ -19,6 +19,7 @@ function LabelSelector({
   const { repository, refreshRepository } = useRepository();
   const [isDeleting, setIsDeleting] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [editing, setEditing] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [labelId, setLabelId] = useState(null);
 
@@ -63,7 +64,7 @@ function LabelSelector({
       <div className="modal">
         <div className="modal-box shadow-lg bg-[#28313B] rounded mt-1">
           <div className="flex">
-            <div className="text-type-primary uppercase text-xs font-bold">
+            <div className="text-type-primary uppercase text-sm font-bold">
               Attach Label
             </div>
             <label
@@ -103,6 +104,13 @@ function LabelSelector({
                   await updateLabels();
                   props.notify("label updated", "info");
                 }}
+                onCancel={async () => {
+                  setCreating(false);
+                  await resetLabels();
+                  if (menuDiv.current) {
+                    menuDiv.current.blur();
+                  }
+                }}
               />
             </div>
           ) : (
@@ -121,27 +129,37 @@ function LabelSelector({
                 Create Label
               </label>
             ) : (
-              <div className="ml-auto mr-3">
-                <label
-                  className={
-                    "ml-2 link text-xs uppercase no-underline font-bold text-green "
-                  }
-                  onClick={async () => {
-                    setCreating(false);
-                    await resetLabels();
-                    if (menuDiv.current) {
-                      menuDiv.current.blur();
-                    }
-                  }}
-                >
-                  Done
-                </label>
-              </div>
+              ""
             )}
           </div>
           <div className="mt-5 max-h-60 overflow-auto">
             {repository.labels.map((l, i) => {
-              return (
+              return l.id === editing ? (
+                <div className="bg-grey-900 mr-2 px-2 py-1 rounded-lg border-t border-[#3E4051]">
+                  <LabelEditor
+                    isEdit={true}
+                    initialLabel={l}
+                    repoOwner={repository.owner.id}
+                    repoName={repository.name}
+                    labelId={l.id}
+                    onSuccess={async (l) => {
+                      console.log(l);
+                      await refreshRepository();
+                      console.log(repository);
+                      await updateLabels();
+                      setEditing(null);
+                      props.notify("label updated", "info");
+                    }}
+                    onCancel={async () => {
+                      setEditing(null);
+                      await resetLabels();
+                      if (menuDiv.current) {
+                        menuDiv.current.blur();
+                      }
+                    }}
+                  />
+                </div>
+              ) : (
                 <div className="form-control" key={"label" + i}>
                   <label
                     className="cursor-pointer label justify-start border-t border-[#3E4051] hover:bg-[#1A2028]"
@@ -168,7 +186,9 @@ function LabelSelector({
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                       className="ml-auto link text-xs uppercase no-underline"
-                      onClick={() => {}}
+                      onClick={() => {
+                        setEditing(l.id);
+                      }}
                     >
                       <path
                         d="M14.1211 4.22183L19.7779 9.87869L9.46424 20.1924L3.80738 20.1924L3.80738 14.5355L14.1211 4.22183Z"
