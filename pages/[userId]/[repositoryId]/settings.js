@@ -150,10 +150,6 @@ function RepositorySettingsView(props) {
                 </div>
                 <div className="sm:px-4 py-4 sm:py-6">
                   <ChangeDefaultBranch
-                    repoId={repository.id}
-                    repoName={repository.name}
-                    repoOwner={repository.owner.id}
-                    repoDefaultBranch={repository.defaultBranch}
                     onSuccess={(name) => {
                       props.notify("updated default branch to " + name, "info");
                     }}
