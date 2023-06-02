@@ -667,7 +667,7 @@ function RepositoryCompareView(props) {
                             }}
                             title="Reviewers"
                           />
-                          <div className="text-xs px-3 mt-2">
+                          <div className="text-xs px-3 mt-2 flex gap-2">
                             {reviewers.length
                               ? reviewers.map((a, i) => (
                                   <div key={"reviewers" + i}>
@@ -695,7 +695,7 @@ function RepositoryCompareView(props) {
                               setAssignees(list);
                             }}
                           />
-                          <div className="text-xs px-3 mt-2">
+                          <div className="text-xs px-3 mt-2 flex gap-2">
                             {assignees.length
                               ? assignees.map((a, i) => (
                                   <div key={"assignee" + i}>

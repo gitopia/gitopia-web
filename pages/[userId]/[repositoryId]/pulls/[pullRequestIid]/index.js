@@ -432,7 +432,7 @@ function RepositoryPullView(props) {
                     if (res) refreshPullRequest();
                   }}
                 />
-                <div className="text-xs px-3 mt-2">
+                <div className="text-xs px-3 mt-2 flex gap-2">
                   {pullRequest.reviewers.length
                     ? pullRequest.reviewers.map((a, i) => (
                         <div key={"reviewer" + i}>
@@ -476,7 +476,7 @@ function RepositoryPullView(props) {
                     if (res) refreshPullRequest();
                   }}
                 />
-                <div className="text-xs px-3 mt-2">
+                <div className="text-xs px-3 mt-2 flex gap-2">
                   {pullRequest.assignees.length
                     ? pullRequest.assignees.map((a, i) => (
                         <div key={"assignee" + i}>

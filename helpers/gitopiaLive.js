@@ -190,7 +190,7 @@ function GitopiaLive(props) {
               </span>
             </div>
 
-            <div className="text-xs mt-3">
+            <div className="text-xs mt-3 flex gap-2">
               {[
                 props.repository.owner.id,
                 ...props.repository.collaborators.map((c) => c.id),

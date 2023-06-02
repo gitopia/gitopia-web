@@ -154,7 +154,7 @@ function RepositoryIssueCreateView(props) {
                     setAssignees(list);
                   }}
                 />
-                <div className="text-xs px-3 mt-2">
+                <div className="text-xs px-3 mt-2 flex gap-2">
                   {assignees.length
                     ? assignees.map((a, i) => (
                         <div key={"assignee" + i}>

@@ -621,7 +621,7 @@ function RepositoryView(props) {
                     </span>
                   </div>
 
-                  <div className="text-xs mt-3">
+                  <div className="text-xs mt-3 flex gap-1">
                     {[
                       repository.owner.id,
                       ...repository.collaborators.map((c) => c.id),
