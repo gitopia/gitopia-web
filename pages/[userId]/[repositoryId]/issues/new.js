@@ -33,7 +33,7 @@ export async function getStaticPaths() {
 
 function RepositoryIssueCreateView(props) {
   const router = useRouter();
-  const { repository } = useRepository();
+  const { repository, refreshRepository } = useRepository();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -80,7 +80,7 @@ function RepositoryIssueCreateView(props) {
     if (repository) {
       setAllLabels(repository.labels);
     }
-  }, [repository.id]);
+  }, [repository]);
 
   return (
     <div
@@ -171,14 +171,8 @@ function RepositoryIssueCreateView(props) {
               <div className="py-8">
                 <LabelSelector
                   labels={labels}
-                  repoLabels={repository.labels}
-                  editLabels={
-                    "/" +
-                    repository.owner.id +
-                    "/" +
-                    repository.name +
-                    "/issues/labels"
-                  }
+                  repository={repository}
+                  refreshRepository={refreshRepository}
                   onChange={async (list) => {
                     console.log(list);
                     setLabels(list);

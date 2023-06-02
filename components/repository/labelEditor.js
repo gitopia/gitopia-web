@@ -6,7 +6,6 @@ import {
   createRepositoryLabel,
   updateRepositoryLabel,
 } from "../../store/actions/repository";
-import useWindowSize from "../../hooks/useWindowSize";
 
 const defaultLabels = [
   {
@@ -18,11 +17,6 @@ const defaultLabels = [
     name: "documentation",
     description: "Improvements or additions to documentation",
     color: "#2469ce",
-  },
-  {
-    name: "help wanted",
-    description: "Extra attention is needed",
-    color: "#22b998",
   },
   {
     name: "enhancement",
@@ -71,7 +65,6 @@ function LabelEditor({
     message: "",
   });
   const [isSaving, setIsSaving] = useState(false);
-  const { isMobile } = useWindowSize();
   const shouldShowSuggestions = !isEdit;
 
   const validateLabel = () => {
@@ -147,11 +140,11 @@ function LabelEditor({
   };
 
   return (
-    <div className="w-full pt-2 pb-4">
+    <div className="w-full p-4">
       <div>
         <div className="flex ml-1">
           <span className="text-xs uppercase text-type-secondary mr-4 mt-1 font-bold">
-            Preview
+            Label Preview
           </span>
           <Label name={name} color={color} />
           <div className="ml-auto mr-1">
@@ -169,43 +162,27 @@ function LabelEditor({
             </label>
           </div>
         </div>
-        <div className="sm:flex mt-5 border border-[#747D96] rounded-lg">
-          <div className="ml-2 w-full">
-            <input
-              className="appearance-none bg-transparent border-none text-gray-200 mr-3 py-2 leading-tight focus:outline-none sm:text-sm w-24"
-              type="text"
-              name="label_name"
-              placeholder="Name"
-              aria-label="Name"
-              value={name}
-              onKeyUp={async (e) => {
-                await validateLabel(e.target.value);
-              }}
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-            ></input>
-          </div>
-          <div className={"flex " + (isMobile ? "mt-3 mb-3" : "")}>
-            <div className="flex-1 mr-4">
+        <div className="mt-4 px-2 border border-grey-50 rounded-lg">
+          <div className="flex">
+            <div className="flex-1">
               <input
-                className="appearance-none bg-transparent border-none text-gray-200 mr-3 py-2 leading-tight focus:outline-none sm:text-sm w-40"
+                className="appearance-none bg-transparent border-none text-gray-200 py-2 focus:outline-none text-sm"
                 type="text"
-                name="label_description"
-                placeholder="Description"
-                aria-label="Description"
-                value={description}
+                name="label_name"
+                placeholder="Name"
+                aria-label="Name"
+                value={name}
                 onKeyUp={async (e) => {
                   await validateLabel(e.target.value);
                 }}
                 onChange={(e) => {
-                  setDescription(e.target.value);
+                  setName(e.target.value);
                 }}
               ></input>
             </div>
-            <div className="flex-none mr-4 mt-1">
+            <div className="flex-none mt-1">
               <input
-                className="appearance-none bg-transparent border-none focus:outline-none h-7 w-6"
+                className="appearance-none bg-transparent border-none focus:outline-none h-7 w-6 rounded-md"
                 type="color"
                 name="label_color"
                 placeholder="Color"
@@ -217,18 +194,21 @@ function LabelEditor({
               ></input>
             </div>
           </div>
-          <div className="flex flex-none w-24 btn-group mb-2">
-            <button
-              className={
-                "link text-xs uppercase no-underline font-bold mt-2 " +
-                (isSaving ? "loading text-grey" : "text-primary")
-              }
-              onClick={isEdit ? onUpdateLabel : onCreateLabel}
-              disabled={isSaving}
-              data-test="save_label"
-            >
-              {isEdit ? "Update Label" : "Create Label"}
-            </button>
+          <div className="">
+            <input
+              className="appearance-none bg-transparent border-none text-gray-200 py-2 focus:outline-none text-sm w-full"
+              type="text"
+              name="label_description"
+              placeholder="Description"
+              aria-label="Description"
+              value={description}
+              onKeyUp={async (e) => {
+                await validateLabel(e.target.value);
+              }}
+              onChange={(e) => {
+                setDescription(e.target.value);
+              }}
+            ></input>
           </div>
         </div>
         {nameHint.shown && (
@@ -254,7 +234,7 @@ function LabelEditor({
         )}
       </div>
       {shouldShowSuggestions ? (
-        <div className="mt-4 ml-1">
+        <div className="mt-6 ml-1 mb-2">
           <div className="mb-2">
             <div className="text-type-secondary uppercase text-xs font-bold">
               Common Labels
@@ -281,6 +261,17 @@ function LabelEditor({
       ) : (
         ""
       )}
+      <button
+        className={
+          "btn btn-secondary btn-block uppercase mt-4 " +
+          (isSaving ? "loading" : "")
+        }
+        onClick={isEdit ? onUpdateLabel : onCreateLabel}
+        disabled={isSaving}
+        data-test="save_label"
+      >
+        {isEdit ? "Update Label" : "Create Label"}
+      </button>
     </div>
   );
 }

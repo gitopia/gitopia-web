@@ -144,7 +144,7 @@ export async function getStaticPaths() {
 }
 
 function RepositoryPullView(props) {
-  const { repository } = useRepository(props.repository);
+  const { repository, refreshRepository } = useRepository(props.repository);
   const { pullRequest, refreshPullRequest } = usePullRequest(
     repository,
     props.pullRequest
@@ -493,14 +493,8 @@ function RepositoryPullView(props) {
               <div className="py-8">
                 <LabelSelector
                   labels={pullRequest.labels}
-                  repoLabels={repository.labels}
-                  editLabels={
-                    "/" +
-                    repository.owner.id +
-                    "/" +
-                    repository.name +
-                    "/issues/labels"
-                  }
+                  repository={repository}
+                  refreshRepository={refreshRepository}
                   onChange={async (list) => {
                     console.log("list", list);
                     const removedLabels = pullRequest.labels.filter(
