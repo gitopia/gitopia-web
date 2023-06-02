@@ -144,7 +144,7 @@ export async function getStaticPaths() {
 }
 
 function RepositoryPullView(props) {
-  const { repository } = useRepository(props.repository);
+  const { repository, refreshRepository } = useRepository(props.repository);
   const { pullRequest, refreshPullRequest } = usePullRequest(
     repository,
     props.pullRequest
@@ -432,7 +432,7 @@ function RepositoryPullView(props) {
                     if (res) refreshPullRequest();
                   }}
                 />
-                <div className="text-xs px-3 mt-2">
+                <div className="text-xs px-3 mt-2 flex gap-2">
                   {pullRequest.reviewers.length
                     ? pullRequest.reviewers.map((a, i) => (
                         <div key={"reviewer" + i}>
@@ -476,7 +476,7 @@ function RepositoryPullView(props) {
                     if (res) refreshPullRequest();
                   }}
                 />
-                <div className="text-xs px-3 mt-2">
+                <div className="text-xs px-3 mt-2 flex gap-2">
                   {pullRequest.assignees.length
                     ? pullRequest.assignees.map((a, i) => (
                         <div key={"assignee" + i}>
@@ -493,14 +493,8 @@ function RepositoryPullView(props) {
               <div className="py-8">
                 <LabelSelector
                   labels={pullRequest.labels}
-                  repoLabels={repository.labels}
-                  editLabels={
-                    "/" +
-                    repository.owner.id +
-                    "/" +
-                    repository.name +
-                    "/issues/labels"
-                  }
+                  repository={repository}
+                  refreshRepository={refreshRepository}
                   onChange={async (list) => {
                     console.log("list", list);
                     const removedLabels = pullRequest.labels.filter(

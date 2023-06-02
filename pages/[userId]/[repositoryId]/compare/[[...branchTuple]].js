@@ -48,7 +48,7 @@ export async function getStaticPaths() {
 function RepositoryCompareView(props) {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { repository } = useRepository();
+  const { repository, refreshRepository } = useRepository();
   const [viewType, setViewType] = useState("unified");
   const [stats, setStats] = useState({ stat: {} });
   const [commits, setCommits] = useState([]);
@@ -667,7 +667,7 @@ function RepositoryCompareView(props) {
                             }}
                             title="Reviewers"
                           />
-                          <div className="text-xs px-3 mt-2">
+                          <div className="text-xs px-3 mt-2 flex gap-2">
                             {reviewers.length
                               ? reviewers.map((a, i) => (
                                   <div key={"reviewers" + i}>
@@ -695,7 +695,7 @@ function RepositoryCompareView(props) {
                               setAssignees(list);
                             }}
                           />
-                          <div className="text-xs px-3 mt-2">
+                          <div className="text-xs px-3 mt-2 flex gap-2">
                             {assignees.length
                               ? assignees.map((a, i) => (
                                   <div key={"assignee" + i}>
@@ -712,14 +712,8 @@ function RepositoryCompareView(props) {
                         <div className="py-8">
                           <LabelSelector
                             labels={labels}
-                            repoLabels={repository.labels}
-                            editLabels={
-                              "/" +
-                              repository.owner.id +
-                              "/" +
-                              repository.name +
-                              "/issues/labels"
-                            }
+                            repository={repository}
+                            refreshRepository={refreshRepository}
                             onChange={async (list) => {
                               console.log(list);
                               setLabels(list);

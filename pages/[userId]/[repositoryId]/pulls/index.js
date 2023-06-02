@@ -581,7 +581,7 @@ function RepositoryPullsView(props) {
                     </div>
                     <div className="flex items-center">
                       {!isMobile ? (
-                        <div className="mt-1">
+                        <div className="mt-1 flex gap-1">
                           {i.assignees.map((a, i) => (
                             <div key={"assignee" + i}>
                               <AccountCard

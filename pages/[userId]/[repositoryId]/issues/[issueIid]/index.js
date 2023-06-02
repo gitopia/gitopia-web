@@ -71,10 +71,11 @@ export async function getStaticProps({ params }) {
       if (i) {
         let cs;
         if (i.commentsCount) {
-          const csJsons = await db
-            .select("*")
-            .from("Comments")
-            .where({repositoryId: r.id, parentIid: i.iid, parent: "COMMENT_PARENT_ISSUE"})
+          const csJsons = await db.select("*").from("Comments").where({
+            repositoryId: r.id,
+            parentIid: i.iid,
+            parent: "COMMENT_PARENT_ISSUE",
+          });
           cs = csJsons.map((j) => JSON.parse(j.data));
         }
         return {
@@ -108,7 +109,7 @@ export async function getStaticPaths() {
 function RepositoryIssueView(props) {
   const router = useRouter();
   const { setErrorStatusCode } = useErrorStatus();
-  const { repository } = useRepository(props.repository);
+  const { repository, refreshRepository } = useRepository(props.repository);
   const [issue, setIssue] = useState({
     iid: router.query.issueIid,
     creator: "",
@@ -139,10 +140,13 @@ function RepositoryIssueView(props) {
       } else {
         setErrorStatusCode(404);
       }
-      setAllLabels(repository.labels);
     }
     initIssues();
   }, [router.query.issueIid, repository.id]);
+
+  useEffect(() => {
+    setAllLabels(repository.labels);
+  }, [repository]);
 
   const getAllComments = async () => {
     const comments = await getIssueCommentAll(repository.id, issue.iid);
@@ -330,14 +334,8 @@ function RepositoryIssueView(props) {
               <div className="py-8">
                 <LabelSelector
                   labels={issue.labels}
-                  repoLabels={repository.labels}
-                  editLabels={
-                    "/" +
-                    repository.owner.id +
-                    "/" +
-                    repository.name +
-                    "/issues/labels"
-                  }
+                  repository={repository}
+                  refreshRepository={refreshRepository}
                   onChange={async (list) => {
                     console.log("list", list);
                     const removedLabels = issue.labels.filter(
@@ -359,22 +357,24 @@ function RepositoryIssueView(props) {
                   }}
                 />
                 <div className="text-xs px-3 mt-2 flex flex-wrap">
-                  {issue.labels.length
-                    ? issue.labels.map((l, i) => {
-                        let label = find(allLabels, { id: l }) || {
-                          name: "",
-                          color: "",
-                        };
-                        return (
-                          <span
-                            className="pr-2 pb-2 whitespace-nowrap"
-                            key={"label" + i}
-                          >
-                            <Label color={label.color} name={label.name} />
-                          </span>
-                        );
-                      })
-                    : "None yet"}
+                  {issue.labels.length ? (
+                    issue.labels.map((l, i) => {
+                      let label = find(allLabels, { id: l }) || {
+                        name: "",
+                        color: "",
+                      };
+                      return (
+                        <span
+                          className="pr-2 pb-2 whitespace-nowrap"
+                          key={"label" + i}
+                        >
+                          <Label color={label.color} name={label.name} />
+                        </span>
+                      );
+                    })
+                  ) : (
+                    "None yet"
+                  )}
                 </div>
               </div>
               {issue.pullRequests.length > 0 ? (

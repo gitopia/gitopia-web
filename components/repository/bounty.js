@@ -381,7 +381,7 @@ function CreateBounty(props) {
                 <div className="flex justify-end">
                   <button
                     className={
-                      "flex link link-primary text-xs no-underline font-bold mt-8 mr-2"
+                      "flex link link-primary text-xs no-underline uppercase font-bold mt-8 mr-2"
                     }
                     onClick={() => {
                       setIsAddingNewToken(!isAddingNewToken);
