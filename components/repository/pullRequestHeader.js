@@ -61,7 +61,7 @@ export default function PullRequestHeader({
           {pullRequest.state === "MERGED" ? (
             <div>
               <AccountCard id={pullRequest.mergedBy} />
-              {"merged "}
+              {" merged "}
             </div>
           ) : (
             <div>
