@@ -175,7 +175,7 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
           </div>
           <label className="label">
             <span className="label-text text-xs font-bold text-gray-400">
-              DAO TREASURY ADDRESS
+              TREASURY ADDRESS
             </span>
           </label>
           <div className="flex border border-gray-700 rounded-lg p-3 text-xs">
