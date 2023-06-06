@@ -63,7 +63,7 @@ export default function useRepository(initialRepository = {}) {
         } else if (r.owner.type === "DAO") {
           ownerDetails = await getDao(r.owner.id);
           setRepository({
-            r,
+            ...r,
             owner: {
               type: r.owner.type,
               id: ownerDetails.name,
