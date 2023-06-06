@@ -58,8 +58,18 @@ export default function PullRequestHeader({
           </span>
         </span>
         <span className="text-xs mr-2 text-type-secondary">
-          <AccountCard id={pullRequest.creator} />
-          {" wants to merge "}
+          {pullRequest.state === "MERGED" ? (
+            <div>
+              <AccountCard id={pullRequest.mergedBy} />
+              {" merged "}
+            </div>
+          ) : (
+            <div>
+              <AccountCard id={pullRequest.creator} />
+              {" wants to merge "}
+            </div>
+          )}
+
           <Link
             href={headLink}
             className="text-xs link link-primary no-underline hover:underline"
