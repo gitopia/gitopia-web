@@ -1,5 +1,14 @@
 ## Changelog
 
+### v1.9.0 - 6 June 2023
+
+- Adding autocomplete for branches in change default branch
+- Fixing ui for branch protection rule component
+- Updated label dialog
+- Correcting pull request message
+- Typo fixes in support project
+- Disabling buttons for reward page
+
 ### v1.8.0 - 16th May 2023
 
 - Add feegrants support
@@ -21,7 +30,6 @@
 - Files changed tree view added
 - Updated behaviour for syntax highlighting of large files
 - Updated bounty design, expiry date check
- 
 
 ### v1.5.0 - 16th Mar 2023
 
@@ -32,7 +40,7 @@
 - Updated forking flow with branch selection and repository name change
 - Added back button in wallet selection
 - Bounty and balance related fixes
-- Minor design improvements 
+- Minor design improvements
 - Testing suite updated for ux changes
 
 ### v1.4.1 - 22nd Feb 2023
