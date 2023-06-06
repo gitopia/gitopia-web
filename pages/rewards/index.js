@@ -143,12 +143,12 @@ function Rewards(props) {
                   Gitopia account, and connect your Github account.
                 </div>
 
-                <Link
+                {/* <Link
                   className="btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-52 rounded-md mt-10"
                   href="/home"
                 >
                   Read How to Join
-                </Link>
+                </Link> */}
               </div>
             </div>
             <div className="ml-auto w-60 mt-10 sm:mt-20 lg:mt-32">
@@ -198,7 +198,8 @@ function Rewards(props) {
                 onClick={() => {
                   githubLogin();
                 }}
-                disabled={activeWallet === null}
+                // disabled={activeWallet === null}
+                disabled={true}
               >
                 Connect Github
               </div>

@@ -450,9 +450,10 @@ function WalletInfo(props) {
             )}
           </div>
           <a
-            href="/rewards"
+            // href="/rewards"
             target="_blank"
             className="btn btn-primary btn-sm px-4"
+            disabled={true}
           >
             {rewards ? "Claim Rewards" : "Check Eligibility"}
           </a>
