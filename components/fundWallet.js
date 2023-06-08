@@ -157,7 +157,6 @@ function FundWallet(props) {
             href="https://osmosis.zone"
             target="_blank"
             rel="noreferrer"
-            disabled={true}
           >
             <img src="/tokens/osmo.svg" className="w-4 h-4 mr-2"></img>
             Buy on Osmosis Dex
