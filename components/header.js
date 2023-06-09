@@ -444,7 +444,9 @@ function Header(props) {
                     }
                   />
                 )} */}
-                  {menuState === 2 && <CurrentWallet setMenuOpen={setMenuOpen} />}
+                  {menuState === 2 && (
+                    <CurrentWallet setMenuOpen={setMenuOpen} />
+                  )}
                   {menuState === 3 && menuOpen && (
                     <SendTlore
                       setMenuOpen={setMenuOpen}

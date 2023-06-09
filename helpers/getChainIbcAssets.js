@@ -1,11 +1,17 @@
 import axios from "./axiosFetch";
 export default async function getChainIbcAsset(chainName) {
-  let chains = ["gitopiatestnet", chainName];
+  let chains = [
+    process.env.NEXT_PUBLIC_NETWORK_ENV === "MAINNET"
+      ? "gitopia"
+      : "gitopiatestnet",
+    chainName,
+  ];
   chains = chains.sort();
   let ibc = [];
   await axios
     .get(
-      process.env.NEXT_PUBLIC_SERVER_URL+"/api/ibc/" +
+      process.env.NEXT_PUBLIC_SERVER_URL +
+        "/api/ibc/" +
         chains[0] +
         "/bridge/" +
         chains[1]

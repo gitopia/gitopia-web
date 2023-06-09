@@ -117,7 +117,9 @@ module.exports = withBundleAnalyzer({
         source: "/api/ibc/all-assets",
         destination:
           process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
-          "/gitopia-janus-devnet-4/gitopia.json",
+          ((process.env.NEXT_PUBLIC_NETWORK_ENV = "MAINNET")
+            ? "/gitopia/gitopia.json"
+            : "/gitopia-janus-devnet-4/gitopia.json"),
       },
       {
         source: "/api/ibc/:chain/bridge/:otherChain",
@@ -129,13 +131,17 @@ module.exports = withBundleAnalyzer({
         source: "/api/ibc/:chain/assets",
         destination:
           process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
-          "/chain-registry/testnets/:chain/assetlist.json",
+          ((process.env.NEXT_PUBLIC_NETWORK_ENV = "MAINNET")
+            ? "/chain-registry/:chain/assetlist.json"
+            : "/chain-registry/testnets/:chain/assetlist.json"),
       },
       {
         source: "/api/ibc/:chain/info",
         destination:
           process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
-          "/chain-registry/testnets/:chain/chain.json",
+          ((process.env.NEXT_PUBLIC_NETWORK_ENV = "MAINNET")
+            ? "/chain-registry/:chain/chain.json"
+            : "/chain-registry/testnets/:chain/chain.json"),
       },
     ];
   },
