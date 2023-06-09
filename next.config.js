@@ -113,36 +113,36 @@ module.exports = withBundleAnalyzer({
         source: "/api/commits/:path*",
         destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/commits/:path*",
       },
-      {
-        source: "/api/ibc/all-assets",
-        destination:
-          process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
-          (process.env.NEXT_PUBLIC_NETWORK_TYPE === "mainnet"
-            ? "/gitopia/gitopia.json"
-            : "/gitopia-janus-devnet-4/gitopia.json"),
-      },
-      {
-        source: "/api/ibc/:chain/bridge/:otherChain",
-        destination:
-          process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
-          "/chain-registry/_IBC/:chain-:otherChain.json",
-      },
-      {
-        source: "/api/ibc/:chain/assets",
-        destination:
-          process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
-          (process.env.NEXT_PUBLIC_NETWORK_TYPE === "mainnet"
-            ? "/chain-registry/:chain/assetlist.json"
-            : "/chain-registry/testnets/:chain/assetlist.json"),
-      },
-      {
-        source: "/api/ibc/:chain/info",
-        destination:
-          process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
-          (process.env.NEXT_PUBLIC_NETWORK_TYPE === "mainnet"
-            ? "/chain-registry/:chain/chain.json"
-            : "/chain-registry/testnets/:chain/chain.json"),
-      },
+      // {
+      //   source: "/api/ibc/all-assets",
+      //   destination:
+      //     process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
+      //     (process.env.NEXT_PUBLIC_NETWORK_TYPE === "mainnet"
+      //       ? "/gitopia/gitopia.json"
+      //       : "/gitopia-janus-devnet-4/gitopia.json"),
+      // },
+      // {
+      //   source: "/api/ibc/:chain/bridge/:otherChain",
+      //   destination:
+      //     process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
+      //     "/chain-registry/_IBC/:chain-:otherChain.json",
+      // },
+      // {
+      //   source: "/api/ibc/:chain/assets",
+      //   destination:
+      //     process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
+      //     (process.env.NEXT_PUBLIC_NETWORK_TYPE === "mainnet"
+      //       ? "/chain-registry/:chain/assetlist.json"
+      //       : "/chain-registry/testnets/:chain/assetlist.json"),
+      // },
+      // {
+      //   source: "/api/ibc/:chain/info",
+      //   destination:
+      //     process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
+      //     (process.env.NEXT_PUBLIC_NETWORK_TYPE === "mainnet"
+      //       ? "/chain-registry/:chain/chain.json"
+      //       : "/chain-registry/testnets/:chain/chain.json"),
+      // },
     ];
   },
   async headers() {
