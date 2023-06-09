@@ -4,7 +4,6 @@ import getAllRepositoryBranch from "../../../../../helpers/getAllRepositoryBranc
 import getAllRepositoryTag from "../../../../../helpers/getAllRepositoryTag";
 
 export default async function handler(req, res) {
-  console.log(req.query);
   if (!req.query?.path) {
     console.error("Path not available");
     res.status(404).send("Not Found");
@@ -64,7 +63,6 @@ export default async function handler(req, res) {
     return null;
   }
 
-  console.log(req.query.repositoryId, branchSha, repoPath.join("/"));
   const file = await getContent(
     repository.id,
     branchSha,
