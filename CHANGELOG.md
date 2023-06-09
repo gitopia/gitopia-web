@@ -2,7 +2,7 @@
 
 ### v1.10.0 - 9 June 2023
 
-- Loading IBC config according to network environment
+- Loading IBC config according to network type
 
 ### v1.9.0 - 6 June 2023
 
