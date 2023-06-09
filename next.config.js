@@ -117,7 +117,7 @@ module.exports = withBundleAnalyzer({
         source: "/api/ibc/all-assets",
         destination:
           process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
-          ((process.env.NEXT_PUBLIC_NETWORK_ENV = "MAINNET")
+          ((process.env.NEXT_PUBLIC_NETWORK_ENVIRONMENT = "MAINNET")
             ? "/gitopia/gitopia.json"
             : "/gitopia-janus-devnet-4/gitopia.json"),
       },
@@ -131,7 +131,7 @@ module.exports = withBundleAnalyzer({
         source: "/api/ibc/:chain/assets",
         destination:
           process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
-          ((process.env.NEXT_PUBLIC_NETWORK_ENV = "MAINNET")
+          ((process.env.NEXT_PUBLIC_NETWORK_ENVIRONMENT = "MAINNET")
             ? "/chain-registry/:chain/assetlist.json"
             : "/chain-registry/testnets/:chain/assetlist.json"),
       },
@@ -139,7 +139,7 @@ module.exports = withBundleAnalyzer({
         source: "/api/ibc/:chain/info",
         destination:
           process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
-          ((process.env.NEXT_PUBLIC_NETWORK_ENV = "MAINNET")
+          ((process.env.NEXT_PUBLIC_NETWORK_ENVIRONMENT = "MAINNET")
             ? "/chain-registry/:chain/chain.json"
             : "/chain-registry/testnets/:chain/chain.json"),
       },
