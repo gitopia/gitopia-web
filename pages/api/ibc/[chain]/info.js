@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   let url =
     process.env.NEXT_PUBLIC_IBC_ASSETS_REPO +
-    ((process.env.NEXT_PUBLIC_NETWORK_ENVIRONMENT === "mainnet")
+    (process.env.NEXT_PUBLIC_NETWORK_TYPE === "mainnet"
       ? `/chain-registry/${req.query.chain}/chain.json`
       : `/chain-registry/testnets/${req.query.chain}/chain.json`);
   let repoRes = await fetch(url);
