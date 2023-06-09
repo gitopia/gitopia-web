@@ -1,7 +1,7 @@
 import axios from "./axiosFetch";
 export default async function getChainIbcAsset(chainName) {
   let chains = [
-    process.env.NEXT_PUBLIC_NETWORK_ENVIRONMENT === "mainnet"
+    process.env.NEXT_PUBLIC_NETWORK_TYPE === "mainnet"
       ? "gitopia"
       : "gitopiatestnet",
     chainName,
