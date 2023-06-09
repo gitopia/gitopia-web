@@ -628,7 +628,9 @@ function RepositoryCompareView(props) {
                                     reviewers: reviewers,
                                     assignees: assignees,
                                     labelIds: labels,
-                                    issues: issueArray,
+                                    issues: issueArray.map(
+                                      (issue) => issue.iid
+                                    ),
                                   });
                                   if (res && res.code === 0) {
                                     router.push(
