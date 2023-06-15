@@ -38,7 +38,7 @@ import AccountCard from "../../../components/account/card";
 import { useRef } from "react";
 
 const atob = (base64) => {
-  return Buffer.from(base64, "base64").toString("binary");
+  return Buffer.from(base64, "base64").toString("utf-8");
 };
 
 export async function getStaticProps({ params }) {
