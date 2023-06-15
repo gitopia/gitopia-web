@@ -57,7 +57,7 @@ export default async function getBalanceInDollars(address) {
                   balance[i].amount /
                   Math.pow(10, coingeckoId[balance[i].denom].coinDecimals);
                 totalPrice = totalPrice + price * perCoinPrice;
-                USDBalances[denom] = price * perCoinPrice;
+                USDBalances[balance[i].denom] = price * perCoinPrice;
               })
               .catch((err) => {
                 console.error(err);

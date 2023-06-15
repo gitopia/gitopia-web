@@ -11,6 +11,7 @@ import ReactMarkdown from "react-markdown";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import dayjs from "dayjs";
 import { InView } from "react-intersection-observer";
+import AccountCard from "../../components/account/card";
 
 function DiffView({
   stats,
@@ -45,7 +46,7 @@ function DiffView({
   }) => {
     const canComment = inHoverState && (viewType === "split" || side === "new");
     if (!commentsAllowed) {
-      return renderDefault()
+      return renderDefault();
     }
     return (
       <div className="relative">
@@ -121,17 +122,22 @@ function DiffView({
               <div>
                 <div className="text-right my-4 sm:justify-end mx-4">
                   <div
-                    className="border border-grey rounded-lg flex-1"
+                    className="border border-grey rounded-lg flex-1 bg-grey-900"
                     data-test="comment_view"
                   >
                     <div className="p-4">
                       <div className="flex uppercase text-xs font-bold">
-                        <div className="">{shrinkAddress(c.creator)}</div>
-                        <div className="pl-3 text-type-tertiary">
+                        {/* <div className="">{shrinkAddress(c.creator)}</div> */}
+                        <AccountCard
+                          id={c.creator}
+                          showAvatar={true}
+                          showId={true}
+                        />
+                        <div className="pl-3 mt-3 text-type-secondary">
                           {dayjs(c.createdAt * 1000).fromNow()}
                         </div>
                       </div>
-                      <div className="text-left text-white font-normal markdown-body mt-4">
+                      <div className="text-left text-white font-normal markdown-body mt-4 ml-12">
                         <ReactMarkdown linkTarget="_blank">
                           {c.body}
                         </ReactMarkdown>
@@ -238,7 +244,10 @@ function DiffView({
         }}
       >
         <div
-          className={"mt-8 border border-grey " + (fileHidden[index] ?  "rounded-md" : "rounded-t-md border-b-0")}
+          className={
+            "mt-8 border border-grey " +
+            (fileHidden[index] ? "rounded-md" : "rounded-t-md border-b-0")
+          }
           key={filename}
           id={"file-" + index}
         >

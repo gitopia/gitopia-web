@@ -6,7 +6,7 @@ export const coingeckoId = {
     icon: "/tokens/osmosis.svg",
   },
   [process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN]: {
-    id: "",
+    id: "gitopia",
     coinDecimals: 6,
     coinDenom: process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toString(),
     icon: "/tokens/gitopia.svg",
