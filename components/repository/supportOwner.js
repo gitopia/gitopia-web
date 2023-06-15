@@ -132,7 +132,7 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
             className="text-type-tertiary font-semibold uppercase"
             style={{ fontSize: "0.5rem" }}
           >
-            Balance Available
+            Owner Balance
           </div>
           <div className="text-xs uppercase">{ownerBalance}</div>
         </div>
