@@ -6,7 +6,7 @@ export default async function getDiff(
   commitSha = null,
   prevCommitSha = null,
   offset = 0,
-  limit = 10,
+  limit = 10
 ) {
   let obj = {},
     numRepoId = Number(repoId);

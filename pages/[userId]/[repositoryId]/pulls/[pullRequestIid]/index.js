@@ -217,12 +217,10 @@ function RepositoryPullView(props) {
     let data = await getDiff(
       repository.id,
       pullRequest.head.sha,
-      null,
       pullRequest.base.sha,
-      false,
+      0,
       null
     );
-
     let newFiles = [];
     if (data && data.diff) {
       data.diff.map(({ file_name, patch, stat }) => {
