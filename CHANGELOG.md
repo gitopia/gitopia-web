@@ -1,5 +1,15 @@
 ## Changelog
 
+### v1.11.0 - 15 June 2023
+
+- Fixes russian characters rendering
+- Loading IBC config according to network type
+- Correcting owner in issue link view
+- Balance Available -> Owner Balance in support project
+- Fixing review comments and updating review comment design
+- Show dollar value using coingecko
+- Disable delete repository button
+
 ### v1.10.0 - 9 June 2023
 
 - Loading IBC config according to network type
