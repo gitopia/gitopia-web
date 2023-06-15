@@ -235,7 +235,7 @@ function RepositoryIssueLinkedPullsView(props) {
                       if (window) {
                         window.open(
                           "/" +
-                            repository.creator +
+                            repository.owner.id +
                             "/" +
                             repository.name +
                             "/pulls/" +
