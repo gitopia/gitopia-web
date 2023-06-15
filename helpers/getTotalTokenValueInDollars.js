@@ -20,5 +20,5 @@ export default async function getTokenValueInDollars(denom, amount) {
       console.error(err);
       notify("Unable to get price", "error");
     });
-  return totalPrice < 1 ? totalPrice.toFixed(7) : totalPrice.toFixed(3);
+  return totalPrice < 1 ? totalPrice.toFixed(9) : totalPrice.toFixed(3);
 }
