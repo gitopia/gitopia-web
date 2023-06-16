@@ -38,16 +38,15 @@ const postWalletUnlocked = async (
 
   if (accountSigner) {
     const { txClient, queryClient } = await import("@gitopia/gitopia-js");
-    if (accountSignerSecondary !== null) {
-      const getRpcEndPointSecondary = await getEndpoint(
-        "rpc",
-        ibcAssets.chainInfo.chain.apis.rpc
-      );
-      const getRestEndPointSecondary = await getEndpoint(
-        "rest",
-        ibcAssets.chainInfo.chain.apis.rest,
-        wallet.activeWallet.counterPartyAddress
-      );
+    if (accountSignerSecondary) {
+      const [rpcEndPointSecondary, restEndPointSecondary] = await Promise.all([
+        getEndpoint("rpc", ibcAssets.chainInfo.chain.apis.rpc),
+        getEndpoint(
+          "rest",
+          ibcAssets.chainInfo.chain.apis.rest,
+          wallet.activeWallet.counterPartyAddress
+        ),
+      ]);
       const [tc, qc, tcs, qcs, amount] = await Promise.all([
         txClient(
           accountSigner,
@@ -61,12 +60,12 @@ const postWalletUnlocked = async (
         txClient(
           accountSignerSecondary,
           {
-            addr: getRpcEndPointSecondary,
+            addr: rpcEndPointSecondary,
             gasPrice: wallet.gasPrice,
           },
           ibcAssets.chainInfo.chain.bech32_prefix
         ),
-        queryClient({ addr: getRestEndPointSecondary }),
+        queryClient({ addr: restEndPointSecondary }),
         updateUserBalance()(dispatch, getState),
       ]);
       dispatch({
@@ -197,28 +196,15 @@ export const setWallet = ({ wallet }) => {
   };
 };
 
-export const unlockWallet = ({ name, password, chainId = null }) => {
+export const unlockWallet = ({ name, password }) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
     let accountSignerSecondary;
-    let chainInfo, chainAsset, chainIbc;
-    if (chainId !== null && chainId !== undefined) {
-      [chainInfo, chainAsset, chainIbc] = await Promise.all([
-        getChainInfo(chainId),
-        getChainAssetList(chainId),
-        getChainIbcAsset(chainId),
-      ]);
-      if (chainInfo && chainAsset && chainIbc) {
-        await dispatch({
-          type: ibcAssetsActions.SET_CHAIN_INFO,
-          payload: {
-            chain: chainInfo,
-            assets: chainAsset,
-            ibc: chainIbc,
-          },
-        });
-      }
-    }
+    let chainInfo,
+      chainAsset,
+      chainIbc,
+      chainId = state.getPasswordPromise.chainId;
+
     let encryptedWallet =
       state.wallets[state.wallets.findIndex((x) => x.name === name)].wallet;
     let wallet;
@@ -243,7 +229,28 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
           prefix: "gitopia",
         }
       );
-      if (chainId !== null) {
+
+      if (state.getPassword === "Approve") {
+        state.getPasswordPromise.resolve(password);
+        return true;
+      }
+
+      if (chainId) {
+        [chainInfo, chainAsset, chainIbc] = await Promise.all([
+          getChainInfo(chainId),
+          getChainAssetList(chainId),
+          getChainIbcAsset(chainId),
+        ]);
+        if (chainInfo && chainAsset && chainIbc) {
+          await dispatch({
+            type: ibcAssetsActions.SET_CHAIN_INFO,
+            payload: {
+              chain: chainInfo,
+              assets: chainAsset,
+              ibc: chainIbc,
+            },
+          });
+        }
         accountSignerSecondary = await DirectSecp256k1HdWallet.fromMnemonic(
           wallet.mnemonic,
           {
@@ -252,14 +259,8 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
         );
         const [counterPartyAccount] =
           await accountSignerSecondary.getAccounts();
-        const counterPartyAddress = counterPartyAccount.address;
-        wallet.counterPartyAddress = counterPartyAddress;
+        wallet.counterPartyAddress = counterPartyAccount.address;
         wallet.counterPartyChain = chainId;
-      }
-
-      if (state.getPassword === "Approve") {
-        state.getPasswordPromise.resolve(password);
-        return true;
       }
 
       // Check if user exists, rename the old wallet to correct username
@@ -293,25 +294,20 @@ export const unlockWallet = ({ name, password, chainId = null }) => {
               avatarUrl: user.avatarUrl,
             },
           });
-        } else {
-          dispatch({
-            type: walletActions.SET_ACTIVE_WALLET,
-            payload: { wallet },
-          });
         }
-      } else {
-        dispatch({
-          type: walletActions.SET_ACTIVE_WALLET,
-          payload: { wallet },
-        });
       }
+
+      dispatch({
+        type: walletActions.SET_ACTIVE_WALLET,
+        payload: { wallet },
+      });
 
       try {
         await postWalletUnlocked(
           accountSigner,
           dispatch,
           getState,
-          chainId !== null ? accountSignerSecondary : null
+          accountSignerSecondary
         );
       } catch (e) {
         console.error(e);
@@ -583,11 +579,7 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
   };
 };
 
-export const unlockLedgerWallet = ({
-  name,
-  chainId = null,
-  justUnlock = false,
-}) => {
+export const unlockLedgerWallet = ({ name, justUnlock = false }) => {
   return async (dispatch, getState) => {
     // const TransportWebHID = (await import("@ledgerhq/hw-transport-webhid"))
     //   .default;
@@ -598,24 +590,11 @@ export const unlockLedgerWallet = ({
     let encryptedWallet =
       wallet.wallets[wallet.wallets.findIndex((x) => x.name === name)].wallet;
     let accountSignerSecondary;
-    let chainInfo, chainAsset, chainIbc;
-    if (chainId !== null) {
-      [chainInfo, chainAsset, chainIbc] = await Promise.all([
-        getChainInfo(chainId),
-        getChainAssetList(chainId),
-        getChainIbcAsset(chainId),
-      ]);
-      if (chainInfo && chainAsset && chainIbc) {
-        await dispatch({
-          type: ibcAssetsActions.SET_CHAIN_INFO,
-          payload: {
-            chain: chainInfo,
-            assets: chainAsset,
-            ibc: chainIbc,
-          },
-        });
-      }
-    }
+    let chainId = wallet.getPasswordPromise.chainId,
+      chainInfo,
+      chainAsset,
+      chainIbc;
+
     dispatch({ type: walletActions.START_UNLOCKING_WALLET });
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
@@ -636,19 +615,6 @@ export const unlockLedgerWallet = ({
           CryptoJS.enc.Utf8
         )
       );
-      if (chainId !== null) {
-        accountSignerSecondary = new LedgerSigner(tp, {
-          hdPaths: [path],
-          prefix: chainInfo.bech32_prefix,
-          ledgerAppName: "Cosmos",
-        });
-        const [counterPartyAccount] =
-          await accountSignerSecondary.getAccounts();
-        const counterPartyAddress = counterPartyAccount.address;
-        console.log(accountSignerSecondary);
-        newWallet.counterPartyAddress = counterPartyAddress;
-        newWallet.counterPartyChain = chainId;
-      }
       if (addr !== newWallet.accounts[0].address) {
         dispatch(
           notify("Wallet address not matching Ledger's address", "error")
@@ -694,7 +660,31 @@ export const unlockLedgerWallet = ({
         },
       });
 
-      if (chainId !== null) {
+      if (chainId) {
+        [chainInfo, chainAsset, chainIbc] = await Promise.all([
+          getChainInfo(chainId),
+          getChainAssetList(chainId),
+          getChainIbcAsset(chainId),
+        ]);
+        if (chainInfo && chainAsset && chainIbc) {
+          await dispatch({
+            type: ibcAssetsActions.SET_CHAIN_INFO,
+            payload: {
+              chain: chainInfo,
+              assets: chainAsset,
+              ibc: chainIbc,
+            },
+          });
+        }
+        accountSignerSecondary = new LedgerSigner(tp, {
+          hdPaths: [path],
+          prefix: chainInfo.bech32_prefix,
+          ledgerAppName: "Cosmos",
+        });
+        const [counterPartyAccount] =
+          await accountSignerSecondary.getAccounts();
+        newWallet.counterPartyAddress = counterPartyAccount.address;
+        newWallet.counterPartyChain = chainId;
         await postWalletUnlocked(
           accountSigner,
           dispatch,
@@ -868,7 +858,7 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
 
       await postWalletUnlocked(ledgerSigner, dispatch, getState);
       await closeLedgerTransport()(dispatch, getState);
-      
+
       return user?.username ? "USER_CREATED" : "WALLET_ADDED";
     } catch (e) {
       console.error(e);
@@ -1067,18 +1057,24 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
 
 export const estimateFee = (address, chain, msg, memo) => {
   return async (getState) => {
-    const { env } = getState();
+    const { env, ibcAssets } = getState();
     const { calculateFee, GasPrice } = await import("@cosmjs/stargate");
-    const gasPrice = GasPrice.fromString(gasConfig[chain].gasPrice);
+    let gas,
+      chainFeesInfo = ibcAssets?.chainInfo?.chain?.fees?.fee_tokens[0];
+    if (chainFeesInfo.average_gas_price) {
+      gas = chainFeesInfo.average_gas_price + chainFeesInfo.denom;
+    } else if (chainFeesInfo.fixed_min_gas_price) {
+      gas = chainFeesInfo.fixed_min_gas_price + chainFeesInfo.denom;
+    } else {
+      gas = gasConfig[chain].gasPrice;
+    }
+    const gasPrice = GasPrice.fromString(gas);
     const gasEstimation = await env.txClientSecondary.simulate(
       address,
       msg,
       memo
     );
-    const fees = calculateFee(
-      Math.round(gasEstimation * gasConfig[chain].multiplier),
-      gasPrice
-    );
+    const fees = calculateFee(Math.round(gasEstimation * 1.5), gasPrice);
     return fees;
   };
 };
