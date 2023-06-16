@@ -27,6 +27,7 @@
     "@rpldy/upload-button": "0.13.5",
     "@rpldy/upload-drop-zone": "0.13.5",
     "@rpldy/uploady": "^0.13.5",
+    "axios": "^1.4.0",
     "better-sqlite3": "^8.2.0",
     "bip39": "^3.0.3",
     "buffer": "^6.0.3",

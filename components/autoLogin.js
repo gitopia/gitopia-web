@@ -77,7 +77,8 @@ function AutoLogin(props) {
     if (showDialog)
       setTimeout(() => {
         if (inputEl.current) inputEl.current.focus();
-        if (props.activeWallet?.isLedger && okayRef.current) okayRef.current.click();
+        if (props.activeWallet?.isLedger && okayRef.current)
+          okayRef.current.click();
       }, 100);
   }, [showDialog]);
 
@@ -91,29 +92,14 @@ function AutoLogin(props) {
   const unlockLocalWallet = async () => {
     let res;
     if (props.getPassword === "Unlock" || props.getPassword === "Approve") {
-      if (props.getPasswordPromise.chainId !== undefined) {
-        res = await props.unlockWallet({
-          name: walletName,
-          password: password,
-          chainId: props.getPasswordPromise.chainId,
-        });
-      } else {
-        res = await props.unlockWallet({
-          name: walletName,
-          password: password,
-        });
-      }
+      res = await props.unlockWallet({
+        name: walletName,
+        password: password,
+      });
     } else if (props.getPassword === "Download") {
       res = await props.downloadWallet(password);
     } else if (props.getPassword === "Connect") {
-      if (props.getPasswordPromise.chainId !== undefined) {
-        res = await props.unlockLedgerWallet({
-          name: walletName,
-          chainId: props.getPasswordPromise.chainId,
-        });
-      } else {
-        res = await props.unlockLedgerWallet({ name: walletName });
-      }
+      res = await props.unlockLedgerWallet({ name: walletName });
       if (res?.message) {
         props.notify(res.message, "error");
         if (props.getPasswordPromise.reject) {

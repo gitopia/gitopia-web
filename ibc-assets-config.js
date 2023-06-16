@@ -20,12 +20,16 @@ export const coingeckoId = {
 };
 
 export const gasConfig = {
+  osmosis: {
+    gasPrice: "0.025uosmo",
+  },
+  cosmoshub: {
+    gasPrice: "0.1uatom",
+  },
   osmosistestnet: {
     gasPrice: "0.025uosmo",
-    multiplier: 1.3,
   },
   cosmoshubtestnet: {
     gasPrice: "0.1uatom",
-    multiplier: 1.5,
   },
 };
