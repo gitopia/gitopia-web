@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.11.1 - 16 June 2023
+
+- Fixes ibc transfers and caching
+
 ### v1.11.0 - 15 June 2023
 
 - Fixes russian characters rendering
