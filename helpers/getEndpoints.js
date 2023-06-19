@@ -35,6 +35,7 @@ export async function getEndpoint(type, endpoints, address = null) {
       try {
         const res = await axios.get(earlierEndpoint);
         if (res.status === 200) {
+          console.log("working", earlierEndpoint);
           return earlierEndpoint;
         }
       } catch (e) {
@@ -48,6 +49,7 @@ export async function getEndpoint(type, endpoints, address = null) {
         const res = await axios.get(baseUrl);
         if (res.status === 200) {
           saveWorkingEndpoint(baseUrl);
+          console.log("working", baseUrl);
           return baseUrl;
         }
       } catch (err) {
@@ -60,9 +62,10 @@ export async function getEndpoint(type, endpoints, address = null) {
     if (earlierEndpoint) {
       try {
         const res = await axios.get(
-          earlierEndpoint + "/cosmos/bank/v1beta1/balances/" + address
+          earlierEndpoint + (address ? "/cosmos/bank/v1beta1/balances/" + address : "/node_info")
         );
         if (res.status === 200) {
+          console.log("working", earlierEndpoint);
           return earlierEndpoint;
         }
       } catch (e) {
@@ -72,11 +75,13 @@ export async function getEndpoint(type, endpoints, address = null) {
     }
     for (let i = 0; i < endpoints.length; i++) {
       const baseUrl =
-        endpoints[i].address + "/cosmos/bank/v1beta1/balances/" + address;
+        endpoints[i].address +
+        (address ? "/cosmos/bank/v1beta1/balances/" + address : "/node_info");
       try {
         const res = await axios.get(baseUrl);
         if (res.status === 200) {
           saveWorkingEndpoint(endpoints[i].address);
+          console.log("working", endpoints[i].address);
           return endpoints[i].address;
         }
       } catch (err) {
