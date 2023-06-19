@@ -85,7 +85,9 @@ function IssueBountyView(props) {
         setIsHovering(false);
       }, 100)}
     >
-      <div className="ml-1 font-semibold mb-4" data-type="issue_bounty_view">Bounties</div>
+      <div className="ml-1 font-semibold mb-4" data-type="issue_bounty_view">
+        Bounties
+      </div>
       <div className="">
         {coins.map((c, index) => {
           return (
@@ -122,10 +124,10 @@ function IssueBountyView(props) {
                   </svg>
 
                   <div className={"flex ml-3 pb-3 mt-1.5 text-xs"}>
-                    {c.amount}
+                    {c.amount.toFixed(2)}
                   </div>
                   <div className="ml-2 font-bold text-xs text-type-tertiary mt-1.5">
-                    {c.dollarAmount > 0 ? "≈$" + c.dollarAmount + "USD" : ""}
+                    {"≈$" + c.dollarAmount + "USD"}
                   </div>
                 </div>
               </div>

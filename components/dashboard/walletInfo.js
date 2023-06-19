@@ -220,7 +220,7 @@ function WalletInfo(props) {
           <div className="mx-3 flex-1">{"Gitopia"}</div>
 
           <div className="">
-            {props.balance / 1000000 +
+            {(props.balance / 1000000).toFixed(2) +
               " " +
               (process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
           </div>
@@ -275,7 +275,7 @@ function WalletInfo(props) {
 
             <div className="mx-4 flex-1">{"Fee Grants"}</div>
             <div className="ml-2">
-              {props.allowance / 1000000 +
+              {props.allowance.toFixed(2) / 1000000 +
                 " " +
                 (process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
             </div>
@@ -292,14 +292,16 @@ function WalletInfo(props) {
               <div className="">
                 <img width={24} src={asset.logo_URIs?.png} />
               </div>
-              <div className="mx-3 flex-1">{asset.chain_name}</div>
+              <div className="mx-3 flex-1 capitalize">{asset.chain_name}</div>
               {/* <div className="font-bold text-xs text-type-tertiary">
                 coming soon
               </div> */}
-              <div className="lowercase">
-                {(tokenBalances[asset.base_denom] /
-                  Math.pow(10, coingeckoId[asset.base_denom]?.coinDecimals) ||
-                  0) +
+              <div className="uppercase">
+                {(
+                  tokenBalances[asset.base_denom] /
+                    Math.pow(10, coingeckoId[asset.base_denom]?.coinDecimals) ||
+                  0
+                ).toFixed(2) +
                   " " +
                   coingeckoId[asset.base_denom]?.coinDenom}
               </div>

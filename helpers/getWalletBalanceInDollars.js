@@ -69,12 +69,7 @@ export default async function getBalanceInDollars(address) {
     }
 
     return {
-      totalPrice:
-        totalPrice === 0
-          ? 0
-          : totalPrice < 1
-          ? totalPrice.toFixed(6)
-          : totalPrice.toFixed(2),
+      totalPrice: totalPrice === 0 ? 0 : totalPrice.toFixed(2),
       TokenBalances,
       USDBalances,
     };
