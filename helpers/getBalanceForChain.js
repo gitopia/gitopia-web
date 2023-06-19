@@ -3,7 +3,7 @@ import { getEndpoint } from "./getEndpoints";
 
 export async function getBalanceForChain(apiEndpoints, address, denom) {
   let balance = 0;
-  const endpoint = getEndpoint("rest", apiEndpoints);
+  const endpoint = await getEndpoint("rest", apiEndpoints);
   const baseUrl =
     endpoint +
     "/cosmos/bank/v1beta1/balances/" +
