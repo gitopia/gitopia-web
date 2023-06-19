@@ -282,7 +282,7 @@ function RepositoryBountiesView(props) {
                                       {a.standardDenomName}
                                     </div>
                                     <div className="text-sm ml-2 mr-4">
-                                      {a.amount}
+                                      {a.amount.toFixed(2)}
                                     </div>
                                   </div>
                                 );
@@ -310,7 +310,7 @@ function RepositoryBountiesView(props) {
                                   className="text-sm mr-4"
                                   data-test={"bounty-amount"}
                                 >
-                                  {a.amount}
+                                  {a.amount.toFixed(2)}
                                 </div>
                               </div>
                             );
