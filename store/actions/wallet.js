@@ -908,32 +908,39 @@ export const getAddressforChain = (name, chainId) => {
               }
             }
             const info = await getNodeInfo();
-            const counterPartyChainInfo = await getAnyNodeInfo(
-              chainInfo.apis.rest[3].address
+            const otherNodeRestEndpoint = await getEndpoint(
+              "rest",
+              chainInfo.apis.rest,
             );
-            const chain = info.default_node_info.network;
-            const offlineSigner = await window.getOfflineSignerAuto(chain);
-            const accountSignerSecondary = await window.getOfflineSignerAuto(
-              counterPartyChainInfo.default_node_info.network
-            );
-            const accounts = await offlineSigner.getAccounts();
-            const counterPartyAccount =
-              await accountSignerSecondary.getAccounts();
-            activeWallet.counterPartyAddress = counterPartyAccount[0].address;
-            activeWallet.counterPartyChain = chainId;
-            await dispatch({
-              type: walletActions.SET_ACTIVE_WALLET,
-              payload: {
-                wallet: activeWallet,
-              },
-            });
-            await postWalletUnlocked(
-              offlineSigner,
-              dispatch,
-              getState,
-              accountSignerSecondary
-            );
-            return accounts[0];
+            if (otherNodeRestEndpoint) {
+              const counterPartyChainInfo = await getAnyNodeInfo(
+                otherNodeRestEndpoint
+              );
+              const chain = info.default_node_info.network;
+              const offlineSigner = await window.getOfflineSignerAuto(chain);
+              const accountSignerSecondary = await window.getOfflineSignerAuto(
+                counterPartyChainInfo.default_node_info.network
+              );
+              const accounts = await offlineSigner.getAccounts();
+              const counterPartyAccount =
+                await accountSignerSecondary.getAccounts();
+              activeWallet.counterPartyAddress = counterPartyAccount[0].address;
+              activeWallet.counterPartyChain = chainId;
+              await dispatch({
+                type: walletActions.SET_ACTIVE_WALLET,
+                payload: {
+                  wallet: activeWallet,
+                },
+              });
+              await postWalletUnlocked(
+                offlineSigner,
+                dispatch,
+                getState,
+                accountSignerSecondary
+              );
+              return accounts[0];
+            }
+            return null;
           } catch (e) {
             console.error(e);
             return null;

@@ -1,5 +1,10 @@
 ## Changelog
 
+### v1.12.0 - 19 June 2023
+
+- Update display format of tokens
+- Fixes ibc transfers for keplr
+
 ### v1.11.1 - 16 June 2023
 
 - Fixes ibc transfers and caching
