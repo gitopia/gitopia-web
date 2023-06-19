@@ -19,6 +19,7 @@ import {
   updatePullRequestReviewers,
 } from "../../../../../store/actions/repository";
 import AssigneeSelector from "../../../../../components/repository/assigneeSelector";
+import ReviewerSelector from "../../../../../components/repository/reviewerSelector";
 import LabelSelector from "../../../../../components/repository/labelSelector";
 import Label from "../../../../../components/repository/label";
 import PullRequestTabs from "../../../../../components/repository/pullRequestTabs";
@@ -400,9 +401,8 @@ function RepositoryPullView(props) {
 
             <div className="flex-none sm:w-72 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
               <div className="pb-8">
-                <AssigneeSelector
-                  title="Reviewers"
-                  assignees={pullRequest.reviewers}
+                <ReviewerSelector
+                  reviewers={pullRequest.reviewers}
                   collaborators={[
                     { id: repository.owner.address, permission: "CREATOR" },
                     ...repository.collaborators,

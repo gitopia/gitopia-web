@@ -1,24 +1,25 @@
 import { useEffect, useState, useRef } from "react";
+import shrinkAddress from "../../helpers/shrinkAddress";
 import getUser from "../../helpers/getUser";
 import validAddress from "../../helpers/validAddress";
 import AccountCard from "../../components/account/card";
 
-function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
-  const [newAssignees, setNewAssignees] = useState([]);
+function ReviewerSelector({ collaborators = [], reviewers = [], onChange }) {
+  const [newReviewers, setNewReviewers] = useState([]);
   const [validateAddressError, setValidateAddressError] = useState(null);
   const [checkMap, setCheckMap] = useState({});
   const menuDiv = useRef(null);
   const inputEl = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
   const [searchAddress, setSearchAddress] = useState("");
-  const assigneesModal = useRef();
+  const reviewersModal = useRef();
 
   const collabAddresses = collaborators
     .filter((x) => x.permission !== "READ")
     .map((x) => x.id);
 
   const validateUserAddress = async (address) => {
-    if (collabAddresses.includes(address) || newAssignees.includes(address)) {
+    if (collabAddresses.includes(address) || newReviewers.includes(address)) {
       setCheckMap({ ...checkMap, [address]: true });
       setValidateAddressError("Address already present");
       return false;
@@ -37,43 +38,42 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
     return false;
   };
 
-  const updateAssignees = async () => {
+  const updateReviewers = async () => {
     const list = [];
     setIsSaving(true);
     for (let address in checkMap) {
       if (checkMap[address] && !list.includes(address)) list.push(address);
     }
     if (onChange) await onChange(list);
-    setNewAssignees([]);
+    setNewReviewers([]);
     setIsSaving(false);
   };
 
-  const resetAssignees = () => {
+  const resetReviewers = () => {
     const newCheckMap = {};
     const otherAddresses = [];
-    assignees.map((a) => {
+    reviewers.map((a) => {
       newCheckMap[a] = true;
       if (!collabAddresses.includes(a)) {
         otherAddresses.push(a);
       }
     });
-    setNewAssignees(otherAddresses);
+    setNewReviewers(otherAddresses);
     setCheckMap(newCheckMap);
   };
 
-  useEffect(resetAssignees, [assignees]);
+  useEffect(resetReviewers, [reviewers]);
 
   return (
-    <div className={"w-full"} data-test="assignee" tabIndex="0">
+    <div className={"w-full"} tabIndex="0">
       <label
         className={
           "btn btn-sm btn-block btn-ghost modal-button " +
           (isSaving ? "loading" : "")
         }
-        data-test="labels"
-        htmlFor="assignee-modal"
+        htmlFor="reviewer-modal"
       >
-        <div className="flex-1 text-left">Assignees</div>
+        <div className="flex-1 text-left">Reviewers</div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5"
@@ -90,17 +90,17 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
 
       <input
         type="checkbox"
-        id="assignee-modal"
+        id="reviewer-modal"
         className="modal-toggle"
-        ref={assigneesModal}
+        ref={reviewersModal}
       />
       <div className="modal">
         <div className="modal-box shadow-lg shadow-lg bg-[#28313B] rounded p-4 mt-1 h-fit">
           <div className="flex">
-            <div className="text-type-primary text-lg font-bold">Assignees</div>
+            <div className="text-type-primary text-lg font-bold">Reviewers</div>
             <label
               className="btn btn-circle btn-sm btn-ghost ml-auto"
-              htmlFor="assignee-modal"
+              htmlFor="reviewer-modal"
               onClick={() => {
                 setSearchAddress("");
                 setValidateAddressError(null);
@@ -122,7 +122,6 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
           </div>
           <div className="form-control mb-2 mt-4">
             <input
-              data-test="assignee_search"
               name="search"
               type="text"
               placeholder="Search By Address"
@@ -132,7 +131,7 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
               onKeyUp={async (e) => {
                 const val = e.target.value;
                 if (await validateUserAddress(val)) {
-                  setNewAssignees([...newAssignees, val]);
+                  setNewReviewers([...newReviewers, val]);
                   setCheckMap({ ...checkMap, [val]: true });
                   setSearchAddress("");
                 }
@@ -177,16 +176,16 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
                 </div>
               );
             })}
-            {newAssignees.length ? (
+            {newReviewers.length ? (
               <div className="py-2 text-type-secondary font-bold text-xs uppercase">
                 Others
               </div>
             ) : (
               ""
             )}
-            {newAssignees.map((a, i) => {
+            {newReviewers.map((a, i) => {
               return (
-                <div className="form-control" key={"newassignee" + i}>
+                <div className="form-control" key={"newreviewers" + i}>
                   <label className="cursor-pointer label justify-start">
                     <input
                       type="checkbox"
@@ -208,16 +207,15 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
                 "btn btn-primary btn-block flex-1 " +
                 (isSaving ? "loading" : "")
               }
-              data-test="assignee_save"
               onClick={(e) => {
-                updateAssignees();
+                updateReviewers();
                 setSearchAddress("");
                 setValidateAddressError(null);
                 if (menuDiv.current) {
                   menuDiv.current.blur();
                 }
-                if (assigneesModal?.current) {
-                  assigneesModal.current.checked = false;
+                if (reviewersModal?.current) {
+                  reviewersModal.current.checked = false;
                 }
                 e.stopPropagation();
               }}
@@ -232,4 +230,4 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
   );
 }
 
-export default AssigneeSelector;
+export default ReviewerSelector;
