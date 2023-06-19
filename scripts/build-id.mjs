@@ -23,6 +23,28 @@ function lastCommitId(dir) {
   });
 }
 
+function gitDescribe(dir) {
+  return new Promise((resolve, reject) => {
+    const gitArgs = [
+      `--git-dir=${path.join(dir, ".git")}`,
+      `--work-tree=${dir}`,
+      "describe",
+      "--tags",
+      "--abbrev=1"
+    ];
+
+    execFile("git", gitArgs, (err, stdout, stderr) => {
+      if (err) return reject(err);
+      if (stderr) return reject(String(stderr).trim());
+      if (stdout) return resolve(String(stdout).trim());
+
+      return reject(
+        new Error(`No output from command: git ${gitArgs.join(" ")}`)
+      );
+    });
+  });
+}
+
 function findDotGit(inputDir, maxAttempts = 999) {
   // inputDir may not be the project root so look for .git dir in parent dirs too
   let dir = inputDir;
@@ -47,12 +69,8 @@ function findDotGit(inputDir, maxAttempts = 999) {
 
 async function determineBuildId({ dir } = { dir: "." }) {
   let topDir = findDotGit(dir);
-  let packageInfo = JSON.parse(
-    fs.readFileSync(path.resolve(topDir, "package.json"))
-  );
-  let version = packageInfo.version;
-  let commitId = await lastCommitId(topDir);
-  return version + "-" + commitId.slice(0, 6);
+  let version = gitDescribe(topDir);
+  return version;
 }
 
-export { determineBuildId, findDotGit, lastCommitId };
+export { determineBuildId, findDotGit, lastCommitId, gitDescribe };
