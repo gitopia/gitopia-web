@@ -45,8 +45,8 @@ function DepositIbcAsset(props) {
         );
       }
     }
-    getChain();
-  }, [props.activeWallet]);
+    if (props.openDeposit) getChain();
+  }, [props.activeWallet, props.openDeposit]);
 
   function fillAmount(amount) {
     document.getElementById("amount").value = amount.toString();
@@ -200,65 +200,58 @@ function DepositIbcAsset(props) {
               )}
             </div>
 
-            <div className="flex ml-auto self-center">
-              <div className="modal-action">
-                <label
-                  htmlFor="my-modal-2"
-                  className={
-                    "btn w-72 sm:w-96 sm:px-56 flex-1 bg-green-900 text-xs ml-1 " +
-                    loading
-                  }
-                  onClick={(e) => {
-                    let notifId;
-                    setLoading(true);
-                    const loadingMessage = props.notify(
-                      "Depositing " + amount + tokenDenom + "...",
-                      "loading",
-                      {
-                        dismissible: false,
-                        dismissAfter: 0,
-                      }
-                    );
-                    notifId = loadingMessage.payload.id;
-                    props
-                      .ibcDeposit(
-                        props.ibcAssets.chainInfo.ibc.chain_1.chain_name.includes(
-                          "gitopia"
-                        )
-                          ? props.ibcAssets.chainInfo.ibc.channels[0].chain_2
-                              .port_id
-                          : props.ibcAssets.chainInfo.ibc.channels[0].chain_1
-                              .port_id,
-                        props.ibcAssets.chainInfo.ibc.chain_1.chain_name.includes(
-                          "gitopia"
-                        )
-                          ? props.ibcAssets.chainInfo.ibc.channels[0].chain_2
-                              .channel_id
-                          : props.ibcAssets.chainInfo.ibc.channels[0].chain_1
-                              .channel_id,
-                        (
-                          Number(amount) * Math.pow(10, tokenDecimals)
-                        ).toString(),
-                        props.ibcAssets.chainInfo.asset.assets[0].denom_units[0]
-                          .denom
+            <div className="modal-action">
+              <label
+                htmlFor="my-modal-2"
+                className={"btn btn-primary btn-block " + loading}
+                onClick={(e) => {
+                  let notifId;
+                  setLoading(true);
+                  const loadingMessage = props.notify(
+                    "Depositing " + amount + tokenDenom + "...",
+                    "loading",
+                    {
+                      dismissible: false,
+                      dismissAfter: 0,
+                    }
+                  );
+                  notifId = loadingMessage.payload.id;
+                  props
+                    .ibcDeposit(
+                      props.ibcAssets.chainInfo.ibc.chain_1.chain_name.includes(
+                        "gitopia"
                       )
-                      .then((res) => {
-                        if (res) {
-                          props.notify(
-                            "Deposit " + amount + tokenDenom + " successful",
-                            "info"
-                          );
-                        }
-                        setLoading(false);
-                        props.dismissNotification(notifId);
-                      });
-                    props.setOpenDeposit(false);
-                  }}
-                  disabled={false}
-                >
-                  DEPOSIT
-                </label>
-              </div>
+                        ? props.ibcAssets.chainInfo.ibc.channels[0].chain_2
+                            .port_id
+                        : props.ibcAssets.chainInfo.ibc.channels[0].chain_1
+                            .port_id,
+                      props.ibcAssets.chainInfo.ibc.chain_1.chain_name.includes(
+                        "gitopia"
+                      )
+                        ? props.ibcAssets.chainInfo.ibc.channels[0].chain_2
+                            .channel_id
+                        : props.ibcAssets.chainInfo.ibc.channels[0].chain_1
+                            .channel_id,
+                      (Number(amount) * Math.pow(10, tokenDecimals)).toString(),
+                      props.ibcAssets.chainInfo.asset.assets[0].denom_units[0]
+                        .denom
+                    )
+                    .then((res) => {
+                      if (res) {
+                        props.notify(
+                          "Deposit " + amount + tokenDenom + " successful",
+                          "info"
+                        );
+                      }
+                      setLoading(false);
+                      props.dismissNotification(notifId);
+                    });
+                  props.setOpenDeposit(false);
+                }}
+                disabled={false}
+              >
+                DEPOSIT
+              </label>
             </div>
           </div>
         </div>

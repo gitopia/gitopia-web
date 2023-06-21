@@ -40,11 +40,7 @@ function AutoLogin(props) {
           console.log("Last wallet found.. ", lastWallet.name);
           if (lastWallet.isKeplr) {
             await initKeplr();
-            const acc = await props.unlockKeplrWallet();
-            console.log(acc);
-            if (acc) {
-              console.log("Keplr sign in success");
-            }
+            await props.unlockKeplrWallet();
           } else {
             setWalletName(lastWallet.name);
             setAddress(lastWallet.accounts[0].address);

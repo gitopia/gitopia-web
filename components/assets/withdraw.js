@@ -59,8 +59,8 @@ function WithdrawIbcAsset(props) {
         }
       }
     }
-    getChain();
-  }, [props.activeWallet, props.ibcAssets]);
+    if (props.openWithdraw) getChain();
+  }, [props.activeWallet, props.openWithdraw]);
 
   function fillAmount(amount) {
     document.getElementById("amount").value = amount;
@@ -215,66 +215,63 @@ function WithdrawIbcAsset(props) {
               )}
             </div>
 
-            <div className="flex ml-auto self-center">
-              <div className="modal-action">
-                <label
-                  htmlFor="my-modal"
-                  className={
-                    "btn w-72 sm:w-96 sm:px-56 flex-1 bg-green-900 text-xs ml-1 " +
-                    (loading ? "loading" : "")
-                  }
-                  onClick={(e) => {
-                    if (validateAmount(amount)) {
-                      setLoading(true);
-                      let notifId;
-                      const loadingMessage = props.notify(
-                        "Withdrawing " + amount + tokenDenom + "...",
-                        "loading",
-                        {
-                          dismissible: false,
-                          dismissAfter: 0,
-                        }
-                      );
-                      notifId = loadingMessage.payload.id;
-                      props
-                        .ibcWithdraw(
-                          props.ibcAssets.chainInfo.ibc.chain_1.chain_name.includes(
-                            "gitopia"
-                          )
-                            ? props.ibcAssets.chainInfo.ibc.channels[0].chain_1
-                                .port_id
-                            : props.ibcAssets.chainInfo.ibc.channels[0].chain_2
-                                .port_id,
-                          props.ibcAssets.chainInfo.ibc.chain_1.chain_name.includes(
-                            "gitopia"
-                          )
-                            ? props.ibcAssets.chainInfo.ibc.channels[0].chain_1
-                                .channel_id
-                            : props.ibcAssets.chainInfo.ibc.channels[0].chain_2
-                                .channel_id,
-                          (
-                            Number(amount) * Math.pow(10, tokenDecimals)
-                          ).toString(),
-                          ibcTokenDenom
+            <div className="modal-action">
+              <label
+                htmlFor="my-modal"
+                className={
+                  "btn btn-primary btn-block " + (loading ? "loading" : "")
+                }
+                onClick={(e) => {
+                  if (validateAmount(amount)) {
+                    setLoading(true);
+                    let notifId;
+                    const loadingMessage = props.notify(
+                      "Withdrawing " + amount + tokenDenom + "...",
+                      "loading",
+                      {
+                        dismissible: false,
+                        dismissAfter: 0,
+                      }
+                    );
+                    notifId = loadingMessage.payload.id;
+                    props
+                      .ibcWithdraw(
+                        props.ibcAssets.chainInfo.ibc.chain_1.chain_name.includes(
+                          "gitopia"
                         )
-                        .then((res) => {
-                          if (res) {
-                            props.notify(
-                              "Withdraw " + amount + tokenDenom + " successful",
-                              "info"
-                            );
-                          }
-                          setLoading(false);
-                          props.dismissNotification(notifId);
-                        });
-                      props.setOpenWithdraw(false);
-                    }
-                  }}
-                  disabled={amount <= 0}
-                >
-                  WITHDRAW
-                </label>
-              </div>
+                          ? props.ibcAssets.chainInfo.ibc.channels[0].chain_1
+                              .port_id
+                          : props.ibcAssets.chainInfo.ibc.channels[0].chain_2
+                              .port_id,
+                        props.ibcAssets.chainInfo.ibc.chain_1.chain_name.includes(
+                          "gitopia"
+                        )
+                          ? props.ibcAssets.chainInfo.ibc.channels[0].chain_1
+                              .channel_id
+                          : props.ibcAssets.chainInfo.ibc.channels[0].chain_2
+                              .channel_id,
+                        (
+                          Number(amount) * Math.pow(10, tokenDecimals)
+                        ).toString(),
+                        ibcTokenDenom
+                      )
+                      .then((res) => {
+                        if (res) {
+                          props.notify(
+                            "Withdraw " + amount + tokenDenom + " successful",
+                            "info"
+                          );
+                        }
+                        setLoading(false);
+                        props.dismissNotification(notifId);
+                      });
+                    props.setOpenWithdraw(false);
+                  }
+                }}
+                disabled={amount <= 0}
+              >
+                WITHDRAW
+              </label>
             </div>
           </div>
         </div>

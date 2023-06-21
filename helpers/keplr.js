@@ -1,13 +1,35 @@
 import getNodeInfo from "./getNodeInfo";
 
-export default async function initKeplr() {
-  if (typeof window === "undefined") return;
-  if (!window.keplr) {
+async function getKeplr() {
+  if (typeof window === "undefined") return null;
+    if (window.keplr) {
+        return window.keplr;
+    }
     
-  } else {
+    if (document.readyState === "complete") {
+        return window.keplr;
+    }
+    
+    return new Promise((resolve) => {
+        const documentStateChange = (event) => {
+            if (
+                event.target?.readyState === "complete"
+            ) {
+                resolve(window.keplr);
+                document.removeEventListener("readystatechange", documentStateChange);
+            }
+        };
+        
+        document.addEventListener("readystatechange", documentStateChange);
+    });
+}
+
+export default async function initKeplr() {
+  const keplr = await getKeplr();
+  if (keplr) {
     const info = await getNodeInfo();
 
-    if (window.keplr.experimentalSuggestChain) {
+    if (keplr.experimentalSuggestChain) {
       try {
         // Keplr v0.6.4 introduces an experimental feature that supports the feature to suggests the chain from a webpage.
         // cosmoshub-3 is integrated to Keplr so the code should return without errors.
@@ -15,7 +37,7 @@ export default async function initKeplr() {
         // If the user approves, the chain will be added to the user's Keplr extension.
         // If the user rejects it or the suggested chain information doesn't include the required fields, it will throw an error.
         // If the same chain id is already registered, it will resolve and not require the user interactions.
-        const suggestChain = await window.keplr.experimentalSuggestChain({
+        const suggestChain = await keplr.experimentalSuggestChain({
           // Chain-id of the Cosmos SDK chain.
           chainId: info.default_node_info.network,
           // The name of the chain to be displayed to the user.
@@ -74,7 +96,7 @@ export default async function initKeplr() {
               coinDecimals: 6,
               // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
               // You can get id from https://api.coingecko.com/api/v3/coins/list if it is listed.
-              // coinGeckoId: ""
+              coinGeckoId: "gitopia"
             },
           ],
           // List of coin/tokens used as a fee token in this chain.
@@ -88,7 +110,7 @@ export default async function initKeplr() {
               coinDecimals: 6,
               // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
               // You can get id from https://api.coingecko.com/api/v3/coins/list if it is listed.
-              // coinGeckoId: ""
+              coinGeckoId: "gitopia"
             },
           ],
           // (Optional) The number of the coin type.
@@ -114,30 +136,6 @@ export default async function initKeplr() {
     } else {
       alert("Please use the recent version of keplr extension");
     }
-
-    // Enabling before using the Keplr is recommended.
-    // This method will ask the user whether or not to allow access if they haven't visited this website.
-    // Also, it will request user to unlock the wallet if the wallet is locked.
-    await window.keplr.enable(info.default_node_info.network);
-
-    // const offlineSigner = window.getOfflineSigner(chainId);
-    // console.log(offlineSigner);
-
-    // You can get the address/public keys by `getAccounts` method.
-    // It can return the array of address/public key.
-    // But, currently, Keplr extension manages only one address/public key pair.
-    // XXX: This line is needed to set the sender address for SigningCosmosClient.
-    // const accounts = await offlineSigner.getAccounts();
-    // console.log(accounts);
-
-    // Initialize the gaia api with the offline signer that is injected by Keplr extension.
-    // const cosmJS = new SigningCosmosClient(
-    //   "https://lcd-cosmoshub.keplr.app",
-    //   accounts[0].address,
-    //   offlineSigner
-    // );
-
-    // add keplr account change event
-    // window.addEventListener("keplr_keystorechange", () => {});
+    await keplr.enable(info.default_node_info.network);
   }
 }

@@ -61,7 +61,7 @@ const postWalletUnlocked = async (
           accountSignerSecondary,
           {
             addr: rpcEndPointSecondary,
-            gasPrice: wallet.gasPrice,
+            gasPrice: getSecondaryGasPrice(ibcAssets?.chainInfo),
           },
           ibcAssets.chainInfo.chain.bech32_prefix
         ),
@@ -910,7 +910,7 @@ export const getAddressforChain = (name, chainId) => {
             const info = await getNodeInfo();
             const otherNodeRestEndpoint = await getEndpoint(
               "rest",
-              chainInfo.apis.rest,
+              chainInfo.apis.rest
             );
             if (otherNodeRestEndpoint) {
               const counterPartyChainInfo = await getAnyNodeInfo(
@@ -1025,25 +1025,9 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
 
         const msg = await env.txClientSecondary.msgTransfer(send);
         const memo = "";
-        let fees = await estimateFee(
-          wallet.activeWallet.counterPartyAddress,
-          wallet.activeWallet.counterPartyChain,
-          [msg],
-          memo
-        )(getState);
-        const fee = {
-          amount: [
-            { amount: fees.amount[0].amount, denom: fees.amount[0].denom },
-          ],
-          gas: fees.gas,
-        };
         const result = await env.txClientSecondary.signAndBroadcast(
           [msg],
-          {
-            fee,
-            memo,
-          },
-          wallet.allowance ? process.env.NEXT_PUBLIC_FEE_GRANTER : null
+          { fee: 1.5, memo }
         );
         updateUserBalance()(dispatch, getState);
 
@@ -1062,29 +1046,19 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
   };
 };
 
-export const estimateFee = (address, chain, msg, memo) => {
-  return async (getState) => {
-    const { env, ibcAssets } = getState();
-    const { calculateFee, GasPrice } = await import("@cosmjs/stargate");
-    let gas,
-      chainFeesInfo = ibcAssets?.chainInfo?.chain?.fees?.fee_tokens[0];
-    if (chainFeesInfo.average_gas_price) {
-      gas = chainFeesInfo.average_gas_price + chainFeesInfo.denom;
-    } else if (chainFeesInfo.fixed_min_gas_price) {
-      gas = chainFeesInfo.fixed_min_gas_price + chainFeesInfo.denom;
-    } else {
-      gas = gasConfig[chain].gasPrice;
-    }
-    const gasPrice = GasPrice.fromString(gas);
-    const gasEstimation = await env.txClientSecondary.simulate(
-      address,
-      msg,
-      memo
-    );
-    const fees = calculateFee(Math.round(gasEstimation * 1.5), gasPrice);
-    return fees;
-  };
-};
+const getSecondaryGasPrice = (chainInfo) => {
+  let gas,
+    chainFeesInfo = chainInfo?.chain?.fees?.fee_tokens[0];
+  if (chainFeesInfo?.average_gas_price) {
+    gas = chainFeesInfo.average_gas_price + chainFeesInfo.denom;
+  } else if (chainFeesInfo?.fixed_min_gas_price) {
+    gas = chainFeesInfo.fixed_min_gas_price + chainFeesInfo.denom;
+  } else {
+    gas = gasConfig[chain].gasPrice;
+  }
+  return gas;
+}
+
 export const getTasks = (address) => {
   return async (dispatch, getState) => {
     const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
