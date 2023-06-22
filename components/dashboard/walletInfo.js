@@ -22,6 +22,8 @@ function WalletInfo(props) {
   const [assets, setAssets] = useState([]);
   const [accountName, setAccountName] = useState("");
   const [accountLink, setAccountLink] = useState("");
+  const [loadingChainInfo, setLoadingChainInfo] = useState(-1);
+
   useEffect(() => {
     async function getWalletbalance() {
       let a = await getBalanceInDollars(props.selectedAddress);
@@ -292,7 +294,14 @@ function WalletInfo(props) {
               <div className="">
                 <img width={24} src={asset.logo_URIs?.png} />
               </div>
-              <div className="mx-3 flex-1 capitalize">{asset.chain_name}</div>
+              <div className="mx-3 flex-1 capitalize">
+                <span>{asset.chain_name}</span>
+              </div>
+              {loadingChainInfo === index ? (
+                <span className="btn btn-ghost btn-xs btn-square loading"></span>
+              ) : (
+                ""
+              )}
               {/* <div className="font-bold text-xs text-type-tertiary">
                 coming soon
               </div> */}
@@ -310,18 +319,15 @@ function WalletInfo(props) {
                   className="btn btn-circle btn-sm btn-outline mr-3 tooltip tooltip-bottom tooltip-secondary"
                   data-tip="Deposit"
                   onClick={() => {
-                    props
-                      .getAddressforChain(
-                        props.activeWallet.name,
-                        asset.chain_name
-                      )
-                      .then((res) => {
-                        if (res?.error) {
-                          props.notify(res.message, "error");
-                        } else {
-                          props.setOpenDeposit(true);
-                        }
-                      });
+                    setLoadingChainInfo(index);
+                    props.getAddressforChain(asset.chain_name).then((res) => {
+                      if (res?.error) {
+                        props.notify(res.message, "error");
+                      } else {
+                        props.setOpenDeposit(true);
+                      }
+                      setLoadingChainInfo(-1);
+                    });
                   }}
                   id={index}
                 >
@@ -362,18 +368,15 @@ function WalletInfo(props) {
                   className="btn btn-circle btn-sm btn-outline tooltip tooltip-bottom tooltip-secondary"
                   data-tip="Withdraw"
                   onClick={() => {
-                    props
-                      .getAddressforChain(
-                        props.activeWallet.name,
-                        asset.chain_name
-                      )
-                      .then((res) => {
-                        if (res?.error) {
-                          props.notify(res.message, "error");
-                        } else {
-                          props.setOpenWithdraw(true);
-                        }
-                      });
+                    setLoadingChainInfo(index);
+                    props.getAddressforChain(asset.chain_name).then((res) => {
+                      if (res?.error) {
+                        props.notify(res.message, "error");
+                      } else {
+                        props.setOpenWithdraw(true);
+                      }
+                      setLoadingChainInfo(-1);
+                    });
                   }}
                   id={index}
                 >

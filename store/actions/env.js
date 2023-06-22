@@ -4,6 +4,7 @@ import {
   initLedgerTransport,
   closeLedgerTransport,
   updateUserBalance,
+  unlockKeplrWallet,
 } from "./wallet";
 import getNodeInfo from "../../helpers/getNodeInfo";
 
@@ -144,27 +145,31 @@ export const setupTxClients = async (dispatch, getState, chainId = null) => {
 
   if (wallet.activeWallet) {
     if (!env.txClient || chainId != wallet.activeWallet.counterPartyChain) {
-      return new Promise((resolve, reject) => {
-        dispatch({
-          type: walletActions.GET_PASSWORD_FOR_UNLOCK_WALLET,
-          payload: {
-            usedFor: wallet.activeWallet.isLedger ? "Connect" : "Unlock",
-            resolve: (action) => {
-              dispatch({
-                type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
-              });
-              resolve({ message: action });
+      if (wallet.activeWallet.isKeplr) {
+        await unlockKeplrWallet(chainId)(dispatch, getState);
+      } else {
+        return new Promise((resolve, reject) => {
+          dispatch({
+            type: walletActions.GET_PASSWORD_FOR_UNLOCK_WALLET,
+            payload: {
+              usedFor: wallet.activeWallet.isLedger ? "Connect" : "Unlock",
+              resolve: (action) => {
+                dispatch({
+                  type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
+                });
+                resolve({ message: action });
+              },
+              reject: (reason) => {
+                dispatch({
+                  type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
+                });
+                reject({ message: reason, error: true });
+              },
+              chainId: chainId,
             },
-            reject: (reason) => {
-              dispatch({
-                type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
-              });
-              reject({ message: reason, error: true });
-            },
-            chainId: chainId,
-          },
+          });
         });
-      });
+      }
     }
   } else {
     return null;
