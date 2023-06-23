@@ -15,7 +15,7 @@ export default function useRepository(initialRepository = {}) {
     name: router.query.repositoryId,
     owner: { id: router.query.userId },
     collaborators: [],
-    defaultBranch: "master",
+    defaultBranch: null,
     branches: [],
     tags: [],
     issues: [],

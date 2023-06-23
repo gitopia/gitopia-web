@@ -36,10 +36,7 @@ import validAddress from "../../../helpers/validAddress";
 import TextInput from "../../../components/textInput";
 import AccountCard from "../../../components/account/card";
 import { useRef } from "react";
-
-const atob = (base64) => {
-  return Buffer.from(base64, "base64").toString("utf-8");
-};
+import atob from "../../../helpers/atob";
 
 export async function getStaticProps({ params }) {
   try {
@@ -236,16 +233,14 @@ function RepositoryView(props) {
     useState(false);
   const { isMobile } = useWindowSize();
 
-  const loadEntities = async (currentEntities = [], firstTime = false) => {
+  const loadEntities = async (currentEntities = [], firstTime = false, branchSha = null) => {
     setLoadingEntities(true);
-    let branchSha = getBranchSha(
-      selectedBranch,
-      repository.branches,
-      repository.tags
-    );
     if (!branchSha) {
-      // TODO: can lead to different commit and file browser state
-      branchSha = repository.branches[0].sha;
+      branchSha = getBranchSha(
+        selectedBranch,
+        repository.branches,
+        repository.tags
+      );
     }
     const res = await getContent(
       repository.id,
@@ -296,7 +291,6 @@ function RepositoryView(props) {
   useEffect(() => {
     async function initCommitHistory() {
       if (typeof window !== "undefined" && repository.branches.length) {
-        loadEntities([], true);
         let branchSha = getBranchSha(
           repository.defaultBranch,
           repository.branches,
@@ -308,6 +302,7 @@ function RepositoryView(props) {
         } else {
           setSelectedBranch(repository.defaultBranch);
         }
+        loadEntities([], true, branchSha);
         const commitHistory = await getCommitHistory(
           repository.id,
           branchSha,

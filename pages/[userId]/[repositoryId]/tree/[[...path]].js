@@ -26,6 +26,7 @@ import SyntaxHighlighter from "react-syntax-highlighter/dist/cjs/prism";
 import extensionMap from "../../../../helpers/extensionMap";
 import { AutoSizer, List } from "react-virtualized";
 import { createElement } from "react-syntax-highlighter";
+import atob from "../../../../helpers/atob";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -190,7 +191,7 @@ function RepositoryTreeView(props) {
                   setFile(res.content[0].content);
                 } else {
                   setIsImageFile(false);
-                  setFile(window.atob(res.content[0].content));
+                  setFile(atob(res.content[0].content));
                 }
 
                 if (extension.toLowerCase() === "md") {
@@ -236,7 +237,7 @@ function RepositoryTreeView(props) {
                 if (readme) {
                   if (readme.content && readme.content[0]) {
                     try {
-                      let file = window.atob(readme.content[0].content);
+                      let file = atob(readme.content[0].content);
                       setReadmeFile(file);
                       readmeFileFound = true;
                       break;
