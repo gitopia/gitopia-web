@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import getUser from "../../helpers/getUser";
-import validAddress from "../../helpers/validAddress";
+import { validUserAddress } from "../../helpers/validAddress";
 import AccountCard from "../../components/account/card";
 
 function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
@@ -10,30 +10,39 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
   const menuDiv = useRef(null);
   const inputEl = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [searchAddress, setSearchAddress] = useState("");
+  const [searchText, setSearchText] = useState("");
   const assigneesModal = useRef();
 
   const collabAddresses = collaborators
     .filter((x) => x.permission !== "READ")
     .map((x) => x.id);
 
-  const validateUserAddress = async (address) => {
-    if (collabAddresses.includes(address) || newAssignees.includes(address)) {
-      setCheckMap({ ...checkMap, [address]: true });
-      setValidateAddressError("Address already present");
-      return false;
-    }
-    if (address.trim() !== "" && validAddress.test(address)) {
-      const res = await getUser(address);
+  const validateUser = async (addressOrUsername) => {
+    let foundAddress;
+    if (validUserAddress.test(addressOrUsername)) {
+      foundAddress = addressOrUsername;
+    } else if (addressOrUsername.trim() !== "") {
+      const res = await getUser(addressOrUsername);
       if (res) {
+        foundAddress = res.creator;
         setValidateAddressError(null);
-        return true;
       } else {
         setValidateAddressError("User not found");
         return false;
       }
     }
-    setValidateAddressError("Enter a valid address");
+    if (foundAddress) {
+      if (
+        collabAddresses.includes(foundAddress) ||
+        newAssignees.includes(foundAddress)
+      ) {
+        setCheckMap({ ...checkMap, [foundAddress]: true });
+        setValidateAddressError("User already present");
+        return false;
+      }
+      return foundAddress;
+    }
+    setValidateAddressError("User not found");
     return false;
   };
 
@@ -121,7 +130,7 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
               className="btn btn-circle btn-sm btn-ghost ml-auto"
               htmlFor="assignee-modal"
               onClick={() => {
-                setSearchAddress("");
+                setSearchText("");
                 setValidateAddressError(null);
               }}
             >
@@ -144,20 +153,23 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
               data-test="assignee_search"
               name="search"
               type="text"
-              placeholder="Search By Address"
+              placeholder="User address or username [Enter to search]"
               autoComplete="off"
               ref={inputEl}
-              value={searchAddress}
+              value={searchText}
               onKeyUp={async (e) => {
                 const val = e.target.value;
-                if (await validateUserAddress(val)) {
-                  setNewAssignees([...newAssignees, val]);
-                  setCheckMap({ ...checkMap, [val]: true });
-                  setSearchAddress("");
+                if (e.code == "Enter") {
+                  const address = await validateUser(val);
+                  if (address) {
+                    setNewAssignees([...newAssignees, address]);
+                    setCheckMap({ ...checkMap, [address]: true });
+                    setSearchText("");
+                  }
                 }
               }}
               onChange={(e) => {
-                setSearchAddress(e.target.value);
+                setSearchText(e.target.value);
               }}
               className="w-full input input-sm input-ghost input-bordered"
             />
@@ -182,14 +194,14 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
             {collabAddresses.map((c, i) => {
               return (
                 <div className="form-control" key={"collaborator" + i}>
-                  <label className="cursor-pointer label justify-start">
+                  <label className="cursor-pointer label justify-start hover:bg-[#1A2028] rounded-md">
                     <input
                       type="checkbox"
                       checked={checkMap[c]}
                       onChange={() => {
                         setCheckMap({ ...checkMap, [c]: !checkMap[c] });
                       }}
-                      className="checkbox checkbox-sm mr-2"
+                      className="checkbox checkbox-sm ml-2 mr-2"
                     />
                     <AccountCard id={c} showAvatar={true} avatarSize="xs" />
                   </label>
@@ -206,14 +218,14 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
             {newAssignees.map((a, i) => {
               return (
                 <div className="form-control" key={"newassignee" + i}>
-                  <label className="cursor-pointer label justify-start">
+                  <label className="cursor-pointer label justify-start hover:bg-[#1A2028] rounded-md">
                     <input
                       type="checkbox"
                       checked={checkMap[a]}
                       onChange={() => {
                         setCheckMap({ ...checkMap, [a]: !checkMap[a] });
                       }}
-                      className="checkbox checkbox-sm mr-2"
+                      className="checkbox checkbox-sm ml-2 mr-2"
                     />
                     <AccountCard id={a} showAvatar={true} avatarSize="xs" />
                   </label>
@@ -230,7 +242,7 @@ function AssigneeSelector({ collaborators = [], assignees = [], onChange }) {
               data-test="assignee_save"
               onClick={(e) => {
                 updateAssignees();
-                setSearchAddress("");
+                setSearchText("");
                 setValidateAddressError(null);
                 if (menuDiv.current) {
                   menuDiv.current.blur();
