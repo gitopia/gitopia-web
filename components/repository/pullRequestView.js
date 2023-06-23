@@ -131,17 +131,13 @@ function IssuePullRequestView(props) {
                             : p.description}
                         </div>
                         <div className="flex mt-4">
-                          <div
-                            className={
-                              "flex text-xs box-border bg-white/10 h-6 p-0.5 rounded-md px-1.5"
-                            }
-                          >
-                            <div className="text-type-secondary">
-                              {p.baseRepo.name} :
-                            </div>
-                            <div className="ml-1 text-teal">
+                          <div className="flex w-36 bg-white/10 rounded-md px-1.5 overflow-x-scroll">
+                            <p className="text-xs text-type-secondary break-keep">
+                              {p.baseRepo.name}:
+                            </p>
+                            <span className="ml-1 text-teal text-xs break-keep">
                               {p.base.branch}
-                            </div>
+                            </span>
                           </div>
                           <svg
                             width="12"
@@ -159,15 +155,11 @@ function IssuePullRequestView(props) {
                               strokeLinejoin="round"
                             />
                           </svg>
-                          <div
-                            className={
-                              "flex text-xs box-border bg-white/10 h-6 p-0.5 rounded-md px-1.5"
-                            }
-                          >
-                            <div className="text-type-secondary">
-                              {p.headRepo.name} :
+                          <div className="flex box-border bg-white/10 rounded-md px-1.5 w-36 overflow-x-scroll">
+                            <div className="text-xs text-type-secondary whitespace-no-wrap">
+                              {p.headRepo.name}:
                             </div>
-                            <div className="ml-1 text-teal">
+                            <div className="ml-1 text-teal text-xs">
                               {p.head.branch}
                             </div>
                           </div>

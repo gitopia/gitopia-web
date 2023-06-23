@@ -17,6 +17,7 @@ import DiffView from "../../../../components/repository/diffView";
 import { createPullRequest } from "../../../../store/actions/repository";
 import MarkdownEditor from "../../../../components/markdownEditor";
 import AssigneeSelector from "../../../../components/repository/assigneeSelector";
+import ReviewerSelector from "../../../../components/repository/reviewerSelector";
 import LabelSelector from "../../../../components/repository/labelSelector";
 import Label from "../../../../components/repository/label";
 import AccountCard from "../../../../components/account/card";
@@ -655,19 +656,23 @@ function RepositoryCompareView(props) {
                       </div>
                       <div className="flex-none sm:w-64 sm:pl-8 divide-y divide-grey mt-8 sm:mt-0">
                         <div className="w-full pb-8">
-                          <AssigneeSelector
-                            assignees={reviewers}
+                          <ReviewerSelector
+                            reviewers={reviewers}
                             collaborators={[
-                              {
-                                id: repository.owner.address,
-                                permission: "CREATOR",
-                              },
+                              ...(() =>
+                                repository.owner.type === "USER"
+                                  ? [
+                                      {
+                                        id: repository.owner.address,
+                                        permission: "CREATOR",
+                                      },
+                                    ]
+                                  : [])(),
                               ...repository.collaborators,
                             ]}
                             onChange={async (list) => {
                               setReviewers(list);
                             }}
-                            title="Reviewers"
                           />
                           <div className="text-xs px-3 mt-2 flex gap-2">
                             {reviewers.length
@@ -687,10 +692,15 @@ function RepositoryCompareView(props) {
                           <AssigneeSelector
                             assignees={assignees}
                             collaborators={[
-                              {
-                                id: repository.owner.address,
-                                permission: "CREATOR",
-                              },
+                              ...(() =>
+                                repository.owner.type === "USER"
+                                  ? [
+                                      {
+                                        id: repository.owner.address,
+                                        permission: "CREATOR",
+                                      },
+                                    ]
+                                  : [])(),
                               ...repository.collaborators,
                             ]}
                             onChange={async (list) => {

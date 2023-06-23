@@ -27,11 +27,11 @@ export async function getStaticPaths() {
 function RepositoryBranchesView(props) {
   const router = useRouter();
   const { repository, refreshRepository } = useRepository();
-  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
-    false
-  );
+  const [currentUserEditPermission, setCurrentUserEditPermission] =
+    useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [branch, setBranch] = useState("");
 
   useEffect(() => {
     async function updatePermissions() {
@@ -157,6 +157,7 @@ function RepositoryBranchesView(props) {
                         className="btn btn-xs btn-ghost btn-square ml-1 mt-0.5"
                         onClick={() => {
                           setConfirmDelete(true);
+                          setBranch(b.name);
                         }}
                       >
                         <svg
@@ -219,12 +220,11 @@ function RepositoryBranchesView(props) {
                             }
                             onClick={async () => {
                               setIsDeleting(true);
-
                               props
                                 .deleteBranch({
                                   repoOwnerId: repository.owner.id,
                                   repositoryName: repository.name,
-                                  name: b.name,
+                                  name: branch,
                                 })
                                 .then((res) => {
                                   if (res.code == 0) {

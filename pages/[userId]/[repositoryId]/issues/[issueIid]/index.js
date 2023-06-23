@@ -172,6 +172,8 @@ function RepositoryIssueView(props) {
     getAllComments();
   }, [issue]);
 
+  const userCommentsLength = allComments.filter((c) => !c.system).length;
+
   return (
     <div
       data-theme="dark"
@@ -214,9 +216,9 @@ function RepositoryIssueView(props) {
             </span>
             <span className="text-xl mr-2 text-type-secondary">&middot;</span>
             <span className="text-xs text-type-secondary">
-              {issue.comments?.length}
+              {userCommentsLength}
               <span className="ml-1">
-                {pluralize("comment", issue.comments?.length)}
+                {pluralize("comment", userCommentsLength)}
               </span>
             </span>
           </div>
@@ -276,7 +278,11 @@ function RepositoryIssueView(props) {
                 })}
                 <div className="flex w-full mt-8">
                   <div className="flex-none mr-4">
-                    <AccountCard id={props.selectedAddress} showAvatar={true} showId={false} />
+                    <AccountCard
+                      id={props.selectedAddress}
+                      showAvatar={true}
+                      showId={false}
+                    />
                   </div>
                   <CommentEditor
                     repositoryId={repository.id}
@@ -293,7 +299,15 @@ function RepositoryIssueView(props) {
                 <AssigneeSelector
                   assignees={issue.assignees}
                   collaborators={[
-                    { id: repository.owner.address, permission: "CREATOR" },
+                    ...(() =>
+                      repository.owner.type === "USER"
+                        ? [
+                            {
+                              id: repository.owner.address,
+                              permission: "CREATOR",
+                            },
+                          ]
+                        : [])(),
                     ...repository.collaborators,
                   ]}
                   onChange={async (list) => {
@@ -320,15 +334,17 @@ function RepositoryIssueView(props) {
                   }}
                 />
                 <div className="text-xs px-3 mt-2 flex gap-2">
-                  {issue.assignees.length ? (
-                    issue.assignees.map((a, i) =>
-                      <div key={"assignee" + i}>
-                        <AccountCard id={a} showAvatar={true} showId={false} />
-                      </div>
-                    )
-                  ) : (
-                    "No one"
-                  )}
+                  {issue.assignees.length
+                    ? issue.assignees.map((a, i) => (
+                        <div key={"assignee" + i}>
+                          <AccountCard
+                            id={a}
+                            showAvatar={true}
+                            showId={false}
+                          />
+                        </div>
+                      ))
+                    : "No one"}
                 </div>
               </div>
               <div className="py-8">
@@ -357,24 +373,22 @@ function RepositoryIssueView(props) {
                   }}
                 />
                 <div className="text-xs px-3 mt-2 flex flex-wrap">
-                  {issue.labels.length ? (
-                    issue.labels.map((l, i) => {
-                      let label = find(allLabels, { id: l }) || {
-                        name: "",
-                        color: "",
-                      };
-                      return (
-                        <span
-                          className="pr-2 pb-2 whitespace-nowrap"
-                          key={"label" + i}
-                        >
-                          <Label color={label.color} name={label.name} />
-                        </span>
-                      );
-                    })
-                  ) : (
-                    "None yet"
-                  )}
+                  {issue.labels.length
+                    ? issue.labels.map((l, i) => {
+                        let label = find(allLabels, { id: l }) || {
+                          name: "",
+                          color: "",
+                        };
+                        return (
+                          <span
+                            className="pr-2 pb-2 whitespace-nowrap"
+                            key={"label" + i}
+                          >
+                            <Label color={label.color} name={label.name} />
+                          </span>
+                        );
+                      })
+                    : "None yet"}
                 </div>
               </div>
               {issue.pullRequests.length > 0 ? (

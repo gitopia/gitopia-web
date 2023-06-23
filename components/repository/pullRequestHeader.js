@@ -59,15 +59,15 @@ export default function PullRequestHeader({
         </span>
         <span className="text-xs mr-2 text-type-secondary">
           {pullRequest.state === "MERGED" ? (
-            <div>
+            <span>
               <AccountCard id={pullRequest.mergedBy} />
               {" merged "}
-            </div>
+            </span>
           ) : (
-            <div>
+            <span>
               <AccountCard id={pullRequest.creator} />
               {" wants to merge "}
-            </div>
+            </span>
           )}
 
           <Link

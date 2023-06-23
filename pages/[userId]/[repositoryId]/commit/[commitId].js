@@ -48,7 +48,7 @@ function RepositoryCommitDiffView(props) {
         if (c && c.id) {
           const data = await getDiffStats(
             Number(repository.id),
-            router.query.commitId,
+            router.query.commitId
           );
           if (data) {
             setCommit({ ...c, ...data });
@@ -89,6 +89,7 @@ function RepositoryCommitDiffView(props) {
             baseRepoId={repository.id}
             currentSha={router.query.commitId}
             onViewTypeChange={(v) => setViewType(v)}
+            commentsAllowed={false}
           />
         </main>
       </div>

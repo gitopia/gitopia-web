@@ -611,11 +611,13 @@ function RepositoryView(props) {
                       <span>Collaborators</span>
                     </div>
                     <span className="ml-2 text-xs text-type-secondary font-semibold">
-                      {repository.collaborators.length + 1}
+                      {repository.collaborators.length +
+                        (repository.owner.type === "USER" ? 1 : 0)}
                       <span className="ml-1 uppercase">
                         {pluralize(
                           "person",
-                          repository.collaborators.length + 1
+                          repository.collaborators.length +
+                            (repository.owner.type === "USER" ? 1 : 0)
                         )}
                       </span>
                     </span>
@@ -623,7 +625,10 @@ function RepositoryView(props) {
 
                   <div className="text-xs mt-3 flex gap-1">
                     {[
-                      repository.owner.id,
+                      ...(() =>
+                        repository.owner.type === "USER"
+                          ? [repository.owner.address]
+                          : [])(),
                       ...repository.collaborators.map((c) => c.id),
                     ].map((a, i) => (
                       <div key={"collaborator" + i}>
