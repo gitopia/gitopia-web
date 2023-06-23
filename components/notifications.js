@@ -8,6 +8,7 @@ import { notify } from "reapop";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { createNotification } from "../store/actions/userNotification";
 import { addCompletedTask } from "../store/actions/taskQueue";
+import atob from "../helpers/atob";
 // import db from "../helpers/db";
 
 function Notifications(props) {
