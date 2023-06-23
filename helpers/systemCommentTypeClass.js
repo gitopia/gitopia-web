@@ -79,13 +79,7 @@ export const commentType = {
     </svg>
   ),
   COMMENT_TYPE_ADD_REVIEWERS: (
-    <svg
-      width="32"
-      height="33"
-      viewBox="0 0 32 33"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="16" cy="16.9817" r="15" stroke="#3E4051" strokeWidth="2" />
       <path
         d="M13.3645 13.8645V13.8645C13.3645 12.8348 14.1993 12 15.2291 12H15.3645C16.4691 12 17.3645 12.8954 17.3645 14V14C17.3645 15.1046 16.4691 16 15.3645 16H13.3645"
@@ -112,7 +106,21 @@ export const commentType = {
       />
     </svg>
   ),
-  COMMENT_TYPE_REMOVE_REVIEWERS: "",
+  COMMENT_TYPE_REMOVE_REVIEWERS: (
+    <svg viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="16" cy="16.1016" r="15" stroke="#3E4051" strokeWidth="2" />
+      <path
+        d="M10.249 21.8523L21.7503 10.351"
+        stroke="#ADBECB"
+        strokeWidth="2"
+      />
+      <path
+        d="M21.7503 21.8523L10.249 10.351"
+        stroke="#ADBECB"
+        strokeWidth="2"
+      />
+    </svg>
+  ),
   COMMENT_TYPE_MODIFIED_TITLE: (
     <svg viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle
@@ -147,13 +155,7 @@ export const commentType = {
   ),
 
   COMMENT_TYPE_ISSUE_CLOSED: (
-    <svg
-      width="32"
-      height="32"
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="16" cy="16" r="15" stroke="#3E4051" strokeWidth="2" />
       <path
         d="M8.83069 16.7917L13.0825 21.0435L23.1694 10.9565"
@@ -164,13 +166,7 @@ export const commentType = {
   ),
 
   COMMENT_TYPE_ISSUE_OPENED: (
-    <svg
-      width="32"
-      height="33"
-      viewBox="0 0 32 33"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="16" cy="16.1479" r="15" stroke="#3E4051" strokeWidth="2" />
       <path
         d="M22.1231 22.4893C21.2852 23.3053 20.272 23.9192 19.1608 24.2842C18.0496 24.6491 16.8697 24.7555 15.7111 24.5952C14.5525 24.4349 13.4459 24.0121 12.4755 23.359C11.5052 22.706 10.6968 21.84 10.112 20.8271"
@@ -196,13 +192,7 @@ export const commentType = {
   ),
 
   COMMENT_TYPE_PULL_REQUEST_CLOSED: (
-    <svg
-      width="32"
-      height="33"
-      viewBox="0 0 32 33"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle
         cx="21.1319"
         cy="21.6029"
@@ -249,13 +239,7 @@ export const commentType = {
   ),
 
   COMMENT_TYPE_PULL_REQUEST_OPENED: (
-    <svg
-      width="32"
-      height="33"
-      viewBox="0 0 32 33"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle
         cx="22.3047"
         cy="22.32"
@@ -295,13 +279,7 @@ export const commentType = {
     </svg>
   ),
   COMMENT_TYPE_PULL_REQUEST_MERGED: (
-    <svg
-      width="32"
-      height="33"
-      viewBox="0 0 32 33"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle
         cx="22.3047"
         cy="22.0372"

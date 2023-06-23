@@ -659,10 +659,15 @@ function RepositoryCompareView(props) {
                           <ReviewerSelector
                             reviewers={reviewers}
                             collaborators={[
-                              {
-                                id: repository.owner.address,
-                                permission: "CREATOR",
-                              },
+                              ...(() =>
+                                repository.owner.type === "USER"
+                                  ? [
+                                      {
+                                        id: repository.owner.address,
+                                        permission: "CREATOR",
+                                      },
+                                    ]
+                                  : [])(),
                               ...repository.collaborators,
                             ]}
                             onChange={async (list) => {
@@ -687,10 +692,15 @@ function RepositoryCompareView(props) {
                           <AssigneeSelector
                             assignees={assignees}
                             collaborators={[
-                              {
-                                id: repository.owner.address,
-                                permission: "CREATOR",
-                              },
+                              ...(() =>
+                                repository.owner.type === "USER"
+                                  ? [
+                                      {
+                                        id: repository.owner.address,
+                                        permission: "CREATOR",
+                                      },
+                                    ]
+                                  : [])(),
                               ...repository.collaborators,
                             ]}
                             onChange={async (list) => {
