@@ -94,7 +94,14 @@ function AccountCard({
       className={"dropdown dropdown-hover " + (props.className || "")}
       onMouseEnter={getAccountData}
     >
-      <label tabIndex={0} className="flex gap-2 items-center">
+      <Link
+        tabIndex={0}
+        className="flex gap-2 items-center"
+        href={props.link ? props.link : "/" + id}
+        data-test={props.dataTest}
+        target="_blank"
+        rel="noreferrer"
+      >
         {showAvatar ? (
           <div className="avatar">
             <div
@@ -137,7 +144,7 @@ function AccountCard({
         ) : (
           ""
         )}
-      </label>
+      </Link>
       <div
         tabIndex={0}
         className="dropdown-content p-4 shadow-xl border border-neutral bg-base-100 rounded-md w-48 relative mt-2"
@@ -171,7 +178,6 @@ function AccountCard({
           <Link
             href={props.link ? props.link : "/" + id}
             className="link text-lg link-primary no-underline"
-            data-test={props.dataTest}
             target="_blank"
             rel="noreferrer"
           >
