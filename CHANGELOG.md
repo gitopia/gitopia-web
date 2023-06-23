@@ -1,5 +1,13 @@
 ## Changelog
 
+### v1.13.0 - 23 June 2023
+
+- Adding assignee and reviewer modal
+- Disable commenting option in a commit
+- Fixed the overflow for issue pull request view
+- Fixed delete branch always deletes main branch
+- Fixed ledger ibc transfers
+
 ### v1.12.0 - 19 June 2023
 
 - Update display format of tokens
