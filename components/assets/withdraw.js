@@ -226,7 +226,11 @@ function WithdrawIbcAsset(props) {
                     setLoading(true);
                     let notifId;
                     const loadingMessage = props.notify(
-                      "Withdrawing " + amount + tokenDenom + "...",
+                      "Withdrawing " +
+                        amount +
+                        " " +
+                        tokenDenom.toUpperCase() +
+                        "...",
                       "loading",
                       {
                         dismissible: false,
@@ -258,7 +262,11 @@ function WithdrawIbcAsset(props) {
                       .then((res) => {
                         if (res) {
                           props.notify(
-                            "Withdraw " + amount + tokenDenom + " successful",
+                            "Withdraw " +
+                              amount +
+                              " " +
+                              tokenDenom.toUpperCase() +
+                              " successful",
                             "info"
                           );
                         }
@@ -268,7 +276,7 @@ function WithdrawIbcAsset(props) {
                     props.setOpenWithdraw(false);
                   }
                 }}
-                disabled={amount <= 0}
+                disabled={validateAmountError}
               >
                 WITHDRAW
               </label>

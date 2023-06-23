@@ -205,10 +205,14 @@ function DepositIbcAsset(props) {
                 htmlFor="my-modal-2"
                 className={"btn btn-primary btn-block " + loading}
                 onClick={(e) => {
-                  let notifId;
                   setLoading(true);
+                  let notifId;
                   const loadingMessage = props.notify(
-                    "Depositing " + amount + tokenDenom + "...",
+                    "Despositing " +
+                      amount +
+                      " " +
+                      tokenDenom.toUpperCase() +
+                      "...",
                     "loading",
                     {
                       dismissible: false,
@@ -239,7 +243,11 @@ function DepositIbcAsset(props) {
                     .then((res) => {
                       if (res) {
                         props.notify(
-                          "Deposit " + amount + tokenDenom + " successful",
+                          "Deposit " +
+                            amount +
+                            " " +
+                            tokenDenom.toUpperCase() +
+                            " successful",
                           "info"
                         );
                       }
@@ -248,7 +256,7 @@ function DepositIbcAsset(props) {
                     });
                   props.setOpenDeposit(false);
                 }}
-                disabled={false}
+                disabled={validateAmountError}
               >
                 DEPOSIT
               </label>

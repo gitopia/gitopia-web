@@ -8,7 +8,7 @@ import {
 import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import find from "lodash/find";
-import { notify } from "reapop";
+import { notify, dismissNotification } from "reapop";
 import { setupTxClients, sendTransaction } from "./env";
 import getNodeInfo from "../../helpers/getNodeInfo";
 import getAnyNodeInfo from "../../helpers/getAnyNodeInfo";
@@ -20,6 +20,7 @@ import getChainIbcAsset from "../../helpers/getChainIbcAssets";
 import dayjs from "dayjs";
 import { gasConfig } from "../../ibc-assets-config";
 import { getEndpoint } from "../../helpers/getEndpoints";
+import { ChainIdHelper } from "../../helpers/chainIdHelper";
 
 let ledgerTransport;
 
@@ -142,16 +143,53 @@ export const signOut = () => {
   };
 };
 
-export const unlockKeplrWallet = () => {
+export const unlockKeplrWallet = (secondaryChainId = null) => {
   return async (dispatch, getState) => {
     if (window.keplr && window.getOfflineSigner) {
       try {
         const info = await getNodeInfo();
         const chainId = info.default_node_info.network;
         const offlineSigner = await window.getOfflineSignerAuto(chainId);
+        let accountSignerSecondary = null,
+          counterPartyAddress = null;
         const accounts = await offlineSigner.getAccounts();
         const key = await window.keplr.getKey(chainId);
         let user = await getUser(accounts[0].address);
+
+        if (secondaryChainId) {
+          let chainInfo, chainAsset, chainIbc;
+          [chainInfo, chainAsset, chainIbc] = await Promise.all([
+            getChainInfo(secondaryChainId),
+            getChainAssetList(secondaryChainId),
+            getChainIbcAsset(secondaryChainId),
+          ]);
+          if (chainInfo && chainAsset && chainIbc) {
+            await dispatch({
+              type: ibcAssetsActions.SET_CHAIN_INFO,
+              payload: {
+                chain: chainInfo,
+                assets: chainAsset,
+                ibc: chainIbc,
+              },
+            });
+          }
+          const otherNodeRestEndpoint = await getEndpoint(
+            "rest",
+            chainInfo.apis.rest
+          );
+          if (otherNodeRestEndpoint) {
+            const counterPartyChainInfo = await getAnyNodeInfo(
+              otherNodeRestEndpoint
+            );
+            accountSignerSecondary = await window.getOfflineSignerAuto(
+              counterPartyChainInfo.default_node_info.network
+            );
+            const counterPartyAccount =
+              await accountSignerSecondary.getAccounts();
+            counterPartyAddress = counterPartyAccount[0].address;
+          }
+        }
+
         await dispatch({
           type: walletActions.SET_ACTIVE_WALLET,
           payload: {
@@ -159,10 +197,17 @@ export const unlockKeplrWallet = () => {
               name: user?.username ? user.username : key.name,
               accounts,
               isKeplr: true,
+              counterPartyAddress,
+              counterPartyChain: secondaryChainId,
             },
           },
         });
-        await postWalletUnlocked(offlineSigner, dispatch, getState);
+        await postWalletUnlocked(
+          offlineSigner,
+          dispatch,
+          getState,
+          accountSignerSecondary
+        );
         return accounts[0];
       } catch (e) {
         console.error(e);
@@ -881,85 +926,6 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
   });
 };
 
-export const getAddressforChain = (name, chainId) => {
-  return async (dispatch, getState) => {
-    try {
-      const { wallet } = getState();
-      let activeWallet = wallet.activeWallet;
-      if (activeWallet.isKeplr) {
-        if (window.keplr && window.getOfflineSigner) {
-          try {
-            let chainInfo, chainAsset, chainIbc;
-            if (chainId !== null && chainId !== undefined) {
-              [chainInfo, chainAsset, chainIbc] = await Promise.all([
-                getChainInfo(chainId),
-                getChainAssetList(chainId),
-                getChainIbcAsset(chainId),
-              ]);
-              if (chainInfo && chainAsset && chainIbc) {
-                await dispatch({
-                  type: ibcAssetsActions.SET_CHAIN_INFO,
-                  payload: {
-                    chain: chainInfo,
-                    assets: chainAsset,
-                    ibc: chainIbc,
-                  },
-                });
-              }
-            }
-            const info = await getNodeInfo();
-            const otherNodeRestEndpoint = await getEndpoint(
-              "rest",
-              chainInfo.apis.rest
-            );
-            if (otherNodeRestEndpoint) {
-              const counterPartyChainInfo = await getAnyNodeInfo(
-                otherNodeRestEndpoint
-              );
-              const chain = info.default_node_info.network;
-              const offlineSigner = await window.getOfflineSignerAuto(chain);
-              const accountSignerSecondary = await window.getOfflineSignerAuto(
-                counterPartyChainInfo.default_node_info.network
-              );
-              const accounts = await offlineSigner.getAccounts();
-              const counterPartyAccount =
-                await accountSignerSecondary.getAccounts();
-              activeWallet.counterPartyAddress = counterPartyAccount[0].address;
-              activeWallet.counterPartyChain = chainId;
-              await dispatch({
-                type: walletActions.SET_ACTIVE_WALLET,
-                payload: {
-                  wallet: activeWallet,
-                },
-              });
-              await postWalletUnlocked(
-                offlineSigner,
-                dispatch,
-                getState,
-                accountSignerSecondary
-              );
-              return accounts[0];
-            }
-            return null;
-          } catch (e) {
-            console.error(e);
-            return null;
-          }
-        } else {
-          dispatch(
-            notify("Please ensure keplr extension is installed", "error")
-          );
-        }
-      } else {
-        return await setupTxClients(dispatch, getState, chainId);
-      }
-      return {};
-    } catch (e) {
-      return e;
-    }
-  };
-};
-
 export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
@@ -970,13 +936,19 @@ export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
           getState,
           wallet.activeWallet.counterPartyChain
         );
-        const { env } = getState();
+        const { env, ibcAssets } = getState();
+        let currentHeight = await env.txClientSecondary.getHeight();
         const send = {
           sourcePort: sourcePort,
           sourceChannel: sourceChannel,
           sender: wallet.selectedAddress,
           receiver: wallet.activeWallet.counterPartyAddress,
-          timeoutTimestamp: dayjs(dayjs().add(1, "day")).valueOf() * 1000000000,
+          timeoutHeight: {
+            revisionHeight: (currentHeight + 150).toString(),
+            revisionNumber: ChainIdHelper.parse(
+              ibcAssets.chainInfo.chain.chain_id
+            ).version.toString(),
+          },
           token: {
             amount: amount,
             denom: denom,
@@ -1003,6 +975,7 @@ export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
 export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
+    let notif;
     if (wallet.activeWallet) {
       try {
         await setupTxClients(
@@ -1010,13 +983,31 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
           getState,
           wallet.activeWallet.counterPartyChain
         );
-        const { env } = getState();
+        const { env, ibcAssets } = getState();
+        if (wallet.activeWallet.isLedger) {
+          notif = dispatch(
+            notify(
+              "Please sign the transaction on your ledger",
+              "waiting-for-input",
+              {
+                dismissible: false,
+                dismissAfter: 0,
+              }
+            )
+          );
+        }
+        let currentHeight = await env.txClientSecondary.getHeight();
         const send = {
           sourcePort: sourcePort,
           sourceChannel: sourceChannel,
           sender: wallet.activeWallet.counterPartyAddress,
           receiver: wallet.selectedAddress,
-          timeoutTimestamp: dayjs(dayjs().add(1, "day")).valueOf() * 1000000000,
+          timeoutHeight: {
+            revisionHeight: (currentHeight + 150).toString(),
+            revisionNumber: ChainIdHelper.parse(
+              ibcAssets.chainInfo.chain.chain_id
+            ).version.toString(),
+          },
           token: {
             amount: amount,
             denom: denom,
@@ -1025,11 +1016,15 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
 
         const msg = await env.txClientSecondary.msgTransfer(send);
         const memo = "";
-        const result = await env.txClientSecondary.signAndBroadcast(
-          [msg],
-          { fee: 1.5, memo }
-        );
+        const result = await env.txClientSecondary.signAndBroadcast([msg], {
+          fee: 1.5,
+          memo,
+        });
         updateUserBalance()(dispatch, getState);
+        if (wallet.activeWallet?.isLedger) {
+          dispatch(dismissNotification(notif?.payload?.id));
+          await closeLedgerTransport()(dispatch, getState);
+        }
 
         if (result && result.code === 0) {
           return true;
@@ -1040,8 +1035,22 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
       } catch (e) {
         console.error(e);
         dispatch(notify(e.message, "error"));
+        if (wallet.activeWallet?.isLedger) {
+          dispatch(dismissNotification(notif?.payload?.id));
+          await closeLedgerTransport()(dispatch, getState);
+        }
         return null;
       }
+    }
+  };
+};
+
+export const getAddressforChain = (chainId) => {
+  return async (dispatch, getState) => {
+    await setupTxClients(dispatch, getState, chainId);
+    const { wallet } = getState();
+    if (wallet.activeWallet.isLedger) {
+      await closeLedgerTransport()(dispatch, getState);
     }
   };
 };
@@ -1057,7 +1066,7 @@ const getSecondaryGasPrice = (chainInfo) => {
     gas = gasConfig[chain].gasPrice;
   }
   return gas;
-}
+};
 
 export const getTasks = (address) => {
   return async (dispatch, getState) => {

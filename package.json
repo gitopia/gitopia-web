@@ -1,6 +1,6 @@
 {
   "name": "gitopia-web",
-  "version": "1.12.0",
+  "version": "1.13.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -20,7 +20,7 @@
     "@cosmjs/ledger-amino": "^0.30.1",
     "@cosmjs/proto-signing": "^0.30.1",
     "@cosmjs/stargate": "^0.30.1",
-    "@gitopia/gitopia-js": "1.8.2",
+    "@gitopia/gitopia-js": "1.9.0",
     "@ledgerhq/hw-transport-webhid": "^6.27.13",
     "@ledgerhq/hw-transport-webusb": "^6.27.13",
     "@next/bundle-analyzer": "^12.0.7",

@@ -471,10 +471,10 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@gitopia/gitopia-js@1.8.2":
-  version "1.8.2"
-  resolved "https://registry.yarnpkg.com/@gitopia/gitopia-js/-/gitopia-js-1.8.2.tgz#e26599f5a57c925768a5348f9662a4da7978b97c"
-  integrity sha512-rr3/E+kDwcwxkKHaG2yiuOeZ3IiQX4Om7LkNpVlYdzFviHy/SbGWETnlXDNenKqSXFyAckGr4fC7Hfjcjsbc1A==
+"@gitopia/gitopia-js@1.9.0":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@gitopia/gitopia-js/-/gitopia-js-1.9.0.tgz#340e132ce30edeaecc35e804584893e5ff4ace61"
+  integrity sha512-/WEA19FVLKKeKfyPCP2jOFiKO0oAN01XwuyfHZkJ72OrFzy0g4EAw7Hr4Hnouvhx0gVgY+mV8/I3ph4yb3wxEg==
   dependencies:
     lodash "^4.17.21"
     long "^5.2.1"

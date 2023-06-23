@@ -95,7 +95,7 @@ export default function NotificationManager() {
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className="h-8 w-8 text-purple-50 animate-spin-slow"
+                      className="h-7 w-8 text-purple-50 animate-spin-slow"
                     >
                       <path
                         strokeLinecap="round"
