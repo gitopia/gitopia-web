@@ -134,7 +134,7 @@ function RepositoryPullFilesView(props) {
             <div className="flex-1">
               <DiffView
                 stats={stats}
-                repoId={pullRequest.head.repositoryId}
+                repoId={pullRequest.base.repositoryId}
                 baseRepoId={pullRequest.base.repositoryId}
                 currentSha={pullRequest.head.sha}
                 previousSha={pullRequest.base.sha}
