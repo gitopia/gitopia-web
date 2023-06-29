@@ -202,7 +202,7 @@ function DiffView({
                       setLoading(true);
                       props
                         .createComment({
-                          repositoryId: repoId,
+                          repositoryId: baseRepoId,
                           parentIid: parentIid,
                           parent: "COMMENT_PARENT_PULLREQUEST",
                           body: comment,
