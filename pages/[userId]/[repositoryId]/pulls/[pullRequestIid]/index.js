@@ -232,7 +232,7 @@ function RepositoryPullView(props) {
 
         return {
           ...widgets,
-          [changeKey]: <div className="px-4 pb-4">{getCommentView(comment)}</div>,
+          [changeKey]: <div className="p-4">{getCommentView(comment)}</div>,
         };
       }, {});
     } else return "";
@@ -266,7 +266,7 @@ function RepositoryPullView(props) {
       pullRequest.base.repository.id,
       pullRequest.head.repository.id,
       pullRequest.base.sha,
-      pullRequest.head.sha,
+      pullRequest.head.sha
     );
     let newFiles = [];
     if (data && data.diff) {
@@ -374,17 +374,19 @@ function RepositoryPullView(props) {
                                 ""
                               )}
                             </div>
-                            {hunks.length
-                              ? [fileDiff].map((diff) =>
-                                  renderFile(diff, hunks, c)
-                                )
-                              : getCommentView(c)}
+                            {hunks.length ? (
+                              [fileDiff].map((diff) =>
+                                renderFile(diff, hunks, c)
+                              )
+                            ) : (
+                              <div className="mt-4">{getCommentView(c)}</div>
+                            )}
                           </div>
                         </div>
                       );
                     }
                   } else {
-                    return getCommentView(c);
+                    return <div className="mt-8">{getCommentView(c)}</div>;
                   }
                 })}
                 <MergePullRequestView

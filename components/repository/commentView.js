@@ -19,7 +19,7 @@ function CommentView({
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
-    <div className="flex w-full mt-8" key={"comment" + comment.id}>
+    <div className="flex w-full" key={"comment" + comment.id}>
       <div className="flex-none mr-4">
         <AccountCard id={comment.creator} showAvatar={true} showId={false} />
       </div>
@@ -108,7 +108,9 @@ function CommentView({
             </div>
             <div className="flex-1 text-xs text-type-tertiary">
               {dayjs(comment.createdAt * 1000).fromNow()}
-                {comment.updatedAt !== comment.createdAt ? ", edited " + dayjs(comment.updatedAt * 1000).fromNow() : ""}
+              {(comment.updatedAt - comment.createdAt) > 120
+                ? ", edited " + dayjs(comment.updatedAt * 1000).fromNow()
+                : ""}
             </div>
           </div>
         </div>

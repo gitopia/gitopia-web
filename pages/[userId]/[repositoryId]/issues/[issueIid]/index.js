@@ -242,37 +242,39 @@ function RepositoryIssueView(props) {
                     );
                   } else {
                     return (
-                      <CommentView
-                        comment={c}
-                        repositoryId={repository.id}
-                        parentIid={issue.iid}
-                        parent={"COMMENT_PARENT_ISSUE"}
-                        userAddress={props.selectedAddress}
-                        onUpdate={async (iid) => {
-                          const newComment = await getIssueComment(
-                            repository.id,
-                            issue.iid,
-                            iid
-                          );
-                          const newAllComments = [...allComments];
-                          newAllComments[i] = newComment;
-                          setAllComments(newAllComments);
-                        }}
-                        onDelete={async (iid) => {
-                          const res = await props.deleteComment({
-                            repositoryId: repository.id,
-                            parentIid: issue.iid,
-                            parent: "COMMENT_PARENT_ISSUE",
-                            commentIid: iid,
-                          });
-                          if (res && res.code === 0) {
+                      <div className="mt-8">
+                        <CommentView
+                          comment={c}
+                          repositoryId={repository.id}
+                          parentIid={issue.iid}
+                          parent={"COMMENT_PARENT_ISSUE"}
+                          userAddress={props.selectedAddress}
+                          onUpdate={async (iid) => {
+                            const newComment = await getIssueComment(
+                              repository.id,
+                              issue.iid,
+                              iid
+                            );
                             const newAllComments = [...allComments];
-                            newAllComments.splice(i, 1);
+                            newAllComments[i] = newComment;
                             setAllComments(newAllComments);
-                          }
-                        }}
-                        key={"comment" + i}
-                      />
+                          }}
+                          onDelete={async (iid) => {
+                            const res = await props.deleteComment({
+                              repositoryId: repository.id,
+                              parentIid: issue.iid,
+                              parent: "COMMENT_PARENT_ISSUE",
+                              commentIid: iid,
+                            });
+                            if (res && res.code === 0) {
+                              const newAllComments = [...allComments];
+                              newAllComments.splice(i, 1);
+                              setAllComments(newAllComments);
+                            }
+                          }}
+                          key={"comment" + i}
+                        />
+                      </div>
                     );
                   }
                 })}
