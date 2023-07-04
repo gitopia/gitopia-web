@@ -108,6 +108,7 @@ function CommentView({
             </div>
             <div className="flex-1 text-xs text-type-tertiary">
               {dayjs(comment.createdAt * 1000).fromNow()}
+                {comment.updatedAt !== comment.createdAt ? ", edited " + dayjs(comment.updatedAt * 1000).fromNow() : ""}
             </div>
           </div>
         </div>
