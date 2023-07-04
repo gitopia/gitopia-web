@@ -34,10 +34,8 @@ import AccountCard from "../../../../../components/account/card";
 import getPullRequestCommentAll from "../../../../../helpers/getPullRequestCommentAll";
 import { parseDiff, Diff, Hunk, getChangeKey } from "react-diff-view";
 import getDiff from "../../../../../helpers/getDiff";
-import ReactMarkdown from "react-markdown";
-import shrinkAddress from "../../../../../helpers/shrinkAddress";
+import getPullDiff from "../../../../../helpers/getPullDiff";
 import validAddress from "../../../../../helpers/validAddress";
-import dayjs from "dayjs";
 import { commentType } from "../../../../../helpers/systemCommentTypeClass";
 
 export async function getStaticProps({ params }) {
@@ -264,12 +262,11 @@ function RepositoryPullView(props) {
   };
 
   const loadDiff = async () => {
-    let data = await getDiff(
-      repository.id,
-      pullRequest.head.sha,
+    let data = await getPullDiff(
+      pullRequest.base.repository.id,
+      pullRequest.head.repository.id,
       pullRequest.base.sha,
-      0,
-      null
+      pullRequest.head.sha,
     );
     let newFiles = [];
     if (data && data.diff) {
@@ -371,7 +368,7 @@ function RepositoryPullView(props) {
                               {c.path}
                               {!hunks.length ? (
                                 <div className="text-type-tertiary text-xs">
-                                  File was updated after the comment
+                                  Unable to load diff
                                 </div>
                               ) : (
                                 ""
