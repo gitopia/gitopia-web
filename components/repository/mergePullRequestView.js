@@ -238,7 +238,7 @@ function MergePullRequestView({
                 setIsGrantingAccess(true);
                 const res = await props.authorizeGitServer();
                 setIsGrantingAccess(false);
-                if (res.code !== 0) {
+                if (res && res.code !== 0) {
                   props.notify(res.rawLog, "error");
                 } else {
                   refreshPullMergeAccess(true);
