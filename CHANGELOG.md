@@ -1,6 +1,18 @@
 ## Changelog
 
-### v1.13.0 - 23 June 2023
+### v1.13.3 - 5th Jul 2023
+
+- Fixed review comments in merged pull requests and updated files
+
+### v1.13.2 - 27th Jun 2023
+
+- Fixed creating review comments in forked pull requests
+
+### v1.13.1 - 24th Jun 2023
+
+- Fixed default branch loading other commit files
+
+### v1.13.0 - 23 Jun 2023
 
 - Adding assignee and reviewer modal
 - Disable commenting option in a commit
@@ -8,16 +20,16 @@
 - Fixed delete branch always deletes main branch
 - Fixed ledger ibc transfers
 
-### v1.12.0 - 19 June 2023
+### v1.12.0 - 19 Jun 2023
 
 - Update display format of tokens
 - Fixes ibc transfers for keplr
 
-### v1.11.1 - 16 June 2023
+### v1.11.1 - 16 Jun 2023
 
 - Fixes ibc transfers and caching
 
-### v1.11.0 - 15 June 2023
+### v1.11.0 - 15 Jun 2023
 
 - Fixes russian characters rendering
 - Loading IBC config according to network type
@@ -27,11 +39,11 @@
 - Show dollar value using coingecko
 - Disable delete repository button
 
-### v1.10.0 - 9 June 2023
+### v1.10.0 - 9 Jun 2023
 
 - Loading IBC config according to network type
 
-### v1.9.0 - 6 June 2023
+### v1.9.0 - 6 Jun 2023
 
 - Adding autocomplete for branches in change default branch
 - Fixing ui for branch protection rule component
