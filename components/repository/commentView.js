@@ -12,6 +12,7 @@ function CommentView({
   userAddress,
   onUpdate,
   onDelete,
+  isReviewComment = false,
   ...props
 }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -19,9 +20,14 @@ function CommentView({
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
-    <div className="flex w-full mt-8" key={"comment" + comment.id}>
-      <div className="flex-none mr-4">
-        <AccountCard id={comment.creator} showAvatar={true} showId={false} />
+    <div className="flex w-full" key={"comment" + comment.id}>
+      <div className={"flex-none mr-4 mt-1" + (isReviewComment ? " mr-2": "")}>
+        <AccountCard
+          id={comment.creator}
+          showAvatar={true}
+          showId={false}
+          avatarSize={isReviewComment ? "xs" : "md"}
+        />
       </div>
       {isEditing ? (
         <CommentEditor
@@ -96,7 +102,7 @@ function CommentView({
               )}
             </div>
           </div>
-          <div className="p-6">
+          <div className={isReviewComment ? "p-3" : "p-6"}>
             <div className="text-white font-normal mb-3 markdown-body">
               {comment.body.length ? (
                 <ReactMarkdown linkTarget="_blank">
@@ -108,6 +114,9 @@ function CommentView({
             </div>
             <div className="flex-1 text-xs text-type-tertiary">
               {dayjs(comment.createdAt * 1000).fromNow()}
+              {comment.updatedAt - comment.createdAt > 120
+                ? ", edited " + dayjs(comment.updatedAt * 1000).fromNow()
+                : ""}
             </div>
           </div>
         </div>

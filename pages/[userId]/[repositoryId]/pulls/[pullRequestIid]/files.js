@@ -20,6 +20,8 @@ import getPullRequestCommentAll from "../../../../../helpers/getPullRequestComme
 import FileTreeView from "../../../../../components/repository/fileTreeView";
 import getPullDiffStats from "../../../../../helpers/getPullDiffStats";
 import Sticky from "react-stickynode";
+import CommentView from "../../../../../components/repository/commentView";
+import getPullRequestComment from "../../../../../helpers/getPullRequestComment";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -68,6 +70,44 @@ function RepositoryPullFilesView(props) {
     };
     getAllComments();
   }, [pullRequest]);
+
+  const getCommentView = (comment) => {
+    return (
+      <CommentView
+        comment={comment}
+        repositoryId={repository.id}
+        parentIid={pullRequest.iid}
+        parent={"COMMENT_PARENT_PULL_REQUEST"}
+        key={"comment" + comment.id}
+        userAddress={props.selectedAddress}
+        onUpdate={async (iid) => {
+          const newComment = await getPullRequestComment(
+            repository.id,
+            pullRequest.iid,
+            iid
+          );
+          const newAllComments = [...allComments];
+          let index = allComments.findIndex((c) => c.id === comment.id);
+          if (index > -1) newAllComments[index] = newComment;
+          setAllComments(newAllComments);
+        }}
+        onDelete={async (iid) => {
+          const res = await props.deleteComment({
+            repositoryId: repository.id,
+            parentIid: pullRequest.iid,
+            parent: "COMMENT_PARENT_PULL_REQUEST",
+            commentIid: iid,
+          });
+          if (res && res.code === 0) {
+            const newAllComments = [...allComments];
+            let index = allComments.findIndex((c) => c.id === comment.id);
+            if (index > -1) newAllComments.splice(index, 1);
+            setAllComments(newAllComments);
+          }
+        }}
+      />
+    );
+  };
 
   const refreshComments = async () => {
     const getAllComments = async () => {
@@ -143,6 +183,7 @@ function RepositoryPullFilesView(props) {
                 refreshComments={refreshComments}
                 onViewTypeChange={(v) => setViewType(v)}
                 showFile={showFile}
+                getCommentView={getCommentView}
               />
             </div>
           </div>

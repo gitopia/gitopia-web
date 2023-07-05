@@ -33,11 +33,9 @@ import PullRequestIssueView from "../../../../../components/repository/issuesVie
 import AccountCard from "../../../../../components/account/card";
 import getPullRequestCommentAll from "../../../../../helpers/getPullRequestCommentAll";
 import { parseDiff, Diff, Hunk, getChangeKey } from "react-diff-view";
-import getDiff from "../../../../../helpers/getDiff";
-import ReactMarkdown from "react-markdown";
-import shrinkAddress from "../../../../../helpers/shrinkAddress";
+import getPullDiff from "../../../../../helpers/getPullDiff";
 import validAddress from "../../../../../helpers/validAddress";
-import dayjs from "dayjs";
+import { commentType } from "../../../../../helpers/systemCommentTypeClass";
 
 export async function getStaticProps({ params }) {
   try {
@@ -163,64 +161,114 @@ function RepositoryPullView(props) {
     }
   };
 
-  const getWidgets = (hunks, creator, body, createdAt) => {
-    const longLines = [hunks[0].changes[hunks[0].changes.length - 1]];
-    return longLines.reduce((widgets, change) => {
-      const changeKey = getChangeKey(change);
+  // const getCommentView = (creator, body, createdAt) => {
+  //   return (
+  //     <div className="text-right my-4 sm:justify-end mx-4">
+  //       <div
+  //         className="border border-grey rounded-lg flex-1"
+  //         data-test="comment_view"
+  //       >
+  //         <div className="p-4">
+  //           <div className="flex uppercase text-xs font-bold">
+  //             <div className="">{shrinkAddress(creator)}</div>
+  //             <div className="pl-3 text-type-tertiary">
+  //               {dayjs(createdAt * 1000).fromNow()}
+  //             </div>
+  //           </div>
+  //           <div className="text-left text-white font-normal markdown-body mt-4">
+  //             <ReactMarkdown linkTarget="_blank">{body}</ReactMarkdown>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // };
 
-      return {
-        ...widgets,
-        [changeKey]: (
-          <div className="text-right my-4 sm:justify-end mx-4">
-            <div
-              className="border border-grey rounded-lg flex-1"
-              data-test="comment_view"
-            >
-              <div className="p-4">
-                <div className="flex uppercase text-xs font-bold">
-                  <div className="">{shrinkAddress(creator)}</div>
-                  <div className="pl-3 text-type-tertiary">
-                    {dayjs(createdAt * 1000).fromNow()}
-                  </div>
-                </div>
-                <div className="text-left text-white font-normal markdown-body mt-4">
-                  <ReactMarkdown linkTarget="_blank">{body}</ReactMarkdown>
-                </div>
-              </div>
-            </div>
-          </div>
-        ),
-      };
-    }, {});
-  };
-
-  const renderFile = ({ diff }, position, creator, body, createdAt, hunks) => {
-    const { oldRevision, newRevision, type } = diff[0];
+  const getCommentView = (comment, isReviewComment = false) => {
     return (
-      <div className="border border-grey rounded-lg w-11/12 sm:w-full">
-        <div className={"text-sm transition-transform origin-top "}>
-          <Diff
-            key={oldRevision + "-" + newRevision}
-            viewType={"unified"}
-            optimizeSelection={true}
-            diffType={type}
-            hunks={hunks}
-            widgets={getWidgets(hunks, creator, body, createdAt)}
-          >
-            {(hunks) => <Hunk key={hunks[0].content} hunk={hunks[0]} />}
-          </Diff>
-        </div>
-      </div>
+      <CommentView
+        comment={comment}
+        repositoryId={repository.id}
+        parentIid={pullRequest.iid}
+        parent={"COMMENT_PARENT_PULL_REQUEST"}
+        key={"comment" + comment.id}
+        userAddress={props.selectedAddress}
+        isReviewComment={isReviewComment}
+        onUpdate={async (iid) => {
+          const newComment = await getPullRequestComment(
+            repository.id,
+            pullRequest.iid,
+            iid
+          );
+          const newAllComments = [...allComments];
+          let index = allComments.findIndex((c) => c.id === comment.id);
+          if (index > -1) newAllComments[index] = newComment;
+          setAllComments(newAllComments);
+        }}
+        onDelete={async (iid) => {
+          const res = await props.deleteComment({
+            repositoryId: repository.id,
+            parentIid: pullRequest.iid,
+            parent: "COMMENT_PARENT_PULL_REQUEST",
+            commentIid: iid,
+          });
+          if (res && res.code === 0) {
+            const newAllComments = [...allComments];
+            let index = allComments.findIndex((c) => c.id === comment.id);
+            if (index > -1) newAllComments.splice(index, 1);
+            setAllComments(newAllComments);
+          }
+        }}
+      />
     );
   };
 
+  const getWidgets = (hunks, comment) => {
+    const changesLength = hunks[0]?.changes?.length;
+    if (changesLength) {
+      const longLines = [hunks[0].changes[changesLength - 1]];
+      return longLines.reduce((widgets, change) => {
+        const changeKey = getChangeKey(change);
+
+        return {
+          ...widgets,
+          [changeKey]: <div className="p-4">{getCommentView(comment, true)}</div>,
+        };
+      }, {});
+    } else return "";
+  };
+
+  const renderFile = ({ diff }, hunks, comment) => {
+    const { oldRevision, newRevision, type } = diff[0];
+    if (hunks && hunks.length && hunks[0].content) {
+      return (
+        <div className="border border-grey rounded-lg w-11/12 sm:w-full">
+          <div className={"text-sm transition-transform origin-top "}>
+            <Diff
+              key={oldRevision + "-" + newRevision}
+              viewType={"unified"}
+              optimizeSelection={true}
+              diffType={type}
+              hunks={hunks}
+              widgets={getWidgets(hunks, comment)}
+            >
+              {(hunks) => <Hunk key={hunks[0].content} hunk={hunks[0]} />}
+            </Diff>
+          </div>
+        </div>
+      );
+    }
+    return "";
+  };
+
   const loadDiff = async () => {
-    let data = await getDiff(
-      repository.id,
-      pullRequest.head.sha,
+    let data = await getPullDiff(
+      pullRequest.base.repository.id,
+      pullRequest.head.repository.id,
       pullRequest.base.sha,
+      pullRequest.head.sha,
       0,
-      null
+      100
     );
     let newFiles = [];
     if (data && data.diff) {
@@ -312,66 +360,35 @@ function RepositoryPullView(props) {
                         <div className="flex w-full" key={c.id}>
                           <div className="flex-none mr-4 w-10"></div>
                           <div className="flex-none w-12 relative pt-5 flex justify-center">
-                            <div className="border border-grey rounded-full w-6 h-6 bg-base-100 z-10"></div>
+                            <div className="w-6 h-6 bg-base-100 z-10">
+                              {commentType["COMMENT_TYPE_ADD_REVIEWERS"]}
+                            </div>
                             <div className="border-l border-grey h-full absolute left-1/2 top-0 z-0"></div>
                           </div>
-                          <div>
-                            <div className="text-xs text-type-secondary pr-4 pt-6 w-11/12 sm:w-full">
-                              {c.creator +
-                                " reviewed " +
-                                dayjs(c.createdAt * 1000).fromNow()}
-                            </div>
-                            <div className="mt-6 mb-2 text-sm text-type-primary">
+                          <div className="w-full">
+                            <div className="mt-5 mb-2 text-sm text-type-primary">
                               {c.path}
+                              {!hunks.length ? (
+                                <span className="ml-2 badge text-xs text-type-secondary">
+                                  Outdated
+                                </span>
+                              ) : (
+                                ""
+                              )}
                             </div>
-                            {[fileDiff].map((diff) =>
-                              renderFile(
-                                diff,
-                                c.position,
-                                c.creator,
-                                c.body,
-                                c.createdAt,
-                                hunks
+                            {hunks.length ? (
+                              [fileDiff].map((diff) =>
+                                renderFile(diff, hunks, c)
                               )
+                            ) : (
+                              <div className="mt-4">{getCommentView(c, true)}</div>
                             )}
                           </div>
                         </div>
                       );
                     }
                   } else {
-                    return (
-                      <CommentView
-                        comment={c}
-                        repositoryId={repository.id}
-                        parentIid={pullRequest.iid}
-                        parent={"COMMENT_PARENT_PULL_REQUEST"}
-                        key={"comment" + i}
-                        userAddress={props.selectedAddress}
-                        onUpdate={async (iid) => {
-                          const newComment = await getPullRequestComment(
-                            repository.id,
-                            pullRequest.iid,
-                            iid
-                          );
-                          const newAllComments = [...allComments];
-                          newAllComments[i] = newComment;
-                          setAllComments(newAllComments);
-                        }}
-                        onDelete={async (iid) => {
-                          const res = await props.deleteComment({
-                            repositoryId: repository.id,
-                            parentIid: pullRequest.iid,
-                            parent: "COMMENT_PARENT_PULL_REQUEST",
-                            commentIid: iid,
-                          });
-                          if (res && res.code === 0) {
-                            const newAllComments = [...allComments];
-                            newAllComments.splice(i, 1);
-                            setAllComments(newAllComments);
-                          }
-                        }}
-                      />
-                    );
+                    return <div className="mt-8">{getCommentView(c)}</div>;
                   }
                 })}
                 <MergePullRequestView

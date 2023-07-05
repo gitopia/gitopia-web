@@ -11,7 +11,6 @@ import ReactMarkdown from "react-markdown";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import dayjs from "dayjs";
 import { InView } from "react-intersection-observer";
-import AccountCard from "../../components/account/card";
 
 function DiffView({
   stats,
@@ -25,6 +24,7 @@ function DiffView({
   refreshComments,
   onViewTypeChange = () => {},
   showFile = null,
+  getCommentView = () => {},
   ...props
 }) {
   const [viewType, setViewType] = useState("unified");
@@ -119,33 +119,7 @@ function DiffView({
             );
           } else {
             commentChange[getChangeKey(h.changes[c.position])] = (
-              <div>
-                <div className="text-right my-4 sm:justify-end mx-4">
-                  <div
-                    className="border border-grey rounded-lg flex-1 bg-grey-900"
-                    data-test="comment_view"
-                  >
-                    <div className="p-4">
-                      <div className="flex uppercase text-xs font-bold">
-                        {/* <div className="">{shrinkAddress(c.creator)}</div> */}
-                        <AccountCard
-                          id={c.creator}
-                          showAvatar={true}
-                          showId={true}
-                        />
-                        <div className="pl-3 mt-3 text-type-secondary">
-                          {dayjs(c.createdAt * 1000).fromNow()}
-                        </div>
-                      </div>
-                      <div className="text-left text-white font-normal markdown-body mt-4 ml-12">
-                        <ReactMarkdown linkTarget="_blank">
-                          {c.body}
-                        </ReactMarkdown>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <div className="p-4">{getCommentView(c)}</div>
             );
           }
         }
@@ -215,7 +189,7 @@ function DiffView({
                           setLoading(false);
                           setComment("");
                           setChange({});
-                          props.notify("comment added", "info");
+                          props.notify("Comment added", "info");
                           if (refreshComments) {
                             refreshComments();
                           }
