@@ -33,7 +33,6 @@ import PullRequestIssueView from "../../../../../components/repository/issuesVie
 import AccountCard from "../../../../../components/account/card";
 import getPullRequestCommentAll from "../../../../../helpers/getPullRequestCommentAll";
 import { parseDiff, Diff, Hunk, getChangeKey } from "react-diff-view";
-import getDiff from "../../../../../helpers/getDiff";
 import getPullDiff from "../../../../../helpers/getPullDiff";
 import validAddress from "../../../../../helpers/validAddress";
 import { commentType } from "../../../../../helpers/systemCommentTypeClass";
@@ -185,7 +184,7 @@ function RepositoryPullView(props) {
   //   );
   // };
 
-  const getCommentView = (comment) => {
+  const getCommentView = (comment, isReviewComment = false) => {
     return (
       <CommentView
         comment={comment}
@@ -194,6 +193,7 @@ function RepositoryPullView(props) {
         parent={"COMMENT_PARENT_PULL_REQUEST"}
         key={"comment" + comment.id}
         userAddress={props.selectedAddress}
+        isReviewComment={isReviewComment}
         onUpdate={async (iid) => {
           const newComment = await getPullRequestComment(
             repository.id,
@@ -232,7 +232,7 @@ function RepositoryPullView(props) {
 
         return {
           ...widgets,
-          [changeKey]: <div className="p-4">{getCommentView(comment)}</div>,
+          [changeKey]: <div className="p-4">{getCommentView(comment, true)}</div>,
         };
       }, {});
     } else return "";
@@ -266,7 +266,9 @@ function RepositoryPullView(props) {
       pullRequest.base.repository.id,
       pullRequest.head.repository.id,
       pullRequest.base.sha,
-      pullRequest.head.sha
+      pullRequest.head.sha,
+      0,
+      100
     );
     let newFiles = [];
     if (data && data.diff) {
@@ -367,9 +369,9 @@ function RepositoryPullView(props) {
                             <div className="mt-5 mb-2 text-sm text-type-primary">
                               {c.path}
                               {!hunks.length ? (
-                                <div className="text-type-tertiary text-xs">
-                                  Unable to load diff
-                                </div>
+                                <span className="ml-2 badge text-xs text-type-secondary">
+                                  Outdated
+                                </span>
                               ) : (
                                 ""
                               )}
@@ -379,7 +381,7 @@ function RepositoryPullView(props) {
                                 renderFile(diff, hunks, c)
                               )
                             ) : (
-                              <div className="mt-4">{getCommentView(c)}</div>
+                              <div className="mt-4">{getCommentView(c, true)}</div>
                             )}
                           </div>
                         </div>
