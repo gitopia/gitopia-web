@@ -22,22 +22,31 @@ function IssueBountyView(props) {
       const coinArray = [];
       for (var i = 0; i < props.bounties.length; i++) {
         const res = await getBounty(props.bounties[i]);
-        if (res) {
-          const bountyValueInDollars = await getBountyValueInDollars(res);
-          res.bountyValueInDollars = bountyValueInDollars;
-        }
-        for (let i = 0; i < res.amount.length; i++) {
-          if (res.amount[i].denom.includes("ibc")) {
-            let denomName = await getDenomNameByHash(res.amount[i].denom);
-            res.amount[i].showDenom = denomName;
+        if (
+          res.state == "BOUNTY_STATE_SRCDEBITTED" &&
+          res.expireAt > dayjs().unix()
+        ) {
+          if (res) {
+            const bountyValueInDollars = await getBountyValueInDollars(res);
+            res.bountyValueInDollars = bountyValueInDollars;
           }
+          for (let i = 0; i < res.amount.length; i++) {
+            if (res.amount[i].denom.includes("ibc")) {
+              let denomName = await getDenomNameByHash(res.amount[i].denom);
+              res.amount[i].showDenom = denomName;
+            }
+          }
+          bountyArray.push(res);
+          res.amount.map((a) => {
+            coin[a.denom] !== undefined
+              ? (coin[a.denom].amount =
+                  coin[a.denom].amount + parseInt(a.amount))
+              : (coin[a.denom] = {
+                  amount: parseInt(a.amount),
+                  denom: a.denom,
+                });
+          });
         }
-        bountyArray.push(res);
-        res.amount.map((a) => {
-          coin[a.denom] !== undefined
-            ? (coin[a.denom].amount = coin[a.denom].amount + parseInt(a.amount))
-            : (coin[a.denom] = { amount: parseInt(a.amount), denom: a.denom });
-        });
       }
       for (const property in coin) {
         coinArray.push(coin[property]);
