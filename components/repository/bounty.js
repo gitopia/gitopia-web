@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import getDenomNameByHash from "../../helpers/getDenomNameByHash";
+import getTokenValueInDollars from "../../helpers/getTotalTokenValueInDollars";
 import { coingeckoId } from "../../ibc-assets-config";
 
 function CreateBounty(props) {
@@ -20,6 +21,7 @@ function CreateBounty(props) {
   const [click, setClick] = useState(false);
   const [tokenKV, setTokenKV] = useState({});
   const [isAddingNewToken, setIsAddingNewToken] = useState(false);
+  const [dollarValue, setDollarValue] = useState(0);
   const ref1 = useRef(null);
   const ref2 = useRef(null);
   // const ref3 = useRef("dd/mm/yyyy");
@@ -69,6 +71,17 @@ function CreateBounty(props) {
       setIsAddingNewToken(true);
     }
   }, [props.bountyAmount]);
+
+  async function getDollarValue(denom, amount) {
+    let dollar = await getTokenValueInDollars(
+      denom,
+      amount * Math.pow(10, coingeckoId[denom].coinDecimals)
+    );
+
+    if (dollar) {
+      setDollarValue(dollar);
+    }
+  }
 
   const handleClick = () => {
     let arr = props.bountyAmount.slice();
@@ -295,6 +308,20 @@ function CreateBounty(props) {
             <label
               htmlFor="my-modal"
               className="btn btn-circle btn-sm btn-ghost"
+              onClick={() => {
+                setAmount([]);
+                setCounter(0);
+                setTokenDenom([]);
+                setMaxAmount([]);
+                props.setBountyAmount([]);
+                let da = dayjs().add(7, "D").format("YYYY-MM-DD");
+                setExpiry(da);
+                // ref3.current.value = da;
+                ref2.current.value = "select-token";
+                ref1.current.value = "";
+                setValidateAmountError(null);
+                setDollarValue(0);
+              }}
             >
               <svg
                 width="14"
@@ -414,6 +441,7 @@ function CreateBounty(props) {
                   onChange={async (e) => {
                     handleTokenDenomOnChange(e.target.value);
                     handleMaxAmountOnChange(e.target.value);
+                    await getDollarValue(e.target.value, amount[counter]);
                   }}
                   ref={ref2}
                   defaultValue="select-token"
@@ -448,50 +476,58 @@ function CreateBounty(props) {
                     data-type="amount_entered"
                     onKeyUp={async (e) => {
                       await validateAmount(e.target.value);
+                      await getDollarValue(tokenDenom[counter], e.target.value);
+                      console.log(tokenDenom[counter], e.target.value);
                     }}
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       handleAmountOnChange(e.target.value);
+                      await getDollarValue(tokenDenom[counter], e.target.value);
                     }}
                   ></input>
                 </div>
               </div>
-              <div className="flex ml-auto text-grey-200 min-h-[24px] items-center">
-                {ref2?.current?.value !== "select-token" ? (
-                  <div className="flex flex-none ml-1">
-                    <div className="text-xs mr-1">Balance:</div>
-                    <div className="text-xs mr-2">{maxAmount[counter]}</div>
-                    <div
-                      className="link link-primary text-xs text-primary font-bold no-underline mr-2"
-                      onClick={(e) => {
-                        fillAmount(maxAmount[counter] * 0.5);
-                        handleAmountOnChange(maxAmount[counter] * 0.5);
-                      }}
-                    >
-                      Half
+              <div className="flex">
+                <div className="flex text-grey-200 min-h-[24px] items-center">
+                  {ref2?.current?.value !== "select-token" ? (
+                    <div className="flex flex-none ml-1">
+                      <div className="text-xs mr-1">Balance:</div>
+                      <div className="text-xs mr-2">{maxAmount[counter]}</div>
+                      <div
+                        className="link link-primary text-xs text-primary font-bold no-underline mr-2"
+                        onClick={(e) => {
+                          fillAmount(maxAmount[counter] * 0.5);
+                          handleAmountOnChange(maxAmount[counter] * 0.5);
+                        }}
+                      >
+                        Half
+                      </div>
+                      <div
+                        className="link link-primary text-xs text-primary font-bold no-underline mr-2"
+                        onClick={(e) => {
+                          fillAmount(maxAmount[counter]);
+                          handleAmountOnChange(maxAmount[counter]);
+                        }}
+                      >
+                        Max
+                      </div>
                     </div>
-                    <div
-                      className="link link-primary text-xs text-primary font-bold no-underline mr-2"
-                      onClick={(e) => {
-                        fillAmount(maxAmount[counter]);
-                        handleAmountOnChange(maxAmount[counter]);
-                      }}
-                    >
-                      Max
-                    </div>
-                  </div>
-                ) : (
-                  ""
-                )}
-                <div className="flex-1"></div>
-                {validateAmountError ? (
-                  <label>
-                    <span className="label-text-alt text-error">
-                      {validateAmountError}
-                    </span>
-                  </label>
-                ) : (
-                  ""
-                )}
+                  ) : (
+                    ""
+                  )}
+                  <div className="flex-1"></div>
+                  {validateAmountError ? (
+                    <label>
+                      <span className="label-text-alt text-error">
+                        {validateAmountError}
+                      </span>
+                    </label>
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div className="ml-auto font-bold text-xs text-type-tertiary">
+                  ≈${dollarValue}
+                </div>
               </div>
             </div>
 
@@ -587,6 +623,7 @@ function CreateBounty(props) {
                           ref2.current.value = "select-token";
                           ref1.current.value = "";
                           setValidateAmountError(null);
+                          setDollarValue(0);
                           if (res && res.code === 0) {
                             props.onUpdate() ? props.onUpdate() : "";
                           }
