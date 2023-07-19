@@ -477,7 +477,10 @@ function CreateBounty(props) {
                     onKeyUp={async (e) => {
                       await validateAmount(e.target.value);
                       await getDollarValue(tokenDenom[counter], e.target.value);
-                      console.log(tokenDenom[counter], e.target.value);
+                    }}
+                    onKeyDown={async (e) => {
+                      await validateAmount(e.target.value);
+                      await getDollarValue(tokenDenom[counter], e.target.value);
                     }}
                     onChange={async (e) => {
                       handleAmountOnChange(e.target.value);
@@ -494,18 +497,26 @@ function CreateBounty(props) {
                       <div className="text-xs mr-2">{maxAmount[counter]}</div>
                       <div
                         className="link link-primary text-xs text-primary font-bold no-underline mr-2"
-                        onClick={(e) => {
+                        onClick={async (e) => {
                           fillAmount(maxAmount[counter] * 0.5);
                           handleAmountOnChange(maxAmount[counter] * 0.5);
+                          await getDollarValue(
+                            tokenDenom[counter],
+                            maxAmount[counter] * 0.5
+                          );
                         }}
                       >
                         Half
                       </div>
                       <div
                         className="link link-primary text-xs text-primary font-bold no-underline mr-2"
-                        onClick={(e) => {
+                        onClick={async (e) => {
                           fillAmount(maxAmount[counter]);
                           handleAmountOnChange(maxAmount[counter]);
+                          await getDollarValue(
+                            tokenDenom[counter],
+                            maxAmount[counter]
+                          );
                         }}
                       >
                         Max
