@@ -274,7 +274,7 @@ function ActivityFeed({ ...props }) {
       </div>
     );
   };
-
+  
   const getRepositoryCard = (r, i) => {
     return (
       <div
