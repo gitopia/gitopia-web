@@ -3,26 +3,11 @@ import FaucetReceiver from "../faucetReceiver";
 import AllowanceReceiver from "../allowanceReceiver";
 import GreetUser from "../greetUser";
 import PromptBackupWallet from "../promptBackupWallet";
-import KnowledgeCenter from "./knowledgeCenter";
+import ActivityFeed from "./activityFeed";
 
 function UserDashboard(props) {
   return (
     <main className="container mx-auto max-w-screen-lg py-4 sm:py-12">
-      {/* <div className="flex">
-        <GreetUser />
-        <div className="flex-1"></div>
-        <div>
-          <div className="text-xs uppercase ml-2">Show:</div>
-          <select
-            className="select select-ghost select-xs w-32"
-            defaultValue="1"
-          >
-            <option value="1">Pull Requests</option>
-            <option value="2">Issues</option>
-            <option value="3">Proposals</option>
-          </select>
-        </div>
-      </div> */}
       <div className="mb-8">
         <GreetUser />
       </div>
@@ -71,8 +56,8 @@ function UserDashboard(props) {
           </div>
         </div>
       </div>
-      <div className="mt-8 sm:mt-12 sm:pl-4 sm:pr-12">
-        <KnowledgeCenter />
+      <div className="mt-8">
+        <ActivityFeed />
       </div>
     </main>
   );
