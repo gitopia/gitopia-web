@@ -6,45 +6,45 @@ import getWhois from "../../helpers/getWhois";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import Link from "next/link";
 import { connect } from "react-redux";
+import { notify } from "reapop";
 
 function AccountCard({
   id,
-  initailData,
+  initialData,
   showAvatar = false,
   showId = true,
   avatarSize = "md",
   autoLoad = true,
   ...props
 }) {
-  const [accountData, setAccountData] = useState(initailData || {});
+  const [accountData, setAccountData] = useState(initialData || {});
   const [loading, setLoading] = useState(0);
-
   const getAccountData = async () => {
     if (loading) return;
     if (accountData?.id) return;
     if (props.user?.creator === id || props.user?.username === id) {
-      setAccountData(props.user);
+      setAccountData({ ...props.user, __typename: "User" });
       return;
     } else if (props.dao?.address === id || props.dao?.name === id) {
-      setAccountData(props.dao);
+      setAccountData({ ...props.dao, __typename: "Dao" });
       return;
     }
     setLoading(1);
     if (validUserAddress.test(id)) {
       let u = await getUser(id);
-      setAccountData(u);
+      setAccountData({ u, __typename: "User" });
     } else if (validDaoAddress.test(id)) {
       let d = await getDao(id);
-      setAccountData(d);
+      setAccountData({ d, __typename: "Dao" });
     } else if (id && id !== "") {
       let data = await getWhois(id);
       console.log(data);
       if (data?.ownerType === "USER") {
         let u = await getUser(id);
-        setAccountData(u);
+        setAccountData({ u, __typename: "User" });
       } else if (data?.ownerType === "DAO") {
         let d = await getDao(id);
-        setAccountData(d);
+        setAccountData({ d, __typename: "Dao" });
       } else {
         setLoading(-1); // error in resolving whois
         return;
@@ -55,9 +55,9 @@ function AccountCard({
 
   useEffect(() => {
     if (props.user?.creator === id || props.user?.username === id) {
-      setAccountData(props.user);
+      setAccountData({ ...props.user, __typename: "User" });
     } else if (props.dao?.address === id || props.dao?.name === id) {
-      setAccountData(props.dao);
+      setAccountData({ ...props.dao, __typename: "Dao" });
     }
   }, [id, props.user, props.dao]);
 
@@ -69,6 +69,8 @@ function AccountCard({
 
   const getAvatarSize = () => {
     switch (avatarSize) {
+      case "xxs":
+        return "w-4 h-4";
       case "xs":
         return "w-6 h-6";
       case "sm":
@@ -80,12 +82,26 @@ function AccountCard({
 
   const getAvatarTextSize = () => {
     switch (avatarSize) {
+      case "xxs":
+        return "text-xs";
       case "xs":
         return "text-sm";
       case "sm":
         return "text-lg";
       default:
         return "text-xl";
+    }
+  };
+
+  const getArrowPosition = () => {
+    switch (avatarSize) {
+      case "xxs":
+      case "xs":
+        return "left-1";
+      case "sm":
+        return "left-2";
+      default:
+        return "left-3";
     }
   };
 
@@ -106,8 +122,9 @@ function AccountCard({
           <div className="avatar">
             <div
               className={
-                (accountData?.address ? "rounded-md " : "rounded-full ") +
-                getAvatarSize()
+                (accountData?.__typename == "Dao"
+                  ? "rounded-md "
+                  : "rounded-full ") + getAvatarSize()
               }
             >
               {accountData?.avatarUrl ? (
@@ -147,16 +164,27 @@ function AccountCard({
       </Link>
       <div
         tabIndex={0}
-        className="dropdown-content p-4 shadow-xl border border-neutral bg-base-100 rounded-md w-48 relative mt-2"
+        className="dropdown-content p-4 shadow-xl border border-neutral bg-base-100 rounded-md w-48 relative mt-3"
       >
-        <div className="absolute rotate-45 w-4 h-4 border border-neutral rounded-md -top-2 left-3"></div>
-        <div className="absolute rotate-45 w-4 h-4 mt-[2px] bg-base-100 rounded-md -top-2 left-3"></div>
-        <div className="absolute w-16 h-6 mt-[2px] bg-transparent rounded-md -top-3 -left-1"></div>
+        <div
+          className={
+            "absolute rotate-45 w-4 h-4 border border-neutral rounded-sm -top-2 " +
+            getArrowPosition()
+          }
+        ></div>
+        <div
+          className={
+            "absolute rotate-45 w-4 h-4 mt-[2px] bg-base-100 rounded-sm -top-2 " +
+            getArrowPosition()
+          }
+        ></div>
+        <div className="absolute w-16 h-6 mt-[2px] bg-transparent rounded-md -top-4 -left-1"></div>
         <div className="avatar">
           <div
             className={
-              (accountData?.address ? "rounded-md " : "rounded-full ") +
-              "w-16 h-16"
+              (accountData?.__typename === "Dao"
+                ? "rounded-md "
+                : "rounded-full ") + "w-16 h-16"
             }
           >
             {accountData?.avatarUrl ? (
@@ -262,7 +290,17 @@ function AccountCard({
           )} */}
         <div className="text-sm text-type">{accountData?.username}</div>
         {accountData?.address || accountData?.creator ? (
-          <div className="text-sm text-type-secondary">
+          <div
+            className="text-sm text-type-secondary cursor-pointer"
+            onClick={(e) => {
+              navigator.clipboard.writeText(
+                accountData?.address
+                  ? accountData?.address
+                  : accountData?.creator
+              );
+              props.notify("Address copied to clipboard", "info");
+            }}
+          >
             {"gitopia" +
               shrinkAddress(
                 accountData?.address
@@ -288,4 +326,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(AccountCard);
+export default connect(mapStateToProps, { notify })(AccountCard);
