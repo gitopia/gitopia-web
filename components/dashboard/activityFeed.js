@@ -16,7 +16,12 @@ function ActivityFeed({ ...props }) {
           number
         }
       }
-      feedItems(first: 10, skip: $skip, orderBy: feedScore, orderDirection: desc) {
+      feedItems(
+        first: 10
+        skip: $skip
+        orderBy: feedScore
+        orderDirection: desc
+      ) {
         feedScore
         ... on Repository {
           __typename
@@ -215,7 +220,7 @@ function ActivityFeed({ ...props }) {
     if (!data.feedItems.length) setHasMore(false);
     setFeed((prevFeedItems) => [...prevFeedItems, ...data.feedItems]);
     setOffset((prevOffset) => prevOffset + data.feedItems.length);
-  }
+  };
 
   const getRepoHeader = (r) => {
     let ownerData = { ...r.owner?.owner };
@@ -277,11 +282,11 @@ function ActivityFeed({ ...props }) {
   const getRepositoryCard = (r, i) => {
     return (
       <div
-        className="p-4 my-4 border border-grey-50 rounded-md"
+        className="p-4 my-0"
         key={"feedRepo" + i}
       >
         {getRepoHeader(r)}
-        <div className="text-sm text-type-secondary">{r.description}</div>
+        <div className="p-2 mx-6 text-sm text-type-secondary max-w-2xl truncate">{r.description}</div>
       </div>
     );
   };
@@ -289,7 +294,7 @@ function ActivityFeed({ ...props }) {
   const getIssueCard = (p, i) => {
     return (
       <div
-        className="p-4 my-4 border border-grey-50 rounded-md"
+        className="p-4 my-4"
         key={"feedIssue" + i}
       >
         {getRepoHeader(p?.repository?.repository)}
@@ -324,7 +329,9 @@ function ActivityFeed({ ...props }) {
             </Link>
             <div className="text-type-secondary text-xs">{p?.description}</div>
             <div className="text-type-secondary text-xs mt-2">
-              <span className="mr-1">{p?.state == "OPEN" ? "Opened by" : "Closed by"}</span>
+              <span className="mr-1">
+                {p?.state == "OPEN" ? "Opened by" : "Closed by"}
+              </span>
               <AccountCard
                 id={p?.owner?.user?.username}
                 initialData={p?.owner?.user}
@@ -332,7 +339,11 @@ function ActivityFeed({ ...props }) {
                 showAvatar={false}
                 showId={true}
               />
-              <span className="ml-1">{ p?.state == "OPEN" ? dayjs(p?.createdAt * 1000).fromNow() : dayjs(p?.closedAt * 1000).fromNow()}</span>
+              <span className="ml-1">
+                {p?.state == "OPEN"
+                  ? dayjs(p?.createdAt * 1000).fromNow()
+                  : dayjs(p?.closedAt * 1000).fromNow()}
+              </span>
             </div>
           </div>
         </div>
@@ -349,32 +360,21 @@ function ActivityFeed({ ...props }) {
   };
 
   return (
-    <div className="max-w-2xl">
-      <div className="text-xl">Explore Gitopia</div>
-      <InfiniteScroll
-        dataLength={feed.length}
-        next={loadMore}
-        hasMore={hasMore}
-        loader={<h4>Loading...</h4>}
-        style={{overflow:"hidden"}}
-        scrollableTarget={() => {
-          typeof window !== "undefined" ? window.document : null;
-        }}
-      >
-        {feed.map((f, i) => {
-          if (f.__typename === "Repository") {
-            return getRepositoryCard(f, i);
-          } else if (f.__typename === "Issue") {
-            return getIssueCard(f, i);
-          } else if (f.__typename === "PullRequest") {
-            return getPullRequestCard(f, i);
-          } else if (f.__typename === "Bounty") {
-            return getBountyCard(f, i);
-          }
-        })}
-        <div className="pb-52"></div>
-      </InfiniteScroll>
-      <div className="text-xs text-type-tertiary">
+    <div className="max-w-screen-lg">
+      <div className="px-4 text-xs text-type-tertiary font-bold uppercase">Trending</div>
+
+      {feed.map((f, i) => {
+        if (f.__typename === "Repository") {
+          return getRepositoryCard(f, i);
+        } else if (f.__typename === "Issue") {
+          return getIssueCard(f, i);
+        } else if (f.__typename === "PullRequest") {
+          return getPullRequestCard(f, i);
+        } else if (f.__typename === "Bounty") {
+          return getBountyCard(f, i);
+        }
+      })}
+      <div className="text-xs text-type-tertiary px-4">
         {"Synced data till block " + data?._meta?.block?.number}
       </div>
     </div>
