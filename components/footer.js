@@ -4,7 +4,14 @@ export default function Footer(props) {
       <div className="mx-auto max-w-screen-lg container px-1 sm:px-4">
         <div className="border-t border-grey py-4 px-24 flex text-xs justify-between text-type-secondary flex-col sm:flex-row text-center">
           <span className="sm:border-r sm:border-grey sm:pr-16">
-            &copy; Gitopia {new Date().getFullYear()}
+            <span></span>&copy; Gitopia {new Date().getFullYear()}
+            {props.buildId ? (
+              <span className="ml-2">
+                {"Build " + props.buildId}
+              </span>
+            ) : (
+              ""
+            )}
           </span>
           <a
             className="link no-underline hover:underline mt-3 sm:mt-0"

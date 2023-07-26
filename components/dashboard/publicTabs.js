@@ -7,7 +7,7 @@ export default function PublicTabs({
   ...props
 }) {
   return (
-    <div className="tabs relative overflow-x-auto overflow-y-hidden flex-nowrap">
+    <div className="tabs overflow-x-auto overflow-y-hidden flex-nowrap">
       <Link
         href={hrefBase}
         className={
