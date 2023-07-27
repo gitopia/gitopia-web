@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import getDiff from "../../helpers/getDiff";
 import { parseDiff, Diff, Hunk, getChangeKey } from "react-diff-view";
 import getPullDiff from "../../helpers/getPullDiff";
 import pluralize from "../../helpers/pluralize";
