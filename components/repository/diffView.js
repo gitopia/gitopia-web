@@ -317,20 +317,14 @@ function DiffView({
     limit = paginationLimit
   ) => {
     setLoadingMore(true);
-    let data;
-    if (baseRepoId === repoId) {
-      data = await getDiff(repoId, currentSha, previousSha, offset, limit);
-    } else {
-      data = await getPullDiff(
-        baseRepoId,
-        repoId,
-        previousSha,
-        currentSha,
-        offset,
-        limit
-      );
-    }
-
+    let data = await getPullDiff(
+      baseRepoId,
+      repoId,
+      previousSha,
+      currentSha,
+      offset,
+      limit
+    );
     let newFiles = [...oldFiles];
     if (data && data.diff) {
       data.diff.map(({ file_name, patch, stat }, index) => {
