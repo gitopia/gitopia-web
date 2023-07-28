@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "../helpers/axiosFetch";
 import Head from "next/head";
-import Header from "./landingPageHeader";
+import Header from "./header";
 import Footer from "./landingPageFooter";
 import styles from "../styles/landing.module.css";
 import Link from "next/link";
@@ -21,18 +21,85 @@ const customParseFormat = require("dayjs/plugin/customParseFormat");
 dayjs.extend(duration);
 dayjs.extend(customParseFormat);
 
+function showToken(value, denom) {
+  if (denom === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN) {
+    return value + " " + denom;
+  } else {
+    let roundOff = Math.floor(value / 10000) / 100;
+    return roundOff + " " + denom;
+  }
+}
+
 function ClaimRewards(props) {
   const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState(null);
-  const [claimedToken, setClaimedToken] = useState(null);
-  const [unclaimedToken, setUnclaimedToken] = useState(null);
+  const [token, setToken] = useState(process.env.NEXT_PUBLIC_CURRENCY_TOKEN);
+  const [claimedToken, setClaimedToken] = useState(500000);
+  const [unclaimedToken, setUnclaimedToken] = useState(100000);
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
-  const [tasks, setTasks] = useState([]);
-  const [tasksTotal, setTasksTotal] = useState(1);
+  const [tasks, setTasks] = useState([
+    {
+      type: "CREATE_USER",
+      isComplete: false,
+      weight: 5,
+    },
+    {
+      type: "CREATE_NON_EMPTY_REPO",
+      isComplete: false,
+      weight: 10,
+    },
+    {
+      type: "CREATE_ISSUE",
+      isComplete: false,
+      weight: 5,
+    },
+    {
+      type: "CREATE_ISSUE_WITH_BOUNTY",
+      isComplete: false,
+      weight: 10,
+    },
+    {
+      type: "CREATE_ISSUE_WITH_BOUNTY_VERIFIED",
+      isComplete: false,
+      weight: 10,
+    },
+    {
+      type: "PR_TO_REPO_MERGED",
+      isComplete: false,
+      weight: 20,
+    },
+    {
+      type: "PR_TO_VERIFIED_REPO_MERGED",
+      isComplete: false,
+      weight: 10,
+    },
+    {
+      type: "PR_TO_VERIFIED_REPO_MERGED_WITH_BOUNTY",
+      isComplete: false,
+      weight: 10,
+    },
+    {
+      type: "LORE_STAKED",
+      isComplete: false,
+      weight: 10,
+    },
+    {
+      type: "VOTE_PROPOSAL",
+      isComplete: false,
+      weight: 10,
+    },
+  ]);
+  const [tasksTotal, setTasksTotal] = useState(100);
   const [tasksCompleted, setTasksCompleted] = useState(0);
-  const [remainingClaimableToken, setRemainingClaimableToken] = useState(0);
+  const [
+    remainingClaimableEcosystemToken,
+    setRemainingClaimableEcosystemToken,
+  ] = useState(250000000);
+  const [remainingClaimableGithubToken, setRemainingClaimableGithubToken] =
+    useState(250000000);
+  const [isEcosystemTokensLoaded, setIsEcosystemTokensLoaded] = useState(false);
+  const [isGithubTokensLoaded, setIsGithubTokensLoaded] = useState(false);
 
   const router = useRouter();
   const deadlineUnix = process.env.NEXT_PUBLIC_REWARD_DEADLINE;
@@ -62,17 +129,37 @@ function ClaimRewards(props) {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => getTime(deadlineUnix), 60000);
-    return () => clearInterval(interval);
+    let i1, i2, i3;
+    if (typeof window !== "undefined") {
+      i1 = setInterval(() => getTime(deadlineUnix), 60000);
+      i2 = setInterval(getTokens, 60000);
+      i3 = setInterval(fetchTasks, 60000);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        clearInterval(i1);
+        clearInterval(i2);
+        clearInterval(i3);
+      }
+    };
   });
+
   async function fetchTasks() {
     const t = await getTasks(props.selectedAddress);
-    if (t !== undefined) {
+    if (Array.isArray(t)) {
       setTasks(t);
-      if (tasks) {
-        const percentage = await calculateTasksPercentage(t);
-        setTasksCompleted(percentage);
-      }
+      const percentage = await calculateTasksPercentage(t);
+      setTasksCompleted(percentage);
+    } else {
+      let newTasks = tasks.map((t) => {
+        return {
+          ...t,
+          isComplete: false,
+        };
+      });
+      setTasks(newTasks);
+      const percentage = await calculateTasksPercentage(newTasks);
+      setTasksCompleted(percentage);
     }
   }
 
@@ -84,23 +171,33 @@ function ClaimRewards(props) {
 
   async function getTokens() {
     let res = await getRewardToken(props.selectedAddress);
+    console.log(res);
     if (res) {
-      res.claimed_amount.amount +
-        res.claimable_amount.amount +
-        res.remaining_claimable_amount.amount <
+      res.claimed_amount?.amount +
+        res.claimable_amount?.amount +
+        res.remaining_claimable_amount?.amount <
       1000000
         ? setToken(process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN)
         : setToken(process.env.NEXT_PUBLIC_CURRENCY_TOKEN);
 
-      setClaimedToken(res.claimed_amount.amount);
-      setUnclaimedToken(res.claimable_amount.amount);
-      setRemainingClaimableToken(res.remaining_claimable_amount.amount);
+      setClaimedToken(res.claimed_amount?.amount || 0);
+      setUnclaimedToken(res.claimable_amount?.amount || 0);
+      setRemainingClaimableEcosystemToken(
+        res.remaining_claimable_amount?.amount || 0
+      );
+      // set github tokens
+      // setRemainingClaimableGithubToken();
+      // setIsGithubTokensLoaded(true);
+      setIsEcosystemTokensLoaded(true);
     }
   }
-  setInterval(getTokens, 60000);
-  setInterval(fetchTasks, 60000);
 
   const claimTokens = async () => {
+    if (process.env.NEXT_PUBLIC_REWARD_DEADLINE < dayjs().unix()) {
+      props.notify("Claim airdrop period ended", "error");
+    } else if (unclaimedToken <= 0) {
+      props.notify("You don't have any unclaimed tokens", "error");
+    };
     if (loading) return;
     if (!props.selectedAddress) {
       props.notify("Please sign in before claiming tokens", "error");
@@ -122,37 +219,99 @@ function ClaimRewards(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <section className={"flex flex-col items-center sm:mt-20 relative"}>
-        <div className="items-center w-1/2 sm:w-3/4 lg:w-2/3">
-          <div>
-            <div className="text-4xl lg:text-7xl font-bold w-96 tracking-tight lg:leading-[4rem]">
+      <section className={"flex flex-col items-center mt-12 lg:mt-16 relative"}>
+        <div className="items-center max-w-screen-lg w-full">
+          <div className="p-4 pt-8 lg:p-0">
+            <div className="text-4xl lg:text-7xl font-bold tracking-tight lg:text-center">
               Claim Airdrop
             </div>
-            {props.activeWallet === null ? (
-              <div>
-                <Link
-                  className="btn btn-primary bg-green hover:bg-green-400 h-12 py-3 w-60 rounded-md mt-10"
-                  href="/login"
-                >
-                  Connect Wallet
-                </Link>
-              </div>
-            ) : (
-              ""
-            )}
+            <div className="text-xl lg:text-3xl font-bold text-type-tertiary mt-4 lg:text-center">
+              {`${days} Days ${hours} Hours ${minutes} Minutes Left`}
+            </div>
           </div>
-          <div className="sm:ml-auto w-80 mt-10">
-            <div className="mt-8">
-              <div className="flex">
-                <div className="opacity-70 font-bold">Unlocked Rewards</div>
-                <button
+          <div className="border border-grey-50 rounded-xl bg-base-200/70 max-w-2xl text-sm relative mx-4 lg:mx-auto mt-12 lg:mt-16">
+            <div className="font-bold text-xs uppercase bg-base-200 border border-grey-50 text-purple-50 rounded-full px-4 py-1 absolute -top-3 left-1/2 -ml-20">
+              Available Rewards
+            </div>
+            <div className="flex flex-col lg:flex-row gap-8 justify-evenly p-8">
+              <div className="lg:text-center">
+                <div className="inline-flex items-center">
+                  <span className="text-type-secondary font-bold">
+                    Ecosystem Staking
+                  </span>
+                  <span
+                    className="tooltip ml-2 mt-px"
+                    data-tip="Based on staking on Cosmos, Osmosis and Akash chain spanshots on 14th April 2023"
+                  >
+                    <svg
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-3.5 h-3.5"
+                    >
+                      <circle cx="8" cy="8" r="7.5" stroke="#8D97A7" />
+                      <path d="M8 3L8 5" stroke="#8D97A7" strokeWidth="2" />
+                      <path d="M8 7L8 13" stroke="#8D97A7" strokeWidth="2" />
+                    </svg>
+                  </span>
+                </div>
+                <div className="my-2">
+                  <span className="text-4xl mr-2 text-type-tertiary">
+                    {!isEcosystemTokensLoaded ? "~" : ""}
+                  </span>
+                  <span className="text-4xl uppercase">
+                    {showToken(remainingClaimableEcosystemToken, token)}
+                  </span>
+                </div>
+                <Link
                   className={
-                    "btn btn-primary btn-xs bg-green w-24 rounded-md ml-2 " +
+                    "btn btn-secondary btn-sm mt-2 " +
                     (loading ? "loading" : "")
                   }
-                  disabled={unclaimedToken <= 0}
+                  disabled={props.selectedAddress}
+                  href="/login"
+                >
+                  Login with staking wallet
+                </Link>
+              </div>
+              <div className="lg:text-center">
+                <div className="inline-flex items-center">
+                  <span className="text-type-secondary font-bold">
+                    Open Source Contribution
+                  </span>
+                  <span
+                    className="tooltip ml-2 mt-px"
+                    data-tip="Based on contributions to open source repositories on Github till 14th April 2023"
+                  >
+                    <svg
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-3.5 h-3.5"
+                    >
+                      <circle cx="8" cy="8" r="7.5" stroke="#8D97A7" />
+                      <path d="M8 3L8 5" stroke="#8D97A7" strokeWidth="2" />
+                      <path d="M8 7L8 13" stroke="#8D97A7" strokeWidth="2" />
+                    </svg>
+                  </span>
+                </div>
+                <div className="my-2">
+                  <span className="text-4xl mr-2 text-type-tertiary">
+                    {!isGithubTokensLoaded ? "~" : ""}
+                  </span>
+                  <span className="text-4xl uppercase">
+                    {showToken(remainingClaimableGithubToken, token)}
+                  </span>
+                </div>
+                <button
+                  className={
+                    "btn btn-secondary btn-sm mt-2 " +
+                    (loading ? "loading" : "")
+                  }
                   onClick={() => {
-                    if (
+                    if (!props.selectedAddress) {
+                      props.notify("Please login first", "error");
+                    } else if (
                       process.env.NEXT_PUBLIC_REWARD_DEADLINE < dayjs().unix()
                     ) {
                       props.notify("Claim airdrop period ended", "error");
@@ -166,83 +325,48 @@ function ClaimRewards(props) {
                     }
                   }}
                 >
-                  Claim Now
+                  Connect with Github profile
                 </button>
-                <div className="tooltip" data-tip="decays by 1% everyday">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="ml-2 mt-1"
-                  >
-                    <circle cx="8" cy="8" r="7.5" stroke="#8D97A7" />
-                    <path d="M8 3L8 5" stroke="#8D97A7" strokeWidth="2" />
-                    <path d="M8 7L8 13" stroke="#8D97A7" strokeWidth="2" />
-                  </svg>
-                </div>
-              </div>
-              <div className="text-4xl uppercase">
-                {(token === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-                  ? unclaimedToken
-                  : unclaimedToken / 1000000) +
-                  " " +
-                  token}
               </div>
             </div>
-            <div className="flex mt-8">
-              <div className="opacity-70 font-bold">Locked Rewards</div>
-              <div className="tooltip" data-tip="decays by 1% everyday">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="ml-2 mt-1"
-                >
-                  <circle cx="8" cy="8" r="7.5" stroke="#8D97A7" />
-                  <path d="M8 3L8 5" stroke="#8D97A7" strokeWidth="2" />
-                  <path d="M8 7L8 13" stroke="#8D97A7" strokeWidth="2" />
-                </svg>
-              </div>
-            </div>
-            <div className="text-4xl uppercase">
-              {(token === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-                ? remainingClaimableToken
-                : remainingClaimableToken / 1000000) +
-                " " +
-                token}
-            </div>
+          </div>
+          <div className="flex flex-col items-center mt-12 lg:mt-16">
+            {unclaimedToken ? (
+              <button
+                className="btn btn-primary btn-lg mx-4 lg:w-96"
+                onClick={claimTokens}
+              >
+                <span>Claim</span>
+                <span className="ml-1 uppercase">
+                  {showToken(unclaimedToken, token)}
+                </span>
+              </button>
+            ) : (
+              <Link
+                className="btn btn-primary btn-lg  mx-4 lg:w-96"
+                href="#missions"
+              >
+                Complete missions to unlock more
+              </Link>
+            )}
 
-            <div className="opacity-70 font-bold mt-8">Claimed Rewards</div>
-            <div className="text-4xl uppercase">
-              {(token === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-                ? claimedToken
-                : claimedToken / 1000000) +
-                " " +
-                token}
-            </div>
+            {claimedToken ? (
+              <div className="text-xs text-type-secondary mt-4">
+                <span>Already claimed</span>
+                <span className="ml-1 uppercase">
+                  {showToken(claimedToken, token)}
+                </span>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         </div>
 
-        <div className="flex p-4 box-border bg-[#222932] w-80 sm:w-3/4 lg:w-2/3 rounded-3xl mt-4 h-36 sm:h-44 mt-24 flex flex-col items-center">
-          <div className="font-bold text-[#4C6784] text-sm uppercase">
-            TIME LEFT
+        <div className="flex my-8 mx-4 px-6 max-w-screen-lg w-full lg:mt-16">
+          <div id="missions" className="text-4xl">
+            Missions
           </div>
-          <div className="flex flex-row justify-between w-full px-3 sm:px-5 lg:px-16 2xl:px-32">
-            <div className="font-bold sm:text-4xl py-8">{days + " "} DAYS</div>
-            <div className="border-l border-base-100 h-20 sm:h-28"></div>
-            <div className="font-bold sm:text-4xl py-8">
-              {hours + " "} HOURS
-            </div>
-            <div className="border-l border-base-100 h-20 sm:h-28"></div>
-            <div className="font-bold sm:text-4xl py-8">{minutes + " "}MIN</div>
-          </div>
-        </div>
-        <div className="sm:flex mt-24 w-80 sm:w-3/4">
-          <div className="text-4xl">Mission</div>
           <div className="flex ml-auto">
             <div className="text-xs opacity-60 mt-4 font-bold mr-2">
               {tasksCompleted + "%"} Complete
@@ -257,10 +381,10 @@ function ClaimRewards(props) {
         {tasks?.map((t, i = 0) => {
           return (
             <div
-              className="flex p-2 sm:p-4 box-border bg-[#222932] w-80 sm:w-3/4 rounded-xl mt-4 text-xs sm:text-base"
+              className="flex bg-base-200/70 rounded-xl mt-4 mx-4 p-2 text-xs sm:text-base w-full max-w-screen-lg"
               key={i}
             >
-              <div className="lg:flex">
+              <div className="lg:flex gap-4">
                 <div
                   className={"my-3 ml-4 " + (t.isComplete ? "text-green" : "")}
                 >
@@ -268,19 +392,46 @@ function ClaimRewards(props) {
                 </div>
                 <div
                   className={
-                    "ml-4 lg:ml-2 flex items-center justify-center rounded-full bg-purple text-xs mt-3 h-6 w-28 mb-4 sm:mb-0 " +
-                    (t.isComplete ? "hidden" : "")
+                    "rounded-full px-2 py-px text-xs h-5 mt-3.5 tooltip cursor-default border" +
+                    (isEcosystemTokensLoaded
+                      ? " bg-purple-900 text-purple-50 border-transparent"
+                      : " text-purple-50 border-purple-900")
+                  }
+                  data-tip={
+                    isEcosystemTokensLoaded
+                      ? "Ecosystem staking rewards"
+                      : "Estimated staking rewards - login to calculate exact amount"
                   }
                 >
-                  {(token === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-                    ? (t.weight / tasksTotal) * remainingClaimableToken
-                    : Math.floor(
-                        (((t.weight / tasksTotal) * remainingClaimableToken) /
-                          1000000) *
-                          100
-                      ) / 100) +
-                    " " +
-                    token}
+                  <span>{isEcosystemTokensLoaded ? "" : "~"}</span>
+                  <span className="uppercase">
+                    {showToken(
+                      (t.weight / tasksTotal) *
+                        remainingClaimableEcosystemToken,
+                      token
+                    )}
+                  </span>
+                </div>
+                <div
+                  className={
+                    "rounded-full px-2 py-px text-xs h-5 mt-3.5 tooltip cursor-default border" +
+                    (isGithubTokensLoaded
+                      ? " bg-purple-900 text-purple-50 border-transparent"
+                      : " text-purple-50 border-purple-900")
+                  }
+                  data-tip={
+                    isGithubTokensLoaded
+                      ? "Open source contribution rewards"
+                      : "Estimated open source contribution rewards - connect Github to calculate exact amount"
+                  }
+                >
+                  <span>{isGithubTokensLoaded ? "" : "~"}</span>
+                  <span className="uppercase">
+                    {showToken(
+                      (t.weight / tasksTotal) * remainingClaimableGithubToken,
+                      token
+                    )}
+                  </span>
                 </div>
               </div>
               {t.isComplete ? (
@@ -310,30 +461,34 @@ function ClaimRewards(props) {
         })}
 
         <div className="flex flex-col items-center mt-12">
-          <button
-            className={
-              "btn btn-primary bg-green h-14 py-3 w-72 rounded-md " +
-              (loading ? "loading" : "")
-            }
-            onClick={() => {
-              if (process.env.NEXT_PUBLIC_REWARD_DEADLINE < dayjs().unix()) {
-                props.notify("Claim airdrop period ended", "error");
-              } else if (unclaimedToken <= 0) {
-                props.notify("You don't have any unclaimed tokens", "error");
-              } else {
-                claimTokens();
+          {unclaimedToken ? (
+            <button
+              className={
+                "btn btn-primary btn-lg mx-4 lg:w-96" +
+                (loading ? " loading" : "")
               }
-            }}
-          >
-            Claim Now
-          </button>
-          <div className="text-xs opacity-50 text-white mt-4">
+              onClick={claimTokens}
+            >
+              <span>Claim</span>
+              <span className="ml-1 uppercase">
+                {showToken(unclaimedToken, token)}
+              </span>
+            </button>
+          ) : (
+            <Link
+              className="btn btn-primary btn-lg  mx-4 lg:w-96"
+              href="#missions"
+            >
+              Complete missions to unlock more
+            </Link>
+          )}
+          <div className="text-xs text-type-secondary mt-4">
             If you have any issues, contact us at contact@gitopia.com
           </div>
         </div>
         <img
           className={
-            "absolute pointer-events-none -z-30 left-1/3 -top-20 opacity-30 lg:opacity-100 invisible lg:visible"
+            "absolute pointer-events-none -z-30 left-1/3 -top-20 opacity-30 lg:opacity-50 invisible lg:visible"
           }
           src="/rewards/drop-mid.svg"
           width={"622"}
@@ -341,62 +496,62 @@ function ClaimRewards(props) {
         />
         <img
           className={
-            "absolute pointer-events-none -z-10 -left-16 sm:left-5 lg:left-60 top-10 sm:top-28 lg:top-44"
+            "absolute pointer-events-none -z-10 -left-16 sm:left-5 lg:left-60 top-10 sm:top-28 lg:top-44 opacity-50"
           }
           src="/rewards/drop-1.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-10 right-0 sm:right-16 lg:right-36 top-36 sm:top-28 lg:top-40 "
+            "absolute pointer-events-none -z-10 right-0 sm:right-16 lg:right-36 top-36 sm:top-28 lg:top-40 opacity-50"
           }
           src="/rewards/drop-2.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-10 w-3/4 right-10 bottom-2/3 sm:mb-14 "
+            "absolute pointer-events-none -z-10 w-3/4 right-10 bottom-2/3 sm:mb-14 opacity-50"
           }
           src="/rewards/objects.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 w-full bottom-1/3 mb-96 lg:mb-48 2xl:mb-10 "
+            "absolute pointer-events-none -z-20 w-full bottom-1/3 mb-96 lg:mb-48 2xl:mb-10 opacity-50"
           }
           src="/rewards/ellipse.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 w-full bottom-2/3 lg:bottom-1/3 lg:mb-48 invisible sm:visible"
+            "absolute pointer-events-none -z-20 w-full bottom-2/3 lg:bottom-1/3 lg:mb-48 invisible sm:visible opacity-50"
           }
           src="/rewards/stars-3.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 left-5 bottom-3/4 mt-20 invisible lg:visible"
+            "absolute pointer-events-none -z-20 left-5 bottom-3/4 mt-20 invisible lg:visible opacity-30"
           }
           src="/rewards/coin-1.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 right-0 -top-36 lg:-top-20 invisible sm:visible"
+            "absolute pointer-events-none -z-20 right-0 -top-36 lg:-top-20 invisible sm:visible opacity-30"
           }
           src="/rewards/coin-2.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 bottom-2/3 left-36 invisible lg:visible"
+            "absolute pointer-events-none -z-20 bottom-2/3 left-36 invisible lg:visible opacity-30"
           }
           src="/rewards/coin-3.png"
         />
         <img
           className={
-            "absolute pointer-events-none bottom-1/2 mb-28 right-36 -z-20 invisible lg:visible"
+            "absolute pointer-events-none bottom-1/2 mb-28 right-36 -z-20 invisible lg:visible opacity-30"
           }
           src="/rewards/coin-4.svg"
         />
       </section>
       <img
         className={
-          "absolute pointer-events-none -z-20 w-full top-40 lg:top-28 invisible sm:visible"
+          "absolute pointer-events-none -z-20 w-full top-40 lg:top-28 invisible sm:visible opacity-50"
         }
         src="/rewards/stars-1.svg"
       />

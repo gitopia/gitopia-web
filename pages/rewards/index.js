@@ -15,7 +15,7 @@ import ClaimRewards from "../../components/claimRewards";
 import { getBalance } from "../../store/actions/wallet";
 function Rewards(props) {
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState(404);
+  const [status, setStatus] = useState(2);
   const [mobile, setMobile] = useState(false);
   const [activeWallet, setActiveWallet] = useState(null);
   const [code, setCode] = useState(null);
@@ -49,26 +49,26 @@ function Rewards(props) {
     };
   });
 
-  async function fetchStatus() {
-    const res = await axios
-      .get(
-        process.env.NEXT_PUBLIC_REWARD_SERVICE_URL +
-          "/rewards?addr=" +
-          props.selectedAddress
-      )
-      .then(({ data }) => {
-        setStatus(data.status);
-      })
-      .catch((e) => {
-        setStatus(404);
-      });
-  }
-  useEffect(() => {
-    const id = setInterval(fetchStatus, 1000);
-    return () => {
-      clearInterval(id);
-    };
-  });
+  // async function fetchStatus() {
+  //   const res = await axios
+  //     .get(
+  //       process.env.NEXT_PUBLIC_REWARD_SERVICE_URL +
+  //         "/rewards?addr=" +
+  //         props.selectedAddress
+  //     )
+  //     .then(({ data }) => {
+  //       setStatus(data.status);
+  //     })
+  //     .catch((e) => {
+  //       setStatus(404);
+  //     });
+  // }
+  // useEffect(() => {
+  //   const id = setInterval(fetchStatus, 1000);
+  //   return () => {
+  //     clearInterval(id);
+  //   };
+  // });
 
   useEffect(() => {
     const query = window.location.search;
@@ -96,16 +96,16 @@ function Rewards(props) {
     }
     setLoading(true);
     const res = await props.calculateGithubRewards(code);
-    await axios
-      .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/rewards", {
-        payload: res,
-      })
-      .then(({ data }) => {
-        setStatus(data.status);
-      })
-      .catch(({ err }) => {
-        console.error(err);
-      });
+    // await axios
+    //   .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/rewards", {
+    //     payload: res,
+    //   })
+    //   .then(({ data }) => {
+    //     setStatus(data.status);
+    //   })
+    //   .catch(({ err }) => {
+    //     console.error(err);
+    //   });
     setLoading(false);
   };
 
