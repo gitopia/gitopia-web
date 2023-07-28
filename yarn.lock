@@ -5441,10 +5441,10 @@ react-click-away-listener@^2.0.3:
   resolved "https://registry.yarnpkg.com/react-click-away-listener/-/react-click-away-listener-2.2.3.tgz#a5c3e37d94cc86dac3546dbb753db14bacb63186"
   integrity sha512-p63JRQtK9d085+QHUJ2Pje22P/N4tEaXsS2x7tbbptriQqZ9o8xEk7G1JrxwND5YmEVc/VO4fC3+cSBsqqgLUQ==
 
-react-diff-view@^2.4.8:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/react-diff-view/-/react-diff-view-2.6.0.tgz#a35d4210d7523b4efcd778c71df753c997428eeb"
-  integrity sha512-TkyMcEv97uIPlxolbatLL99p//4G4xlGBismQaF/6iZeIX+ni9CRBE9ayXt1Tn1cWFDn9tXY6fp06T231gfjlQ==
+react-diff-view@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/react-diff-view/-/react-diff-view-3.0.3.tgz#c30fb19a04f5da401b9c3f672e3cfec1539aec74"
+  integrity sha512-orETYmQbptfMbOnbkSHH61Ew5RBTYWAO2M1MDx2ZvsEDHPygn6U8mWh7kUCm/z40YzVKmd3+8hpH872Y0uioIg==
   dependencies:
     classnames "^2.3.2"
     diff-match-patch "^1.0.5"
