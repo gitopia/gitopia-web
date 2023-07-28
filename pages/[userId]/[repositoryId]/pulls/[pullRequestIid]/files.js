@@ -184,6 +184,7 @@ function RepositoryPullFilesView(props) {
                 onViewTypeChange={(v) => setViewType(v)}
                 showFile={showFile}
                 getCommentView={getCommentView}
+                isPullDiff={true}
               />
             </div>
           </div>

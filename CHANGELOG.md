@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.13.4 - 5th Jul 2023
+
+- Use pull request api for diff calculation
+
 ### v1.13.3 - 5th Jul 2023
 
 - Fixed review comments in merged pull requests and updated files

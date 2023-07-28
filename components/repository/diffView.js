@@ -24,7 +24,8 @@ function DiffView({
   refreshComments,
   onViewTypeChange = () => {},
   showFile = null,
-  getCommentView = () => {},
+  getCommentView = () => { },
+  isPullDiff = false,
   ...props
 }) {
   const [viewType, setViewType] = useState("unified");
@@ -318,9 +319,7 @@ function DiffView({
   ) => {
     setLoadingMore(true);
     let data;
-    if (baseRepoId === repoId) {
-      data = await getDiff(repoId, currentSha, previousSha, offset, limit);
-    } else {
+    if (isPullDiff) {
       data = await getPullDiff(
         baseRepoId,
         repoId,
@@ -329,6 +328,8 @@ function DiffView({
         offset,
         limit
       );
+    } else {
+      data = await getDiff(repoId, currentSha, previousSha, offset, limit);
     }
 
     let newFiles = [...oldFiles];

@@ -781,6 +781,7 @@ function RepositoryCompareView(props) {
                     previousSha={compare.target.sha}
                     onViewTypeChange={(v) => setViewType(v)}
                     commentsAllowed={false}
+                    isPullDiff={true}
                   />
                 ) : (
                   <div className="alert alert-warning">
