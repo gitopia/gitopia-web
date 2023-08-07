@@ -10,8 +10,6 @@ import Footer from "../../components/landingPageFooter";
 import getWhois from "../../helpers/getWhois";
 import { calculateGithubRewards } from "../../store/actions/user";
 import axios from "../../helpers/axiosFetch";
-import LoadingRewards from "../../components/loadingRewards";
-import ClaimRewards from "../../components/claimRewards";
 import { getBalance } from "../../store/actions/wallet";
 import { updateUserBalance } from "../../store/actions/wallet";
 import { claimRewards } from "../../store/actions/user";
@@ -36,7 +34,9 @@ function showToken(value, denom) {
 }
 
 function Rewards(props) {
-  const [loading, setLoading] = useState(false);
+  const [calculatingRewardsLoading, setCalculatingRewardsLoading] = useState(false);
+  const [getEcosystemRewardsLoading, setGetEcosystemRewardsLoading] = useState(false);
+  const [claimTokensLoading, setClaimTokensLoading] = useState(false);
   const [status, setStatus] = useState(null);
   const [mobile, setMobile] = useState(false);
   const [activeWallet, setActiveWallet] = useState(null);
@@ -49,8 +49,10 @@ function Rewards(props) {
     }
   }
   const [token, setToken] = useState(process.env.NEXT_PUBLIC_CURRENCY_TOKEN);
-  const [claimedToken, setClaimedToken] = useState(500000);
-  const [unclaimedToken, setUnclaimedToken] = useState(100000);
+  const [claimedGithubToken, setClaimedGithubToken] = useState(0);
+  const [unclaimedGithubToken, setUnclaimedGithubToken] = useState(0);
+  const [claimedEcosystemToken, setClaimedEcosystemToken] = useState(0);
+  const [unclaimedEcosystemToken, setUnclaimedEcosystemToken] = useState(0);
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
@@ -111,11 +113,12 @@ function Rewards(props) {
   const [
     remainingClaimableEcosystemToken,
     setRemainingClaimableEcosystemToken,
-  ] = useState(250000000);
+  ] = useState(0);
   const [remainingClaimableGithubToken, setRemainingClaimableGithubToken] =
-    useState(250000000);
+    useState(0);
+  const [totalGithubToken, setTotalGithubToken] = useState(0);
+  const [totalEcosystemToken, setTotalEcosystemToken] = useState(0);
   const [isEcosystemTokensLoaded, setIsEcosystemTokensLoaded] = useState(true);
-  const [isGithubTokensLoaded, setIsGithubTokensLoaded] = useState(false);
 
   const deadlineUnix = process.env.NEXT_PUBLIC_REWARD_DEADLINE;
 
@@ -186,45 +189,56 @@ function Rewards(props) {
 
   async function getTokens() {
     let res = await getRewardToken(props.selectedAddress);
-    console.log(res);
     if (res) {
-      res.claimed_amount?.amount +
-        res.claimable_amount?.amount +
-        res.remaining_claimable_amount?.amount <
-      1000000
-        ? setToken(process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN)
-        : setToken(process.env.NEXT_PUBLIC_CURRENCY_TOKEN);
+      for (let i = 0; i < res.length; i++) {
+         if (res[i].series === "ONE") {
+        res[i].claimed_amount?.amount +
+          res[i].claimable_amount?.amount +
+          res[i].remaining_claimable_amount?.amount <
+        1000000
+          ? setToken(process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN)
+          : setToken(process.env.NEXT_PUBLIC_CURRENCY_TOKEN);
 
-      setClaimedToken(res.claimed_amount?.amount || 0);
-      setUnclaimedToken(res.claimable_amount?.amount || 0);
-      setRemainingClaimableEcosystemToken(
-        res.remaining_claimable_amount?.amount || 0
-      );
-      // set github tokens
-      // setRemainingClaimableGithubToken();
-      // setIsGithubTokensLoaded(true);
-      setIsEcosystemTokensLoaded(true);
+        setTotalGithubToken(res[i].amount.amount);
+        setClaimedGithubToken(res[i].claimed_amount?.amount || 0);
+        setUnclaimedGithubToken(res[i].claimable_amount?.amount || 0);
+        setRemainingClaimableGithubToken(
+          res[i].remaining_claimable_amount?.amount || 0
+        );
+         }
+        if (res[i].series === "EIGHT") {
+          setTotalEcosystemToken(res[i].amount.amount);
+          setClaimedEcosystemToken(res[i].claimed_amount?.amount || 0);
+          setUnclaimedEcosystemToken(res[i].claimable_amount?.amount || 0);
+          setRemainingClaimableEcosystemToken(
+            res[i].remaining_claimable_amount?.amount || 0
+          );
+        }
+      }
     }
   }
 
   const claimTokens = async () => {
     if (process.env.NEXT_PUBLIC_REWARD_DEADLINE < dayjs().unix()) {
       props.notify("Claim airdrop period ended", "error");
-    } else if (unclaimedToken <= 0) {
+    } else if (
+      parseInt(unclaimedGithubToken) + parseInt(unclaimedEcosystemToken) <=
+      0
+    ) {
       props.notify("You don't have any unclaimed tokens", "error");
     }
-    if (loading) return;
+    if (claimTokensLoading) return;
     if (!props.selectedAddress) {
       props.notify("Please sign in before claiming tokens", "error");
       return;
     }
-    setLoading(true);
+    setClaimTokensLoading(true);
     const res = await props.claimRewards();
     if (res) {
       getTokens();
       props.notify("reward claimed", "info");
     }
-    setLoading(false);
+    setClaimTokensLoading(false);
   };
   useEffect(() => {
     async function initBalance() {
@@ -254,14 +268,29 @@ function Rewards(props) {
       .get(
         process.env.NEXT_PUBLIC_REWARD_SERVICE_URL +
           "/rewards?addr=" +
-          props.selectedAddress
+          props.selectedAddress +
+          "&series=1"
       )
       .then(({ data }) => {
-       // setStatus(data.status);
-       setStatus(null)
+        setStatus(data.status);
       })
       .catch((e) => {
         setStatus(404);
+      });
+
+    const result = await axios
+      .get(
+        process.env.NEXT_PUBLIC_REWARD_SERVICE_URL +
+          "/rewards?addr=" +
+          props.selectedAddress +
+          "&series=8"
+      )
+      .then(({ data }) => {
+        setTotalEcosystemToken(data.total_amount);
+        setIsEcosystemTokensLoaded(true);
+      })
+      .catch((e) => {
+        console.error(e);
       });
   }
   useEffect(() => {
@@ -290,17 +319,16 @@ function Rewards(props) {
   }, [props.activeWallet]);
 
   const getRewards = async () => {
-    if (loading) return;
+    if (calculatingRewardsLoading) return;
     if (!props.selectedAddress) {
       props.notify("Please sign in before claiming tokens", "error");
       return;
     }
-    setLoading(true);
-    console.log(code);
+    setCalculatingRewardsLoading(true);
     const res = await props.calculateGithubRewards(code);
-    console.log(res);
     await axios
       .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/rewards", {
+        series: 1,
         payload: res,
       })
       .then(({ data }) => {
@@ -309,7 +337,29 @@ function Rewards(props) {
       .catch(({ err }) => {
         console.error(err);
       });
-    setLoading(false);
+      setCalculatingRewardsLoading(false);
+  };
+
+  const getEcosystemRewards = async () => {
+    if (getEcosystemRewardsLoading) return;
+    if (!props.selectedAddress) {
+      props.notify("Please sign in before claiming tokens", "error");
+      return;
+    }
+    setGetEcosystemRewardsLoading(true);
+    const res = await props.calculateGithubRewards("ecosystem");
+    await axios
+      .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/rewards", {
+        series: 8,
+        payload: res,
+      })
+      .then(({ data }) => {
+        setIsEcosystemTokensLoaded(data.status == 2 ? true : false);
+      })
+      .catch(({ err }) => {
+        console.error(err);
+      });
+      setGetEcosystemRewardsLoading(false);
   };
 
   function githubLogin() {
@@ -364,22 +414,44 @@ function Rewards(props) {
                 </div>
                 <div className="my-2">
                   <span className="text-4xl mr-2 text-type-tertiary">
-                    {!isEcosystemTokensLoaded ? "~" : ""}
+                    {isEcosystemTokensLoaded ? "~" : ""}
                   </span>
                   <span className="text-4xl uppercase">
-                    {showToken(remainingClaimableEcosystemToken, token)}
+                    {showToken(totalEcosystemToken, token)}
                   </span>
                 </div>
-                <Link
-                  className={
-                    "btn btn-secondary btn-sm mt-2 " +
-                    (loading ? "loading" : "")
-                  }
-                  disabled={props.selectedAddress}
-                  href="/login"
-                >
-                  Login with staking wallet
-                </Link>
+                {props.selectedAddress ? (
+                  <button
+                    className={
+                      "btn btn-secondary btn-sm mt-2 " +
+                      (getEcosystemRewardsLoading ? "loading" : "")
+                    }
+                    onClick={() => {
+                      if (!props.selectedAddress) {
+                        props.notify("Please login first", "error");
+                      } else if (
+                        process.env.NEXT_PUBLIC_REWARD_DEADLINE < dayjs().unix()
+                      ) {
+                        props.notify("Claim airdrop period ended", "error");
+                      } else {
+                        getEcosystemRewards();
+                      }
+                    }}
+                  >
+                    Calculate Reward
+                  </button>
+                ) : (
+                  <Link
+                    className={
+                      "btn btn-secondary btn-sm mt-2 " +
+                      (getEcosystemRewardsLoading ? "loading" : "")
+                    }
+                    disabled={props.selectedAddress}
+                    href="/login"
+                  >
+                    Login with staking wallet
+                  </Link>
+                )}
               </div>
               <div className="lg:text-center">
                 <div className="inline-flex items-center">
@@ -422,7 +494,7 @@ function Rewards(props) {
                       {status === 2 ? "" : "~"}
                     </span>
                     <span className="text-4xl uppercase">
-                      {showToken(remainingClaimableGithubToken, token)}
+                      {showToken(totalGithubToken, token)}
                     </span>
                   </div>
                 )}
@@ -432,7 +504,7 @@ function Rewards(props) {
                     <button
                       className={
                         "btn btn-secondary btn-sm mt-2 " +
-                        (loading ? "loading" : "")
+                        (calculatingRewardsLoading ? "loading" : "")
                       }
                       onClick={() => {
                         if (!props.selectedAddress) {
@@ -442,11 +514,6 @@ function Rewards(props) {
                           dayjs().unix()
                         ) {
                           props.notify("Claim airdrop period ended", "error");
-                        } else if (unclaimedToken <= 0) {
-                          props.notify(
-                            "You don't have any unclaimed tokens",
-                            "error"
-                          );
                         } else {
                           githubLogin();
                         }
@@ -458,7 +525,7 @@ function Rewards(props) {
                     <button
                       className={
                         "btn btn-secondary btn-sm mt-2 " +
-                        (loading ? "loading" : "")
+                        (calculatingRewardsLoading ? "loading" : "")
                       }
                       onClick={() => {
                         if (!props.selectedAddress) {
@@ -468,12 +535,7 @@ function Rewards(props) {
                           dayjs().unix()
                         ) {
                           props.notify("Claim airdrop period ended", "error");
-                        } else if (unclaimedToken <= 0) {
-                          props.notify(
-                            "You don't have any unclaimed tokens",
-                            "error"
-                          );
-                        } else {
+                        }  else {
                           getRewards();
                         }
                       }}
@@ -488,14 +550,20 @@ function Rewards(props) {
             </div>
           </div>
           <div className="flex flex-col items-center mt-12 lg:mt-16">
-            {unclaimedToken ? (
+            {parseInt(unclaimedGithubToken) +
+              parseInt(unclaimedEcosystemToken) >
+            0 ? (
               <button
                 className="btn btn-primary btn-lg mx-4 lg:w-96"
                 onClick={claimTokens}
               >
                 <span>Claim</span>
                 <span className="ml-1 uppercase">
-                  {showToken(unclaimedToken, token)}
+                  {showToken(
+                    parseInt(unclaimedGithubToken) +
+                      parseInt(unclaimedEcosystemToken),
+                    token
+                  )}
                 </span>
               </button>
             ) : (
@@ -507,11 +575,16 @@ function Rewards(props) {
               </Link>
             )}
 
-            {claimedToken ? (
+            {parseInt(claimedGithubToken) + parseInt(claimedEcosystemToken) >
+            0 ? (
               <div className="text-xs text-type-secondary mt-4">
                 <span>Already claimed</span>
                 <span className="ml-1 uppercase">
-                  {showToken(claimedToken, token)}
+                  {showToken(
+                    parseInt(claimedGithubToken) +
+                      parseInt(claimedEcosystemToken),
+                    token
+                  )}
                 </span>
               </div>
             ) : (
@@ -572,20 +645,20 @@ function Rewards(props) {
                 <div
                   className={
                     "rounded-full px-2 py-px text-xs h-5 mt-3.5 tooltip cursor-default border" +
-                    (isGithubTokensLoaded
+                    (status === 2
                       ? " bg-purple-900 text-purple-50 border-transparent"
                       : " text-purple-50 border-purple-900")
                   }
                   data-tip={
-                    isGithubTokensLoaded
+                    status === 2
                       ? "Open source contribution rewards"
                       : "Estimated open source contribution rewards - connect Github to calculate exact amount"
                   }
                 >
-                  <span>{isGithubTokensLoaded ? "" : "~"}</span>
+                  <span>{status === 2 ? "" : "~"}</span>
                   <span className="uppercase">
                     {showToken(
-                      (t.weight / tasksTotal) * remainingClaimableGithubToken,
+                      (t.weight / tasksTotal) * totalGithubToken,
                       token
                     )}
                   </span>
@@ -618,17 +691,22 @@ function Rewards(props) {
         })}
 
         <div className="flex flex-col items-center mt-12">
-          {unclaimedToken ? (
+          {parseInt(unclaimedGithubToken) + parseInt(unclaimedEcosystemToken) >
+          0 ? (
             <button
               className={
                 "btn btn-primary btn-lg mx-4 lg:w-96" +
-                (loading ? " loading" : "")
+                (claimTokensLoading ? " loading" : "")
               }
               onClick={claimTokens}
             >
               <span>Claim</span>
               <span className="ml-1 uppercase">
-                {showToken(unclaimedToken, token)}
+                {showToken(
+                  parseInt(unclaimedGithubToken) +
+                    parseInt(unclaimedEcosystemToken),
+                  token
+                )}
               </span>
             </button>
           ) : (
