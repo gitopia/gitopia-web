@@ -41,7 +41,6 @@ function Rewards(props) {
   const [mobile, setMobile] = useState(false);
   const [activeWallet, setActiveWallet] = useState(null);
   const [code, setCode] = useState(null);
-  const [walletBalance, setWalletBalance] = useState(null);
   const router = useRouter();
   function detectWindowSize() {
     if (typeof window !== "undefined") {
@@ -241,21 +240,10 @@ function Rewards(props) {
     setClaimTokensLoading(false);
   };
   useEffect(() => {
-    async function initBalance() {
-      const balance = await props.getBalance(
-        process.env.NEXT_PUBLIC_REWARD_SERVICE_WALLET_ADDRESS
-      );
-      setWalletBalance(
-        props.advanceUser === true
-          ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-          : balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
-      );
-    }
     if (typeof window !== "undefined") {
       window.addEventListener("resize", detectWindowSize);
     }
     detectWindowSize();
-    initBalance();
     return () => {
       if (typeof window !== "undefined") {
         window.removeEventListener("resize", detectWindowSize);
@@ -420,7 +408,7 @@ function Rewards(props) {
                     {showToken(totalEcosystemToken, token)}
                   </span>
                 </div>
-                {props.selectedAddress ? (
+                {activeWallet ? (
                   <button
                     className={
                       "btn btn-secondary btn-sm mt-2 " +
