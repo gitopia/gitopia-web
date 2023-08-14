@@ -84,7 +84,7 @@ function Home(props) {
         />
       </Head>
       <Header />
-      <UserDashboard />
+      <UserDashboard selectedAddress={props.selectedAddress} />
       <Footer buildId={props.buildId} />
     </div>
   );
