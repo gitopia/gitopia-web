@@ -58,11 +58,9 @@ const QUERY_USER_REPOSITORIES = gql`
 `;
 
 function UserDashboard(props) {
-  const [tab, setTab] = useState("repositories");
-
   const { data, error, loading } = useQuery(QUERY_USER_REPOSITORIES, {
     client: client,
-    variables: { address: "gitopia1mnzcusakrmucyqgz4zzemupzu385ayyy96p45t" },
+    variables: { address: props.selectedAddress },
   });
 
   return (
