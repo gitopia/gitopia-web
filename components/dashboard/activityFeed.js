@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { connect } from "react-redux";
 import { notify } from "reapop";
 import AccountCard from "../account/card";
@@ -10,7 +10,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 function ActivityFeed({ ...props }) {
   const QUERY_ACTIVTY = gql`
-    query Activity($skip: Int = 0) {
+    query Activity($skip: Int = 0, $after: String = "") {
       _meta {
         block {
           number
@@ -21,6 +21,7 @@ function ActivityFeed({ ...props }) {
         skip: $skip
         orderBy: feedScore
         orderDirection: desc
+        where: { updatedAt_gt: $after }
       ) {
         feedScore
         ... on Repository {
@@ -94,6 +95,8 @@ function ActivityFeed({ ...props }) {
           updatedAt
           closedAt
           closedBy
+          mergedAt
+          mergedBy
           baseRepository {
             repository {
               name
@@ -202,9 +205,10 @@ function ActivityFeed({ ...props }) {
   const [feed, setFeed] = useState([]);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  let time = dayjs().subtract(1, "M").unix();
   const { data, error, loading, fetchMore } = useQuery(QUERY_ACTIVTY, {
     client: client,
-    variables: { skip: offset },
+    variables: { skip: offset, after: time.toString() },
     onCompleted: (data) => {
       if (!feed.length) {
         setFeed(data.feedItems);
@@ -223,6 +227,7 @@ function ActivityFeed({ ...props }) {
   };
 
   const getRepoHeader = (r) => {
+    if (!r) return "";
     let ownerData = { ...r.owner?.owner };
     if (ownerData) {
       ownerData.id = ownerData.address;
@@ -233,7 +238,7 @@ function ActivityFeed({ ...props }) {
           id={r.ownerId}
           showId={true}
           showAvatar={true}
-          avatarSize="xs"
+          avatarSize="sm"
           initialData={ownerData}
           autoLoad={false}
         />
@@ -242,64 +247,27 @@ function ActivityFeed({ ...props }) {
           <div className="text-primary">{r.name}</div>
         </Link>
         <div className="flex-1"></div>
-        <div className="flex-none btn-group">
-          <Link
-            className="btn btn-xs btn-ghost border-grey-50"
-            data-test="fork-repo"
-            href={["", r.ownerId, r.name, "fork"].join("/")}
-            disabled={!r.allowForking}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3 mr-2"
-              stroke="currentColor"
-            >
-              <path
-                d="M11.9998 12.5L6.49982 12.5L6.49982 5.5M11.9998 12.5L17.4998 12.5L17.4998 5.5M11.9998 12.5L11.9998 17.5"
-                strokeWidth="2"
-                fill="none"
-              />
-              <path d="M14.4998 19.5C14.4998 20.8807 13.3805 22 11.9998 22C10.6191 22 9.49982 20.8807 9.49982 19.5C9.49982 18.1193 10.6191 17 11.9998 17C13.3805 17 14.4998 18.1193 14.4998 19.5Z" />
-              <circle cx="6.49982" cy="5.5" r="2.5" />
-              <circle cx="17.4998" cy="5.5" r="2.5" />
-            </svg>
-
-            <span>FORKS</span>
-          </Link>
-          <button
-            className="btn btn-xs btn-ghost border-grey-50"
-            href={["", r.ownerId, r.name, "insights"].join("/")}
-            disabled={!r.allowForking}
-          >
-            {r.forksCount || 0}
-          </button>
-        </div>
       </div>
     );
   };
+
   const getRepositoryCard = (r, i) => {
     return (
-      <div
-        className="p-4 my-0"
-        key={"feedRepo" + i}
-      >
+      <div className="p-4 my-0" key={"feedRepo" + i}>
         {getRepoHeader(r)}
-        <div className="p-2 mx-6 text-sm text-type-secondary max-w-2xl truncate">{r.description}</div>
+        <div className="p-2 mx-8 text-sm text-type-secondary max-w-2xl truncate">
+          {r.description}
+        </div>
       </div>
     );
   };
 
   const getIssueCard = (p, i) => {
     return (
-      <div
-        className="p-4 my-4"
-        key={"feedIssue" + i}
-      >
+      <div className="p-4 my-4" key={"feedIssue" + i}>
         {getRepoHeader(p?.repository?.repository)}
         <div className="flex mt-2">
-          <div className="text-neutral mr-2">
+          <div className="text-neutral ml-1 mr-3">
             <svg
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
@@ -323,11 +291,18 @@ function ActivityFeed({ ...props }) {
                 "issues",
                 p?.iid,
               ].join("/")}
+              className="max-w-2xl"
             >
               <span className="text-type-primary">{p?.title}</span>
               <span className="text-neutral ml-2">#{p?.iid}</span>
             </Link>
-            <div className="text-type-secondary text-xs">{p?.description}</div>
+            {p?.description ? (
+              <div className="text-type-secondary text-xs mt-2 truncate max-w-2xl">
+                {p?.description}
+              </div>
+            ) : (
+              ""
+            )}
             <div className="text-type-secondary text-xs mt-2">
               <span className="mr-1">
                 {p?.state == "OPEN" ? "Opened by" : "Closed by"}
@@ -352,7 +327,100 @@ function ActivityFeed({ ...props }) {
   };
 
   const getPullRequestCard = (p, i) => {
-    return <div key={"feedPull" + i}>PR</div>;
+    return (
+      <div className="p-4 my-4" key={"feedPull" + i}>
+        {getRepoHeader(p?.baseRepository?.repository)}
+        <div className="flex mt-2">
+          <div className="text-neutral ml-1 mr-3">
+            <svg
+              viewBox="-2 -2 26 26"
+              fill="currentColor"
+              stroke="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+            >
+              <path
+                d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="none"
+              />
+              <circle cx="8.5" cy="18.5" r="2.5" fill="currentColor" />
+              <circle cx="8.5" cy="5.5" r="2.5" fill="currentColor" />
+              <path
+                d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+          <div>
+            <Link
+              href={[
+                "",
+                p?.baseRepository?.repository?.ownerId,
+                p?.baseRepository?.repository?.name,
+                "pulls",
+                p?.iid,
+              ].join("/")}
+              className="max-w-2xl"
+            >
+              <span className="text-type-primary">{p?.title}</span>
+              <span className="text-neutral ml-2">#{p?.iid}</span>
+            </Link>
+            {p?.description ? (
+              <div className="text-type-secondary text-xs mt-2 truncate max-w-2xl">
+                {p?.description}
+              </div>
+            ) : (
+              ""
+            )}
+            <div className="text-type-secondary text-xs mt-2">
+              {p?.state == "OPEN" ? (
+                <>
+                  <span className="mr-1">Opened by</span>
+                  <AccountCard
+                    id={p?.owner?.user?.username}
+                    initialData={p?.owner?.user}
+                    avatarSize="xxs"
+                    showAvatar={false}
+                    showId={true}
+                  />
+                  <span className="ml-1">
+                    {dayjs(p?.createdAt * 1000).fromNow()}
+                  </span>
+                </>
+              ) : p?.state == "CLOSED" ? (
+                <>
+                  <span className="mr-1">Closed by</span>
+                  <AccountCard
+                    id={p?.closedBy}
+                    avatarSize="xxs"
+                    showAvatar={false}
+                    showId={true}
+                  />
+                  <span className="ml-1">
+                    {dayjs(p?.closedAt * 1000).fromNow()}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="mr-1">Merged by</span>
+                  <AccountCard
+                    id={p?.mergedBy}
+                    avatarSize="xxs"
+                    showAvatar={false}
+                    showId={true}
+                  />
+                  <span className="ml-1">
+                    {dayjs(p?.mergedAt * 1000).fromNow()}
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const getBountyCard = (p, i) => {
@@ -361,19 +429,31 @@ function ActivityFeed({ ...props }) {
 
   return (
     <div className="max-w-screen-lg">
-      <div className="px-4 text-xs text-type-tertiary font-bold uppercase">Trending</div>
-
-      {feed.map((f, i) => {
-        if (f.__typename === "Repository") {
-          return getRepositoryCard(f, i);
-        } else if (f.__typename === "Issue") {
-          return getIssueCard(f, i);
-        } else if (f.__typename === "PullRequest") {
-          return getPullRequestCard(f, i);
-        } else if (f.__typename === "Bounty") {
-          return getBountyCard(f, i);
-        }
-      })}
+      <div className="px-4 text-xs text-type-tertiary font-bold uppercase">
+        Trending on Gitopia
+      </div>
+      <InfiniteScroll
+        dataLength={feed.length}
+        next={loadMore}
+        hasMore={hasMore}
+        loader={<h4>Loading...</h4>}
+        style={{ overflow: "hidden" }}
+        scrollableTarget={() => {
+          typeof window !== "undefined" ? window.document : null;
+        }}
+      >
+        {feed.map((f, i) => {
+          if (f.__typename === "Repository") {
+            return getRepositoryCard(f, i);
+          } else if (f.__typename === "Issue") {
+            return getIssueCard(f, i);
+          } else if (f.__typename === "PullRequest") {
+            return getPullRequestCard(f, i);
+          } else if (f.__typename === "Bounty") {
+            return getBountyCard(f, i);
+          }
+        })}
+      </InfiniteScroll>
       <div className="text-xs text-type-tertiary px-4">
         {"Synced data till block " + data?._meta?.block?.number}
       </div>

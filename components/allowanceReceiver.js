@@ -28,22 +28,24 @@ function AllowanceReceiver(props) {
   };
 
   return isBalanceLow ? (
-    <div className="bg-box-grad-tl bg-base-200 p-4 rounded-md mb-4">
-      <div>
-        <div className="text-lg">Get Fee Grant</div>
-        <div className="text-xs mt-2 text-type-secondary">
-          You can ask for a fee grant to start using Gitopia without buying any{" "}
-          {(process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
+    <div className="mb-8">
+      <div className="bg-box-grad-tl bg-base-200 p-4 rounded-md mb-4">
+        <div>
+          <div className="text-lg">Get Fee Grant</div>
+          <div className="text-xs mt-2 text-type-secondary">
+            You can ask for a fee grant to start using Gitopia without buying
+            any {(process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
+          </div>
         </div>
-      </div>
-      <div className="mt-4">
-        <Link
-          className={"btn btn-sm btn-primary btn-wide"}
-          href="/login?step=5"
-          rel="noreferrer"
-        >
-          Request Grant
-        </Link>
+        <div className="mt-4">
+          <Link
+            className={"btn btn-sm btn-primary btn-wide"}
+            href="/login?step=5"
+            rel="noreferrer"
+          >
+            Request Grant
+          </Link>
+        </div>
       </div>
     </div>
   ) : (
