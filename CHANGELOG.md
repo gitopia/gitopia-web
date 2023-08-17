@@ -1,5 +1,10 @@
 ## Changelog
 
+### v1.14.0 - 17th Aug 2023
+
+- Updated homepage with activity feed
+- Changed designs of dao / user settings page 
+
 ### v1.13.4 - 5th Jul 2023
 
 - Use pull request api for diff calculation
