@@ -60,35 +60,37 @@ function FaucetReceiver(props) {
   };
 
   return !tokenReceived ? (
-    <div className="bg-box-grad-tl bg-base-200 p-4 rounded-md mb-4">
-      <div>
-        <div className="text-lg">
-          Get{" "}
-          {props.advanceUser === true
-            ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
-            : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}{" "}
-          tokens
+    <div className="mb-8">
+      <div className="bg-box-grad-tl bg-base-200 p-4 rounded-md mb-4">
+        <div>
+          <div className="text-lg">
+            Get{" "}
+            {props.advanceUser === true
+              ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
+              : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}{" "}
+            tokens
+          </div>
+          <div className="text-xs mt-2 text-type-secondary">
+            Use them to test Gitopia. Based on your activity you might get
+            actual tokens on mainnet
+          </div>
         </div>
-        <div className="text-xs mt-2 text-type-secondary">
-          Use them to test Gitopia. Based on your activity you might get actual
-          tokens on mainnet
+        <div className="mt-4">
+          <button
+            className={
+              "btn btn-sm btn-primary btn-outline btn-wide " +
+              (loading ? "loading" : "")
+            }
+            onClick={() => getTokens(1)}
+            disabled={loading}
+            data-test="get-token"
+          >
+            Get{tokenReceived ? " More " : " "}
+            {props.advanceUser === true
+              ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
+              : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
+          </button>
         </div>
-      </div>
-      <div className="mt-4">
-        <button
-          className={
-            "btn btn-sm btn-primary btn-outline btn-wide " +
-            (loading ? "loading" : "")
-          }
-          onClick={() => getTokens(1)}
-          disabled={loading}
-          data-test="get-token"
-        >
-          Get{tokenReceived ? " More " : " "}
-          {props.advanceUser === true
-            ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toUpperCase()
-            : process.env.NEXT_PUBLIC_CURRENCY_TOKEN.toUpperCase()}
-        </button>
       </div>
     </div>
   ) : (

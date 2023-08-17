@@ -14,17 +14,15 @@ const QUERY_USER_REPOSITORIES = gql`
     user(id: $address) {
       username
       repositoriesCreated {
-        repository {
-          updatedAt
+        repository(orderBy: updatedAt, orderDirection: desc) {
           name
         }
       }
       memberOf {
         dao {
           repositoriesCreated {
-            repository {
+            repository(orderBy: updatedAt, orderDirection: desc) {
               name
-              updatedAt
             }
           }
           name
@@ -42,9 +40,8 @@ const QUERY_USER_REPOSITORIES = gql`
         role
       }
       collaboratorOf {
-        repository {
+        repository(orderBy: updatedAt, orderDirection: desc) {
           name
-          updatedAt
           owner {
             owner {
               username
@@ -61,19 +58,36 @@ function UserDashboard(props) {
   const { data, error, loading } = useQuery(QUERY_USER_REPOSITORIES, {
     client: client,
     variables: { address: props.selectedAddress },
+    onCompleted: (data) => {
+      let daos = {};
+      data?.user?.memberOf?.map((m) => {
+        daos[m.dao?.username] = false;
+      });
+      setShowAll({
+        mine: false,
+        collab: false,
+        daos,
+      });
+    },
   });
+  const maxRepos = 4;
+  const [showAll, setShowAll] = useState({
+    mine: false,
+    collab: false,
+    daos: {},
+  });
+
+  console.log(showAll);
 
   return (
     <main className="container mx-auto py-4 sm:py-12">
       <div className="flex flex-col sm:flex-row gap-8">
         <div className="w-full max-w-md px-2 sm:px-0">
-          <div className="mb-8">
-            {process.env.NEXT_PUBLIC_FEE_GRANTER ? (
+          {process.env.NEXT_PUBLIC_FEE_GRANTER ? (
               <AllowanceReceiver />
-            ) : (
+          ) : (
               <FaucetReceiver />
-            )}
-          </div>
+          )}
           <div className="mb-8">
             <GreetUser />
           </div>
@@ -85,14 +99,17 @@ function UserDashboard(props) {
               Your Repositories
             </div> */}
             <div className="mt-4">
-              {data?.user?.repositoriesCreated?.map((r) => {
+              {data?.user?.repositoriesCreated?.map((r, i) => {
+                if (i > maxRepos && !showAll.mine) {
+                  return "";
+                }
                 return (
                   <div>
                     <Link
                       className="btn btn-ghost btn-block btn-sm justify-start"
                       href={data.user.username + "/" + r.repository.name}
                     >
-                      <span className="mr-1 mt-px">
+                      <span className="mr-1 mt-1">
                         <svg
                           viewBox="0 0 24 24"
                           fill="none"
@@ -109,32 +126,65 @@ function UserDashboard(props) {
                   </div>
                 );
               })}
-              {data?.user?.collaboratorOf?.map((m) => {
+              {data?.user?.repositoriesCreated?.length > maxRepos ? (
+                <button
+                  className="btn btn-link btn-xs"
+                  onClick={() => {
+                    setShowAll({ ...showAll, mine: !showAll.mine });
+                  }}
+                >
+                  Show {showAll.mine ? "Less" : "More"}
+                </button>
+              ) : (
+                ""
+              )}
+              {data?.user?.collaboratorOf?.map((m, i) => {
+                if (i > maxRepos && !showAll.collab) {
+                  return "";
+                }
                 return (
                   <div>
-                    {m.repository?.map((r) => {
-                      <Link
-                        className="btn btn-ghost btn-block btn-sm justify-start"
-                        href={r.owner.owner.username + "/" + r.name}
-                      >
-                        <span className="mr-1 mt-px">
-                          <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4"
-                            stroke="currentColor"
-                          >
-                            <path d="M9.5 7L4.5 12L9.5 17" strokeWidth="2" />
-                            <path d="M14.5 7L19.5 12L14.5 17" strokeWidth="2" />
-                          </svg>
-                        </span>
-                        <span>{r.owner.owner.username + "/" + r.name}</span>
-                      </Link>;
-                    })}
+                    <Link
+                      className="btn btn-ghost btn-block btn-sm justify-start"
+                      href={
+                        m.repository.owner.owner.username +
+                        "/" +
+                        m.repository.name
+                      }
+                    >
+                      <span className="mr-1 mt-1">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          stroke="currentColor"
+                        >
+                          <path d="M9.5 7L4.5 12L9.5 17" strokeWidth="2" />
+                          <path d="M14.5 7L19.5 12L14.5 17" strokeWidth="2" />
+                        </svg>
+                      </span>
+                      <span>
+                        {m.repository.owner.owner.username +
+                          "/" +
+                          m.repository.name}
+                      </span>
+                    </Link>
                   </div>
                 );
               })}
+              {data?.user?.collaboratorOf?.length > maxRepos ? (
+                <button
+                  className="btn btn-link btn-xs"
+                  onClick={() => {
+                    setShowAll({ ...showAll, mine: !showAll.collab });
+                  }}
+                >
+                  Show {showAll.collab ? "Less" : "More"}
+                </button>
+              ) : (
+                ""
+              )}
             </div>
             <div className="mt-4">
               <Link
@@ -153,36 +203,57 @@ function UserDashboard(props) {
               {data?.user?.memberOf?.map((m) => {
                 return (
                   <div>
-                    <div className="flex mb-2">
+                    <div className="flex mt-8 mb-4">
                       <Link
-                        className="link link-primary no-underline ml-4"
+                        className="link link-primary no-underline ml-4 text-xl"
                         href={m.dao?.username}
                       >
                         {m.dao?.name}
                       </Link>
-                      <div className="ml-2">
+                      <div className="mt-1 ml-2 flex items-center gap-1">
                         {m.dao?.members?.map((m) => {
                           return (
-                            <span className="ml-1">
-                              <AccountCard
-                                id={m?.user?.address}
-                                showAvatar={true}
-                                showId={false}
-                                initialData={{ id: m.user.address, ...m.user }}
-                                avatarSize="xxs"
-                              />
-                            </span>
+                            <AccountCard
+                              id={m?.user?.address}
+                              showAvatar={true}
+                              showId={false}
+                              initialData={{ id: m.user.address, ...m.user }}
+                              avatarSize="xxs"
+                            />
                           );
                         })}
                       </div>
+                      {m.role === "OWNER" ? (
+                        <Link
+                          href={`/dao/${m.dao?.username}/dashboard`}
+                          className="ml-2 mt-1 btn btn-xs btn-square btn-ghost"
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            class="w-3 h-3"
+                          >
+                            <path d="M14.1211 4.22183L19.7779 9.87869L9.46424 20.1924L3.80738 20.1924L3.80738 14.5355L14.1211 4.22183Z"></path>
+                            <path d="M15.1816 9.5249L11.6461 13.0604"></path>
+                          </svg>
+                        </Link>
+                      ) : (
+                        ""
+                      )}
                     </div>
-                    {m.dao?.repositoriesCreated?.map((r) => {
+                    {m.dao?.repositoriesCreated?.map((r, i) => {
+                      if (i > maxRepos && !showAll.daos[m.dao?.username]) {
+                        return "";
+                      }
                       return (
                         <Link
                           className="btn btn-ghost btn-block btn-sm justify-start items-center"
                           href={m.dao.username + "/" + r.repository.name}
                         >
-                          <span className="icon mr-1 mt-px">
+                          <span className="icon mr-1 mt-1">
                             <svg
                               viewBox="0 0 24 24"
                               fill="none"
@@ -197,12 +268,28 @@ function UserDashboard(props) {
                               />
                             </svg>
                           </span>
-                          <span>
-                            {r.repository.name}
-                          </span>
+                          <span>{r.repository.name}</span>
                         </Link>
                       );
                     })}
+                    {m.dao?.repositoriesCreated?.length > maxRepos ? (
+                      <button
+                        className="link link-secondary ml-4 no-underline text-xs"
+                        onClick={() => {
+                          setShowAll({
+                            ...showAll,
+                            daos: {
+                              ...showAll.daos,
+                              [m.dao?.username]: !showAll.daos[m.dao?.username],
+                            },
+                          });
+                        }}
+                      >
+                        Show {showAll.daos[m.dao?.username] ? "Less" : "More"}
+                      </button>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 );
               })}
