@@ -21,7 +21,7 @@ function ActivityFeed({ ...props }) {
         skip: $skip
         orderBy: feedScore
         orderDirection: desc
-        where: { updatedAt_gt: $after }
+        where: { updatedAt_gt: $after, feedScore_gt: 0.3 }
       ) {
         feedScore
         ... on Repository {
@@ -205,7 +205,7 @@ function ActivityFeed({ ...props }) {
   const [feed, setFeed] = useState([]);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  let time = dayjs().subtract(1, "M").unix();
+  let time = dayjs().subtract(3, "M").unix();
   const { data, error, loading, fetchMore } = useQuery(QUERY_ACTIVTY, {
     client: client,
     variables: { skip: offset, after: time.toString() },
@@ -436,7 +436,7 @@ function ActivityFeed({ ...props }) {
         dataLength={feed.length}
         next={loadMore}
         hasMore={hasMore}
-        loader={<h4>Loading...</h4>}
+        loader={<h4 className="text-type-secondary text-xs m-4">Loading...</h4>}
         style={{ overflow: "hidden" }}
         scrollableTarget={() => {
           typeof window !== "undefined" ? window.document : null;
@@ -454,7 +454,7 @@ function ActivityFeed({ ...props }) {
           }
         })}
       </InfiniteScroll>
-      <div className="text-xs text-type-tertiary px-4">
+      <div className="text-xs text-type-tertiary px-4 pt-24">
         {"Synced data till block " + data?._meta?.block?.number}
       </div>
     </div>
