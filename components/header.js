@@ -12,7 +12,6 @@ import {
 import { setIbcAssets } from "../store/actions/ibcAssets";
 import { getAssetList } from "../helpers/getIbcAssetList";
 import shrinkAddress from "../helpers/shrinkAddress";
-import getHomeUrl from "../helpers/getHomeUrl";
 import { notify } from "reapop";
 
 import dynamic from "next/dynamic";
@@ -90,14 +89,6 @@ function Header(props) {
     else setMenuState(2);
   }, [props.activeWallet]);
 
-  const [homeUrl, setHomeUrl] = useState(
-    getHomeUrl(props.dashboards, props.currentDashboard)
-  );
-
-  useEffect(() => {
-    setHomeUrl(getHomeUrl(props.dashboards, props.currentDashboard));
-  }, [props.dashboards, props.currentDashboard]);
-
   const headerMessage = process.env.NEXT_PUBLIC_HEADER_MESSAGE;
 
   const kelprWalletChange = async () => {
@@ -168,7 +159,7 @@ function Header(props) {
         <Drawer
           isOpen={isOpen}
           setIsOpen={setIsOpen}
-          homeUrl={homeUrl}
+          homeUrl={"/home"}
           chainId={chainId}
         ></Drawer>
         <div
@@ -176,7 +167,7 @@ function Header(props) {
             "flex-none sm:px-6 transition-all ease-out delay-150 sm:w-42"
           }
         >
-          <Link href={homeUrl}>
+          <Link href={"/home"}>
             <img
               width={80}
               src="/logo-white.svg"

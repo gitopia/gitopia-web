@@ -39,40 +39,25 @@ function AccountView(props) {
               </div>
             </div>
             <div className="pl-4">
-              <div className="text-2xl mb-1">{props.user.name}</div>
-              <div className="">{props.user.username}</div>
-            </div>
-            <div className="flex-1"></div>
-            <div className="">
               <Link
                 href={"/" + props.user.username}
-                className="btn btn-xs btn-outline"
+                className="link link-primary text-2xl no-underline"
               >
-                View Profile
+                {props.user.name ? props.user.name : props.user.username}
               </Link>
+              <div className="">{props.user.creator}</div>
             </div>
           </div>
-          <div className="sm:flex mt-8">
-            <div className="flex-none w-64">
-              <ul className="menu p-4 rounded-md">
-                <li>
-                  <a className="rounded selected" href="#authorizations">
-                    Authorizations
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div className="flex-1 px-6">
-              <div className="divide-y divide-grey">
-                <div
-                  className="text-lg sm:text-2xl py-4 sm:py-6"
-                  id="authorizations"
-                >
-                  Authorizations
-                </div>
-
-                <AccountGrants address={props.selectedAddress} />
+          <div className="mt-12">
+            <div className="divide-y divide-grey">
+              <div
+                className="text-lg sm:text-2xl py-4 sm:py-6"
+                id="authorizations"
+              >
+                Authorizations
               </div>
+
+              <AccountGrants address={props.selectedAddress} />
             </div>
           </div>
         </main>

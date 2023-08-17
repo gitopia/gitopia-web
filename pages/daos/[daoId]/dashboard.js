@@ -2,15 +2,12 @@ import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import Head from "next/head";
 import Header from "../../../components/header";
-import DashboardSelector from "../../../components/dashboard/dashboardSelector";
-import TopRepositories from "../../../components/topRepositories";
-import getHomeUrl from "../../../helpers/getHomeUrl";
 import { useRouter } from "next/router";
-import { getDaoDetailsForDashboard } from "../../../store/actions/dao";
 import Dao from "../../../components/dashboard/dao";
 import Link from "next/link";
-import useWindowSize from "../../../hooks/useWindowSize";
-import getAnyRepositoryAll from "../../../helpers/getAnyRepositoryAll";
+import getDao from "../../../helpers/getDao";
+import getDaoMember from "../../../helpers/getUserDaoMember";
+import { useErrorStatus } from "../../../hooks/errorHandler";
 
 export async function getStaticProps() {
   const fs = await import("fs");
@@ -30,22 +27,35 @@ export async function getStaticPaths() {
 }
 
 function DaoDashboard(props) {
-  const hrefBase = "/daos/" + props.currentDashboard;
+  const [dao, setDao] = useState({});
+  const { setErrorStatusCode } = useErrorStatus();
   const router = useRouter();
-  const { isMobile } = useWindowSize();
-  const [allRepository, setAllRepository] = useState([]);
+
+  async function refreshData() {
+    const [dao, members] = await Promise.all([
+      getDao(router.query.daoId),
+      getDaoMember(router.query.daoId),
+    ]);
+    if (dao) {
+      let isMember = false;
+      members.forEach(m => {
+        if (m.address == props.selectedAddress) { isMember = true; return false; } else { return true; }
+      });
+      console.log(dao, members, props.selectedAddress)
+      if (!isMember) {
+        console.log("Not a member");
+        setErrorStatusCode(404);
+      }
+      setDao({ ...dao, members: members });
+    } else {
+      setErrorStatusCode(404);
+    }
+  }
 
   useEffect(() => {
-    async function initDashboard() {
-      if (router.query.daoId !== props.currentDashboard) {
-        router.push(getHomeUrl(props.dashboards, props.currentDashboard));
-      }
-      const repos = await getAnyRepositoryAll(props.currentDashboard);
-      setAllRepository(repos);
-      props.getDaoDetailsForDashboard();
-    }
-    initDashboard();
-  }, [props.currentDashboard]);
+    if (props.selectedAddress) refreshData();
+  }, [props.selectedAddress]);
+
   return (
     <div
       data-theme="dark"
@@ -57,103 +67,9 @@ function DaoDashboard(props) {
       </Head>
       <Header />
       <div className="sm:flex sm:flex-1">
-        {!isMobile ? (
-          <div className="w-64 border-r border-grey flex flex-col">
-            <div className="flex-1">
-              <DashboardSelector />
-              {allRepository?.length == 0 ? (
-                ""
-              ) : (
-                <TopRepositories
-                  repositories={allRepository?.map((r) => {
-                    return {
-                      owner: props.currentDashboard,
-                      username: props.username,
-                      ...r,
-                    };
-                  })}
-                />
-              )}
-            </div>
-            <div>
-              <div className="bg-footer-grad py-6">
-                <div className="text-xs text-type-secondary mx-8 mb-2">
-                  &copy; Gitopia {new Date().getFullYear()}
-                </div>
-                <div className="text-xs text-type-tertiary sm:mx-8 mb-4 text-center sm:text-left">
-                  Build {props.buildId}
-                </div>
-                <div className="mx-6">
-                  {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ? (
-                    <>
-                      <Link
-                        href={
-                          "/" +
-                          process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
-                          "?tab=proposals"
-                        }
-                        className={"btn btn-xs btn-link mt-2"}
-                      >
-                        Proposals
-                      </Link>
-                      <Link
-                        href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
-                        className={"btn btn-xs btn-link mt-2"}
-                      >
-                        Source code
-                      </Link>
-                    </>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <DashboardSelector />
-        )}
         <div className="flex-1 px-4">
-          <Dao dao={props.dao} currentDashboard={props.currentDashboard} />
+          <Dao dao={dao} refreshData={refreshData} />
         </div>
-        {isMobile ? (
-          <div className="border-t border-grey mt-4">
-            <div className="py-6 w-1/2 m-auto">
-              <div className="text-xs text-type-secondary text-center mb-2">
-                &copy; Gitopia {new Date().getFullYear()}
-              </div>
-              <div className="text-xs text-type-tertiary sm:mx-8 mb-4 text-center sm:text-left">
-                Build {props.buildId}
-              </div>
-              <div className="mx-6 flex">
-                {process.env.NEXT_PUBLIC_GITOPIA_ADDRESS ? (
-                  <>
-                    <Link
-                      href={
-                        "/" +
-                        process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
-                        "?tab=proposals"
-                      }
-                      className={"btn btn-xs btn-link mt-1"}
-                    >
-                      Proposals
-                    </Link>
-                    <Link
-                      href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}
-                      className={"btn btn-xs btn-link mt-1"}
-                    >
-                      Source code
-                    </Link>
-                  </>
-                ) : (
-                  ""
-                )}
-              </div>
-            </div>
-          </div>
-        ) : (
-          ""
-        )}
       </div>
     </div>
   );
@@ -161,13 +77,10 @@ function DaoDashboard(props) {
 
 const mapStateToProps = (state) => {
   return {
-    currentDashboard: state.user.currentDashboard,
-    dashboards: state.user.dashboards,
-    dao: state.dao,
-    username: state.dao.name,
+    selectedAddress: state.wallet.selectedAddress,
   };
 };
 
-export default connect(mapStateToProps, { getDaoDetailsForDashboard })(
+export default connect(mapStateToProps, { })(
   DaoDashboard
 );

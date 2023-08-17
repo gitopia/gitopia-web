@@ -225,16 +225,16 @@ function UserDashboard(props) {
                       </div>
                       {m.role === "OWNER" ? (
                         <Link
-                          href={`/dao/${m.dao?.username}/dashboard`}
+                          href={`/daos/${m.dao?.username}/dashboard`}
                           className="ml-2 mt-1 btn btn-xs btn-square btn-ghost"
                         >
                           <svg
                             viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
-                            stroke-width="2"
+                            strokeWidth="2"
                             stroke="currentColor"
-                            class="w-3 h-3"
+                            className="w-3 h-3"
                           >
                             <path d="M14.1211 4.22183L19.7779 9.87869L9.46424 20.1924L3.80738 20.1924L3.80738 14.5355L14.1211 4.22183Z"></path>
                             <path d="M15.1816 9.5249L11.6461 13.0604"></path>
