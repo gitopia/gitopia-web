@@ -1,16 +1,8 @@
-import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import Link from "next/link";
 import Head from "next/head";
 import Header from "../components/header";
-import TopRepositories from "../components/topRepositories";
 import UserDashboard from "../components/dashboard/user";
-import { useRouter } from "next/router";
-import DashboardSelector from "../components/dashboard/dashboardSelector";
-import getHomeUrl from "../helpers/getHomeUrl";
-import useWindowSize from "../hooks/useWindowSize";
-import getAnyRepositoryAll from "../helpers/getAnyRepositoryAll";
-import Footer from "../components/footer";
 import ActivityFeed from "../components/dashboard/activityFeed";
 
 export async function getStaticProps() {
@@ -29,30 +21,6 @@ export async function getStaticProps() {
 }
 
 function Home(props) {
-  const router = useRouter();
-  const { isMobile } = useWindowSize();
-  const [allRepository, setAllRepository] = useState([]);
-  useEffect(() => {
-    async function setRepos() {
-      if (props.selectedAddress) {
-        if (props.selectedAddress !== props.currentDashboard) {
-          const newUrl = getHomeUrl(props.dashboards, props.currentDashboard);
-          router.push(newUrl);
-        } else {
-          const repos = await getAnyRepositoryAll(props.currentDashboard);
-          if (repos) {
-            setAllRepository(repos);
-          } else {
-            setAllRepository([]);
-          }
-        }
-      } else {
-        setAllRepository([]);
-      }
-    }
-    setRepos();
-  }, [props.dashboards, props.currentDashboard, props.selectedAddress]);
-
   return (
     <div
       data-theme="dark"
