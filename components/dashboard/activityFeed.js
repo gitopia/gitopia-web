@@ -255,7 +255,7 @@ function ActivityFeed({ ...props }) {
     return (
       <div className="p-4 my-0" key={"feedRepo" + i}>
         {getRepoHeader(r)}
-        <div className="p-2 mx-8 text-sm text-type-secondary max-w-2xl truncate">
+        <div className="p-2 mx-8 text-sm text-type-secondary max-w-xs lg:max-w-2xl truncate">
           {r.description}
         </div>
       </div>
@@ -291,13 +291,13 @@ function ActivityFeed({ ...props }) {
                 "issues",
                 p?.iid,
               ].join("/")}
-              className="max-w-2xl"
+              className="max-w-xs lg:max-w-2xl"
             >
               <span className="text-type-primary">{p?.title}</span>
               <span className="text-neutral ml-2">#{p?.iid}</span>
             </Link>
             {p?.description ? (
-              <div className="text-type-secondary text-xs mt-2 truncate max-w-2xl">
+              <div className="text-type-secondary text-xs mt-2 truncate max-w-xs lg:max-w-2xl">
                 {p?.description}
               </div>
             ) : (
@@ -362,13 +362,13 @@ function ActivityFeed({ ...props }) {
                 "pulls",
                 p?.iid,
               ].join("/")}
-              className="max-w-2xl"
+              className="max-w-xs lg:max-w-2xl"
             >
               <span className="text-type-primary">{p?.title}</span>
               <span className="text-neutral ml-2">#{p?.iid}</span>
             </Link>
             {p?.description ? (
-              <div className="text-type-secondary text-xs mt-2 truncate max-w-2xl">
+              <div className="text-type-secondary text-xs mt-2 truncate max-w-xs lg:max-w-2xl">
                 {p?.description}
               </div>
             ) : (
@@ -428,7 +428,7 @@ function ActivityFeed({ ...props }) {
   };
 
   return (
-    <div className="max-w-screen-lg">
+    <div className="max-w-screen-lg lg:px-4">
       <div className="px-4 text-xs text-type-tertiary font-bold uppercase">
         Trending on Gitopia
       </div>
@@ -453,10 +453,8 @@ function ActivityFeed({ ...props }) {
             return getBountyCard(f, i);
           }
         })}
+        <div className="pt-48"></div>
       </InfiniteScroll>
-      <div className="text-xs text-type-tertiary px-4 pt-24">
-        {"Synced data till block " + data?._meta?.block?.number}
-      </div>
     </div>
   );
 }
