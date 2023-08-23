@@ -12,6 +12,12 @@ export default function pluralize(name, count) {
       return Number(count) == 1 ? "file" : "files";
     case "person":
       return Number(count) == 1 ? "person" : "people";
+    case "pull request":
+      return Number(count) == 1 ? "pull request" : "pull requests";
+    case "issue":
+      return Number(count) == 1 ? "issue" : "issues";
+    case "attachment":
+      return Number(count) == 1 ? "attachment" : "attachments";
   }
   return "";
 }
