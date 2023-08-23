@@ -151,7 +151,7 @@ function AccountCard({
           ""
         )}
         {showId ? (
-          <div className="link link-primary no-underline">
+          <div className="link link-primary no-underline max-w-sm truncate">
             {accountData?.name
               ? accountData?.name
               : accountData?.username
@@ -205,7 +205,7 @@ function AccountCard({
         <div className="flex gap-1 mt-2">
           <Link
             href={props.link ? props.link : "/" + id}
-            className="link text-lg link-primary no-underline"
+            className="link text-lg link-primary no-underline max-w-[42] truncate"
             target="_blank"
             rel="noreferrer"
           >
@@ -288,7 +288,9 @@ function AccountCard({
               />
             </svg>
           )} */}
-        <div className="text-sm text-type">{accountData?.username}</div>
+        <div className="text-sm text-type max-w-[42] truncate">
+          {accountData?.username}
+        </div>
         {accountData?.address || accountData?.creator ? (
           <div
             className="text-sm text-type-secondary cursor-pointer"

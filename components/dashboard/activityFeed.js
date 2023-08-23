@@ -7,10 +7,12 @@ import client from "../../helpers/apolloClient";
 import Link from "next/link";
 import dayjs from "dayjs";
 import InfiniteScroll from "react-infinite-scroll-component";
+import getTokenValueInDollars from "../../helpers/getTotalTokenValueInDollars";
+import pluralize from "../../helpers/pluralize";
 
 function ActivityFeed({ ...props }) {
   const QUERY_ACTIVTY = gql`
-    query Activity($skip: Int = 0, $after: String = "") {
+    query Activity($skip: Int = 0, $after: Int = 0) {
       _meta {
         block {
           number
@@ -21,19 +23,19 @@ function ActivityFeed({ ...props }) {
         skip: $skip
         orderBy: feedScore
         orderDirection: desc
-        where: { updatedAt_gt: $after, feedScore_gt: 0.3 }
+        where: { updatedAt_gt: $after }
       ) {
         feedScore
         ... on Repository {
           __typename
           name
           description
-          ownerId
           forksCount
-          issuesCount
-          pullsCount
-          updatedAt
+          openIssuesCount
+          openPullsCount
+          pushedAt
           allowForking
+          ownerId
           owner {
             owner {
               ... on Dao {
@@ -78,28 +80,32 @@ function ActivityFeed({ ...props }) {
           __typename
           commentsCount
           createdAt
-          creator
           description
           id
           iid
-          labels {
-            label {
-              color
-              createdAt
-              description
-              name
-            }
-          }
           state
           title
-          updatedAt
           closedAt
-          closedBy
+          closedBy {
+            username
+            avatarUrl
+            name
+            description
+            address
+          }
           mergedAt
-          mergedBy
+          mergedBy {
+            username
+            avatarUrl
+            name
+            description
+            address
+          }
           baseRepository {
             repository {
               name
+              allowForking
+              forksCount
               ownerId
               owner {
                 owner {
@@ -110,12 +116,13 @@ function ActivityFeed({ ...props }) {
                   address
                 }
               }
-              allowForking
             }
           }
           headRepository {
             repository {
               name
+              allowForking
+              forksCount
               ownerId
               owner {
                 owner {
@@ -126,7 +133,6 @@ function ActivityFeed({ ...props }) {
                   address
                 }
               }
-              allowForking
             }
           }
           owner {
@@ -143,27 +149,25 @@ function ActivityFeed({ ...props }) {
           __typename
           commentsCount
           createdAt
-          creator
           description
           id
           iid
-          labels {
-            label {
-              color
-              createdAt
-              description
-              name
-            }
-          }
           repositoryId
           state
           title
-          updatedAt
           closedAt
-          closedBy
+          closedBy {
+            username
+            avatarUrl
+            name
+            description
+            address
+          }
           repository {
             repository {
               name
+              allowForking
+              forksCount
               ownerId
               owner {
                 owner {
@@ -174,7 +178,6 @@ function ActivityFeed({ ...props }) {
                   address
                 }
               }
-              allowForking
             }
           }
           owner {
@@ -195,7 +198,58 @@ function ActivityFeed({ ...props }) {
             amount
             denom
           }
+          updatedAt
           expireAt
+          repository {
+            name
+            allowForking
+            forksCount
+            ownerId
+            owner {
+              owner {
+                address
+                avatarUrl
+                description
+                name
+                username
+              }
+            }
+          }
+          parentIssue {
+            issue {
+              title
+              state
+              iid
+            }
+          }
+        }
+        ... on Release {
+          id
+          name
+          description
+          tagName
+          repository {
+            repository {
+              name
+              allowForking
+              forksCount
+              ownerId
+              owner {
+                owner {
+                  address
+                  avatarUrl
+                  description
+                  name
+                  username
+                }
+              }
+            }
+          }
+          attachments {
+            name
+          }
+          description
+          draft
         }
         updatedAt
       }
@@ -208,7 +262,7 @@ function ActivityFeed({ ...props }) {
   let time = dayjs().subtract(3, "M").unix();
   const { data, error, loading, fetchMore } = useQuery(QUERY_ACTIVTY, {
     client: client,
-    variables: { skip: offset, after: time.toString() },
+    variables: { skip: offset, after: time },
     onCompleted: (data) => {
       if (!feed.length) {
         setFeed(data.feedItems);
@@ -228,14 +282,14 @@ function ActivityFeed({ ...props }) {
 
   const getRepoHeader = (r) => {
     if (!r) return "";
-    let ownerData = { ...r.owner?.owner };
+    let ownerData = { ...r.owner?.owner, ...r.owner?.user };
     if (ownerData) {
-      ownerData.id = ownerData.address;
+      ownerData.id = ownerData.username ? ownerData.username : ownerData.address;
     }
     return (
-      <div className="flex items-center">
+      <div className="flex items-center mb-2">
         <AccountCard
-          id={r.ownerId}
+          id={ownerData?.id}
           showId={true}
           showAvatar={true}
           avatarSize="sm"
@@ -243,188 +297,398 @@ function ActivityFeed({ ...props }) {
           autoLoad={false}
         />
         <div className="mx-2 text-type-tertiary">/</div>
-        <Link href={r.ownerId + "/" + r.name}>
+        <Link href={["", (ownerData?.username ? ownerData.username : ownerData.id), r.name].join('/')}>
           <div className="text-primary">{r.name}</div>
         </Link>
         <div className="flex-1"></div>
+        <div className="flex-none btn-group">
+          <Link
+            className="btn btn-xs btn-ghost border-grey-50"
+            data-test="fork-repo"
+            href={["", ownerData?.id, r.name, "fork"].join("/")}
+            disabled={!r.allowForking}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-3 w-3 mr-2"
+              stroke="currentColor"
+            >
+              <path
+                d="M11.9998 12.5L6.49982 12.5L6.49982 5.5M11.9998 12.5L17.4998 12.5L17.4998 5.5M11.9998 12.5L11.9998 17.5"
+                strokeWidth="2"
+                fill="none"
+              />
+              <path d="M14.4998 19.5C14.4998 20.8807 13.3805 22 11.9998 22C10.6191 22 9.49982 20.8807 9.49982 19.5C9.49982 18.1193 10.6191 17 11.9998 17C13.3805 17 14.4998 18.1193 14.4998 19.5Z" />
+              <circle cx="6.49982" cy="5.5" r="2.5" />
+              <circle cx="17.4998" cy="5.5" r="2.5" />
+            </svg>
+
+            <span>FORK</span>
+          </Link>
+          <button
+            className="btn btn-xs btn-ghost border-grey-50"
+            href={["", ownerData?.id, r.name, "insights"].join("/")}
+            disabled={!r.allowForking}
+          >
+            {r.forksCount || 0}
+          </button>
+        </div>
       </div>
     );
   };
-  
+
   const getRepositoryCard = (r, i) => {
     return (
       <div className="p-4 my-0" key={"feedRepo" + i}>
         {getRepoHeader(r)}
-        <div className="p-2 mx-8 text-sm text-type-secondary max-w-xs lg:max-w-2xl truncate">
-          {r.description}
+        {r.description ? (
+          <div className="mx-10 mb-2 text-type-primary max-w-xs lg:max-w-2xl max-h-[5rem] overflow-hidden">
+            {r.description}
+          </div>
+        ) : (
+          ""
+        )}
+        <div className="mx-10 mt-2 flex gap-1 text-xs text-type-secondary max-w-xs lg:max-w-2xl truncate">
+          <span>Updated {dayjs(r?.updatedAt * 1000).fromNow()}</span>
+          <span className="w-1 h-1 mt-2 mx-2 rounded-full bg-neutral"></span>
+          <span className="capitalize">
+            {r.openPullsCount} Open{" "}
+            {pluralize("pull request", r.openPullsCount)}
+          </span>
+          <span className="w-1 h-1 mt-2 mx-2 rounded-full bg-neutral"></span>
+          <span className="capitalize">
+            {r.openIssuesCount} Open {pluralize("issue", r.openIssuesCount)}
+          </span>
         </div>
       </div>
     );
   };
 
   const getIssueCard = (p, i) => {
+    let ownerData = { ...p.owner?.owner, ...p.owner?.user },
+      closerData = { ...p.closedBy };
+    if (ownerData) {
+      ownerData.id = ownerData.address;
+    }
+    if (closerData) {
+      closerData.id = closerData.address;
+    }
     return (
       <div className="p-4 my-4" key={"feedIssue" + i}>
         {getRepoHeader(p?.repository?.repository)}
-        <div className="flex mt-2">
-          <div className="text-neutral ml-1 mr-3">
-            <svg
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-            >
-              <path
-                transform="translate(0,2)"
-                d="M5.93782 16.5L12 6L18.0622 16.5H5.93782Z"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="transparent"
-              />
-            </svg>
+        <Link
+          href={[
+            "",
+            p?.repository?.repository?.owner?.owner?.username
+              ? p?.repository?.repository?.owner?.owner?.username
+              : p?.repository?.repository?.ownerId,
+            p?.repository?.repository?.name,
+            "issues",
+            p?.iid,
+          ].join("/")}
+          className="mx-10 mb-2 max-w-xs lg:max-w-2xl flex"
+        >
+          <span className="text-type-primary">{p?.title}</span>
+          <span className="text-neutral ml-2">#{p?.iid}</span>
+        </Link>
+        {p?.description ? (
+          <div className="mx-10 mt-2 text-xs text-type-secondary max-w-xs lg:max-w-2xl max-h-[5rem] overflow-hidden">
+            {p?.description}
           </div>
-          <div>
-            <Link
-              href={[
-                "",
-                p?.repository?.repository?.ownerId,
-                p?.repository?.repository?.name,
-                "issues",
-                p?.iid,
-              ].join("/")}
-              className="max-w-xs lg:max-w-2xl"
-            >
-              <span className="text-type-primary">{p?.title}</span>
-              <span className="text-neutral ml-2">#{p?.iid}</span>
-            </Link>
-            {p?.description ? (
-              <div className="text-type-secondary text-xs mt-2 truncate max-w-xs lg:max-w-2xl">
-                {p?.description}
-              </div>
-            ) : (
-              ""
-            )}
-            <div className="text-type-secondary text-xs mt-2">
-              <span className="mr-1">
-                {p?.state == "OPEN" ? "Opened by" : "Closed by"}
-              </span>
+        ) : (
+          ""
+        )}
+        <div className="mx-10 mt-2 flex gap-1 text-xs text-type-secondary max-w-xs lg:max-w-2xl">
+          {p?.state == "OPEN" ? (
+            <>
+              <span
+                className={
+                  "mr-1 mt-px h-2 w-2 rounded-md justify-self-end self-center inline-block bg-green-900"
+                }
+              />
+              <span>Issue opened by</span>
               <AccountCard
-                id={p?.owner?.user?.username}
-                initialData={p?.owner?.user}
+                id={ownerData?.id}
+                initialData={ownerData}
                 avatarSize="xxs"
                 showAvatar={false}
                 showId={true}
               />
-              <span className="ml-1">
-                {p?.state == "OPEN"
-                  ? dayjs(p?.createdAt * 1000).fromNow()
-                  : dayjs(p?.closedAt * 1000).fromNow()}
-              </span>
-            </div>
-          </div>
+              <span>{dayjs(p?.createdAt * 1000).fromNow()}</span>
+            </>
+          ) : (
+            <>
+              <span
+                className={
+                  "mr-1 mt-px h-2 w-2 rounded-md justify-self-end self-center inline-block bg-red-900"
+                }
+              />
+              <span>Issue closed by</span>
+              <AccountCard
+                id={closerData?.id}
+                initialData={closerData}
+                avatarSize="xxs"
+                showAvatar={false}
+                showId={true}
+              />
+              <span>{dayjs(p?.closedAt * 1000).fromNow()}</span>
+            </>
+          )}
+          <span className="w-1 h-1 mt-2 mx-2 rounded-full bg-neutral"></span>
+          <span className="capitalize">
+            {p?.commentsCount} {pluralize("comment", p?.commentsCount)}
+          </span>
         </div>
       </div>
     );
   };
 
   const getPullRequestCard = (p, i) => {
+    let ownerData = { ...p.owner?.owner, ...p.owner?.user },
+      closerData = { ...p.closedBy },
+      mergerData = { ...p.mergedBy };
+    if (ownerData) {
+      ownerData.id = ownerData.address;
+    }
+    if (closerData) {
+      closerData.id = closerData.address;
+    }
+    if (mergerData) {
+      mergerData.id = mergerData.address;
+    }
     return (
       <div className="p-4 my-4" key={"feedPull" + i}>
         {getRepoHeader(p?.baseRepository?.repository)}
-        <div className="flex mt-2">
-          <div className="text-neutral ml-1 mr-3">
-            <svg
-              viewBox="-2 -2 26 26"
-              fill="currentColor"
-              stroke="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-            >
-              <path
-                d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="none"
-              />
-              <circle cx="8.5" cy="18.5" r="2.5" fill="currentColor" />
-              <circle cx="8.5" cy="5.5" r="2.5" fill="currentColor" />
-              <path
-                d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
-                fill="currentColor"
-              />
-            </svg>
+        <Link
+          href={[
+            "",
+            p?.baseRepository?.repository?.owner?.owner?.username
+              ? p?.baseRepository?.repository?.owner?.owner?.username
+              : p?.baseRepository?.repository?.ownerId,
+            p?.baseRepository?.repository?.name,
+            "pulls",
+            p?.iid,
+          ].join("/")}
+          className="mx-10 mb-2 max-w-xs lg:max-w-2xl flex"
+        >
+          <span className="text-type-primary">{p?.title}</span>
+          <span className="text-neutral ml-2">#{p?.iid}</span>
+        </Link>
+        {p?.description ? (
+          <div className="mx-10 mt-2 text-xs text-type-secondary max-w-xs lg:max-w-2xl max-h-[5rem] overflow-hidden">
+            {p?.description}
           </div>
-          <div>
-            <Link
-              href={[
-                "",
-                p?.baseRepository?.repository?.ownerId,
-                p?.baseRepository?.repository?.name,
-                "pulls",
-                p?.iid,
-              ].join("/")}
-              className="max-w-xs lg:max-w-2xl"
-            >
-              <span className="text-type-primary">{p?.title}</span>
-              <span className="text-neutral ml-2">#{p?.iid}</span>
-            </Link>
-            {p?.description ? (
-              <div className="text-type-secondary text-xs mt-2 truncate max-w-xs lg:max-w-2xl">
-                {p?.description}
-              </div>
-            ) : (
-              ""
-            )}
-            <div className="text-type-secondary text-xs mt-2">
-              {p?.state == "OPEN" ? (
-                <>
-                  <span className="mr-1">Opened by</span>
-                  <AccountCard
-                    id={p?.owner?.user?.username}
-                    initialData={p?.owner?.user}
-                    avatarSize="xxs"
-                    showAvatar={false}
-                    showId={true}
-                  />
-                  <span className="ml-1">
-                    {dayjs(p?.createdAt * 1000).fromNow()}
-                  </span>
-                </>
-              ) : p?.state == "CLOSED" ? (
-                <>
-                  <span className="mr-1">Closed by</span>
-                  <AccountCard
-                    id={p?.closedBy}
-                    avatarSize="xxs"
-                    showAvatar={false}
-                    showId={true}
-                  />
-                  <span className="ml-1">
-                    {dayjs(p?.closedAt * 1000).fromNow()}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span className="mr-1">Merged by</span>
-                  <AccountCard
-                    id={p?.mergedBy}
-                    avatarSize="xxs"
-                    showAvatar={false}
-                    showId={true}
-                  />
-                  <span className="ml-1">
-                    {dayjs(p?.mergedAt * 1000).fromNow()}
-                  </span>
-                </>
-              )}
-            </div>
-          </div>
+        ) : (
+          ""
+        )}
+        <div className="mx-10 mt-2 flex gap-1 text-xs text-type-secondary max-w-xs lg:max-w-2xl">
+          {p?.state == "OPEN" ? (
+            <>
+              <span
+                className={
+                  "mr-1 mt-px h-2 w-2 rounded-md justify-self-end self-center inline-block bg-green-900"
+                }
+              />
+              <span>Pull Request opened by</span>
+              <AccountCard
+                id={ownerData?.id}
+                initialData={ownerData}
+                avatarSize="xxs"
+                showAvatar={false}
+                showId={true}
+              />
+              <span>{dayjs(p?.createdAt * 1000).fromNow()}</span>
+            </>
+          ) : p?.state == "CLOSED" ? (
+            <>
+              <span
+                className={
+                  "mr-1 mt-px h-2 w-2 rounded-md justify-self-end self-center inline-block bg-red-900"
+                }
+              />
+              <span>Pull Request closed by</span>
+              <AccountCard
+                id={closerData?.id}
+                initialData={closerData}
+                avatarSize="xxs"
+                showAvatar={false}
+                showId={true}
+              />
+              <span>{dayjs(p?.closedAt * 1000).fromNow()}</span>
+            </>
+          ) : (
+            <>
+              <span
+                className={
+                  "mr-1 mt-px h-2 w-2 rounded-md justify-self-end self-center inline-block bg-purple-900"
+                }
+              />
+              <span>Pull Request merged by</span>
+              <AccountCard
+                id={mergerData?.id}
+                initialData={mergerData}
+                avatarSize="xxs"
+                showAvatar={false}
+                showId={true}
+              />
+              <span>{dayjs(p?.mergedAt * 1000).fromNow()}</span>
+            </>
+          )}
+          <span className="w-1 h-1 mt-2 mx-2 rounded-full bg-neutral"></span>
+          <span className="capitalize">
+            {p?.commentsCount} {pluralize("comment", p?.commentsCount)}
+          </span>
         </div>
       </div>
     );
   };
 
-  const getBountyCard = (p, i) => {
-    return <div key={"feedBounty" + i}>Bounty</div>;
+  const getBountyCard = (b, i) => {
+    let isExpired = b?.expireAt < dayjs().unix();
+    let rewareeData = { ...b?.rewardee }
+    if (rewareeData) {
+      rewareeData.id = rewareeData.address
+    }
+    return (
+      <div className="p-4 my-0" key={"feedBounty" + i}>
+        {getRepoHeader(b?.repository)}
+        <Link
+          href={[
+            "",
+            b?.repository?.owner?.owner?.username
+              ? b?.repository?.owner?.owner?.username
+              : b?.repository?.ownerId,
+            b?.repository?.name,
+            "issues",
+            b?.parentIssue?.issue?.iid,
+          ].join("/")}
+          className="mx-10 mb-2 max-w-xs lg:max-w-2xl"
+        >
+          <span className="text-type-primary">
+            {b?.amount?.map((a) => {
+              return (
+                <>
+                  <span className="">
+                    {a.amount / 1000000 + " " + a.denom.slice(1).toUpperCase()}
+                  </span>
+                </>
+              );
+            })}
+          </span>
+          {b?.state == "BOUNTY_STATE_DESTCREDITED" ? (
+            <>
+              <span className="ml-2">Rewared to</span>
+              <AccountCard
+                id={rewareeData?.id}
+                initialData={rewareeData}
+                avatarSize="xs"
+                showAvatar={true}
+                showId={true}
+              />
+            </>
+          ) : (
+            ""
+          )}
+        </Link>
+        <div className="mx-10 mt-2 text-xs text-type-secondary max-w-xs lg:max-w-2xl max-h-[5rem] overflow-hidden">
+          {b?.parentIssue?.issue?.title}
+        </div>
+        <div className="mx-10 mt-2 flex gap-1 text-xs text-type-secondary max-w-xs lg:max-w-2xl">
+          {b?.state == "BOUNTY_STATE_REVERTEDBACK" ? (
+            <>
+              <span
+                className={
+                  "mr-1 mt-px h-2 w-2 rounded-md justify-self-end self-center inline-block bg-red-900"
+                }
+              />
+              <span>
+                Bounty reverted {dayjs(b?.updatedAt * 1000).fromNow()}
+              </span>
+            </>
+          ) : (
+            ""
+          )}
+          {b?.state == "BOUNTY_STATE_SRCDEBITTED" ? (
+            isExpired ? (
+              <>
+                <span
+                  className={
+                    "mr-1 mt-px h-2 w-2 rounded-md justify-self-end self-center inline-block bg-pink-900"
+                  }
+                />
+                <span>
+                  Bounty expired {dayjs(b?.expireAt * 1000).fromNow()}
+                </span>
+              </>
+            ) : (
+              <>
+                <span
+                  className={
+                    "mr-1 mt-px h-2 w-2 rounded-md justify-self-end self-center inline-block bg-green-900"
+                  }
+                />
+                <span>
+                  Bounty expires in {dayjs(b?.expireAt * 1000).fromNow()}
+                </span>
+              </>
+            )
+          ) : (
+            ""
+          )}
+          {b?.state == "BOUNTY_STATE_DESTCREDITED" ? (
+            <>
+              <span
+                className={
+                  "mr-1 mt-px h-2 w-2 rounded-md justify-self-end self-center inline-block bg-green-900"
+                }
+              />
+              <span>Bounty rewared {dayjs(b?.updatedAt * 1000).fromNow()}</span>
+            </>
+          ) : (
+            ""
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const getReleaseCard = (l, i) => {
+    return (
+      <div className="p-4 my-0" key={"feedBounty" + i}>
+        {getRepoHeader(l?.repository?.repository)}
+        <Link
+          href={[
+            "",
+            l?.repository?.repository?.owner?.owner?.username
+              ? l?.repository?.repository?.owner?.owner?.username
+              : l?.repository?.repository?.ownerId,
+            l?.repository?.repository?.name,
+            "releases/tag",
+            l?.tagName,
+          ].join("/")}
+          className="mx-10 mb-2 max-w-xs lg:max-w-2xl"
+        >
+          <span className="text-type-primary">{l?.name}</span>
+        </Link>
+        {l?.description ? (
+          <div className="mx-10 mt-2 text-xs text-type-secondary max-w-xs lg:max-w-2xl max-h-[5rem] overflow-hidden">
+            {l?.description}
+          </div>
+        ) : (
+          ""
+        )}
+        <div className="mx-10 mt-2 flex gap-1 text-xs text-type-secondary max-w-xs lg:max-w-2xl">
+          <span>Released {dayjs(l?.updatedAt * 1000).fromNow()}</span>
+          <span className="w-1 h-1 mt-2 mx-2 rounded-full bg-neutral"></span>
+          <span className="capitalize">
+            {l?.attachments?.length}{" "}
+            {pluralize("attachment", l?.attachments?.length)}
+          </span>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -451,6 +715,8 @@ function ActivityFeed({ ...props }) {
             return getPullRequestCard(f, i);
           } else if (f.__typename === "Bounty") {
             return getBountyCard(f, i);
+          } else if (f.__typename === "Release") {
+            return getReleaseCard(f, i);
           }
         })}
         <div className="pt-48"></div>
