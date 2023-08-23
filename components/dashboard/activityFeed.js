@@ -284,7 +284,7 @@ function ActivityFeed({ ...props }) {
     if (!r) return "";
     let ownerData = { ...r.owner?.owner, ...r.owner?.user };
     if (ownerData) {
-      ownerData.id = ownerData.address;
+      ownerData.id = ownerData.username ? ownerData.username : ownerData.address;
     }
     return (
       <div className="flex items-center mb-2">
@@ -297,7 +297,7 @@ function ActivityFeed({ ...props }) {
           autoLoad={false}
         />
         <div className="mx-2 text-type-tertiary">/</div>
-        <Link href={ownerData?.id + "/" + r.name}>
+        <Link href={["", (ownerData?.username ? ownerData.username : ownerData.id), r.name].join('/')}>
           <div className="text-primary">{r.name}</div>
         </Link>
         <div className="flex-1"></div>
@@ -351,7 +351,7 @@ function ActivityFeed({ ...props }) {
           ""
         )}
         <div className="mx-10 mt-2 flex gap-1 text-xs text-type-secondary max-w-xs lg:max-w-2xl truncate">
-          <span>Updated {dayjs(r?.pushedAt * 1000).fromNow()}</span>
+          <span>Updated {dayjs(r?.updatedAt * 1000).fromNow()}</span>
           <span className="w-1 h-1 mt-2 mx-2 rounded-full bg-neutral"></span>
           <span className="capitalize">
             {r.openPullsCount} Open{" "}
@@ -381,7 +381,9 @@ function ActivityFeed({ ...props }) {
         <Link
           href={[
             "",
-            p?.repository?.repository?.ownerId,
+            p?.repository?.repository?.owner?.owner?.username
+              ? p?.repository?.repository?.owner?.owner?.username
+              : p?.repository?.repository?.ownerId,
             p?.repository?.repository?.name,
             "issues",
             p?.iid,
@@ -462,7 +464,9 @@ function ActivityFeed({ ...props }) {
         <Link
           href={[
             "",
-            p?.baseRepository?.repository?.ownerId,
+            p?.baseRepository?.repository?.owner?.owner?.username
+              ? p?.baseRepository?.repository?.owner?.owner?.username
+              : p?.baseRepository?.repository?.ownerId,
             p?.baseRepository?.repository?.name,
             "pulls",
             p?.iid,
@@ -488,13 +492,13 @@ function ActivityFeed({ ...props }) {
                 }
               />
               <span>Pull Request opened by</span>
-                <AccountCard
-                  id={ownerData?.id}
-                  initialData={ownerData}
-                  avatarSize="xxs"
-                  showAvatar={false}
-                  showId={true}
-                />
+              <AccountCard
+                id={ownerData?.id}
+                initialData={ownerData}
+                avatarSize="xxs"
+                showAvatar={false}
+                showId={true}
+              />
               <span>{dayjs(p?.createdAt * 1000).fromNow()}</span>
             </>
           ) : p?.state == "CLOSED" ? (
@@ -505,13 +509,13 @@ function ActivityFeed({ ...props }) {
                 }
               />
               <span>Pull Request closed by</span>
-                <AccountCard
-                  id={closerData?.id}
-                  initialData={closerData}
-                  avatarSize="xxs"
-                  showAvatar={false}
-                  showId={true}
-                />
+              <AccountCard
+                id={closerData?.id}
+                initialData={closerData}
+                avatarSize="xxs"
+                showAvatar={false}
+                showId={true}
+              />
               <span>{dayjs(p?.closedAt * 1000).fromNow()}</span>
             </>
           ) : (
@@ -522,13 +526,13 @@ function ActivityFeed({ ...props }) {
                 }
               />
               <span>Pull Request merged by</span>
-                <AccountCard
-                  id={mergerData?.id}
-                  initialData={mergerData}
-                  avatarSize="xxs"
-                  showAvatar={false}
-                  showId={true}
-                />
+              <AccountCard
+                id={mergerData?.id}
+                initialData={mergerData}
+                avatarSize="xxs"
+                showAvatar={false}
+                showId={true}
+              />
               <span>{dayjs(p?.mergedAt * 1000).fromNow()}</span>
             </>
           )}
@@ -553,7 +557,9 @@ function ActivityFeed({ ...props }) {
         <Link
           href={[
             "",
-            b?.repository?.owner?.id,
+            b?.repository?.owner?.owner?.username
+              ? b?.repository?.owner?.owner?.username
+              : b?.repository?.ownerId,
             b?.repository?.name,
             "issues",
             b?.parentIssue?.issue?.iid,
@@ -573,7 +579,7 @@ function ActivityFeed({ ...props }) {
           </span>
           {b?.state == "BOUNTY_STATE_DESTCREDITED" ? (
             <>
-              <span>Rewared to</span>
+              <span className="ml-2">Rewared to</span>
               <AccountCard
                 id={rewareeData?.id}
                 initialData={rewareeData}
@@ -655,7 +661,9 @@ function ActivityFeed({ ...props }) {
         <Link
           href={[
             "",
-            l?.repository?.repository?.ownerId,
+            l?.repository?.repository?.owner?.owner?.username
+              ? l?.repository?.repository?.owner?.owner?.username
+              : l?.repository?.repository?.ownerId,
             l?.repository?.repository?.name,
             "releases/tag",
             l?.tagName,
@@ -674,7 +682,10 @@ function ActivityFeed({ ...props }) {
         <div className="mx-10 mt-2 flex gap-1 text-xs text-type-secondary max-w-xs lg:max-w-2xl">
           <span>Released {dayjs(l?.updatedAt * 1000).fromNow()}</span>
           <span className="w-1 h-1 mt-2 mx-2 rounded-full bg-neutral"></span>
-          <span className="capitalize">{l?.attachments?.length} {pluralize("attachment", l?.attachments?.length)}</span>
+          <span className="capitalize">
+            {l?.attachments?.length}{" "}
+            {pluralize("attachment", l?.attachments?.length)}
+          </span>
         </div>
       </div>
     );
