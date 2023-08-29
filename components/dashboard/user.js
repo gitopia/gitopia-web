@@ -77,8 +77,6 @@ function UserDashboard(props) {
     daos: {},
   });
 
-  console.log(showAll);
-
   return (
     <>
       <div className="mb-8">

@@ -436,7 +436,7 @@ export const signUploadFileMessage = (name, size, md5) => {
   };
 };
 
-export const calculateGithubRewards = (code) => {
+export const signMessageForRewards = (code) => {
   return async (dispatch, getState) => {
     const data = {
       // Any arbitrary object
@@ -451,7 +451,6 @@ export const calculateGithubRewards = (code) => {
       return msg;
     } catch (e) {
       console.error(e);
-      dispatch(notify(e.message, "error"));
       return null;
     }
   };
