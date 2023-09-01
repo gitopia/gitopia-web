@@ -3,7 +3,9 @@ import Link from "next/link";
 import Head from "next/head";
 import Header from "../components/header";
 import UserDashboard from "../components/dashboard/user";
-import ActivityFeed from "../components/dashboard/activityFeed";
+import ActivityFeed from "../components/feed/activityFeed";
+import { useState } from "react";
+import BountyFeed from "../components/feed/bountyFeed";
 
 export async function getStaticProps() {
   const fs = await import("fs");
@@ -21,6 +23,8 @@ export async function getStaticProps() {
 }
 
 function Home(props) {
+  const [currentTab, setCurrentTab] = useState("trending");
+
   return (
     <div
       data-theme="dark"
@@ -145,7 +149,48 @@ function Home(props) {
             </div>
           </div>
           <div className="w-full mt-14 px-2 sm:px-0 border-l border-grey-50">
-            <ActivityFeed />
+            <div className="tabs ml-8 mb-4">
+              <div
+                className={
+                  "tab tab-sm tab-bordered" +
+                  (currentTab === "trending" ? " tab-active" : "")
+                }
+                onClick={() => {
+                  setCurrentTab("trending");
+                }}
+              >
+                Trending
+              </div>
+              <div
+                className={
+                  "tab tab-sm tab-bordered" +
+                  (currentTab === "latest" ? " tab-active" : "")
+                }
+                onClick={() => {
+                  setCurrentTab("latest");
+                }}
+              >
+                Latest
+              </div>
+              <div
+                className={
+                  "tab tab-sm tab-bordered" +
+                  (currentTab === "bounties" ? " tab-active" : "")
+                }
+                onClick={() => {
+                  setCurrentTab("bounties");
+                }}
+              >
+                Bounties
+              </div>
+            </div>
+            {currentTab === "trending" ? (
+              <ActivityFeed order="feedScore" />
+            ) : (
+              ""
+            )}
+            {currentTab === "latest" ? <ActivityFeed order="updatedAt" /> : ""}
+            {currentTab === "bounties" ? <BountyFeed /> : ""}
           </div>
         </div>
       </main>
