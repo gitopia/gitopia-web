@@ -33,12 +33,22 @@ function WalletInfo(props) {
       }
     }
     async function getRewards() {
-      let tokens = await getRewardToken(props.selectedAddress);
-      if (tokens) {
-        setRewards(tokens.claimed_amount.amount);
+      let res = await getRewardToken(props.selectedAddress),
+        totalDecayedAmount = 0,
+        denom = process.env.NEXT_PUBLIC_CURRENCY_TOKEN;
+      if (res) {
+        for (let i = 0; i < res.length; i++) {
+          totalDecayedAmount +=
+            parseInt(res[i].claimed_amount?.amount || 0) +
+            parseInt(res[i].claimable_amount?.amount || 0) +
+            parseInt(res[i].remaining_claimable_amount?.amount || 0);
+        }
+      }
+      if (totalDecayedAmount) {
+        setRewards(totalDecayedAmount);
         let dollar = await getTokenValueInDollars(
-          tokens.claimed_amount.denom,
-          tokens.claimed_amount.amount
+          process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN,
+          totalDecayedAmount
         );
         if (dollar) {
           setRewardsDollarValue(dollar);
@@ -440,7 +450,7 @@ function WalletInfo(props) {
           </div>
           <div className="mx-4 flex-1">
             <div className="font-semibold text-xl">
-              {rewards / 1000000 +
+              {parseFloat(rewards / 1000000).toFixed(2) +
                 " " +
                 (process.env.NEXT_PUBLIC_CURRENCY_TOKEN || "").toUpperCase()}
             </div>
@@ -452,14 +462,9 @@ function WalletInfo(props) {
               ""
             )}
           </div>
-          <a
-            // href="/rewards"
-            target="_blank"
-            className="btn btn-primary btn-sm px-4"
-            disabled={true}
-          >
+          <Link href="/rewards" className="btn btn-primary btn-sm px-4">
             {rewards ? "Claim Rewards" : "Check Eligibility"}
-          </a>
+          </Link>
         </div>
       </div>
     </div>

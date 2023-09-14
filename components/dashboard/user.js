@@ -3,7 +3,7 @@ import FaucetReceiver from "../faucetReceiver";
 import AllowanceReceiver from "../allowanceReceiver";
 import GreetUser from "../greetUser";
 import PromptBackupWallet from "../promptBackupWallet";
-import ActivityFeed from "./activityFeed";
+import ActivityFeed from "../feed/activityFeed";
 import client from "../../helpers/apolloClient";
 import { useLazyQuery, gql, useQuery } from "@apollo/client";
 import { useState } from "react";
@@ -76,8 +76,6 @@ function UserDashboard(props) {
     collab: false,
     daos: {},
   });
-
-  console.log(showAll);
 
   return (
     <>
