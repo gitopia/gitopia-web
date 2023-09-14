@@ -120,11 +120,18 @@ function Rewards(props) {
 
   const getTime = () => {
     const deadline = dayjs.unix(deadlineUnix);
+    const start = dayjs.unix(process.env.NEXT_PUBLIC_REWARD_START);
     const now = dayjs();
-    const diff = dayjs.duration(deadline.diff(now));
-    setDays(parseInt(diff.asDays()));
-    setHours(diff.hours());
-    setMinutes(diff.minutes());
+    if (now.isAfter(start)) {
+      const diff = dayjs.duration(deadline.diff(now));
+      setDays(parseInt(diff.asDays()));
+      setHours(diff.hours());
+      setMinutes(diff.minutes());
+    } else {
+      setDays('-');
+      setHours('-');
+      setMinutes('-');
+    }
   };
 
   const calculateTasksPercentage = (t) => {
@@ -501,19 +508,23 @@ function Rewards(props) {
                     </div>
                   </div>
                 ) : (
-                  <div className="my-2">
+                  <div className="my-2 py-1">
                     {githubCalculationStatus === 2 ? (
                       <span className="text-4xl uppercase">
                         {showToken(totalGithubDecayedAmount, token)}
                       </span>
                     ) : (
                       <>
-                        <span className="text-4xl mr-2 text-type-tertiary">
+                        <span className="text-2xl mr-2 text-type-tertiary">
+                          Coming Soon
+                        </span>
+
+                        {/* <span className="text-4xl mr-2 text-type-tertiary">
                           ~
                         </span>
                         <span className="text-4xl uppercase">
                           {showToken(totalGithubToken, token)}
-                        </span>
+                        </span> */}
                       </>
                     )}
                   </div>
@@ -538,6 +549,7 @@ function Rewards(props) {
                           githubLogin();
                         }
                       }}
+                      disabled={true}
                     >
                       Connect with Github profile
                     </button>
@@ -559,6 +571,7 @@ function Rewards(props) {
                           getGithubRewards();
                         }
                       }}
+                      disabled={true}
                     >
                       Calculate Reward
                     </button>
@@ -688,7 +701,7 @@ function Rewards(props) {
                     )}
                   </span>
                 </div>
-                <div
+                {/* <div
                   className={
                     "rounded-full px-2 py-px text-xs h-5 mt-3.5 tooltip cursor-default border" +
                     (githubCalculationStatus === 2
@@ -708,7 +721,7 @@ function Rewards(props) {
                       token
                     )}
                   </span>
-                </div>
+                </div> */}
               </div>
               {t.isComplete ? (
                 <img
