@@ -1,5 +1,10 @@
 ## Changelog
 
+### v1.15.0 - 14th Sep 2023
+
+- Update rewards flow
+- Add latest activity and bounty feed
+
 ### v1.14.0 - 17th Aug 2023
 
 - Updated homepage with activity feed
