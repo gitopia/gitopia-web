@@ -107,7 +107,7 @@ export const signMessage = ({ data = {} }) => {
         {
           accountNumber: 0,
           sequence: 0,
-          chainId: info.default_node_info.network,
+          chainId: "",
         }
       );
       if (wallet.activeWallet?.isLedger) {
