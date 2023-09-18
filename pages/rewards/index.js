@@ -128,9 +128,9 @@ function Rewards(props) {
       setHours(diff.hours());
       setMinutes(diff.minutes());
     } else {
-      setDays('-');
-      setHours('-');
-      setMinutes('-');
+      setDays("-");
+      setHours("-");
+      setMinutes("-");
     }
   };
 
@@ -340,22 +340,17 @@ function Rewards(props) {
       return;
     }
     setGetEcosystemRewardsLoading(true);
-    const res = await props.signMessageForRewards("ecosystem");
-    if (res) {
-      console.log(res);
-      await axios
-        .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/rewards", {
-          series: 8,
-          payload: res,
-        })
-        .then(({ data }) => {
-          consumeEcosystemData(data);
-        })
-        .catch(({ err }) => {
-          console.error(err);
-        });
-    } else {
-    }
+    await axios
+      .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/rewards", {
+        series: 8,
+        payload: props.selectedAddress,
+      })
+      .then(({ data }) => {
+        consumeEcosystemData(data);
+      })
+      .catch(({ err }) => {
+        console.error(err);
+      });
     setGetEcosystemRewardsLoading(false);
   };
 
