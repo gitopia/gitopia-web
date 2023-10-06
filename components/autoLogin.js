@@ -5,9 +5,9 @@ import {
   unlockWallet,
   downloadWallet,
   unlockKeplrWallet,
+  unlockLeapWallet,
   unlockLedgerWallet,
 } from "../store/actions/wallet";
-import initKeplr from "../helpers/keplr";
 import TextInput from "./textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { notify } from "reapop";
@@ -39,8 +39,9 @@ function AutoLogin(props) {
         if (!props.activeWallet) {
           console.log("Last wallet found.. ", lastWallet.name);
           if (lastWallet.isKeplr) {
-            await initKeplr();
             await props.unlockKeplrWallet();
+          } else if (lastWallet.isLeap) {
+            await props.unlockLeapWallet();
           } else {
             setWalletName(lastWallet.name);
             setAddress(lastWallet.accounts[0].address);
@@ -214,6 +215,7 @@ export default connect(mapStateToProps, {
   unlockWallet,
   downloadWallet,
   unlockKeplrWallet,
+  unlockLeapWallet,
   unlockLedgerWallet,
   notify,
 })(AutoLogin);

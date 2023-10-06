@@ -5,9 +5,9 @@ import {
   removeWallet,
   unlockLedgerWallet,
   unlockKeplrWallet,
+  unlockLeapWallet,
   signOut,
 } from "../store/actions/wallet";
-import initKeplr from "../helpers/keplr";
 import TextInput from "./textInput";
 import Link from "next/link";
 import shrinkAddress from "../helpers/shrinkAddress";
@@ -262,7 +262,6 @@ function CurrentWallet(props) {
           <button
             className="btn btn-outline border-grey mb-2 rounded-full px-4 relative justify-start"
             onClick={async () => {
-              await initKeplr();
               props.unlockKeplrWallet();
             }}
           >
@@ -270,6 +269,18 @@ function CurrentWallet(props) {
               <img src="/keplr-logo.svg"></img>
             </div>
             <div className="ml-10 mr-2 whitespace-nowrap">Connect Keplr</div>
+          </button>
+
+          <button
+            className="btn btn-outline border-grey mb-2 rounded-full px-4 relative justify-start"
+            onClick={async () => {
+              props.unlockLeapWallet();
+            }}
+          >
+            <div className="rounded-full mask mask-circle w-10 h-10 bg-base-200 flex justify-center items-center absolute left-1">
+              <img src="/metamask-fox.svg"></img>
+            </div>
+            <div className="ml-10 mr-2 whitespace-nowrap">Connect Metamask</div>
           </button>
 
           <Link
@@ -313,5 +324,6 @@ export default connect(mapStateToProps, {
   unlockLedgerWallet,
   removeWallet,
   unlockKeplrWallet,
+  unlockLeapWallet,
   signOut,
 })(CurrentWallet);

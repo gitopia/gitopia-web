@@ -21,6 +21,8 @@ import dayjs from "dayjs";
 import { gasConfig } from "../../ibc-assets-config";
 import { getEndpoint } from "../../helpers/getEndpoints";
 import { ChainIdHelper } from "../../helpers/chainIdHelper";
+import initKeplr from "../../helpers/keplr";
+import initLeap from "../../helpers/leap";
 
 let ledgerTransport;
 
@@ -147,8 +149,8 @@ export const unlockKeplrWallet = (secondaryChainId = null) => {
   return async (dispatch, getState) => {
     if (window.keplr && window.getOfflineSigner) {
       try {
-        const info = await getNodeInfo();
-        const chainId = info.default_node_info.network;
+        const info = await initKeplr();
+        const chainId = info?.default_node_info?.network;
         const offlineSigner = await window.getOfflineSignerAuto(chainId);
         let accountSignerSecondary = null,
           counterPartyAddress = null;
@@ -215,6 +217,85 @@ export const unlockKeplrWallet = (secondaryChainId = null) => {
       }
     } else {
       dispatch(notify("Please ensure keplr extension is installed", "error"));
+    }
+  };
+};
+
+export const unlockLeapWallet = (secondaryChainId = null) => {
+  return async (dispatch, getState) => {
+    if (window.ethereum) {
+      try {
+        const info = await initLeap();
+        const { CosmjsOfflineSigner, getKey } = (
+          await import("@leapwallet/cosmos-snap-provider")
+        );
+        const chainId = info?.default_node_info?.network;
+        const offlineSigner = new CosmjsOfflineSigner(chainId);
+        let accountSignerSecondary = null,
+          counterPartyAddress = null;
+        const accounts = await offlineSigner.getAccounts();
+        const key = await getKey(chainId);
+        let user = await getUser(accounts[0].address);
+
+        if (secondaryChainId) {
+          let chainInfo, chainAsset, chainIbc;
+          [chainInfo, chainAsset, chainIbc] = await Promise.all([
+            getChainInfo(secondaryChainId),
+            getChainAssetList(secondaryChainId),
+            getChainIbcAsset(secondaryChainId),
+          ]);
+          if (chainInfo && chainAsset && chainIbc) {
+            await dispatch({
+              type: ibcAssetsActions.SET_CHAIN_INFO,
+              payload: {
+                chain: chainInfo,
+                assets: chainAsset,
+                ibc: chainIbc,
+              },
+            });
+          }
+          const otherNodeRestEndpoint = await getEndpoint(
+            "rest",
+            chainInfo.apis.rest
+          );
+          if (otherNodeRestEndpoint) {
+            const counterPartyChainInfo = await getAnyNodeInfo(
+              otherNodeRestEndpoint
+            );
+            accountSignerSecondary = new CosmjsOfflineSigner(
+              counterPartyChainInfo.default_node_info.network
+            );
+            const counterPartyAccount =
+              await accountSignerSecondary.getAccounts();
+            counterPartyAddress = counterPartyAccount[0].address;
+          }
+        }
+
+        await dispatch({
+          type: walletActions.SET_ACTIVE_WALLET,
+          payload: {
+            wallet: {
+              name: user?.username ? user.username : key.name,
+              accounts,
+              isLeap: true,
+              counterPartyAddress,
+              counterPartyChain: secondaryChainId,
+            },
+          },
+        });
+        await postWalletUnlocked(
+          offlineSigner,
+          dispatch,
+          getState,
+          accountSignerSecondary
+        );
+        return accounts[0];
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    } else {
+      dispatch(notify("Please ensure leap extension is installed", "error"));
     }
   };
 };

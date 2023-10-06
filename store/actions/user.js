@@ -76,6 +76,22 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
             getState
           );
           await refreshCurrentDashboard(dispatch, getState);
+        } else if (newWallet.isLeap) {
+          await dispatch({
+            type: walletActions.SET_ACTIVE_WALLET,
+            payload: {
+              wallet: {
+                name: username,
+                accounts: newWallet.accounts,
+                isLeap: true,
+              },
+            },
+          });
+          await setCurrentDashboard(newWallet.accounts[0].address)(
+            dispatch,
+            getState
+          );
+          await refreshCurrentDashboard(dispatch, getState);
         } else {
           // local wallet
           const continueAfterUnlockingWallet = new Promise(
@@ -282,6 +298,31 @@ const updateWalletsList = async (dispatch, getState, username, avatarUrl) => {
           name: newWallet.name,
           accounts,
           isKeplr: true,
+        },
+      },
+    });
+    await getUserDetailsForSelectedAddress()(dispatch, getState);
+    const daos = await getUserDaoAll(newWallet.accounts[0].address);
+    await dispatch({
+      type: userActions.INIT_DASHBOARDS,
+      payload: {
+        name: newWallet.name,
+        id: newWallet.accounts[0].address,
+        daos: daos,
+      },
+    });
+  } else if (newWallet.isLeap) {
+    const info = await getNodeInfo();
+    const chainId = info.default_node_info.network;
+    const offlineSigner = await window.getOfflineSignerAuto(chainId);
+    const accounts = await offlineSigner.getAccounts();
+    await dispatch({
+      type: walletActions.SET_ACTIVE_WALLET,
+      payload: {
+        wallet: {
+          name: newWallet.name,
+          accounts,
+          isLeap: true,
         },
       },
     });

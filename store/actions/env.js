@@ -5,6 +5,7 @@ import {
   closeLedgerTransport,
   updateUserBalance,
   unlockKeplrWallet,
+  unlockLeapWallet,
 } from "./wallet";
 import getNodeInfo from "../../helpers/getNodeInfo";
 
@@ -147,6 +148,9 @@ export const setupTxClients = async (dispatch, getState, chainId = null) => {
     if (!env.txClient || chainId != wallet.activeWallet.counterPartyChain) {
       if (wallet.activeWallet.isKeplr) {
         await unlockKeplrWallet(chainId)(dispatch, getState);
+      }
+      else if (wallet.activeWallet.isLeap) {
+        await unlockLeapWallet(chainId)(dispatch, getState);
       } else {
         return new Promise((resolve, reject) => {
           dispatch({

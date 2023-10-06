@@ -7,8 +7,7 @@ import Footer from "../components/footer";
 import ConnectLedger from "../components/connectLedger";
 import CreateUser from "../components/createUser";
 import { useRouter } from "next/router";
-import initKeplr from "../helpers/keplr";
-import { unlockKeplrWallet } from "../store/actions/wallet";
+import { unlockKeplrWallet, unlockLeapWallet } from "../store/actions/wallet";
 import { connect } from "react-redux";
 import FundWallet from "../components/fundWallet";
 
@@ -50,7 +49,7 @@ function Login(props) {
             <div className="max-w-lg w-full p-4">
               <div className="flex flex-col gap-2">
                 <button
-                  className="flex-1 border-2 border-primary rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost w-full focus:outline-none hover:border-primary flex items-center"
+                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost w-full focus:outline-none flex items-center"
                   onClick={(e) => {
                     push("/login?step=2");
                   }}
@@ -62,6 +61,30 @@ function Login(props) {
                       Recommended
                     </span>
                   </div>
+                </button>
+                <button
+                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
+                  onClick={async (e) => {
+                    const acc = await props.unlockKeplrWallet();
+                    if (acc) {
+                      push("/home");
+                    }
+                  }}
+                >
+                  <img src="/keplr-logo.svg" className="w-20 h-20 p-2" />
+                  <div className="ml-8">Connect Keplr</div>
+                </button>
+                <button
+                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
+                  onClick={async (e) => {
+                    const acc = await props.unlockLeapWallet();
+                    if (acc) {
+                      push("/home");
+                    }
+                  }}
+                >
+                  <img src="/metamask-fox.svg" className="w-20 h-20 p-2" />
+                  <div className="ml-8">Connect Metamask (Flask)</div>
                 </button>
                 <button
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
@@ -82,19 +105,6 @@ function Login(props) {
                 >
                   <img src="/existing-wallet.svg" className="w-20 h-20" />
                   <div className="ml-8">Recover exisiting local wallet</div>
-                </button>
-                <button
-                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
-                  onClick={async (e) => {
-                    await initKeplr();
-                    const acc = await props.unlockKeplrWallet();
-                    if (acc) {
-                      push("/home");
-                    }
-                  }}
-                >
-                  <img src="/keplr-logo.svg" className="w-20 h-20 p-2" />
-                  <div className="ml-8">Connect Keplr</div>
                 </button>
               </div>
             </div>
@@ -145,4 +155,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   unlockKeplrWallet,
+  unlockLeapWallet,
 })(Login);

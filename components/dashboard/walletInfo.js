@@ -125,7 +125,9 @@ function WalletInfo(props) {
               </svg>
             </Link>
           </div>
-          {props.activeWallet.isKeplr || props.activeWallet.isLedger ? (
+          {props.activeWallet.isKeplr ||
+          props.activeWallet.isLeap ||
+          props.activeWallet.isLedger ? (
             ""
           ) : (
             <div

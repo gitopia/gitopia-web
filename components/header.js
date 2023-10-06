@@ -98,6 +98,13 @@ function Header(props) {
     }
   };
 
+  const leapWalletChange = async () => {
+    console.log("Leap wallet change", props.activeWallet);
+    if (props.activeWallet && props.activeWallet.isLeap) {
+      await props.unlockLeapWallet();
+    }
+  };
+
   useEffect(() => {
     const updateNetworkName = async () => {
       if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
@@ -115,8 +122,11 @@ function Header(props) {
 
   useEffect(() => {
     window.addEventListener("keplr_keystorechange", kelprWalletChange);
+    window.addEventListener("leap_keystorechange", leapWalletChange);
+
     return () => {
       window.removeEventListener("keplr_keystorechange", kelprWalletChange);
+      window.removeEventListener("leap_keystorechange", leapWalletChange);
     };
   }, [null, props.activeWallet]);
 
@@ -372,7 +382,7 @@ function Header(props) {
                             {props.activeWallet.name}
                           </span>
                           {props.activeWallet.isLedger ||
-                          props.activeWallet.isKeplr ? (
+                          props.activeWallet.isKeplr || props.activeWallet.isLeap ? (
                             <span
                               className={
                                 "ml-1 border rounded-md pl-1.5 pr-2 py-px relative -top-px " +
@@ -384,7 +394,7 @@ function Header(props) {
                             >
                               {props.activeWallet.isLedger
                                 ? " Ledger"
-                                : " Keplr"}
+                                : props.activeWallet.isKeplr ? " Keplr" : " Leap"}
                             </span>
                           ) : (
                             ""
