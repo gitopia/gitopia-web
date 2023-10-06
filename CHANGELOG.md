@@ -1,5 +1,9 @@
 ## Changelog
 
+### v1.15.1 - 6th Oct 2023
+
+- Add metamask (flask) support with leap wallet snap
+
 ### v1.15.0 - 14th Sep 2023
 
 - Update rewards flow
