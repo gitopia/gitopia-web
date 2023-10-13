@@ -24,7 +24,6 @@ import { ChainIdHelper } from "../../helpers/chainIdHelper";
 import initKeplr from "../../helpers/keplr";
 import initMetamask from "../../helpers/metamask";
 import initLeap from "../../helpers/leap";
-import { walletType } from "../walletType";
 
 let ledgerTransport;
 
