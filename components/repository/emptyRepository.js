@@ -26,7 +26,12 @@ function EmptyRepository(props) {
   const input = useRef();
 
   if (activeWallet) {
-    if (activeWallet.isKeplr || activeWallet.isLedger || activeWallet.isLeap) {
+    if (
+      activeWallet.isKeplr ||
+      activeWallet.isLedger ||
+      activeWallet.isMetamask ||
+      activeWallet.isLeap
+    ) {
     } else {
       shouldShowDownloadWallet = true;
     }

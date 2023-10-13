@@ -60,32 +60,19 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
             getState
           );
           await refreshCurrentDashboard(dispatch, getState);
-        } else if (newWallet.isKeplr) {
-          await dispatch({
-            type: walletActions.SET_ACTIVE_WALLET,
-            payload: {
+        } else if (newWallet.isKeplr || newWallet.isLeap || newWallet.isMetamask) {
+          let payload = {
               wallet: {
                 name: username,
                 accounts: newWallet.accounts,
-                isKeplr: true,
-              },
-            },
-          });
-          await setCurrentDashboard(newWallet.accounts[0].address)(
-            dispatch,
-            getState
-          );
-          await refreshCurrentDashboard(dispatch, getState);
-        } else if (newWallet.isLeap) {
+              }
+          }
+          if (newWallet.isKeplr) payload.wallet.isKeplr = true;
+          if (newWallet.isLeap) payload.wallet.isLeap = true;
+          if (newWallet.isMetamask) payload.wallet.isMetamask = true;
           await dispatch({
             type: walletActions.SET_ACTIVE_WALLET,
-            payload: {
-              wallet: {
-                name: username,
-                accounts: newWallet.accounts,
-                isLeap: true,
-              },
-            },
+            payload,
           });
           await setCurrentDashboard(newWallet.accounts[0].address)(
             dispatch,
@@ -314,7 +301,7 @@ const updateWalletsList = async (dispatch, getState, username, avatarUrl) => {
   } else if (newWallet.isLeap) {
     const info = await getNodeInfo();
     const chainId = info.default_node_info.network;
-    const offlineSigner = await window.getOfflineSignerAuto(chainId);
+    const offlineSigner = await window.leap.getOfflineSignerAuto(chainId);
     const accounts = await offlineSigner.getAccounts();
     await dispatch({
       type: walletActions.SET_ACTIVE_WALLET,
@@ -322,7 +309,35 @@ const updateWalletsList = async (dispatch, getState, username, avatarUrl) => {
         wallet: {
           name: newWallet.name,
           accounts,
-          isLeap: true,
+          isMetamask: true,
+        },
+      },
+    });
+    await getUserDetailsForSelectedAddress()(dispatch, getState);
+    const daos = await getUserDaoAll(newWallet.accounts[0].address);
+    await dispatch({
+      type: userActions.INIT_DASHBOARDS,
+      payload: {
+        name: newWallet.name,
+        id: newWallet.accounts[0].address,
+        daos: daos,
+      },
+    });
+  } else if (newWallet.isMetamask) {
+    const info = await getNodeInfo();
+    const chainId = info.default_node_info.network;
+    const { CosmjsOfflineSigner, getKey } = await import(
+      "@leapwallet/cosmos-snap-provider"
+    );
+    const offlineSigner = new CosmjsOfflineSigner(chainId);
+    const accounts = await offlineSigner.getAccounts();
+    await dispatch({
+      type: walletActions.SET_ACTIVE_WALLET,
+      payload: {
+        wallet: {
+          name: newWallet.name,
+          accounts,
+          isMetamask: true,
         },
       },
     });

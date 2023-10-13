@@ -5,6 +5,7 @@ import {
   unlockWallet,
   downloadWallet,
   unlockKeplrWallet,
+  unlockMetamaskWallet,
   unlockLeapWallet,
   unlockLedgerWallet,
 } from "../store/actions/wallet";
@@ -40,6 +41,8 @@ function AutoLogin(props) {
           console.log("Last wallet found.. ", lastWallet.name);
           if (lastWallet.isKeplr) {
             await props.unlockKeplrWallet();
+          } else if (lastWallet.isMetamask) {
+            await props.unlockMetamaskWallet();
           } else if (lastWallet.isLeap) {
             await props.unlockLeapWallet();
           } else {
@@ -215,6 +218,7 @@ export default connect(mapStateToProps, {
   unlockWallet,
   downloadWallet,
   unlockKeplrWallet,
+  unlockMetamaskWallet,
   unlockLeapWallet,
   unlockLedgerWallet,
   notify,

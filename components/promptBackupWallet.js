@@ -28,7 +28,10 @@ const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
     nonBackupFriendly:
-      state.wallet.activeWallet?.isLedger || state.wallet.activeWallet?.isKeplr || state.wallet.activeWallet?.isLeap,
+      state.wallet.activeWallet?.isLedger ||
+      state.wallet.activeWallet?.isKeplr ||
+      state.wallet.activeWallet?.isMetamask ||
+      state.wallet.activeWallet?.isLeap,
     backupState: state.wallet.backupState,
   };
 };

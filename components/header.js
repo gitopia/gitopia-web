@@ -8,6 +8,7 @@ import {
   transferToWallet,
   signOut,
   unlockKeplrWallet,
+  unlockLeapWallet,
 } from "../store/actions/wallet";
 import { setIbcAssets } from "../store/actions/ibcAssets";
 import { getAssetList } from "../helpers/getIbcAssetList";
@@ -104,6 +105,32 @@ function Header(props) {
       await props.unlockLeapWallet();
     }
   };
+
+  const getWalletBadge = (wallet) => {
+    let text = "";
+    if (wallet.isLedger) {
+      text = "Ledger";
+    } else if (wallet.isKeplr) {
+      text = "Keplr";
+    } else if (wallet.isLeap) {
+      text = "Leap";
+    } else if (wallet.isMetamask) {
+      text = "Metamask";
+    } else {
+      return "";
+    }
+    let badge = (
+      <span
+        className={
+          "ml-1 border rounded-md pl-1.5 pr-2 py-px relative -top-px text-purple-50 border-purple"
+        }
+        style={{ fontSize: "0.75em" }}
+      >
+        {text}
+      </span>
+    );
+    return badge;
+  }
 
   useEffect(() => {
     const updateNetworkName = async () => {
@@ -259,74 +286,6 @@ function Header(props) {
             }}
           >
             <div className="flex">
-              {/* <div className="mt-2">
-              <div className="indicator flex-none mr-4">
-                {unread === true && menuOpen !== true ? (
-                  <div class="indicator-item badge badge-primary"></div>
-                ) : (
-                  ""
-                )}
-                <a
-                  class="btn btn-primary btn-circle btn-base btn-outline btn-sm w-10 h-10"
-                  href="#"
-                  onClick={(e) => {
-                    setUnread(false);
-                    setMenuOpen(true);
-                    setMenuState(5);
-                    e.preventDefault();
-                  }}
-                >
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 32 32"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <mask id="path-1-inside-1_728_3215" fill="white">
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M15.9999 4.96387C11.9545 4.96387 8.67506 8.2433 8.67506 12.2887V16.8486H6.22461V22.7806H25.7745V16.8486H23.3247V12.2887C23.3247 8.24331 20.0453 4.96387 15.9999 4.96387Z"
-                      />
-                    </svg>
-                  </a>
-                </div>
-              </div> */}
-              {/* {props.selectedAddress !== null && !isMobile ? (
-                <div>
-                  <div className="indicator flex-none mr-4">
-                    <a
-                      className="btn btn-circle btn-outline btn-sm w-12 h-12"
-                      href="#"
-                      onClick={(e) => {
-                        setMenuOpen(true);
-                        setMenuState(6);
-                        e.preventDefault();
-                        props.setIbcAssets(assets);
-                      }}
-                    >
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M4 5H20C21.1046 5 22 5.89543 22 7V9H14V16H22V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V7C2 5.89543 2.89543 5 4 5ZM22 14V11H16V14H22ZM24 16V18C24 20.2091 22.2091 22 20 22H4C1.79086 22 0 20.2091 0 18V7C0 4.79086 1.79086 3 4 3H20C22.2091 3 24 4.79086 24 7V9V16Z"
-                          fill="currentColor"
-                        />
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              ) : (
-                ""
-              )} */}
-
               <div
                 className={
                   "dropdown dropdown-end " + (menuOpen ? "dropdown-open" : "")
@@ -381,24 +340,7 @@ function Header(props) {
                           <span data-test="current_wallet_name">
                             {props.activeWallet.name}
                           </span>
-                          {props.activeWallet.isLedger ||
-                          props.activeWallet.isKeplr || props.activeWallet.isLeap ? (
-                            <span
-                              className={
-                                "ml-1 border rounded-md pl-1.5 pr-2 py-px relative -top-px " +
-                                (props.activeWallet.isLedger
-                                  ? "text-purple-50 border-purple"
-                                  : "text-teal-50 border-teal")
-                              }
-                              style={{ fontSize: "0.75em" }}
-                            >
-                              {props.activeWallet.isLedger
-                                ? " Ledger"
-                                : props.activeWallet.isKeplr ? " Keplr" : " Leap"}
-                            </span>
-                          ) : (
-                            ""
-                          )}
+                          {getWalletBadge(props.activeWallet)}
                         </div>
                         <div
                           className="text-xs text-left text-type-tertiary"
@@ -421,30 +363,6 @@ function Header(props) {
                       setOpenWithdraw={setOpenWithdraw}
                     />
                   )}
-                  {/* {menuState === 6 && (
-                  <NotificationsList
-                    setMenuOpen={setMenuOpen}
-                    setMenuState={setMenuState}
-                    formattedIssueNotifications={formattedIssueNotifications}
-                    formattedPullNotifications={formattedPullNotifications}
-                    showNotificationListState={showNotificationListState}
-                  />
-                )}
-                {menuState === 5 && (
-                  <NotificationsCard
-                    setMenuOpen={setMenuOpen}
-                    setMenuState={setMenuState}
-                    setFormattedIssueNotifications={
-                      setFormattedIssueNotifications
-                    }
-                    setFormattedPullNotifications={
-                      setFormattedPullNotifications
-                    }
-                    setShowNotificationListState={
-                      setShowNotificationListState
-                    }
-                  />
-                )} */}
                   {menuState === 2 && (
                     <CurrentWallet setMenuOpen={setMenuOpen} />
                   )}
@@ -455,103 +373,6 @@ function Header(props) {
                       setMenuState={setMenuState}
                     />
                   )}
-                  {/* {menuState === 1 && (
-                    <ul className="menu compact w-48 rounded">
-                      {props.activeWallet ? (
-                        <>
-                          <li>
-                            <a
-                              onClick={(e) => {
-                                navigator.clipboard.writeText(
-                                  props.selectedAddress
-                                );
-                                setMenuOpen(false);
-                                if (menuRef.current) {
-                                  menuRef.current.blur();
-                                }
-                                props.notify("Copied to clipboard", "info");
-                              }}
-                            >
-                              <span className="flex-1">Copy Address</span>
-                            </a>
-                          </li>
-                          {props.activeWallet.isKeplr ||
-                          props.activeWallet.isLedger ? (
-                            ""
-                          ) : (
-                            <li>
-                              <a
-                                onClick={(e) => {
-                                  props.downloadWalletForRemoteHelper();
-                                  setMenuOpen(false);
-                                  if (menuRef.current) {
-                                    menuRef.current.blur();
-                                  }
-                                }}
-                                data-test="download_wallet"
-                              >
-                                Download Wallet
-                              </a>
-                            </li>
-                          )}
-                          {isMobile ? (
-                            <li>
-                              <a
-                                href="#"
-                                onClick={(e) => {
-                                  setMenuState(1);
-                                  e.preventDefault();
-                                }}
-                              >
-                                IBC Transfer
-                              </a>
-                            </li>
-                          ) : (
-                            ""
-                          )}
-                          <li>
-                            <Link
-                              href={
-                                props.username
-                                  ? "/" + props.username
-                                  : "/" + props.selectedAddress
-                              }
-                            >
-                              My Profile
-                            </Link>
-                          </li>
-                          <li>
-                            <Link href="/settings">Settings</Link>
-                          </li>
-                          <div className="border-b border-grey my-2"></div>
-                          <li>
-                            <a
-                              href="#"
-                              onClick={(e) => {
-                                setMenuState(2);
-                                e.preventDefault();
-                              }}
-                            >
-                              Switch Wallet
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              onClick={() => {
-                                setMenuOpen(false);
-                                props.signOut();
-                              }}
-                              data-test="log-out"
-                            >
-                              Log Out
-                            </a>
-                          </li>
-                        </>
-                      ) : (
-                        ""
-                      )}
-                    </ul>
-                  )} */}
                 </div>
               </div>
             </div>
@@ -592,5 +413,6 @@ export default connect(mapStateToProps, {
   signOut,
   notify,
   unlockKeplrWallet,
+  unlockLeapWallet,
   setIbcAssets,
 })(Header);

@@ -22,7 +22,9 @@ import { gasConfig } from "../../ibc-assets-config";
 import { getEndpoint } from "../../helpers/getEndpoints";
 import { ChainIdHelper } from "../../helpers/chainIdHelper";
 import initKeplr from "../../helpers/keplr";
+import initMetamask from "../../helpers/metamask";
 import initLeap from "../../helpers/leap";
+import { walletType } from "../walletType";
 
 let ledgerTransport;
 
@@ -221,11 +223,88 @@ export const unlockKeplrWallet = (secondaryChainId = null) => {
   };
 };
 
+
 export const unlockLeapWallet = (secondaryChainId = null) => {
+  return async (dispatch, getState) => {
+    if (window.leap && window.leap.getOfflineSigner) {
+      try {
+        const info = await initLeap();
+        const chainId = info?.default_node_info?.network;
+        const offlineSigner = await window.leap.getOfflineSignerAuto(chainId);
+        let accountSignerSecondary = null,
+          counterPartyAddress = null;
+        const accounts = await offlineSigner.getAccounts();
+        const key = await window.leap.getKey(chainId);
+        let user = await getUser(accounts[0].address);
+
+        if (secondaryChainId) {
+          let chainInfo, chainAsset, chainIbc;
+          [chainInfo, chainAsset, chainIbc] = await Promise.all([
+            getChainInfo(secondaryChainId),
+            getChainAssetList(secondaryChainId),
+            getChainIbcAsset(secondaryChainId),
+          ]);
+          if (chainInfo && chainAsset && chainIbc) {
+            await dispatch({
+              type: ibcAssetsActions.SET_CHAIN_INFO,
+              payload: {
+                chain: chainInfo,
+                assets: chainAsset,
+                ibc: chainIbc,
+              },
+            });
+          }
+          const otherNodeRestEndpoint = await getEndpoint(
+            "rest",
+            chainInfo.apis.rest
+          );
+          if (otherNodeRestEndpoint) {
+            const counterPartyChainInfo = await getAnyNodeInfo(
+              otherNodeRestEndpoint
+            );
+            accountSignerSecondary = await window.leap.getOfflineSignerAuto(
+              counterPartyChainInfo.default_node_info.network
+            );
+            const counterPartyAccount =
+              await accountSignerSecondary.getAccounts();
+            counterPartyAddress = counterPartyAccount[0].address;
+          }
+        }
+
+        await dispatch({
+          type: walletActions.SET_ACTIVE_WALLET,
+          payload: {
+            wallet: {
+              name: user?.username ? user.username : key.name,
+              accounts,
+              isLeap: true,
+              counterPartyAddress,
+              counterPartyChain: secondaryChainId,
+            },
+          },
+        });
+        await postWalletUnlocked(
+          offlineSigner,
+          dispatch,
+          getState,
+          accountSignerSecondary
+        );
+        return accounts[0];
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    } else {
+      dispatch(notify("Please ensure leap extension is installed", "error"));
+    }
+  };
+};
+
+export const unlockMetamaskWallet = (secondaryChainId = null) => {
   return async (dispatch, getState) => {
     if (window.ethereum) {
       try {
-        const info = await initLeap();
+        const info = await initMetamask();
         const { CosmjsOfflineSigner, getKey } = (
           await import("@leapwallet/cosmos-snap-provider")
         );
@@ -235,6 +314,7 @@ export const unlockLeapWallet = (secondaryChainId = null) => {
           counterPartyAddress = null;
         const accounts = await offlineSigner.getAccounts();
         const key = await getKey(chainId);
+        console.log(key);
         let user = await getUser(accounts[0].address);
 
         if (secondaryChainId) {
@@ -277,7 +357,7 @@ export const unlockLeapWallet = (secondaryChainId = null) => {
             wallet: {
               name: user?.username ? user.username : key.name,
               accounts,
-              isLeap: true,
+              isMetamask: true,
               counterPartyAddress,
               counterPartyChain: secondaryChainId,
             },
@@ -295,7 +375,7 @@ export const unlockLeapWallet = (secondaryChainId = null) => {
         return null;
       }
     } else {
-      dispatch(notify("Please ensure leap extension is installed", "error"));
+      dispatch(notify("Please ensure metamask flask extension is installed and leap snap is enabled", "error"));
     }
   };
 };
@@ -308,7 +388,6 @@ export const setWallet = ({ wallet }) => {
         wallet: {
           name: wallet.name,
           accounts: wallet.accounts,
-          isLedger: wallet.isLedger,
         },
       },
     });

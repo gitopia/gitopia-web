@@ -7,7 +7,11 @@ import Footer from "../components/footer";
 import ConnectLedger from "../components/connectLedger";
 import CreateUser from "../components/createUser";
 import { useRouter } from "next/router";
-import { unlockKeplrWallet, unlockLeapWallet } from "../store/actions/wallet";
+import {
+  unlockKeplrWallet,
+  unlockMetamaskWallet,
+  unlockLeapWallet,
+} from "../store/actions/wallet";
 import { connect } from "react-redux";
 import FundWallet from "../components/fundWallet";
 
@@ -77,7 +81,7 @@ function Login(props) {
                 <button
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
                   onClick={async (e) => {
-                    const acc = await props.unlockLeapWallet();
+                    const acc = await props.unlockMetamaskWallet();
                     if (acc) {
                       push("/home");
                     }
@@ -85,6 +89,18 @@ function Login(props) {
                 >
                   <img src="/metamask-fox.svg" className="w-20 h-20 p-2" />
                   <div className="ml-8">Connect Metamask (Flask)</div>
+                </button>
+                <button
+                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
+                  onClick={async (e) => {
+                    const acc = await props.unlockLeapWallet();
+                    if (acc) {
+                      push("/home");
+                    }
+                  }}
+                >
+                  <img src="/leap-wallet.svg" className="w-20 h-20 p-2" />
+                  <div className="ml-8">Connect Leap</div>
                 </button>
                 <button
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
@@ -155,5 +171,6 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   unlockKeplrWallet,
+  unlockMetamaskWallet,
   unlockLeapWallet,
 })(Login);

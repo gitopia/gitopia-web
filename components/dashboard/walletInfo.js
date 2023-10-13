@@ -126,8 +126,9 @@ function WalletInfo(props) {
             </Link>
           </div>
           {props.activeWallet.isKeplr ||
-          props.activeWallet.isLeap ||
-          props.activeWallet.isLedger ? (
+          props.activeWallet.isMetamask ||
+          props.activeWallet.isLedger ||
+          props.activeWallet?.isLeap ? (
             ""
           ) : (
             <div
