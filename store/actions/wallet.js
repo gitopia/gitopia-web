@@ -374,7 +374,7 @@ export const unlockMetamaskWallet = (secondaryChainId = null) => {
         return null;
       }
     } else {
-      dispatch(notify("Please ensure metamask flask extension is installed and leap snap is enabled", "error"));
+      dispatch(notify("Please ensure metamask extension is installed and leap snap is enabled", "error"));
     }
   };
 };

@@ -88,7 +88,7 @@ function Login(props) {
                   }}
                 >
                   <img src="/metamask-fox.svg" className="w-20 h-20 p-2" />
-                  <div className="ml-8">Connect Metamask (Flask)</div>
+                  <div className="ml-8">Connect Metamask</div>
                 </button>
                 <button
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"

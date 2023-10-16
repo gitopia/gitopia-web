@@ -2,7 +2,7 @@
 
 ### v1.15.1 - 13th Oct 2023
 
-- Add metamask (flask) support with leap wallet snap
+- Add metamask support with leap wallet snap
 - Add leap wallet support
 
 ### v1.15.0 - 14th Sep 2023
