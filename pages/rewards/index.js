@@ -16,6 +16,7 @@ import { claimRewards } from "../../store/actions/user";
 import { tasksToMessage } from "../../helpers/tasksTypes";
 import getTasks from "../../helpers/getTasks";
 import getRewardToken from "../../helpers/getRewardTokens";
+import showToken from "../../helpers/showToken";
 
 const dayjs = require("dayjs");
 const duration = require("dayjs/plugin/duration");
@@ -23,15 +24,6 @@ const customParseFormat = require("dayjs/plugin/customParseFormat");
 
 dayjs.extend(duration);
 dayjs.extend(customParseFormat);
-
-function showToken(value, denom) {
-  if (denom === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN) {
-    return value + " " + denom;
-  } else {
-    let roundOff = Math.floor(value / 10000) / 100;
-    return roundOff + " " + denom;
-  }
-}
 
 function Rewards(props) {
   const [calculatingRewardsLoading, setCalculatingRewardsLoading] =
@@ -196,7 +188,7 @@ function Rewards(props) {
           setClaimedGithubToken(res[i].claimed_amount?.amount || 0);
           setUnclaimedGithubToken(res[i].claimable_amount?.amount || 0);
           setRemainingClaimableGithubToken(
-            res[i].remaining_claimable_amount?.amount || 0
+            res[i].remaining_claimable_amount?.amount || 0,
           );
         }
         if (res[i].series === "COSMOS") {
@@ -204,7 +196,7 @@ function Rewards(props) {
           setClaimedEcosystemToken(res[i].claimed_amount?.amount || 0);
           setUnclaimedEcosystemToken(res[i].claimable_amount?.amount || 0);
           setRemainingClaimableEcosystemToken(
-            res[i].remaining_claimable_amount?.amount || 0
+            res[i].remaining_claimable_amount?.amount || 0,
           );
           setIsEcosystemTokensLoaded(true);
         }
@@ -241,7 +233,7 @@ function Rewards(props) {
         process.env.NEXT_PUBLIC_REWARD_SERVICE_URL +
           "/rewards?addr=" +
           props.selectedAddress +
-          "&series=1"
+          "&series=1",
       )
       .then(({ data }) => {
         consumeGithubRewardData(data);
@@ -256,7 +248,7 @@ function Rewards(props) {
         process.env.NEXT_PUBLIC_REWARD_SERVICE_URL +
           "/rewards?addr=" +
           props.selectedAddress +
-          "&series=8"
+          "&series=8",
       )
       .then(({ data }) => {
         consumeEcosystemData(data);
@@ -357,7 +349,7 @@ function Rewards(props) {
   function githubLogin() {
     window.location.assign(
       "https://github.com/login/oauth/authorize?client_id=" +
-        process.env.NEXT_PUBLIC_GITHUB_OAUTH_CLIENT_ID
+        process.env.NEXT_PUBLIC_GITHUB_OAUTH_CLIENT_ID,
     );
   }
 
@@ -377,23 +369,23 @@ function Rewards(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <section className={"flex flex-col items-center mt-12 lg:mt-16 relative"}>
-        <div className="items-center max-w-screen-lg w-full">
+      <section className={"relative mt-12 flex flex-col items-center lg:mt-16"}>
+        <div className="w-full max-w-screen-lg items-center">
           <div className="p-4 pt-8 lg:p-0">
-            <div className="text-4xl lg:text-7xl font-bold tracking-tight lg:text-center">
+            <div className="text-4xl font-bold tracking-tight lg:text-center lg:text-7xl">
               Claim Airdrop
             </div>
-            <div className="text-xl lg:text-3xl font-bold text-type-tertiary mt-4 lg:text-center">
+            <div className="text-type-tertiary mt-4 text-xl font-bold lg:text-center lg:text-3xl">
               {`${days} Days ${hours} Hours ${minutes} Minutes Left`}
             </div>
           </div>
-          <div className="border border-grey-50 rounded-xl bg-base-200/70 max-w-2xl text-sm relative mx-4 lg:mx-auto mt-12 lg:mt-16">
-            <div className="font-bold text-xs uppercase bg-base-200 border border-grey-50 text-purple-50 rounded-full px-4 py-1 absolute -top-3 left-1/2 -ml-36">
+          <div className="border-grey-50 bg-base-200/70 relative mx-4 mt-12 max-w-2xl rounded-xl border text-sm lg:mx-auto lg:mt-16">
+            <div className="bg-base-200 border-grey-50 absolute -top-3 left-1/2 -ml-36 rounded-full border px-4 py-1 text-xs font-bold uppercase text-purple-50">
               Available Rewards (Reduces 1% every day)
             </div>
-            <div className="flex flex-col lg:flex-row gap-8 justify-evenly p-8 pt-10">
+            <div className="flex flex-col justify-evenly gap-8 p-8 pt-10 lg:flex-row">
               <div className="lg:text-center">
-                <div className="inline-flex items-center -mr-2">
+                <div className="-mr-2 inline-flex items-center">
                   <span className="text-type-secondary font-bold">
                     Ecosystem Staking
                   </span>
@@ -405,7 +397,7 @@ function Rewards(props) {
                       viewBox="0 0 16 16"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-3.5 h-3.5"
+                      className="h-3.5 w-3.5"
                     >
                       <circle cx="8" cy="8" r="7.5" stroke="#8D97A7" />
                       <path d="M8 3L8 5" stroke="#8D97A7" strokeWidth="2" />
@@ -420,7 +412,7 @@ function Rewards(props) {
                     </span>
                   ) : (
                     <>
-                      <span className="text-4xl mr-2 text-type-tertiary">
+                      <span className="text-type-tertiary mr-2 text-4xl">
                         ~
                       </span>
                       <span className="text-4xl uppercase">
@@ -468,7 +460,7 @@ function Rewards(props) {
                 )}
               </div>
               <div className="lg:text-center">
-                <div className="inline-flex items-center -mr-2">
+                <div className="-mr-2 inline-flex items-center">
                   <span className="text-type-secondary font-bold">
                     Open Source Contribution
                   </span>
@@ -480,7 +472,7 @@ function Rewards(props) {
                       viewBox="0 0 16 16"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-3.5 h-3.5"
+                      className="h-3.5 w-3.5"
                     >
                       <circle cx="8" cy="8" r="7.5" stroke="#8D97A7" />
                       <path d="M8 3L8 5" stroke="#8D97A7" strokeWidth="2" />
@@ -489,12 +481,12 @@ function Rewards(props) {
                   </span>
                 </div>
                 {githubCalculationStatus === 1 ? (
-                  <div className="flex justify-center mt-4 ">
-                    <div className="mr-2 text-2xl font-bold text-base">
+                  <div className="mt-4 flex justify-center ">
+                    <div className="mr-2 text-2xl text-base font-bold">
                       Calculating
                     </div>
                     <div
-                      class="inline-block mt-2 h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                      class="mt-2 inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                       role="status"
                     >
                       <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
@@ -510,7 +502,7 @@ function Rewards(props) {
                       </span>
                     ) : (
                       <>
-                        <span className="text-2xl mr-2 text-type-tertiary">
+                        <span className="text-type-tertiary mr-2 text-2xl">
                           Coming Soon
                         </span>
 
@@ -575,10 +567,10 @@ function Rewards(props) {
                   ""
                 )}
                 {githubCalculationError ? (
-                  <div className="text-error text-xs mt-2 flex">
+                  <div className="text-error mt-2 flex text-xs">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 mr-2 mt-px"
+                      className="mr-2 mt-px h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -598,7 +590,7 @@ function Rewards(props) {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center mt-12 lg:mt-16">
+          <div className="mt-12 flex flex-col items-center lg:mt-16">
             {parseInt(unclaimedGithubToken) +
               parseInt(unclaimedEcosystemToken) >
             0 ? (
@@ -611,7 +603,7 @@ function Rewards(props) {
                   {showToken(
                     parseInt(unclaimedGithubToken) +
                       parseInt(unclaimedEcosystemToken),
-                    token
+                    token,
                   )}
                 </span>
               </button>
@@ -626,13 +618,13 @@ function Rewards(props) {
 
             {parseInt(claimedGithubToken) + parseInt(claimedEcosystemToken) >
             0 ? (
-              <div className="text-xs text-type-secondary mt-4">
+              <div className="text-type-secondary mt-4 text-xs">
                 <span>Already claimed</span>
                 <span className="ml-1 uppercase">
                   {showToken(
                     parseInt(claimedGithubToken) +
                       parseInt(claimedEcosystemToken),
-                    token
+                    token,
                   )}
                 </span>
               </div>
@@ -642,16 +634,16 @@ function Rewards(props) {
           </div>
         </div>
 
-        <div className="flex my-8 mx-4 px-6 max-w-screen-lg w-full lg:mt-16">
+        <div className="mx-4 my-8 flex w-full max-w-screen-lg px-6 lg:mt-16">
           <div id="missions" className="text-4xl">
             Missions
           </div>
-          <div className="flex ml-auto">
-            <div className="text-xs opacity-60 mt-4 font-bold mr-2">
+          <div className="ml-auto flex">
+            <div className="mr-2 mt-4 text-xs font-bold opacity-60">
               {tasksCompleted + "%"} Complete
             </div>
             <progress
-              className="progress progress-primary w-56 sm:w-80 mt-5"
+              className="progress progress-primary mt-5 w-56 sm:w-80"
               value={tasksCompleted}
               max="100"
             ></progress>
@@ -666,10 +658,10 @@ function Rewards(props) {
           // }
           return (
             <div
-              className="flex bg-base-200/70 rounded-xl mt-4 mx-4 p-2 text-xs sm:text-base w-full max-w-screen-lg"
+              className="bg-base-200/70 mx-4 mt-4 flex w-full max-w-screen-lg rounded-xl p-2 text-xs sm:text-base"
               key={i}
             >
-              <div className="lg:flex gap-4">
+              <div className="gap-4 lg:flex">
                 <div
                   className={"my-3 ml-4 " + (t.isComplete ? "text-green" : "")}
                 >
@@ -677,10 +669,10 @@ function Rewards(props) {
                 </div>
                 <div
                   className={
-                    "rounded-full px-2 py-px text-xs h-5 mt-3.5 tooltip cursor-default border" +
+                    "tooltip mt-3.5 h-5 cursor-default rounded-full border px-2 py-px text-xs" +
                     (isEcosystemTokensLoaded
-                      ? " bg-purple-900 text-purple-50 border-transparent"
-                      : " text-purple-50 border-purple-900")
+                      ? " border-transparent bg-purple-900 text-purple-50"
+                      : " border-purple-900 text-purple-50")
                   }
                   data-tip={
                     isEcosystemTokensLoaded
@@ -692,7 +684,7 @@ function Rewards(props) {
                   <span className="uppercase">
                     {showToken(
                       (t.weight / tasksTotal) * totalEcosystemDecayedAmount,
-                      token
+                      token,
                     )}
                   </span>
                 </div>
@@ -729,7 +721,7 @@ function Rewards(props) {
                     viewBox="0 0 12 16"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    className="w-3 h-4"
+                    className="h-4 w-3"
                   >
                     <path
                       fillRule="evenodd"
@@ -744,7 +736,7 @@ function Rewards(props) {
           );
         })}
 
-        <div className="flex flex-col items-center mt-12">
+        <div className="mt-12 flex flex-col items-center">
           {parseInt(unclaimedGithubToken) + parseInt(unclaimedEcosystemToken) >
           0 ? (
             <button
@@ -759,7 +751,7 @@ function Rewards(props) {
                 {showToken(
                   parseInt(unclaimedGithubToken) +
                     parseInt(unclaimedEcosystemToken),
-                  token
+                  token,
                 )}
               </span>
             </button>
@@ -771,13 +763,13 @@ function Rewards(props) {
               Complete missions to unlock more
             </Link>
           )}
-          <div className="text-xs text-type-secondary mt-4">
+          <div className="text-type-secondary mt-4 text-xs">
             If you have any issues, contact us at contact@gitopia.com
           </div>
         </div>
         <img
           className={
-            "absolute pointer-events-none -z-30 left-1/3 -top-20 opacity-30 lg:opacity-50 invisible lg:visible"
+            "pointer-events-none invisible absolute -top-20 left-1/3 -z-30 opacity-30 lg:visible lg:opacity-50"
           }
           src="/rewards/drop-mid.svg"
           width={"622"}
@@ -785,62 +777,62 @@ function Rewards(props) {
         />
         <img
           className={
-            "absolute pointer-events-none -z-10 -left-16 sm:left-5 lg:left-60 top-10 sm:top-28 lg:top-44 opacity-50"
+            "pointer-events-none absolute -left-16 top-10 -z-10 opacity-50 sm:left-5 sm:top-28 lg:left-60 lg:top-44"
           }
           src="/rewards/drop-1.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-10 right-0 sm:right-16 lg:right-36 top-36 sm:top-28 lg:top-40 opacity-50"
+            "pointer-events-none absolute right-0 top-36 -z-10 opacity-50 sm:right-16 sm:top-28 lg:right-36 lg:top-40"
           }
           src="/rewards/drop-2.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-10 w-3/4 right-10 bottom-2/3 sm:mb-14 opacity-50"
+            "pointer-events-none absolute bottom-2/3 right-10 -z-10 w-3/4 opacity-50 sm:mb-14"
           }
           src="/rewards/objects.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 w-full bottom-1/3 mb-96 lg:mb-48 2xl:mb-10 opacity-50"
+            "pointer-events-none absolute bottom-1/3 -z-20 mb-96 w-full opacity-50 lg:mb-48 2xl:mb-10"
           }
           src="/rewards/ellipse.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 w-full bottom-2/3 lg:bottom-1/3 lg:mb-48 invisible sm:visible opacity-50"
+            "pointer-events-none invisible absolute bottom-2/3 -z-20 w-full opacity-50 sm:visible lg:bottom-1/3 lg:mb-48"
           }
           src="/rewards/stars-3.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 left-5 bottom-3/4 mt-20 invisible lg:visible opacity-30"
+            "pointer-events-none invisible absolute bottom-3/4 left-5 -z-20 mt-20 opacity-30 lg:visible"
           }
           src="/rewards/coin-1.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 right-0 -top-36 lg:-top-20 invisible sm:visible opacity-30"
+            "pointer-events-none invisible absolute -top-36 right-0 -z-20 opacity-30 sm:visible lg:-top-20"
           }
           src="/rewards/coin-2.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 bottom-2/3 left-36 invisible lg:visible opacity-30"
+            "pointer-events-none invisible absolute bottom-2/3 left-36 -z-20 opacity-30 lg:visible"
           }
           src="/rewards/coin-3.png"
         />
         <img
           className={
-            "absolute pointer-events-none bottom-1/2 mb-28 right-36 -z-20 invisible lg:visible opacity-30"
+            "pointer-events-none invisible absolute bottom-1/2 right-36 -z-20 mb-28 opacity-30 lg:visible"
           }
           src="/rewards/coin-4.svg"
         />
       </section>
       <img
         className={
-          "absolute pointer-events-none -z-20 w-full top-40 lg:top-28 invisible sm:visible opacity-50"
+          "pointer-events-none invisible absolute top-40 -z-20 w-full opacity-50 sm:visible lg:top-28"
         }
         src="/rewards/stars-1.svg"
       />
