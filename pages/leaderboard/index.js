@@ -8,6 +8,18 @@ import AccountAvatar from "../../components/account/avatar";
 import UserUsername from "../../components/user/username";
 import Footer from "../../components/landingPageFooter";
 import showToken from "../../helpers/showToken";
+import { useQuery, gql } from "@apollo/client";
+import client from "../../helpers/apolloClient";
+
+const GET_USERS = gql`
+  query GetUsers($addresses: [String!]) {
+    users(where: { address_in: $addresses }) {
+      id
+      username
+      name
+    }
+  }
+`;
 
 function Leaderboard(props) {
   const [currentUserBounty, setCurrentUserBounty] = useState({
@@ -16,6 +28,7 @@ function Leaderboard(props) {
   });
   const [users, setUsers] = useState([]);
   const [token, setToken] = useState(process.env.NEXT_PUBLIC_CURRENCY_TOKEN);
+  const [usernames, setUsernames] = useState({});
 
   const fetchBounties = async (key = "") => {
     let url = "https://api.gitopia.com/gitopia/gitopia/gitopia/bounty";
@@ -73,6 +86,24 @@ function Leaderboard(props) {
     aggregateData();
   }, [props.user]);
 
+  // Extract user addresses from your users state to pass into the GraphQL query
+  const addresses = users.map((user) => user.address);
+
+  const { loading, error, data } = useQuery(GET_USERS, {
+    variables: { addresses },
+    client: client,
+  });
+
+  useEffect(() => {
+    if (data && data.users) {
+      const usernameMap = data.users.reduce((acc, user) => {
+        acc[user.id] = user.name;
+        return acc;
+      }, {});
+      setUsernames(usernameMap);
+    }
+  }, [data]);
+
   return (
     <>
       <Head>
@@ -121,7 +152,7 @@ function Leaderboard(props) {
               <td className="text-sm">
                 <AccountCard id={user.address} showAvatar={true} />
               </td>
-              <td>{user.name}</td>
+              <td>{usernames[user.address]}</td>
               <td>{user.count}</td>
               <td>{showToken(user.total, token)}</td>
             </tr>
