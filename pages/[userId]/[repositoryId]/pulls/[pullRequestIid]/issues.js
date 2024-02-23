@@ -134,7 +134,7 @@ function RepositoryPullIssuesView(props) {
                   <ApolloProvider client={client}>
                     <QueryIssues
                       substr={textEntered}
-                      repoId={Number(repository.id)}
+                      repoId={repository.id}
                       setIssueList={setIssueList}
                     />
                   </ApolloProvider>
