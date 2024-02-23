@@ -1,5 +1,17 @@
 ## Changelog
 
+### v1.15.3 - 23rd Feb 2024
+
+- Fix graphql query in issue link field
+
+### v1.15.2 - 18th Sep 2023
+
+- Changes in  rewards api
+
+### v1.15.1 - 16th Sep 2023
+
+- Fix arbitrary message signing in Keplr
+
 ### v1.15.0 - 14th Sep 2023
 
 - Update rewards flow
@@ -8,7 +20,7 @@
 ### v1.14.0 - 17th Aug 2023
 
 - Updated homepage with activity feed
-- Changed designs of dao / user settings page 
+- Changed designs of dao / user settings page
 
 ### v1.13.4 - 5th Jul 2023
 
