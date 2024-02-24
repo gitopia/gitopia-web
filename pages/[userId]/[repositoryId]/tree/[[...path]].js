@@ -123,7 +123,7 @@ function RepositoryTreeView(props) {
         if (!found) {
           repository.tags.every((b) => {
             let branch = b.name;
-            let branchTest = new RegExp("^" + branch);
+            let branchTest = new RegExp("^" + branch + "$");
             if (branchTest.test(joinedPath)) {
               let path = joinedPath.replace(branch, "").split("/");
               path = path.filter((p) => p !== "");
