@@ -103,13 +103,13 @@ function CommentView({
             </div>
           </div>
           <div className={isReviewComment ? "p-3" : "p-6"}>
-            <div className="text-white font-normal mb-3 markdown-body">
+            <div className="text-white font-normal mb-3 markdown-body max-w-[562px]">
               {comment.body.length ? (
                 <ReactMarkdown linkTarget="_blank">
                   {comment.body}
                 </ReactMarkdown>
               ) : (
-                <ReactMarkdown>{"*No description given*"}</ReactMarkdown>
+                <ReactMarkdown>{"*No comment given*"}</ReactMarkdown>
               )}
             </div>
             <div className="flex-1 text-xs text-type-tertiary">

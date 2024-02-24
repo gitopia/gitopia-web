@@ -173,13 +173,13 @@ function IssuePullDescription({
               </div>
 
               <div className="text-xs p-6">
-                <div className="text-white font-normal mb-3 markdown-body">
+                <div className="text-white font-normal mb-3 markdown-body max-w-[562px]">
                   {issuePullObj.description.length ? (
                     <ReactMarkdown linkTarget="_blank">
                       {issuePullObj.description}
                     </ReactMarkdown>
                   ) : (
-                    <ReactMarkdown>{"*No description given*"}</ReactMarkdown>
+                    <ReactMarkdown>{"*No issue description given*"}</ReactMarkdown>
                   )}
                 </div>
                 <div className="flex-1 text-xs text-type-tertiary">
