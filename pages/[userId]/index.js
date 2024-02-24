@@ -121,45 +121,32 @@ function AccountView(props) {
       router.push("/" + updatedName);
       return;
     }
+    let u, d;
     if (validAddress.test(router.query.userId)) {
       const validUserAddress = new RegExp("^gitopia([a-z0-9]{39})$");
-      let u, d;
       if (validUserAddress.test(router.query.userId)) {
         u = await getUser(router.query.userId);
       } else {
         d = await getDao(router.query.userId);
       }
-      if (u) {
-        setUser(u);
-        setDao({ name: "" });
-      } else if (d) {
-        setDao(d);
-      } else {
-        setErrorStatusCode(404);
-        setUser({ creator: "" });
-      }
     } else {
       const data = await getWhois(router.query.userId);
       if (data?.ownerType === "USER") {
-        const u = await getUser(data.address);
-        if (u) {
-          setUser(u);
-        } else {
-          setErrorStatusCode(404);
-          setUser({ creator: "" });
-        }
+        u = await getUser(data.address);
       } else if (data?.ownerType === "DAO") {
-        const o = await getDao(data.address);
-        if (o) {
-          setDao(o);
-        } else {
-          setErrorStatusCode(404);
-          setDao({ name: "" });
-        }
-      } else {
-        setErrorStatusCode(404);
-        setUser({ creator: "" });
+        d = await getDao(data.address);
       }
+    }
+    if (u) {
+      setUser(u);
+      setDao({ name: "" });
+    } else if (d) {
+      setUser({ creator: "" });
+      setDao(d);
+    } else {
+      setErrorStatusCode(404);
+      setUser({ creator: "" });
+      setDao({ name: "" });
     }
   };
 
