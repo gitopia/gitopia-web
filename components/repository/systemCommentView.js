@@ -15,7 +15,7 @@ function SystemCommentView({ comment = { creator: "" }, ...props }) {
         )}
         <div className="border-l border-grey h-1/2 absolute left-1/2 top-0 z-0"></div>
       </div>
-      <div className="flex-1 text-xs text-type-secondary pr-4 pt-6 break-words w-5 sm:w-96">
+      <div className="flex-1 text-xs text-type-secondary pr-4 pt-6 break-words w-5 sm:w-32 md:w-64">
         <ReactMarkdown linkTarget="_blank">{comment.body}</ReactMarkdown>
       </div>
     </div>

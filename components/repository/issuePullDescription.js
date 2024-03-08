@@ -84,7 +84,7 @@ function IssuePullDescription({
       <div className="flex-none mr-4">
         <AccountCard id={issuePullObj.creator} showAvatar={true} showId={false} />
       </div>
-      <div className="flex-1">
+      <div className="flex-1 overflow-hiddden">
         {isEditing ? (
           <div className="">
             <MarkdownEditor
@@ -130,7 +130,7 @@ function IssuePullDescription({
           </div>
         ) : (
           <div className="">
-            <div className="border border-grey rounded-lg flex-1">
+            <div className="border border-grey rounded-lg flex-none whitespace-pre-wrap">
               <div className="text-xs px-2 rounded-t relative">
                 <div className="absolute right-2 top-1">
                   {issuePullObj.creator === props.selectedAddress ? (
@@ -172,14 +172,14 @@ function IssuePullDescription({
                 </div>
               </div>
 
-              <div className="text-xs p-6">
-                <div className="text-white font-normal mb-3 markdown-body">
+              <div className="text-xs p-6 overflow-scroll">
+		<div className="text-white font-normal mb-3 markdown-body min-w=0 max-w-[252px] sm:max-w-[229px] md:max-w-[386px] lg:max-w-[598px] xl:max-w-[598px] 2xl:max-w-[598px]">
                   {issuePullObj.description.length ? (
                     <ReactMarkdown linkTarget="_blank">
                       {issuePullObj.description}
                     </ReactMarkdown>
                   ) : (
-                    <ReactMarkdown>{"*No description given*"}</ReactMarkdown>
+                    <ReactMarkdown>{"*No issue description given*"}</ReactMarkdown>
                   )}
                 </div>
                 <div className="flex-1 text-xs text-type-tertiary">
@@ -203,4 +203,5 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   updateIssueDescription,
   updatePullRequestDescription,
+                // <div className="text-white font-normal mb-3 markdown-body max-w-[302px] min-[320px]:max-w-[302px] sm:max-w-[598px] md:max-w-[562px] lg:max-w-[598px] xl:max-w-[598px] 2xl:max-w-[598px]">
 })(IssuePullDescription);
