@@ -132,7 +132,7 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
       <section className={"flex flex-col items-center mt-12 lg:mt-16 relative"}>
         <div className="items-center max-w-screen-lg w-full">
           <div className="p-4 pt-8 lg:p-0">
-            <div className="text-4xl lg:text-7xl font-bold tracking-tight lg:text-center">
+            <div className="text-4xl lg:text-5xl font-bold tracking-tight lg:text-center">
               Rewards
             </div>
           </div>
@@ -207,9 +207,18 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
           </div>
         </div>
 
-        <div className="flex my-8 mx-4 px-6 max-w-screen-lg w-full lg:mt-16">
+        {totalClaimedPlatformIncentivesToken > 0 && (
+          <Link
+            className="btn btn-primary btn-base  mx-4 my-8 lg:w-48"
+            href={`https://twitter.com/intent/tweet?text=${xPost}`}
+          >
+            𝕏 Post
+          </Link>
+        )}
+
+        <div className="flex my-4 mx-4 px-3 max-w-screen-lg w-full lg:mt-4">
           <div id="missions" className="text-4xl">
-            Splits
+            Distribution Round 1
           </div>
           <div className="flex ml-auto">
             <div className="text-xs opacity-60 mt-4 font-bold mr-2">
@@ -232,19 +241,33 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
           </div>
         </div>
 
-        {totalClaimedPlatformIncentivesToken > 0 && (
-          <div className="twitter-share">
-            <span className="share-label">Spread the word</span>
-            <a
-              className="twitter-share-button"
-              href={`https://twitter.com/intent/tweet?text=${xPost}`}
-              data-size="large"
-              data-url="https://gitopia.com"
-            >
-              Tweet
-            </a>
-          </div>
-        )}
+        <div className="flex flex-col bg-base-200/70 rounded-xl mx-4 p-2 text-xs sm:text-base w-full max-w-screen-lg">
+          {totalClaimedPlatformIncentivesToken > 0 && (
+            <div>
+              🎉 Congratulations! You have earned{" "}
+              <span className="uppercase">
+                {showToken(totalPlatformIncentivesToken, token)}
+              </span>{" "}
+              as a reward for your contributions. 🎉
+            </div>
+          )}
+          <br />
+          Distribution Details:
+          <ul className="list-disc mx-4">
+            <li>Total Distribution: 2,250,000 LORE</li>
+            <li>
+              Your reward:{" "}
+              <span className="uppercase">{`${showToken(
+                totalPlatformIncentivesToken,
+                token
+              )}`}</span>
+            </li>
+            <li>
+              Cutoff Date: Contributions up to Feb 9th 2024 are taken into
+              account for this round of distribution
+            </li>
+          </ul>
+        </div>
 
         {splits?.map((t, i = 0) => {
           return (
@@ -253,7 +276,11 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
               key={i}
             >
               <div className="lg:flex gap-4">
-                <div className={"my-3 ml-4 " + (true ? "text-green" : "")}>
+                <div
+                  className={
+                    "my-3 ml-4 " + (isRewardActive(t) ? "text-green" : "")
+                  }
+                >
                   {t["start_date"]} - {t["end_date"]}
                 </div>
                 <div
