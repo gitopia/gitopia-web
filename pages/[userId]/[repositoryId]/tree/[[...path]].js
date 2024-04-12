@@ -107,7 +107,6 @@ function RepositoryTreeView(props) {
 
   useEffect(() => {
     const hash = router.asPath.split("#")[1];
-    console.log("HHH", hash);
     if (hash) {
       let startend = hash.split("-");
       if (startend.length > 0) {
