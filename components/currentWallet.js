@@ -6,6 +6,7 @@ import {
   unlockLedgerWallet,
   unlockKeplrWallet,
   unlockMetamaskWallet,
+  unlockLeapWallet,
   signOut,
 } from "../store/actions/wallet";
 import TextInput from "./textInput";
@@ -280,12 +281,12 @@ function CurrentWallet(props) {
               <div className="rounded-full mask mask-circle w-10 h-10 bg-base-200 flex justify-center items-center">
                 <img src="/metamask-fox.svg"></img>
               </div>
-              </button>
-              
+            </button>
+
             <button
               className="btn btn-outline btn-circle border-grey rounded-full"
               onClick={async () => {
-                props.unlockMetamaskWallet();
+                props.unlockLeapWallet();
               }}
             >
               <div className="rounded-full mask mask-circle w-10 h-10 bg-base-200 flex justify-center items-center">
@@ -336,5 +337,6 @@ export default connect(mapStateToProps, {
   removeWallet,
   unlockKeplrWallet,
   unlockMetamaskWallet,
+  unlockLeapWallet,
   signOut,
 })(CurrentWallet);
