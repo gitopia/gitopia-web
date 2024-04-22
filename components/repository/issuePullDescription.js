@@ -203,5 +203,4 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   updateIssueDescription,
   updatePullRequestDescription,
-                // <div className="text-white font-normal mb-3 markdown-body max-w-[302px] min-[320px]:max-w-[302px] sm:max-w-[598px] md:max-w-[562px] lg:max-w-[598px] xl:max-w-[598px] 2xl:max-w-[598px]">
 })(IssuePullDescription);

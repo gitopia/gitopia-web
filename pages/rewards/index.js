@@ -129,8 +129,8 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
         ></script>
       </Head>
       <Header />
-      <section className={"flex flex-col items-center mt-12 lg:mt-16 relative"}>
-        <div className="items-center max-w-screen-lg w-full">
+      <section className={"relative mt-12 flex flex-col items-center lg:mt-16"}>
+        <div className="w-full max-w-screen-lg items-center">
           <div className="p-4 pt-8 lg:p-0">
             <div className="text-4xl lg:text-5xl font-bold tracking-tight lg:text-center">
               Rewards
@@ -140,7 +140,7 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
             <div className="font-bold text-xs uppercase bg-base-200 border border-grey-50 text-purple-50 rounded-full px-4 py-1 absolute -top-3 left-1/2 -ml-24">
               Platform Incentives
             </div>
-            <div className="flex flex-col lg:flex-row gap-8 justify-evenly p-8 pt-10">
+            <div className="flex flex-col justify-evenly gap-8 p-8 pt-10 lg:flex-row">
               <div className="lg:text-center">
                 <div className="inline-flex items-center -mr-2">
                   <span className="text-type-secondary font-bold">Total</span>
@@ -152,7 +152,7 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
                       viewBox="0 0 16 16"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-3.5 h-3.5"
+                      className="h-3.5 w-3.5"
                     >
                       <circle cx="8" cy="8" r="7.5" stroke="#8D97A7" />
                       <path d="M8 3L8 5" stroke="#8D97A7" strokeWidth="2" />
@@ -183,7 +183,7 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
                       viewBox="0 0 16 16"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-3.5 h-3.5"
+                      className="h-3.5 w-3.5"
                     >
                       <circle cx="8" cy="8" r="7.5" stroke="#8D97A7" />
                       <path d="M8 3L8 5" stroke="#8D97A7" strokeWidth="2" />
@@ -303,10 +303,10 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
         {splits?.map((t, i = 0) => {
           return (
             <div
-              className="flex bg-base-200/70 rounded-xl mt-4 mx-4 p-2 text-xs sm:text-base w-full max-w-screen-lg"
+              className="bg-base-200/70 mx-4 mt-4 flex w-full max-w-screen-lg rounded-xl p-2 text-xs sm:text-base"
               key={i}
             >
-              <div className="lg:flex gap-4">
+              <div className="gap-4 lg:flex">
                 <div
                   className={
                     "my-3 ml-4 " + (isRewardActive(t) ? "text-green" : "")
@@ -348,7 +348,7 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
                     viewBox="0 0 12 16"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    className="w-3 h-4"
+                    className="h-4 w-3"
                   >
                     <path
                       fillRule="evenodd"
@@ -365,7 +365,7 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
 
         <img
           className={
-            "absolute pointer-events-none -z-30 left-1/3 -top-20 opacity-30 lg:opacity-50 invisible lg:visible"
+            "pointer-events-none invisible absolute -top-20 left-1/3 -z-30 opacity-30 lg:visible lg:opacity-50"
           }
           src="/rewards/drop-mid.svg"
           width={"622"}
@@ -373,62 +373,62 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
         />
         <img
           className={
-            "absolute pointer-events-none -z-10 -left-16 sm:left-5 lg:left-60 top-10 sm:top-28 lg:top-44 opacity-50"
+            "pointer-events-none absolute -left-16 top-10 -z-10 opacity-50 sm:left-5 sm:top-28 lg:left-60 lg:top-44"
           }
           src="/rewards/drop-1.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-10 right-0 sm:right-16 lg:right-36 top-36 sm:top-28 lg:top-40 opacity-50"
+            "pointer-events-none absolute right-0 top-36 -z-10 opacity-50 sm:right-16 sm:top-28 lg:right-36 lg:top-40"
           }
           src="/rewards/drop-2.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-10 w-3/4 right-10 bottom-2/3 sm:mb-14 opacity-50"
+            "pointer-events-none absolute bottom-2/3 right-10 -z-10 w-3/4 opacity-50 sm:mb-14"
           }
           src="/rewards/objects.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 w-full bottom-1/3 mb-96 lg:mb-48 2xl:mb-10 opacity-50"
+            "pointer-events-none absolute bottom-1/3 -z-20 mb-96 w-full opacity-50 lg:mb-48 2xl:mb-10"
           }
           src="/rewards/ellipse.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 w-full bottom-2/3 lg:bottom-1/3 lg:mb-48 invisible sm:visible opacity-50"
+            "pointer-events-none invisible absolute bottom-2/3 -z-20 w-full opacity-50 sm:visible lg:bottom-1/3 lg:mb-48"
           }
           src="/rewards/stars-3.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 left-5 bottom-3/4 mt-20 invisible lg:visible opacity-30"
+            "pointer-events-none invisible absolute bottom-3/4 left-5 -z-20 mt-20 opacity-30 lg:visible"
           }
           src="/rewards/coin-1.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 right-0 -top-36 lg:-top-20 invisible sm:visible opacity-30"
+            "pointer-events-none invisible absolute -top-36 right-0 -z-20 opacity-30 sm:visible lg:-top-20"
           }
           src="/rewards/coin-2.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 bottom-2/3 left-36 invisible lg:visible opacity-30"
+            "pointer-events-none invisible absolute bottom-2/3 left-36 -z-20 opacity-30 lg:visible"
           }
           src="/rewards/coin-3.png"
         />
         <img
           className={
-            "absolute pointer-events-none bottom-1/2 mb-28 right-36 -z-20 invisible lg:visible opacity-30"
+            "pointer-events-none invisible absolute bottom-1/2 right-36 -z-20 mb-28 opacity-30 lg:visible"
           }
           src="/rewards/coin-4.svg"
         />
       </section>
       <img
         className={
-          "absolute pointer-events-none -z-20 w-full top-40 lg:top-28 invisible sm:visible opacity-50"
+          "pointer-events-none invisible absolute top-40 -z-20 w-full opacity-50 sm:visible lg:top-28"
         }
         src="/rewards/stars-1.svg"
       />

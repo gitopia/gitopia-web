@@ -52,7 +52,14 @@ function rowRenderer({ rows, stylesheet, useInlineStyles }) {
 
 function virtualizedRenderer({ overscanRowCount = 10, rowHeight = 15 } = {}) {
   return ({ rows, stylesheet, useInlineStyles }) => (
-    <div style={{ height: (rows.length > 1000 ? "max(40rem, calc(100vh - 40rem))" : rowHeight * rows.length + "px") }}>
+    <div
+      style={{
+        height:
+          rows.length > 1000
+            ? "max(40rem, calc(100vh - 40rem))"
+            : rowHeight * rows.length + "px",
+      }}
+    >
       <AutoSizer>
         {({ height, width }) => (
           <List
@@ -95,6 +102,30 @@ function RepositoryTreeView(props) {
   const [isTag, setIsTag] = useState(false);
   const [readmeFile, setReadmeFile] = useState(null);
   const { isMobile } = useWindowSize();
+  const [highlightStart, setHighlightStart] = useState(0);
+  const [highlightEnd, setHighlightEnd] = useState(0);
+
+  useEffect(() => {
+    const hash = router.asPath.split("#")[1];
+    if (hash) {
+      let startend = hash.split("-");
+      if (startend.length > 0) {
+        if (startend[0].match(/^L(\d+)/)) {
+          let line = parseInt(startend[0].match(/^L(\d+)/)[1]);
+          console.log("HHH start", line);
+          setHighlightStart(line);
+          setHighlightEnd(line);
+        }
+      }
+      if (startend.length > 1) {
+        if (startend[1].match(/^L(\d+)/)) {
+          let line = parseInt(startend[1].match(/^L(\d+)/)[1]);
+          console.log("HHH end", line);
+          setHighlightEnd(line);
+        }
+      }
+    }
+  }, [router.asPath]);
 
   useEffect(() => {
     async function initBranch() {
@@ -136,7 +167,7 @@ function RepositoryTreeView(props) {
                 "repoPath",
                 path,
                 "isTag",
-                true
+                true,
               );
               found = true;
               return false;
@@ -159,7 +190,7 @@ function RepositoryTreeView(props) {
         repository.id,
         getBranchSha(branchName, repository.branches, repository.tags),
         repoPath.join("/"),
-        firstTime ? null : hasMoreEntities
+        firstTime ? null : hasMoreEntities,
       );
       if (res) {
         if (res.content) {
@@ -184,7 +215,7 @@ function RepositoryTreeView(props) {
               if (res.content[0].content) {
                 if (
                   ["jpg", "jpeg", "png", "gif"].includes(
-                    extension.toLowerCase()
+                    extension.toLowerCase(),
                   )
                 ) {
                   setIsImageFile(true);
@@ -229,9 +260,9 @@ function RepositoryTreeView(props) {
                   getBranchSha(
                     branchName,
                     repository.branches,
-                    repository.tags
+                    repository.tags,
                   ),
-                  res.content[i].name
+                  res.content[i].name,
                 );
 
                 if (readme) {
@@ -295,7 +326,7 @@ function RepositoryTreeView(props) {
       repoPath.join("/"),
       null,
       1,
-      true
+      true,
     );
     if (
       res?.content?.length &&
@@ -318,7 +349,7 @@ function RepositoryTreeView(props) {
           repository.id,
           getBranchSha(branchName, repository.branches, repository.tags),
           repoPath.join("/"),
-          1
+          1,
         );
         if (
           commitHistory &&
@@ -498,6 +529,16 @@ function RepositoryTreeView(props) {
                         customStyle={{ margin: 0, background: "transparent" }}
                         showLineNumbers={true}
                         showInlineLineNumbers={true}
+                        lineProps={(lineNumber) => {
+                          let style = { display: "block" };
+                          if (
+                            lineNumber >= highlightStart &&
+                            lineNumber <= highlightEnd
+                          ) {
+                            style.backgroundColor = "#713f124a";
+                          }
+                          return { style };
+                        }}
                       >
                         {file}
                       </SyntaxHighlighter>
