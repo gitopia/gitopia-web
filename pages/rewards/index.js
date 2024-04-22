@@ -246,13 +246,13 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
         </div>
 
         <div className="flex flex-col bg-base-200/70 rounded-xl mx-4 p-2 text-xs sm:text-base w-full max-w-screen-lg">
-          {totalClaimedPlatformIncentivesToken > 0 ? (
+          {totalPlatformIncentivesToken > 0 ? (
             <div>
               🎉 Congratulations! You have earned{" "}
               <span className="uppercase">
                 {showToken(totalPlatformIncentivesToken, token)}
               </span>{" "}
-              as a reward for your contributions. 🎉
+              as platform incentives for your open source contributions. 🎉
             </div>
           ) : (
             <div>
@@ -270,7 +270,7 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
                   </Link>
                 </li>
                 <li>
-                  Contribute to verified repositories like{" "}
+                  Contribute to verified repositories in verified DAOs like{" "}
                   <Link
                     href="https://gitopia.com/Gitopia"
                     className="text-xs link link-primary no-underline hover:underline"
@@ -278,7 +278,9 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
                     Gitopia
                   </Link>
                 </li>
-                <li>Push your own repositories here and make contributions</li>
+                <li>
+                  Push your own repositories to Gitopia and make contributions
+                </li>
               </ul>
             </div>
           )}
