@@ -12,6 +12,48 @@ import getDepositor from "../../helpers/getDepositor";
 import getVoter from "../../helpers/getVoter";
 import ReactMarkdown from "react-markdown";
 
+import vscDarkPlus from "react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus";
+import SyntaxHighlighter from "react-syntax-highlighter/dist/cjs/prism";
+import { AutoSizer, List } from "react-virtualized";
+import { createElement } from "react-syntax-highlighter";
+
+function rowRenderer({ rows, stylesheet, useInlineStyles }) {
+  return ({ index, key, style }) =>
+    createElement({
+      node: rows[index],
+      stylesheet,
+      style,
+      useInlineStyles,
+      key,
+    });
+}
+
+function virtualizedRenderer({ overscanRowCount = 10, rowHeight = 15 } = {}) {
+  return ({ rows, stylesheet, useInlineStyles }) => (
+    <div
+      style={{
+        height:
+          rows.length > 1000
+            ? "max(40rem, calc(100vh - 40rem))"
+            : rowHeight * rows.length + "px",
+      }}
+    >
+      <AutoSizer>
+        {({ height, width }) => (
+          <List
+            height={height}
+            width={width}
+            rowHeight={rowHeight}
+            rowRenderer={rowRenderer({ rows, stylesheet, useInlineStyles })}
+            rowCount={rows.length}
+            overscanRowCount={overscanRowCount}
+          />
+        )}
+      </AutoSizer>
+    </div>
+  );
+}
+
 function DaoProposalDetails({ id, ...props }) {
   const [amount, setAmount] = useState("");
   const [validateAmountError, setValidateAmountError] = useState(null);
@@ -255,11 +297,26 @@ function DaoProposalDetails({ id, ...props }) {
           </div>
           <div className="mt-3 text-type-secondary mb-14">
             {typeof proposal.content !== "undefined" ? (
-              <div className="mb-3 markdown-body">
-                <ReactMarkdown linkTarget="_blank">
-                  {proposal.content.description}
-                </ReactMarkdown>
-              </div>
+              proposal.content.description ? (
+                <div className="mb-3 markdown-body">
+                  <ReactMarkdown linkTarget="_blank">
+                    {proposal.content.description}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <SyntaxHighlighter
+                  style={vscDarkPlus}
+                  renderer={virtualizedRenderer({
+                    rowHeight: 19.5,
+                  })}
+                  language="json"
+                  customStyle={{ margin: 0, background: "transparent" }}
+                  showLineNumbers={false}
+                  showInlineLineNumbers={true}
+                >
+                  {JSON.stringify(proposal.content, null, 2)}
+                </SyntaxHighlighter>
+              )
             ) : (
               ""
             )}
