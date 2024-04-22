@@ -222,19 +222,23 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
           </div>
           <div className="flex ml-auto">
             <div className="text-xs opacity-60 mt-4 font-bold mr-2">
-              {(
-                (totalClaimedPlatformIncentivesToken /
-                  totalPlatformIncentivesToken) *
-                100
-              ).toFixed(2) + "%"}{" "}
+              {totalPlatformIncentivesToken != 0
+                ? (
+                    (totalClaimedPlatformIncentivesToken /
+                      totalPlatformIncentivesToken) *
+                    100
+                  ).toFixed(2)
+                : 0 + "%"}{" "}
               Claimed
             </div>
             <progress
               className="progress progress-primary w-56 sm:w-80 mt-5"
               value={
-                (totalClaimedPlatformIncentivesToken /
-                  totalPlatformIncentivesToken) *
-                100
+                totalPlatformIncentivesToken != 0
+                  ? (totalClaimedPlatformIncentivesToken /
+                      totalPlatformIncentivesToken) *
+                    100
+                  : 0
               }
               max="100"
             ></progress>
@@ -242,13 +246,40 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
         </div>
 
         <div className="flex flex-col bg-base-200/70 rounded-xl mx-4 p-2 text-xs sm:text-base w-full max-w-screen-lg">
-          {totalClaimedPlatformIncentivesToken > 0 && (
+          {totalClaimedPlatformIncentivesToken > 0 ? (
             <div>
               🎉 Congratulations! You have earned{" "}
               <span className="uppercase">
                 {showToken(totalPlatformIncentivesToken, token)}
               </span>{" "}
               as a reward for your contributions. 🎉
+            </div>
+          ) : (
+            <div>
+              🌟 Hello! While you didn't qualify for platform incentives in this
+              round, there are still many ways to earn rewards! Try these tips
+              to increase your chances next time:
+              <ul className="list-disc mx-4">
+                <li>
+                  Earn Gitopia{" "}
+                  <Link
+                    href="https://gitopia.com/home"
+                    className="text-xs link link-primary no-underline hover:underline"
+                  >
+                    Bounties
+                  </Link>
+                </li>
+                <li>
+                  Contribute to verified repositories like{" "}
+                  <Link
+                    href="https://gitopia.com/Gitopia"
+                    className="text-xs link link-primary no-underline hover:underline"
+                  >
+                    Gitopia
+                  </Link>
+                </li>
+                <li>Push your own repositories here and make contributions</li>
+              </ul>
             </div>
           )}
           <br />
