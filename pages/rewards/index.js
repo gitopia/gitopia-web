@@ -133,14 +133,14 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
         <div className="w-full max-w-screen-lg items-center">
           <div className="p-4 pt-8 lg:p-0">
             <div className="text-4xl lg:text-5xl font-bold tracking-tight lg:text-center">
-              Rewards
+              Rewards - Round 1
             </div>
           </div>
           <div className="border border-grey-50 rounded-xl bg-base-200/70 max-w-2xl text-sm relative mx-4 lg:mx-auto mt-12 lg:mt-16">
             <div className="font-bold text-xs uppercase bg-base-200 border border-grey-50 text-purple-50 rounded-full px-4 py-1 absolute -top-3 left-1/2 -ml-24">
               Platform Incentives
             </div>
-            <div className="flex flex-col justify-evenly gap-8 p-8 pt-10 lg:flex-row">
+            <div className="flex flex-col justify-evenly gap-8 px-8 pt-10 pb-4 lg:flex-row">
               <div className="lg:text-center">
                 <div className="inline-flex items-center -mr-2">
                   <span className="text-type-secondary font-bold">Total</span>
@@ -204,6 +204,31 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
                 </div>
               </div>
             </div>
+            <div className="flex my-4 mx-4 px-3 pb-4 w-full">
+              <div className="flex mx-auto">
+                <div className="text-xs opacity-60 font-bold mr-2">
+                  {totalPlatformIncentivesToken != 0
+                    ? (
+                        (totalClaimedPlatformIncentivesToken /
+                          totalPlatformIncentivesToken) *
+                        100
+                      ).toFixed(2)
+                    : 0 + "%"}{" "}
+                  Claimed
+                </div>
+                <progress
+                  className="progress progress-primary w-56 sm:w-80 mt-1"
+                  value={
+                    totalPlatformIncentivesToken != 0
+                      ? (totalClaimedPlatformIncentivesToken /
+                          totalPlatformIncentivesToken) *
+                        100
+                      : 0
+                  }
+                  max="100"
+                ></progress>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -216,36 +241,7 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
           </Link>
         )}
 
-        <div className="flex my-4 mx-4 px-3 max-w-screen-lg w-full lg:mt-4">
-          <div id="missions" className="text-4xl">
-            Distribution Round 1
-          </div>
-          <div className="flex ml-auto">
-            <div className="text-xs opacity-60 mt-4 font-bold mr-2">
-              {totalPlatformIncentivesToken != 0
-                ? (
-                    (totalClaimedPlatformIncentivesToken /
-                      totalPlatformIncentivesToken) *
-                    100
-                  ).toFixed(2)
-                : 0 + "%"}{" "}
-              Claimed
-            </div>
-            <progress
-              className="progress progress-primary w-56 sm:w-80 mt-5"
-              value={
-                totalPlatformIncentivesToken != 0
-                  ? (totalClaimedPlatformIncentivesToken /
-                      totalPlatformIncentivesToken) *
-                    100
-                  : 0
-              }
-              max="100"
-            ></progress>
-          </div>
-        </div>
-
-        <div className="flex flex-col bg-base-200/70 rounded-xl mx-4 p-2 text-xs sm:text-base w-full max-w-screen-lg">
+        <div className="flex flex-col bg-info/30 rounded-xl mx-4 p-6 my-8 text-xs sm:text-base w-full max-w-screen-lg">
           {totalPlatformIncentivesToken > 0 ? (
             <div>
               🎉 Congratulations! You have earned{" "}
@@ -285,16 +281,8 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
             </div>
           )}
           <br />
-          Distribution Details:
           <ul className="list-disc mx-4">
-            <li>Total Distribution: 2,250,000 LORE</li>
-            <li>
-              Your reward:{" "}
-              <span className="uppercase">{`${showToken(
-                totalPlatformIncentivesToken,
-                token
-              )}`}</span>
-            </li>
+            <li>Round 1 Total Distribution: 2,250,000 LORE</li>
             <li>
               Cutoff Date: Contributions up to Feb 9th 2024 are taken into
               account for this round of distribution
@@ -338,7 +326,7 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
                   />
                 ) : (
                   <button
-                    className="btn btn-primary btn-sm mx-4 ml-auto mr-3 sm:mt-2"
+                    className="btn btn-primary btn-sm mx-4 ml-auto mr-3 sm:mt-2 px-12"
                     onClick={() => claimPlatformIncentives(1, i)}
                   >
                     <span>Claim</span>
