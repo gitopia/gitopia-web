@@ -1,12 +1,17 @@
 ## Changelog
 
+### v1.16.0 - 25th Apr 2024
+
+- Show platform incentives in Rewards view
+- Add a new Bounties Leaderboard view
+
 ### v1.15.3 - 23rd Feb 2024
 
 - Fix graphql query in issue link field
 
 ### v1.15.2 - 18th Sep 2023
 
-- Changes in  rewards api
+- Changes in rewards api
 
 ### v1.15.1 - 16th Sep 2023
 
