@@ -7,7 +7,7 @@ import Head from "next/head";
 import Link from "next/link";
 import Header from "../../components/header";
 import Footer from "../../components/landingPageFooter";
-import getWhois from "../../helpers/getWhois";
+import showToken from "../../helpers/showToken";
 import { signMessageForRewards } from "../../store/actions/user";
 import axios from "../../helpers/axiosFetch";
 import { getBalance } from "../../store/actions/wallet";
@@ -28,15 +28,6 @@ const isRewardActive = (reward) => {
   const endDate = new Date(reward["end_date"]);
   return today >= startDate && today <= endDate;
 };
-
-function showToken(value, denom) {
-  if (denom === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN) {
-    return value.toLocaleString() + " " + denom;
-  } else {
-    let roundOff = Math.floor(value / 10000) / 100;
-    return roundOff.toLocaleString() + " " + denom;
-  }
-}
 
 function Rewards(props) {
   const [claimTokensLoading, setClaimTokensLoading] = useState(false);
