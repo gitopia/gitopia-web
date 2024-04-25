@@ -4,6 +4,11 @@
 
 - Show platform incentives in Rewards view
 - Add a new Bounties Leaderboard view
+- Support highlighting of specific lines in the code view. URL format: `...<filename>#L10-L22`
+- Fix comments count in the issues list view
+- Fix user profile link in the DAO view
+- Fix 404 error in Repository view when tag name includes `-` in the url
+- Fix the size of Issue description component in the issue view
 
 ### v1.15.3 - 23rd Feb 2024
 
