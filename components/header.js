@@ -187,6 +187,15 @@ function Header(props) {
         )}
         {!isMobile ? (
           <div className="items-stretch">
+            <a className="btn btn-ghost btn-sm rounded-btn" href="/leaderboard">
+              Leaderboard
+            </a>
+          </div>
+        ) : (
+          ""
+        )}
+        {!isMobile ? (
+          <div className="items-stretch">
             <a
               className="btn btn-ghost btn-sm rounded-btn"
               href={process.env.NEXT_PUBLIC_EXPLORER_URL}
