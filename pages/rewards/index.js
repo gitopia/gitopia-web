@@ -95,14 +95,10 @@ function Rewards(props) {
     setSplits(data.splits);
     setXPost(
       encodeURIComponent(
-        `🎉 Excited to share that I earned ${Math.floor(
+        `🚀 Thrilled to earn ${Math.floor(
           data["total_claimed_amount"] / 1e6
-        ).toLocaleString()} $LORE tokens by contributing to open source projects on Gitopia! 🌟
-
-Switch to Gitopia and earn rewards for your open source contributions! 💰
-#Gitopia #OpenSource
-
-`
+        ).toLocaleString()} $LORE by contributing to open source projects on Gitopia!\n
+Calling all devs: Get rewarded for your #OpenSource contributions on #Gitopia 🌟\n`
       )
     );
     setIsPlatformIncentivesTokensLoaded(true);
@@ -226,7 +222,9 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
         {totalClaimedPlatformIncentivesToken > 0 && (
           <Link
             className="btn btn-primary btn-base  mx-4 my-8 lg:w-48"
-            href={`https://twitter.com/intent/tweet?text=${xPost}`}
+            href={`https://twitter.com/intent/tweet?text=${xPost}&url=${encodeURI(
+              "https://gitopia.com/rewards"
+            )}`}
           >
             𝕏 Post
           </Link>
