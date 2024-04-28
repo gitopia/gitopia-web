@@ -95,10 +95,12 @@ function Rewards(props) {
     setSplits(data.splits);
     setXPost(
       encodeURIComponent(
-        `🚀 Thrilled to earn ${Math.floor(
+        `Just claimed ${Math.floor(
           data["total_claimed_amount"] / 1e6
-        ).toLocaleString()} $LORE by contributing to open source projects on Gitopia!\n
-Calling all devs: Get rewarded for your #OpenSource contributions on #Gitopia 🌟\n`
+        ).toLocaleString()} $LORE for my #OpenSource contributions on @gitopiaDAO 🎉
+You can earn rewards too for your projects 💰
+Start building on #Gitopia today! 🚀
+#GitopiaRewards | Learn more: `
       )
     );
     setIsPlatformIncentivesTokensLoaded(true);
@@ -246,7 +248,7 @@ Calling all devs: Get rewarded for your #OpenSource contributions on #Gitopia �
               to increase your chances next time:
               <ul className="list-disc mx-4">
                 <li>
-                  Earn Gitopia{" "}
+                  Hunt Gitopia{" "}
                   <Link
                     href="https://gitopia.com/home"
                     className="text-xs link link-primary no-underline hover:underline"
