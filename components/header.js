@@ -24,6 +24,8 @@ import WalletInfo from "./dashboard/walletInfo";
 import SearchBar from "./searchBar";
 import DepositIbcAsset from "./assets/deposit";
 import WithdrawIbcAsset from "./assets/withdraw";
+import Providers from "./providers";
+
 // const NotificationsCard = dynamic(() =>
 //   import("./dashboard/notificationsButton")
 // );
@@ -228,23 +230,17 @@ function Header(props) {
           ""
         )}
         <div className="flex-1"></div>
-        {process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES && !isMobile ? (
+        {!isMobile ? (
           <div className="flex-col mr-8 items-end">
             <div
-              className="uppercase text-type-secondary"
+              className="text-type-secondary"
               style={{ fontSize: "0.6rem", lineHeight: "1rem" }}
             >
-              {chainId}
-            </div>
-            <div style={{ fontSize: "0.6rem", lineHeight: "1rem" }}>
-              <a
-                className="link link-primary no-underline"
-                target="_blank"
-                rel="noreferrer"
-                href={process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES}
-              >
-                SEE WHATS NEW
-              </a>
+              <div className={"dropdown dropdown-end dropdown-open"}>
+                <div className="shadow-xl dropdown-content bg-base-300 rounded mt-1">
+                  <Providers />
+                </div>
+              </div>
             </div>
           </div>
         ) : (

@@ -192,3 +192,17 @@ export const handlePostingTransaction = async (dispatch, getState, message) => {
     return null;
   }
 };
+
+export const setConfig = ({ config }) => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: envActions.SET_CONFIG,
+      payload: {
+        config: {
+          apiNode: config.apiNode,
+          rpcNode: config.rpcNode,
+        },
+      },
+    });
+  };
+};
