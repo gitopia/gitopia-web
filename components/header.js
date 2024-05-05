@@ -89,13 +89,16 @@ function Header(props) {
   }
 
   useEffect(unreadNotification, [props.userNotification]);
+
+  const refreshProviders = async () => {
+    const provider = await selectProvider();
+    setSelectedProvider(provider);
+  };
+
   useEffect(() => {
-    const selectProviderAsync = async () => {
-      const provider = await selectProvider();
-      setSelectedProvider(provider);
-    };
-    selectProviderAsync();
+    refreshProviders();
   }, []);
+
   useEffect(() => {
     onUserMenuClose();
     if (props.activeWallet) setMenuState(1);
@@ -114,7 +117,7 @@ function Header(props) {
   useEffect(() => {
     const updateNetworkName = async () => {
       if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
-        const info = await getNodeInfo();
+        const info = await getNodeInfo(props.apiNode);
         setChainId(info.default_node_info.network);
       }
     };
@@ -242,45 +245,67 @@ function Header(props) {
         )}
         <div className="flex-1"></div>
         {!isMobile ? (
-      <div className="flex-col mr-8 items-end">
-        <ClickAwayListener onClickAway={handleClickAway}>
-          <div
-            className={
-              "dropdown dropdown-end " + (menuOpenProvider ? "dropdown-open" : "")
-            }
-            ref={menuRef}
-          >
-            <button
-              tabIndex="0"
-              className="btn btn-ghost rounded-btn normal-case text-xs"
-              onClick={() => setMenuOpenProvider(!menuOpenProvider)}
-            >
-              {selectedProvider ? (
-                <>
-                  {selectedProvider.apiEndpoint}
-                  <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
-                </>
-              ) : (
-                "Select Provider"
-              )}
-            </button>
-            {menuOpenProvider && (
-              <div className="shadow-xl dropdown-content bg-base-300 rounded mt-1">
-                <Providers
-                  selectedProvider={selectedProvider}
-                  setSelectedProvider={(provider) => {
-                    setSelectedProvider(provider);
-                    setMenuOpenProvider(false);
-                  }}
-                />
+          <div className="flex-row mr-8 items-end">
+            <ClickAwayListener onClickAway={handleClickAway}>
+              <div
+                className={
+                  "dropdown dropdown-end " +
+                  (menuOpenProvider ? "dropdown-open" : "")
+                }
+                ref={menuRef}
+              >
+                <button
+                  tabIndex="0"
+                  className="btn btn-ghost rounded-btn normal-case text-xs"
+                  onClick={() => setMenuOpenProvider(!menuOpenProvider)}
+                >
+                  {selectedProvider ? (
+                    <>
+                      {selectedProvider.apiEndpoint}
+                      <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
+                    </>
+                  ) : (
+                    "Select Provider"
+                  )}
+                </button>
+                {menuOpenProvider && (
+                  <div className="shadow-xl dropdown-content bg-base-300 rounded mt-1">
+                    <Providers
+                      selectedProvider={selectedProvider}
+                      setSelectedProvider={(provider) => {
+                        setSelectedProvider(provider);
+                        setMenuOpenProvider(false);
+                      }}
+                    />
+                  </div>
+                )}
               </div>
-            )}
+            </ClickAwayListener>
+            <div
+              className="tooltip tooltip-bottom tooltip-secondary"
+              data-tip="Reset API provider"
+            >
+              <button className="btn btn-ghost ml-2" onClick={refreshProviders}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  className="w-4 h-4"
+                >
+                  <path d="M21 2v6h-6" />
+                  <path d="M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6" />
+                  <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+                </svg>
+              </button>
+            </div>
           </div>
-        </ClickAwayListener>
-      </div>
-    ) : (
-      ""
-    )}
+        ) : (
+          ""
+        )}
         <div className="flex-none mr-4">
           <ClickAwayListener
             onClickAway={() => {
@@ -602,6 +627,7 @@ function Header(props) {
 
 const mapStateToProps = (state) => {
   return {
+    apiNode: state.env.apiNode,
     wallets: state.wallet.wallets,
     activeWallet: state.wallet.activeWallet,
     selectedAddress: state.wallet.selectedAddress,
