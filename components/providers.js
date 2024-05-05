@@ -31,6 +31,12 @@ const Providers = (props) => {
 
   const chooseProvider = (p) => {
     setSelectedProvider(p);
+    props.setConfig({
+      config: {
+        apiNode: p.apiEndpoint,
+        rpcNode: p.rpcEndpoint,
+      },
+    });
     setIsOpen(!isOpen);
   };
 
@@ -42,7 +48,8 @@ const Providers = (props) => {
       >
         <div className="ml-10 mr-2">
           <div className="text-xs text-left whitespace-nowrap">
-            {selectedProvider.apiEndpoint}
+            {selectedProvider.apiEndpoint}{" "}
+            <span className="mr-2 h-2 w-2 rounded-md justify-self-end self-center inline-block bg-green-900" />
           </div>
         </div>
       </button>
