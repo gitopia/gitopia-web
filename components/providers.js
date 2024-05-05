@@ -1,94 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import providers from "../providers.json";
-import selectProvider from "../helpers/providerSelector";
 import { setConfig } from "../store/actions/env";
 
-const Providers = (props) => {
-  const [selectedProvider, setSelectedProvider] = useState({ apiEndpoint: "" });
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    const selectProviderAsync = async () => {
-      const provider = await selectProvider();
-      setSelectedProvider(provider);
-      props.setConfig({
-        config: {
-          apiNode: provider.apiEndpoint,
-          rpcNode: provider.rpcEndpoint,
-        },
-      });
-      console.log(
-        `Selected provider ${provider.rpcEndpoint} based on least latency`
-      );
-    };
-    selectProviderAsync();
-  }, []);
-
-  const handleClick = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const chooseProvider = (p) => {
-    setSelectedProvider(p);
-    props.setConfig({
+const Providers = ({ selectedProvider, setSelectedProvider, setConfig }) => {
+  const chooseProvider = (provider) => {
+    setSelectedProvider(provider);
+    setConfig({
       config: {
-        apiNode: p.apiEndpoint,
-        rpcNode: p.rpcEndpoint,
+        apiNode: provider.apiEndpoint,
+        rpcNode: provider.rpcEndpoint,
       },
     });
-    setIsOpen(!isOpen);
   };
 
   return (
-    <div className="flex flex-col">
-      <button
-        onClick={handleClick}
-        className="btn btn-ghost rounded-full px-4 mb-2 relative justify-start"
-      >
-        <div className="ml-10 mr-2">
-          <div className="text-xs text-left whitespace-nowrap">
-            {selectedProvider.apiEndpoint}{" "}
-            <span className="mr-2 h-2 w-2 rounded-md justify-self-end self-center inline-block bg-green-900" />
+    <div className="flex flex-col p-4">
+      <div className="text-sm font-semibold mb-2">API Provider</div>
+      {providers.map((provider) => (
+        <button
+          key={provider.name}
+          onClick={() => chooseProvider(provider)}
+          className={`btn rounded-full px-4 mb-2 relative justify-start ${selectedProvider && selectedProvider.name === provider.name
+              ? "btn-primary"
+              : "btn-ghost"
+            }`}
+        >
+          <div className="ml-10 mr-2">
+            <div className="text-xs text-left whitespace-nowrap">
+              {provider.apiEndpoint}
+              {selectedProvider && selectedProvider.name === provider.name && (
+                <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
+              )}
+            </div>
           </div>
-        </div>
-      </button>
-      {isOpen && (
-        <div className="flex flex-col">
-          API Provider
-          {providers.map((p, i) => {
-            const isSelected = p.name === selectProvider.name;
-
-            return (
-              <button
-                onClick={(e) => {
-                  chooseProvider(p);
-                }}
-                className={
-                  "btn rounded-full px-4 mb-2 relative justify-start" +
-                  (isSelected ? " btn-primary" : " btn-ghost")
-                }
-                key={i}
-              >
-                <div className={"ml-10" + (isSelected ? " mr-6" : " mr-2")}>
-                  <div className="text-xs text-left whitespace-nowrap">
-                    {p.apiEndpoint}
-                    {isSelected ? (
-                      <span className="mr-2 h-2 w-2 rounded-md justify-self-end self-center inline-block bg-green-900" />
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      )}
+        </button>
+      ))}
     </div>
   );
 };
 
-export default connect(null, {
-  setConfig,
-})(Providers);
+export default connect(null, { setConfig })(Providers);

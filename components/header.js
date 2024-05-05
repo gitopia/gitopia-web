@@ -25,6 +25,7 @@ import SearchBar from "./searchBar";
 import DepositIbcAsset from "./assets/deposit";
 import WithdrawIbcAsset from "./assets/withdraw";
 import Providers from "./providers";
+import selectProvider from "../helpers/providerSelector";
 
 // const NotificationsCard = dynamic(() =>
 //   import("./dashboard/notificationsButton")
@@ -43,8 +44,10 @@ Menu States
 */
 
 function Header(props) {
+  const [selectedProvider, setSelectedProvider] = useState(null);
   const [menuState, setMenuState] = useState(1);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpenProvider, setMenuOpenProvider] = useState(false);
   const [chainId, setChainId] = useState("");
   const [assets, setAssets] = useState([]);
   const [unread, setUnread] = useState(false);
@@ -65,7 +68,9 @@ function Header(props) {
       menuRef.current.blur();
     }
   };
-
+  const handleClickAway = () => {
+    setMenuOpenProvider(false);
+  };
   let addressToShow = "";
   if (props.selectedAddress) {
     addressToShow = "gitopia" + shrinkAddress(props.selectedAddress);
@@ -84,7 +89,13 @@ function Header(props) {
   }
 
   useEffect(unreadNotification, [props.userNotification]);
-
+  useEffect(() => {
+    const selectProviderAsync = async () => {
+      const provider = await selectProvider();
+      setSelectedProvider(provider);
+    };
+    selectProviderAsync();
+  }, []);
   useEffect(() => {
     onUserMenuClose();
     if (props.activeWallet) setMenuState(1);
@@ -231,21 +242,45 @@ function Header(props) {
         )}
         <div className="flex-1"></div>
         {!isMobile ? (
-          <div className="flex-col mr-8 items-end">
-            <div
-              className="text-type-secondary"
-              style={{ fontSize: "0.6rem", lineHeight: "1rem" }}
+      <div className="flex-col mr-8 items-end">
+        <ClickAwayListener onClickAway={handleClickAway}>
+          <div
+            className={
+              "dropdown dropdown-end " + (menuOpenProvider ? "dropdown-open" : "")
+            }
+            ref={menuRef}
+          >
+            <button
+              tabIndex="0"
+              className="btn btn-ghost rounded-btn normal-case text-xs"
+              onClick={() => setMenuOpenProvider(!menuOpenProvider)}
             >
-              <div className={"dropdown dropdown-end dropdown-open"}>
-                <div className="shadow-xl dropdown-content bg-base-300 rounded mt-1">
-                  <Providers />
-                </div>
+              {selectedProvider ? (
+                <>
+                  {selectedProvider.apiEndpoint}
+                  <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
+                </>
+              ) : (
+                "Select Provider"
+              )}
+            </button>
+            {menuOpenProvider && (
+              <div className="shadow-xl dropdown-content bg-base-300 rounded mt-1">
+                <Providers
+                  selectedProvider={selectedProvider}
+                  setSelectedProvider={(provider) => {
+                    setSelectedProvider(provider);
+                    setMenuOpenProvider(false);
+                  }}
+                />
               </div>
-            </div>
+            )}
           </div>
-        ) : (
-          ""
-        )}
+        </ClickAwayListener>
+      </div>
+    ) : (
+      ""
+    )}
         <div className="flex-none mr-4">
           <ClickAwayListener
             onClickAway={() => {
