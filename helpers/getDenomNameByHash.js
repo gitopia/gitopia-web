@@ -1,8 +1,9 @@
 import { Api } from "../store/ibc.applications.transfer.v1/module/rest";
-const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
-export default async function getDenomNameByHash(denom) {
+
+export default async function getDenomNameByHash(apiNode, denom) {
   if (!denom) return null;
   try {
+    const api = new Api({ baseUrl: apiNode });
     const denomHash = denom.slice(4, denom.length);
     const result = await api.queryDenomTrace(denomHash);
     if (result.ok) {

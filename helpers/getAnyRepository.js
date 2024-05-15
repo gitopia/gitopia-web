@@ -1,4 +1,4 @@
-import api from "./getApi";
+import { useApiClient } from "../context/ApiClientContext";
 
 export default async function getAnyRepository(
   usernameOrAddress,
@@ -6,7 +6,11 @@ export default async function getAnyRepository(
 ) {
   if (!usernameOrAddress || !repositoryName) return null;
   try {
-    const res = await api.queryAnyRepository(usernameOrAddress, repositoryName);
+    const { apiClient } = useApiClient();
+    const res = await apiClient.queryAnyRepository(
+      usernameOrAddress,
+      repositoryName
+    );
     if (res.status === 200) {
       return res.data.Repository;
     }

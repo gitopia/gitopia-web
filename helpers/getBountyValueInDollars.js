@@ -1,11 +1,12 @@
 import axios from "./axiosFetch";
 import { coingeckoId } from "../ibc-assets-config";
 import { Api } from "../store/ibc.applications.transfer.v1/module/rest";
-const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
-export default async function getBountyValueInDollars(bounty) {
+
+export default async function getBountyValueInDollars(apiNode, bounty) {
   if (!bounty) return null;
   let totalPrice = 0;
   try {
+    const api = new Api({ baseUrl: apiNode });
     let amount = bounty.amount;
     for (let i = 0; i < amount.length; i++) {
       if (amount[i].denom.includes("ibc")) {

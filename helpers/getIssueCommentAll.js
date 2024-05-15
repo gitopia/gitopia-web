@@ -1,9 +1,10 @@
-import api from "./getApi";
+import { useApiClient } from "../context/ApiClientContext";
 
 export default async function getIssueCommentAll(repoId, issueIid) {
   if (!repoId || !issueIid) return null;
   try {
-    const res = await api.queryIssueCommentAll(repoId, issueIid);
+    const { apiClient } = useApiClient();
+    const res = await apiClient.queryIssueCommentAll(repoId, issueIid);
     if (res.status === 200) {
       let c = res.data.Comment;
       return c;

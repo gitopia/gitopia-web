@@ -177,9 +177,11 @@ export const setupTxClients = async (dispatch, getState, chainId = null) => {
 };
 
 export const handlePostingTransaction = async (dispatch, getState, message) => {
+  const { env } = getState();
+
   try {
     const result = await sendTransaction({ message })(dispatch, getState);
-    updateUserBalance()(dispatch, getState);
+    updateUserBalance(env.apiNode)(dispatch, getState);
     if (result?.code === 0) {
       return result;
     } else {

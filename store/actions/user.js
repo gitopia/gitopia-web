@@ -23,7 +23,7 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
         avatarUrl,
       });
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(env.apiNode)(dispatch, getState);
       if (result && result.code === 0) {
         console.log("User created successfully.. renaming wallet");
         let oldWalletName = wallet.activeWallet.name,
@@ -52,7 +52,7 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
               encryptedWallet,
               index: oldWalletIndex,
               isLedger: true,
-              avatarUrl
+              avatarUrl,
             },
           });
           await setCurrentDashboard(newWallet.accounts[0].address)(
@@ -176,7 +176,7 @@ export const updateUserBio = (bio) => {
         bio: bio,
       });
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(env.apiNode)(dispatch, getState);
       return result;
     } catch (e) {
       dispatch(notify(e.message, "error"));
@@ -195,9 +195,14 @@ export const updateUserAvatar = (avatarUrl) => {
         url: avatarUrl,
       });
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(env.apiNode)(dispatch, getState);
       if (result?.code === 0) {
-        let newWallet = await updateWalletsList(dispatch, getState, null, avatarUrl);
+        let newWallet = await updateWalletsList(
+          dispatch,
+          getState,
+          null,
+          avatarUrl
+        );
         await getUserDetailsForSelectedAddress()(dispatch, getState);
       }
       return result;
@@ -218,7 +223,7 @@ export const updateUserName = (name) => {
         name,
       });
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(env.apiNode)(dispatch, getState);
       if (result?.code === 0) {
         await getUserDetailsForSelectedAddress()(dispatch, getState);
       }
@@ -240,7 +245,7 @@ export const updateUserUsername = (username) => {
         username,
       });
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(env.apiNode)(dispatch, getState);
       if (result?.code === 0) {
         let newWallet = await updateWalletsList(dispatch, getState, username);
         await getUserDetailsForSelectedAddress()(dispatch, getState);
@@ -364,7 +369,7 @@ const updateWalletsList = async (dispatch, getState, username, avatarUrl) => {
     await continueAfterUnlockingWallet;
   }
   return newWallet;
-}
+};
 
 // export const updateStorageGrant = (allow) => {
 //   return async (dispatch, getState) => {
@@ -471,7 +476,7 @@ export const claimRewards = () => {
     try {
       const message = await env.txClient.msgClaim(msg);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(env.apiNode)(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {

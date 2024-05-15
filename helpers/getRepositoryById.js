@@ -1,9 +1,10 @@
-import api from "./getApi";
+import { useApiClient } from "../context/ApiClientContext";
 
 export default async function getRepositoryById(repositoryId) {
   if (!repositoryId) return null;
   try {
-    const res = await api.queryRepository(repositoryId);
+    const { apiClient } = useApiClient();
+    const res = await apiClient.queryRepository(repositoryId);
     if (res.status === 200) {
       return res.data.Repository;
     }

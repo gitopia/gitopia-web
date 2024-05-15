@@ -1,4 +1,4 @@
-import api from "./getApi";
+import { useApiClient } from "../context/ApiClientContext";
 
 export default async function getPullRequestComment(
   repositoryId,
@@ -7,7 +7,8 @@ export default async function getPullRequestComment(
 ) {
   if (!repositoryId || !pullRequestIid || !commentIid) return null;
   try {
-    const res = await api.queryPullRequestComment(
+    const { apiClient } = useApiClient();
+    const res = await apiClient.queryPullRequestComment(
       repositoryId,
       pullRequestIid,
       commentIid

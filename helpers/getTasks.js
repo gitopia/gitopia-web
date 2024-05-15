@@ -1,8 +1,9 @@
 import { Api } from "../store/gitopia.gitopia.rewards/rest";
-const api = new Api({ baseURL: process.env.NEXT_PUBLIC_API_URL });
-export default async function getTasks(address) {
+
+export default async function getTasks(apiNode, address) {
   if (!address) return {};
   try {
+    const api = new Api({ baseURL: apiNode });
     const res = await api.queryTasks(address);
     if (res) {
       return res.data.tasks;

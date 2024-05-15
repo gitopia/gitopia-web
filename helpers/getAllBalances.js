@@ -1,9 +1,9 @@
 import { Api } from "../store/cosmos.bank.v1beta1/module/rest";
-const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
 
-export default async function getBalances(address) {
+export default async function getBalances(apiNode, address) {
   if (!address) return null;
   try {
+    const api = new Api({ baseUrl: apiNode });
     const res = await api.queryAllBalances(address);
     if (res.status === 200) {
       let u = res.data;

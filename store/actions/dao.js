@@ -43,7 +43,7 @@ export const createDao = ({
             daos: daos,
           },
         });
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         let newDaoAddress;
         daos.every((d) => {
           if (d.name === name) {
@@ -116,7 +116,7 @@ export const addMember = ({ daoId = null, userId = null, role = null }) => {
     try {
       const message = await env.txClient.msgAddMember(collaborator);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(env.apiNode)(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -157,7 +157,7 @@ export const updateMemberRole = ({
     try {
       const message = await env.txClient.msgUpdateMemberRole(collaborator);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(env.apiNode)(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {
@@ -186,7 +186,7 @@ export const removeMember = ({ daoId = null, userId = null }) => {
     try {
       const message = await env.txClient.msgRemoveMember(collaborator);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(env.apiNode)(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {

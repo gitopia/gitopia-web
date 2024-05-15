@@ -11,6 +11,8 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import Notifications from "../components/notifications";
 // import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import ErrorHandler from "../hooks/errorHandler";
+import { ApiClientProvider } from "../context/ApiClientContext";
+
 const progress = new ProgressBar({
   size: 2,
   color: "#66ce67",
@@ -30,7 +32,9 @@ function MyApp({ Component, pageProps }) {
     <>
       <Notifications />
       <ErrorHandler>
-        <Component {...pageProps} />
+        <ApiClientProvider>
+          <Component {...pageProps} />
+        </ApiClientProvider>
       </ErrorHandler>
       <AutoLogin />
       <NotificationManager />

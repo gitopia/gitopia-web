@@ -26,7 +26,7 @@ export const createBounty = (
         console.log(send);
         const message = await env.txClient.msgCreateBounty(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Bounty Created", "info"));
@@ -58,7 +58,7 @@ export const updateBountyExpiry = (id, expiry) => {
         console.log(send);
         const message = await env.txClient.msgUpdateBountyExpiry(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Bounty Expiry Updated", "info"));
@@ -89,7 +89,7 @@ export const closeBounty = (id) => {
         console.log(send);
         const message = await env.txClient.msgCloseBounty(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Bounty Closed", "info"));
@@ -120,7 +120,7 @@ export const deleteBounty = (id) => {
         console.log(send);
         const message = await env.txClient.msgDeleteBounty(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Bounty Deleted", "info"));
@@ -152,7 +152,7 @@ export const linkPullIssuebyIid = (repositoryId, pullRequestIid, issueIid) => {
         };
         const message = await env.txClient.msgLinkPullRequestIssueByIid(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Issue Linked to Pull Request", "info"));
@@ -187,7 +187,7 @@ export const unlinkPullIssuebyIid = (
         };
         const message = await env.txClient.msgUnlinkPullRequestIssueByIid(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Issue Unlinked to Pull Request", "info"));

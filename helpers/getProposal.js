@@ -1,13 +1,11 @@
 import api from "./getProposalApi";
 import axios from "../helpers/axiosFetch";
 
-export default async function getProposal(id) {
+export default async function getProposal(apiNode, id) {
   let proposer = "";
   let initialDeposit = "";
   const baseUrl =
-    process.env.NEXT_PUBLIC_API_URL +
-    "/cosmos/tx/v1beta1/txs?events=submit_proposal.proposal_id=" +
-    id;
+    apiNode + "/cosmos/tx/v1beta1/txs?events=submit_proposal.proposal_id=" + id;
   await axios
     .get(baseUrl)
     .then(({ data }) => {

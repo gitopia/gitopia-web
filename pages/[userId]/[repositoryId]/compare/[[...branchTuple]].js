@@ -173,9 +173,14 @@ function RepositoryCompareView(props) {
         if (reposlug[0].includes("/")) {
           // forked repo name also given
           const ownerslug = reposlug[0].split("/");
-          sourceRepo = await getAnyRepository(ownerslug[0], ownerslug[1]);
+          sourceRepo = await getAnyRepository(
+            apiNode,
+            ownerslug[0],
+            ownerslug[1]
+          );
         } else {
           sourceRepo = await getAnyRepository(
+            apiNode,
             reposlug[0],
             router.query.repositoryId
           );
@@ -870,6 +875,7 @@ function RepositoryCompareView(props) {
 
 const mapStateToProps = (state) => {
   return {
+    apiNode: state.env.apiNode,
     selectedAddress: state.wallet.selectedAddress,
     user: state.user,
   };

@@ -261,7 +261,7 @@ function Header(props) {
                 >
                   {selectedProvider ? (
                     <>
-                      {selectedProvider.apiEndpoint}
+                      {selectedProvider.apiEndpoint.replace(/^https:\/\//, "")}
                       <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
                     </>
                   ) : (

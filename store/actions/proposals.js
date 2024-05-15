@@ -37,7 +37,8 @@ export const submitGovernanceProposal = (
               ? [
                   {
                     amount: initialDeposit,
-                    denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+                    denom:
+                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
                   },
                 ]
               : [],
@@ -45,7 +46,7 @@ export const submitGovernanceProposal = (
         };
         const message = await env.txClient.msgSubmitProposal(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Submitted", "info"));
@@ -95,9 +96,9 @@ export const chainUpgradeProposal = (
         });
         const msgAny = Any.fromPartial({
           typeUrl: "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal",
-          value: 
-            SoftwareUpgradeProposal.encode(softwareUpgradeProposal).finish()
-          ,
+          value: SoftwareUpgradeProposal.encode(
+            softwareUpgradeProposal
+          ).finish(),
         });
         const send = {
           content: msgAny,
@@ -106,7 +107,8 @@ export const chainUpgradeProposal = (
               ? [
                   {
                     amount: initialDeposit,
-                    denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+                    denom:
+                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
                   },
                 ]
               : [],
@@ -114,7 +116,7 @@ export const chainUpgradeProposal = (
         };
         const message = await env.txClient.msgSubmitProposal(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Submitted", "info"));
@@ -146,29 +148,27 @@ export const communityPoolSpendProposal = (
         await setupTxClients(dispatch, getState);
         const { env } = getState();
         const Any = (await import("cosmjs-types/google/protobuf/any")).Any;
-        const CommunityPoolSpendProposal = (await import(
-          "cosmjs-types/cosmos/distribution/v1beta1/distribution"
-        )).CommunityPoolSpendProposal;
+        const CommunityPoolSpendProposal = (
+          await import("cosmjs-types/cosmos/distribution/v1beta1/distribution")
+        ).CommunityPoolSpendProposal;
         const amountToSend = [
           {
             amount: amount,
             denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
           },
         ];
-        const communityPoolSpendProposal = CommunityPoolSpendProposal.fromPartial(
-          {
+        const communityPoolSpendProposal =
+          CommunityPoolSpendProposal.fromPartial({
             title: title,
             description: description,
             recipient: address,
             amount: amountToSend,
-          }
-        );
+          });
         const msgAny = Any.fromPartial({
           typeUrl: "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal",
-          value: 
-            CommunityPoolSpendProposal.encode(
-              communityPoolSpendProposal
-            ).finish(),
+          value: CommunityPoolSpendProposal.encode(
+            communityPoolSpendProposal
+          ).finish(),
         });
         const send = {
           content: msgAny,
@@ -177,7 +177,8 @@ export const communityPoolSpendProposal = (
               ? [
                   {
                     amount: initialDeposit,
-                    denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+                    denom:
+                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
                   },
                 ]
               : [],
@@ -185,7 +186,7 @@ export const communityPoolSpendProposal = (
         };
         const message = await env.txClient.msgSubmitProposal(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Submitted", "info"));
@@ -238,8 +239,7 @@ export const paramChangeProposal = (
         });
         const msgAny = Any.fromPartial({
           typeUrl: "/cosmos.params.v1beta1.ParameterChangeProposal",
-          value: 
-            ParameterChangeProposal.encode(paramChangeProposal).finish(),
+          value: ParameterChangeProposal.encode(paramChangeProposal).finish(),
         });
         const send = {
           content: msgAny,
@@ -248,7 +248,8 @@ export const paramChangeProposal = (
               ? [
                   {
                     amount: initialDeposit,
-                    denom: process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
+                    denom:
+                      process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN.toString(),
                   },
                 ]
               : [],
@@ -256,7 +257,7 @@ export const paramChangeProposal = (
         };
         const message = await env.txClient.msgSubmitProposal(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Submitted", "info"));
@@ -296,7 +297,7 @@ export const proposalDeposit = (proposalId, amount) => {
 
         const message = await env.txClient.msgDeposit(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Deposit Submitted", "info"));
@@ -345,7 +346,7 @@ export const proposalVote = (proposalId, option) => {
         };
         const message = await env.txClient.msgVote(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result && result.code === 0) {
           if (result.code === 0) {
             dispatch(notify("Proposal Vote Submitted", "info"));

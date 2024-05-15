@@ -1,10 +1,11 @@
-import api from "./getApi";
+import { useApiClient } from "../context/ApiClientContext";
 
 export default async function getWhois(id) {
   if (!id) return null;
   let lId = String(id).toLowerCase();
   try {
-    const res = await api.queryWhois(lId);
+    const { apiClient } = useApiClient();
+    const res = await apiClient.queryWhois(lId);
     if (res.status === 200) {
       let u = res.data.Whois;
       return u;

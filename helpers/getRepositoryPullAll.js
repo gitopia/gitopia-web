@@ -1,4 +1,4 @@
-import api from "./getApi";
+import { useApiClient } from "../context/ApiClientContext";
 
 export default async function getRepositoryPullAll(
   id,
@@ -15,7 +15,12 @@ export default async function getRepositoryPullAll(
       query[`pagination.${p}`] = pagination[p];
     }
     console.log(query);
-    const res = await api.queryRepositoryPullRequestAll(id, repoName, query);
+    const { apiClient } = useApiClient();
+    const res = await apiClient.queryRepositoryPullRequestAll(
+      id,
+      repoName,
+      query
+    );
     if (res.status === 200) {
       return res.data;
     }

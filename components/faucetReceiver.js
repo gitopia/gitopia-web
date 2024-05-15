@@ -44,7 +44,7 @@ function FaucetReceiver(props) {
           setLoading(0);
         } else {
           setTimeout(() => {
-            props.updateUserBalance(true);
+            props.updateUserBalance(props.apiNode, true);
             setLoading(0);
           }, 2000);
         }
@@ -100,6 +100,7 @@ function FaucetReceiver(props) {
 
 const mapStateToProps = (state) => {
   return {
+    apiNode: state.env.apiNode,
     selectedAddress: state.wallet.selectedAddress,
     balance: state.wallet.balance,
     allowance: state.wallet.allowance,

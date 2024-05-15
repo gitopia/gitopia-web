@@ -31,7 +31,7 @@ function WithdrawIbcAsset(props) {
           props.ibcAssets.chainInfo.asset.assets[0].denom_units[1].exponent
         );
 
-        let res = await getBalances(props.selectedAddress);
+        let res = await getBalances(props.apiNode, props.selectedAddress);
         if (res) {
           let b = res.balances;
           for (let i = 0; i < b.length; i++) {
@@ -291,6 +291,7 @@ function WithdrawIbcAsset(props) {
 }
 const mapStateToProps = (state) => {
   return {
+    apiNode: state.env.apiNode,
     selectedAddress: state.wallet.selectedAddress,
     balance: state.wallet.balance,
     activeWallet: state.wallet.activeWallet,

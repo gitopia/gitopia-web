@@ -1,10 +1,13 @@
 import { Api } from "../store/cosmos.feegrant.v1beta1/rest";
-const api = new Api({ baseURL: process.env.NEXT_PUBLIC_API_URL });
 
-export default async function getAllowance(address) {
+export default async function getAllowance(apiNode, address) {
   if (!address) return null;
   try {
-    const res = await api.queryAllowance(process.env.NEXT_PUBLIC_FEE_GRANTER, address);
+    const api = new Api({ baseURL: apiNode });
+    const res = await api.queryAllowance(
+      process.env.NEXT_PUBLIC_FEE_GRANTER,
+      address
+    );
     if (res.status === 200) {
       return res.data?.allowance;
     }

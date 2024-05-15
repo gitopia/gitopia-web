@@ -1,4 +1,4 @@
-import api from "./getApi";
+import { useApiClient } from "../context/ApiClientContext";
 
 export default async function getPullRequestMergePermission(
   userAddress,
@@ -6,7 +6,8 @@ export default async function getPullRequestMergePermission(
   pullIid
 ) {
   try {
-    const res = await api.queryPullRequestMergePermission(
+    const { apiClient } = useApiClient();
+    const res = await apiClient.queryPullRequestMergePermission(
       userAddress,
       repositoryId,
       pullIid

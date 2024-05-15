@@ -45,7 +45,7 @@ function FundWallet(props) {
           setGettingFaucetTokens(false);
         } else {
           setTimeout(() => {
-            props.updateUserBalance(true);
+            props.updateUserBalance(props.apiNode, true);
             setGettingFaucetTokens(false);
           }, 2000);
         }
@@ -63,7 +63,7 @@ function FundWallet(props) {
 
   useEffect(() => {
     getTokens();
-    props.updateUserAllowance();
+    props.updateUserAllowance(props.apiNode);
   }, []);
 
   useEffect(() => {
@@ -205,6 +205,7 @@ function FundWallet(props) {
 
 const mapStateToProps = (state) => {
   return {
+    apiNode: state.env.apiNode,
     wallets: state.wallet.wallets,
     selectedAddress: state.wallet.selectedAddress,
     balance: state.wallet.balance,

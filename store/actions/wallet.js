@@ -67,7 +67,7 @@ const postWalletUnlocked = async (
           ibcAssets.chainInfo.chain.bech32_prefix
         ),
         queryClient({ addr: restEndPointSecondary }),
-        updateUserBalance()(dispatch, getState),
+        updateUserBalance(env.apiNode)(dispatch, getState),
       ]);
       dispatch({
         type: envActions.SET_CLIENTS,
@@ -89,7 +89,7 @@ const postWalletUnlocked = async (
           "gitopia"
         ),
         queryClient({ addr: env.apiNode }),
-        updateUserBalance()(dispatch, getState),
+        updateUserBalance(env.apiNode)(dispatch, getState),
       ]);
       dispatch({
         type: envActions.SET_CLIENTS,
@@ -105,7 +105,7 @@ const postWalletUnlocked = async (
   } else {
     const { Api } = await import("@gitopia/gitopia-js/dist/rest");
 
-    updateUserBalance()(dispatch, getState);
+    updateUserBalance(env.apiNode)(dispatch, getState);
     dispatch({
       type: envActions.SET_CLIENTS,
       payload: {
@@ -424,10 +424,10 @@ export const createWalletWithMnemonic = ({
   };
 };
 
-export const updateUserBalance = (showNotification = false) => {
+export const updateUserBalance = (apiNode, showNotification = false) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
-    const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
+    const api = new Api({ baseUrl: apiNode });
     try {
       const res = await api.queryBalance(
         state.selectedAddress,
@@ -493,10 +493,10 @@ export const updateUserAllowance = (showNotification = false) => {
   };
 };
 
-export const getBalance = (address) => {
+export const getBalance = (apiNode, address) => {
   return async (dispatch, getState) => {
     if (!address) return null;
-    const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
+    const api = new Api({ baseUrl: apiNode });
     try {
       const res = await api.queryBalance(
         address,
@@ -607,7 +607,7 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
           dispatch,
           getState
         );
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result && result.code === 0) {
           dispatch(notify("Transaction Successful", "info"));
           return true;
@@ -956,7 +956,7 @@ export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
         };
         const message = await env.txClient.msgTransfer(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (result && result.code === 0) {
           return true;
         } else {
@@ -1020,7 +1020,7 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
           fee: 1.5,
           memo,
         });
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(env.apiNode)(dispatch, getState);
         if (wallet.activeWallet?.isLedger) {
           dispatch(dismissNotification(notif?.payload?.id));
           await closeLedgerTransport()(dispatch, getState);
@@ -1068,9 +1068,9 @@ const getSecondaryGasPrice = (chainInfo) => {
   return gas;
 };
 
-export const getTasks = (address) => {
+export const getTasks = (apiNode, address) => {
   return async (dispatch, getState) => {
-    const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
+    const api = new Api({ baseUrl: apiNode });
     try {
       const res = await api.queryTasks(address);
       if (res) return res.data.tasks;
