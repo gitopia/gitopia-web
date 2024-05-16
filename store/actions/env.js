@@ -140,13 +140,18 @@ export const signMessage = ({ data = {} }) => {
   };
 };
 
-export const setupTxClients = async (dispatch, getState, chainId = null) => {
+export const setupTxClients = async (
+  apiClient,
+  dispatch,
+  getState,
+  chainId = null
+) => {
   const { env, wallet } = getState();
 
   if (wallet.activeWallet) {
     if (!env.txClient || chainId != wallet.activeWallet.counterPartyChain) {
       if (wallet.activeWallet.isKeplr) {
-        await unlockKeplrWallet(chainId)(dispatch, getState);
+        await unlockKeplrWallet(apiClient, chainId)(dispatch, getState);
       } else {
         return new Promise((resolve, reject) => {
           dispatch({

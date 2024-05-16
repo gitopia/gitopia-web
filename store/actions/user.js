@@ -235,7 +235,7 @@ export const updateUserName = (name) => {
   };
 };
 
-export const updateUserUsername = (username) => {
+export const updateUserUsername = (apiClient, username) => {
   return async (dispatch, getState) => {
     try {
       await setupTxClients(dispatch, getState);
@@ -249,7 +249,10 @@ export const updateUserUsername = (username) => {
       if (result?.code === 0) {
         let newWallet = await updateWalletsList(dispatch, getState, username);
         await getUserDetailsForSelectedAddress()(dispatch, getState);
-        const daos = await getUserDaoAll(newWallet.accounts[0].address);
+        const daos = await getUserDaoAll(
+          apiClient,
+          newWallet.accounts[0].address
+        );
         await dispatch({
           type: userActions.INIT_DASHBOARDS,
           payload: {
@@ -267,7 +270,13 @@ export const updateUserUsername = (username) => {
   };
 };
 
-const updateWalletsList = async (dispatch, getState, username, avatarUrl) => {
+const updateWalletsList = async (
+  apiClient,
+  dispatch,
+  getState,
+  username,
+  avatarUrl
+) => {
   const { env, wallet, user } = getState();
   const CryptoJS = (await import("crypto-js")).default;
   let newWallet = { ...wallet.activeWallet };
@@ -291,7 +300,7 @@ const updateWalletsList = async (dispatch, getState, username, avatarUrl) => {
       },
     });
     await getUserDetailsForSelectedAddress()(dispatch, getState);
-    const daos = await getUserDaoAll(newWallet.accounts[0].address);
+    const daos = await getUserDaoAll(apiClient, newWallet.accounts[0].address);
     await dispatch({
       type: userActions.INIT_DASHBOARDS,
       payload: {

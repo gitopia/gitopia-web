@@ -11,6 +11,7 @@ import initKeplr from "../helpers/keplr";
 import TextInput from "./textInput";
 import Link from "next/link";
 import shrinkAddress from "../helpers/shrinkAddress";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function CurrentWallet(props) {
   const [isUnlocking, setIsUnlocking] = useState(false);
@@ -263,7 +264,8 @@ function CurrentWallet(props) {
             className="btn btn-outline border-grey mb-2 rounded-full px-4 relative justify-start"
             onClick={async () => {
               await initKeplr();
-              props.unlockKeplrWallet();
+              const apiClient = useApiClient();
+              props.unlockKeplrWallet(apiClient);
             }}
           >
             <div className="rounded-full mask mask-circle w-10 h-10 bg-primary flex justify-center items-center absolute left-1">

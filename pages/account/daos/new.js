@@ -9,6 +9,7 @@ import TextInput from "../../../components/textInput";
 import Footer from "../../../components/footer";
 import AccountAvatar from "../../../components/account/avatar";
 import getUserDaoAll from "../../../helpers/getUserDaoAll";
+import { useApiClient } from "../../../context/ApiClientContext";
 
 function NewDao(props) {
   const router = useRouter();
@@ -80,7 +81,8 @@ function NewDao(props) {
     }
 
     let alreadyAvailable = false;
-    const daos = await getUserDaoAll(props.selectedAddress);
+    const apiClient = useApiClient();
+    const daos = await getUserDaoAll(apiClient, props.selectedAddress);
     daos?.every((o) => {
       if (o.name === name) {
         alreadyAvailable = true;

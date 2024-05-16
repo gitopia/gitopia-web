@@ -26,6 +26,7 @@ import DepositIbcAsset from "./assets/deposit";
 import WithdrawIbcAsset from "./assets/withdraw";
 import Providers from "./providers";
 import selectProvider from "../helpers/providerSelector";
+import { useApiClient } from "../../context/ApiClientContext";
 
 // const NotificationsCard = dynamic(() =>
 //   import("./dashboard/notificationsButton")
@@ -110,7 +111,8 @@ function Header(props) {
   const kelprWalletChange = async () => {
     console.log("Keplr wallet change", props.activeWallet);
     if (props.activeWallet && props.activeWallet.isKeplr) {
-      await props.unlockKeplrWallet();
+      const apiClient = useApiClient();
+      await props.unlockKeplrWallet(apiClient);
     }
   };
 

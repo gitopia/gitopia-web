@@ -8,13 +8,16 @@ import { MemberRole } from "@gitopia/gitopia-js/dist/types/gitopia/member";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getDaoMember from "../../helpers/getUserDaoMember";
 
-export const createDao = ({
-  name = null,
-  description = null,
-  avatarUrl = null,
-  location = null,
-  website = null,
-}) => {
+export const createDao = (
+  apiClient,
+  {
+    name = null,
+    description = null,
+    avatarUrl = null,
+    location = null,
+    website = null,
+  }
+) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "dao")))
       return null;
@@ -34,7 +37,7 @@ export const createDao = ({
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         await getUserDetailsForSelectedAddress()(dispatch, getState);
-        const daos = await getUserDaoAll(wallet.selectedAddress);
+        const daos = await getUserDaoAll(apiClient, wallet.selectedAddress);
         dispatch({
           type: userActions.INIT_DASHBOARDS,
           payload: {

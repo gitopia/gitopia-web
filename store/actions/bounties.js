@@ -2,7 +2,9 @@ import { notify } from "reapop";
 import { sendTransaction, setupTxClients } from "./env";
 import { updateUserBalance } from "./wallet";
 import { BountyParent } from "@gitopia/gitopia-js/dist/types/gitopia/bounty";
+
 export const createBounty = (
+  apiClient,
   amount,
   expiry,
   parentIid,

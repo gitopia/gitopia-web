@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import getDenomNameByHash from "../../helpers/getDenomNameByHash";
 import getTokenValueInDollars from "../../helpers/getTotalTokenValueInDollars";
 import { coingeckoId } from "../../ibc-assets-config";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function CreateBounty(props) {
   const router = useRouter();
@@ -25,6 +26,7 @@ function CreateBounty(props) {
   const ref1 = useRef(null);
   const ref2 = useRef(null);
   // const ref3 = useRef("dd/mm/yyyy");
+  const apiClient = useApiClient();
 
   useEffect(() => {
     async function getBalance() {
@@ -617,6 +619,7 @@ function CreateBounty(props) {
                   props.issue
                     ? props
                         .createBounty(
+                          apiClient,
                           props.bountyAmount,
                           dayjs(expiry.toString()).unix(),
                           props.issue.iid,

@@ -11,6 +11,7 @@ import initKeplr from "../helpers/keplr";
 import TextInput from "./textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { notify } from "reapop";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function AutoLogin(props) {
   const [password, setPassword] = useState("");
@@ -40,7 +41,8 @@ function AutoLogin(props) {
           console.log("Last wallet found.. ", lastWallet.name);
           if (lastWallet.isKeplr) {
             await initKeplr();
-            await props.unlockKeplrWallet();
+            const apiClient = useApiClient();
+            await props.unlockKeplrWallet(apiClient);
           } else {
             setWalletName(lastWallet.name);
             setAddress(lastWallet.accounts[0].address);

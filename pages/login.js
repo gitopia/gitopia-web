@@ -11,6 +11,7 @@ import initKeplr from "../helpers/keplr";
 import { unlockKeplrWallet } from "../store/actions/wallet";
 import { connect } from "react-redux";
 import FundWallet from "../components/fundWallet";
+import { useApiClient } from "../context/ApiClientContext";
 
 /*
 Wizard Steps
@@ -87,7 +88,8 @@ function Login(props) {
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
                   onClick={async (e) => {
                     await initKeplr();
-                    const acc = await props.unlockKeplrWallet();
+                    const apiClient = useApiClient();
+                    const acc = await props.unlockKeplrWallet(apiClient);
                     if (acc) {
                       push("/home");
                     }

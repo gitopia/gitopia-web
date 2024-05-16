@@ -25,6 +25,7 @@ import { ChainIdHelper } from "../../helpers/chainIdHelper";
 let ledgerTransport;
 
 const postWalletUnlocked = async (
+  apiClient,
   accountSigner,
   dispatch,
   getState,
@@ -143,7 +144,7 @@ export const signOut = () => {
   };
 };
 
-export const unlockKeplrWallet = (secondaryChainId = null) => {
+export const unlockKeplrWallet = (apiClient, secondaryChainId = null) => {
   return async (dispatch, getState) => {
     if (window.keplr && window.getOfflineSigner) {
       try {
@@ -912,10 +913,17 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
   };
 };
 
-export const refreshCurrentDashboard = async (dispatch, getState) => {
+export const refreshCurrentDashboard = async (
+  apiClient,
+  dispatch,
+  getState
+) => {
   const { wallet } = getState();
   await getUserDetailsForSelectedAddress()(dispatch, getState);
-  const daos = await getUserDaoAll(wallet.activeWallet.accounts[0].address);
+  const daos = await getUserDaoAll(
+    apiClient,
+    wallet.activeWallet.accounts[0].address
+  );
   await dispatch({
     type: userActions.INIT_DASHBOARDS,
     payload: {
