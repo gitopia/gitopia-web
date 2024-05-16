@@ -26,7 +26,7 @@ import DepositIbcAsset from "./assets/deposit";
 import WithdrawIbcAsset from "./assets/withdraw";
 import Providers from "./providers";
 import selectProvider from "../helpers/providerSelector";
-import { useApiClient } from "../../context/ApiClientContext";
+import { useApiClient } from "../context/ApiClientContext";
 
 // const NotificationsCard = dynamic(() =>
 //   import("./dashboard/notificationsButton")

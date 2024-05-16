@@ -11,7 +11,7 @@ import initKeplr from "../helpers/keplr";
 import TextInput from "./textInput";
 import Link from "next/link";
 import shrinkAddress from "../helpers/shrinkAddress";
-import { useApiClient } from "../../context/ApiClientContext";
+import { useApiClient } from "../context/ApiClientContext";
 
 function CurrentWallet(props) {
   const [isUnlocking, setIsUnlocking] = useState(false);

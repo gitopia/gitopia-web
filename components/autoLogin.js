@@ -11,7 +11,7 @@ import initKeplr from "../helpers/keplr";
 import TextInput from "./textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { notify } from "reapop";
-import { useApiClient } from "../../context/ApiClientContext";
+import { useApiClient } from "../context/ApiClientContext";
 
 function AutoLogin(props) {
   const [password, setPassword] = useState("");

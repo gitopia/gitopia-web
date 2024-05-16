@@ -7,7 +7,7 @@ import AccountCard from "../account/card";
 import UserBio from "./bio";
 import UserName from "./name";
 import UserUsername from "./username";
-import { useApiClient } from "../context/ApiClientContext";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function UserHeader(props) {
   const [isEditable, setIsEditable] = useState(false);
