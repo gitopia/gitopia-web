@@ -9,6 +9,7 @@ import { notify } from "reapop";
 import TextInput from "./textInput";
 import AccountAvatar from "./account/avatar";
 import { useRouter } from "next/router";
+import { useApiClient } from "../context/ApiClientContext";
 
 function CreateUser(props) {
   const [loading, setLoading] = useState(false);
@@ -32,6 +33,7 @@ function CreateUser(props) {
     type: "error",
     message: "",
   });
+  const apiClient = useApiClient();
 
   const usernameRegex = /^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$/;
   const router = useRouter();
@@ -106,7 +108,7 @@ function CreateUser(props) {
   const createProfile = async () => {
     setLoading(true);
     if (await validateProfile()) {
-      let res = await props.createUser({
+      let res = await props.createUser(apiClient, {
         username,
         name,
         bio,
@@ -123,11 +125,12 @@ function CreateUser(props) {
   return (
     <>
       <div className="text-4xl mt-16 sm:mt-0 sm:text-6xl mb-6">
-            Setup Your Profile
-          </div>
-          <div className="text-xs text-type-secondary mb-8">
-            This information is visible publicly and will be used to interact with other gitopia users
-          </div>
+        Setup Your Profile
+      </div>
+      <div className="text-xs text-type-secondary mb-8">
+        This information is visible publicly and will be used to interact with
+        other gitopia users
+      </div>
 
       <div>
         <AccountAvatar

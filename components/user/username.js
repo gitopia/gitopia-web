@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { updateUserUsername } from "../../store/actions/user";
 import { notify } from "reapop";
 import TextInput from "../textInput";
-import { useApiClient } from "../context/ApiClientContext";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function UserUsername(props = { isEditable: false }) {
   const [newUsername, setNewUsername] = useState(props.user?.username || "");

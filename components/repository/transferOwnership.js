@@ -6,6 +6,7 @@ import getUser from "../../helpers/getUser";
 import getDao from "../../helpers/getDao";
 import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
 import validAddress from "../../helpers/validAddress";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function TransferOwnership({
   repoId = null,
@@ -22,6 +23,7 @@ function TransferOwnership({
   });
   const [isChanging, setIsChanging] = useState(false);
   const [startTransfer, setStartTransfer] = useState(false);
+  const apiClient = useApiClient();
 
   useEffect(() => {
     setAddress("");
@@ -56,7 +58,7 @@ function TransferOwnership({
     console.log("user tranfer ownership", user);
     if (user) {
       console.log("user exists", user);
-      const repositories = await getAnyRepositoryAll(address);
+      const repositories = await getAnyRepositoryAll(apiClient, address);
       repositories.every((r) => {
         if (r.name === repoName) {
           alreadyAvailable = true;
@@ -66,7 +68,7 @@ function TransferOwnership({
       });
     } else if (dao) {
       console.log("dao exists", dao);
-      const repositories = await getAnyRepositoryAll(address);
+      const repositories = await getAnyRepositoryAll(apiClient, address);
       repositories.every((r) => {
         if (r.name === repoName) {
           alreadyAvailable = true;

@@ -7,6 +7,7 @@ import shrinkAddress from "../../helpers/shrinkAddress";
 import Link from "next/link";
 import { connect } from "react-redux";
 import { notify } from "reapop";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function AccountCard({
   id,
@@ -19,6 +20,8 @@ function AccountCard({
 }) {
   const [accountData, setAccountData] = useState(initialData || {});
   const [loading, setLoading] = useState(0);
+  const apiClient = useApiClient();
+
   const getAccountData = async () => {
     if (loading) return;
     if (accountData?.id) return;
@@ -37,7 +40,7 @@ function AccountCard({
       let d = await getDao(id);
       setAccountData({ d, __typename: "Dao" });
     } else if (id && id !== "") {
-      let data = await getWhois(id);
+      let data = await getWhois(apiClient, id);
       console.log(data);
       if (data?.ownerType === "USER") {
         let u = await getUser(id);

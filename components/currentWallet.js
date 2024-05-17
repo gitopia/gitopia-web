@@ -24,6 +24,7 @@ function CurrentWallet(props) {
     message: "",
   });
   const inputEl = useRef();
+  const apiClient = useApiClient();
 
   const unlockWallet = async () => {
     if (password === "") {
@@ -34,7 +35,10 @@ function CurrentWallet(props) {
       });
       return;
     }
-    let res = await props.unlockWallet({ name: selectedWallet, password });
+    let res = await props.unlockWallet(apiClient, {
+      name: selectedWallet,
+      password,
+    });
     if (res) {
       resetWallet(false);
     } else {

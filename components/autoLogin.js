@@ -26,6 +26,7 @@ function AutoLogin(props) {
   const [externalWalletMsg, setExternalWalletMsg] = useState(null);
   const inputEl = useRef();
   const okayRef = useRef();
+  const apiClient = useApiClient();
 
   useEffect(() => {
     async function setWallet() {
@@ -41,12 +42,11 @@ function AutoLogin(props) {
           console.log("Last wallet found.. ", lastWallet.name);
           if (lastWallet.isKeplr) {
             await initKeplr();
-            const apiClient = useApiClient();
             await props.unlockKeplrWallet(apiClient);
           } else {
             setWalletName(lastWallet.name);
             setAddress(lastWallet.accounts[0].address);
-            let res = await props.setWallet({
+            let res = await props.setWallet(apiClient, {
               wallet: lastWallet,
             });
           }
@@ -90,7 +90,7 @@ function AutoLogin(props) {
   const unlockLocalWallet = async () => {
     let res;
     if (props.getPassword === "Unlock" || props.getPassword === "Approve") {
-      res = await props.unlockWallet({
+      res = await props.unlockWallet(apiClient, {
         name: walletName,
         password: password,
       });

@@ -100,7 +100,7 @@ function UserDashboard(props) {
               return "";
             }
             return (
-              <div>
+              <div key={r.repository.id}>
                 <Link
                   className="btn btn-ghost btn-block btn-sm justify-start"
                   href={data.user.username + "/" + r.repository.name}
@@ -139,7 +139,7 @@ function UserDashboard(props) {
               return "";
             }
             return (
-              <div>
+              <div key={i}>
                 <Link
                   className="btn btn-ghost btn-block btn-sm justify-start"
                   href={

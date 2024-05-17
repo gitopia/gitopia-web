@@ -19,6 +19,7 @@ import DaoProposalList from "../../components/account/daoProposalList";
 import DaoProposalCreate from "../../components/account/daoProposalCreate";
 import DaoProposalDetails from "../../components/account/daoProposalDetails";
 import validAddress from "../../helpers/validAddress";
+import { useApiClient } from "../../context/ApiClientContext";
 
 export async function getStaticProps({ params }) {
   let data,
@@ -26,7 +27,7 @@ export async function getStaticProps({ params }) {
     d,
     allRepos = [];
   try {
-    const db = (await import('../../helpers/getSeoDatabase')).default;
+    const db = (await import("../../helpers/getSeoDatabase")).default;
     if (validAddress.test(params.userId)) {
       data = await db
         .first("*")
@@ -36,20 +37,25 @@ export async function getStaticProps({ params }) {
       data = await db.first("*").from("Whois").where({ name: params.userId });
     }
     if (data?.ownerType === "USER") {
-      u = JSON.parse((await db.first("*").from("Users").where({ address: data.address })).data);
+      u = JSON.parse(
+        (await db.first("*").from("Users").where({ address: data.address }))
+          .data
+      );
       let repoJsons = await db
         .select("*")
         .from("Repositories")
-        .where({ownerAddress: data.address})
+        .where({ ownerAddress: data.address })
         .orderBy("updatedAt", "desc")
         .limit(10);
       allRepos = repoJsons.map((j) => JSON.parse(j.data));
     } else if (data?.ownerType === "DAO") {
-      d = JSON.parse((await db.first("*").from("Daos").where({ address: data.address })).data);
+      d = JSON.parse(
+        (await db.first("*").from("Daos").where({ address: data.address })).data
+      );
       let repoJsons = await db
         .select("*")
         .from("Repositories")
-        .where({ownerAddress: data.address})
+        .where({ ownerAddress: data.address })
         .orderBy("updatedAt", "desc")
         .limit(10);
       allRepos = repoJsons.map((j) => JSON.parse(j.data));
@@ -113,6 +119,7 @@ function AccountView(props) {
     repositories: [],
     ...props.dao,
   });
+  const apiClient = useApiClient();
 
   const hrefBase = "/" + router.query.userId;
 
@@ -130,7 +137,7 @@ function AccountView(props) {
         d = await getDao(router.query.userId);
       }
     } else {
-      const data = await getWhois(router.query.userId);
+      const data = await getWhois(apiClient, router.query.userId);
       if (data?.ownerType === "USER") {
         u = await getUser(data.address);
       } else if (data?.ownerType === "DAO") {

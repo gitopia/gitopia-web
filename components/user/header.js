@@ -12,6 +12,7 @@ import { useApiClient } from "../../context/ApiClientContext";
 function UserHeader(props) {
   const [isEditable, setIsEditable] = useState(false);
   const [daos, setDaos] = useState([]);
+  const apiClient = useApiClient();
 
   const refresh = async (updatedUserName) => {
     await props.refresh(updatedUserName);
@@ -19,7 +20,6 @@ function UserHeader(props) {
 
   useEffect(() => {
     async function getDaos() {
-      const apiClient = useApiClient();
       const daos = await getUserDaoAll(apiClient, props.user.creator);
       setDaos(daos);
     }

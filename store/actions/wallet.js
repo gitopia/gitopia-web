@@ -53,12 +53,12 @@ const postWalletUnlocked = async (
         txClient(
           accountSigner,
           {
-            addr: env.rpcNode,
+            addr: env.rpcNode, // TODO
             gasPrice: wallet.gasPrice,
           },
           "gitopia"
         ),
-        queryClient({ addr: env.apiNode }),
+        queryClient({ addr: env.apiNode }), // TODO
         txClient(
           accountSignerSecondary,
           {
@@ -111,12 +111,12 @@ const postWalletUnlocked = async (
       type: envActions.SET_CLIENTS,
       payload: {
         txClient: null,
-        queryClient: new Api({ baseURL: env.apiNode }),
+        queryClient: new Api({ baseURL: env.apiNode }), // TODO
       },
     });
   }
 
-  await refreshCurrentDashboard(dispatch, getState);
+  await refreshCurrentDashboard(apiClient, dispatch, getState);
   const { user } = getState();
   const dashboard = find(
     user.dashboards,
@@ -155,7 +155,7 @@ export const unlockKeplrWallet = (apiClient, secondaryChainId = null) => {
           counterPartyAddress = null;
         const accounts = await offlineSigner.getAccounts();
         const key = await window.keplr.getKey(chainId);
-        let user = await getUser(accounts[0].address);
+        let user = await getUser(apiClient, accounts[0].address);
 
         if (secondaryChainId) {
           let chainInfo, chainAsset, chainIbc;
@@ -204,6 +204,7 @@ export const unlockKeplrWallet = (apiClient, secondaryChainId = null) => {
           },
         });
         await postWalletUnlocked(
+          apiClient,
           offlineSigner,
           dispatch,
           getState,
@@ -220,7 +221,7 @@ export const unlockKeplrWallet = (apiClient, secondaryChainId = null) => {
   };
 };
 
-export const setWallet = ({ wallet }) => {
+export const setWallet = (apiClient, { wallet }) => {
   return async (dispatch, getState) => {
     dispatch({
       type: walletActions.SET_ACTIVE_WALLET,
@@ -234,7 +235,7 @@ export const setWallet = ({ wallet }) => {
     });
     if (wallet.accounts.length > 0) {
       try {
-        await postWalletUnlocked(null, dispatch, getState);
+        await postWalletUnlocked(apiClient, null, dispatch, getState);
       } catch (e) {
         console.error(e);
       }
@@ -242,7 +243,7 @@ export const setWallet = ({ wallet }) => {
   };
 };
 
-export const unlockWallet = ({ name, password }) => {
+export const unlockWallet = (apiClient, { name, password }) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
     let accountSignerSecondary;
@@ -310,7 +311,7 @@ export const unlockWallet = ({ name, password }) => {
       }
 
       // Check if user exists, rename the old wallet to correct username
-      let user = await getUser(wallet.accounts[0].address),
+      let user = await getUser(apiClient, wallet.accounts[0].address),
         oldWalletName,
         oldWalletIndex = state.wallets.findIndex((x) => x.name === name);
 
@@ -350,6 +351,7 @@ export const unlockWallet = ({ name, password }) => {
 
       try {
         await postWalletUnlocked(
+          apiClient,
           accountSigner,
           dispatch,
           getState,
@@ -370,13 +372,16 @@ export const removeWallet = ({ name }) => {
   };
 };
 
-export const createWalletWithMnemonic = ({
-  name = null,
-  mnemonic,
-  HDpath = "m/44'/118'/0'/0/",
-  prefix = "gitopia",
-  password = null,
-}) => {
+export const createWalletWithMnemonic = (
+  apiClient,
+  {
+    name = null,
+    mnemonic,
+    HDpath = "m/44'/118'/0'/0/",
+    prefix = "gitopia",
+    password = null,
+  }
+) => {
   return async (dispatch, getState) => {
     const wallet = {
       name,
@@ -394,7 +399,7 @@ export const createWalletWithMnemonic = ({
     });
     const [firstAccount] = await accountSigner.getAccounts();
     const account = { address: firstAccount.address, pathIncrement: 0 };
-    const user = await getUser(firstAccount.address);
+    const user = await getUser(apiClient, firstAccount.address);
     let oldWalletName = wallet.name;
     if (user?.username) {
       wallet.name = user.username;
@@ -418,7 +423,7 @@ export const createWalletWithMnemonic = ({
     });
 
     try {
-      await postWalletUnlocked(accountSigner, dispatch, getState);
+      await postWalletUnlocked(apiClient, accountSigner, dispatch, getState);
     } catch (e) {
       console.error(e);
     }
@@ -428,7 +433,7 @@ export const createWalletWithMnemonic = ({
 export const updateUserBalance = (apiNode, showNotification = false) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
-    const api = new Api({ baseUrl: apiNode });
+    const api = new Api({ baseUrl: apiNode }); // TODO
     try {
       const res = await api.queryBalance(
         state.selectedAddress,
@@ -497,7 +502,7 @@ export const updateUserAllowance = (showNotification = false) => {
 export const getBalance = (apiNode, address) => {
   return async (dispatch, getState) => {
     if (!address) return null;
-    const api = new Api({ baseUrl: apiNode });
+    const api = new Api({ baseUrl: apiNode }); // TODO
     try {
       const res = await api.queryBalance(
         address,
@@ -625,7 +630,7 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
   };
 };
 
-export const unlockLedgerWallet = ({ name, justUnlock = false }) => {
+export const unlockLedgerWallet = (apiClient, { name, justUnlock = false }) => {
   return async (dispatch, getState) => {
     // const TransportWebHID = (await import("@ledgerhq/hw-transport-webhid"))
     //   .default;
@@ -675,7 +680,7 @@ export const unlockLedgerWallet = ({ name, justUnlock = false }) => {
 
       // Check if user exists, rename the old wallet to correct username
 
-      let user = await getUser(addr),
+      let user = await getUser(apiClient, addr),
         oldWalletName = newWallet.name,
         oldWalletIndex = wallet.wallets.findIndex(
           (x) => x.name === newWallet.name
@@ -732,13 +737,14 @@ export const unlockLedgerWallet = ({ name, justUnlock = false }) => {
         newWallet.counterPartyAddress = counterPartyAccount.address;
         newWallet.counterPartyChain = chainId;
         await postWalletUnlocked(
+          apiClient,
           accountSigner,
           dispatch,
           getState,
           accountSignerSecondary
         );
       } else {
-        await postWalletUnlocked(accountSigner, dispatch, getState);
+        await postWalletUnlocked(apiClient, accountSigner, dispatch, getState);
       }
 
       console.log("justUnlock", justUnlock);
@@ -862,7 +868,7 @@ export const showLedgerAddress = (ledgerSigner) => {
   };
 };
 
-export const addLedgerWallet = (name, address, ledgerSigner) => {
+export const addLedgerWallet = (apiClient, name, address, ledgerSigner) => {
   return async (dispatch, getState) => {
     if (!ledgerSigner) return { message: "No connection available" };
     const stringToPath = (await import("@cosmjs/crypto")).stringToPath;
@@ -870,7 +876,7 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
 
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
-      const user = await getUser(address);
+      const user = await getUser(apiClient, address);
       const wallet = {
         name: user ? user.username : name,
         accounts: [{ address, path }],
@@ -902,7 +908,7 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
         },
       });
 
-      await postWalletUnlocked(ledgerSigner, dispatch, getState);
+      await postWalletUnlocked(apiClient, ledgerSigner, dispatch, getState);
       await closeLedgerTransport()(dispatch, getState);
 
       return user?.username ? "USER_CREATED" : "WALLET_ADDED";
@@ -1078,7 +1084,7 @@ const getSecondaryGasPrice = (chainInfo) => {
 
 export const getTasks = (apiNode, address) => {
   return async (dispatch, getState) => {
-    const api = new Api({ baseUrl: apiNode });
+    const api = new Api({ baseUrl: apiNode }); // TODO
     try {
       const res = await api.queryTasks(address);
       if (res) return res.data.tasks;

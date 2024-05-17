@@ -10,7 +10,7 @@ import { notify } from "reapop";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getNodeInfo from "../../helpers/getNodeInfo";
 
-export const createUser = ({ username, name, bio, avatarUrl }) => {
+export const createUser = (apiClient, { username, name, bio, avatarUrl }) => {
   return async (dispatch, getState) => {
     try {
       await setupTxClients(dispatch, getState);
@@ -59,7 +59,7 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
             dispatch,
             getState
           );
-          await refreshCurrentDashboard(dispatch, getState);
+          await refreshCurrentDashboard(apiClient, dispatch, getState);
         } else if (newWallet.isKeplr) {
           await dispatch({
             type: walletActions.SET_ACTIVE_WALLET,
@@ -75,7 +75,7 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
             dispatch,
             getState
           );
-          await refreshCurrentDashboard(dispatch, getState);
+          await refreshCurrentDashboard(apiClient, dispatch, getState);
         } else {
           // local wallet
           const continueAfterUnlockingWallet = new Promise(
@@ -110,7 +110,11 @@ export const createUser = ({ username, name, bio, avatarUrl }) => {
                         dispatch,
                         getState
                       );
-                      await refreshCurrentDashboard(dispatch, getState);
+                      await refreshCurrentDashboard(
+                        apiClient,
+                        dispatch,
+                        getState
+                      );
                       await dispatch({
                         type: walletActions.RESET_PASSWORD_FOR_UNLOCK_WALLET,
                       });

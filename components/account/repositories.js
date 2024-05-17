@@ -3,13 +3,15 @@ import dayjs from "dayjs";
 import Link from "next/link";
 import sortBy from "lodash/sortBy";
 import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function AccountRepositories(props) {
   const [allRepos, setAllRepos] = useState(props.allRepos || []);
+  const apiClient = useApiClient();
 
   const getAllRepos = async () => {
     if (props.userId) {
-      const pr = await getAnyRepositoryAll(props.userId);
+      const pr = await getAnyRepositoryAll(apiClient, props.userId);
       const repos = sortBy(pr, (r) => -Number(r.updatedAt));
       setAllRepos(repos);
     } else {

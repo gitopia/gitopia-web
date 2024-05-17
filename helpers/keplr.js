@@ -2,32 +2,30 @@ import getNodeInfo from "./getNodeInfo";
 
 async function getKeplr() {
   if (typeof window === "undefined") return null;
-    if (window.keplr) {
-        return window.keplr;
-    }
-    
-    if (document.readyState === "complete") {
-        return window.keplr;
-    }
-    
-    return new Promise((resolve) => {
-        const documentStateChange = (event) => {
-            if (
-                event.target?.readyState === "complete"
-            ) {
-                resolve(window.keplr);
-                document.removeEventListener("readystatechange", documentStateChange);
-            }
-        };
-        
-        document.addEventListener("readystatechange", documentStateChange);
-    });
+  if (window.keplr) {
+    return window.keplr;
+  }
+
+  if (document.readyState === "complete") {
+    return window.keplr;
+  }
+
+  return new Promise((resolve) => {
+    const documentStateChange = (event) => {
+      if (event.target?.readyState === "complete") {
+        resolve(window.keplr);
+        document.removeEventListener("readystatechange", documentStateChange);
+      }
+    };
+
+    document.addEventListener("readystatechange", documentStateChange);
+  });
 }
 
 export default async function initKeplr() {
   const keplr = await getKeplr();
   if (keplr) {
-    const info = await getNodeInfo();
+    const info = await getNodeInfo(); // TODO
 
     if (keplr.experimentalSuggestChain) {
       try {
@@ -96,7 +94,7 @@ export default async function initKeplr() {
               coinDecimals: 6,
               // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
               // You can get id from https://api.coingecko.com/api/v3/coins/list if it is listed.
-              coinGeckoId: "gitopia"
+              coinGeckoId: "gitopia",
             },
           ],
           // List of coin/tokens used as a fee token in this chain.
@@ -110,7 +108,7 @@ export default async function initKeplr() {
               coinDecimals: 6,
               // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
               // You can get id from https://api.coingecko.com/api/v3/coins/list if it is listed.
-              coinGeckoId: "gitopia"
+              coinGeckoId: "gitopia",
             },
           ],
           // (Optional) The number of the coin type.
