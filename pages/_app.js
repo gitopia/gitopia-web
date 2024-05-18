@@ -31,12 +31,12 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <Notifications />
-      <ErrorHandler>
-        <ApiClientProvider>
+      <ApiClientProvider>
+        <ErrorHandler>
           <Component {...pageProps} />
-        </ApiClientProvider>
-      </ErrorHandler>
-      <AutoLogin />
+        </ErrorHandler>
+        <AutoLogin />
+      </ApiClientProvider>
       <NotificationManager />
     </>
   );
