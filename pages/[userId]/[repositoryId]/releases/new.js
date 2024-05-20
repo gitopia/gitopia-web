@@ -24,6 +24,7 @@ import UploadButton from "@rpldy/upload-button";
 import UploadDropZone from "@rpldy/upload-drop-zone";
 import getBranchSha from "../../../../helpers/getBranchSha";
 import useRepository from "../../../../hooks/useRepository";
+import { useApiClient } from "../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -49,6 +50,7 @@ function RepositoryReleaseNewView(props) {
   const [uploadingAttachment, setUploadingAttachment] = useState({ file: {} });
   const [newTagOptionShown, setNewTagOptionShown] = useState(false);
   const [creatingTag, setCreatingTag] = useState(false);
+  const { apiClient } = useApiClient();
 
   const validateIssue = () => {
     return true;
@@ -74,7 +76,7 @@ function RepositoryReleaseNewView(props) {
           };
         }),
       };
-      const res = await props.createRelease(issue);
+      const res = await props.createRelease(apiClient, issue);
       if (res && res.code === 0) {
         router.push(
           "/" +
@@ -230,7 +232,7 @@ function RepositoryReleaseNewView(props) {
                         }
                         onClick={async () => {
                           setCreatingTag(true);
-                          const res = await props.createTag({
+                          const res = await props.createTag(apiClient, {
                             repoOwnerId: repository.owner.id,
                             repositoryName: repository.name,
                             name: tagName,
@@ -272,7 +274,11 @@ function RepositoryReleaseNewView(props) {
           <div className="sm:flex mt-8">
             <div className="flex flex-1">
               <div className="flex-none mr-4">
-                <AccountCard id={props.selectedAddress} showAvatar={true} showId={false} />
+                <AccountCard
+                  id={props.selectedAddress}
+                  showAvatar={true}
+                  showId={false}
+                />
               </div>
               <div className="border border-grey rounded flex-1 p-4">
                 <div className="form-control mb-4">

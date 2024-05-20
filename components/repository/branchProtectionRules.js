@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { notify } from "reapop";
 import getAllRepositoryBranch from "../../helpers/getAllRepositoryBranch";
 import { toggleForcePush } from "../../store/actions/repository";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function BranchProtectionRules({
   repoName = "",
@@ -15,6 +16,7 @@ function BranchProtectionRules({
   const [branch, setBranch] = useState("");
   const [branches, setBranches] = useState([]);
   const [protectedBranches, setProtectedBranches] = useState({});
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function getRepositoryBranch() {
@@ -114,7 +116,7 @@ function BranchProtectionRules({
                         className={"px-4 ml-auto"}
                         onClick={async () => {
                           props
-                            .toggleForcePush({
+                            .toggleForcePush(apiClient, {
                               repoOwner: repoOwner,
                               repoName: repoName,
                               branchName: b.name,
@@ -204,7 +206,7 @@ function BranchProtectionRules({
               onClick={async () => {
                 setIsAdding(true);
                 props
-                  .toggleForcePush({
+                  .toggleForcePush(apiClient, {
                     repoOwner: repoOwner,
                     repoName: repoName,
                     branchName: branch,

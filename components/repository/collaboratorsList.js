@@ -9,6 +9,7 @@ import getUser from "../../helpers/getUser";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import { notify } from "reapop";
 import AccountCard from "../account/card";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function CollaboratorsList({
   repoOwnerId,
@@ -29,6 +30,7 @@ function CollaboratorsList({
   const [isRemoving, setIsRemoving] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [startUpdate, setStartUpdate] = useState("");
+  const { apiClient } = useApiClient();
 
   const validateCollaborator = async () => {
     const res = await getUser(collabAddress);
@@ -45,7 +47,7 @@ function CollaboratorsList({
   const addCollaborator = async () => {
     setIsAdding(true);
     if (await validateCollaborator()) {
-      const res = await props.updateCollaborator({
+      const res = await props.updateCollaborator(apiClient, {
         repoName: repoName,
         repoOwner: repoOwnerId,
         user: collabAddress,
@@ -59,7 +61,7 @@ function CollaboratorsList({
 
   const removeCollaborator = async (address, index) => {
     setIsRemoving(index);
-    await props.removeCollaborator({
+    await props.removeCollaborator(apiClient, {
       repoName: repoName,
       repoOwner: repoOwnerId,
       user: address,
@@ -70,7 +72,7 @@ function CollaboratorsList({
 
   const updateCollaborator = async (address, role, index) => {
     setIsUpdating(index);
-    await props.updateCollaborator({
+    await props.updateCollaborator(apiClient, {
       repoName: repoName,
       repoOwner: repoOwnerId,
       user: address,

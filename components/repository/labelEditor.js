@@ -6,6 +6,7 @@ import {
   createRepositoryLabel,
   updateRepositoryLabel,
 } from "../../store/actions/repository";
+import { useApiClient } from "../../context/ApiClientContext";
 
 const defaultLabels = [
   {
@@ -66,6 +67,7 @@ function LabelEditor({
   });
   const [isSaving, setIsSaving] = useState(false);
   const shouldShowSuggestions = !isEdit;
+  const { apiClient } = useApiClient();
 
   const validateLabel = () => {
     resetHints();
@@ -97,7 +99,7 @@ function LabelEditor({
   const onCreateLabel = async () => {
     setIsSaving(true);
     if (validateLabel()) {
-      const res = await props.createRepositoryLabel({
+      const res = await props.createRepositoryLabel(apiClient, {
         repoOwner,
         repoName,
         name,
@@ -122,7 +124,7 @@ function LabelEditor({
   const onUpdateLabel = async () => {
     setIsSaving(true);
     if (validateLabel()) {
-      const res = await props.updateRepositoryLabel({
+      const res = await props.updateRepositoryLabel(apiClient, {
         repoOwner,
         repoName,
         labelId,

@@ -8,6 +8,7 @@ import TextInput from "../components/textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
 import Footer from "../components/footer";
 import isRepositoryNameTaken from "../helpers/isRepositoryNameTaken";
+import { useApiClient } from "../context/ApiClientContext";
 
 function NewRepository(props) {
   const router = useRouter();
@@ -28,6 +29,7 @@ function NewRepository(props) {
   const [accountsList, setAccountsList] = useState([
     { value: "", display: "" },
   ]);
+  const { apiClient } = useApiClient();
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
@@ -88,7 +90,7 @@ function NewRepository(props) {
         description,
         ownerName,
       });
-      let res = await props.createRepository({
+      let res = await props.createRepository(apiClient, {
         name: name.replace(sanitizedNameTest, "-"),
         description,
         ownerId: ownerName,

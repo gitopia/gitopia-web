@@ -4,6 +4,7 @@ import LabelEditor from "./labelEditor";
 import { deleteRepositoryLabel } from "../../store/actions/repository";
 import { connect } from "react-redux";
 import { notify } from "reapop";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function LabelSelector({
   onChange,
@@ -20,6 +21,7 @@ function LabelSelector({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [labelId, setLabelId] = useState(null);
   const labelsModal = useRef();
+  const { apiClient } = useApiClient();
 
   const updateLabels = async () => {
     setIsSaving(true);
@@ -71,9 +73,7 @@ function LabelSelector({
               strokeWidth="1.8"
             />
             <circle cx="15.6716" cy="12.9305" r="1.81331" fill="currentColor" />
-            <path
-              d="M22.9107 8.64216C23.4647 9.00242 23.8316 9.47334 23.9798 10.0117C24.128 10.55 24.0533 11.1404 23.7607 11.7298C23.4685 12.3183 22.9686 12.8865 22.3061 13.3829C21.6436 13.8793 20.8394 14.2884 19.9662 14.5731C19.093 14.8578 18.1782 15.0092 17.3044 15.0136C16.4306 15.0181 15.6255 14.8754 14.9616 14.5986L15.5766 13.1239C16.0056 13.3029 16.5916 13.4195 17.2963 13.4159C17.9963 13.4124 18.7469 13.2901 19.4709 13.054C20.1958 12.8177 20.84 12.485 21.348 12.1043C21.8611 11.7198 22.1735 11.3337 22.3296 11.0193C22.4791 10.7181 22.4658 10.5319 22.4394 10.4357C22.4127 10.3387 22.3271 10.1685 22.0397 9.98163C21.2122 9.44357 19.8477 9.35892 18.8917 9.42736L17.774 7.99178C19.357 7.74635 21.5153 7.7348 22.9107 8.64216Z"
-            />
+            <path d="M22.9107 8.64216C23.4647 9.00242 23.8316 9.47334 23.9798 10.0117C24.128 10.55 24.0533 11.1404 23.7607 11.7298C23.4685 12.3183 22.9686 12.8865 22.3061 13.3829C21.6436 13.8793 20.8394 14.2884 19.9662 14.5731C19.093 14.8578 18.1782 15.0092 17.3044 15.0136C16.4306 15.0181 15.6255 14.8754 14.9616 14.5986L15.5766 13.1239C16.0056 13.3029 16.5916 13.4195 17.2963 13.4159C17.9963 13.4124 18.7469 13.2901 19.4709 13.054C20.1958 12.8177 20.84 12.485 21.348 12.1043C21.8611 11.7198 22.1735 11.3337 22.3296 11.0193C22.4791 10.7181 22.4658 10.5319 22.4394 10.4357C22.4127 10.3387 22.3271 10.1685 22.0397 9.98163C21.2122 9.44357 19.8477 9.35892 18.8917 9.42736L17.774 7.99178C19.357 7.74635 21.5153 7.7348 22.9107 8.64216Z" />
           </svg>
         </label>
       </div>
@@ -121,7 +121,6 @@ function LabelSelector({
                     repoName={repository?.name}
                     labelId={l.id}
                     onSuccess={async (l) => {
-                      
                       await refreshRepository();
                       await updateLabels();
                       setEditing(null);
@@ -530,7 +529,7 @@ function LabelSelector({
               }
               onClick={async () => {
                 setIsDeleting(true);
-                const res = await props.deleteRepositoryLabel({
+                const res = await props.deleteRepositoryLabel(apiClient, {
                   repoOwner: repository?.owner?.id,
                   repoName: repository?.name,
                   labelId: labelId,

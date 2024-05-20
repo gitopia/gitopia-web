@@ -355,7 +355,7 @@ function RepositoryView(props) {
     setSavingDescription(true);
     if (validateDescription(newDescription)) {
       console.log(repository);
-      const res = await props.updateRepositoryDescription({
+      const res = await props.updateRepositoryDescription(apiClient, {
         name: repository.name,
         ownerId: repository.owner.id,
         description: newDescription,

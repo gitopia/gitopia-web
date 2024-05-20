@@ -95,7 +95,7 @@ function RepositoryPullFilesView(props) {
           setAllComments(newAllComments);
         }}
         onDelete={async (iid) => {
-          const res = await props.deleteComment({
+          const res = await props.deleteComment(apiClient, {
             repositoryId: repository.id,
             parentIid: pullRequest.iid,
             parent: "COMMENT_PARENT_PULL_REQUEST",

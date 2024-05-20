@@ -16,6 +16,7 @@ import {
 import getRepositoryReleaseLatest from "../../../../helpers/getRepositoryReleaseLatest";
 import ReleaseView from "../../../../components/repository/releaseView";
 import useRepository from "../../../../hooks/useRepository";
+import { useApiClient } from "../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -32,9 +33,10 @@ function RepositoryReleasesView(props) {
   const { repository, refreshRepository } = useRepository();
   const [latestRelease, setLatestRelease] = useState(null);
   const [olderReleases, setOlderReleases] = useState([]);
-  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
-    false
-  );
+  const [currentUserEditPermission, setCurrentUserEditPermission] =
+    useState(false);
+  const { apiClient } = useApiClient();
+
   const getReleases = async () => {
     if (repository) {
       const release = await getRepositoryReleaseLatest(
@@ -90,7 +92,9 @@ function RepositoryReleasesView(props) {
                 latest={true}
                 showEditControls={currentUserEditPermission}
                 onDelete={async (id) => {
-                  const res = await props.deleteRelease({ releaseId: id });
+                  const res = await props.deleteRelease(apiClient, {
+                    releaseId: id,
+                  });
                   await refreshRepository();
                   return res;
                 }}

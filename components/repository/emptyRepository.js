@@ -6,6 +6,7 @@ import { useRef } from "react";
 import { useEffect, useState } from "react";
 import { updateRepositoryDescription } from "../../store/actions/repository";
 import { isCurrentUserEligibleToUpdate } from "../../store/actions/repository";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function EmptyRepository(props) {
   const { repository } = props;
@@ -24,6 +25,7 @@ function EmptyRepository(props) {
   });
   const [savingDescription, setSavingDescription] = useState(false);
   const input = useRef();
+  const { apiClient } = useApiClient();
 
   if (activeWallet) {
     if (activeWallet.isKeplr || activeWallet.isLedger) {
@@ -61,7 +63,7 @@ function EmptyRepository(props) {
     setSavingDescription(true);
     if (validateDescription(newDescription)) {
       console.log(repository);
-      const res = await props.updateRepositoryDescription({
+      const res = await props.updateRepositoryDescription(apiClient, {
         name: repository.name,
         ownerId: repository.owner.id,
         description: newDescription,

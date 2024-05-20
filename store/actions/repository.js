@@ -5,13 +5,14 @@ import { updateUserBalance } from "./wallet";
 import { watchTask } from "./taskQueue";
 
 export const validatePostingEligibility = async (
+  apiClient,
   dispatch,
   getState,
   msgType,
   numberOfTransactions = 1
 ) => {
   try {
-    await setupTxClients(dispatch, getState);
+    await setupTxClients(apiClient, dispatch, getState);
   } catch (e) {
     console.log(e.message);
     return false;
@@ -59,14 +60,20 @@ export const validatePostingEligibility = async (
   return true;
 };
 
-export const createRepository = ({
-  name = null,
-  description = null,
-  ownerId = null,
-}) => {
+export const createRepository = (
+  apiClient,
+  { name = null, description = null, ownerId = null }
+) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
     const repository = {
       creator: wallet.selectedAddress,
@@ -96,10 +103,20 @@ export const createRepository = ({
   };
 };
 
-export const deleteRepository = ({ name = null, ownerId = null }) => {
+export const deleteRepository = (
+  apiClient,
+  { name = null, ownerId = null }
+) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
     const repository = {
       creator: wallet.selectedAddress,
@@ -127,14 +144,20 @@ export const deleteRepository = ({ name = null, ownerId = null }) => {
   };
 };
 
-export const updateRepositoryDescription = ({
-  name = null,
-  ownerId = null,
-  description = null,
-}) => {
+export const updateRepositoryDescription = (
+  apiClient,
+  { name = null, ownerId = null, description = null }
+) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
     const repository = {
       creator: wallet.selectedAddress,
@@ -165,19 +188,29 @@ export const updateRepositoryDescription = ({
   };
 };
 
-export const createIssue = ({
-  title = "",
-  description = "",
-  repositoryName = "",
-  repositoryOwner = "",
-  labels = [],
-  weight = 0,
-  assignees = [],
-  bountyAmount = [],
-  bountyExpiry = 0,
-}) => {
+export const createIssue = (
+  apiClient,
+  {
+    title = "",
+    description = "",
+    repositoryName = "",
+    repositoryOwner = "",
+    labels = [],
+    weight = 0,
+    assignees = [],
+    bountyAmount = [],
+    bountyExpiry = 0,
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "issue")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "issue"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -223,19 +256,29 @@ export const createIssue = ({
   };
 };
 
-export const createComment = ({
-  repositoryId = null,
-  parentIid = null,
-  parent = "",
-  body = "",
-  attachments = [],
-  diffHunk = "",
-  path = "",
-  position = null,
-  commentType = 1,
-}) => {
+export const createComment = (
+  apiClient,
+  {
+    repositoryId = null,
+    parentIid = null,
+    parent = "",
+    body = "",
+    attachments = [],
+    diffHunk = "",
+    path = "",
+    position = null,
+    commentType = 1,
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "comment"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -273,16 +316,26 @@ export const createComment = ({
   };
 };
 
-export const updateComment = ({
-  repositoryId = null,
-  parentIid = null,
-  parent = null,
-  commentIid = null,
-  body = "",
-  attachments = [],
-}) => {
+export const updateComment = (
+  apiClient,
+  {
+    repositoryId = null,
+    parentIid = null,
+    parent = null,
+    commentIid = null,
+    body = "",
+    attachments = [],
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "comment"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -308,14 +361,19 @@ export const updateComment = ({
   };
 };
 
-export const deleteComment = ({
-  repositoryId = null,
-  parentIid = null,
-  parent = null,
-  commentIid = null,
-}) => {
+export const deleteComment = (
+  apiClient,
+  { repositoryId = null, parentIid = null, parent = null, commentIid = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "comment"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -338,13 +396,19 @@ export const deleteComment = ({
   };
 };
 
-export const toggleIssueState = ({
-  repositoryId = null,
-  iid = null,
-  commentBody = null,
-}) => {
+export const toggleIssueState = (
+  apiClient,
+  { repositoryId = null, iid = null, commentBody = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "comment"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -371,13 +435,19 @@ export const toggleIssueState = ({
   };
 };
 
-export const renameRepository = ({
-  repoOwner = null,
-  repoName = null,
-  name = "",
-}) => {
+export const renameRepository = (
+  apiClient,
+  { repoOwner = null, repoName = null, name = "" }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     const repository = {
@@ -405,13 +475,19 @@ export const renameRepository = ({
   };
 };
 
-export const changeDefaultBranch = ({
-  repoOwner = null,
-  repoName = null,
-  branchName = "",
-}) => {
+export const changeDefaultBranch = (
+  apiClient,
+  { repoOwner = null, repoName = null, branchName = "" }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     const data = {
@@ -439,13 +515,19 @@ export const changeDefaultBranch = ({
   };
 };
 
-export const toggleForcePush = ({
-  repoOwner = null,
-  repoName = null,
-  branchName = "",
-}) => {
+export const toggleForcePush = (
+  apiClient,
+  { repoOwner = null, repoName = null, branchName = "" }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     const repository = {
@@ -472,14 +554,19 @@ export const toggleForcePush = ({
   };
 };
 
-export const updateCollaborator = ({
-  repoOwner = null,
-  repoName = null,
-  user = null,
-  role = null,
-}) => {
+export const updateCollaborator = (
+  apiClient,
+  { repoOwner = null, repoName = null, user = null, role = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "collaborator"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     const collaborator = {
@@ -509,13 +596,19 @@ export const updateCollaborator = ({
   };
 };
 
-export const removeCollaborator = ({
-  repoOwner = null,
-  repoName = null,
-  user = null,
-}) => {
+export const removeCollaborator = (
+  apiClient,
+  { repoOwner = null, repoName = null, user = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "collaborator"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     const collaborator = {
@@ -547,13 +640,19 @@ export const removeCollaborator = ({
   };
 };
 
-export const changeRepositoryOwner = ({
-  repoOwner = null,
-  repoName = null,
-  owner = null,
-}) => {
+export const changeRepositoryOwner = (
+  apiClient,
+  { repoOwner = null, repoName = null, owner = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "collaborator"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     const req = {
@@ -582,13 +681,19 @@ export const changeRepositoryOwner = ({
   };
 };
 
-export const updateIssueTitle = ({
-  title = null,
-  repositoryId = null,
-  iid = null,
-}) => {
+export const updateIssueTitle = (
+  apiClient,
+  { title = null, repositoryId = null, iid = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "issue")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "issue"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -617,13 +722,19 @@ export const updateIssueTitle = ({
   };
 };
 
-export const updatePullRequestTitle = ({
-  title = null,
-  repositoryId = null,
-  iid = null,
-}) => {
+export const updatePullRequestTitle = (
+  apiClient,
+  { title = null, repositoryId = null, iid = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "pull request"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -652,13 +763,19 @@ export const updatePullRequestTitle = ({
   };
 };
 
-export const updateIssueDescription = ({
-  description = null,
-  repositoryId = null,
-  iid = null,
-}) => {
+export const updateIssueDescription = (
+  apiClient,
+  { description = null, repositoryId = null, iid = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "issue")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "issue"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -687,13 +804,19 @@ export const updateIssueDescription = ({
   };
 };
 
-export const updatePullRequestDescription = ({
-  description = null,
-  repositoryId = null,
-  iid = null,
-}) => {
+export const updatePullRequestDescription = (
+  apiClient,
+  { description = null, repositoryId = null, iid = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "pull request"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -722,14 +845,25 @@ export const updatePullRequestDescription = ({
   };
 };
 
-export const updateIssueAssignees = ({
-  repositoryId = null,
-  iid = null,
-  addedAssignees = [],
-  removedAssignees = [],
-}) => {
+export const updateIssueAssignees = (
+  apiClient,
+  {
+    repositoryId = null,
+    iid = null,
+    addedAssignees = [],
+    removedAssignees = [],
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "issue",
+        2
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -772,7 +906,7 @@ export const updateIssueAssignees = ({
           return null;
         }
       }
-      updateUserBalance(env.apiNode)(dispatch, getState);
+      updateUserBalance(env.apiNode)(dispatch, getState); // TODO
       return { result1, result2 };
     } catch (e) {
       console.error(e);
@@ -781,14 +915,20 @@ export const updateIssueAssignees = ({
   };
 };
 
-export const updateIssueLabels = ({
-  repositoryId = null,
-  iid = null,
-  addedLabels = [],
-  removedLabels = [],
-}) => {
+export const updateIssueLabels = (
+  apiClient,
+  { repositoryId = null, iid = null, addedLabels = [], removedLabels = [] }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "issue",
+        2
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -838,15 +978,19 @@ export const updateIssueLabels = ({
   };
 };
 
-export const createRepositoryLabel = ({
-  repoOwner = null,
-  repoName = null,
-  name = "",
-  color = "",
-  description = "",
-}) => {
+export const createRepositoryLabel = (
+  apiClient,
+  { repoOwner = null, repoName = null, name = "", color = "", description = "" }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "label")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "label"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -877,16 +1021,26 @@ export const createRepositoryLabel = ({
   };
 };
 
-export const updateRepositoryLabel = ({
-  repoOwner = null,
-  repoName = null,
-  labelId = null,
-  name = "",
-  color = "",
-  description = "",
-}) => {
+export const updateRepositoryLabel = (
+  apiClient,
+  {
+    repoOwner = null,
+    repoName = null,
+    labelId = null,
+    name = "",
+    color = "",
+    description = "",
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "label")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "label"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -918,13 +1072,19 @@ export const updateRepositoryLabel = ({
   };
 };
 
-export const deleteRepositoryLabel = ({
-  repoOwner = null,
-  repoName = null,
-  labelId = null,
-}) => {
+export const deleteRepositoryLabel = (
+  apiClient,
+  { repoOwner = null, repoName = null, labelId = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "label")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "label"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -975,16 +1135,26 @@ export const isCurrentUserEligibleToUpdate = (repository) => {
   };
 };
 
-export const forkRepository = ({
-  ownerId = null,
-  repoOwner = null,
-  repoName = null,
-  repoBranch = null,
-  forkRepositoryName = null,
-  forkRepositoryDescription = null,
-}) => {
+export const forkRepository = (
+  apiClient,
+  {
+    ownerId = null,
+    repoOwner = null,
+    repoName = null,
+    repoBranch = null,
+    forkRepositoryName = null,
+    forkRepositoryDescription = null,
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1036,22 +1206,32 @@ export const forkRepository = ({
   };
 };
 
-export const createPullRequest = ({
-  title,
-  description,
-  headBranch,
-  headRepoOwner,
-  headRepoName,
-  baseBranch,
-  baseRepoOwner,
-  baseRepoName,
-  reviewers = [],
-  assignees = [],
-  labelIds = [],
-  issues = [],
-}) => {
+export const createPullRequest = (
+  apiClient,
+  {
+    title,
+    description,
+    headBranch,
+    headRepoOwner,
+    headRepoName,
+    baseBranch,
+    baseRepoOwner,
+    baseRepoName,
+    reviewers = [],
+    assignees = [],
+    labelIds = [],
+    issues = [],
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "pull request"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1096,6 +1276,7 @@ export const createPullRequest = ({
 };
 
 export const createRelease = (
+  apiClient,
   {
     repoOwner = null,
     repoName = null,
@@ -1112,7 +1293,14 @@ export const createRelease = (
   edit = false
 ) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "release")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "release"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1151,9 +1339,16 @@ export const createRelease = (
   };
 };
 
-export const deleteRelease = ({ releaseId }) => {
+export const deleteRelease = (apiClient, { releaseId }) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "release")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "release"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1178,14 +1373,14 @@ export const deleteRelease = ({ releaseId }) => {
   };
 };
 
-export const createTag = ({
-  repoOwnerId = null,
-  repositoryName = null,
-  name = null,
-  sha = null,
-}) => {
+export const createTag = (
+  apiClient,
+  { repoOwnerId = null, repositoryName = null, name = null, sha = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "tag")))
+    if (
+      !(await validatePostingEligibility(apiClient, dispatch, getState, "tag"))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1217,13 +1412,14 @@ export const createTag = ({
   };
 };
 
-export const deleteTag = ({
-  repoOwnerId = null,
-  repositoryName = null,
-  name = null,
-}) => {
+export const deleteTag = (
+  apiClient,
+  { repoOwnerId = null, repositoryName = null, name = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "tag")))
+    if (
+      !(await validatePostingEligibility(apiClient, dispatch, getState, "tag"))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1252,13 +1448,14 @@ export const deleteTag = ({
   };
 };
 
-export const deleteBranch = ({
-  repoOwnerId = null,
-  repositoryName = null,
-  name = null,
-}) => {
+export const deleteBranch = (
+  apiClient,
+  { repoOwnerId = null, repositoryName = null, name = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "tag")))
+    if (
+      !(await validatePostingEligibility(apiClient, dispatch, getState, "tag"))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1287,15 +1484,24 @@ export const deleteBranch = ({
   };
 };
 
-export const updatePullRequestAssignees = ({
-  repositoryId = null,
-  pullIid = null,
-  addedAssignees = [],
-  removedAssignees = [],
-}) => {
+export const updatePullRequestAssignees = (
+  apiClient,
+  {
+    repositoryId = null,
+    pullIid = null,
+    addedAssignees = [],
+    removedAssignees = [],
+  }
+) => {
   return async (dispatch, getState) => {
     if (
-      !(await validatePostingEligibility(dispatch, getState, "pull request", 2))
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "pull request",
+        2
+      ))
     )
       return null;
 
@@ -1350,15 +1556,24 @@ export const updatePullRequestAssignees = ({
   };
 };
 
-export const updatePullRequestReviewers = ({
-  repositoryId = null,
-  pullIid = null,
-  addedReviewers = [],
-  removedReviewers = [],
-}) => {
+export const updatePullRequestReviewers = (
+  apiClient,
+  {
+    repositoryId = null,
+    pullIid = null,
+    addedReviewers = [],
+    removedReviewers = [],
+  }
+) => {
   return async (dispatch, getState) => {
     if (
-      !(await validatePostingEligibility(dispatch, getState, "pull request", 2))
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "pull request",
+        2
+      ))
     )
       return null;
 
@@ -1413,14 +1628,20 @@ export const updatePullRequestReviewers = ({
   };
 };
 
-export const updatePullRequestLabels = ({
-  repositoryId = null,
-  pullIid = null,
-  addedLabels = [],
-  removedLabels = [],
-}) => {
+export const updatePullRequestLabels = (
+  apiClient,
+  { repositoryId = null, pullIid = null, addedLabels = [], removedLabels = [] }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "issue",
+        2
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1472,15 +1693,19 @@ export const updatePullRequestLabels = ({
   };
 };
 
-export const updatePullRequestState = ({
-  repositoryId = null,
-  iid = null,
-  state,
-  mergeCommitSha,
-  commentBody,
-}) => {
+export const updatePullRequestState = (
+  apiClient,
+  { repositoryId = null, iid = null, state, mergeCommitSha, commentBody }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "pull request"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1509,9 +1734,19 @@ export const updatePullRequestState = ({
   };
 };
 
-export const mergePullRequest = ({ repositoryId, iid, branchName }) => {
+export const mergePullRequest = (
+  apiClient,
+  { repositoryId, iid, branchName }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "pull request"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1551,9 +1786,16 @@ export const mergePullRequest = ({ repositoryId, iid, branchName }) => {
   };
 };
 
-export const toggleRepositoryForking = ({ repoOwner, repoName }) => {
+export const toggleRepositoryForking = (apiClient, { repoOwner, repoName }) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1578,9 +1820,16 @@ export const toggleRepositoryForking = ({ repoOwner, repoName }) => {
   };
 };
 
-export const authorizeGitServer = () => {
+export const authorizeGitServer = (apiClient) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "grant access")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        dispatch,
+        getState,
+        "grant access"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();

@@ -135,7 +135,7 @@ function RepositoryInvokeForkView(props) {
     let validate = await validateRepository();
     console.log(validate);
     if (validate) {
-      const res = await props.forkRepository({
+      const res = await props.forkRepository(apiClient, {
         ownerId,
         repoOwner: repository.owner.address,
         repoName: repository.name,
@@ -379,7 +379,7 @@ function RepositoryInvokeForkView(props) {
                   }
                   onClick={async () => {
                     setIsGrantingAccess(true);
-                    const res = await props.authorizeGitServer();
+                    const res = await props.authorizeGitServer(apiClient);
                     setIsGrantingAccess(false);
                     if (res && res.code === 0) {
                       // let access = await refreshForkingAccess();

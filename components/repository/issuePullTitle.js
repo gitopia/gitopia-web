@@ -6,6 +6,7 @@ import {
   updatePullRequestTitle,
 } from "../../store/actions/repository";
 import TextInput from "../textInput";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function IssuePullTitle({
   issuePullObj,
@@ -23,6 +24,7 @@ function IssuePullTitle({
     message: "",
   });
   const [savingTitle, setSavingTitle] = useState(false);
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     setNewTitle(issuePullObj.title);
@@ -57,12 +59,12 @@ function IssuePullTitle({
     setSavingTitle(true);
     if (validateTitle(newTitle)) {
       const res = isPull
-        ? await props.updatePullRequestTitle({
+        ? await props.updatePullRequestTitle(apiClient, {
             title: newTitle,
             repositoryId: repository.id,
             iid: issuePullObj.iid,
           })
-        : await props.updateIssueTitle({
+        : await props.updateIssueTitle(apiClient, {
             title: newTitle,
             repositoryId: repository.id,
             iid: issuePullObj.iid,

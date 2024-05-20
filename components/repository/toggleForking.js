@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { toggleRepositoryForking } from "../../store/actions/repository";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function ToggleForking({
   repoOwner,
@@ -11,9 +12,11 @@ function ToggleForking({
 }) {
   const [currentState, setCurrentState] = useState(!!allowForking);
   const [isToggling, setIsToggling] = useState(false);
+  const { apiClient } = useApiClient();
+
   const toggleForking = async () => {
     setIsToggling(true);
-    const res = await props.toggleRepositoryForking({
+    const res = await props.toggleRepositoryForking(apiClient, {
       repoOwner: repoOwner,
       repoName: repoName,
     });

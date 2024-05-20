@@ -19,7 +19,9 @@ export const createDao = (
   }
 ) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "dao")))
+    if (
+      !(await validatePostingEligibility(apiClient, dispatch, getState, "dao"))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -69,13 +71,13 @@ export const createDao = (
   };
 };
 
-export const getDaoDetailsForDashboard = () => {
+export const getDaoDetailsForDashboard = (apiClient) => {
   return async (dispatch, getState) => {
     const { env, user } = getState();
     try {
       const [daoRes, members] = await Promise.all([
         env.queryClient.queryDao(user.currentDashboard),
-        getDaoMember(user.currentDashboard),
+        getDaoMember(apiClient, user.currentDashboard),
       ]);
       let dao = daoRes.data.dao;
       dispatch({

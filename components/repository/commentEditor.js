@@ -7,6 +7,7 @@ import {
   toggleIssueState,
   updatePullRequestState,
 } from "../../store/actions/repository";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function CommentEditor({
   commentIid = null,
@@ -25,6 +26,7 @@ function CommentEditor({
   const [postingComment, setPostingComment] = useState(false);
   const [togglingIssue, setTogglingIssue] = useState(false);
   const [commentHint, setCommentHint] = useState({ shown: false });
+  const { apiClient } = useApiClient();
 
   const validateComment = () => {
     setCommentHint({ shown: false });
@@ -50,7 +52,7 @@ function CommentEditor({
   const createComment = async () => {
     setPostingComment(true);
     if (validateComment()) {
-      const res = await props.createComment({
+      const res = await props.createComment(apiClient, {
         repositoryId: repositoryId,
         parentIid: parentIid,
         parent: parent,
@@ -67,7 +69,7 @@ function CommentEditor({
   const updateComment = async () => {
     setPostingComment(true);
     if (validateComment()) {
-      const res = await props.updateComment({
+      const res = await props.updateComment(apiClient, {
         repositoryId: repositoryId,
         parentIid: parentIid,
         parent: parent,
@@ -110,7 +112,7 @@ function CommentEditor({
                 disabled={togglingIssue || postingComment}
                 onClick={async () => {
                   setTogglingIssue(true);
-                  const res = await props.toggleIssueState({
+                  const res = await props.toggleIssueState(apiClient, {
                     repositoryId: repositoryId,
                     iid: parentIid,
                     commentBody: comment,
@@ -126,7 +128,9 @@ function CommentEditor({
               >
                 {issueState === "OPEN" ? "Close" : "Re-Open"}
                 {" issue"}
-                {(issueState === "OPEN" && comment.trim().length !== 0) ? " with comment" : ""}
+                {issueState === "OPEN" && comment.trim().length !== 0
+                  ? " with comment"
+                  : ""}
               </button>
             </div>
           ) : issueState === "OPEN" ? (
@@ -139,7 +143,7 @@ function CommentEditor({
                 disabled={togglingIssue || postingComment}
                 onClick={async () => {
                   setTogglingIssue(true);
-                  const res = await props.updatePullRequestState({
+                  const res = await props.updatePullRequestState(apiClient, {
                     repositoryId: repositoryId,
                     iid: parentIid,
                     state: "CLOSED",

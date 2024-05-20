@@ -81,7 +81,7 @@ function MergePullRequestView({
         setIsMerging(false);
         return;
       }
-      const res = await props.mergePullRequest({
+      const res = await props.mergePullRequest(apiClient, {
         repositoryId: repositoryId,
         iid: pullRequest.iid,
         branchName: pullRequest.head.branch,
@@ -246,7 +246,7 @@ function MergePullRequestView({
               }
               onClick={async () => {
                 setIsGrantingAccess(true);
-                const res = await props.authorizeGitServer();
+                const res = await props.authorizeGitServer(apiClient);
                 setIsGrantingAccess(false);
                 if (res && res.code !== 0) {
                   props.notify(res.rawLog, "error");

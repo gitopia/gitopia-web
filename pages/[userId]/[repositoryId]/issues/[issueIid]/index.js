@@ -267,7 +267,7 @@ function RepositoryIssueView(props) {
                             setAllComments(newAllComments);
                           }}
                           onDelete={async (iid) => {
-                            const res = await props.deleteComment({
+                            const res = await props.deleteComment(apiClient, {
                               repositoryId: repository.id,
                               parentIid: issue.iid,
                               parent: "COMMENT_PARENT_ISSUE",
@@ -332,7 +332,7 @@ function RepositoryIssueView(props) {
                         )
                     );
 
-                    const res = await props.updateIssueAssignees({
+                    const res = await props.updateIssueAssignees(apiClient, {
                       repositoryId: repository.id,
                       iid: issue.iid,
                       addedAssignees,
@@ -371,7 +371,7 @@ function RepositoryIssueView(props) {
                         !(removedLabels.includes(x) || issue.labels.includes(x))
                     );
 
-                    const res = await props.updateIssueLabels({
+                    const res = await props.updateIssueLabels(apiClient, {
                       repositoryId: repository.id,
                       iid: issue.iid,
                       addedLabels,

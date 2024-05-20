@@ -3,6 +3,7 @@ import TextInput from "../textInput";
 import { connect } from "react-redux";
 import { renameRepository } from "../../store/actions/repository";
 import isRepositoryNameTaken from "../../helpers/isRepositoryNameTaken";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function RenameRepository({
   repoId = null,
@@ -22,6 +23,7 @@ function RenameRepository({
   const [renaming, setRenaming] = useState(false);
   const [startRename, setStartRename] = useState(false);
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     setName(currentName);
@@ -52,7 +54,7 @@ function RenameRepository({
   const changeName = async () => {
     setIsChanging(true);
     if (await validateName()) {
-      const res = await props.renameRepository({
+      const res = await props.renameRepository(apiClient, {
         repoOwner: repoOwner,
         repoName: repoName,
         name: name.replace(sanitizedNameTest, "-"),

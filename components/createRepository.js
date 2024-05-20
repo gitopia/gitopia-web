@@ -2,6 +2,7 @@ import { useState } from "react";
 import { connect } from "react-redux";
 import { createRepository } from "../store/actions/env";
 import TextInput from "./textInput";
+import { useApiClient } from "../context/ApiClientContext";
 
 function CreateRepository(props) {
   const [name, setName] = useState("");
@@ -17,6 +18,7 @@ function CreateRepository(props) {
     message: "",
   });
   const [repositoryCreated, setRepositoryCreated] = useState(false);
+  const { apiClient } = useApiClient();
 
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });
@@ -61,7 +63,7 @@ function CreateRepository(props) {
 
   const createRepository = async () => {
     if (validateRepository()) {
-      let res = await props.createRepository({
+      let res = await props.createRepository(apiClient, {
         name,
         description,
       });

@@ -6,6 +6,7 @@ import getAllRepositoryBranch from "../../helpers/getAllRepositoryBranch";
 import { useEffect } from "react";
 import useRepository from "../../hooks/useRepository";
 import dayjs from "dayjs";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function ChangeDefaultBranch({ onSuccess, ...props }) {
   const [name, setName] = useState("");
@@ -19,8 +20,8 @@ function ChangeDefaultBranch({ onSuccess, ...props }) {
   const [startChange, setStartChange] = useState(false);
   const [isChanging, setIsChanging] = useState(false);
   const [repoBranch, setRepoBranch] = useState([]);
-
   const { repository, refreshRepository } = useRepository();
+  const { apiClient } = useApiClient();
 
   function getBranches(branch, substring) {
     const matchingBranches = branch.filter(
@@ -45,7 +46,7 @@ function ChangeDefaultBranch({ onSuccess, ...props }) {
   const changeName = async () => {
     setIsChanging(true);
 
-    const res = await props.changeDefaultBranch({
+    const res = await props.changeDefaultBranch(apiClient, {
       repoOwner: repository.owner.id,
       repoName: repository.name,
       branchName: name,

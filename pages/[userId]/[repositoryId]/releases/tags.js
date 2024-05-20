@@ -15,6 +15,7 @@ import {
 } from "../../../../store/actions/repository";
 
 import dayjs from "dayjs";
+import { useApiClient } from "../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -34,6 +35,7 @@ function RepositoryTagsView(props) {
     useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function updatePermissions() {
@@ -166,7 +168,7 @@ function RepositoryTagsView(props) {
                               setIsDeleting(true);
 
                               props
-                                .deleteTag({
+                                .deleteTag(apiClient, {
                                   repoOwnerId: repository.owner.id,
                                   repositoryName: repository.name,
                                   name: t.name,

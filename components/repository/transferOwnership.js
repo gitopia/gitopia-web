@@ -102,7 +102,7 @@ function TransferOwnership({
     setIsChanging(true);
     const res = await validateAddress();
     if (res) {
-      const res = await props.changeRepositoryOwner({
+      const res = await props.changeRepositoryOwner(apiClient, {
         repoName: repoName,
         repoOwner: currentOwnerId,
         owner: address,

@@ -620,26 +620,29 @@ function RepositoryCompareView(props) {
                                 }
                                 onClick={async () => {
                                   setCreatingPull(true);
-                                  const res = await props.createPullRequest({
-                                    title,
-                                    description,
-                                    baseRepoOwner:
-                                      compare.target.repository.owner.address,
-                                    baseRepoName:
-                                      compare.target.repository.name,
-                                    baseBranch: compare.target.name,
-                                    headRepoOwner:
-                                      compare.source.repository.owner.address,
-                                    headRepoName:
-                                      compare.source.repository.name,
-                                    headBranch: compare.source.name,
-                                    reviewers: reviewers,
-                                    assignees: assignees,
-                                    labelIds: labels,
-                                    issues: issueArray.map(
-                                      (issue) => issue.iid
-                                    ),
-                                  });
+                                  const res = await props.createPullRequest(
+                                    apiClient,
+                                    {
+                                      title,
+                                      description,
+                                      baseRepoOwner:
+                                        compare.target.repository.owner.address,
+                                      baseRepoName:
+                                        compare.target.repository.name,
+                                      baseBranch: compare.target.name,
+                                      headRepoOwner:
+                                        compare.source.repository.owner.address,
+                                      headRepoName:
+                                        compare.source.repository.name,
+                                      headBranch: compare.source.name,
+                                      reviewers: reviewers,
+                                      assignees: assignees,
+                                      labelIds: labels,
+                                      issues: issueArray.map(
+                                        (issue) => issue.iid
+                                      ),
+                                    }
+                                  );
                                   if (res && res.code === 0) {
                                     router.push(
                                       "/" +

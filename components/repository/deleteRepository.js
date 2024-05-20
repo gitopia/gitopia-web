@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { connect } from "react-redux";
 import { deleteRepository } from "../../store/actions/repository";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function DeleteRepository({
   repoName = "",
@@ -11,6 +12,7 @@ function DeleteRepository({
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [typedData, setTypedData] = useState("");
+  const { apiClient } = useApiClient();
 
   return (
     <div className="flex items-center">
@@ -80,7 +82,7 @@ function DeleteRepository({
               onClick={async () => {
                 setIsDeleting(true);
                 props
-                  .deleteRepository({
+                  .deleteRepository(apiClient, {
                     ownerId: currentOwnerId,
                     name: repoName,
                   })

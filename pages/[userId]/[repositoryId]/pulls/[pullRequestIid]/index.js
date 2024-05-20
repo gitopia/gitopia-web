@@ -210,7 +210,7 @@ function RepositoryPullView(props) {
           setAllComments(newAllComments);
         }}
         onDelete={async (iid) => {
-          const res = await props.deleteComment({
+          const res = await props.deleteComment(apiClient, {
             repositoryId: repository.id,
             parentIid: pullRequest.iid,
             parent: "COMMENT_PARENT_PULL_REQUEST",
@@ -453,12 +453,15 @@ function RepositoryPullView(props) {
                         )
                     );
 
-                    const res = await props.updatePullRequestReviewers({
-                      repositoryId: repository.id,
-                      pullIid: pullRequest.iid,
-                      addedReviewers,
-                      removedReviewers,
-                    });
+                    const res = await props.updatePullRequestReviewers(
+                      apiClient,
+                      {
+                        repositoryId: repository.id,
+                        pullIid: pullRequest.iid,
+                        addedReviewers,
+                        removedReviewers,
+                      }
+                    );
 
                     if (res) refreshPullRequest();
                   }}
@@ -505,12 +508,15 @@ function RepositoryPullView(props) {
                         )
                     );
 
-                    const res = await props.updatePullRequestAssignees({
-                      repositoryId: repository.id,
-                      pullIid: pullRequest.iid,
-                      addedAssignees,
-                      removedAssignees,
-                    });
+                    const res = await props.updatePullRequestAssignees(
+                      apiClient,
+                      {
+                        repositoryId: repository.id,
+                        pullIid: pullRequest.iid,
+                        addedAssignees,
+                        removedAssignees,
+                      }
+                    );
 
                     if (res) refreshPullRequest();
                   }}
@@ -547,7 +553,7 @@ function RepositoryPullView(props) {
                         )
                     );
 
-                    const res = await props.updatePullRequestLabels({
+                    const res = await props.updatePullRequestLabels(apiClient, {
                       repositoryId: repository.id,
                       pullIid: pullRequest.iid,
                       addedLabels,
