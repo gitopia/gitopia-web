@@ -22,6 +22,7 @@ import getPullDiffStats from "../../../../../helpers/getPullDiffStats";
 import Sticky from "react-stickynode";
 import CommentView from "../../../../../components/repository/commentView";
 import getPullRequestComment from "../../../../../helpers/getPullRequestComment";
+import { useApiClient } from "../../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -41,6 +42,7 @@ function RepositoryPullFilesView(props) {
   const [viewType, setViewType] = useState("unified");
   const [allComments, setAllComments] = useState(props.comments || []);
   const [showFile, setShowFile] = useState(null);
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function initDiff() {
@@ -58,6 +60,7 @@ function RepositoryPullFilesView(props) {
   useEffect(() => {
     const getAllComments = async () => {
       const comments = await getPullRequestCommentAll(
+        apiClient,
         repository.id,
         pullRequest.iid
       );
@@ -112,6 +115,7 @@ function RepositoryPullFilesView(props) {
   const refreshComments = async () => {
     const getAllComments = async () => {
       const comments = await getPullRequestCommentAll(
+        apiClient,
         repository.id,
         pullRequest.iid
       );

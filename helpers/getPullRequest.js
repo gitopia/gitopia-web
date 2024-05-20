@@ -1,8 +1,10 @@
-import { useApiClient } from "../context/ApiClientContext";
-
-export default async function getPullRequest(id, repositoryName, pullIid) {
+export default async function getPullRequest(
+  apiClient,
+  id,
+  repositoryName,
+  pullIid
+) {
   try {
-    const { apiClient } = useApiClient();
     const res = await apiClient.queryRepositoryPullRequest(
       id,
       repositoryName,

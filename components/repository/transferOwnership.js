@@ -23,7 +23,7 @@ function TransferOwnership({
   });
   const [isChanging, setIsChanging] = useState(false);
   const [startTransfer, setStartTransfer] = useState(false);
-  const apiClient = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     setAddress("");
@@ -54,7 +54,10 @@ function TransferOwnership({
     //   return true;
     // });
     //
-    let [user, dao] = await Promise.all([getUser(address), getDao(address)]);
+    let [user, dao] = await Promise.all([
+      getUser(apiClient, address),
+      getDao(apiClient, address),
+    ]);
     console.log("user tranfer ownership", user);
     if (user) {
       console.log("user exists", user);

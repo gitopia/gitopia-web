@@ -12,7 +12,7 @@ import { useApiClient } from "../../context/ApiClientContext";
 function UserHeader(props) {
   const [isEditable, setIsEditable] = useState(false);
   const [daos, setDaos] = useState([]);
-  const apiClient = useApiClient();
+  const { apiClient } = useApiClient();
 
   const refresh = async (updatedUserName) => {
     await props.refresh(updatedUserName);

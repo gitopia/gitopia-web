@@ -26,7 +26,7 @@ function CreateBounty(props) {
   const ref1 = useRef(null);
   const ref2 = useRef(null);
   // const ref3 = useRef("dd/mm/yyyy");
-  const apiClient = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function getBalance() {

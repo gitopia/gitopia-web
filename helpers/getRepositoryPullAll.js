@@ -1,6 +1,5 @@
-import { useApiClient } from "../context/ApiClientContext";
-
 export default async function getRepositoryPullAll(
+  apiClient,
   id,
   repoName,
   option,
@@ -15,7 +14,6 @@ export default async function getRepositoryPullAll(
       query[`pagination.${p}`] = pagination[p];
     }
     console.log(query);
-    const { apiClient } = useApiClient();
     const res = await apiClient.queryRepositoryPullRequestAll(
       id,
       repoName,

@@ -88,7 +88,7 @@ function Login(props) {
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
                   onClick={async (e) => {
                     await initKeplr();
-                    const apiClient = useApiClient();
+                    const { apiClient } = useApiClient();
                     const acc = await props.unlockKeplrWallet(apiClient);
                     if (acc) {
                       push("/home");

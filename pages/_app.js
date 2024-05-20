@@ -30,8 +30,8 @@ dayjs.extend(customParseFormat);
 function MyApp({ Component, pageProps }) {
   return (
     <>
-      <Notifications />
       <ApiClientProvider>
+        <Notifications />
         <ErrorHandler>
           <Component {...pageProps} />
         </ErrorHandler>
@@ -42,4 +42,5 @@ function MyApp({ Component, pageProps }) {
   );
 }
 // serviceWorkerRegistration.register();
+
 export default wrapper.withRedux(MyApp);

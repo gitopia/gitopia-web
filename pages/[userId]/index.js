@@ -119,7 +119,7 @@ function AccountView(props) {
     repositories: [],
     ...props.dao,
   });
-  const apiClient = useApiClient();
+  const { apiClient } = useApiClient();
 
   const hrefBase = "/" + router.query.userId;
 
@@ -132,16 +132,16 @@ function AccountView(props) {
     if (validAddress.test(router.query.userId)) {
       const validUserAddress = new RegExp("^gitopia([a-z0-9]{39})$");
       if (validUserAddress.test(router.query.userId)) {
-        u = await getUser(router.query.userId);
+        u = await getUser(apiClient, router.query.userId);
       } else {
-        d = await getDao(router.query.userId);
+        d = await getDao(apiClient, router.query.userId);
       }
     } else {
       const data = await getWhois(apiClient, router.query.userId);
       if (data?.ownerType === "USER") {
-        u = await getUser(data.address);
+        u = await getUser(apiClient, data.address);
       } else if (data?.ownerType === "DAO") {
-        d = await getDao(data.address);
+        d = await getDao(apiClient, data.address);
       }
     }
     if (u) {

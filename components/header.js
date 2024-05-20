@@ -111,7 +111,7 @@ function Header(props) {
   const kelprWalletChange = async () => {
     console.log("Keplr wallet change", props.activeWallet);
     if (props.activeWallet && props.activeWallet.isKeplr) {
-      const apiClient = useApiClient();
+      const { apiClient } = useApiClient();
       await props.unlockKeplrWallet(apiClient);
     }
   };

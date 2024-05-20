@@ -9,9 +9,12 @@ import shrinkAddress from "../helpers/shrinkAddress";
 import { createNotification } from "../store/actions/userNotification";
 import { addCompletedTask } from "../store/actions/taskQueue";
 import atob from "../helpers/atob";
+import { useApiClient } from "../context/ApiClientContext";
 // import db from "../helpers/db";
 
 function Notifications(props) {
+  const { apiClient } = useApiClient();
+
   async function addNotification(
     type,
     msg,
@@ -88,8 +91,8 @@ function Notifications(props) {
       case "/gitopia.gitopia.gitopia.MsgCreateComment":
         {
           if (tx.message.commentType === "ISSUE") {
-            let issue = await getIssue(tx.message.parentId);
-            let repo = await getRepository(issue.repositoryId);
+            let issue = await getIssue(apiClient, tx.message.parentId);
+            let repo = await getRepository(apiClient, issue.repositoryId);
             if (
               (props.selectedAddress === repo.owner.id &&
                 tx.message.creator !== props.selectedAddress) ||
@@ -118,8 +121,8 @@ function Notifications(props) {
               props.notify(formattedMsg.join(" "), "info");
             }
           } else if (tx.message.commentType === "PULLREQUEST") {
-            let pull = await getPullRequest(tx.message.parentId);
-            let repo = await getRepository(pull.head.repositoryId);
+            let pull = await getPullRequest(apiClient, tx.message.parentId);
+            let repo = await getRepository(apiClient, pull.head.repositoryId);
             for (let j = 0; j < pull.reviewers.length; j++) {
               if (
                 props.selectedAddress !== tx.message.creator &&
@@ -212,8 +215,8 @@ function Notifications(props) {
 
       case "/gitopia.gitopia.gitopia.MsgAddIssueLabels":
         {
-          let issue = await getIssue(tx.message.issueId);
-          let repo = await getRepository(issue.repositoryId);
+          let issue = await getIssue(apiClient, tx.message.issueId);
+          let repo = await getRepository(apiClient, issue.repositoryId);
           let labels = [];
           tx.message.labelIds.map((lid, _) => {
             for (let i = 0; i < repo.labels.length; i++) {
@@ -252,8 +255,8 @@ function Notifications(props) {
 
       case "/gitopia.gitopia.gitopia.MsgRemoveIssueLabels":
         {
-          let issue = await getIssue(tx.message.issueId);
-          let repo = await getRepository(issue.repositoryId);
+          let issue = await getIssue(apiClient, tx.message.issueId);
+          let repo = await getRepository(apiClient, issue.repositoryId);
           let labels = [];
           tx.message.labelIds.map((lid, _) => {
             for (let i = 0; i < repo.labels.length; i++) {
@@ -292,8 +295,8 @@ function Notifications(props) {
 
       case "/gitopia.gitopia.gitopia.MsgRemoveIssueAssignees":
         {
-          let issue = await getIssue(tx.message.id);
-          let repo = await getRepository(issue.repositoryId);
+          let issue = await getIssue(apiClient, tx.message.id);
+          let repo = await getRepository(apiClient, issue.repositoryId);
 
           for (let j = 0; j < tx.message.assignees.length; j++) {
             if (
@@ -327,8 +330,8 @@ function Notifications(props) {
         break;
       case "/gitopia.gitopia.gitopia.MsgAddIssueAssignees":
         {
-          let issue = await getIssue(tx.message.id);
-          let repo = await getRepository(issue.repositoryId);
+          let issue = await getIssue(apiClient, tx.message.id);
+          let repo = await getRepository(apiClient, issue.repositoryId);
 
           for (let j = 0; j < tx.message.assignees.length; j++) {
             if (
@@ -446,8 +449,8 @@ function Notifications(props) {
 
       case "/gitopia.gitopia.gitopia.MsgRemovePullRequestReviewers":
         {
-          let pull = await getPullRequest(tx.message.id);
-          let repo = await getRepository(pull.head.repositoryId);
+          let pull = await getPullRequest(apiClient, tx.message.id);
+          let repo = await getRepository(apiClient, pull.head.repositoryId);
           for (let j = 0; j < tx.message.reviewers.length; j++) {
             if (
               props.selectedAddress !== tx.message.creator &&
@@ -477,8 +480,8 @@ function Notifications(props) {
         break;
       case "/gitopia.gitopia.gitopia.MsgAddPullRequestReviewers":
         {
-          let pull = await getPullRequest(tx.message.id);
-          let repo = await getRepository(pull.head.repositoryId);
+          let pull = await getPullRequest(apiClient, tx.message.id);
+          let repo = await getRepository(apiClient, pull.head.repositoryId);
           for (let j = 0; j < tx.message.reviewers.length; j++) {
             if (
               props.selectedAddress !== tx.message.creator &&
@@ -509,8 +512,8 @@ function Notifications(props) {
 
       case "/gitopia.gitopia.gitopia.MsgRemovePullRequestAssignees":
         {
-          let pull = await getPullRequest(tx.message.id);
-          let repo = await getRepository(pull.head.repositoryId);
+          let pull = await getPullRequest(apiClient, tx.message.id);
+          let repo = await getRepository(apiClient, pull.head.repositoryId);
           for (let j = 0; j < tx.message.assignees.length; j++) {
             if (
               props.selectedAddress !== tx.message.creator &&
@@ -540,8 +543,8 @@ function Notifications(props) {
         break;
       case "/gitopia.gitopia.gitopia.MsgAddPullRequestAssignees":
         {
-          let pull = await getPullRequest(tx.message.id);
-          let repo = await getRepository(pull.head.repositoryId);
+          let pull = await getPullRequest(apiClient, tx.message.id);
+          let repo = await getRepository(apiClient, pull.head.repositoryId);
           for (let j = 0; j < tx.message.assignees.length; j++) {
             if (
               props.selectedAddress !== tx.message.creator &&
@@ -572,8 +575,8 @@ function Notifications(props) {
 
       case "/gitopia.gitopia.gitopia.MsgSetPullRequestState":
         {
-          let pull = await getPullRequest(tx.message.id);
-          let repo = await getRepository(pull.head.repositoryId);
+          let pull = await getPullRequest(apiClient, tx.message.id);
+          let repo = await getRepository(apiClient, pull.head.repositoryId);
           for (let j = 0; j < pull.reviewers.length; j++) {
             if (
               props.selectedAddress !== tx.message.creator &&

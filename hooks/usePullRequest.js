@@ -3,6 +3,7 @@ import getPullRequest from "../helpers/getPullRequest";
 import { useRouter } from "next/router";
 import { useErrorStatus } from "./errorHandler";
 import getPullRepoInfo from "../helpers/getPullRepoInfo";
+import { useApiClient } from "../context/ApiClientContext";
 
 export default function usePullRequest(repository, initialPullRequest = {}) {
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function usePullRequest(repository, initialPullRequest = {}) {
     ...initialPullRequest,
   });
   const [refreshIndex, setRefreshIndex] = useState(1);
+  const { apiClient } = useApiClient();
 
   const refreshPullRequest = () =>
     setRefreshIndex((prevIndex) => prevIndex + 1);
@@ -28,12 +30,13 @@ export default function usePullRequest(repository, initialPullRequest = {}) {
   useEffect(() => {
     async function initRepository() {
       const p = await getPullRequest(
+        apiClient,
         router.query.userId,
         router.query.repositoryId,
         router.query.pullRequestIid
       );
       if (p) {
-        setPullRequest(await getPullRepoInfo(p, repository));
+        setPullRequest(await getPullRepoInfo(apiClient, p, repository));
       } else {
         setErrorStatusCode(404);
       }

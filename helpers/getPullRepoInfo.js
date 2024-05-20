@@ -3,7 +3,11 @@ import getRepository from "./getRepository";
 import getAllRepositoryBranch from "./getAllRepositoryBranch";
 import getAllRepositoryTag from "./getAllRepositoryTag";
 
-export default async function getPullRepoInfo(pullRequest, baseRepository) {
+export default async function getPullRepoInfo(
+  apiClient,
+  pullRequest,
+  baseRepository
+) {
   let p = pullRequest;
   if (p.base.repositoryId === p.head.repositoryId) {
     p.head.repository = p.base.repository = baseRepository;
@@ -23,12 +27,17 @@ export default async function getPullRepoInfo(pullRequest, baseRepository) {
       p.head.sha = p.head.commitSha;
     }
   } else {
-    const forkRepo = await getRepository(p.head.repositoryId);
+    const forkRepo = await getRepository(apiClient, p.head.repositoryId);
     forkRepo.branches = await getAllRepositoryBranch(
+      apiClient,
       forkRepo.owner.id,
       forkRepo.name
     );
-    forkRepo.tags = await getAllRepositoryTag(forkRepo.owner.id, forkRepo.name);
+    forkRepo.tags = await getAllRepositoryTag(
+      apiClient,
+      forkRepo.owner.id,
+      forkRepo.name
+    );
     if (forkRepo) {
       p.head.repository = forkRepo;
       p.base.repository = baseRepository;

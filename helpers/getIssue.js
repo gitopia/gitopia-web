@@ -1,8 +1,10 @@
-import { useApiClient } from "../context/ApiClientContext";
-
-export default async function getIssue(id, repositoryName, issueIid) {
+export default async function getIssue(
+  apiClient,
+  id,
+  repositoryName,
+  issueIid
+) {
   try {
-    const { apiClient } = useApiClient();
     const res = await apiClient.queryRepositoryIssue(
       id,
       repositoryName,

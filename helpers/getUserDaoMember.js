@@ -1,9 +1,6 @@
-import { useApiClient } from "../context/ApiClientContext";
-
-export default async function getDaoMember(daoId) {
+export default async function getDaoMember(apiClient, daoId) {
   if (!daoId) return null;
   try {
-    const { apiClient } = useApiClient();
     const res = await apiClient.queryDaoMemberAll(daoId);
     if (res.status === 200) {
       let m = res.data.Member;

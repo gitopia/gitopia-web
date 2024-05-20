@@ -11,6 +11,7 @@ import pullRequestStateClass from "../../helpers/pullRequestStateClass";
 import mergePullRequestCheck from "../../helpers/mergePullRequestCheck";
 import getPullRequestMergePermission from "../../helpers/getPullRequestMergePermission";
 import getGitServerAuthorization from "../../helpers/getGitServerAuthStatus";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function MergePullRequestView({
   repositoryId,
@@ -26,6 +27,7 @@ function MergePullRequestView({
   const [pullMergeAccessDialogShown, setPullMergeAccessDialogShown] =
     useState(false);
   const [isGrantingAccess, setIsGrantingAccess] = useState(false);
+  const { apiClient } = useApiClient();
 
   const checkMerge = async () => {
     if (!props.selectedAddress) {
@@ -64,12 +66,16 @@ function MergePullRequestView({
   const mergePull = async () => {
     setIsMerging(true);
     const user = await getPullRequestMergePermission(
+      apiClent,
       props.selectedAddress,
       repositoryId,
       pullRequest.iid
     );
     if (user && user.havePermission) {
-      let access = await getGitServerAuthorization(props.selectedAddress);
+      let access = await getGitServerAuthorization(
+        apiClient,
+        props.selectedAddress
+      );
       if (!access) {
         setPullMergeAccessDialogShown(true);
         setIsMerging(false);
@@ -78,7 +84,7 @@ function MergePullRequestView({
       const res = await props.mergePullRequest({
         repositoryId: repositoryId,
         iid: pullRequest.iid,
-        branchName: pullRequest.head.branch
+        branchName: pullRequest.head.branch,
       });
       if (res) {
         if (res.TaskState === "TASK_STATE_SUCCESS") refreshPullRequest();
@@ -110,7 +116,9 @@ function MergePullRequestView({
   }, [pullRequest, props.selectedAddress]);
 
   const refreshPullMergeAccess = async (mergeAfter = false) => {
-    setPullMergeAccess(await getGitServerAuthorization(props.selectedAddress));
+    setPullMergeAccess(
+      await getGitServerAuthorization(apiClient, props.selectedAddress)
+    );
     if (mergeAfter) setTimeout(mergePull, 0);
   };
   useEffect(() => {
@@ -185,7 +193,9 @@ function MergePullRequestView({
               />
             </svg>
           )}
-          <div className="flex-1 text-xs sm:text-base" data-test="pr_state">{message}</div>
+          <div className="flex-1 text-xs sm:text-base" data-test="pr_state">
+            {message}
+          </div>
         </div>
         {pullRequest.state === "OPEN" ? (
           <div className="sm:ml-auto flex-none">

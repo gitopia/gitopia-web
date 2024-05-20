@@ -15,7 +15,7 @@ function AccountOverview(props) {
   const [allRepos, setAllRepos] = useState(props.allRepos || []);
   const [contributions, setContributions] = useState([{}]);
   const [totalContributions, setTotalContributions] = useState(0);
-  const apiClient = useApiClient();
+  const { apiClient } = useApiClient();
 
   const getAllRepos = async () => {
     let letter = "x";

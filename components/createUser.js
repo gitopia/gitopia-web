@@ -33,7 +33,7 @@ function CreateUser(props) {
     type: "error",
     message: "",
   });
-  const apiClient = useApiClient();
+  const { apiClient } = useApiClient();
 
   const usernameRegex = /^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$/;
   const router = useRouter();

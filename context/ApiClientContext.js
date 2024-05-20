@@ -12,6 +12,7 @@ export const useApiClient = () => {
 export const ApiClientProvider = ({ children }) => {
   const [apiClient, setApiClient] = useState(null);
   const [apiUrl, setApiUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const updateApiClient = (apiNode) => {
     const newApiClient = new Api({ baseURL: apiNode });
@@ -34,15 +35,18 @@ export const ApiClientProvider = ({ children }) => {
         if (bestApiProvider.apiEndpoint !== apiUrl) {
           updateApiClient(bestApiProvider.apiEndpoint);
         }
+        setLoading(false);
       };
 
       updateBestApiUrl();
+    } else {
+      setLoading(false);
     }
   }, [apiUrl]);
 
   return (
     <ApiClientContext.Provider value={{ apiClient, updateApiClient }}>
-      {children}
+      {!loading && children}
     </ApiClientContext.Provider>
   );
 };

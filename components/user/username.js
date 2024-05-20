@@ -34,7 +34,7 @@ function UserUsername(props = { isEditable: false }) {
 
   const updateUsername = async () => {
     setSavingUsername(true);
-    const apiClient = useApiClient();
+    const { apiClient } = useApiClient();
     const res = await props.updateUserUsername(apiClient, newUsername);
     if (res && res.code === 0) {
       props.notify("Your username is updated", "info");

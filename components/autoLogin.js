@@ -26,7 +26,7 @@ function AutoLogin(props) {
   const [externalWalletMsg, setExternalWalletMsg] = useState(null);
   const inputEl = useRef();
   const okayRef = useRef();
-  const apiClient = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function setWallet() {

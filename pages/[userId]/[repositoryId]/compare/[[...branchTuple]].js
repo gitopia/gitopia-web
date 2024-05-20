@@ -34,6 +34,7 @@ import { ApolloProvider } from "@apollo/client";
 import QueryIssues from "../../../../helpers/gql/queryIssuesByTitleGql";
 import client from "../../../../helpers/apolloClient";
 import { notify } from "reapop";
+import { useApiClient } from "../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -69,6 +70,7 @@ function RepositoryCompareView(props) {
   const [textEntered, setEnteredText] = useState("");
   const [issueList, setIssueList] = useState([]);
   const [issueArray, setIssueArray] = useState([]);
+  const { apiClient } = useApiClient();
 
   const setDefaultBranches = (r) => {
     if (r.branches.length) {
@@ -100,7 +102,7 @@ function RepositoryCompareView(props) {
   const getOwnerDetails = async (repo) => {
     if (repo) {
       if (repo.owner.type === "USER") {
-        let ownerDetails = await getUser(repo.owner.id);
+        let ownerDetails = await getUser(apiClient, repo.owner.id);
         if (ownerDetails)
           return {
             type: repo.owner.type,
@@ -114,7 +116,7 @@ function RepositoryCompareView(props) {
           };
         else return repo.owner;
       } else {
-        let ownerDetails = await getDao(repo.owner.id);
+        let ownerDetails = await getDao(apiClient, repo.owner.id);
         if (ownerDetails)
           return {
             type: repo.owner.type,

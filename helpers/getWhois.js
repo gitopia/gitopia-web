@@ -1,4 +1,4 @@
-export default async function getWhois(id) {
+export default async function getWhois(apiClient, id) {
   if (!id) return null;
   let lId = String(id).toLowerCase();
   try {

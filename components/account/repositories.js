@@ -7,7 +7,7 @@ import { useApiClient } from "../../context/ApiClientContext";
 
 function AccountRepositories(props) {
   const [allRepos, setAllRepos] = useState(props.allRepos || []);
-  const apiClient = useApiClient();
+  const { apiClient } = useApiClient();
 
   const getAllRepos = async () => {
     if (props.userId) {

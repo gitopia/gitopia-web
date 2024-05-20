@@ -36,6 +36,7 @@ import { parseDiff, Diff, Hunk, getChangeKey } from "react-diff-view";
 import getPullDiff from "../../../../../helpers/getPullDiff";
 import validAddress from "../../../../../helpers/validAddress";
 import { commentType } from "../../../../../helpers/systemCommentTypeClass";
+import { useApiClient } from "../../../../../context/ApiClientContext";
 
 export async function getStaticProps({ params }) {
   try {
@@ -150,9 +151,11 @@ function RepositoryPullView(props) {
   );
   const [allComments, setAllComments] = useState(props.comments || []);
   const [files, setFiles] = useState([]);
+  const { apiClient } = useApiClient();
 
   const getAllComments = async () => {
     const comments = await getPullRequestCommentAll(
+      apiClient,
       repository.id,
       pullRequest.iid
     );
@@ -196,6 +199,7 @@ function RepositoryPullView(props) {
         isReviewComment={isReviewComment}
         onUpdate={async (iid) => {
           const newComment = await getPullRequestComment(
+            apiClient,
             repository.id,
             pullRequest.iid,
             iid
@@ -232,7 +236,9 @@ function RepositoryPullView(props) {
 
         return {
           ...widgets,
-          [changeKey]: <div className="p-4">{getCommentView(comment, true)}</div>,
+          [changeKey]: (
+            <div className="p-4">{getCommentView(comment, true)}</div>
+          ),
         };
       }, {});
     } else return "";
@@ -381,7 +387,9 @@ function RepositoryPullView(props) {
                                 renderFile(diff, hunks, c)
                               )
                             ) : (
-                              <div className="mt-4">{getCommentView(c, true)}</div>
+                              <div className="mt-4">
+                                {getCommentView(c, true)}
+                              </div>
                             )}
                           </div>
                         </div>

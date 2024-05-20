@@ -27,6 +27,7 @@ import getDenomNameByHash from "../../../../../helpers/getDenomNameByHash";
 import { coingeckoId } from "../../../../../ibc-assets-config";
 import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
 import useWindowSize from "../../../../../hooks/useWindowSize";
+import { useApiClient } from "../../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -60,6 +61,7 @@ function RepositoryBountiesView(props) {
   const [closeBountyLoading, setCloseBountyLoading] = useState(false);
   const [bountyAmount, setBountyAmount] = useState([]);
   const { isMobile } = useWindowSize();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function fetchBounty() {
@@ -78,11 +80,12 @@ function RepositoryBountiesView(props) {
     async function fetchIssue() {
       const [i, c] = await Promise.all([
         getIssue(
+          apiClient,
           router.query.userId,
           router.query.repositoryId,
           router.query.issueIid
         ),
-        getIssueCommentAll(repository.id, router.query.issueIid),
+        getIssueCommentAll(apiClient, repository.id, router.query.issueIid),
       ]);
       if (i) {
         i.comments = c;
@@ -119,11 +122,12 @@ function RepositoryBountiesView(props) {
   const refreshIssue = async () => {
     const [i, c] = await Promise.all([
       getIssue(
+        apiClient,
         router.query.userId,
         router.query.repositoryId,
         router.query.issueIid
       ),
-      getIssueCommentAll(repository.id, router.query.issueIid),
+      getIssueCommentAll(apiClient, repository.id, router.query.issueIid),
     ]);
     if (i) {
       i.comments = c;

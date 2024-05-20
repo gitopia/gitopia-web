@@ -13,6 +13,7 @@ import GitopiaLive from "../helpers/gitopiaLive";
 import getAllRepositoryBranch from "../helpers/getAllRepositoryBranch";
 import getAllRepositoryTag from "../helpers/getAllRepositoryTag";
 import getDao from "../helpers/getDao";
+import { useApiClient } from "../context/ApiClientContext";
 const pCircles = [
   {
     url: "#circle1",
@@ -170,6 +171,8 @@ export default function Landing() {
   const [mobile, setMobile] = useState(false);
   const [isVisible, setVisible] = useState(true);
   const domRef = useRef();
+  const { apiClient } = useApiClient();
+
   useEffect(() => {
     let domRefValue = null;
     const observer = new IntersectionObserver((entries) => {
@@ -221,7 +224,7 @@ export default function Landing() {
     let tags = await getAllRepositoryTag(demoAddress, demoRepoName);
     let ownerDetails = {};
     if (repo) {
-      ownerDetails = await getDao(repo.owner.id);
+      ownerDetails = await getDao(apiClient, repo.owner.id);
       setRepository({
         ...repo,
         owner: {

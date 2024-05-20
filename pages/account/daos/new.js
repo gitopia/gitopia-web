@@ -81,7 +81,7 @@ function NewDao(props) {
     }
 
     let alreadyAvailable = false;
-    const apiClient = useApiClient();
+    const { apiClient } = useApiClient();
     const daos = await getUserDaoAll(apiClient, props.selectedAddress);
     daos?.every((o) => {
       if (o.name === name) {

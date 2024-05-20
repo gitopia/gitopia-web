@@ -16,6 +16,7 @@ import {
 } from "../../../store/actions/repository";
 import { useRouter } from "next/router";
 import getGitServerAuthorization from "../../../helpers/getGitServerAuthStatus";
+import { useApiClient } from "../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -50,14 +51,12 @@ function RepositoryInvokeForkView(props) {
   const [forkRepositoryDescription, setForkRepositoryDescription] = useState(
     repository?.description || ""
   );
-  const [
-    forkRepositoryDescriptionHint,
-    setForkRepositoryDescriptionHint,
-  ] = useState({
-    shown: false,
-    type: "error",
-    message: "",
-  });
+  const [forkRepositoryDescriptionHint, setForkRepositoryDescriptionHint] =
+    useState({
+      shown: false,
+      type: "error",
+      message: "",
+    });
   const [forkOnlyOneBranch, setForkOnlyOneBranch] = useState(true);
   const [forkOnlyOneBranchName, setForkOnlyOneBranchName] = useState(
     repository?.defaultBranch || ""
@@ -70,6 +69,7 @@ function RepositoryInvokeForkView(props) {
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
   const router = useRouter();
+  const { apiClient } = useApiClient();
 
   const hideHints = () => {
     setForkRepositoryNameHint({ ...forkRepositoryNameHint, shown: false });
@@ -123,7 +123,10 @@ function RepositoryInvokeForkView(props) {
   };
 
   const invokeForkRepository = async () => {
-    let forkingAccess = await getGitServerAuthorization(props.selectedAddress);
+    let forkingAccess = await getGitServerAuthorization(
+      apiClient,
+      props.selectedAddress
+    );
     if (!forkingAccess) {
       setGrantAccessDialogShown(true);
       return;

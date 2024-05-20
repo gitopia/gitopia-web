@@ -37,6 +37,7 @@ import TextInput from "../../../components/textInput";
 import AccountCard from "../../../components/account/card";
 import { useRef } from "react";
 import atob from "../../../helpers/atob";
+import { useApiClient } from "../../../context/ApiClientContext";
 
 export async function getStaticProps({ params }) {
   try {
@@ -232,8 +233,13 @@ function RepositoryView(props) {
   const [currentUserEditPermission, setCurrentUserEditPermission] =
     useState(false);
   const { isMobile } = useWindowSize();
+  const { apiClient } = useApiClient();
 
-  const loadEntities = async (currentEntities = [], firstTime = false, branchSha = null) => {
+  const loadEntities = async (
+    currentEntities = [],
+    firstTime = false,
+    branchSha = null
+  ) => {
     setLoadingEntities(true);
     if (!branchSha) {
       branchSha = getBranchSha(

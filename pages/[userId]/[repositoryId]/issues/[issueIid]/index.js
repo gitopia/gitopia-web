@@ -34,6 +34,7 @@ import IssueBountyView from "../../../../../components/repository/bountiesView";
 import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
 import validAddress from "../../../../../helpers/validAddress";
 import AccountCard from "../../../../../components/account/card";
+import { useApiClient } from "../../../../../context/ApiClientContext";
 
 export async function getStaticProps({ params }) {
   try {
@@ -123,16 +124,18 @@ function RepositoryIssueView(props) {
   });
   const [allComments, setAllComments] = useState(props.comments || []);
   const [allLabels, setAllLabels] = useState([]);
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function initIssues() {
       const [i, c] = await Promise.all([
         getIssue(
+          apiClient,
           router.query.userId,
           router.query.repositoryId,
           router.query.issueIid
         ),
-        getIssueCommentAll(repository.id, router.query.issueIid),
+        getIssueCommentAll(apiClient, repository.id, router.query.issueIid),
       ]);
       if (i) {
         i.comments = c;
@@ -149,7 +152,11 @@ function RepositoryIssueView(props) {
   }, [repository]);
 
   const getAllComments = async () => {
-    const comments = await getIssueCommentAll(repository.id, issue.iid);
+    const comments = await getIssueCommentAll(
+      apiClient,
+      repository.id,
+      issue.iid
+    );
     if (comments) {
       setAllComments(comments);
     } else {
@@ -159,8 +166,8 @@ function RepositoryIssueView(props) {
 
   const refreshIssue = async () => {
     const [i, c] = await Promise.all([
-      getIssue(router.query.userId, repository.name, issue.iid),
-      getIssueCommentAll(repository.id, router.query.issueIid),
+      getIssue(apiClient, router.query.userId, repository.name, issue.iid),
+      getIssueCommentAll(apiClient, repository.id, router.query.issueIid),
     ]);
     if (i) {
       i.comments = c;
