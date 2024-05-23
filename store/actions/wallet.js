@@ -430,12 +430,14 @@ export const createWalletWithMnemonic = (
   };
 };
 
-export const updateUserBalance = (apiNode, showNotification = false) => {
+export const updateUserBalance = (
+  cosmosBankApiClient,
+  showNotification = false
+) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
-    const api = new Api({ baseUrl: apiNode }); // TODO
     try {
-      const res = await api.queryBalance(
+      const res = await cosmosBankApiClient.queryBalance(
         state.selectedAddress,
         process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
       );
