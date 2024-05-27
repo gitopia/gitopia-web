@@ -26,7 +26,8 @@ function AutoLogin(props) {
   const [externalWalletMsg, setExternalWalletMsg] = useState(null);
   const inputEl = useRef();
   const okayRef = useRef();
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function setWallet() {
@@ -46,9 +47,14 @@ function AutoLogin(props) {
           } else {
             setWalletName(lastWallet.name);
             setAddress(lastWallet.accounts[0].address);
-            let res = await props.setWallet(apiClient, {
-              wallet: lastWallet,
-            });
+            let res = await props.setWallet(
+              apiClient,
+              cosmosBankApiClient,
+              cosmosFeegrantApiClient,
+              {
+                wallet: lastWallet,
+              }
+            );
           }
         } else {
           console.log("Wallet active");
@@ -90,10 +96,15 @@ function AutoLogin(props) {
   const unlockLocalWallet = async () => {
     let res;
     if (props.getPassword === "Unlock" || props.getPassword === "Approve") {
-      res = await props.unlockWallet(apiClient, {
-        name: walletName,
-        password: password,
-      });
+      res = await props.unlockWallet(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          name: walletName,
+          password: password,
+        }
+      );
     } else if (props.getPassword === "Download") {
       res = await props.downloadWallet(password);
     } else if (props.getPassword === "Connect") {

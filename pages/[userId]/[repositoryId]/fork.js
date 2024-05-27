@@ -69,7 +69,8 @@ function RepositoryInvokeForkView(props) {
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
   const router = useRouter();
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const hideHints = () => {
     setForkRepositoryNameHint({ ...forkRepositoryNameHint, shown: false });
@@ -379,7 +380,11 @@ function RepositoryInvokeForkView(props) {
                   }
                   onClick={async () => {
                     setIsGrantingAccess(true);
-                    const res = await props.authorizeGitServer(apiClient);
+                    const res = await props.authorizeGitServer(
+                      apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient
+                    );
                     setIsGrantingAccess(false);
                     if (res && res.code === 0) {
                       // let access = await refreshForkingAccess();

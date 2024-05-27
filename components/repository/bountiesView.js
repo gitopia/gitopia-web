@@ -9,19 +9,22 @@ import getDenomNameByHash from "../../helpers/getDenomNameByHash";
 import { coingeckoId } from "../../ibc-assets-config";
 import getTokenValueInDollars from "../../helpers/getTotalTokenValueInDollars";
 import getBountyValueInDollars from "../../helpers/getBountyValueInDollars";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function IssueBountyView(props) {
   const router = useRouter();
   const [bounties, setBounties] = useState([]);
   const [coins, setCoins] = useState([]);
   const [isHovering, setIsHovering] = useState(false);
+  const { apiClient } = useApiClient();
+
   useEffect(() => {
     async function fetchBountyArray() {
       const bountyArray = [];
       const coin = {};
       const coinArray = [];
       for (var i = 0; i < props.bounties.length; i++) {
-        const res = await getBounty(props.bounties[i]);
+        const res = await getBounty(apiClient, props.bounties[i]);
         if (
           res.state == "BOUNTY_STATE_SRCDEBITTED" &&
           res.expireAt > dayjs().unix()

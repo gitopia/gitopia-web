@@ -26,7 +26,8 @@ function IssuePullDescription({
     message: "",
   });
   const [savingDescription, setSavingDescription] = useState(false);
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     setNewDescription(issuePullObj.description);
@@ -61,16 +62,26 @@ function IssuePullDescription({
     setSavingDescription(true);
     if (validateDescription(newDescription)) {
       const res = isPull
-        ? await props.updatePullRequestDescription(apiClient, {
-            description: newDescription,
-            repositoryId: repository.id,
-            iid: issuePullObj.iid,
-          })
-        : await props.updateIssueDescription(apiClient, {
-            description: newDescription,
-            repositoryId: repository.id,
-            iid: issuePullObj.iid,
-          });
+        ? await props.updatePullRequestDescription(
+            apiClient,
+            cosmosBankApiClient,
+            cosmosFeegrantApiClient,
+            {
+              description: newDescription,
+              repositoryId: repository.id,
+              iid: issuePullObj.iid,
+            }
+          )
+        : await props.updateIssueDescription(
+            apiClient,
+            cosmosBankApiClient,
+            cosmosFeegrantApiClient,
+            {
+              description: newDescription,
+              repositoryId: repository.id,
+              iid: issuePullObj.iid,
+            }
+          );
       if (res && res.code === 0) {
         if (onUpdate) await onUpdate(newDescription);
         setIsEditing(false);

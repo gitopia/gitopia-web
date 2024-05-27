@@ -23,7 +23,8 @@ function TransferOwnership({
   });
   const [isChanging, setIsChanging] = useState(false);
   const [startTransfer, setStartTransfer] = useState(false);
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     setAddress("");
@@ -102,11 +103,16 @@ function TransferOwnership({
     setIsChanging(true);
     const res = await validateAddress();
     if (res) {
-      const res = await props.changeRepositoryOwner(apiClient, {
-        repoName: repoName,
-        repoOwner: currentOwnerId,
-        owner: address,
-      });
+      const res = await props.changeRepositoryOwner(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          repoName: repoName,
+          repoOwner: currentOwnerId,
+          owner: address,
+        }
+      );
       if (res) {
         if (onSuccess) await onSuccess(address);
       }

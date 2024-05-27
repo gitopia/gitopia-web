@@ -9,6 +9,7 @@ import { communityPoolSpendProposal } from "../../store/actions/proposals";
 import { paramChangeProposal } from "../../store/actions/proposals";
 import getUser from "../../helpers/getUser";
 import validAddress from "../../helpers/validAddress";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function DaoProposalCreate({ dao, ...props }) {
   const [validateAddressError, setValidateAddressError] = useState("");
@@ -31,6 +32,7 @@ function DaoProposalCreate({ dao, ...props }) {
   const [menuState, setMenuState] = useState(1);
   const [counter, setCounter] = useState(1);
   const [initialDeposit, setInitialDeposit] = useState(0);
+  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
   // const [dao, setDao] = useState({
   //   name: "",
   //   repositories: [],
@@ -391,6 +393,8 @@ function DaoProposalCreate({ dao, ...props }) {
                     setLoading(true);
                     props
                       .communityPoolSpendProposal(
+                        cosmosBankApiClient,
+                        cosmosFeegrantApiClient,
                         title,
                         description,
                         proposalType,
@@ -486,6 +490,8 @@ function DaoProposalCreate({ dao, ...props }) {
                     setLoading(true);
                     props
                       .chainUpgradeProposal(
+                        cosmosBankApiClient,
+                        cosmosFeegrantApiClient,
                         title,
                         description,
                         proposalType,
@@ -611,6 +617,8 @@ function DaoProposalCreate({ dao, ...props }) {
                     setLoading(true);
                     props
                       .paramChangeProposal(
+                        cosmosBankApiClient,
+                        cosmosFeegrantApiClient,
                         title,
                         description,
                         proposalType,
@@ -656,6 +664,8 @@ function DaoProposalCreate({ dao, ...props }) {
                   setLoading(true);
                   props
                     .submitGovernanceProposal(
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient,
                       title,
                       description,
                       proposalType,

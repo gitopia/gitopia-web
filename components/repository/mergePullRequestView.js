@@ -27,7 +27,8 @@ function MergePullRequestView({
   const [pullMergeAccessDialogShown, setPullMergeAccessDialogShown] =
     useState(false);
   const [isGrantingAccess, setIsGrantingAccess] = useState(false);
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const checkMerge = async () => {
     if (!props.selectedAddress) {
@@ -246,7 +247,11 @@ function MergePullRequestView({
               }
               onClick={async () => {
                 setIsGrantingAccess(true);
-                const res = await props.authorizeGitServer(apiClient);
+                const res = await props.authorizeGitServer(
+                  apiClient,
+                  cosmosBankApiClient,
+                  cosmosFeegrantApiClient
+                );
                 setIsGrantingAccess(false);
                 if (res && res.code !== 0) {
                   props.notify(res.rawLog, "error");

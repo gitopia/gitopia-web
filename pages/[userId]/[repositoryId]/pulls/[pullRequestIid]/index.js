@@ -151,7 +151,8 @@ function RepositoryPullView(props) {
   );
   const [allComments, setAllComments] = useState(props.comments || []);
   const [files, setFiles] = useState([]);
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const getAllComments = async () => {
     const comments = await getPullRequestCommentAll(
@@ -210,12 +211,17 @@ function RepositoryPullView(props) {
           setAllComments(newAllComments);
         }}
         onDelete={async (iid) => {
-          const res = await props.deleteComment(apiClient, {
-            repositoryId: repository.id,
-            parentIid: pullRequest.iid,
-            parent: "COMMENT_PARENT_PULL_REQUEST",
-            commentIid: iid,
-          });
+          const res = await props.deleteComment(
+            apiClient,
+            cosmosBankApiClient,
+            cosmosFeegrantApiClient,
+            {
+              repositoryId: repository.id,
+              parentIid: pullRequest.iid,
+              parent: "COMMENT_PARENT_PULL_REQUEST",
+              commentIid: iid,
+            }
+          );
           if (res && res.code === 0) {
             const newAllComments = [...allComments];
             let index = allComments.findIndex((c) => c.id === comment.id);

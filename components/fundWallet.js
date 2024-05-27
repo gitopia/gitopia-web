@@ -7,6 +7,7 @@ import {
 import axios from "../helpers/axiosFetch";
 import { useRouter } from "next/router";
 import { notify } from "reapop";
+import { useApiClient } from "../context/ApiClientContext";
 
 function FundWallet(props) {
   const [gettingFaucetTokens, setGettingFaucetTokens] = useState(false);
@@ -14,6 +15,7 @@ function FundWallet(props) {
   const isBalanceLow =
     Number(props.balance) <= 500 && Number(props.allowance) <= 500;
   const router = useRouter();
+  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
 
   const getTokens = () => {
     if (!props.selectedAddress) {
@@ -45,7 +47,11 @@ function FundWallet(props) {
           setGettingFaucetTokens(false);
         } else {
           setTimeout(() => {
-            props.updateUserBalance(props.apiNode, true);
+            props.updateUserBalance(
+              cosmosBankApiClient,
+              cosmosFeegrantApiClient,
+              true
+            );
             setGettingFaucetTokens(false);
           }, 2000);
         }
@@ -63,7 +69,7 @@ function FundWallet(props) {
 
   useEffect(() => {
     getTokens();
-    props.updateUserAllowance(props.apiNode);
+    props.updateUserAllowance(cosmosFeegrantApiClient);
   }, []);
 
   useEffect(() => {
@@ -205,7 +211,6 @@ function FundWallet(props) {
 
 const mapStateToProps = (state) => {
   return {
-    apiNode: state.env.apiNode,
     wallets: state.wallet.wallets,
     selectedAddress: state.wallet.selectedAddress,
     balance: state.wallet.balance,

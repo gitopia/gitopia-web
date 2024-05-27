@@ -41,7 +41,8 @@ function RepositoryPullIssuesView(props) {
   const [textEntered, setEnteredText] = useState("");
   const [issueList, setIssueList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function fetchIssues() {
@@ -224,7 +225,13 @@ function RepositoryPullIssuesView(props) {
               onClick={() => {
                 setLoading(true);
                 props
-                  .linkPullIssuebyIid(repository.id, pullRequest.iid, issue.iid)
+                  .linkPullIssuebyIid(
+                    cosmosBankApiClient,
+                    cosmosFeegrantApiClient,
+                    repository.id,
+                    pullRequest.iid,
+                    issue.iid
+                  )
                   .then(() => {
                     setIssue({ title: "", iid: "" });
                     refreshPullRequest();
@@ -450,6 +457,8 @@ function RepositoryPullIssuesView(props) {
                         onClick={() => {
                           props
                             .unlinkPullIssuebyIid(
+                              cosmosBankApiClient,
+                              cosmosFeegrantApiClient,
                               repository.id,
                               pullRequest.iid,
                               i.iid

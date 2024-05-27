@@ -18,7 +18,8 @@ function CreateRepository(props) {
     message: "",
   });
   const [repositoryCreated, setRepositoryCreated] = useState(false);
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });
@@ -63,10 +64,15 @@ function CreateRepository(props) {
 
   const createRepository = async () => {
     if (validateRepository()) {
-      let res = await props.createRepository(apiClient, {
-        name,
-        description,
-      });
+      let res = await props.createRepository(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          name,
+          description,
+        }
+      );
       setRepositoryCreated(true);
     }
   };

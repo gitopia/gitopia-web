@@ -2,8 +2,12 @@ import { updateBountyExpiry } from "../../store/actions/bounties";
 import { connect } from "react-redux";
 import { useRef } from "react";
 import dayjs from "dayjs";
+import { useApiClient } from "../../context/ApiClientContext";
+
 function ExtendExpiry(props) {
   const ref1 = useRef("dd/mm/yyyy");
+  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
+
   return (
     <div>
       <input type="checkbox" id="my-modal-2" className="modal-toggle" />
@@ -48,6 +52,8 @@ function ExtendExpiry(props) {
               onClick={() => {
                 props
                   .updateBountyExpiry(
+                    cosmosBankApiClient,
+                    cosmosFeegrantApiClient,
                     props.bountyId,
                     dayjs(props.updatedExpiry.toString()).unix()
                   )

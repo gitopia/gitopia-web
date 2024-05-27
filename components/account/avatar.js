@@ -8,6 +8,7 @@ import { updateDaoAvatar } from "../../store/actions/dao";
 import { notify } from "reapop";
 import formatBytes from "../../helpers/formatBytes";
 import debounce from "lodash/debounce";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
   const name = isDao
@@ -30,6 +31,8 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
   const [imageFileHash, setImageFileHash] = useState(null);
   const [imageUploading, setImageUploading] = useState(0);
   // var image = new Image();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     setValidateImageUrlError("");
@@ -289,11 +292,21 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                   } else {
                     setLoading(true);
                     const res = isDao
-                      ? await props.updateDaoAvatar({
-                          id: props.dao.address,
-                          url: imageUrl,
-                        })
-                      : await props.updateUserAvatar(imageUrl);
+                      ? await props.updateDaoAvatar(
+                          apiClient,
+                          cosmosBankApiClient,
+                          cosmosFeegrantApiClient,
+                          {
+                            id: props.dao.address,
+                            url: imageUrl,
+                          }
+                        )
+                      : await props.updateUserAvatar(
+                          apiClient,
+                          cosmosBankApiClient,
+                          cosmosFeegrantApiClient,
+                          imageUrl
+                        );
                     if (res && res.code === 0) {
                       props.notify(
                         "Your " +

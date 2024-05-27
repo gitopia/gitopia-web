@@ -44,7 +44,8 @@ function RepositoryIssueCreateView(props) {
   const [allLabels, setAllLabels] = useState([]);
   const [bountyAmount, setBountyAmount] = useState([]);
   const [bountyExpiry, setBountyExpiry] = useState(0);
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const validateIssue = () => {
     return true;
@@ -63,7 +64,12 @@ function RepositoryIssueCreateView(props) {
         bountyAmount,
         bountyExpiry,
       };
-      const res = await props.createIssue(apiClient, issue);
+      const res = await props.createIssue(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        issue
+      );
       if (res && res.code === 0) {
         router.push(
           "/" +

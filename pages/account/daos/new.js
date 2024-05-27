@@ -39,6 +39,8 @@ function NewDao(props) {
     message: "",
   });
   const [daoCreating, setDaoCreating] = useState(false);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
@@ -81,7 +83,6 @@ function NewDao(props) {
     }
 
     let alreadyAvailable = false;
-    const { apiClient } = useApiClient();
     const daos = await getUserDaoAll(apiClient, props.selectedAddress);
     daos?.every((o) => {
       if (o.name === name) {
@@ -112,13 +113,18 @@ function NewDao(props) {
   const createDao = async () => {
     setDaoCreating(true);
     if (validateDao() && validateWebsite()) {
-      let res = await props.createDao({
-        name: name.replace(sanitizedNameTest, "-"),
-        description,
-        avatarUrl,
-        location,
-        website,
-      });
+      let res = await props.createDao(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          name: name.replace(sanitizedNameTest, "-"),
+          description,
+          avatarUrl,
+          location,
+          website,
+        }
+      );
       if (res && res.url) {
         router.push(res.url);
       }

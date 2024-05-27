@@ -3,12 +3,14 @@ import { connect } from "react-redux";
 import { updateUserAllowance } from "../store/actions/wallet";
 import { notify } from "reapop";
 import Link from "next/link";
+import { useApiClient } from "../context/ApiClientContext";
 
 function AllowanceReceiver(props) {
   const [loading, setLoading] = useState(false);
   const [isBalanceLow, setIsBalanceLow] = useState(
     Number(props.balance) <= 500 && Number(props.allowance) <= 500
   );
+  const { cosmosFeegrantApiClient } = useApiClient();
 
   useEffect(() => {
     setIsBalanceLow(
@@ -23,7 +25,7 @@ function AllowanceReceiver(props) {
       return;
     }
     setLoading(true);
-    await props.updateUserAllowance();
+    await props.updateUserAllowance(cosmosFeegrantApiClient);
     setLoading(false);
   };
 

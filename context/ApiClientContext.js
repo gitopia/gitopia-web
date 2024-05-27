@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState, useContext } from "react";
 import { Api } from "@gitopia/gitopia-js/dist/rest";
-import { Api as CosmosBankApi } from "../cosmos.bank.v1beta1/module/rest";
+import { Api as CosmosBankApi } from "../store/cosmos.bank.v1beta1/module/rest";
+import { Api as CosmosFeegrantApi } from "../store/cosmos.feegrant.v1beta1/rest";
 import providers from "../providers.json";
 import selectProvider from "../helpers/providerSelector";
 
@@ -13,6 +14,7 @@ export const useApiClient = () => {
 export const ApiClientProvider = ({ children }) => {
   const [apiClient, setApiClient] = useState(null);
   const [cosmosBankApiClient, setCosmosBankApiClient] = useState(null);
+  const [cosmosFeegrantApiClient, setCosmosFeegrantApiClient] = useState(null);
   const [apiUrl, setApiUrl] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -22,6 +24,11 @@ export const ApiClientProvider = ({ children }) => {
 
     const newCosmosBankApiClient = new CosmosBankApi({ baseURL: apiNode });
     setCosmosBankApiClient(newCosmosBankApiClient);
+
+    const newCosmosFeegrantApiClient = new CosmosFeegrantApi({
+      baseURL: apiNode,
+    });
+    setCosmosFeegrantApiClient(newCosmosFeegrantApiClient);
 
     localStorage.setItem("apiUrl", apiNode);
   };
@@ -52,7 +59,12 @@ export const ApiClientProvider = ({ children }) => {
 
   return (
     <ApiClientContext.Provider
-      value={{ apiClient, cosmosBankApiClient, updateApiClient }}
+      value={{
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        updateApiClient,
+      }}
     >
       {!loading && children}
     </ApiClientContext.Provider>

@@ -59,7 +59,7 @@ function RepositoryReleaseEditView(props) {
   const [uploadingAttachment, setUploadingAttachment] = useState({ file: {} });
   const [newTagOptionShown, setNewTagOptionShown] = useState(false);
   const [creatingTag, setCreatingTag] = useState(false);
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosFeegrantApiClient } = useApiClient();
 
   const validateIssue = () => {
     return true;
@@ -242,12 +242,16 @@ function RepositoryReleaseEditView(props) {
                         }
                         onClick={async () => {
                           setCreatingTag(true);
-                          const res = await props.createTag(apiClient, {
-                            repoOwnerId: repository.owner.id,
-                            repositoryName: repository.name,
-                            name: tagName,
-                            sha: target.sha,
-                          });
+                          const res = await props.createTag(
+                            apiClient,
+                            cosmosFeegrantApiClient,
+                            {
+                              repoOwnerId: repository.owner.id,
+                              repositoryName: repository.name,
+                              name: tagName,
+                              sha: target.sha,
+                            }
+                          );
                           if (res && res.code === 0) {
                             setNewTagOptionShown(false);
                             refreshRepository();

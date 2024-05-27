@@ -32,7 +32,7 @@ function RepositoryTagsView(props) {
     useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosFeegrantApiClient } = useApiClient();
 
   useEffect(() => {
     async function updatePermissions() {
@@ -225,7 +225,7 @@ function RepositoryTagsView(props) {
                               setIsDeleting(true);
 
                               props
-                                .deleteTag(apiClient, {
+                                .deleteTag(apiClient, cosmosFeegrantApiClient, {
                                   repoOwnerId: repository.owner.id,
                                   repositoryName: repository.name,
                                   name: t.name,

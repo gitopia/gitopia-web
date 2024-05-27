@@ -25,7 +25,8 @@ function EmptyRepository(props) {
   });
   const [savingDescription, setSavingDescription] = useState(false);
   const input = useRef();
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   if (activeWallet) {
     if (activeWallet.isKeplr || activeWallet.isLedger) {
@@ -63,11 +64,16 @@ function EmptyRepository(props) {
     setSavingDescription(true);
     if (validateDescription(newDescription)) {
       console.log(repository);
-      const res = await props.updateRepositoryDescription(apiClient, {
-        name: repository.name,
-        ownerId: repository.owner.id,
-        description: newDescription,
-      });
+      const res = await props.updateRepositoryDescription(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          name: repository.name,
+          ownerId: repository.owner.id,
+          description: newDescription,
+        }
+      );
 
       if (res && res.code === 0) {
         if (props.refreshRepository) await props.refreshRepository();

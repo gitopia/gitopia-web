@@ -11,6 +11,7 @@ import Link from "next/dist/client/link";
 import getDepositor from "../../helpers/getDepositor";
 import getVoter from "../../helpers/getVoter";
 import ReactMarkdown from "react-markdown";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function DaoProposalDetails({ id, ...props }) {
   const [amount, setAmount] = useState("");
@@ -32,6 +33,7 @@ function DaoProposalDetails({ id, ...props }) {
   const amountRef = useRef(null);
   var localizedFormat = require("dayjs/plugin/localizedFormat");
   dayjs.extend(localizedFormat);
+  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
 
   const refreshProposal = async () => {
     if (id !== undefined) {
@@ -365,11 +367,18 @@ function DaoProposalDetails({ id, ...props }) {
                     }
                     onClick={(e) => {
                       setVoteYesLoading(true);
-                      props.proposalVote(id, "VOTE_OPTION_YES").then((res) => {
-                        setVoteYesLoading(false);
-                        refreshTally();
-                        refreshVoters();
-                      });
+                      props
+                        .proposalVote(
+                          cosmosBankApiClient,
+                          cosmosFeegrantApiClient,
+                          id,
+                          "VOTE_OPTION_YES"
+                        )
+                        .then((res) => {
+                          setVoteYesLoading(false);
+                          refreshTally();
+                          refreshVoters();
+                        });
                     }}
                     disabled={
                       proposal.status !== "PROPOSAL_STATUS_VOTING_PERIOD" ||
@@ -400,11 +409,18 @@ function DaoProposalDetails({ id, ...props }) {
                     }
                     onClick={(e) => {
                       setVoteNoLoading(true);
-                      props.proposalVote(id, "VOTE_OPTION_NO").then((res) => {
-                        setVoteNoLoading(false);
-                        refreshTally();
-                        refreshVoters();
-                      });
+                      props
+                        .proposalVote(
+                          cosmosBankApiClient,
+                          cosmosFeegrantApiClient,
+                          id,
+                          "VOTE_OPTION_NO"
+                        )
+                        .then((res) => {
+                          setVoteNoLoading(false);
+                          refreshTally();
+                          refreshVoters();
+                        });
                     }}
                     disabled={
                       proposal.status !== "PROPOSAL_STATUS_VOTING_PERIOD" ||
@@ -436,7 +452,12 @@ function DaoProposalDetails({ id, ...props }) {
                     onClick={(e) => {
                       setVoteAbstainLoading(true);
                       props
-                        .proposalVote(id, "VOTE_OPTION_ABSTAIN")
+                        .proposalVote(
+                          cosmosBankApiClient,
+                          cosmosFeegrantApiClient,
+                          id,
+                          "VOTE_OPTION_ABSTAIN"
+                        )
                         .then((res) => {
                           setVoteAbstainLoading(false);
                           refreshTally();
@@ -473,7 +494,12 @@ function DaoProposalDetails({ id, ...props }) {
                     onClick={(e) => {
                       setVoteNoWithVetoLoading(true);
                       props
-                        .proposalVote(id, "VOTE_OPTION_NO_WITH_VETO")
+                        .proposalVote(
+                          cosmosBankApiClient,
+                          cosmosFeegrantApiClient,
+                          id,
+                          "VOTE_OPTION_NO_WITH_VETO"
+                        )
                         .then((res) => {
                           setVoteNoWithVetoLoading(false);
                           refreshTally();
@@ -548,6 +574,8 @@ function DaoProposalDetails({ id, ...props }) {
                         setDepositLoading(true);
                         props
                           .proposalDeposit(
+                            cosmosBankApiClient,
+                            cosmosFeegrantApiClient,
                             id,
                             props.advanceUser === true
                               ? amount.toString()

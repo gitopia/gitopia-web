@@ -30,7 +30,8 @@ function CollaboratorsList({
   const [isRemoving, setIsRemoving] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [startUpdate, setStartUpdate] = useState("");
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const validateCollaborator = async () => {
     const res = await getUser(collabAddress);
@@ -47,12 +48,17 @@ function CollaboratorsList({
   const addCollaborator = async () => {
     setIsAdding(true);
     if (await validateCollaborator()) {
-      const res = await props.updateCollaborator(apiClient, {
-        repoName: repoName,
-        repoOwner: repoOwnerId,
-        user: collabAddress,
-        role: collabRole,
-      });
+      const res = await props.updateCollaborator(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          repoName: repoName,
+          repoOwner: repoOwnerId,
+          user: collabAddress,
+          role: collabRole,
+        }
+      );
     }
     if (refreshRepository) await refreshRepository();
     setCollabAddress("");
@@ -61,23 +67,33 @@ function CollaboratorsList({
 
   const removeCollaborator = async (address, index) => {
     setIsRemoving(index);
-    await props.removeCollaborator(apiClient, {
-      repoName: repoName,
-      repoOwner: repoOwnerId,
-      user: address,
-    });
+    await props.removeCollaborator(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      {
+        repoName: repoName,
+        repoOwner: repoOwnerId,
+        user: address,
+      }
+    );
     if (refreshRepository) await refreshRepository();
     setIsRemoving(false);
   };
 
   const updateCollaborator = async (address, role, index) => {
     setIsUpdating(index);
-    await props.updateCollaborator(apiClient, {
-      repoName: repoName,
-      repoOwner: repoOwnerId,
-      user: address,
-      role: role,
-    });
+    await props.updateCollaborator(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      {
+        repoName: repoName,
+        repoOwner: repoOwnerId,
+        user: address,
+        role: role,
+      }
+    );
     if (refreshRepository) await refreshRepository();
     setIsUpdating(false);
   };

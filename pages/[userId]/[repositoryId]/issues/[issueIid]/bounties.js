@@ -61,13 +61,14 @@ function RepositoryBountiesView(props) {
   const [closeBountyLoading, setCloseBountyLoading] = useState(false);
   const [bountyAmount, setBountyAmount] = useState([]);
   const { isMobile } = useWindowSize();
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function fetchBounty() {
       const array = [];
       for (var i = 0; i < issue.bounties.length; i++) {
-        const res = await getBounty(issue.bounties[i]);
+        const res = await getBounty(apiClient, issue.bounties[i]);
         const bounty = await updateDenomName(res);
         array.push(bounty);
       }
@@ -389,7 +390,13 @@ function RepositoryBountiesView(props) {
                                 (closeBountyLoading ? " loading" : "")
                               }
                               onClick={() => {
-                                props.closeBounty(b.id).then(refreshBounty);
+                                props
+                                  .closeBounty(
+                                    cosmosBankApiClient,
+                                    cosmosFeegrantApiClient,
+                                    b.id
+                                  )
+                                  .then(refreshBounty);
                               }}
                               data-test="bounty_close_button"
                             >

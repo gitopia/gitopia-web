@@ -33,7 +33,8 @@ function CreateUser(props) {
     type: "error",
     message: "",
   });
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const usernameRegex = /^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$/;
   const router = useRouter();
@@ -108,12 +109,17 @@ function CreateUser(props) {
   const createProfile = async () => {
     setLoading(true);
     if (await validateProfile()) {
-      let res = await props.createUser(apiClient, {
-        username,
-        name,
-        bio,
-        avatarUrl,
-      });
+      let res = await props.createUser(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          username,
+          name,
+          bio,
+          avatarUrl,
+        }
+      );
       if (res && res.code === 0) {
         await props.getUserDetailsForSelectedAddress();
         router.push("/home");

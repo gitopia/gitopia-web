@@ -124,7 +124,8 @@ function RepositoryIssueView(props) {
   });
   const [allComments, setAllComments] = useState(props.comments || []);
   const [allLabels, setAllLabels] = useState([]);
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function initIssues() {
@@ -267,12 +268,17 @@ function RepositoryIssueView(props) {
                             setAllComments(newAllComments);
                           }}
                           onDelete={async (iid) => {
-                            const res = await props.deleteComment(apiClient, {
-                              repositoryId: repository.id,
-                              parentIid: issue.iid,
-                              parent: "COMMENT_PARENT_ISSUE",
-                              commentIid: iid,
-                            });
+                            const res = await props.deleteComment(
+                              apiClient,
+                              cosmosBankApiClient,
+                              cosmosFeegrantApiClient,
+                              {
+                                repositoryId: repository.id,
+                                parentIid: issue.iid,
+                                parent: "COMMENT_PARENT_ISSUE",
+                                commentIid: iid,
+                              }
+                            );
                             if (res && res.code === 0) {
                               const newAllComments = [...allComments];
                               newAllComments.splice(i, 1);
@@ -332,12 +338,17 @@ function RepositoryIssueView(props) {
                         )
                     );
 
-                    const res = await props.updateIssueAssignees(apiClient, {
-                      repositoryId: repository.id,
-                      iid: issue.iid,
-                      addedAssignees,
-                      removedAssignees,
-                    });
+                    const res = await props.updateIssueAssignees(
+                      apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient,
+                      {
+                        repositoryId: repository.id,
+                        iid: issue.iid,
+                        addedAssignees,
+                        removedAssignees,
+                      }
+                    );
 
                     if (res) refreshIssue();
                   }}
@@ -371,12 +382,17 @@ function RepositoryIssueView(props) {
                         !(removedLabels.includes(x) || issue.labels.includes(x))
                     );
 
-                    const res = await props.updateIssueLabels(apiClient, {
-                      repositoryId: repository.id,
-                      iid: issue.iid,
-                      addedLabels,
-                      removedLabels,
-                    });
+                    const res = await props.updateIssueLabels(
+                      apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient,
+                      {
+                        repositoryId: repository.id,
+                        iid: issue.iid,
+                        addedLabels,
+                        removedLabels,
+                      }
+                    );
 
                     if (res) refreshIssue();
                   }}

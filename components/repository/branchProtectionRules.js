@@ -16,7 +16,8 @@ function BranchProtectionRules({
   const [branch, setBranch] = useState("");
   const [branches, setBranches] = useState([]);
   const [protectedBranches, setProtectedBranches] = useState({});
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function getRepositoryBranch() {
@@ -116,11 +117,16 @@ function BranchProtectionRules({
                         className={"px-4 ml-auto"}
                         onClick={async () => {
                           props
-                            .toggleForcePush(apiClient, {
-                              repoOwner: repoOwner,
-                              repoName: repoName,
-                              branchName: b.name,
-                            })
+                            .toggleForcePush(
+                              apiClient,
+                              cosmosBankApiClient,
+                              cosmosFeegrantApiClient,
+                              {
+                                repoOwner: repoOwner,
+                                repoName: repoName,
+                                branchName: b.name,
+                              }
+                            )
                             .then(async (res) => {
                               if (res?.code == 0) {
                                 refreshBranches();
@@ -206,11 +212,16 @@ function BranchProtectionRules({
               onClick={async () => {
                 setIsAdding(true);
                 props
-                  .toggleForcePush(apiClient, {
-                    repoOwner: repoOwner,
-                    repoName: repoName,
-                    branchName: branch,
-                  })
+                  .toggleForcePush(
+                    apiClient,
+                    cosmosBankApiClientm,
+                    cosmosFeegrantApiClient,
+                    {
+                      repoOwner: repoOwner,
+                      repoName: repoName,
+                      branchName: branch,
+                    }
+                  )
                   .then(async (res) => {
                     if (res?.code == 0) {
                       if (onSuccess) await onSuccess(branch);

@@ -181,12 +181,21 @@ export const setupTxClients = async (
   }
 };
 
-export const handlePostingTransaction = async (dispatch, getState, message) => {
+export const handlePostingTransaction = async (
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  dispatch,
+  getState,
+  message
+) => {
   const { env } = getState();
 
   try {
     const result = await sendTransaction({ message })(dispatch, getState);
-    updateUserBalance(env.apiNode)(dispatch, getState);
+    updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+      dispatch,
+      getState
+    );
     if (result?.code === 0) {
       return result;
     } else {
