@@ -152,11 +152,11 @@ export const createUser = (
   };
 };
 
-export const getUserDetailsForSelectedAddress = () => {
+export const getUserDetailsForSelectedAddress = (apiClient) => {
   return async (dispatch, getState) => {
-    const { env, wallet } = getState();
+    const { wallet } = getState();
     try {
-      const result = await env.queryClient.queryUser(wallet.selectedAddress);
+      const result = await apiClient.queryUser(wallet.selectedAddress);
       dispatch({
         type: userActions.SET_USER,
         payload: { user: result.data.User },
@@ -231,7 +231,7 @@ export const updateUserAvatar = (
           null,
           avatarUrl
         );
-        await getUserDetailsForSelectedAddress()(dispatch, getState);
+        await getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
       }
       return result;
     } catch (e) {
@@ -260,7 +260,7 @@ export const updateUserName = (
         getState
       );
       if (result?.code === 0) {
-        await getUserDetailsForSelectedAddress()(dispatch, getState);
+        await getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
       }
       return result;
     } catch (e) {
@@ -296,7 +296,7 @@ export const updateUserUsername = (
           getState,
           username
         );
-        await getUserDetailsForSelectedAddress()(dispatch, getState);
+        await getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
         const daos = await getUserDaoAll(
           apiClient,
           newWallet.accounts[0].address
@@ -347,7 +347,7 @@ const updateWalletsList = async (
         },
       },
     });
-    await getUserDetailsForSelectedAddress()(dispatch, getState);
+    await getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
     const daos = await getUserDaoAll(apiClient, newWallet.accounts[0].address);
     await dispatch({
       type: userActions.INIT_DASHBOARDS,

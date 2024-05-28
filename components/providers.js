@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import providers from "../providers.json";
-import { setConfig } from "../store/actions/env";
 import { useApiClient } from "../context/ApiClientContext";
 
-const Providers = ({ selectedProvider, setSelectedProvider, setConfig }) => {
+const Providers = ({ selectedProvider, setSelectedProvider, setIsLoading }) => {
   const { updateApiClient } = useApiClient();
   const [customProvider, setCustomProvider] = useState({
     name: "Custom Provider",
@@ -17,13 +16,8 @@ const Providers = ({ selectedProvider, setSelectedProvider, setConfig }) => {
 
   const chooseProvider = (provider) => {
     setSelectedProvider(provider);
-    setConfig({
-      config: {
-        apiNode: provider.apiEndpoint,
-        rpcNode: provider.rpcEndpoint,
-      },
-    });
     updateApiClient(provider.apiEndpoint);
+    setIsLoading(false);
   };
 
   const handleCustomProviderChange = (field, value) => {
@@ -38,16 +32,13 @@ const Providers = ({ selectedProvider, setSelectedProvider, setConfig }) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     if (customProvider.apiEndpoint && customProvider.rpcEndpoint) {
       setProvidersWithCustom(...providersWithCustom, customProvider);
+      setSelectedProvider(customProvider);
+      updateApiClient(customProvider.apiEndpoint);
     }
-    setSelectedProvider(customProvider);
-    setConfig({
-      config: {
-        apiNode: customProvider.apiEndpoint,
-        rpcNode: customProvider.rpcEndpoint,
-      },
-    });
+    setIsLoading(false);
   }, [customProvider]);
 
   return (
@@ -116,4 +107,4 @@ const Providers = ({ selectedProvider, setSelectedProvider, setConfig }) => {
   );
 };
 
-export default connect(null, { setConfig })(Providers);
+export default Providers;

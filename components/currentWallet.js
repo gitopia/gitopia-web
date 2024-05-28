@@ -24,7 +24,7 @@ function CurrentWallet(props) {
     message: "",
   });
   const inputEl = useRef();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, rpcUrl } =
     useApiClient();
 
   const unlockWallet = async () => {
@@ -40,6 +40,7 @@ function CurrentWallet(props) {
       apiClient,
       cosmosBankApiClient,
       cosmosFeegrantApiClient,
+      rpcUrl,
       {
         name: selectedWallet,
         password,
@@ -73,7 +74,13 @@ function CurrentWallet(props) {
     const wallet =
       props.wallets[props.wallets.findIndex((x) => x.name === walletName)];
     if (wallet && wallet.isLedger) {
-      props.unlockLedgerWallet({ name: wallet.name, justUnlock: true });
+      props.unlockLedgerWallet(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        rpcUrl,
+        { name: wallet.name, justUnlock: true }
+      );
       setExternalWalletMsg("Please open Cosmos app on your ledger to verify");
     } else {
       setExternalWalletMsg(null);
@@ -153,9 +160,15 @@ function CurrentWallet(props) {
                 <button
                   className="btn btn-sm btn-block btn-primary flex-1"
                   onClick={async () => {
-                    const res = await props.unlockLedgerWallet({
-                      name: selectedWallet,
-                    });
+                    const res = await props.unlockLedgerWallet(
+                      apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient,
+                      rpcUrl,
+                      {
+                        name: selectedWallet,
+                      }
+                    );
                     if (res?.message) {
                       setExternalWalletMsg(res.message);
                     }
@@ -275,7 +288,12 @@ function CurrentWallet(props) {
             onClick={async () => {
               await initKeplr();
               const { apiClient } = useApiClient();
-              props.unlockKeplrWallet(apiClient);
+              props.unlockKeplrWallet(
+                apiClient,
+                cosmosBankApiClient,
+                cosmosFeegrantApiClient,
+                rpcUrl
+              );
             }}
           >
             <div className="rounded-full mask mask-circle w-10 h-10 bg-primary flex justify-center items-center absolute left-1">

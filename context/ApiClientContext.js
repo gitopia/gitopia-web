@@ -16,9 +16,10 @@ export const ApiClientProvider = ({ children }) => {
   const [cosmosBankApiClient, setCosmosBankApiClient] = useState(null);
   const [cosmosFeegrantApiClient, setCosmosFeegrantApiClient] = useState(null);
   const [apiUrl, setApiUrl] = useState(null);
+  const [rpcUrl, setRpcUrl] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const updateApiClient = (apiNode) => {
+  const updateApiClient = (apiNode, rpcNode) => {
     const newApiClient = new Api({ baseURL: apiNode });
     setApiClient(newApiClient);
 
@@ -31,14 +32,18 @@ export const ApiClientProvider = ({ children }) => {
     setCosmosFeegrantApiClient(newCosmosFeegrantApiClient);
 
     localStorage.setItem("apiUrl", apiNode);
+    localStorage.setItem("rpcUrl", rpcNode);
   };
 
   useEffect(() => {
-    const cachedApiUrl =
-      localStorage.getItem("apiUrl") ||
-      providers[Math.floor(Math.random() * providers.length)].apiEndpoint; // Default API URL
-    setApiUrl(cachedApiUrl);
-    updateApiClient(cachedApiUrl);
+    const cachedApiUrl = localStorage.getItem("apiUrl");
+    const cachedRpcUrl = localStorage.getItem("rpcUrl");
+
+    if (cachedApiUrl) {
+      setApiUrl(cachedApiUrl);
+      setRpcUrl(cachedRpcUrl);
+      updateApiClient(cachedApiUrl);
+    }
   }, []);
 
   useEffect(() => {
@@ -47,6 +52,7 @@ export const ApiClientProvider = ({ children }) => {
         const bestApiProvider = await selectProvider();
         if (bestApiProvider.apiEndpoint !== apiUrl) {
           updateApiClient(bestApiProvider.apiEndpoint);
+          setRpcUrl(bestApiProvider.rpcEndpoint);
         }
         setLoading(false);
       };
@@ -60,6 +66,8 @@ export const ApiClientProvider = ({ children }) => {
   return (
     <ApiClientContext.Provider
       value={{
+        apiUrl,
+        rpcUrl,
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,

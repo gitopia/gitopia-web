@@ -46,7 +46,7 @@ export const createDao = (
       const message = await env.txClient.msgCreateDao(dao);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
-        await getUserDetailsForSelectedAddress()(dispatch, getState);
+        await getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
         const daos = await getUserDaoAll(apiClient, wallet.selectedAddress);
         dispatch({
           type: userActions.INIT_DASHBOARDS,
@@ -87,7 +87,7 @@ export const getDaoDetailsForDashboard = (apiClient) => {
     const { env, user } = getState();
     try {
       const [daoRes, members] = await Promise.all([
-        env.queryClient.queryDao(user.currentDashboard),
+        apiClient.queryDao(user.currentDashboard),
         getDaoMember(apiClient, user.currentDashboard),
       ]);
       let dao = daoRes.data.dao;

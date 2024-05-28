@@ -97,7 +97,7 @@ export const createRepository = (
         getState
       );
       if (result && result.code === 0) {
-        getUserDetailsForSelectedAddress()(dispatch, getState);
+        getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
         let url = "/" + ownerId + "/" + name;
         console.log(url);
         return { url };
@@ -147,7 +147,7 @@ export const deleteRepository = (
         getState
       );
       if (result && result.code === 0) {
-        getUserDetailsForSelectedAddress()(dispatch, getState);
+        getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
@@ -519,7 +519,7 @@ export const renameRepository = (
         getState
       );
       if (result && result.code === 0) {
-        getUserDetailsForSelectedAddress()(dispatch, getState);
+        getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
@@ -565,7 +565,7 @@ export const changeDefaultBranch = (
         getState
       );
       if (result && result.code === 0) {
-        getUserDetailsForSelectedAddress()(dispatch, getState);
+        getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
@@ -1330,7 +1330,7 @@ export const forkRepository = (
         );
         console.log("Watch task result", res);
         if (res.TaskState === "TASK_STATE_SUCCESS") {
-          getUserDetailsForSelectedAddress()(dispatch, getState);
+          getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
           let url = "/" + ownerId + "/" + res.RepositoryName;
           return { url };
         } else if (res.TaskState === "TASK_STATE_FAILURE") {
@@ -1947,7 +1947,7 @@ export const mergePullRequest = (
           getState
         );
         console.log("Watch task result", res);
-        getUserDetailsForSelectedAddress()(dispatch, getState);
+        getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
         return res;
       } else {
         dispatch(notify(result.rawLog, "error"));

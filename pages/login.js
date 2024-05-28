@@ -24,6 +24,8 @@ Wizard Steps
 function Login(props) {
   const { query, push } = useRouter();
   const [step, setStep] = useState(Number(query.step) || 1);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, rpcUrl } =
+    useApiClient();
 
   useEffect(() => {
     setStep(Number(query.step) || 1);
@@ -89,7 +91,12 @@ function Login(props) {
                   onClick={async (e) => {
                     await initKeplr();
                     const { apiClient } = useApiClient();
-                    const acc = await props.unlockKeplrWallet(apiClient);
+                    const acc = await props.unlockKeplrWallet(
+                      apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient,
+                      rpcUrl
+                    );
                     if (acc) {
                       push("/home");
                     }

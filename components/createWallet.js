@@ -38,7 +38,7 @@ function CreateWallet(props) {
   });
   const [walletCreated, setWalletCreated] = useState(false);
   const router = useRouter();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, rpcUrl } =
     useApiClient();
 
   const hideHints = () => {
@@ -119,6 +119,7 @@ function CreateWallet(props) {
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
+        rpcUrl,
         {
           name,
           mnemonic,

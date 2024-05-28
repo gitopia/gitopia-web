@@ -10,6 +10,7 @@ import {
 import axios from "../helpers/axiosFetch";
 import { useRouter } from "next/router";
 import { notify } from "reapop";
+import { useApiClient } from "../context/ApiClientContext";
 
 function ConnectLedger(props) {
   const [name, setName] = useState("untitled-ledger-1");
@@ -27,6 +28,8 @@ function ConnectLedger(props) {
   const [addressVerified, setAddressVerified] = useState(false);
   const [verifyError, setVerifyError] = useState(null);
   const [walletCreated, setWalletCreated] = useState(false);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, rpcUrl } =
+    useApiClient();
 
   const router = useRouter();
   useEffect(() => {
@@ -56,7 +59,15 @@ function ConnectLedger(props) {
         console.log(v);
         if (v.pubkey) {
           setAddressVerified(true);
-          const a = await props.addLedgerWallet(name, s.addr, s.signer);
+          const a = await props.addLedgerWallet(
+            apiClient,
+            cosmosBankApiClient,
+            cosmosFeegrantApiClient,
+            rpcUrl,
+            name,
+            s.addr,
+            s.signer
+          );
           if (a === "USER_CREATED") {
             router.push("/home");
           } else if (a === "WALLET_ADDED") {

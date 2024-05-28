@@ -45,7 +45,6 @@ Menu States
 */
 
 function Header(props) {
-  const [selectedProvider, setSelectedProvider] = useState(null);
   const [menuState, setMenuState] = useState(1);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuOpenProvider, setMenuOpenProvider] = useState(false);
@@ -62,6 +61,13 @@ function Header(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [openDeposit, setOpenDeposit] = useState(false);
   const [openWithdraw, setOpenWithdraw] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const { apiUrl, cosmosBankApiClient, cosmosFeegrantApiClient, rpcUrl } =
+    useApiClient();
+  const [selectedProvider, setSelectedProvider] = useState({
+    apiEndpoint: apiUrl,
+    rpcEndpoint: rpcUrl,
+  });
 
   const onUserMenuClose = () => {
     setMenuOpen(false);
@@ -97,10 +103,6 @@ function Header(props) {
   };
 
   useEffect(() => {
-    refreshProviders();
-  }, []);
-
-  useEffect(() => {
     onUserMenuClose();
     if (props.activeWallet) setMenuState(1);
     else setMenuState(2);
@@ -112,14 +114,19 @@ function Header(props) {
     console.log("Keplr wallet change", props.activeWallet);
     if (props.activeWallet && props.activeWallet.isKeplr) {
       const { apiClient } = useApiClient();
-      await props.unlockKeplrWallet(apiClient);
+      await props.unlockKeplrWallet(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        rpcUrl
+      );
     }
   };
 
   useEffect(() => {
     const updateNetworkName = async () => {
       if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
-        const info = await getNodeInfo(props.apiNode);
+        const info = await getNodeInfo(apiUrl);
         setChainId(info.default_node_info.network);
       }
     };
@@ -277,7 +284,9 @@ function Header(props) {
                       setSelectedProvider={(provider) => {
                         setSelectedProvider(provider);
                         setMenuOpenProvider(false);
+                        setIsLoading(false);
                       }}
+                      setIsLoading={setIsLoading}
                     />
                   </div>
                 )}
@@ -629,7 +638,6 @@ function Header(props) {
 
 const mapStateToProps = (state) => {
   return {
-    apiNode: state.env.apiNode,
     wallets: state.wallet.wallets,
     activeWallet: state.wallet.activeWallet,
     selectedAddress: state.wallet.selectedAddress,

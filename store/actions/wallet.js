@@ -27,6 +27,7 @@ const postWalletUnlocked = async (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  rpcNode,
   accountSigner,
   dispatch,
   getState,
@@ -54,7 +55,7 @@ const postWalletUnlocked = async (
         txClient(
           accountSigner,
           {
-            addr: env.rpcNode, // TODO
+            addr: rpcNode,
             gasPrice: wallet.gasPrice,
           },
           "gitopia"
@@ -88,7 +89,7 @@ const postWalletUnlocked = async (
         txClient(
           accountSigner,
           {
-            addr: env.rpcNode, // TODO
+            addr: rpcNode,
             gasPrice: wallet.gasPrice,
           },
           "gitopia"
@@ -156,6 +157,7 @@ export const unlockKeplrWallet = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  rpcNode,
   secondaryChainId = null
 ) => {
   return async (dispatch, getState) => {
@@ -220,6 +222,7 @@ export const unlockKeplrWallet = (
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
+          rpcNode,
           offlineSigner,
           dispatch,
           getState,
@@ -240,6 +243,7 @@ export const setWallet = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  rpcNode,
   { wallet }
 ) => {
   return async (dispatch, getState) => {
@@ -259,6 +263,7 @@ export const setWallet = (
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
+          rpcNode,
           null,
           dispatch,
           getState
@@ -274,6 +279,7 @@ export const unlockWallet = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  rpcNode,
   { name, password }
 ) => {
   return async (dispatch, getState) => {
@@ -386,6 +392,7 @@ export const unlockWallet = (
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
+          rpcNode,
           accountSigner,
           dispatch,
           getState,
@@ -410,6 +417,7 @@ export const createWalletWithMnemonic = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  rpcNode,
   {
     name = null,
     mnemonic,
@@ -463,6 +471,7 @@ export const createWalletWithMnemonic = (
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
+        rpcNode,
         accountSigner,
         dispatch,
         getState
@@ -694,6 +703,7 @@ export const unlockLedgerWallet = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  rpcNode,
   { name, justUnlock = false }
 ) => {
   return async (dispatch, getState) => {
@@ -805,6 +815,7 @@ export const unlockLedgerWallet = (
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
+          rpcNode,
           accountSigner,
           dispatch,
           getState,
@@ -815,6 +826,7 @@ export const unlockLedgerWallet = (
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
+          rpcNode,
           accountSigner,
           dispatch,
           getState
@@ -946,6 +958,7 @@ export const addLedgerWallet = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  rpcNode,
   name,
   address,
   ledgerSigner
@@ -993,6 +1006,7 @@ export const addLedgerWallet = (
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
+        rpcNode,
         ledgerSigner,
         dispatch,
         getState
@@ -1013,7 +1027,7 @@ export const refreshCurrentDashboard = async (
   getState
 ) => {
   const { wallet } = getState();
-  await getUserDetailsForSelectedAddress()(dispatch, getState);
+  await getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
   const daos = await getUserDaoAll(
     apiClient,
     wallet.activeWallet.accounts[0].address

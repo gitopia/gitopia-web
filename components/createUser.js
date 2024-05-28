@@ -121,7 +121,7 @@ function CreateUser(props) {
         }
       );
       if (res && res.code === 0) {
-        await props.getUserDetailsForSelectedAddress();
+        await props.getUserDetailsForSelectedAddress(apiClient);
         router.push("/home");
       }
     }

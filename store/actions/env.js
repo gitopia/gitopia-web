@@ -6,7 +6,6 @@ import {
   updateUserBalance,
   unlockKeplrWallet,
 } from "./wallet";
-import getNodeInfo from "../../helpers/getNodeInfo";
 
 export const sendTransaction = ({
   message,
@@ -91,7 +90,6 @@ export const signMessage = ({ data = {} }) => {
         signer: wallet.selectedAddress,
         data,
       });
-      const info = await getNodeInfo();
       const res = await env.txClient.sign(
         [msg],
         {

@@ -293,7 +293,6 @@ function WithdrawIbcAsset(props) {
 }
 const mapStateToProps = (state) => {
   return {
-    apiNode: state.env.apiNode,
     selectedAddress: state.wallet.selectedAddress,
     balance: state.wallet.balance,
     activeWallet: state.wallet.activeWallet,
