@@ -40,7 +40,11 @@ function RenameRepository({
       });
       return false;
     }
-    const alreadyAvailable = await isRepositoryNameTaken(name, repoOwner);
+    const alreadyAvailable = await isRepositoryNameTaken(
+      apiClient,
+      name,
+      repoOwner
+    );
     if (alreadyAvailable) {
       setNameHint({
         type: "error",

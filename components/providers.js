@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
 import providers from "../providers.json";
 import { useApiClient } from "../context/ApiClientContext";
 
@@ -16,7 +15,7 @@ const Providers = ({ selectedProvider, setSelectedProvider, setIsLoading }) => {
 
   const chooseProvider = (provider) => {
     setSelectedProvider(provider);
-    updateApiClient(provider.apiEndpoint);
+    updateApiClient(provider.apiEndpoint, provider.rpcEndpoint);
     setIsLoading(false);
   };
 
@@ -36,7 +35,7 @@ const Providers = ({ selectedProvider, setSelectedProvider, setIsLoading }) => {
     if (customProvider.apiEndpoint && customProvider.rpcEndpoint) {
       setProvidersWithCustom(...providersWithCustom, customProvider);
       setSelectedProvider(customProvider);
-      updateApiClient(customProvider.apiEndpoint);
+      updateApiClient(customProvider.apiEndpoint, customProvider.rpcEndpoint);
     }
     setIsLoading(false);
   }, [customProvider]);

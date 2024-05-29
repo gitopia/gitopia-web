@@ -24,7 +24,7 @@ function CurrentWallet(props) {
     message: "",
   });
   const inputEl = useRef();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, rpcUrl } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, apiUrl } =
     useApiClient();
 
   const unlockWallet = async () => {
@@ -40,7 +40,6 @@ function CurrentWallet(props) {
       apiClient,
       cosmosBankApiClient,
       cosmosFeegrantApiClient,
-      rpcUrl,
       {
         name: selectedWallet,
         password,
@@ -78,7 +77,6 @@ function CurrentWallet(props) {
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
-        rpcUrl,
         { name: wallet.name, justUnlock: true }
       );
       setExternalWalletMsg("Please open Cosmos app on your ledger to verify");
@@ -164,7 +162,6 @@ function CurrentWallet(props) {
                       apiClient,
                       cosmosBankApiClient,
                       cosmosFeegrantApiClient,
-                      rpcUrl,
                       {
                         name: selectedWallet,
                       }
@@ -286,13 +283,11 @@ function CurrentWallet(props) {
           <button
             className="btn btn-outline border-grey mb-2 rounded-full px-4 relative justify-start"
             onClick={async () => {
-              await initKeplr();
-              const { apiClient } = useApiClient();
+              await initKeplr(apiUrl);
               props.unlockKeplrWallet(
                 apiClient,
                 cosmosBankApiClient,
-                cosmosFeegrantApiClient,
-                rpcUrl
+                cosmosFeegrantApiClient
               );
             }}
           >

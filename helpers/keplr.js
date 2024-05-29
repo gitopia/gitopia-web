@@ -22,10 +22,10 @@ async function getKeplr() {
   });
 }
 
-export default async function initKeplr() {
+export default async function initKeplr(apiNode) {
   const keplr = await getKeplr();
   if (keplr) {
-    const info = await getNodeInfo(); // TODO
+    const info = await getNodeInfo(apiNode);
 
     if (keplr.experimentalSuggestChain) {
       try {

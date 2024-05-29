@@ -108,6 +108,7 @@ function RepositoryInvokeForkView(props) {
       return false;
     }
     const alreadyAvailable = await isRepositoryNameTaken(
+      apiClient,
       forkRepositoryName,
       ownerId
     );

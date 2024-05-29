@@ -219,7 +219,7 @@ export default function Landing() {
     demoRepoBranch = "master";
 
   const initDemoRepo = async () => {
-    const repo = await getAnyRepository(demoAddress, demoRepoName);
+    const repo = await getAnyRepository(apiClient, demoAddress, demoRepoName);
     let branches = await getAllRepositoryBranch(demoAddress, demoRepoName);
     let tags = await getAllRepositoryTag(demoAddress, demoRepoName);
     let ownerDetails = {};

@@ -18,7 +18,13 @@ export const createUser = (
 ) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(dispatch, getState);
+      await setupTxClients(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState
+      );
       const { env, wallet } = getState();
       const message = await env.txClient.msgCreateUser({
         creator: wallet.selectedAddress,
@@ -185,7 +191,13 @@ export const updateUserBio = (
 ) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(dispatch, getState);
+      await setupTxClients(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState
+      );
       const { env, wallet } = getState();
       const message = await env.txClient.msgUpdateUserBio({
         creator: wallet.selectedAddress,
@@ -212,7 +224,13 @@ export const updateUserAvatar = (
 ) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(dispatch, getState);
+      await setupTxClients(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState
+      );
       const { env, wallet } = getState();
       const message = await env.txClient.msgUpdateUserAvatar({
         creator: wallet.selectedAddress,
@@ -248,7 +266,13 @@ export const updateUserName = (
 ) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(dispatch, getState);
+      await setupTxClients(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState
+      );
       const { env, wallet } = getState();
       const message = await env.txClient.msgUpdateUserName({
         creator: wallet.selectedAddress,
@@ -278,7 +302,13 @@ export const updateUserUsername = (
 ) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(dispatch, getState);
+      await setupTxClients(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState
+      );
       const { env, wallet, user } = getState();
       const message = await env.txClient.msgUpdateUserUsername({
         creator: wallet.selectedAddress,
@@ -430,7 +460,7 @@ const updateWalletsList = async (
 
 // export const updateStorageGrant = (allow) => {
 //   return async (dispatch, getState) => {
-//     await setupTxClients(dispatch, getState);
+//     await setupTxClients(apiClient,cosmosBankApiClient, cosmosFeegrantApiClient, apiNode, rpcNode,dispatch, getState);
 //     const { env, wallet } = getState();
 //     let fn = allow ? env.txClient.msgGrant : env.txClient.msgRevoke;
 //     console.log(fn);
@@ -458,7 +488,13 @@ export const updateAddressGrant = (
 ) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(dispatch, getState);
+      await setupTxClients(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState
+      );
     } catch (e) {
       console.error(e);
       return null;
@@ -533,7 +569,13 @@ export const signMessageForRewards = (code) => {
 export const claimRewards = (cosmosBankApiClient, cosmosFeegrantApiClient) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(dispatch, getState);
+      await setupTxClients(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState
+      );
     } catch (e) {
       console.error(e);
       return null;

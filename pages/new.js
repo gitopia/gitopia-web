@@ -62,7 +62,11 @@ function NewRepository(props) {
       });
       return false;
     }
-    const alreadyAvailable = await isRepositoryNameTaken(name, ownerId);
+    const alreadyAvailable = await isRepositoryNameTaken(
+      apiClient,
+      name,
+      ownerId
+    );
 
     if (alreadyAvailable) {
       setNameHint({

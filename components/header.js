@@ -62,7 +62,7 @@ function Header(props) {
   const [openDeposit, setOpenDeposit] = useState(false);
   const [openWithdraw, setOpenWithdraw] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const { apiUrl, cosmosBankApiClient, cosmosFeegrantApiClient, rpcUrl } =
+  const { apiUrl, rpcUrl, cosmosBankApiClient, cosmosFeegrantApiClient } =
     useApiClient();
   const [selectedProvider, setSelectedProvider] = useState({
     apiEndpoint: apiUrl,
@@ -113,12 +113,10 @@ function Header(props) {
   const kelprWalletChange = async () => {
     console.log("Keplr wallet change", props.activeWallet);
     if (props.activeWallet && props.activeWallet.isKeplr) {
-      const { apiClient } = useApiClient();
       await props.unlockKeplrWallet(
         apiClient,
         cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        rpcUrl
+        cosmosFeegrantApiClient
       );
     }
   };

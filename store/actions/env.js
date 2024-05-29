@@ -69,7 +69,13 @@ export const sendTransaction = ({
 export const signMessage = ({ data = {} }) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(dispatch, getState);
+      await setupTxClients(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState
+      );
     } catch (e) {
       console.error(e);
       return null;
@@ -140,6 +146,8 @@ export const signMessage = ({ data = {} }) => {
 
 export const setupTxClients = async (
   apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
   dispatch,
   getState,
   chainId = null
@@ -149,7 +157,12 @@ export const setupTxClients = async (
   if (wallet.activeWallet) {
     if (!env.txClient || chainId != wallet.activeWallet.counterPartyChain) {
       if (wallet.activeWallet.isKeplr) {
-        await unlockKeplrWallet(apiClient, chainId)(dispatch, getState);
+        await unlockKeplrWallet(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          chainId
+        )(dispatch, getState);
       } else {
         return new Promise((resolve, reject) => {
           dispatch({

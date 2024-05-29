@@ -17,7 +17,13 @@ export const createBounty = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const send = {
           creator: wallet.selectedAddress,
@@ -60,7 +66,13 @@ export const updateBountyExpiry = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const send = {
           creator: wallet.selectedAddress,
@@ -99,7 +111,13 @@ export const closeBounty = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const send = {
           creator: wallet.selectedAddress,
@@ -137,7 +155,13 @@ export const deleteBounty = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const send = {
           creator: wallet.selectedAddress,
@@ -177,7 +201,13 @@ export const linkPullIssuebyIid = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const send = {
           creator: wallet.selectedAddress,
@@ -217,7 +247,13 @@ export const unlinkPullIssuebyIid = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const send = {
           creator: wallet.selectedAddress,

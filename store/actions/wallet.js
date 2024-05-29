@@ -27,7 +27,6 @@ const postWalletUnlocked = async (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
-  rpcNode,
   accountSigner,
   dispatch,
   getState,
@@ -55,7 +54,7 @@ const postWalletUnlocked = async (
         txClient(
           accountSigner,
           {
-            addr: rpcNode,
+            addr: env.rpcNode,
             gasPrice: wallet.gasPrice,
           },
           "gitopia"
@@ -89,7 +88,7 @@ const postWalletUnlocked = async (
         txClient(
           accountSigner,
           {
-            addr: rpcNode,
+            addr: env.rpcNode,
             gasPrice: wallet.gasPrice,
           },
           "gitopia"
@@ -157,13 +156,13 @@ export const unlockKeplrWallet = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
-  rpcNode,
   secondaryChainId = null
 ) => {
   return async (dispatch, getState) => {
     if (window.keplr && window.getOfflineSigner) {
       try {
-        const info = await getNodeInfo();
+        const { env } = getState();
+        const info = await getNodeInfo(env.apiNode);
         const chainId = info.default_node_info.network;
         const offlineSigner = await window.getOfflineSignerAuto(chainId);
         let accountSignerSecondary = null,
@@ -222,7 +221,6 @@ export const unlockKeplrWallet = (
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
-          rpcNode,
           offlineSigner,
           dispatch,
           getState,
@@ -243,7 +241,6 @@ export const setWallet = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
-  rpcNode,
   { wallet }
 ) => {
   return async (dispatch, getState) => {
@@ -263,7 +260,6 @@ export const setWallet = (
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
-          rpcNode,
           null,
           dispatch,
           getState
@@ -279,7 +275,6 @@ export const unlockWallet = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
-  rpcNode,
   { name, password }
 ) => {
   return async (dispatch, getState) => {
@@ -392,7 +387,6 @@ export const unlockWallet = (
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
-          rpcNode,
           accountSigner,
           dispatch,
           getState,
@@ -417,7 +411,6 @@ export const createWalletWithMnemonic = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
-  rpcNode,
   {
     name = null,
     mnemonic,
@@ -471,7 +464,6 @@ export const createWalletWithMnemonic = (
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
-        rpcNode,
         accountSigner,
         dispatch,
         getState
@@ -662,7 +654,13 @@ export const transferToWallet = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const send = {
           fromAddress: fromAddress,
@@ -703,7 +701,6 @@ export const unlockLedgerWallet = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
-  rpcNode,
   { name, justUnlock = false }
 ) => {
   return async (dispatch, getState) => {
@@ -815,7 +812,6 @@ export const unlockLedgerWallet = (
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
-          rpcNode,
           accountSigner,
           dispatch,
           getState,
@@ -826,7 +822,6 @@ export const unlockLedgerWallet = (
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
-          rpcNode,
           accountSigner,
           dispatch,
           getState
@@ -958,7 +953,6 @@ export const addLedgerWallet = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
-  rpcNode,
   name,
   address,
   ledgerSigner
@@ -1006,7 +1000,6 @@ export const addLedgerWallet = (
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
-        rpcNode,
         ledgerSigner,
         dispatch,
         getState
@@ -1055,6 +1048,9 @@ export const ibcWithdraw = (
     if (wallet.activeWallet) {
       try {
         await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
           dispatch,
           getState,
           wallet.activeWallet.counterPartyChain
@@ -1112,6 +1108,9 @@ export const ibcDeposit = (
     if (wallet.activeWallet) {
       try {
         await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
           dispatch,
           getState,
           wallet.activeWallet.counterPartyChain
@@ -1183,7 +1182,14 @@ export const ibcDeposit = (
 
 export const getAddressforChain = (chainId) => {
   return async (dispatch, getState) => {
-    await setupTxClients(dispatch, getState, chainId);
+    await setupTxClients(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      dispatch,
+      getState,
+      chainId
+    );
     const { wallet } = getState();
     if (wallet.activeWallet.isLedger) {
       await closeLedgerTransport()(dispatch, getState);

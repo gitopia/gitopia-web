@@ -1,9 +1,10 @@
 import React, { createContext, useEffect, useState, useContext } from "react";
+import { useDispatch } from "react-redux";
 import { Api } from "@gitopia/gitopia-js/dist/rest";
 import { Api as CosmosBankApi } from "../store/cosmos.bank.v1beta1/module/rest";
 import { Api as CosmosFeegrantApi } from "../store/cosmos.feegrant.v1beta1/rest";
-import providers from "../providers.json";
 import selectProvider from "../helpers/providerSelector";
+import { setConfig } from "../store/actions/env";
 
 const ApiClientContext = createContext();
 
@@ -18,6 +19,7 @@ export const ApiClientProvider = ({ children }) => {
   const [apiUrl, setApiUrl] = useState(null);
   const [rpcUrl, setRpcUrl] = useState(null);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
 
   const updateApiClient = (apiNode, rpcNode) => {
     const newApiClient = new Api({ baseURL: apiNode });
@@ -31,8 +33,13 @@ export const ApiClientProvider = ({ children }) => {
     });
     setCosmosFeegrantApiClient(newCosmosFeegrantApiClient);
 
+    setApiUrl(apiNode);
+    setRpcUrl(rpcNode);
+
     localStorage.setItem("apiUrl", apiNode);
     localStorage.setItem("rpcUrl", rpcNode);
+
+    dispatch(setConfig({ config: { apiNode, rpcNode } }));
   };
 
   useEffect(() => {
@@ -42,25 +49,24 @@ export const ApiClientProvider = ({ children }) => {
     if (cachedApiUrl) {
       setApiUrl(cachedApiUrl);
       setRpcUrl(cachedRpcUrl);
-      updateApiClient(cachedApiUrl);
+      updateApiClient(cachedApiUrl, cachedRpcUrl);
     }
   }, []);
 
   useEffect(() => {
-    if (apiUrl) {
-      const updateBestApiUrl = async () => {
-        const bestApiProvider = await selectProvider();
-        if (bestApiProvider.apiEndpoint !== apiUrl) {
-          updateApiClient(bestApiProvider.apiEndpoint);
-          setRpcUrl(bestApiProvider.rpcEndpoint);
-        }
-        setLoading(false);
-      };
-
-      updateBestApiUrl();
-    } else {
+    const updateBestApiUrl = async () => {
+      const bestApiProvider = await selectProvider();
+      if (bestApiProvider.apiEndpoint !== apiUrl) {
+        updateApiClient(
+          bestApiProvider.apiEndpoint,
+          bestApiProvider.rpcEndpoint
+        );
+        setApiUrl(bestApiProvider.apiEndpoint);
+        setRpcUrl(bestApiProvider.rpcEndpoint);
+      }
       setLoading(false);
-    }
+    };
+    updateBestApiUrl();
   }, [apiUrl]);
 
   return (

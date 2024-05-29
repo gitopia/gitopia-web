@@ -26,7 +26,7 @@ function AutoLogin(props) {
   const [externalWalletMsg, setExternalWalletMsg] = useState(null);
   const inputEl = useRef();
   const okayRef = useRef();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, rpcUrl } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, apiUrl } =
     useApiClient();
 
   useEffect(() => {
@@ -42,12 +42,11 @@ function AutoLogin(props) {
         if (!props.activeWallet) {
           console.log("Last wallet found.. ", lastWallet.name);
           if (lastWallet.isKeplr) {
-            await initKeplr();
+            await initKeplr(apiUrl);
             await props.unlockKeplrWallet(
               apiClient,
               cosmosBankApiClient,
-              cosmosFeegrantApiClient,
-              rpcUrl
+              cosmosFeegrantApiClient
             );
           } else {
             setWalletName(lastWallet.name);
@@ -56,7 +55,6 @@ function AutoLogin(props) {
               apiClient,
               cosmosBankApiClient,
               cosmosFeegrantApiClient,
-              rpcUrl,
               {
                 wallet: lastWallet,
               }
@@ -106,7 +104,6 @@ function AutoLogin(props) {
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
-        rpcUrl,
         {
           name: walletName,
           password: password,
@@ -119,7 +116,6 @@ function AutoLogin(props) {
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
-        rpcUrl,
         { name: walletName }
       );
       if (res?.message) {

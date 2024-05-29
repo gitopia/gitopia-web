@@ -28,7 +28,7 @@ function ConnectLedger(props) {
   const [addressVerified, setAddressVerified] = useState(false);
   const [verifyError, setVerifyError] = useState(null);
   const [walletCreated, setWalletCreated] = useState(false);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, rpcUrl } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
     useApiClient();
 
   const router = useRouter();
@@ -63,7 +63,6 @@ function ConnectLedger(props) {
             apiClient,
             cosmosBankApiClient,
             cosmosFeegrantApiClient,
-            rpcUrl,
             name,
             s.addr,
             s.signer

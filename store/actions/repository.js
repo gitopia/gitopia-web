@@ -6,6 +6,7 @@ import { watchTask } from "./taskQueue";
 
 export const validatePostingEligibility = async (
   apiClient,
+  cosmosBankApiClient,
   cosmosFeegrantApiClient,
   dispatch,
   getState,
@@ -13,7 +14,13 @@ export const validatePostingEligibility = async (
   numberOfTransactions = 1
 ) => {
   try {
-    await setupTxClients(apiClient, dispatch, getState);
+    await setupTxClients(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      dispatch,
+      getState
+    );
   } catch (e) {
     console.log(e.message);
     return false;
@@ -75,6 +82,7 @@ export const createRepository = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -124,6 +132,7 @@ export const deleteRepository = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -171,6 +180,7 @@ export const updateRepositoryDescription = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -230,6 +240,7 @@ export const createIssue = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -304,6 +315,7 @@ export const createComment = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -367,6 +379,7 @@ export const updateComment = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -411,6 +424,7 @@ export const deleteComment = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -452,6 +466,7 @@ export const toggleIssueState = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -497,6 +512,7 @@ export const renameRepository = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -543,6 +559,7 @@ export const changeDefaultBranch = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -589,6 +606,7 @@ export const toggleForcePush = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -634,6 +652,7 @@ export const updateCollaborator = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -682,6 +701,7 @@ export const removeCollaborator = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -732,6 +752,7 @@ export const changeRepositoryOwner = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -779,6 +800,7 @@ export const updateIssueTitle = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -826,6 +848,7 @@ export const updatePullRequestTitle = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -873,6 +896,7 @@ export const updateIssueDescription = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -920,6 +944,7 @@ export const updatePullRequestDescription = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -972,6 +997,7 @@ export const updateIssueAssignees = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1043,6 +1069,7 @@ export const updateIssueLabels = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1112,6 +1139,7 @@ export const createRepositoryLabel = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1168,6 +1196,7 @@ export const updateRepositoryLabel = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1218,6 +1247,7 @@ export const deleteRepositoryLabel = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1292,6 +1322,7 @@ export const forkRepository = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1370,6 +1401,7 @@ export const createPullRequest = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1440,6 +1472,7 @@ export const createRelease = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1489,6 +1522,7 @@ export const deleteRelease = (apiClient, { releaseId }) => {
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1528,6 +1562,7 @@ export const createTag = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1574,6 +1609,7 @@ export const deleteTag = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         cosmosFeegrantApiClient,
         dispatch,
@@ -1618,6 +1654,7 @@ export const deleteBranch = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         cosmosFeegrantApiClient,
         dispatch,
@@ -1666,6 +1703,7 @@ export const updatePullRequestAssignees = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1739,6 +1777,7 @@ export const updatePullRequestReviewers = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1807,6 +1846,7 @@ export const updatePullRequestLabels = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1873,6 +1913,7 @@ export const updatePullRequestState = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1915,6 +1956,7 @@ export const mergePullRequest = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -1965,6 +2007,7 @@ export const toggleRepositoryForking = (apiClient, { repoOwner, repoName }) => {
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -2004,6 +2047,7 @@ export const authorizeGitServer = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,

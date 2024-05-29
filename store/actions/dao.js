@@ -24,6 +24,7 @@ export const createDao = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -120,6 +121,7 @@ export const addMember = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -173,6 +175,7 @@ export const updateMemberRole = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -263,6 +266,7 @@ export const updateDaoAvatar = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -297,6 +301,7 @@ export const updateDaoDescription = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -331,6 +336,7 @@ export const updateDaoLocation = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -365,6 +371,7 @@ export const updateDaoWebsite = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,
@@ -399,6 +406,7 @@ export const renameDao = (
     if (
       !(await validatePostingEligibility(
         apiClient,
+        cosmosBankApiClient,
         cosmosFeegrantApiClient,
         dispatch,
         getState,

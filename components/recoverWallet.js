@@ -33,7 +33,7 @@ function RecoverWallet(props) {
   });
   const [mnemonicValidated, setMnemonicValidated] = useState(false);
   const router = useRouter();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, rpcUrl } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
     useApiClient();
 
   const hideHints = () => {
@@ -119,7 +119,6 @@ function RecoverWallet(props) {
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
-        rpcUrl,
         {
           name,
           mnemonic,

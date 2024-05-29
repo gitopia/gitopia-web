@@ -14,7 +14,13 @@ export const submitGovernanceProposal = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const TextProposal = (
           await import("cosmjs-types/cosmos/gov/v1beta1/gov")
@@ -82,7 +88,13 @@ export const chainUpgradeProposal = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const Any = (await import("cosmjs-types/google/protobuf/any")).Any;
         const { SoftwareUpgradeProposal, Plan } = await import(
@@ -157,7 +169,13 @@ export const communityPoolSpendProposal = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const Any = (await import("cosmjs-types/google/protobuf/any")).Any;
         const CommunityPoolSpendProposal = (
@@ -233,7 +251,13 @@ export const paramChangeProposal = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const Any = (await import("cosmjs-types/google/protobuf/any")).Any;
         const { ParameterChangeProposal, ParamChange } = await import(
@@ -304,7 +328,13 @@ export const proposalDeposit = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const longify = (
           await import("@cosmjs/stargate/build/queryclient/utils")
@@ -367,7 +397,13 @@ export const proposalVote = (
     }
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const longify = (
           await import("@cosmjs/stargate/build/queryclient/utils")
