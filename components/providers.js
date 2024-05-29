@@ -5,9 +5,8 @@ import { useApiClient } from "../context/ApiClientContext";
 const Providers = ({ selectedProvider, setSelectedProvider, setIsLoading }) => {
   const { updateApiClient } = useApiClient();
   const [customProvider, setCustomProvider] = useState({
-    name: "Custom Provider",
-    apiNode: "",
-    rpcNode: "",
+    apiEndpoint: "",
+    rpcEndpoint: "",
   });
   const [showCustomProviderInputs, setShowCustomProviderInputs] =
     useState(false);
@@ -43,22 +42,24 @@ const Providers = ({ selectedProvider, setSelectedProvider, setIsLoading }) => {
   return (
     <div className="flex flex-col p-4">
       <div className="text-sm font-semibold mb-2">API Provider</div>
-      {providersWithCustom.map((provider) => (
+      {providersWithCustom.map((provider, i) => (
         <button
-          key={provider.name}
+          key={i}
           onClick={() => chooseProvider(provider)}
           className={`btn rounded-full px-4 mb-2 relative justify-start ${
-            selectedProvider && selectedProvider.name === provider.name
+            selectedProvider &&
+            selectedProvider.apiEndpoint === provider.apiEndpoint
               ? "btn-primary"
               : "btn-ghost"
           }`}
         >
-          <div className="ml-10 mr-2">
+          <div className="ml-2 mr-2">
             <div className="text-xs text-left whitespace-nowrap">
-              {provider.apiEndpoint}
-              {selectedProvider && selectedProvider.name === provider.name && (
-                <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
-              )}
+              {provider.apiEndpoint.replace(/^https:\/\//, "")}
+              {selectedProvider &&
+                selectedProvider.apiEndpoint === provider.apiEndpoint && (
+                  <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
+                )}
             </div>
           </div>
         </button>
@@ -67,7 +68,7 @@ const Providers = ({ selectedProvider, setSelectedProvider, setIsLoading }) => {
         onClick={toggleCustomProviderInputs}
         className="btn btn-ghost rounded-full px-4 mb-2 relative justify-start"
       >
-        Configure Custom Provider
+        Set Custom Provider
       </button>
       {showCustomProviderInputs && (
         <div className="mt-4">
@@ -93,7 +94,8 @@ const Providers = ({ selectedProvider, setSelectedProvider, setIsLoading }) => {
           <button
             onClick={() => chooseProvider(customProvider)}
             className={`btn rounded-full px-4 mb-2 relative justify-start ${
-              selectedProvider && selectedProvider.name === customProvider.name
+              selectedProvider &&
+              selectedProvider.apiEndpoint === customProvider.apiEndpoint
                 ? "btn-primary"
                 : "btn-ghost"
             }`}

@@ -62,8 +62,13 @@ function Header(props) {
   const [openDeposit, setOpenDeposit] = useState(false);
   const [openWithdraw, setOpenWithdraw] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const { apiUrl, rpcUrl, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const {
+    apiUrl,
+    rpcUrl,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    updateApiClient,
+  } = useApiClient();
   const [selectedProvider, setSelectedProvider] = useState({
     apiEndpoint: apiUrl,
     rpcEndpoint: rpcUrl,
@@ -100,6 +105,7 @@ function Header(props) {
   const refreshProviders = async () => {
     const provider = await selectProvider();
     setSelectedProvider(provider);
+    updateApiClient(provider.apiEndpoint, provider.rpcEndpoint);
   };
 
   useEffect(() => {
