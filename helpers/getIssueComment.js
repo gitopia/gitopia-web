@@ -1,13 +1,11 @@
-import { useApiClient } from "../context/ApiClientContext";
-
 export default async function getIssueComment(
+  apiClient,
   repositoryId,
   issueIid,
   commentIid
 ) {
   if (!repositoryId || !issueIid || !commentIid) return null;
   try {
-    const { apiClient } = useApiClient();
     const res = await apiClient.queryIssueComment(
       repositoryId,
       issueIid,

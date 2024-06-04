@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { renameRepository } from "../../store/actions/repository";
 import isRepositoryNameTaken from "../../helpers/isRepositoryNameTaken";
 import { useApiClient } from "../../context/ApiClientContext";
+import { notify } from "reapop";
 
 function RenameRepository({
   repoId = null,
@@ -70,6 +71,7 @@ function RenameRepository({
         }
       );
       if (res) {
+        props.notify("Repository name changed", "info");
         if (onSuccess) await onSuccess(name.replace(sanitizedNameTest, "-"));
       }
     }
@@ -194,4 +196,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   renameRepository,
+  notify,
 })(RenameRepository);

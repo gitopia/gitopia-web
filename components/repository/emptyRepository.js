@@ -76,6 +76,7 @@ function EmptyRepository(props) {
       );
 
       if (res && res.code === 0) {
+        dispatch(notify("Repository description updated", "info"));
         if (props.refreshRepository) await props.refreshRepository();
         setEditDescription(false);
       } else {

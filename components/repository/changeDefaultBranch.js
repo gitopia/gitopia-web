@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import useRepository from "../../hooks/useRepository";
 import dayjs from "dayjs";
 import { useApiClient } from "../../context/ApiClientContext";
+import { notify } from "reapop";
 
 function ChangeDefaultBranch({ onSuccess, ...props }) {
   const [name, setName] = useState("");
@@ -36,6 +37,7 @@ function ChangeDefaultBranch({ onSuccess, ...props }) {
   useEffect(() => {
     const getRepoBranch = async () => {
       const repoBranch = await getAllRepositoryBranch(
+        apiClient,
         repository.owner.id,
         repository.name
       );
@@ -58,6 +60,7 @@ function ChangeDefaultBranch({ onSuccess, ...props }) {
       }
     );
     if (res) {
+      props.notify("Default branch updated");
       setStartChange(false);
       setName("");
       setEnteredText("");
@@ -270,4 +273,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   changeDefaultBranch,
+  notify,
 })(ChangeDefaultBranch);

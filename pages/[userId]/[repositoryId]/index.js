@@ -368,6 +368,7 @@ function RepositoryView(props) {
       );
 
       if (res && res.code === 0) {
+        props.notify("Repository description updated");
         if (refreshRepository) await refreshRepository();
         setEditDescription(false);
       } else {

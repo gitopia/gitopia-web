@@ -71,6 +71,7 @@ function RepositoryIssueCreateView(props) {
         issue
       );
       if (res && res.code === 0) {
+        props.notify("Issue created", "info");
         router.push(
           "/" +
             repository.owner.id +

@@ -9,6 +9,7 @@ import shrinkAddress from "../helpers/shrinkAddress";
 import Footer from "../components/footer";
 import isRepositoryNameTaken from "../helpers/isRepositoryNameTaken";
 import { useApiClient } from "../context/ApiClientContext";
+import { notify } from "reapop";
 
 function NewRepository(props) {
   const router = useRouter();
@@ -106,6 +107,7 @@ function NewRepository(props) {
         }
       );
       if (res && res.url) {
+        props.notify("Repository created", "info");
         router.push(res.url);
       }
     }
@@ -233,4 +235,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   createRepository,
+  notify,
 })(NewRepository);

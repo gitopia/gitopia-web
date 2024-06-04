@@ -220,8 +220,12 @@ export default function Landing() {
 
   const initDemoRepo = async () => {
     const repo = await getAnyRepository(apiClient, demoAddress, demoRepoName);
-    let branches = await getAllRepositoryBranch(demoAddress, demoRepoName);
-    let tags = await getAllRepositoryTag(demoAddress, demoRepoName);
+    let branches = await getAllRepositoryBranch(
+      apiClient,
+      demoAddress,
+      demoRepoName
+    );
+    let tags = await getAllRepositoryTag(apiClient, demoAddress, demoRepoName);
     let ownerDetails = {};
     if (repo) {
       ownerDetails = await getDao(apiClient, repo.owner.id);

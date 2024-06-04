@@ -25,7 +25,7 @@ export const ApiClientProvider = ({ children }) => {
     const newApiClient = new Api({ baseURL: apiNode });
     setApiClient(newApiClient);
 
-    const newCosmosBankApiClient = new CosmosBankApi({ baseURL: apiNode });
+    const newCosmosBankApiClient = new CosmosBankApi({ baseUrl: apiNode });
     setCosmosBankApiClient(newCosmosBankApiClient);
 
     const newCosmosFeegrantApiClient = new CosmosFeegrantApi({

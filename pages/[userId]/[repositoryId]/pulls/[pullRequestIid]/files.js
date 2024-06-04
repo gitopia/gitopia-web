@@ -23,6 +23,7 @@ import Sticky from "react-stickynode";
 import CommentView from "../../../../../components/repository/commentView";
 import getPullRequestComment from "../../../../../helpers/getPullRequestComment";
 import { useApiClient } from "../../../../../context/ApiClientContext";
+import { notify } from "reapop";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -108,6 +109,7 @@ function RepositoryPullFilesView(props) {
             }
           );
           if (res && res.code === 0) {
+            props.notify("Comment deleted", "info");
             const newAllComments = [...allComments];
             let index = allComments.findIndex((c) => c.id === comment.id);
             if (index > -1) newAllComments.splice(index, 1);
@@ -215,4 +217,5 @@ export default connect(mapStateToProps, {
   deleteComment,
   updateIssueAssignees,
   updateIssueLabels,
+  notify,
 })(RepositoryPullFilesView);

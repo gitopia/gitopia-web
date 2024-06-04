@@ -8,6 +8,7 @@ import {
   updatePullRequestState,
 } from "../../store/actions/repository";
 import { useApiClient } from "../../context/ApiClientContext";
+import { notify } from "reapop";
 
 function CommentEditor({
   commentIid = null,
@@ -65,6 +66,7 @@ function CommentEditor({
         }
       );
       if (res && res.code === 0) {
+        props.notify("Comment created", "info");
         setComment("");
         if (onSuccess) await onSuccess();
       }
@@ -88,6 +90,7 @@ function CommentEditor({
         }
       );
       if (res && res.code === 0) {
+        props.notify("Comment updated", "info");
         setComment("");
         if (onSuccess) await onSuccess(commentIid);
       }
@@ -134,6 +137,9 @@ function CommentEditor({
                     }
                   );
                   if (res && res.code === 0) {
+                    issueState === "OPEN"
+                      ? props.notify("Issue closed", "info")
+                      : props.notify("Issue re-opened", "info");
                     if (onSuccess) {
                       await onSuccess();
                     }
@@ -223,4 +229,5 @@ export default connect(mapStateToProps, {
   updateComment,
   toggleIssueState,
   updatePullRequestState,
+  notify,
 })(CommentEditor);

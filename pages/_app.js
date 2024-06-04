@@ -8,7 +8,6 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
-import Notifications from "../components/notifications";
 // import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import ErrorHandler from "../hooks/errorHandler";
 import { ApiClientProvider } from "../context/ApiClientContext";
@@ -31,7 +30,6 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <ApiClientProvider>
-        <Notifications />
         <ErrorHandler>
           <Component {...pageProps} />
         </ErrorHandler>

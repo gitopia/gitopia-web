@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import find from "lodash/find";
+import { notify } from "reapop";
 
 import getIssue from "../../../../../helpers/getIssue";
 import getIssueComment from "../../../../../helpers/getIssueComment";
@@ -259,6 +260,7 @@ function RepositoryIssueView(props) {
                           userAddress={props.selectedAddress}
                           onUpdate={async (iid) => {
                             const newComment = await getIssueComment(
+                              apiClient,
                               repository.id,
                               issue.iid,
                               iid
@@ -280,6 +282,7 @@ function RepositoryIssueView(props) {
                               }
                             );
                             if (res && res.code === 0) {
+                              props.notify("Comment deleted", "info");
                               const newAllComments = [...allComments];
                               newAllComments.splice(i, 1);
                               setAllComments(newAllComments);
@@ -457,4 +460,5 @@ export default connect(mapStateToProps, {
   deleteComment,
   updateIssueAssignees,
   updateIssueLabels,
+  notify,
 })(RepositoryIssueView);

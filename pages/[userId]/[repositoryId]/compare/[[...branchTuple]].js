@@ -191,8 +191,12 @@ function RepositoryCompareView(props) {
           sourceRepo = r;
         }
         const [branches, tags] = await Promise.all([
-          getAllRepositoryBranch(sourceRepo.owner.id, sourceRepo.name),
-          getAllRepositoryTag(sourceRepo.owner.id, sourceRepo.name),
+          getAllRepositoryBranch(
+            apiClient,
+            sourceRepo.owner.id,
+            sourceRepo.name
+          ),
+          getAllRepositoryTag(apiClient, sourceRepo.owner.id, sourceRepo.name),
         ]);
         if (branches) sourceRepo.branches = branches;
         if (tags) sourceRepo.tags = tags;

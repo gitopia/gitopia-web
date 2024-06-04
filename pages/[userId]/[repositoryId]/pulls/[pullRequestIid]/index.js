@@ -223,6 +223,7 @@ function RepositoryPullView(props) {
             }
           );
           if (res && res.code === 0) {
+            props.notify("Comment deleted", "info");
             const newAllComments = [...allComments];
             let index = allComments.findIndex((c) => c.id === comment.id);
             if (index > -1) newAllComments.splice(index, 1);

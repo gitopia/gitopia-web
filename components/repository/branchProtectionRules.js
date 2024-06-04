@@ -21,7 +21,7 @@ function BranchProtectionRules({
 
   useEffect(() => {
     async function getRepositoryBranch() {
-      const res = await getAllRepositoryBranch(repoOwner, repoName);
+      const res = await getAllRepositoryBranch(apiClient, repoOwner, repoName);
       if (res) {
         setBranches(res);
         let b = res.filter((b) => b.allowForcePush === false);
@@ -33,7 +33,7 @@ function BranchProtectionRules({
 
   function refreshBranches() {
     async function getRepositoryBranch() {
-      const res = await getAllRepositoryBranch(repoOwner, repoName);
+      const res = await getAllRepositoryBranch(apiClient, repoOwner, repoName);
       if (res) {
         setBranches(res);
         let b = res.filter((b) => b.allowForcePush === false);
