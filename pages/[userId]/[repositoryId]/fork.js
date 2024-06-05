@@ -168,6 +168,7 @@ function RepositoryInvokeForkView(props) {
     } else {
       setOwnerId(props.currentDashboard);
     }
+    setForkOnlyOneBranchName(repository?.defaultBranch);
   }, [repository, props.currentDashboard]);
 
   return (
