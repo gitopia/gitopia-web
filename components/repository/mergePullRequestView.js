@@ -67,7 +67,7 @@ function MergePullRequestView({
   const mergePull = async () => {
     setIsMerging(true);
     const user = await getPullRequestMergePermission(
-      apiClent,
+      apiClient,
       props.selectedAddress,
       repositoryId,
       pullRequest.iid

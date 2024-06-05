@@ -33,11 +33,16 @@ function DaoProposalDetails({ id, ...props }) {
   const amountRef = useRef(null);
   var localizedFormat = require("dayjs/plugin/localizedFormat");
   dayjs.extend(localizedFormat);
-  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
+  const {
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    cosmosGovApiClient,
+    apiUrl,
+  } = useApiClient();
 
   const refreshProposal = async () => {
     if (id !== undefined) {
-      await getProposal(id).then((res) => {
+      await getProposal(apiUrl, cosmosGovApiClient, id).then((res) => {
         if (res !== undefined) {
           setProposal(res.msg);
           setProposer(res.proposer);
@@ -51,7 +56,7 @@ function DaoProposalDetails({ id, ...props }) {
 
   const refreshTally = async () => {
     if (id !== undefined) {
-      await getTally(id).then((res) => {
+      await getTally(apiUrl, id).then((res) => {
         if (res === {}) {
           setTally({
             yes: 0,
@@ -67,7 +72,7 @@ function DaoProposalDetails({ id, ...props }) {
 
   const refreshDepositors = async () => {
     if (id !== undefined) {
-      await getDepositor(id).then((res) => {
+      await getDepositor(apiUrl, id).then((res) => {
         if (res !== undefined) {
           setDepositors(res.slice(1, res.length));
         }
@@ -77,7 +82,7 @@ function DaoProposalDetails({ id, ...props }) {
 
   const refreshVoters = async () => {
     if (id !== undefined) {
-      await getVoter(id).then((res) => {
+      await getVoter(apiUrl, id).then((res) => {
         setVoters(res);
       });
     }
@@ -259,7 +264,8 @@ function DaoProposalDetails({ id, ...props }) {
             {typeof proposal.content !== "undefined" ? (
               <div className="mb-3 markdown-body">
                 <ReactMarkdown linkTarget="_blank">
-                  {proposal.content.description}
+                  {proposal.content.description ||
+                    JSON.stringify(proposal.content)}
                 </ReactMarkdown>
               </div>
             ) : (
@@ -781,7 +787,9 @@ function DaoProposalDetails({ id, ...props }) {
               <tbody className="text-type-tertiary">
                 {voters !== undefined
                   ? voters.map((voter, i) => {
-                      let option = voter.body.messages[0].option;
+                      let option =
+                        voter.body.messages[0].option ||
+                        voter.body.messages[0].msgs[0].option; // For handling Exec msg
                       option = option.replace("VOTE_OPTION_", "");
                       option = option.replace(/\_/g, " ");
                       return (

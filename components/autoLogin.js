@@ -26,8 +26,13 @@ function AutoLogin(props) {
   const [externalWalletMsg, setExternalWalletMsg] = useState(null);
   const inputEl = useRef();
   const okayRef = useRef();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, apiUrl } =
-    useApiClient();
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    apiUrl,
+    rpcUrl,
+  } = useApiClient();
 
   useEffect(() => {
     async function setWallet() {
@@ -42,7 +47,7 @@ function AutoLogin(props) {
         if (!props.activeWallet) {
           console.log("Last wallet found.. ", lastWallet.name);
           if (lastWallet.isKeplr) {
-            await initKeplr(apiUrl);
+            await initKeplr(apiUrl, rpcUrl);
             await props.unlockKeplrWallet(
               apiClient,
               cosmosBankApiClient,

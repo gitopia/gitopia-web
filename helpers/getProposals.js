@@ -1,8 +1,6 @@
-import api from "./getProposalApi";
-
-export default async function getProposals() {
+export default async function getProposals(cosmosGovApiClient) {
   try {
-    const res = await api.queryProposals();
+    const res = await cosmosGovApiClient.queryProposals();
     if (res.status === 200) {
       let u = res.data.proposals;
       return u;

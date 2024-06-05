@@ -22,7 +22,7 @@ async function getKeplr() {
   });
 }
 
-export default async function initKeplr(apiNode) {
+export default async function initKeplr(apiNode, rpcNode) {
   const keplr = await getKeplr();
   if (keplr) {
     const info = await getNodeInfo(apiNode);
@@ -41,9 +41,9 @@ export default async function initKeplr(apiNode) {
           // The name of the chain to be displayed to the user.
           chainName: info.application_version.name,
           // RPC endpoint of the chain.
-          rpc: process.env.NEXT_PUBLIC_RPC_URL,
+          rpc: rpcNode,
           // REST endpoint of the chain.
-          rest: process.env.NEXT_PUBLIC_API_URL,
+          rest: apiNode,
           // Staking coin information
           stakeCurrency: {
             // Coin denomination to be displayed to the user.

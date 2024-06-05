@@ -24,8 +24,13 @@ function CurrentWallet(props) {
     message: "",
   });
   const inputEl = useRef();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, apiUrl } =
-    useApiClient();
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    apiUrl,
+    rpcUrl,
+  } = useApiClient();
 
   const unlockWallet = async () => {
     if (password === "") {
@@ -283,7 +288,7 @@ function CurrentWallet(props) {
           <button
             className="btn btn-outline border-grey mb-2 rounded-full px-4 relative justify-start"
             onClick={async () => {
-              await initKeplr(apiUrl);
+              await initKeplr(apiUrl, rpcUrl);
               props.unlockKeplrWallet(
                 apiClient,
                 cosmosBankApiClient,

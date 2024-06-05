@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import getProposals from "../../helpers/getProposals";
 import ProposalItem from "../../components/dashboard/proposalItem";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function DaoProposalList({ dao, ...props }) {
   const router = useRouter();
@@ -12,13 +13,14 @@ function DaoProposalList({ dao, ...props }) {
   //   repositories: [],
   // });
   const [proposals, setProposals] = useState([]);
+  const { cosmosGovApiClient } = useApiClient();
 
   useEffect(() => {
     async function initProposals() {
       if (router.query.userId !== process.env.NEXT_PUBLIC_GITOPIA_ADDRESS) {
         router.push("/" + router.query.userId);
       }
-      const p = await getProposals();
+      const p = await getProposals(cosmosGovApiClient);
       setProposals(p);
     }
     initProposals();

@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { Api } from "@gitopia/gitopia-js/dist/rest";
 import { Api as CosmosBankApi } from "../store/cosmos.bank.v1beta1/module/rest";
 import { Api as CosmosFeegrantApi } from "../store/cosmos.feegrant.v1beta1/rest";
+import { Api as CosmosGovApi } from "../store/cosmos.gov.v1beta1/module/rest";
 import selectProvider from "../helpers/providerSelector";
 import { setConfig } from "../store/actions/env";
 
@@ -16,6 +17,7 @@ export const ApiClientProvider = ({ children }) => {
   const [apiClient, setApiClient] = useState(null);
   const [cosmosBankApiClient, setCosmosBankApiClient] = useState(null);
   const [cosmosFeegrantApiClient, setCosmosFeegrantApiClient] = useState(null);
+  const [cosmosGovApiClient, setCosmosGovApiClient] = useState(null);
   const [apiUrl, setApiUrl] = useState(null);
   const [rpcUrl, setRpcUrl] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,6 +34,9 @@ export const ApiClientProvider = ({ children }) => {
       baseURL: apiNode,
     });
     setCosmosFeegrantApiClient(newCosmosFeegrantApiClient);
+
+    const newCosmosGovApiClient = new CosmosGovApi({ baseUrl: apiNode });
+    setCosmosGovApiClient(newCosmosGovApiClient);
 
     setApiUrl(apiNode);
     setRpcUrl(rpcNode);
@@ -77,6 +82,7 @@ export const ApiClientProvider = ({ children }) => {
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
+        cosmosGovApiClient,
         updateApiClient,
       }}
     >
