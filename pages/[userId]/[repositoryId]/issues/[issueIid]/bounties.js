@@ -140,7 +140,7 @@ function RepositoryBountiesView(props) {
     refreshIssue();
     const array = [];
     for (var i = 0; i < issue.bounties.length; i++) {
-      const res = await getBounty(issue.bounties[i]);
+      const res = await getBounty(apiClient, issue.bounties[i]);
       const bounty = await updateDenomName(res);
       array.push(bounty);
     }
@@ -392,6 +392,7 @@ function RepositoryBountiesView(props) {
                               onClick={() => {
                                 props
                                   .closeBounty(
+                                    apiClient,
                                     cosmosBankApiClient,
                                     cosmosFeegrantApiClient,
                                     b.id

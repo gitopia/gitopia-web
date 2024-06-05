@@ -65,6 +65,7 @@ function Header(props) {
   const {
     apiUrl,
     rpcUrl,
+    apiClient,
     cosmosBankApiClient,
     cosmosFeegrantApiClient,
     updateApiClient,

@@ -57,6 +57,7 @@ export const createBounty = (
 };
 
 export const updateBountyExpiry = (
+  apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
   id,
@@ -103,6 +104,7 @@ export const updateBountyExpiry = (
 };
 
 export const closeBounty = (
+  apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
   id
@@ -147,6 +149,7 @@ export const closeBounty = (
 };
 
 export const deleteBounty = (
+  apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
   id
@@ -191,6 +194,7 @@ export const deleteBounty = (
 };
 
 export const linkPullIssuebyIid = (
+  apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
   repositoryId,
@@ -237,6 +241,7 @@ export const linkPullIssuebyIid = (
 };
 
 export const unlinkPullIssuebyIid = (
+  apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
   repositoryId,

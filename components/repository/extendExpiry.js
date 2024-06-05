@@ -6,7 +6,8 @@ import { useApiClient } from "../../context/ApiClientContext";
 
 function ExtendExpiry(props) {
   const ref1 = useRef("dd/mm/yyyy");
-  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   return (
     <div>
@@ -52,6 +53,7 @@ function ExtendExpiry(props) {
               onClick={() => {
                 props
                   .updateBountyExpiry(
+                    apiClient,
                     cosmosBankApiClient,
                     cosmosFeegrantApiClient,
                     props.bountyId,
