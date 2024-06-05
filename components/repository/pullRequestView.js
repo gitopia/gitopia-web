@@ -27,8 +27,8 @@ function IssuePullRequestView(props) {
           props.pullRequests[i].iid
         );
         if (res) {
-          baseRepo = await getRepositoryById(res.base.repositoryId);
-          headRepo = await getRepositoryById(res.head.repositoryId);
+          baseRepo = await getRepositoryById(apiClient, res.base.repositoryId);
+          headRepo = await getRepositoryById(apiClient, res.head.repositoryId);
           res.baseRepo = baseRepo;
           res.headRepo = headRepo;
           array.push(res);
