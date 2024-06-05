@@ -16,7 +16,7 @@ function IssueBountyView(props) {
   const [bounties, setBounties] = useState([]);
   const [coins, setCoins] = useState([]);
   const [isHovering, setIsHovering] = useState(false);
-  const { apiClient } = useApiClient();
+  const { apiClient, ibcAppTransferApiClient } = useApiClient();
 
   useEffect(() => {
     async function fetchBountyArray() {
@@ -30,7 +30,10 @@ function IssueBountyView(props) {
           res.expireAt > dayjs().unix()
         ) {
           if (res) {
-            const bountyValueInDollars = await getBountyValueInDollars(res);
+            const bountyValueInDollars = await getBountyValueInDollars(
+              ibcAppTransferApiClient,
+              res
+            );
             res.bountyValueInDollars = bountyValueInDollars;
           }
           for (let i = 0; i < res.amount.length; i++) {
