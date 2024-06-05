@@ -462,6 +462,8 @@ function RepositoryPullView(props) {
 
                     const res = await props.updatePullRequestReviewers(
                       apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient,
                       {
                         repositoryId: repository.id,
                         pullIid: pullRequest.iid,
@@ -517,6 +519,8 @@ function RepositoryPullView(props) {
 
                     const res = await props.updatePullRequestAssignees(
                       apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient,
                       {
                         repositoryId: repository.id,
                         pullIid: pullRequest.iid,
@@ -560,12 +564,17 @@ function RepositoryPullView(props) {
                         )
                     );
 
-                    const res = await props.updatePullRequestLabels(apiClient, {
-                      repositoryId: repository.id,
-                      pullIid: pullRequest.iid,
-                      addedLabels,
-                      removedLabels,
-                    });
+                    const res = await props.updatePullRequestLabels(
+                      apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient,
+                      {
+                        repositoryId: repository.id,
+                        pullIid: pullRequest.iid,
+                        addedLabels,
+                        removedLabels,
+                      }
+                    );
 
                     if (res) refreshPullRequest();
                   }}

@@ -165,12 +165,17 @@ function CommentEditor({
                 disabled={togglingIssue || postingComment}
                 onClick={async () => {
                   setTogglingIssue(true);
-                  const res = await props.updatePullRequestState(apiClient, {
-                    repositoryId: repositoryId,
-                    iid: parentIid,
-                    state: "CLOSED",
-                    commentBody: comment,
-                  });
+                  const res = await props.updatePullRequestState(
+                    apiClient,
+                    cosmosBankApiClient,
+                    cosmosFeegrantApiClient,
+                    {
+                      repositoryId: repositoryId,
+                      iid: parentIid,
+                      state: "CLOSED",
+                      commentBody: comment,
+                    }
+                  );
                   if (res && res.code === 0) {
                     if (onSuccess) {
                       await onSuccess();

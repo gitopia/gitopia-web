@@ -35,7 +35,8 @@ function RepositoryReleasesView(props) {
   const [olderReleases, setOlderReleases] = useState([]);
   const [currentUserEditPermission, setCurrentUserEditPermission] =
     useState(false);
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const getReleases = async () => {
     if (repository) {
@@ -92,9 +93,14 @@ function RepositoryReleasesView(props) {
                 latest={true}
                 showEditControls={currentUserEditPermission}
                 onDelete={async (id) => {
-                  const res = await props.deleteRelease(apiClient, {
-                    releaseId: id,
-                  });
+                  const res = await props.deleteRelease(
+                    apiClient,
+                    cosmosBankApiClient,
+                    cosmosFeegrantApiClient,
+                    {
+                      releaseId: id,
+                    }
+                  );
                   await refreshRepository();
                   return res;
                 }}

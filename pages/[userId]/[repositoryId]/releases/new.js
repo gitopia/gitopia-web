@@ -50,7 +50,8 @@ function RepositoryReleaseNewView(props) {
   const [uploadingAttachment, setUploadingAttachment] = useState({ file: {} });
   const [newTagOptionShown, setNewTagOptionShown] = useState(false);
   const [creatingTag, setCreatingTag] = useState(false);
-  const { apiClient, cosmosFeegrantApiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const validateIssue = () => {
     return true;
@@ -76,7 +77,12 @@ function RepositoryReleaseNewView(props) {
           };
         }),
       };
-      const res = await props.createRelease(apiClient, issue);
+      const res = await props.createRelease(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        issue
+      );
       if (res && res.code === 0) {
         router.push(
           "/" +
@@ -234,6 +240,7 @@ function RepositoryReleaseNewView(props) {
                           setCreatingTag(true);
                           const res = await props.createTag(
                             apiClient,
+                            cosmosBankApiClient,
                             cosmosFeegrantApiClient,
                             {
                               repoOwnerId: repository.owner.id,

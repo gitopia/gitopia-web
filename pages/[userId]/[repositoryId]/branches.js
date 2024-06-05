@@ -33,7 +33,8 @@ function RepositoryBranchesView(props) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [branch, setBranch] = useState("");
-  const { apiClient, cosmosFeegrantApiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function updatePermissions() {
@@ -225,6 +226,7 @@ function RepositoryBranchesView(props) {
                               props
                                 .deleteBranch(
                                   apiClient,
+                                  cosmosBankApiClient,
                                   cosmosFeegrantApiClient,
                                   {
                                     repoOwnerId: repository.owner.id,

@@ -1412,6 +1412,8 @@ export const forkRepository = (
 
 export const createPullRequest = (
   apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
   {
     title,
     description,
@@ -1483,6 +1485,8 @@ export const createPullRequest = (
 
 export const createRelease = (
   apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
   {
     repoOwner = null,
     repoName = null,
@@ -1547,7 +1551,12 @@ export const createRelease = (
   };
 };
 
-export const deleteRelease = (apiClient, { releaseId }) => {
+export const deleteRelease = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { releaseId }
+) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(
@@ -1585,6 +1594,7 @@ export const deleteRelease = (apiClient, { releaseId }) => {
 
 export const createTag = (
   apiClient,
+  cosmosBankApiClient,
   cosmosFeegrantApiClient,
   { repoOwnerId = null, repositoryName = null, name = null, sha = null }
 ) => {
@@ -1632,6 +1642,7 @@ export const createTag = (
 
 export const deleteTag = (
   apiClient,
+  cosmosBankApiClient,
   cosmosFeegrantApiClient,
   { repoOwnerId = null, repositoryName = null, name = null }
 ) => {
@@ -1677,6 +1688,7 @@ export const deleteTag = (
 
 export const deleteBranch = (
   apiClient,
+  cosmosBankApiClient,
   cosmosFeegrantApiClient,
   { repoOwnerId = null, repositoryName = null, name = null }
 ) => {
@@ -1722,6 +1734,8 @@ export const deleteBranch = (
 
 export const updatePullRequestAssignees = (
   apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
   {
     repositoryId = null,
     pullIid = null,
@@ -1796,6 +1810,8 @@ export const updatePullRequestAssignees = (
 
 export const updatePullRequestReviewers = (
   apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
   {
     repositoryId = null,
     pullIid = null,
@@ -1870,6 +1886,8 @@ export const updatePullRequestReviewers = (
 
 export const updatePullRequestLabels = (
   apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
   { repositoryId = null, pullIid = null, addedLabels = [], removedLabels = [] }
 ) => {
   return async (dispatch, getState) => {
@@ -1937,6 +1955,8 @@ export const updatePullRequestLabels = (
 
 export const updatePullRequestState = (
   apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
   { repositoryId = null, iid = null, state, mergeCommitSha, commentBody }
 ) => {
   return async (dispatch, getState) => {
@@ -2039,7 +2059,12 @@ export const mergePullRequest = (
   };
 };
 
-export const toggleRepositoryForking = (apiClient, { repoOwner, repoName }) => {
+export const toggleRepositoryForking = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repoOwner, repoName }
+) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(

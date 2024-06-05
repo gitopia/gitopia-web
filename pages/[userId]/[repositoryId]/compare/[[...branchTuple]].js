@@ -70,7 +70,8 @@ function RepositoryCompareView(props) {
   const [textEntered, setEnteredText] = useState("");
   const [issueList, setIssueList] = useState([]);
   const [issueArray, setIssueArray] = useState([]);
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const setDefaultBranches = (r) => {
     if (r.branches.length) {
@@ -134,7 +135,7 @@ function RepositoryCompareView(props) {
     const r = repository;
     if (r.id) {
       if (r.forks.length) {
-        const pr = r.forks.map((r) => getRepository(r));
+        const pr = r.forks.map((r) => getRepository(apiClient, r));
         const repos = await Promise.all(pr);
         for (let i = 0; i < repos.length; i++) {
           repos[i].owner = await getOwnerDetails(repos[i]);
@@ -626,6 +627,8 @@ function RepositoryCompareView(props) {
                                   setCreatingPull(true);
                                   const res = await props.createPullRequest(
                                     apiClient,
+                                    cosmosBankApiClient,
+                                    cosmosFeegrantApiClient,
                                     {
                                       title,
                                       description,
