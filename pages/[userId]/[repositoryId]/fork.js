@@ -50,14 +50,12 @@ function RepositoryInvokeForkView(props) {
   const [forkRepositoryDescription, setForkRepositoryDescription] = useState(
     repository?.description || ""
   );
-  const [
-    forkRepositoryDescriptionHint,
-    setForkRepositoryDescriptionHint,
-  ] = useState({
-    shown: false,
-    type: "error",
-    message: "",
-  });
+  const [forkRepositoryDescriptionHint, setForkRepositoryDescriptionHint] =
+    useState({
+      shown: false,
+      type: "error",
+      message: "",
+    });
   const [forkOnlyOneBranch, setForkOnlyOneBranch] = useState(true);
   const [forkOnlyOneBranchName, setForkOnlyOneBranchName] = useState(
     repository?.defaultBranch || ""
@@ -155,6 +153,7 @@ function RepositoryInvokeForkView(props) {
     } else {
       setOwnerId(props.currentDashboard);
     }
+    setForkOnlyOneBranchName(repository?.defaultBranch);
   }, [repository, props.currentDashboard]);
 
   return (
