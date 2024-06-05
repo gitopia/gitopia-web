@@ -2,7 +2,35 @@ import { notify } from "reapop";
 import { sendTransaction, setupTxClients } from "./env";
 import { getUserDetailsForSelectedAddress } from "./user";
 import { updateUserBalance } from "./wallet";
-import { watchTask } from "./taskQueue";
+import getTask from "../../helpers/getTask";
+
+async function watchTask(apiClient, taskId) {
+  const TIMEOUT = 15000; // 15 seconds
+  const POLL_INTERVAL = 1000; // 1 second
+
+  const pollTask = async (resolve, reject, startTime) => {
+    try {
+      const res = await getTask(apiClient, taskId);
+      if (
+        res.state === "TASK_STATE_SUCCESS" ||
+        res.state == "TASK_STATE_FAILURE"
+      ) {
+        resolve(res);
+      } else if (Date.now() - startTime >= TIMEOUT) {
+        reject(new Error("Timeout exceeded"));
+      } else {
+        setTimeout(() => pollTask(resolve, reject, startTime), POLL_INTERVAL);
+      }
+    } catch (error) {
+      reject(error);
+    }
+  };
+
+  return new Promise((resolve, reject) => {
+    const startTime = Date.now();
+    pollTask(resolve, reject, startTime);
+  });
+}
 
 export const validatePostingEligibility = async (
   apiClient,
@@ -1309,6 +1337,8 @@ export const isCurrentUserEligibleToUpdate = (repository) => {
 
 export const forkRepository = (
   apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
   {
     ownerId = null,
     repoOwner = null,
@@ -1347,7 +1377,6 @@ export const forkRepository = (
 
     try {
       const message = await env.txClient.msgInvokeForkRepository(repository);
-      dispatch({ type: "START_RECORDING_TASKS" });
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         const log = JSON.parse(result.rawLog);
@@ -1355,17 +1384,18 @@ export const forkRepository = (
           log[0].events[0].attributes[
             log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
           ].value;
-        const res = await watchTask(taskId, "Forking repository " + repoName)(
-          dispatch,
-          getState
-        );
-        console.log("Watch task result", res);
-        if (res.TaskState === "TASK_STATE_SUCCESS") {
-          getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
-          let url = "/" + ownerId + "/" + res.RepositoryName;
-          return { url };
-        } else if (res.TaskState === "TASK_STATE_FAILURE") {
-          dispatch(notify(res.Message, "error"));
+        try {
+          const res = await watchTask(apiClient, taskId);
+          if (res.state === "TASK_STATE_SUCCESS") {
+            getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+            let url = "/" + ownerId + "/" + repository.forkRepositoryName;
+            return { url };
+          } else if (res.state === "TASK_STATE_FAILURE") {
+            dispatch(notify(res.message, "error"));
+            return null;
+          }
+        } catch (e) {
+          dispatch(notify(e.message, "error"));
           return null;
         }
       } else {
@@ -1950,6 +1980,8 @@ export const updatePullRequestState = (
 
 export const mergePullRequest = (
   apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
   { repositoryId, iid, branchName }
 ) => {
   return async (dispatch, getState) => {
@@ -1975,7 +2007,6 @@ export const mergePullRequest = (
 
     try {
       const message = await env.txClient.msgInvokeMergePullRequest(mergePull);
-      dispatch({ type: "START_RECORDING_TASKS" });
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         // return result;
@@ -1984,13 +2015,19 @@ export const mergePullRequest = (
           log[0].events[0].attributes[
             log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
           ].value;
-        const res = await watchTask(taskId, "Merging branch " + branchName)(
-          dispatch,
-          getState
-        );
-        console.log("Watch task result", res);
-        getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
-        return res;
+        try {
+          const res = await watchTask(apiClient, taskId);
+          if (res.state === "TASK_STATE_SUCCESS") {
+            getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+            return res;
+          } else if (res.state === "TASK_STATE_FAILURE") {
+            dispatch(notify(res.message, "error"));
+            return null;
+          }
+        } catch (e) {
+          dispatch(notify(e.message, "error"));
+          return null;
+        }
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;

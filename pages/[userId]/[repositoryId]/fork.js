@@ -137,14 +137,22 @@ function RepositoryInvokeForkView(props) {
     let validate = await validateRepository();
     console.log(validate);
     if (validate) {
-      const res = await props.forkRepository(apiClient, {
-        ownerId,
-        repoOwner: repository.owner.address,
-        repoName: repository.name,
-        repoBranch: forkOnlyOneBranch ? forkOnlyOneBranchName : null,
-        forkRepositoryName: forkRepositoryName.replace(sanitizedNameTest, "-"),
-        forkRepositoryDescription,
-      });
+      const res = await props.forkRepository(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          ownerId,
+          repoOwner: repository.owner.address,
+          repoName: repository.name,
+          repoBranch: forkOnlyOneBranch ? forkOnlyOneBranchName : null,
+          forkRepositoryName: forkRepositoryName.replace(
+            sanitizedNameTest,
+            "-"
+          ),
+          forkRepositoryDescription,
+        }
+      );
       if (res?.url) {
         router.push(res.url);
       }

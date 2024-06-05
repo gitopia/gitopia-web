@@ -82,15 +82,18 @@ function MergePullRequestView({
         setIsMerging(false);
         return;
       }
-      const res = await props.mergePullRequest(apiClient, {
-        repositoryId: repositoryId,
-        iid: pullRequest.iid,
-        branchName: pullRequest.head.branch,
-      });
+      const res = await props.mergePullRequest(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          repositoryId: repositoryId,
+          iid: pullRequest.iid,
+          branchName: pullRequest.head.branch,
+        }
+      );
       if (res) {
-        if (res.TaskState === "TASK_STATE_SUCCESS") refreshPullRequest();
-        else if (res.TaskState === "TASK_STATE_FAILURE")
-          props.notify(res.Message, "error");
+        if (res.state === "TASK_STATE_SUCCESS") refreshPullRequest();
       } else {
         props.notify("Unknown error", "error");
       }
