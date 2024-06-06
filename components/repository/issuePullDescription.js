@@ -147,7 +147,7 @@ function IssuePullDescription({
           </div>
         ) : (
           <div className="">
-            <div className="border border-grey rounded-lg flex-none whitespace-pre-wrap">
+            <div className="border border-grey rounded-lg flex-none">
               <div className="text-xs px-2 rounded-t relative">
                 <div className="absolute right-2 top-1">
                   {issuePullObj.creator === props.selectedAddress ? (
