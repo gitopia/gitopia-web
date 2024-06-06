@@ -79,7 +79,7 @@ export const ApiClientProvider = ({ children }) => {
       setLoading(false);
     };
     updateBestApiUrl();
-  }, [apiUrl]);
+  }, []);
 
   return (
     <ApiClientContext.Provider

@@ -61,7 +61,6 @@ function Header(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [openDeposit, setOpenDeposit] = useState(false);
   const [openWithdraw, setOpenWithdraw] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const {
     apiUrl,
     rpcUrl,
@@ -289,9 +288,7 @@ function Header(props) {
                       setSelectedProvider={(provider) => {
                         setSelectedProvider(provider);
                         setMenuOpenProvider(false);
-                        setIsLoading(false);
                       }}
-                      setIsLoading={setIsLoading}
                     />
                   </div>
                 )}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import providers from "../providers.json";
 import { useApiClient } from "../context/ApiClientContext";
 
-const Providers = ({ selectedProvider, setSelectedProvider, setIsLoading }) => {
+const Providers = ({ selectedProvider, setSelectedProvider }) => {
   const { updateApiClient } = useApiClient();
   const [customProvider, setCustomProvider] = useState({
     apiEndpoint: "",
@@ -15,7 +15,6 @@ const Providers = ({ selectedProvider, setSelectedProvider, setIsLoading }) => {
   const chooseProvider = (provider) => {
     setSelectedProvider(provider);
     updateApiClient(provider.apiEndpoint, provider.rpcEndpoint);
-    setIsLoading(false);
   };
 
   const handleCustomProviderChange = (field, value) => {
@@ -30,13 +29,11 @@ const Providers = ({ selectedProvider, setSelectedProvider, setIsLoading }) => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
     if (customProvider.apiEndpoint && customProvider.rpcEndpoint) {
       setProvidersWithCustom(...providersWithCustom, customProvider);
       setSelectedProvider(customProvider);
       updateApiClient(customProvider.apiEndpoint, customProvider.rpcEndpoint);
     }
-    setIsLoading(false);
   }, [customProvider]);
 
   return (
