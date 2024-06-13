@@ -58,17 +58,13 @@ export const ApiClientProvider = ({ children }) => {
     const cachedApiUrl = localStorage.getItem("apiUrl");
     const cachedRpcUrl = localStorage.getItem("rpcUrl");
 
-    if (cachedApiUrl) {
-      setApiUrl(cachedApiUrl);
-      setRpcUrl(cachedRpcUrl);
-      updateApiClient(cachedApiUrl, cachedRpcUrl);
-    }
-  }, []);
-
-  useEffect(() => {
-    const updateBestApiUrl = async () => {
-      const bestApiProvider = await selectProvider();
-      if (bestApiProvider.apiEndpoint !== apiUrl) {
+    const initializeApiProviders = async () => {
+      if (cachedApiUrl) {
+        setApiUrl(cachedApiUrl);
+        setRpcUrl(cachedRpcUrl);
+        updateApiClient(cachedApiUrl, cachedRpcUrl);
+      } else {
+        const bestApiProvider = await selectProvider();
         updateApiClient(
           bestApiProvider.apiEndpoint,
           bestApiProvider.rpcEndpoint
@@ -78,7 +74,8 @@ export const ApiClientProvider = ({ children }) => {
       }
       setLoading(false);
     };
-    updateBestApiUrl();
+
+    initializeApiProviders();
   }, []);
 
   return (
