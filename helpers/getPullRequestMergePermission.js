@@ -1,12 +1,11 @@
-import api from "./getApi";
-
 export default async function getPullRequestMergePermission(
+  apiClient,
   userAddress,
   repositoryId,
   pullIid
 ) {
   try {
-    const res = await api.queryPullRequestMergePermission(
+    const res = await apiClient.queryPullRequestMergePermission(
       userAddress,
       repositoryId,
       pullIid

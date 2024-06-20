@@ -7,7 +7,6 @@ import { reducer as notificationsReducer } from "reapop";
 import userReducer from "./user";
 import daoReducer from "./dao";
 import userNotificationReducer from "./userNotification";
-import taskQueueReducer from "./taskQueue";
 import ibcAssetsReducer from "./ibcAssets";
 
 const rootReducer = combineReducers({
@@ -19,7 +18,6 @@ const rootReducer = combineReducers({
   notifications: notificationsReducer(),
   dao: daoReducer,
   userNotification: userNotificationReducer,
-  taskQueue: taskQueueReducer,
   ibcAssets: ibcAssetsReducer,
 });
 

@@ -20,6 +20,7 @@ import getPullRequest from "../../../../../helpers/getPullRequest";
 import pullRequestStateClass from "../../../../../helpers/pullRequestStateClass";
 import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
 import getPullRequestCommentAll from "../../../../../helpers/getPullRequestCommentAll";
+import { useApiClient } from "../../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -44,16 +45,18 @@ function RepositoryIssueLinkedPullsView(props) {
     comments: [],
     pullRequests: [],
   });
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function fetchIssue() {
       const [i, c] = await Promise.all([
         getIssue(
+          apiClient,
           router.query.userId,
           router.query.repositoryId,
           router.query.issueIid
         ),
-        getIssueCommentAll(repository.id, router.query.issueIid),
+        getIssueCommentAll(apiClient, repository.id, router.query.issueIid),
       ]);
       if (i) {
         if (c) {
@@ -89,11 +92,12 @@ function RepositoryIssueLinkedPullsView(props) {
   const refreshIssue = async () => {
     const [i, c] = await Promise.all([
       getIssue(
+        apiClient,
         router.query.userId,
         router.query.repositoryId,
         router.query.issueIid
       ),
-      getIssueCommentAll(repository.id, router.query.issueIid),
+      getIssueCommentAll(apiClient, repository.id, router.query.issueIid),
     ]);
     if (i) {
       i.comments = c;

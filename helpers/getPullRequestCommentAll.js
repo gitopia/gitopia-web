@@ -1,12 +1,11 @@
-import api from "./getApi";
-
 export default async function getPullRequestCommentAll(
+  apiClient,
   repositoryId,
   pullRequestIid
 ) {
   if (!repositoryId || !pullRequestIid) return null;
   try {
-    const res = await api.queryPullRequestCommentAll(
+    const res = await apiClient.queryPullRequestCommentAll(
       repositoryId,
       pullRequestIid
     );

@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { notify } from "reapop";
 import getAllRepositoryBranch from "../../helpers/getAllRepositoryBranch";
 import { toggleForcePush } from "../../store/actions/repository";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function BranchProtectionRules({
   repoName = "",
@@ -15,10 +16,12 @@ function BranchProtectionRules({
   const [branch, setBranch] = useState("");
   const [branches, setBranches] = useState([]);
   const [protectedBranches, setProtectedBranches] = useState({});
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function getRepositoryBranch() {
-      const res = await getAllRepositoryBranch(repoOwner, repoName);
+      const res = await getAllRepositoryBranch(apiClient, repoOwner, repoName);
       if (res) {
         setBranches(res);
         let b = res.filter((b) => b.allowForcePush === false);
@@ -30,7 +33,7 @@ function BranchProtectionRules({
 
   function refreshBranches() {
     async function getRepositoryBranch() {
-      const res = await getAllRepositoryBranch(repoOwner, repoName);
+      const res = await getAllRepositoryBranch(apiClient, repoOwner, repoName);
       if (res) {
         setBranches(res);
         let b = res.filter((b) => b.allowForcePush === false);
@@ -114,11 +117,16 @@ function BranchProtectionRules({
                         className={"px-4 ml-auto"}
                         onClick={async () => {
                           props
-                            .toggleForcePush({
-                              repoOwner: repoOwner,
-                              repoName: repoName,
-                              branchName: b.name,
-                            })
+                            .toggleForcePush(
+                              apiClient,
+                              cosmosBankApiClient,
+                              cosmosFeegrantApiClient,
+                              {
+                                repoOwner: repoOwner,
+                                repoName: repoName,
+                                branchName: b.name,
+                              }
+                            )
                             .then(async (res) => {
                               if (res?.code == 0) {
                                 refreshBranches();
@@ -204,11 +212,16 @@ function BranchProtectionRules({
               onClick={async () => {
                 setIsAdding(true);
                 props
-                  .toggleForcePush({
-                    repoOwner: repoOwner,
-                    repoName: repoName,
-                    branchName: branch,
-                  })
+                  .toggleForcePush(
+                    apiClient,
+                    cosmosBankApiClientm,
+                    cosmosFeegrantApiClient,
+                    {
+                      repoOwner: repoOwner,
+                      repoName: repoName,
+                      branchName: branch,
+                    }
+                  )
                   .then(async (res) => {
                     if (res?.code == 0) {
                       if (onSuccess) await onSuccess(branch);

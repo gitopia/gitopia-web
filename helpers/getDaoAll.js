@@ -1,8 +1,9 @@
-import api from "./getApi";
+import { useApiClient } from "../context/ApiClientContext";
 
 export default async function getDaoAll() {
   try {
-    const res = await api.queryDaoAll();
+    const { apiClient } = useApiClient();
+    const res = await apiClient.queryDaoAll();
     if (res.status === 200) {
       let u = res.data.dao;
       return u;

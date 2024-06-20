@@ -6,6 +6,7 @@ import {
   createRepositoryLabel,
   updateRepositoryLabel,
 } from "../../store/actions/repository";
+import { useApiClient } from "../../context/ApiClientContext";
 
 const defaultLabels = [
   {
@@ -66,6 +67,8 @@ function LabelEditor({
   });
   const [isSaving, setIsSaving] = useState(false);
   const shouldShowSuggestions = !isEdit;
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const validateLabel = () => {
     resetHints();
@@ -97,13 +100,18 @@ function LabelEditor({
   const onCreateLabel = async () => {
     setIsSaving(true);
     if (validateLabel()) {
-      const res = await props.createRepositoryLabel({
-        repoOwner,
-        repoName,
-        name,
-        color,
-        description,
-      });
+      const res = await props.createRepositoryLabel(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          repoOwner,
+          repoName,
+          name,
+          color,
+          description,
+        }
+      );
       if (res && res.code === 0) {
         if (onSuccess) await onSuccess({ name, description, color });
         setName(initialLabel.name);
@@ -122,14 +130,19 @@ function LabelEditor({
   const onUpdateLabel = async () => {
     setIsSaving(true);
     if (validateLabel()) {
-      const res = await props.updateRepositoryLabel({
-        repoOwner,
-        repoName,
-        labelId,
-        name,
-        color,
-        description,
-      });
+      const res = await props.updateRepositoryLabel(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          repoOwner,
+          repoName,
+          labelId,
+          name,
+          color,
+          description,
+        }
+      );
       if (res && res.code === 0) {
         if (onSuccess) await onSuccess({ name, description, color });
       } else {

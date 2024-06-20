@@ -1,12 +1,14 @@
-import api from "./getApi";
-
 export default async function getAnyRepository(
+  apiClient,
   usernameOrAddress,
   repositoryName
 ) {
   if (!usernameOrAddress || !repositoryName) return null;
   try {
-    const res = await api.queryAnyRepository(usernameOrAddress, repositoryName);
+    const res = await apiClient.queryAnyRepository(
+      usernameOrAddress,
+      repositoryName
+    );
     if (res.status === 200) {
       return res.data.Repository;
     }

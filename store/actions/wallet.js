@@ -5,7 +5,6 @@ import {
   daoActions,
   ibcAssetsActions,
 } from "./actionTypes";
-import { Api } from "../cosmos.bank.v1beta1/module/rest";
 import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import find from "lodash/find";
 import { notify, dismissNotification } from "reapop";
@@ -25,6 +24,9 @@ import { ChainIdHelper } from "../../helpers/chainIdHelper";
 let ledgerTransport;
 
 const postWalletUnlocked = async (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
   accountSigner,
   dispatch,
   getState,
@@ -57,7 +59,7 @@ const postWalletUnlocked = async (
           },
           "gitopia"
         ),
-        queryClient({ addr: env.apiNode }),
+        apiClient,
         txClient(
           accountSignerSecondary,
           {
@@ -67,7 +69,10 @@ const postWalletUnlocked = async (
           ibcAssets.chainInfo.chain.bech32_prefix
         ),
         queryClient({ addr: restEndPointSecondary }),
-        updateUserBalance()(dispatch, getState),
+        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+          dispatch,
+          getState
+        ),
       ]);
       dispatch({
         type: envActions.SET_CLIENTS,
@@ -88,8 +93,11 @@ const postWalletUnlocked = async (
           },
           "gitopia"
         ),
-        queryClient({ addr: env.apiNode }),
-        updateUserBalance()(dispatch, getState),
+        apiClient,
+        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+          dispatch,
+          getState
+        ),
       ]);
       dispatch({
         type: envActions.SET_CLIENTS,
@@ -103,19 +111,20 @@ const postWalletUnlocked = async (
       wallet.getPasswordPromise.resolve("Unlock success");
     }
   } else {
-    const { Api } = await import("@gitopia/gitopia-js/dist/rest");
-
-    updateUserBalance()(dispatch, getState);
+    updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+      dispatch,
+      getState
+    );
     dispatch({
       type: envActions.SET_CLIENTS,
       payload: {
         txClient: null,
-        queryClient: new Api({ baseURL: env.apiNode }),
+        queryClient: apiClient,
       },
     });
   }
 
-  await refreshCurrentDashboard(dispatch, getState);
+  await refreshCurrentDashboard(apiClient, dispatch, getState);
   const { user } = getState();
   const dashboard = find(
     user.dashboards,
@@ -143,18 +152,24 @@ export const signOut = () => {
   };
 };
 
-export const unlockKeplrWallet = (secondaryChainId = null) => {
+export const unlockKeplrWallet = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  secondaryChainId = null
+) => {
   return async (dispatch, getState) => {
     if (window.keplr && window.getOfflineSigner) {
       try {
-        const info = await getNodeInfo();
+        const { env } = getState();
+        const info = await getNodeInfo(env.apiNode);
         const chainId = info.default_node_info.network;
         const offlineSigner = await window.getOfflineSignerAuto(chainId);
         let accountSignerSecondary = null,
           counterPartyAddress = null;
         const accounts = await offlineSigner.getAccounts();
         const key = await window.keplr.getKey(chainId);
-        let user = await getUser(accounts[0].address);
+        let user = await getUser(apiClient, accounts[0].address);
 
         if (secondaryChainId) {
           let chainInfo, chainAsset, chainIbc;
@@ -203,6 +218,9 @@ export const unlockKeplrWallet = (secondaryChainId = null) => {
           },
         });
         await postWalletUnlocked(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
           offlineSigner,
           dispatch,
           getState,
@@ -219,7 +237,12 @@ export const unlockKeplrWallet = (secondaryChainId = null) => {
   };
 };
 
-export const setWallet = ({ wallet }) => {
+export const setWallet = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { wallet }
+) => {
   return async (dispatch, getState) => {
     dispatch({
       type: walletActions.SET_ACTIVE_WALLET,
@@ -233,7 +256,14 @@ export const setWallet = ({ wallet }) => {
     });
     if (wallet.accounts.length > 0) {
       try {
-        await postWalletUnlocked(null, dispatch, getState);
+        await postWalletUnlocked(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          null,
+          dispatch,
+          getState
+        );
       } catch (e) {
         console.error(e);
       }
@@ -241,7 +271,12 @@ export const setWallet = ({ wallet }) => {
   };
 };
 
-export const unlockWallet = ({ name, password }) => {
+export const unlockWallet = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { name, password }
+) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
     let accountSignerSecondary;
@@ -309,7 +344,7 @@ export const unlockWallet = ({ name, password }) => {
       }
 
       // Check if user exists, rename the old wallet to correct username
-      let user = await getUser(wallet.accounts[0].address),
+      let user = await getUser(apiClient, wallet.accounts[0].address),
         oldWalletName,
         oldWalletIndex = state.wallets.findIndex((x) => x.name === name);
 
@@ -349,6 +384,9 @@ export const unlockWallet = ({ name, password }) => {
 
       try {
         await postWalletUnlocked(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
           accountSigner,
           dispatch,
           getState,
@@ -369,13 +407,18 @@ export const removeWallet = ({ name }) => {
   };
 };
 
-export const createWalletWithMnemonic = ({
-  name = null,
-  mnemonic,
-  HDpath = "m/44'/118'/0'/0/",
-  prefix = "gitopia",
-  password = null,
-}) => {
+export const createWalletWithMnemonic = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  {
+    name = null,
+    mnemonic,
+    HDpath = "m/44'/118'/0'/0/",
+    prefix = "gitopia",
+    password = null,
+  }
+) => {
   return async (dispatch, getState) => {
     const wallet = {
       name,
@@ -393,7 +436,7 @@ export const createWalletWithMnemonic = ({
     });
     const [firstAccount] = await accountSigner.getAccounts();
     const account = { address: firstAccount.address, pathIncrement: 0 };
-    const user = await getUser(firstAccount.address);
+    const user = await getUser(apiClient, firstAccount.address);
     let oldWalletName = wallet.name;
     if (user?.username) {
       wallet.name = user.username;
@@ -417,24 +460,34 @@ export const createWalletWithMnemonic = ({
     });
 
     try {
-      await postWalletUnlocked(accountSigner, dispatch, getState);
+      await postWalletUnlocked(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        accountSigner,
+        dispatch,
+        getState
+      );
     } catch (e) {
       console.error(e);
     }
   };
 };
 
-export const updateUserBalance = (showNotification = false) => {
+export const updateUserBalance = (
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  showNotification = false
+) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
-    const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
     try {
-      const res = await api.queryBalance(
+      const res = await cosmosBankApiClient.queryBalance(
         state.selectedAddress,
         process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
       );
       if (Number(res?.data?.balance?.amount) <= 500) {
-        await updateUserAllowance()(dispatch, getState);
+        await updateUserAllowance(cosmosFeegrantApiClient)(dispatch, getState);
       }
       dispatch({
         type: walletActions.UPDATE_BALANCE,
@@ -457,13 +510,19 @@ export const updateUserBalance = (showNotification = false) => {
   };
 };
 
-export const updateUserAllowance = (showNotification = false) => {
+export const updateUserAllowance = (
+  cosmosFeegrantApiClient,
+  showNotification = false
+) => {
   return async (dispatch, getState) => {
     const state = getState().wallet;
     const getAllowance = (await import("../../helpers/getAllowance")).default;
 
     try {
-      const res = await getAllowance(state.selectedAddress);
+      const res = await getAllowance(
+        cosmosFeegrantApiClient,
+        state.selectedAddress
+      );
       let limit = res?.allowance?.spend_limit[0];
       if (limit?.denom === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN) {
         dispatch({
@@ -493,12 +552,11 @@ export const updateUserAllowance = (showNotification = false) => {
   };
 };
 
-export const getBalance = (address) => {
+export const getBalance = (cosmosBankApiClient, address) => {
   return async (dispatch, getState) => {
     if (!address) return null;
-    const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
     try {
-      const res = await api.queryBalance(
+      const res = await cosmosBankApiClient.queryBalance(
         address,
         process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
       );
@@ -585,12 +643,24 @@ export const downloadWallet = (password) => {
   };
 };
 
-export const transferToWallet = (fromAddress, toAddress, amount) => {
+export const transferToWallet = (
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  fromAddress,
+  toAddress,
+  amount
+) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(dispatch, getState);
+        await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          dispatch,
+          getState
+        );
         const { env } = getState();
         const send = {
           fromAddress: fromAddress,
@@ -607,7 +677,10 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
           dispatch,
           getState
         );
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+          dispatch,
+          getState
+        );
         if (result && result.code === 0) {
           dispatch(notify("Transaction Successful", "info"));
           return true;
@@ -624,7 +697,12 @@ export const transferToWallet = (fromAddress, toAddress, amount) => {
   };
 };
 
-export const unlockLedgerWallet = ({ name, justUnlock = false }) => {
+export const unlockLedgerWallet = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { name, justUnlock = false }
+) => {
   return async (dispatch, getState) => {
     // const TransportWebHID = (await import("@ledgerhq/hw-transport-webhid"))
     //   .default;
@@ -674,7 +752,7 @@ export const unlockLedgerWallet = ({ name, justUnlock = false }) => {
 
       // Check if user exists, rename the old wallet to correct username
 
-      let user = await getUser(addr),
+      let user = await getUser(apiClient, addr),
         oldWalletName = newWallet.name,
         oldWalletIndex = wallet.wallets.findIndex(
           (x) => x.name === newWallet.name
@@ -731,13 +809,23 @@ export const unlockLedgerWallet = ({ name, justUnlock = false }) => {
         newWallet.counterPartyAddress = counterPartyAccount.address;
         newWallet.counterPartyChain = chainId;
         await postWalletUnlocked(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
           accountSigner,
           dispatch,
           getState,
           accountSignerSecondary
         );
       } else {
-        await postWalletUnlocked(accountSigner, dispatch, getState);
+        await postWalletUnlocked(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          accountSigner,
+          dispatch,
+          getState
+        );
       }
 
       console.log("justUnlock", justUnlock);
@@ -861,7 +949,14 @@ export const showLedgerAddress = (ledgerSigner) => {
   };
 };
 
-export const addLedgerWallet = (name, address, ledgerSigner) => {
+export const addLedgerWallet = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  name,
+  address,
+  ledgerSigner
+) => {
   return async (dispatch, getState) => {
     if (!ledgerSigner) return { message: "No connection available" };
     const stringToPath = (await import("@cosmjs/crypto")).stringToPath;
@@ -869,7 +964,7 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
 
     try {
       const path = stringToPath("m/44'/118'/0'/0/0");
-      const user = await getUser(address);
+      const user = await getUser(apiClient, address);
       const wallet = {
         name: user ? user.username : name,
         accounts: [{ address, path }],
@@ -901,7 +996,14 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
         },
       });
 
-      await postWalletUnlocked(ledgerSigner, dispatch, getState);
+      await postWalletUnlocked(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        ledgerSigner,
+        dispatch,
+        getState
+      );
       await closeLedgerTransport()(dispatch, getState);
 
       return user?.username ? "USER_CREATED" : "WALLET_ADDED";
@@ -912,10 +1014,17 @@ export const addLedgerWallet = (name, address, ledgerSigner) => {
   };
 };
 
-export const refreshCurrentDashboard = async (dispatch, getState) => {
+export const refreshCurrentDashboard = async (
+  apiClient,
+  dispatch,
+  getState
+) => {
   const { wallet } = getState();
-  await getUserDetailsForSelectedAddress()(dispatch, getState);
-  const daos = await getUserDaoAll(wallet.activeWallet.accounts[0].address);
+  await getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+  const daos = await getUserDaoAll(
+    apiClient,
+    wallet.activeWallet.accounts[0].address
+  );
   await dispatch({
     type: userActions.INIT_DASHBOARDS,
     payload: {
@@ -926,12 +1035,22 @@ export const refreshCurrentDashboard = async (dispatch, getState) => {
   });
 };
 
-export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
+export const ibcWithdraw = (
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  sourcePort,
+  sourceChannel,
+  amount,
+  denom
+) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
         await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
           dispatch,
           getState,
           wallet.activeWallet.counterPartyChain
@@ -956,7 +1075,10 @@ export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
         };
         const message = await env.txClient.msgTransfer(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+          dispatch,
+          getState
+        );
         if (result && result.code === 0) {
           return true;
         } else {
@@ -972,13 +1094,23 @@ export const ibcWithdraw = (sourcePort, sourceChannel, amount, denom) => {
   };
 };
 
-export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
+export const ibcDeposit = (
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  sourcePort,
+  sourceChannel,
+  amount,
+  denom
+) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     let notif;
     if (wallet.activeWallet) {
       try {
         await setupTxClients(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
           dispatch,
           getState,
           wallet.activeWallet.counterPartyChain
@@ -1020,7 +1152,10 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
           fee: 1.5,
           memo,
         });
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+          dispatch,
+          getState
+        );
         if (wallet.activeWallet?.isLedger) {
           dispatch(dismissNotification(notif?.payload?.id));
           await closeLedgerTransport()(dispatch, getState);
@@ -1047,7 +1182,14 @@ export const ibcDeposit = (sourcePort, sourceChannel, amount, denom) => {
 
 export const getAddressforChain = (chainId) => {
   return async (dispatch, getState) => {
-    await setupTxClients(dispatch, getState, chainId);
+    await setupTxClients(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      dispatch,
+      getState,
+      chainId
+    );
     const { wallet } = getState();
     if (wallet.activeWallet.isLedger) {
       await closeLedgerTransport()(dispatch, getState);
@@ -1066,17 +1208,4 @@ const getSecondaryGasPrice = (chainInfo) => {
     gas = gasConfig[chain].gasPrice;
   }
   return gas;
-};
-
-export const getTasks = (address) => {
-  return async (dispatch, getState) => {
-    const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
-    try {
-      const res = await api.queryTasks(address);
-      if (res) return res.data.tasks;
-      else console.error(res.error);
-    } catch (e) {
-      console.error("Unable to get tasks", e);
-    }
-  };
 };

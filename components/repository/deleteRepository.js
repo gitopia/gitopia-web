@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { connect } from "react-redux";
 import { deleteRepository } from "../../store/actions/repository";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function DeleteRepository({
   repoName = "",
@@ -11,6 +12,8 @@ function DeleteRepository({
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [typedData, setTypedData] = useState("");
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   return (
     <div className="flex items-center">
@@ -80,10 +83,15 @@ function DeleteRepository({
               onClick={async () => {
                 setIsDeleting(true);
                 props
-                  .deleteRepository({
-                    ownerId: currentOwnerId,
-                    name: repoName,
-                  })
+                  .deleteRepository(
+                    apiClient,
+                    cosmosBankApiClient,
+                    cosmosFeegrantApiClient,
+                    {
+                      ownerId: currentOwnerId,
+                      name: repoName,
+                    }
+                  )
                   .then(async (res) => {
                     if (res.code == 0) {
                       if (onSuccess) await onSuccess;

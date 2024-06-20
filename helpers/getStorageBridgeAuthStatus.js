@@ -1,9 +1,10 @@
-import api from "./getApi";
+import { useApiClient } from "../context/ApiClientContext";
 
 export default async function getStorageBridgeAuthStatus(userAddress) {
   if (!userAddress) return null;
   try {
-    const res = await api.queryCheckStorageProviderAuthorization(
+    const { apiClient } = useApiClient();
+    const res = await apiClient.queryCheckStorageProviderAuthorization(
       userAddress,
       process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS
     );

@@ -37,6 +37,7 @@ import TextInput from "../../../components/textInput";
 import AccountCard from "../../../components/account/card";
 import { useRef } from "react";
 import atob from "../../../helpers/atob";
+import { useApiClient } from "../../../context/ApiClientContext";
 
 export async function getStaticProps({ params }) {
   try {
@@ -232,8 +233,14 @@ function RepositoryView(props) {
   const [currentUserEditPermission, setCurrentUserEditPermission] =
     useState(false);
   const { isMobile } = useWindowSize();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
-  const loadEntities = async (currentEntities = [], firstTime = false, branchSha = null) => {
+  const loadEntities = async (
+    currentEntities = [],
+    firstTime = false,
+    branchSha = null
+  ) => {
     setLoadingEntities(true);
     if (!branchSha) {
       branchSha = getBranchSha(
@@ -349,13 +356,19 @@ function RepositoryView(props) {
     setSavingDescription(true);
     if (validateDescription(newDescription)) {
       console.log(repository);
-      const res = await props.updateRepositoryDescription({
-        name: repository.name,
-        ownerId: repository.owner.id,
-        description: newDescription,
-      });
+      const res = await props.updateRepositoryDescription(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          name: repository.name,
+          ownerId: repository.owner.id,
+          description: newDescription,
+        }
+      );
 
       if (res && res.code === 0) {
+        props.notify("Repository description updated");
         if (refreshRepository) await refreshRepository();
         setEditDescription(false);
       } else {

@@ -12,6 +12,7 @@ import Link from "next/link";
 import getRepository from "../../../helpers/getRepository";
 import shrinkAddress from "../../../helpers/shrinkAddress";
 import useRepository from "../../../hooks/useRepository";
+import { useApiClient } from "../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -28,17 +29,18 @@ function RepositoryInsightsView(props) {
   const { repository } = useRepository();
   const [childRepos, setChildRepos] = useState([]);
   const [parentRepo, setParentRepo] = useState(null);
+  const { apiClient } = useApiClient();
 
   const refreshRepositoryForks = async () => {
     if (repository.id) {
       if (repository.forks.length) {
-        const pr = repository.forks.map((r) => getRepository(r));
+        const pr = repository.forks.map((r) => getRepository(apiClient, r));
         const repos = await Promise.all(pr);
         setChildRepos(repos);
-        console.log("repos", repos);
+        // console.log("repos", repos);
       }
       if (repository.parent !== "0") {
-        const repo = await getRepository(repository.parent);
+        const repo = await getRepository(apiClient, repository.parent);
         if (repo) {
           setParentRepo(repo);
         }

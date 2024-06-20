@@ -2,6 +2,7 @@ import getContent from "../../../../../helpers/getContent";
 import getAnyRepository from "../../../../../helpers/getAnyRepository";
 import getAllRepositoryBranch from "../../../../../helpers/getAllRepositoryBranch";
 import getAllRepositoryTag from "../../../../../helpers/getAllRepositoryTag";
+import { Api } from "@gitopia/gitopia-js/dist/rest";
 
 export default async function handler(req, res) {
   if (!req.query?.path) {
@@ -9,12 +10,17 @@ export default async function handler(req, res) {
     res.status(404).send("Not Found");
     return null;
   }
+
+  const apiClient = new Api({ baseURL: process.env.NEXT_PUBLIC_API_URL });
+
   const repository = await getAnyRepository(
+    apiClient,
     req.query.userId,
     req.query.repositoryId
   );
 
   const branches = await getAllRepositoryBranch(
+    apiClient,
     req.query.userId,
     req.query.repositoryId
   );
@@ -38,6 +44,7 @@ export default async function handler(req, res) {
   }
   if (!found) {
     const tags = await getAllRepositoryTag(
+      apiClient,
       req.query.userId,
       req.query.repositoryId
     );

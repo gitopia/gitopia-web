@@ -1,8 +1,9 @@
-import api from "./getApi";
+import { useApiClient } from "../context/ApiClientContext";
 
 export default async function getRepositoryReleaseLatest(id, repoName) {
   try {
-    const res = await api.queryRepositoryReleaseLatest(id, repoName);
+    const { apiClient } = useApiClient();
+    const res = await apiClient.queryRepositoryReleaseLatest(id, repoName);
     if (res.status === 200) {
       return res.data.Release;
     }

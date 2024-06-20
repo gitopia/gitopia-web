@@ -27,6 +27,7 @@ import getDenomNameByHash from "../../../../../helpers/getDenomNameByHash";
 import { coingeckoId } from "../../../../../ibc-assets-config";
 import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
 import useWindowSize from "../../../../../hooks/useWindowSize";
+import { useApiClient } from "../../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -60,12 +61,14 @@ function RepositoryBountiesView(props) {
   const [closeBountyLoading, setCloseBountyLoading] = useState(false);
   const [bountyAmount, setBountyAmount] = useState([]);
   const { isMobile } = useWindowSize();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function fetchBounty() {
       const array = [];
       for (var i = 0; i < issue.bounties.length; i++) {
-        const res = await getBounty(issue.bounties[i]);
+        const res = await getBounty(apiClient, issue.bounties[i]);
         const bounty = await updateDenomName(res);
         array.push(bounty);
       }
@@ -78,11 +81,12 @@ function RepositoryBountiesView(props) {
     async function fetchIssue() {
       const [i, c] = await Promise.all([
         getIssue(
+          apiClient,
           router.query.userId,
           router.query.repositoryId,
           router.query.issueIid
         ),
-        getIssueCommentAll(repository.id, router.query.issueIid),
+        getIssueCommentAll(apiClient, repository.id, router.query.issueIid),
       ]);
       if (i) {
         i.comments = c;
@@ -119,11 +123,12 @@ function RepositoryBountiesView(props) {
   const refreshIssue = async () => {
     const [i, c] = await Promise.all([
       getIssue(
+        apiClient,
         router.query.userId,
         router.query.repositoryId,
         router.query.issueIid
       ),
-      getIssueCommentAll(repository.id, router.query.issueIid),
+      getIssueCommentAll(apiClient, repository.id, router.query.issueIid),
     ]);
     if (i) {
       i.comments = c;
@@ -135,7 +140,7 @@ function RepositoryBountiesView(props) {
     refreshIssue();
     const array = [];
     for (var i = 0; i < issue.bounties.length; i++) {
-      const res = await getBounty(issue.bounties[i]);
+      const res = await getBounty(apiClient, issue.bounties[i]);
       const bounty = await updateDenomName(res);
       array.push(bounty);
     }
@@ -385,7 +390,14 @@ function RepositoryBountiesView(props) {
                                 (closeBountyLoading ? " loading" : "")
                               }
                               onClick={() => {
-                                props.closeBounty(b.id).then(refreshBounty);
+                                props
+                                  .closeBounty(
+                                    apiClient,
+                                    cosmosBankApiClient,
+                                    cosmosFeegrantApiClient,
+                                    b.id
+                                  )
+                                  .then(refreshBounty);
                               }}
                               data-test="bounty_close_button"
                             >

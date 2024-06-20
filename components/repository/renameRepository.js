@@ -3,6 +3,8 @@ import TextInput from "../textInput";
 import { connect } from "react-redux";
 import { renameRepository } from "../../store/actions/repository";
 import isRepositoryNameTaken from "../../helpers/isRepositoryNameTaken";
+import { useApiClient } from "../../context/ApiClientContext";
+import { notify } from "reapop";
 
 function RenameRepository({
   repoId = null,
@@ -22,6 +24,8 @@ function RenameRepository({
   const [renaming, setRenaming] = useState(false);
   const [startRename, setStartRename] = useState(false);
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     setName(currentName);
@@ -37,7 +41,11 @@ function RenameRepository({
       });
       return false;
     }
-    const alreadyAvailable = await isRepositoryNameTaken(name, repoOwner);
+    const alreadyAvailable = await isRepositoryNameTaken(
+      apiClient,
+      name,
+      repoOwner
+    );
     if (alreadyAvailable) {
       setNameHint({
         type: "error",
@@ -52,12 +60,18 @@ function RenameRepository({
   const changeName = async () => {
     setIsChanging(true);
     if (await validateName()) {
-      const res = await props.renameRepository({
-        repoOwner: repoOwner,
-        repoName: repoName,
-        name: name.replace(sanitizedNameTest, "-"),
-      });
+      const res = await props.renameRepository(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          repoOwner: repoOwner,
+          repoName: repoName,
+          name: name.replace(sanitizedNameTest, "-"),
+        }
+      );
       if (res) {
+        props.notify("Repository name changed", "info");
         if (onSuccess) await onSuccess(name.replace(sanitizedNameTest, "-"));
       }
     }
@@ -182,4 +196,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   renameRepository,
+  notify,
 })(RenameRepository);

@@ -1,9 +1,7 @@
-import api from "./getApi";
-
-export default async function getUserDaoAll(usernameOrAddress) {
+export default async function getUserDaoAll(apiClient, usernameOrAddress) {
   if (!usernameOrAddress) return null;
   try {
-    const res = await api.queryUserDaoAll(usernameOrAddress);
+    const res = await apiClient.queryUserDaoAll(usernameOrAddress);
     if (res.status === 200) {
       return res.data.dao;
     }

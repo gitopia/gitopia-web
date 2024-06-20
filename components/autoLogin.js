@@ -11,6 +11,7 @@ import initKeplr from "../helpers/keplr";
 import TextInput from "./textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { notify } from "reapop";
+import { useApiClient } from "../context/ApiClientContext";
 
 function AutoLogin(props) {
   const [password, setPassword] = useState("");
@@ -25,6 +26,13 @@ function AutoLogin(props) {
   const [externalWalletMsg, setExternalWalletMsg] = useState(null);
   const inputEl = useRef();
   const okayRef = useRef();
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    apiUrl,
+    rpcUrl,
+  } = useApiClient();
 
   useEffect(() => {
     async function setWallet() {
@@ -39,14 +47,23 @@ function AutoLogin(props) {
         if (!props.activeWallet) {
           console.log("Last wallet found.. ", lastWallet.name);
           if (lastWallet.isKeplr) {
-            await initKeplr();
-            await props.unlockKeplrWallet();
+            await initKeplr(apiUrl, rpcUrl);
+            await props.unlockKeplrWallet(
+              apiClient,
+              cosmosBankApiClient,
+              cosmosFeegrantApiClient
+            );
           } else {
             setWalletName(lastWallet.name);
             setAddress(lastWallet.accounts[0].address);
-            let res = await props.setWallet({
-              wallet: lastWallet,
-            });
+            let res = await props.setWallet(
+              apiClient,
+              cosmosBankApiClient,
+              cosmosFeegrantApiClient,
+              {
+                wallet: lastWallet,
+              }
+            );
           }
         } else {
           console.log("Wallet active");
@@ -88,14 +105,24 @@ function AutoLogin(props) {
   const unlockLocalWallet = async () => {
     let res;
     if (props.getPassword === "Unlock" || props.getPassword === "Approve") {
-      res = await props.unlockWallet({
-        name: walletName,
-        password: password,
-      });
+      res = await props.unlockWallet(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          name: walletName,
+          password: password,
+        }
+      );
     } else if (props.getPassword === "Download") {
       res = await props.downloadWallet(password);
     } else if (props.getPassword === "Connect") {
-      res = await props.unlockLedgerWallet({ name: walletName });
+      res = await props.unlockLedgerWallet(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        { name: walletName }
+      );
       if (res?.message) {
         props.notify(res.message, "error");
         if (props.getPasswordPromise.reject) {

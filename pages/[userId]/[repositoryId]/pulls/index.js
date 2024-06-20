@@ -19,6 +19,7 @@ import parseFilters from "../../../../helpers/parseFilters";
 import pullRequestStateClass from "../../../../helpers/pullRequestStateClass";
 import useWindowSize from "../../../../hooks/useWindowSize";
 import getPullRequestCommentAll from "../../../../helpers/getPullRequestCommentAll";
+import { useApiClient } from "../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -42,6 +43,7 @@ function RepositoryPullsView(props) {
     countTotal: true,
   });
   const { isMobile } = useWindowSize();
+  const { apiClient } = useApiClient();
 
   const getAllPulls = async () => {
     if (repository) {
@@ -82,6 +84,7 @@ function RepositoryPullsView(props) {
       }
       console.log(option);
       const data = await getRepositoryPullAll(
+        apiClient,
         repository.owner.id,
         repository.name,
         option,
@@ -95,6 +98,7 @@ function RepositoryPullsView(props) {
         if (data.PullRequest) {
           for (let i = 0; i < data.PullRequest.length; i++) {
             const c = await getPullRequestCommentAll(
+              apiClient,
               repository.id,
               data.PullRequest[i].iid
             );
@@ -339,9 +343,7 @@ function RepositoryPullsView(props) {
                               }}
                               key={"author" + i}
                             >
-                              <a>
-                                {shrinkAddress(c.id)}
-                              </a>
+                              <a>{shrinkAddress(c.id)}</a>
                             </li>
                           );
                         })}
@@ -454,9 +456,7 @@ function RepositoryPullsView(props) {
                               }}
                               key={"assignee" + i}
                             >
-                              <a>
-                                {shrinkAddress(c.id)}
-                              </a>
+                              <a>{shrinkAddress(c.id)}</a>
                             </li>
                           );
                         })}
@@ -525,12 +525,12 @@ function RepositoryPullsView(props) {
                   case "OPEN":
                     message =
                       "opened " + dayjs(i.createdAt * 1000).fromNow() + " by ";
-                    link = <AccountCard id={i.creator} />
+                    link = <AccountCard id={i.creator} />;
                     break;
                   case "MERGED":
                     message =
                       "merged " + dayjs(i.mergedAt * 1000).fromNow() + " by ";
-                    link =  <AccountCard id={i.mergedBy} />
+                    link = <AccountCard id={i.mergedBy} />;
                     break;
 
                   case "CLOSED":

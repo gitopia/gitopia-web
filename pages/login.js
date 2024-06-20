@@ -11,6 +11,7 @@ import initKeplr from "../helpers/keplr";
 import { unlockKeplrWallet } from "../store/actions/wallet";
 import { connect } from "react-redux";
 import FundWallet from "../components/fundWallet";
+import { useApiClient } from "../context/ApiClientContext";
 
 /*
 Wizard Steps
@@ -23,6 +24,13 @@ Wizard Steps
 function Login(props) {
   const { query, push } = useRouter();
   const [step, setStep] = useState(Number(query.step) || 1);
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    apiUrl,
+    rpcUrl,
+  } = useApiClient();
 
   useEffect(() => {
     setStep(Number(query.step) || 1);
@@ -86,8 +94,12 @@ function Login(props) {
                 <button
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
                   onClick={async (e) => {
-                    await initKeplr();
-                    const acc = await props.unlockKeplrWallet();
+                    await initKeplr(apiUrl, rpcUrl);
+                    const acc = await props.unlockKeplrWallet(
+                      apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient
+                    );
                     if (acc) {
                       push("/home");
                     }

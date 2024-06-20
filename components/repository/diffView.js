@@ -11,6 +11,7 @@ import ReactMarkdown from "react-markdown";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import dayjs from "dayjs";
 import { InView } from "react-intersection-observer";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function DiffView({
   stats,
@@ -24,7 +25,7 @@ function DiffView({
   refreshComments,
   onViewTypeChange = () => {},
   showFile = null,
-  getCommentView = () => { },
+  getCommentView = () => {},
   isPullDiff = false,
   ...props
 }) {
@@ -37,6 +38,8 @@ function DiffView({
   const [loading, setLoading] = useState(false);
   const [scrollingToFile, setScrollingToFile] = useState(false);
   const paginationLimit = 10;
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const renderGutter = ({
     side,
@@ -176,16 +179,21 @@ function DiffView({
                     onClick={() => {
                       setLoading(true);
                       props
-                        .createComment({
-                          repositoryId: baseRepoId,
-                          parentIid: parentIid,
-                          parent: "COMMENT_PARENT_PULLREQUEST",
-                          body: comment,
-                          diffHunk: diffHunk.content,
-                          path: filename,
-                          position: position,
-                          commentType: 15,
-                        })
+                        .createComment(
+                          apiClient,
+                          cosmosBankApiClient,
+                          cosmosFeegrantApiClient,
+                          {
+                            repositoryId: baseRepoId,
+                            parentIid: parentIid,
+                            parent: "COMMENT_PARENT_PULLREQUEST",
+                            body: comment,
+                            diffHunk: diffHunk.content,
+                            path: filename,
+                            position: position,
+                            commentType: 15,
+                          }
+                        )
                         .then(() => {
                           setLoading(false);
                           setComment("");

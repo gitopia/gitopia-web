@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import AccountCard from "../account/card";
 import getDaoMember from "../../helpers/getUserDaoMember";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function AccountPeople(props) {
   const [allMembers, setAllMembers] = useState([]);
+  const { apiClient } = useApiClient();
 
   const getAllMembers = async () => {
     if (props.dao.id) {
-      const members = await getDaoMember(props.dao.address);
+      const members = await getDaoMember(apiClient, props.dao.address);
       setAllMembers(members);
     }
   };
