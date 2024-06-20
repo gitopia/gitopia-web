@@ -8,8 +8,10 @@ const Providers = ({ selectedProvider, setSelectedProvider }) => {
     apiEndpoint: "",
     rpcEndpoint: "",
   });
-  const [showCustomProviderInputs, setShowCustomProviderInputs] = useState(false);
+  const [showCustomProviderInputs, setShowCustomProviderInputs] =
+    useState(false);
   const [providersWithCustom, setProvidersWithCustom] = useState(providers);
+  const [validationError, setValidationError] = useState("");
 
   const chooseProvider = (provider) => {
     setSelectedProvider(provider);
@@ -27,11 +29,56 @@ const Providers = ({ selectedProvider, setSelectedProvider }) => {
     setShowCustomProviderInputs((prevState) => !prevState);
   };
 
-  const addCustomProvider = () => {
-    if (customProvider.apiEndpoint && customProvider.rpcEndpoint) {
-      setProvidersWithCustom([...providersWithCustom, customProvider]);
-      chooseProvider(customProvider);
+  const validateUrl = (url) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (e) {
+      return false;
     }
+  };
+
+  const checkApiResponse = async (url) => {
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      return data.code === 12 && data.message === "Not Implemented";
+    } catch (error) {
+      console.error("API validation failed:", error);
+      return false;
+    }
+  };
+
+  const checkRpcResponse = async (url) => {
+    try {
+      const response = await fetch(`${url}/status`);
+      const data = await response.json();
+      return !data.result.sync_info.catching_up;
+    } catch (error) {
+      console.error("RPC validation failed:", error);
+      return false;
+    }
+  };
+
+  const addCustomProvider = async () => {
+    const { apiEndpoint, rpcEndpoint } = customProvider;
+
+    if (!validateUrl(apiEndpoint) || !validateUrl(rpcEndpoint)) {
+      setValidationError("Invalid URL format.");
+      return;
+    }
+
+    const isApiValid = await checkApiResponse(apiEndpoint);
+    const isRpcValid = await checkRpcResponse(rpcEndpoint);
+
+    if (!isApiValid || !isRpcValid) {
+      setValidationError("Failed to validate API or RPC endpoint.");
+      return;
+    }
+
+    setProvidersWithCustom([...providersWithCustom, customProvider]);
+    chooseProvider(customProvider);
+    setValidationError("");
   };
 
   return (
@@ -86,6 +133,9 @@ const Providers = ({ selectedProvider, setSelectedProvider }) => {
             }
             className="input input-bordered w-full mb-2"
           />
+          {validationError && (
+            <div className="text-red-500 text-xs mb-2">{validationError}</div>
+          )}
           <button
             onClick={addCustomProvider}
             className={`btn rounded-full px-4 mb-2 relative justify-start ${
