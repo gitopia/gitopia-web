@@ -32,7 +32,8 @@ function DaoProposalCreate({ dao, ...props }) {
   const [menuState, setMenuState] = useState(1);
   const [counter, setCounter] = useState(1);
   const [initialDeposit, setInitialDeposit] = useState(0);
-  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
   // const [dao, setDao] = useState({
   //   name: "",
   //   repositories: [],
@@ -55,7 +56,7 @@ function DaoProposalCreate({ dao, ...props }) {
 
   const validateUserAddress = async (address) => {
     if (address.trim() !== "" && validAddress.test(address)) {
-      const res = await getUser(address);
+      const res = await getUser(apiClient, address);
       setValidateAddressError(null);
     } else {
       setValidateAddressError("Enter a valid address");

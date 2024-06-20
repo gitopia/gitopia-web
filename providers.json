@@ -1,17 +1,27 @@
 [
   {
-    "name": "polkachu",
-    "apiEndpoint": "https://gitopia-api.polkachu.com",
-    "rpcEndpoint": "https://gitopia-rpc.polkachu.com:443"
+    "name": "Decloud Nodes Lab",
+    "apiEndpoint": "https://gitopia.declab.pro",
+    "rpcEndpoint": "https://gitopia.declab.pro:26625"
   },
   {
-    "name": "Lavender.Five Nodes 🐝",
-    "apiEndpoint": "https://gitopia-api.lavenderfive.com",
-    "rpcEndpoint": "https://gitopia-rpc.lavenderfive.com"
+    "name": "Inter Blockchain Services",
+    "apiEndpoint": "https://gitopia-api.ibs.team",
+    "rpcEndpoint": "https://gitopia-rpc.ibs.team"
   },
   {
     "name": "kjnodes",
     "apiEndpoint": "https://gitopia.api.kjnodes.com",
     "rpcEndpoint": "https://gitopia.rpc.kjnodes.com"
+  },
+  {
+    "name": "Polkachu",
+    "apiEndpoint": "https://gitopia-api.polkachu.com",
+    "rpcEndpoint": "https://gitopia-rpc.polkachu.com"
+  },
+  {
+    "name": "WhisperNode",
+    "apiEndpoint": "https://lcd-gitopia.whispernode.com",
+    "rpcEndpoint": "https://rpc-gitopia.whispernode.com"
   }
 ]
