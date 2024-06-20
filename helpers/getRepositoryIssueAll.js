@@ -1,6 +1,5 @@
-import api from "./getApi";
-
 export default async function getRepositoryIssueAll(
+  apiClient,
   id,
   repoName,
   option,
@@ -15,7 +14,7 @@ export default async function getRepositoryIssueAll(
       query[`pagination.${p}`] = pagination[p];
     }
     console.log(query);
-    const res = await api.queryRepositoryIssueAll(id, repoName, query);
+    const res = await apiClient.queryRepositoryIssueAll(id, repoName, query);
     if (res.status === 200) {
       return res.data;
     }

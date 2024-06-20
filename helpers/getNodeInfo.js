@@ -1,8 +1,8 @@
 import axios from "../helpers/axiosFetch";
-export default async function getNodeInfo() {
+
+export default async function getNodeInfo(apiNode) {
   let networkName = "gitopia";
-  const baseUrl =
-    process.env.NEXT_PUBLIC_API_URL + "/cosmos/base/tendermint/v1beta1/node_info"
+  const baseUrl = apiNode + "/cosmos/base/tendermint/v1beta1/node_info";
   await axios
     .get(baseUrl)
     .then((response) => {

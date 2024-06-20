@@ -1,10 +1,10 @@
 const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 import getAnyRepository from "./getAnyRepository";
 
-const isRepositoryNameTaken = async (name, ownerId) => {
+const isRepositoryNameTaken = async (apiClient, name, ownerId) => {
   let sanitizedName = name.replace(sanitizedNameTest, "-");
 
-  const repo = await getAnyRepository(ownerId, sanitizedName);
+  const repo = await getAnyRepository(apiClient, ownerId, sanitizedName);
   if (repo) {
     return true;
   } else {

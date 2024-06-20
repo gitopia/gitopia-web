@@ -10,6 +10,7 @@ import getUser from "../../helpers/getUser";
 import shrinkAddress from "../../helpers/shrinkAddress";
 import { notify } from "reapop";
 import AccountCard from "../account/card";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function MembersList({ daoId, members = [], refreshDao, ...props }) {
   const [collabAddress, setCollabAddress] = useState("");
@@ -24,6 +25,8 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [startUpdate, setStartUpdate] = useState("");
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const validateMember = async () => {
     setCollabHint({
@@ -45,11 +48,16 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
   const addMember = async () => {
     setIsAdding(true);
     if (await validateMember()) {
-      const res = await props.addMember({
-        daoId: daoId,
-        userId: collabAddress,
-        role: collabRole,
-      });
+      const res = await props.addMember(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          daoId: daoId,
+          userId: collabAddress,
+          role: collabRole,
+        }
+      );
       if (refreshDao) await refreshDao();
       setCollabAddress("");
       setCollabHint({
@@ -63,18 +71,28 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
 
   const removeMember = async (address, index) => {
     setIsRemoving(index);
-    await props.removeMember({ daoId: daoId, userId: address });
+    await props.removeMember(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      { daoId: daoId, userId: address }
+    );
     if (refreshDao) await refreshDao();
     setIsRemoving(false);
   };
 
   const updateCollaborator = async (address, role, index) => {
     setIsUpdating(index);
-    await props.updateMemberRole({
-      daoId: daoId,
-      userId: address,
-      role: role,
-    });
+    await props.updateMemberRole(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      {
+        daoId: daoId,
+        userId: address,
+        role: role,
+      }
+    );
     if (refreshDao) await refreshDao();
     setIsUpdating(false);
   };
@@ -91,8 +109,13 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
       <tbody>
         {members.map((c, i) => (
           <tr key={"member" + i}>
-            <td className="text-sm">              
-              <AccountCard id={c.address} showAvatar={true} avatarSize="xs" dataTest="mem_address" />
+            <td className="text-sm">
+              <AccountCard
+                id={c.address}
+                showAvatar={true}
+                avatarSize="xs"
+                dataTest="mem_address"
+              />
             </td>
             {startUpdate === c.id ? (
               <td style={{ verticalAlign: "top" }}>

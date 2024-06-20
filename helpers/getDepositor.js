@@ -1,9 +1,9 @@
 import axios from "../helpers/axiosFetch";
 
-export default async function getDepositor(id) {
+export default async function getDepositor(apiNode, id) {
   let obj = [];
   const baseUrl =
-    process.env.NEXT_PUBLIC_API_URL +
+    apiNode +
     "/cosmos/tx/v1beta1/txs?events=proposal_deposit.proposal_id=" +
     id;
   await axios

@@ -8,15 +8,29 @@ import { MemberRole } from "@gitopia/gitopia-js/dist/types/gitopia/member";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getDaoMember from "../../helpers/getUserDaoMember";
 
-export const createDao = ({
-  name = null,
-  description = null,
-  avatarUrl = null,
-  location = null,
-  website = null,
-}) => {
+export const createDao = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  {
+    name = null,
+    description = null,
+    avatarUrl = null,
+    location = null,
+    website = null,
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "dao")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "dao"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -33,8 +47,8 @@ export const createDao = ({
       const message = await env.txClient.msgCreateDao(dao);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
-        await getUserDetailsForSelectedAddress()(dispatch, getState);
-        const daos = await getUserDaoAll(wallet.selectedAddress);
+        await getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+        const daos = await getUserDaoAll(apiClient, wallet.selectedAddress);
         dispatch({
           type: userActions.INIT_DASHBOARDS,
           payload: {
@@ -43,7 +57,10 @@ export const createDao = ({
             daos: daos,
           },
         });
-        updateUserBalance()(dispatch, getState);
+        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+          dispatch,
+          getState
+        );
         let newDaoAddress;
         daos.every((d) => {
           if (d.name === name) {
@@ -66,13 +83,13 @@ export const createDao = ({
   };
 };
 
-export const getDaoDetailsForDashboard = () => {
+export const getDaoDetailsForDashboard = (apiClient) => {
   return async (dispatch, getState) => {
     const { env, user } = getState();
     try {
       const [daoRes, members] = await Promise.all([
-        env.queryClient.queryDao(user.currentDashboard),
-        getDaoMember(user.currentDashboard),
+        apiClient.queryDao(user.currentDashboard),
+        getDaoMember(apiClient, user.currentDashboard),
       ]);
       let dao = daoRes.data.dao;
       dispatch({
@@ -94,9 +111,23 @@ export const getDaoDetailsForDashboard = () => {
   };
 };
 
-export const addMember = ({ daoId = null, userId = null, role = null }) => {
+export const addMember = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { daoId = null, userId = null, role = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "collaborator"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     let choice;
@@ -116,7 +147,10 @@ export const addMember = ({ daoId = null, userId = null, role = null }) => {
     try {
       const message = await env.txClient.msgAddMember(collaborator);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -131,13 +165,23 @@ export const addMember = ({ daoId = null, userId = null, role = null }) => {
   };
 };
 
-export const updateMemberRole = ({
-  daoId = null,
-  userId = null,
-  role = null,
-}) => {
+export const updateMemberRole = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { daoId = null, userId = null, role = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "collaborator"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     let choice;
@@ -157,7 +201,10 @@ export const updateMemberRole = ({
     try {
       const message = await env.txClient.msgUpdateMemberRole(collaborator);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -172,7 +219,12 @@ export const updateMemberRole = ({
   };
 };
 
-export const removeMember = ({ daoId = null, userId = null }) => {
+export const removeMember = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { daoId = null, userId = null }
+) => {
   return async (dispatch, getState) => {
     if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
       return null;
@@ -186,7 +238,10 @@ export const removeMember = ({ daoId = null, userId = null }) => {
     try {
       const message = await env.txClient.msgRemoveMember(collaborator);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -201,10 +256,22 @@ export const removeMember = ({ daoId = null, userId = null }) => {
   };
 };
 
-export const updateDaoAvatar = ({ id, url }) => {
+export const updateDaoAvatar = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { id, url }
+) => {
   return async (dispatch, getState) => {
     if (
-      !(await validatePostingEligibility(dispatch, getState, "update avatar"))
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "update avatar"
+      ))
     )
       return null;
     const { env, wallet } = getState();
@@ -214,14 +281,32 @@ export const updateDaoAvatar = ({ id, url }) => {
       url,
     };
     const message = await env.txClient.msgUpdateDaoAvatar(payload);
-    return await handlePostingTransaction(dispatch, getState, message);
+    return await handlePostingTransaction(
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      dispatch,
+      getState,
+      message
+    );
   };
 };
 
-export const updateDaoDescription = ({ id, description }) => {
+export const updateDaoDescription = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { id, description }
+) => {
   return async (dispatch, getState) => {
     if (
-      !(await validatePostingEligibility(dispatch, getState, "update location"))
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "update location"
+      ))
     )
       return null;
     const { env, wallet } = getState();
@@ -231,14 +316,32 @@ export const updateDaoDescription = ({ id, description }) => {
       description,
     };
     const message = await env.txClient.msgUpdateDaoDescription(payload);
-    return await handlePostingTransaction(dispatch, getState, message);
+    return await handlePostingTransaction(
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      dispatch,
+      getState,
+      message
+    );
   };
 };
 
-export const updateDaoLocation = ({ id, location }) => {
+export const updateDaoLocation = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { id, location }
+) => {
   return async (dispatch, getState) => {
     if (
-      !(await validatePostingEligibility(dispatch, getState, "update location"))
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "update location"
+      ))
     )
       return null;
     const { env, wallet } = getState();
@@ -248,14 +351,32 @@ export const updateDaoLocation = ({ id, location }) => {
       location,
     };
     const message = await env.txClient.msgUpdateDaoLocation(payload);
-    return await handlePostingTransaction(dispatch, getState, message);
+    return await handlePostingTransaction(
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      dispatch,
+      getState,
+      message
+    );
   };
 };
 
-export const updateDaoWebsite = ({ id, website }) => {
+export const updateDaoWebsite = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { id, website }
+) => {
   return async (dispatch, getState) => {
     if (
-      !(await validatePostingEligibility(dispatch, getState, "update website"))
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "update website"
+      ))
     )
       return null;
     const { env, wallet } = getState();
@@ -265,13 +386,33 @@ export const updateDaoWebsite = ({ id, website }) => {
       url: website,
     };
     const message = await env.txClient.msgUpdateDaoWebsite(payload);
-    return await handlePostingTransaction(dispatch, getState, message);
+    return await handlePostingTransaction(
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      dispatch,
+      getState,
+      message
+    );
   };
 };
 
-export const renameDao = ({ id, name }) => {
+export const renameDao = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { id, name }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "update name")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "update name"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     const payload = {
@@ -280,7 +421,13 @@ export const renameDao = ({ id, name }) => {
       name,
     };
     const message = await env.txClient.msgRenameDao(payload);
-    return await handlePostingTransaction(dispatch, getState, message);
+    return await handlePostingTransaction(
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      dispatch,
+      getState,
+      message
+    );
   };
 };
 

@@ -34,6 +34,7 @@ import { ApolloProvider } from "@apollo/client";
 import QueryIssues from "../../../../helpers/gql/queryIssuesByTitleGql";
 import client from "../../../../helpers/apolloClient";
 import { notify } from "reapop";
+import { useApiClient } from "../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -69,6 +70,8 @@ function RepositoryCompareView(props) {
   const [textEntered, setEnteredText] = useState("");
   const [issueList, setIssueList] = useState([]);
   const [issueArray, setIssueArray] = useState([]);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const setDefaultBranches = (r) => {
     if (r.branches.length) {
@@ -100,7 +103,7 @@ function RepositoryCompareView(props) {
   const getOwnerDetails = async (repo) => {
     if (repo) {
       if (repo.owner.type === "USER") {
-        let ownerDetails = await getUser(repo.owner.id);
+        let ownerDetails = await getUser(apiClient, repo.owner.id);
         if (ownerDetails)
           return {
             type: repo.owner.type,
@@ -114,7 +117,7 @@ function RepositoryCompareView(props) {
           };
         else return repo.owner;
       } else {
-        let ownerDetails = await getDao(repo.owner.id);
+        let ownerDetails = await getDao(apiClient, repo.owner.id);
         if (ownerDetails)
           return {
             type: repo.owner.type,
@@ -132,7 +135,7 @@ function RepositoryCompareView(props) {
     const r = repository;
     if (r.id) {
       if (r.forks.length) {
-        const pr = r.forks.map((r) => getRepository(r));
+        const pr = r.forks.map((r) => getRepository(apiClient, r));
         const repos = await Promise.all(pr);
         for (let i = 0; i < repos.length; i++) {
           repos[i].owner = await getOwnerDetails(repos[i]);
@@ -173,9 +176,14 @@ function RepositoryCompareView(props) {
         if (reposlug[0].includes("/")) {
           // forked repo name also given
           const ownerslug = reposlug[0].split("/");
-          sourceRepo = await getAnyRepository(ownerslug[0], ownerslug[1]);
+          sourceRepo = await getAnyRepository(
+            apiClient,
+            ownerslug[0],
+            ownerslug[1]
+          );
         } else {
           sourceRepo = await getAnyRepository(
+            apiClient,
             reposlug[0],
             router.query.repositoryId
           );
@@ -184,8 +192,12 @@ function RepositoryCompareView(props) {
           sourceRepo = r;
         }
         const [branches, tags] = await Promise.all([
-          getAllRepositoryBranch(sourceRepo.owner.id, sourceRepo.name),
-          getAllRepositoryTag(sourceRepo.owner.id, sourceRepo.name),
+          getAllRepositoryBranch(
+            apiClient,
+            sourceRepo.owner.id,
+            sourceRepo.name
+          ),
+          getAllRepositoryTag(apiClient, sourceRepo.owner.id, sourceRepo.name),
         ]);
         if (branches) sourceRepo.branches = branches;
         if (tags) sourceRepo.tags = tags;
@@ -613,26 +625,31 @@ function RepositoryCompareView(props) {
                                 }
                                 onClick={async () => {
                                   setCreatingPull(true);
-                                  const res = await props.createPullRequest({
-                                    title,
-                                    description,
-                                    baseRepoOwner:
-                                      compare.target.repository.owner.address,
-                                    baseRepoName:
-                                      compare.target.repository.name,
-                                    baseBranch: compare.target.name,
-                                    headRepoOwner:
-                                      compare.source.repository.owner.address,
-                                    headRepoName:
-                                      compare.source.repository.name,
-                                    headBranch: compare.source.name,
-                                    reviewers: reviewers,
-                                    assignees: assignees,
-                                    labelIds: labels,
-                                    issues: issueArray.map(
-                                      (issue) => issue.iid
-                                    ),
-                                  });
+                                  const res = await props.createPullRequest(
+                                    apiClient,
+                                    cosmosBankApiClient,
+                                    cosmosFeegrantApiClient,
+                                    {
+                                      title,
+                                      description,
+                                      baseRepoOwner:
+                                        compare.target.repository.owner.address,
+                                      baseRepoName:
+                                        compare.target.repository.name,
+                                      baseBranch: compare.target.name,
+                                      headRepoOwner:
+                                        compare.source.repository.owner.address,
+                                      headRepoName:
+                                        compare.source.repository.name,
+                                      headBranch: compare.source.name,
+                                      reviewers: reviewers,
+                                      assignees: assignees,
+                                      labelIds: labels,
+                                      issues: issueArray.map(
+                                        (issue) => issue.iid
+                                      ),
+                                    }
+                                  );
                                   if (res && res.code === 0) {
                                     router.push(
                                       "/" +

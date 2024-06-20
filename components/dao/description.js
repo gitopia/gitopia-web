@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { updateDaoDescription } from "../../store/actions/dao";
 import { notify } from "reapop";
 import TextInput from "../textInput";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function DaoDescription(props = { isEditable: false }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -14,6 +15,8 @@ function DaoDescription(props = { isEditable: false }) {
   });
   const [savingDescription, setSavingDescription] = useState(false);
   const input = useRef();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const validateDescription = (description) => {
     setNewDescriptionHint({
@@ -35,10 +38,15 @@ function DaoDescription(props = { isEditable: false }) {
   const updateDescription = async () => {
     setSavingDescription(true);
     if (validateDescription(newDescription)) {
-      const res = await props.updateDaoDescription({
-        id: props.dao.address,
-        description: newDescription,
-      });
+      const res = await props.updateDaoDescription(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          id: props.dao.address,
+          description: newDescription,
+        }
+      );
 
       if (res && res.code === 0) {
         if (props.refresh) await props.refresh();

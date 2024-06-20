@@ -20,7 +20,7 @@ function ToggleGitServerAuthorization({ address, onSuccess, ...props }) {
   useEffect(() => {
     async function initAddress() {
       setIsToggling(true);
-      setCurrentState(await getGitServerAuthStatus(address));
+      setCurrentState(await getGitServerAuthStatus(apiClient, address));
       setIsToggling(false);
     }
     initAddress();

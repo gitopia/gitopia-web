@@ -4,14 +4,15 @@ import axios from "./axiosFetch";
 import { coingeckoId } from "../ibc-assets-config";
 import { Api } from "../store/cosmos.bank.v1beta1/module/rest";
 import { Api as ibcApi } from "../store/ibc.applications.transfer.v1/module/rest";
-const api = new Api({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
-const ibc = new ibcApi({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
-export default async function getBalanceInDollars(address) {
+
+export default async function getBalanceInDollars(apiNode, address) {
   if (!address) return {};
   try {
     let totalPrice = 0,
       TokenBalances = {},
       USDBalances = {};
+    const api = new Api({ baseUrl: apiNode });
+    const ibc = new ibcApi({ baseUrl: apiNode });
     const res = await api.queryAllBalances(address);
     if (res.status === 200) {
       let balance = res.data.balances;

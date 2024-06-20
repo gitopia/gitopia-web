@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { updateUserName } from "../../store/actions/user";
 import { notify } from "reapop";
 import TextInput from "../textInput";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function UserName(props = { isEditable: false }) {
   const [newName, setNewName] = useState(props.user?.name || "");
@@ -14,6 +15,7 @@ function UserName(props = { isEditable: false }) {
   const [savingName, setSavingName] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const input = useRef();
+  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
 
   useEffect(() => {
     setNewName(props.user?.name || "");
@@ -33,7 +35,11 @@ function UserName(props = { isEditable: false }) {
 
   const updateName = async () => {
     setSavingName(true);
-    const res = await props.updateUserName(newName);
+    const res = await props.updateUserName(
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      newName
+    );
     if (res && res.code === 0) {
       props.notify("Your name is updated", "info");
       if (props.refresh) await props.refresh();

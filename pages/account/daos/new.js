@@ -9,6 +9,7 @@ import TextInput from "../../../components/textInput";
 import Footer from "../../../components/footer";
 import AccountAvatar from "../../../components/account/avatar";
 import getUserDaoAll from "../../../helpers/getUserDaoAll";
+import { useApiClient } from "../../../context/ApiClientContext";
 
 function NewDao(props) {
   const router = useRouter();
@@ -38,6 +39,8 @@ function NewDao(props) {
     message: "",
   });
   const [daoCreating, setDaoCreating] = useState(false);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
@@ -80,7 +83,7 @@ function NewDao(props) {
     }
 
     let alreadyAvailable = false;
-    const daos = await getUserDaoAll(props.selectedAddress);
+    const daos = await getUserDaoAll(apiClient, props.selectedAddress);
     daos?.every((o) => {
       if (o.name === name) {
         alreadyAvailable = true;
@@ -110,13 +113,18 @@ function NewDao(props) {
   const createDao = async () => {
     setDaoCreating(true);
     if (validateDao() && validateWebsite()) {
-      let res = await props.createDao({
-        name: name.replace(sanitizedNameTest, "-"),
-        description,
-        avatarUrl,
-        location,
-        website,
-      });
+      let res = await props.createDao(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          name: name.replace(sanitizedNameTest, "-"),
+          description,
+          avatarUrl,
+          location,
+          website,
+        }
+      );
       if (res && res.url) {
         router.push(res.url);
       }

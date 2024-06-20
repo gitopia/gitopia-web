@@ -11,14 +11,16 @@ import AccountAvatar from "../account/avatar";
 import DaoLocation from "../dao/location";
 import DaoWebsite from "../dao/website";
 import getDaoMember from "../../helpers/getUserDaoMember";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function AccountDaoHeader(props) {
   const [isEditable, setIsEditable] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const { apiClient } = useApiClient();
 
   const refresh = async (updatedDaoName) => {
     await props.refresh(updatedDaoName);
-    await props.getDaoDetailsForDashboard();
+    await props.getDaoDetailsForDashboard(apiClient);
   };
 
   useEffect(() => {

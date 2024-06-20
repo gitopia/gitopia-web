@@ -7,11 +7,13 @@ import debounce from "lodash/debounce";
 import { notify } from "reapop";
 import getRepositoryById from "../../helpers/getRepositoryById";
 import { useRouter } from "next/router";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function IssuePullRequestView(props) {
   const [pulls, setPulls] = useState([]);
   const [isHovering, setIsHovering] = useState({ id: null });
   const router = useRouter();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function fetchPulls() {
@@ -19,13 +21,14 @@ function IssuePullRequestView(props) {
       let baseRepo, headRepo;
       for (var i = 0; i < props.pullRequests.length; i++) {
         const res = await getPullRequest(
+          apiClient,
           props.repoOwner,
           props.repositoryName,
           props.pullRequests[i].iid
         );
         if (res) {
-          baseRepo = await getRepositoryById(res.base.repositoryId);
-          headRepo = await getRepositoryById(res.head.repositoryId);
+          baseRepo = await getRepositoryById(apiClient, res.base.repositoryId);
+          headRepo = await getRepositoryById(apiClient, res.head.repositoryId);
           res.baseRepo = baseRepo;
           res.headRepo = headRepo;
           array.push(res);

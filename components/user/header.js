@@ -7,10 +7,12 @@ import AccountCard from "../account/card";
 import UserBio from "./bio";
 import UserName from "./name";
 import UserUsername from "./username";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function UserHeader(props) {
   const [isEditable, setIsEditable] = useState(false);
   const [daos, setDaos] = useState([]);
+  const { apiClient } = useApiClient();
 
   const refresh = async (updatedUserName) => {
     await props.refresh(updatedUserName);
@@ -18,7 +20,7 @@ function UserHeader(props) {
 
   useEffect(() => {
     async function getDaos() {
-      const daos = await getUserDaoAll(props.user.creator);
+      const daos = await getUserDaoAll(apiClient, props.user.creator);
       setDaos(daos);
     }
     getDaos();
@@ -68,7 +70,11 @@ function UserHeader(props) {
               {daos.map((dao, index) => {
                 return index < 2 ? (
                   <div key={dao.id}>
-                    <AccountCard id={dao.address} showAvatar={true} showId={false} />
+                    <AccountCard
+                      id={dao.address}
+                      showAvatar={true}
+                      showId={false}
+                    />
                   </div>
                 ) : (
                   ""

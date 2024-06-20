@@ -13,6 +13,7 @@ import GitopiaLive from "../helpers/gitopiaLive";
 import getAllRepositoryBranch from "../helpers/getAllRepositoryBranch";
 import getAllRepositoryTag from "../helpers/getAllRepositoryTag";
 import getDao from "../helpers/getDao";
+import { useApiClient } from "../context/ApiClientContext";
 const pCircles = [
   {
     url: "#circle1",
@@ -170,6 +171,8 @@ export default function Landing() {
   const [mobile, setMobile] = useState(false);
   const [isVisible, setVisible] = useState(true);
   const domRef = useRef();
+  const { apiClient } = useApiClient();
+
   useEffect(() => {
     let domRefValue = null;
     const observer = new IntersectionObserver((entries) => {
@@ -216,12 +219,16 @@ export default function Landing() {
     demoRepoBranch = "master";
 
   const initDemoRepo = async () => {
-    const repo = await getAnyRepository(demoAddress, demoRepoName);
-    let branches = await getAllRepositoryBranch(demoAddress, demoRepoName);
-    let tags = await getAllRepositoryTag(demoAddress, demoRepoName);
+    const repo = await getAnyRepository(apiClient, demoAddress, demoRepoName);
+    let branches = await getAllRepositoryBranch(
+      apiClient,
+      demoAddress,
+      demoRepoName
+    );
+    let tags = await getAllRepositoryTag(apiClient, demoAddress, demoRepoName);
     let ownerDetails = {};
     if (repo) {
-      ownerDetails = await getDao(repo.owner.id);
+      ownerDetails = await getDao(apiClient, repo.owner.id);
       setRepository({
         ...repo,
         owner: {

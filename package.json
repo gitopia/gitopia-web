@@ -69,7 +69,6 @@
     "react-tooltip": "^4.2.21",
     "react-virtualized": "^9.22.3",
     "reapop": "^4.0.0",
-    "reconnecting-websocket": "^4.4.0",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.7",

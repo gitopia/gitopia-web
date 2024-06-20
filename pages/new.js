@@ -8,6 +8,8 @@ import TextInput from "../components/textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
 import Footer from "../components/footer";
 import isRepositoryNameTaken from "../helpers/isRepositoryNameTaken";
+import { useApiClient } from "../context/ApiClientContext";
+import { notify } from "reapop";
 
 function NewRepository(props) {
   const router = useRouter();
@@ -28,6 +30,8 @@ function NewRepository(props) {
   const [accountsList, setAccountsList] = useState([
     { value: "", display: "" },
   ]);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
@@ -59,7 +63,11 @@ function NewRepository(props) {
       });
       return false;
     }
-    const alreadyAvailable = await isRepositoryNameTaken(name, ownerId);
+    const alreadyAvailable = await isRepositoryNameTaken(
+      apiClient,
+      name,
+      ownerId
+    );
 
     if (alreadyAvailable) {
       setNameHint({
@@ -88,12 +96,18 @@ function NewRepository(props) {
         description,
         ownerName,
       });
-      let res = await props.createRepository({
-        name: name.replace(sanitizedNameTest, "-"),
-        description,
-        ownerId: ownerName,
-      });
+      let res = await props.createRepository(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          name: name.replace(sanitizedNameTest, "-"),
+          description,
+          ownerId: ownerName,
+        }
+      );
       if (res && res.url) {
+        props.notify("Repository created", "info");
         router.push(res.url);
       }
     }
@@ -221,4 +235,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   createRepository,
+  notify,
 })(NewRepository);

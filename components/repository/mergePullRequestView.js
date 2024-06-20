@@ -11,6 +11,7 @@ import pullRequestStateClass from "../../helpers/pullRequestStateClass";
 import mergePullRequestCheck from "../../helpers/mergePullRequestCheck";
 import getPullRequestMergePermission from "../../helpers/getPullRequestMergePermission";
 import getGitServerAuthorization from "../../helpers/getGitServerAuthStatus";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function MergePullRequestView({
   repositoryId,
@@ -26,6 +27,8 @@ function MergePullRequestView({
   const [pullMergeAccessDialogShown, setPullMergeAccessDialogShown] =
     useState(false);
   const [isGrantingAccess, setIsGrantingAccess] = useState(false);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const checkMerge = async () => {
     if (!props.selectedAddress) {
@@ -64,26 +67,33 @@ function MergePullRequestView({
   const mergePull = async () => {
     setIsMerging(true);
     const user = await getPullRequestMergePermission(
+      apiClient,
       props.selectedAddress,
       repositoryId,
       pullRequest.iid
     );
     if (user && user.havePermission) {
-      let access = await getGitServerAuthorization(props.selectedAddress);
+      let access = await getGitServerAuthorization(
+        apiClient,
+        props.selectedAddress
+      );
       if (!access) {
         setPullMergeAccessDialogShown(true);
         setIsMerging(false);
         return;
       }
-      const res = await props.mergePullRequest({
-        repositoryId: repositoryId,
-        iid: pullRequest.iid,
-        branchName: pullRequest.head.branch
-      });
+      const res = await props.mergePullRequest(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          repositoryId: repositoryId,
+          iid: pullRequest.iid,
+          branchName: pullRequest.head.branch,
+        }
+      );
       if (res) {
-        if (res.TaskState === "TASK_STATE_SUCCESS") refreshPullRequest();
-        else if (res.TaskState === "TASK_STATE_FAILURE")
-          props.notify(res.Message, "error");
+        if (res.state === "TASK_STATE_SUCCESS") refreshPullRequest();
       } else {
         props.notify("Unknown error", "error");
       }
@@ -110,7 +120,9 @@ function MergePullRequestView({
   }, [pullRequest, props.selectedAddress]);
 
   const refreshPullMergeAccess = async (mergeAfter = false) => {
-    setPullMergeAccess(await getGitServerAuthorization(props.selectedAddress));
+    setPullMergeAccess(
+      await getGitServerAuthorization(apiClient, props.selectedAddress)
+    );
     if (mergeAfter) setTimeout(mergePull, 0);
   };
   useEffect(() => {
@@ -185,7 +197,9 @@ function MergePullRequestView({
               />
             </svg>
           )}
-          <div className="flex-1 text-xs sm:text-base" data-test="pr_state">{message}</div>
+          <div className="flex-1 text-xs sm:text-base" data-test="pr_state">
+            {message}
+          </div>
         </div>
         {pullRequest.state === "OPEN" ? (
           <div className="sm:ml-auto flex-none">
@@ -236,7 +250,11 @@ function MergePullRequestView({
               }
               onClick={async () => {
                 setIsGrantingAccess(true);
-                const res = await props.authorizeGitServer();
+                const res = await props.authorizeGitServer(
+                  apiClient,
+                  cosmosBankApiClient,
+                  cosmosFeegrantApiClient
+                );
                 setIsGrantingAccess(false);
                 if (res && res.code !== 0) {
                   props.notify(res.rawLog, "error");

@@ -2,16 +2,62 @@ import { notify } from "reapop";
 import { sendTransaction, setupTxClients } from "./env";
 import { getUserDetailsForSelectedAddress } from "./user";
 import { updateUserBalance } from "./wallet";
-import { watchTask } from "./taskQueue";
+import getTask from "../../helpers/getTask";
+
+async function watchTask(apiClient, taskId) {
+  const TIMEOUT = 15000; // 15 seconds
+  const POLL_INTERVAL = 1000; // 1 second
+  const MAX_RETRIES = 5; // Maximum number of retries on network failure
+
+  const pollTask = async (resolve, reject, startTime, retries = 0) => {
+    try {
+      const res = await getTask(apiClient, taskId);
+      if (
+        res.state === "TASK_STATE_SUCCESS" ||
+        res.state == "TASK_STATE_FAILURE"
+      ) {
+        resolve(res);
+      } else if (Date.now() - startTime >= TIMEOUT) {
+        reject(new Error("Timeout exceeded"));
+      } else {
+        setTimeout(() => pollTask(resolve, reject, startTime), POLL_INTERVAL);
+      }
+    } catch (error) {
+      if (retries < MAX_RETRIES) {
+        console.log(`Retrying... (${retries + 1}/${MAX_RETRIES})`);
+        setTimeout(
+          () => pollTask(resolve, reject, startTime, retries + 1),
+          POLL_INTERVAL
+        );
+      } else {
+        reject(error);
+      }
+    }
+  };
+
+  return new Promise((resolve, reject) => {
+    const startTime = Date.now();
+    pollTask(resolve, reject, startTime);
+  });
+}
 
 export const validatePostingEligibility = async (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
   dispatch,
   getState,
   msgType,
   numberOfTransactions = 1
 ) => {
   try {
-    await setupTxClients(dispatch, getState);
+    await setupTxClients(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      dispatch,
+      getState
+    );
   } catch (e) {
     console.log(e.message);
     return false;
@@ -27,7 +73,10 @@ export const validatePostingEligibility = async (
   let balance = wallet.balance;
   if (balance <= 500 * numberOfTransactions) {
     const getAllowance = (await import("../../helpers/getAllowance")).default;
-    let res = await getAllowance(wallet.selectedAddress);
+    let res = await getAllowance(
+      cosmosFeegrantApiClient,
+      wallet.selectedAddress
+    );
     if (res?.allowance?.spend_limit) {
       let limit = res?.allowance?.spend_limit[0];
       if (limit?.denom === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN) {
@@ -59,14 +108,24 @@ export const validatePostingEligibility = async (
   return true;
 };
 
-export const createRepository = ({
-  name = null,
-  description = null,
-  ownerId = null,
-}) => {
+export const createRepository = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { name = null, description = null, ownerId = null }
+) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
     const repository = {
       creator: wallet.selectedAddress,
@@ -78,9 +137,12 @@ export const createRepository = ({
     try {
       const message = await env.txClient.msgCreateRepository(repository);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
-        getUserDetailsForSelectedAddress()(dispatch, getState);
+        getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
         let url = "/" + ownerId + "/" + name;
         console.log(url);
         return { url };
@@ -90,16 +152,30 @@ export const createRepository = ({
       }
     } catch (e) {
       console.error(e);
-      dispatch(notify(e['message'], "error"));
+      dispatch(notify(e["message"], "error"));
       return null;
     }
   };
 };
 
-export const deleteRepository = ({ name = null, ownerId = null }) => {
+export const deleteRepository = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { name = null, ownerId = null }
+) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
     const repository = {
       creator: wallet.selectedAddress,
@@ -112,9 +188,12 @@ export const deleteRepository = ({ name = null, ownerId = null }) => {
     try {
       const message = await env.txClient.msgDeleteRepository(repository);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
-        getUserDetailsForSelectedAddress()(dispatch, getState);
+        getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
@@ -127,14 +206,24 @@ export const deleteRepository = ({ name = null, ownerId = null }) => {
   };
 };
 
-export const updateRepositoryDescription = ({
-  name = null,
-  ownerId = null,
-  description = null,
-}) => {
+export const updateRepositoryDescription = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { name = null, ownerId = null, description = null }
+) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
     const repository = {
       creator: wallet.selectedAddress,
@@ -150,7 +239,10 @@ export const updateRepositoryDescription = ({
         repository
       );
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -165,19 +257,33 @@ export const updateRepositoryDescription = ({
   };
 };
 
-export const createIssue = ({
-  title = "",
-  description = "",
-  repositoryName = "",
-  repositoryOwner = "",
-  labels = [],
-  weight = 0,
-  assignees = [],
-  bountyAmount = [],
-  bountyExpiry = 0,
-}) => {
+export const createIssue = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  {
+    title = "",
+    description = "",
+    repositoryName = "",
+    repositoryOwner = "",
+    labels = [],
+    weight = 0,
+    assignees = [],
+    bountyAmount = [],
+    bountyExpiry = 0,
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "issue")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "issue"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -209,7 +315,10 @@ export const createIssue = ({
     try {
       const message = await env.txClient.msgCreateIssue(issue);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
       } else {
         dispatch(notify(result.rawLog, "error"));
@@ -223,19 +332,33 @@ export const createIssue = ({
   };
 };
 
-export const createComment = ({
-  repositoryId = null,
-  parentIid = null,
-  parent = "",
-  body = "",
-  attachments = [],
-  diffHunk = "",
-  path = "",
-  position = null,
-  commentType = 1,
-}) => {
+export const createComment = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  {
+    repositoryId = null,
+    parentIid = null,
+    parent = "",
+    body = "",
+    attachments = [],
+    diffHunk = "",
+    path = "",
+    position = null,
+    commentType = 1,
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "comment"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -264,7 +387,10 @@ export const createComment = ({
     try {
       const message = await env.txClient.msgCreateComment(comment);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       return result;
     } catch (e) {
       console.error(e);
@@ -273,16 +399,30 @@ export const createComment = ({
   };
 };
 
-export const updateComment = ({
-  repositoryId = null,
-  parentIid = null,
-  parent = null,
-  commentIid = null,
-  body = "",
-  attachments = [],
-}) => {
+export const updateComment = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  {
+    repositoryId = null,
+    parentIid = null,
+    parent = null,
+    commentIid = null,
+    body = "",
+    attachments = [],
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "comment"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -299,7 +439,10 @@ export const updateComment = ({
     try {
       const message = await env.txClient.msgUpdateComment(comment);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       return result;
     } catch (e) {
       console.error(e);
@@ -308,14 +451,23 @@ export const updateComment = ({
   };
 };
 
-export const deleteComment = ({
-  repositoryId = null,
-  parentIid = null,
-  parent = null,
-  commentIid = null,
-}) => {
+export const deleteComment = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repositoryId = null, parentIid = null, parent = null, commentIid = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "comment"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -329,7 +481,10 @@ export const deleteComment = ({
     try {
       const message = await env.txClient.msgDeleteComment(comment);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       return result;
     } catch (e) {
       console.error(e);
@@ -338,13 +493,23 @@ export const deleteComment = ({
   };
 };
 
-export const toggleIssueState = ({
-  repositoryId = null,
-  iid = null,
-  commentBody = null,
-}) => {
+export const toggleIssueState = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repositoryId = null, iid = null, commentBody = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "comment")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "comment"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -357,7 +522,10 @@ export const toggleIssueState = ({
     try {
       const message = await env.txClient.msgToggleIssueState(comment);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -371,13 +539,23 @@ export const toggleIssueState = ({
   };
 };
 
-export const renameRepository = ({
-  repoOwner = null,
-  repoName = null,
-  name = "",
-}) => {
+export const renameRepository = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repoOwner = null, repoName = null, name = "" }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     const repository = {
@@ -389,9 +567,12 @@ export const renameRepository = ({
     try {
       const message = await env.txClient.msgRenameRepository(repository);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
-        getUserDetailsForSelectedAddress()(dispatch, getState);
+        getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
@@ -405,13 +586,23 @@ export const renameRepository = ({
   };
 };
 
-export const changeDefaultBranch = ({
-  repoOwner = null,
-  repoName = null,
-  branchName = "",
-}) => {
+export const changeDefaultBranch = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repoOwner = null, repoName = null, branchName = "" }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     const data = {
@@ -423,9 +614,12 @@ export const changeDefaultBranch = ({
     try {
       const message = await env.txClient.msgSetDefaultBranch(data);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
-        getUserDetailsForSelectedAddress()(dispatch, getState);
+        getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
@@ -439,13 +633,23 @@ export const changeDefaultBranch = ({
   };
 };
 
-export const toggleForcePush = ({
-  repoOwner = null,
-  repoName = null,
-  branchName = "",
-}) => {
+export const toggleForcePush = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repoOwner = null, repoName = null, branchName = "" }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     const repository = {
@@ -457,7 +661,10 @@ export const toggleForcePush = ({
     try {
       const message = await env.txClient.msgToggleForcePush(repository);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -472,14 +679,23 @@ export const toggleForcePush = ({
   };
 };
 
-export const updateCollaborator = ({
-  repoOwner = null,
-  repoName = null,
-  user = null,
-  role = null,
-}) => {
+export const updateCollaborator = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repoOwner = null, repoName = null, user = null, role = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "collaborator"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     const collaborator = {
@@ -494,7 +710,10 @@ export const updateCollaborator = ({
         collaborator
       );
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -509,13 +728,23 @@ export const updateCollaborator = ({
   };
 };
 
-export const removeCollaborator = ({
-  repoOwner = null,
-  repoName = null,
-  user = null,
-}) => {
+export const removeCollaborator = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repoOwner = null, repoName = null, user = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "collaborator"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     const collaborator = {
@@ -532,7 +761,10 @@ export const removeCollaborator = ({
         collaborator
       );
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -547,13 +779,23 @@ export const removeCollaborator = ({
   };
 };
 
-export const changeRepositoryOwner = ({
-  repoOwner = null,
-  repoName = null,
-  owner = null,
-}) => {
+export const changeRepositoryOwner = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repoOwner = null, repoName = null, owner = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "collaborator")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "collaborator"
+      ))
+    )
       return null;
     const { env, wallet } = getState();
     const req = {
@@ -567,7 +809,10 @@ export const changeRepositoryOwner = ({
     try {
       const message = await env.txClient.msgChangeOwner(req);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -582,13 +827,23 @@ export const changeRepositoryOwner = ({
   };
 };
 
-export const updateIssueTitle = ({
-  title = null,
-  repositoryId = null,
-  iid = null,
-}) => {
+export const updateIssueTitle = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { title = null, repositoryId = null, iid = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "issue")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "issue"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -602,7 +857,10 @@ export const updateIssueTitle = ({
     try {
       const message = await env.txClient.msgUpdateIssueTitle(issue);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -617,13 +875,23 @@ export const updateIssueTitle = ({
   };
 };
 
-export const updatePullRequestTitle = ({
-  title = null,
-  repositoryId = null,
-  iid = null,
-}) => {
+export const updatePullRequestTitle = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { title = null, repositoryId = null, iid = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "pull request"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -637,7 +905,10 @@ export const updatePullRequestTitle = ({
     try {
       const message = await env.txClient.msgUpdatePullRequestTitle(pull);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -652,13 +923,23 @@ export const updatePullRequestTitle = ({
   };
 };
 
-export const updateIssueDescription = ({
-  description = null,
-  repositoryId = null,
-  iid = null,
-}) => {
+export const updateIssueDescription = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { description = null, repositoryId = null, iid = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "issue")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "issue"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -672,7 +953,10 @@ export const updateIssueDescription = ({
     try {
       const message = await env.txClient.msgUpdateIssueDescription(issue);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -687,13 +971,23 @@ export const updateIssueDescription = ({
   };
 };
 
-export const updatePullRequestDescription = ({
-  description = null,
-  repositoryId = null,
-  iid = null,
-}) => {
+export const updatePullRequestDescription = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { description = null, repositoryId = null, iid = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "pull request"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -707,7 +1001,10 @@ export const updatePullRequestDescription = ({
     try {
       const message = await env.txClient.msgUpdatePullRequestDescription(pull);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -722,14 +1019,29 @@ export const updatePullRequestDescription = ({
   };
 };
 
-export const updateIssueAssignees = ({
-  repositoryId = null,
-  iid = null,
-  addedAssignees = [],
-  removedAssignees = [],
-}) => {
+export const updateIssueAssignees = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  {
+    repositoryId = null,
+    iid = null,
+    addedAssignees = [],
+    removedAssignees = [],
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "issue",
+        2
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -772,7 +1084,10 @@ export const updateIssueAssignees = ({
           return null;
         }
       }
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       return { result1, result2 };
     } catch (e) {
       console.error(e);
@@ -781,14 +1096,24 @@ export const updateIssueAssignees = ({
   };
 };
 
-export const updateIssueLabels = ({
-  repositoryId = null,
-  iid = null,
-  addedLabels = [],
-  removedLabels = [],
-}) => {
+export const updateIssueLabels = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repositoryId = null, iid = null, addedLabels = [], removedLabels = [] }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "issue",
+        2
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -829,7 +1154,10 @@ export const updateIssueLabels = ({
           return null;
         }
       }
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       return { result1, result2 };
     } catch (e) {
       console.error(e);
@@ -838,15 +1166,23 @@ export const updateIssueLabels = ({
   };
 };
 
-export const createRepositoryLabel = ({
-  repoOwner = null,
-  repoName = null,
-  name = "",
-  color = "",
-  description = "",
-}) => {
+export const createRepositoryLabel = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repoOwner = null, repoName = null, name = "", color = "", description = "" }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "label")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "label"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -861,7 +1197,10 @@ export const createRepositoryLabel = ({
     try {
       const message = await env.txClient.msgCreateRepositoryLabel(label);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -877,16 +1216,30 @@ export const createRepositoryLabel = ({
   };
 };
 
-export const updateRepositoryLabel = ({
-  repoOwner = null,
-  repoName = null,
-  labelId = null,
-  name = "",
-  color = "",
-  description = "",
-}) => {
+export const updateRepositoryLabel = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  {
+    repoOwner = null,
+    repoName = null,
+    labelId = null,
+    name = "",
+    color = "",
+    description = "",
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "label")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "label"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -902,7 +1255,10 @@ export const updateRepositoryLabel = ({
     try {
       const message = await env.txClient.msgUpdateRepositoryLabel(label);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       if (result && result.code === 0) {
         return result;
       } else {
@@ -918,13 +1274,23 @@ export const updateRepositoryLabel = ({
   };
 };
 
-export const deleteRepositoryLabel = ({
-  repoOwner = null,
-  repoName = null,
-  labelId = null,
-}) => {
+export const deleteRepositoryLabel = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repoOwner = null, repoName = null, labelId = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "label")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "label"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -936,7 +1302,10 @@ export const deleteRepositoryLabel = ({
     try {
       const message = await env.txClient.msgDeleteRepositoryLabel(label);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       return result;
     } catch (e) {
       console.error(e);
@@ -975,16 +1344,30 @@ export const isCurrentUserEligibleToUpdate = (repository) => {
   };
 };
 
-export const forkRepository = ({
-  ownerId = null,
-  repoOwner = null,
-  repoName = null,
-  repoBranch = null,
-  forkRepositoryName = null,
-  forkRepositoryDescription = null,
-}) => {
+export const forkRepository = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  {
+    ownerId = null,
+    repoOwner = null,
+    repoName = null,
+    repoBranch = null,
+    forkRepositoryName = null,
+    forkRepositoryDescription = null,
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1003,7 +1386,6 @@ export const forkRepository = ({
 
     try {
       const message = await env.txClient.msgInvokeForkRepository(repository);
-      dispatch({ type: "START_RECORDING_TASKS" });
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         const log = JSON.parse(result.rawLog);
@@ -1011,17 +1393,18 @@ export const forkRepository = ({
           log[0].events[0].attributes[
             log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
           ].value;
-        const res = await watchTask(taskId, "Forking repository " + repoName)(
-          dispatch,
-          getState
-        );
-        console.log("Watch task result", res);
-        if (res.TaskState === "TASK_STATE_SUCCESS") {
-          getUserDetailsForSelectedAddress()(dispatch, getState);
-          let url = "/" + ownerId + "/" + res.RepositoryName;
-          return { url };
-        } else if (res.TaskState === "TASK_STATE_FAILURE") {
-          dispatch(notify(res.Message, "error"));
+        try {
+          const res = await watchTask(apiClient, taskId);
+          if (res.state === "TASK_STATE_SUCCESS") {
+            getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+            let url = "/" + ownerId + "/" + repository.forkRepositoryName;
+            return { url };
+          } else if (res.state === "TASK_STATE_FAILURE") {
+            dispatch(notify(res.message, "error"));
+            return null;
+          }
+        } catch (e) {
+          dispatch(notify(e.message, "error"));
           return null;
         }
       } else {
@@ -1036,22 +1419,36 @@ export const forkRepository = ({
   };
 };
 
-export const createPullRequest = ({
-  title,
-  description,
-  headBranch,
-  headRepoOwner,
-  headRepoName,
-  baseBranch,
-  baseRepoOwner,
-  baseRepoName,
-  reviewers = [],
-  assignees = [],
-  labelIds = [],
-  issues = [],
-}) => {
+export const createPullRequest = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  {
+    title,
+    description,
+    headBranch,
+    headRepoOwner,
+    headRepoName,
+    baseBranch,
+    baseRepoOwner,
+    baseRepoName,
+    reviewers = [],
+    assignees = [],
+    labelIds = [],
+    issues = [],
+  }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "pull request"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1096,6 +1493,9 @@ export const createPullRequest = ({
 };
 
 export const createRelease = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
   {
     repoOwner = null,
     repoName = null,
@@ -1112,7 +1512,16 @@ export const createRelease = (
   edit = false
 ) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "release")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "release"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1151,9 +1560,23 @@ export const createRelease = (
   };
 };
 
-export const deleteRelease = ({ releaseId }) => {
+export const deleteRelease = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { releaseId }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "release")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "release"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1178,14 +1601,23 @@ export const deleteRelease = ({ releaseId }) => {
   };
 };
 
-export const createTag = ({
-  repoOwnerId = null,
-  repositoryName = null,
-  name = null,
-  sha = null,
-}) => {
+export const createTag = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repoOwnerId = null, repositoryName = null, name = null, sha = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "tag")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "tag"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1217,13 +1649,24 @@ export const createTag = ({
   };
 };
 
-export const deleteTag = ({
-  repoOwnerId = null,
-  repositoryName = null,
-  name = null,
-}) => {
+export const deleteTag = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repoOwnerId = null, repositoryName = null, name = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "tag")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "tag"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1252,13 +1695,24 @@ export const deleteTag = ({
   };
 };
 
-export const deleteBranch = ({
-  repoOwnerId = null,
-  repositoryName = null,
-  name = null,
-}) => {
+export const deleteBranch = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repoOwnerId = null, repositoryName = null, name = null }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "tag")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "tag"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1287,15 +1741,28 @@ export const deleteBranch = ({
   };
 };
 
-export const updatePullRequestAssignees = ({
-  repositoryId = null,
-  pullIid = null,
-  addedAssignees = [],
-  removedAssignees = [],
-}) => {
+export const updatePullRequestAssignees = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  {
+    repositoryId = null,
+    pullIid = null,
+    addedAssignees = [],
+    removedAssignees = [],
+  }
+) => {
   return async (dispatch, getState) => {
     if (
-      !(await validatePostingEligibility(dispatch, getState, "pull request", 2))
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "pull request",
+        2
+      ))
     )
       return null;
 
@@ -1350,15 +1817,28 @@ export const updatePullRequestAssignees = ({
   };
 };
 
-export const updatePullRequestReviewers = ({
-  repositoryId = null,
-  pullIid = null,
-  addedReviewers = [],
-  removedReviewers = [],
-}) => {
+export const updatePullRequestReviewers = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  {
+    repositoryId = null,
+    pullIid = null,
+    addedReviewers = [],
+    removedReviewers = [],
+  }
+) => {
   return async (dispatch, getState) => {
     if (
-      !(await validatePostingEligibility(dispatch, getState, "pull request", 2))
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "pull request",
+        2
+      ))
     )
       return null;
 
@@ -1413,14 +1893,24 @@ export const updatePullRequestReviewers = ({
   };
 };
 
-export const updatePullRequestLabels = ({
-  repositoryId = null,
-  pullIid = null,
-  addedLabels = [],
-  removedLabels = [],
-}) => {
+export const updatePullRequestLabels = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repositoryId = null, pullIid = null, addedLabels = [], removedLabels = [] }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "issue", 2)))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "issue",
+        2
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1472,15 +1962,23 @@ export const updatePullRequestLabels = ({
   };
 };
 
-export const updatePullRequestState = ({
-  repositoryId = null,
-  iid = null,
-  state,
-  mergeCommitSha,
-  commentBody,
-}) => {
+export const updatePullRequestState = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repositoryId = null, iid = null, state, mergeCommitSha, commentBody }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "pull request"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1509,9 +2007,23 @@ export const updatePullRequestState = ({
   };
 };
 
-export const mergePullRequest = ({ repositoryId, iid, branchName }) => {
+export const mergePullRequest = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repositoryId, iid, branchName }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "pull request")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "pull request"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1524,7 +2036,6 @@ export const mergePullRequest = ({ repositoryId, iid, branchName }) => {
 
     try {
       const message = await env.txClient.msgInvokeMergePullRequest(mergePull);
-      dispatch({ type: "START_RECORDING_TASKS" });
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
         // return result;
@@ -1533,13 +2044,19 @@ export const mergePullRequest = ({ repositoryId, iid, branchName }) => {
           log[0].events[0].attributes[
             log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
           ].value;
-        const res = await watchTask(taskId, "Merging branch " + branchName)(
-          dispatch,
-          getState
-        );
-        console.log("Watch task result", res);
-        getUserDetailsForSelectedAddress()(dispatch, getState);
-        return res;
+        try {
+          const res = await watchTask(apiClient, taskId);
+          if (res.state === "TASK_STATE_SUCCESS") {
+            getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+            return res;
+          } else if (res.state === "TASK_STATE_FAILURE") {
+            dispatch(notify(res.message, "error"));
+            return null;
+          }
+        } catch (e) {
+          dispatch(notify(e.message, "error"));
+          return null;
+        }
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
@@ -1551,9 +2068,23 @@ export const mergePullRequest = ({ repositoryId, iid, branchName }) => {
   };
 };
 
-export const toggleRepositoryForking = ({ repoOwner, repoName }) => {
+export const toggleRepositoryForking = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { repoOwner, repoName }
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "repository")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "repository"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1578,9 +2109,22 @@ export const toggleRepositoryForking = ({ repoOwner, repoName }) => {
   };
 };
 
-export const authorizeGitServer = () => {
+export const authorizeGitServer = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient
+) => {
   return async (dispatch, getState) => {
-    if (!(await validatePostingEligibility(dispatch, getState, "grant access")))
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "grant access"
+      ))
+    )
       return null;
 
     const { wallet, env } = getState();
@@ -1592,7 +2136,10 @@ export const authorizeGitServer = () => {
         permission: 0,
       });
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance()(dispatch, getState);
+      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+        dispatch,
+        getState
+      );
       console.log(result);
       if (result && result.code === 0) {
         return result;

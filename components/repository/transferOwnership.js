@@ -6,6 +6,7 @@ import getUser from "../../helpers/getUser";
 import getDao from "../../helpers/getDao";
 import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
 import validAddress from "../../helpers/validAddress";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function TransferOwnership({
   repoId = null,
@@ -22,6 +23,8 @@ function TransferOwnership({
   });
   const [isChanging, setIsChanging] = useState(false);
   const [startTransfer, setStartTransfer] = useState(false);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     setAddress("");
@@ -52,11 +55,14 @@ function TransferOwnership({
     //   return true;
     // });
     //
-    let [user, dao] = await Promise.all([getUser(address), getDao(address)]);
+    let [user, dao] = await Promise.all([
+      getUser(apiClient, address),
+      getDao(apiClient, address),
+    ]);
     console.log("user tranfer ownership", user);
     if (user) {
       console.log("user exists", user);
-      const repositories = await getAnyRepositoryAll(address);
+      const repositories = await getAnyRepositoryAll(apiClient, address);
       repositories.every((r) => {
         if (r.name === repoName) {
           alreadyAvailable = true;
@@ -66,7 +72,7 @@ function TransferOwnership({
       });
     } else if (dao) {
       console.log("dao exists", dao);
-      const repositories = await getAnyRepositoryAll(address);
+      const repositories = await getAnyRepositoryAll(apiClient, address);
       repositories.every((r) => {
         if (r.name === repoName) {
           alreadyAvailable = true;
@@ -97,11 +103,16 @@ function TransferOwnership({
     setIsChanging(true);
     const res = await validateAddress();
     if (res) {
-      const res = await props.changeRepositoryOwner({
-        repoName: repoName,
-        repoOwner: currentOwnerId,
-        owner: address,
-      });
+      const res = await props.changeRepositoryOwner(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          repoName: repoName,
+          repoOwner: currentOwnerId,
+          owner: address,
+        }
+      );
       if (res) {
         if (onSuccess) await onSuccess(address);
       }

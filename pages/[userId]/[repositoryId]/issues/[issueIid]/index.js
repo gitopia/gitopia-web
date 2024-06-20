@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import find from "lodash/find";
+import { notify } from "reapop";
 
 import getIssue from "../../../../../helpers/getIssue";
 import getIssueComment from "../../../../../helpers/getIssueComment";
@@ -34,6 +35,7 @@ import IssueBountyView from "../../../../../components/repository/bountiesView";
 import getIssueCommentAll from "../../../../../helpers/getIssueCommentAll";
 import validAddress from "../../../../../helpers/validAddress";
 import AccountCard from "../../../../../components/account/card";
+import { useApiClient } from "../../../../../context/ApiClientContext";
 
 export async function getStaticProps({ params }) {
   try {
@@ -123,16 +125,19 @@ function RepositoryIssueView(props) {
   });
   const [allComments, setAllComments] = useState(props.comments || []);
   const [allLabels, setAllLabels] = useState([]);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function initIssues() {
       const [i, c] = await Promise.all([
         getIssue(
+          apiClient,
           router.query.userId,
           router.query.repositoryId,
           router.query.issueIid
         ),
-        getIssueCommentAll(repository.id, router.query.issueIid),
+        getIssueCommentAll(apiClient, repository.id, router.query.issueIid),
       ]);
       if (i) {
         i.comments = c;
@@ -149,7 +154,11 @@ function RepositoryIssueView(props) {
   }, [repository]);
 
   const getAllComments = async () => {
-    const comments = await getIssueCommentAll(repository.id, issue.iid);
+    const comments = await getIssueCommentAll(
+      apiClient,
+      repository.id,
+      issue.iid
+    );
     if (comments) {
       setAllComments(comments);
     } else {
@@ -159,8 +168,8 @@ function RepositoryIssueView(props) {
 
   const refreshIssue = async () => {
     const [i, c] = await Promise.all([
-      getIssue(router.query.userId, repository.name, issue.iid),
-      getIssueCommentAll(repository.id, router.query.issueIid),
+      getIssue(apiClient, router.query.userId, repository.name, issue.iid),
+      getIssueCommentAll(apiClient, repository.id, router.query.issueIid),
     ]);
     if (i) {
       i.comments = c;
@@ -251,6 +260,7 @@ function RepositoryIssueView(props) {
                           userAddress={props.selectedAddress}
                           onUpdate={async (iid) => {
                             const newComment = await getIssueComment(
+                              apiClient,
                               repository.id,
                               issue.iid,
                               iid
@@ -260,13 +270,19 @@ function RepositoryIssueView(props) {
                             setAllComments(newAllComments);
                           }}
                           onDelete={async (iid) => {
-                            const res = await props.deleteComment({
-                              repositoryId: repository.id,
-                              parentIid: issue.iid,
-                              parent: "COMMENT_PARENT_ISSUE",
-                              commentIid: iid,
-                            });
+                            const res = await props.deleteComment(
+                              apiClient,
+                              cosmosBankApiClient,
+                              cosmosFeegrantApiClient,
+                              {
+                                repositoryId: repository.id,
+                                parentIid: issue.iid,
+                                parent: "COMMENT_PARENT_ISSUE",
+                                commentIid: iid,
+                              }
+                            );
                             if (res && res.code === 0) {
+                              props.notify("Comment deleted", "info");
                               const newAllComments = [...allComments];
                               newAllComments.splice(i, 1);
                               setAllComments(newAllComments);
@@ -325,12 +341,17 @@ function RepositoryIssueView(props) {
                         )
                     );
 
-                    const res = await props.updateIssueAssignees({
-                      repositoryId: repository.id,
-                      iid: issue.iid,
-                      addedAssignees,
-                      removedAssignees,
-                    });
+                    const res = await props.updateIssueAssignees(
+                      apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient,
+                      {
+                        repositoryId: repository.id,
+                        iid: issue.iid,
+                        addedAssignees,
+                        removedAssignees,
+                      }
+                    );
 
                     if (res) refreshIssue();
                   }}
@@ -364,12 +385,17 @@ function RepositoryIssueView(props) {
                         !(removedLabels.includes(x) || issue.labels.includes(x))
                     );
 
-                    const res = await props.updateIssueLabels({
-                      repositoryId: repository.id,
-                      iid: issue.iid,
-                      addedLabels,
-                      removedLabels,
-                    });
+                    const res = await props.updateIssueLabels(
+                      apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient,
+                      {
+                        repositoryId: repository.id,
+                        iid: issue.iid,
+                        addedLabels,
+                        removedLabels,
+                      }
+                    );
 
                     if (res) refreshIssue();
                   }}
@@ -434,4 +460,5 @@ export default connect(mapStateToProps, {
   deleteComment,
   updateIssueAssignees,
   updateIssueLabels,
+  notify,
 })(RepositoryIssueView);

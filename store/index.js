@@ -39,4 +39,6 @@ const initStore = (context) => {
 
 // const makeStore = context => createStore(reducer);
 
-export const wrapper = createWrapper(initStore, { debug: process.env === "development" });
+export const wrapper = createWrapper(initStore, {
+  debug: process.env === "development",
+});

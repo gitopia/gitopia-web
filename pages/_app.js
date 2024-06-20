@@ -8,9 +8,10 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
-import Notifications from "../components/notifications";
 // import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import ErrorHandler from "../hooks/errorHandler";
+import { ApiClientProvider } from "../context/ApiClientContext";
+
 const progress = new ProgressBar({
   size: 2,
   color: "#66ce67",
@@ -28,14 +29,16 @@ dayjs.extend(customParseFormat);
 function MyApp({ Component, pageProps }) {
   return (
     <>
-      <Notifications />
-      <ErrorHandler>
-        <Component {...pageProps} />
-      </ErrorHandler>
-      <AutoLogin />
+      <ApiClientProvider>
+        <ErrorHandler>
+          <Component {...pageProps} />
+        </ErrorHandler>
+        <AutoLogin />
+      </ApiClientProvider>
       <NotificationManager />
     </>
   );
 }
 // serviceWorkerRegistration.register();
+
 export default wrapper.withRedux(MyApp);

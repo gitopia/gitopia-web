@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { updateDaoWebsite } from "../../store/actions/dao";
 import { notify } from "reapop";
 import TextInput from "../textInput";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function DaoWebsite(props = { isEditable: false }) {
   const [newWebsite, setNewWebsite] = useState(props.dao?.website || "");
@@ -14,6 +15,8 @@ function DaoWebsite(props = { isEditable: false }) {
   const [savingWebsite, setSavingWebsite] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const input = useRef();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     setNewWebsite(props.dao?.website || "");
@@ -33,10 +36,15 @@ function DaoWebsite(props = { isEditable: false }) {
 
   const updateWebsite = async () => {
     setSavingWebsite(true);
-    const res = await props.updateDaoWebsite({
-      id: props.dao.address,
-      website: newWebsite,
-    });
+    const res = await props.updateDaoWebsite(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      {
+        id: props.dao.address,
+        website: newWebsite,
+      }
+    );
     if (res && res.code === 0) {
       props.notify(props.dao.name + " website is updated", "info");
       if (props.refresh) await props.refresh();

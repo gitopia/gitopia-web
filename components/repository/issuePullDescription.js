@@ -8,6 +8,7 @@ import {
 } from "../../store/actions/repository";
 import MarkdownEditor from "../markdownEditor";
 import AccountCard from "../account/card";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function IssuePullDescription({
   issuePullObj,
@@ -25,6 +26,8 @@ function IssuePullDescription({
     message: "",
   });
   const [savingDescription, setSavingDescription] = useState(false);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     setNewDescription(issuePullObj.description);
@@ -59,16 +62,26 @@ function IssuePullDescription({
     setSavingDescription(true);
     if (validateDescription(newDescription)) {
       const res = isPull
-        ? await props.updatePullRequestDescription({
-            description: newDescription,
-            repositoryId: repository.id,
-            iid: issuePullObj.iid,
-          })
-        : await props.updateIssueDescription({
-            description: newDescription,
-            repositoryId: repository.id,
-            iid: issuePullObj.iid,
-          });
+        ? await props.updatePullRequestDescription(
+            apiClient,
+            cosmosBankApiClient,
+            cosmosFeegrantApiClient,
+            {
+              description: newDescription,
+              repositoryId: repository.id,
+              iid: issuePullObj.iid,
+            }
+          )
+        : await props.updateIssueDescription(
+            apiClient,
+            cosmosBankApiClient,
+            cosmosFeegrantApiClient,
+            {
+              description: newDescription,
+              repositoryId: repository.id,
+              iid: issuePullObj.iid,
+            }
+          );
       if (res && res.code === 0) {
         if (onUpdate) await onUpdate(newDescription);
         setIsEditing(false);
@@ -82,7 +95,11 @@ function IssuePullDescription({
   return (
     <div className="flex w-full">
       <div className="flex-none mr-4">
-        <AccountCard id={issuePullObj.creator} showAvatar={true} showId={false} />
+        <AccountCard
+          id={issuePullObj.creator}
+          showAvatar={true}
+          showId={false}
+        />
       </div>
       <div className="flex-1 overflow-hiddden">
         {isEditing ? (
@@ -130,7 +147,7 @@ function IssuePullDescription({
           </div>
         ) : (
           <div className="">
-            <div className="border border-grey rounded-lg flex-none whitespace-pre-wrap">
+            <div className="border border-grey rounded-lg flex-none">
               <div className="text-xs px-2 rounded-t relative">
                 <div className="absolute right-2 top-1">
                   {issuePullObj.creator === props.selectedAddress ? (
@@ -173,13 +190,15 @@ function IssuePullDescription({
               </div>
 
               <div className="text-xs p-6 overflow-scroll">
-		<div className="text-white font-normal mb-3 markdown-body min-w=0 max-w-[252px] sm:max-w-[229px] md:max-w-[386px] lg:max-w-[598px] xl:max-w-[598px] 2xl:max-w-[598px]">
+                <div className="text-white font-normal mb-3 markdown-body min-w=0 max-w-[252px] sm:max-w-[229px] md:max-w-[386px] lg:max-w-[598px] xl:max-w-[598px] 2xl:max-w-[598px]">
                   {issuePullObj.description.length ? (
                     <ReactMarkdown linkTarget="_blank">
                       {issuePullObj.description}
                     </ReactMarkdown>
                   ) : (
-                    <ReactMarkdown>{"*No issue description given*"}</ReactMarkdown>
+                    <ReactMarkdown>
+                      {"*No issue description given*"}
+                    </ReactMarkdown>
                   )}
                 </div>
                 <div className="flex-1 text-xs text-type-tertiary">

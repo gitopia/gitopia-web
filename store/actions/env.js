@@ -6,7 +6,6 @@ import {
   updateUserBalance,
   unlockKeplrWallet,
 } from "./wallet";
-import getNodeInfo from "../../helpers/getNodeInfo";
 
 export const sendTransaction = ({
   message,
@@ -70,7 +69,13 @@ export const sendTransaction = ({
 export const signMessage = ({ data = {} }) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(dispatch, getState);
+      await setupTxClients(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState
+      );
     } catch (e) {
       console.error(e);
       return null;
@@ -91,7 +96,6 @@ export const signMessage = ({ data = {} }) => {
         signer: wallet.selectedAddress,
         data,
       });
-      const info = await getNodeInfo();
       const res = await env.txClient.sign(
         [msg],
         {
@@ -140,13 +144,25 @@ export const signMessage = ({ data = {} }) => {
   };
 };
 
-export const setupTxClients = async (dispatch, getState, chainId = null) => {
+export const setupTxClients = async (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  dispatch,
+  getState,
+  chainId = null
+) => {
   const { env, wallet } = getState();
 
   if (wallet.activeWallet) {
     if (!env.txClient || chainId != wallet.activeWallet.counterPartyChain) {
       if (wallet.activeWallet.isKeplr) {
-        await unlockKeplrWallet(chainId)(dispatch, getState);
+        await unlockKeplrWallet(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          chainId
+        )(dispatch, getState);
       } else {
         return new Promise((resolve, reject) => {
           dispatch({
@@ -176,10 +192,21 @@ export const setupTxClients = async (dispatch, getState, chainId = null) => {
   }
 };
 
-export const handlePostingTransaction = async (dispatch, getState, message) => {
+export const handlePostingTransaction = async (
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  dispatch,
+  getState,
+  message
+) => {
+  const { env } = getState();
+
   try {
     const result = await sendTransaction({ message })(dispatch, getState);
-    updateUserBalance()(dispatch, getState);
+    updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+      dispatch,
+      getState
+    );
     if (result?.code === 0) {
       return result;
     } else {
@@ -191,4 +218,18 @@ export const handlePostingTransaction = async (dispatch, getState, message) => {
     dispatch(notify(e.message, "error"));
     return null;
   }
+};
+
+export const setConfig = ({ config }) => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: envActions.SET_CONFIG,
+      payload: {
+        config: {
+          apiNode: config.apiNode,
+          rpcNode: config.rpcNode,
+        },
+      },
+    });
+  };
 };

@@ -12,6 +12,7 @@ import {
   isCurrentUserEligibleToUpdate,
   deleteBranch,
 } from "../../../store/actions/repository";
+import { useApiClient } from "../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -32,6 +33,8 @@ function RepositoryBranchesView(props) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [branch, setBranch] = useState("");
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function updatePermissions() {
@@ -221,11 +224,16 @@ function RepositoryBranchesView(props) {
                             onClick={async () => {
                               setIsDeleting(true);
                               props
-                                .deleteBranch({
-                                  repoOwnerId: repository.owner.id,
-                                  repositoryName: repository.name,
-                                  name: branch,
-                                })
+                                .deleteBranch(
+                                  apiClient,
+                                  cosmosBankApiClient,
+                                  cosmosFeegrantApiClient,
+                                  {
+                                    repoOwnerId: repository.owner.id,
+                                    repositoryName: repository.name,
+                                    name: branch,
+                                  }
+                                )
                                 .then((res) => {
                                   if (res.code == 0) {
                                     refreshRepository();

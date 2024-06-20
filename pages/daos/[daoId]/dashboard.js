@@ -8,6 +8,7 @@ import Link from "next/link";
 import getDao from "../../../helpers/getDao";
 import getDaoMember from "../../../helpers/getUserDaoMember";
 import { useErrorStatus } from "../../../hooks/errorHandler";
+import { useApiClient } from "../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   const fs = await import("fs");
@@ -30,18 +31,24 @@ function DaoDashboard(props) {
   const [dao, setDao] = useState({});
   const { setErrorStatusCode } = useErrorStatus();
   const router = useRouter();
+  const { apiClient } = useApiClient();
 
   async function refreshData() {
     const [dao, members] = await Promise.all([
-      getDao(router.query.daoId),
-      getDaoMember(router.query.daoId),
+      getDao(apiClient, router.query.daoId),
+      getDaoMember(apiClient, router.query.daoId),
     ]);
     if (dao) {
       let isMember = false;
-      members.forEach(m => {
-        if (m.address == props.selectedAddress) { isMember = true; return false; } else { return true; }
+      members.forEach((m) => {
+        if (m.address == props.selectedAddress) {
+          isMember = true;
+          return false;
+        } else {
+          return true;
+        }
       });
-      console.log(dao, members, props.selectedAddress)
+      console.log(dao, members, props.selectedAddress);
       if (!isMember) {
         console.log("Not a member");
         setErrorStatusCode(404);
@@ -81,6 +88,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { })(
-  DaoDashboard
-);
+export default connect(mapStateToProps, {})(DaoDashboard);

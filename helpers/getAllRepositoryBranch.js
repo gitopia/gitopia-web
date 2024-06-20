@@ -1,9 +1,11 @@
-import api from "./getApi";
-
-export default async function getAllRepositoryBranch(id, repositoryName) {
+export default async function getAllRepositoryBranch(
+  apiClient,
+  id,
+  repositoryName
+) {
   if (!repositoryName || !id) return null;
   try {
-    const res = await api.queryRepositoryBranchAll(id, repositoryName);
+    const res = await apiClient.queryRepositoryBranchAll(id, repositoryName);
     if (res.status === 200) {
       let b = res.data.Branch;
       return b;
