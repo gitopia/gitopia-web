@@ -8,5 +8,6 @@ export default async function getTask(apiClient, taskId) {
     }
   } catch (e) {
     console.log("Not found task", taskId);
+    throw e;
   }
 }

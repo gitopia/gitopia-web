@@ -7,8 +7,9 @@ import getTask from "../../helpers/getTask";
 async function watchTask(apiClient, taskId) {
   const TIMEOUT = 15000; // 15 seconds
   const POLL_INTERVAL = 1000; // 1 second
+  const MAX_RETRIES = 5; // Maximum number of retries on network failure
 
-  const pollTask = async (resolve, reject, startTime) => {
+  const pollTask = async (resolve, reject, startTime, retries = 0) => {
     try {
       const res = await getTask(apiClient, taskId);
       if (
@@ -22,7 +23,15 @@ async function watchTask(apiClient, taskId) {
         setTimeout(() => pollTask(resolve, reject, startTime), POLL_INTERVAL);
       }
     } catch (error) {
-      reject(error);
+      if (retries < MAX_RETRIES) {
+        console.log(`Retrying... (${retries + 1}/${MAX_RETRIES})`);
+        setTimeout(
+          () => pollTask(resolve, reject, startTime, retries + 1),
+          POLL_INTERVAL
+        );
+      } else {
+        reject(error);
+      }
     }
   };
 
