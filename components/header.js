@@ -106,6 +106,7 @@ function Header(props) {
     const provider = await selectProvider();
     setSelectedProvider(provider);
     updateApiClient(provider.apiEndpoint, provider.rpcEndpoint);
+    props.notify("API provider reset successful", "info");
   };
 
   useEffect(() => {
