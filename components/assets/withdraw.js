@@ -15,7 +15,7 @@ function WithdrawIbcAsset(props) {
   const [tokenDenom, setTokenDenom] = useState("");
   const [ibcTokenDenom, setIbcTokenDenom] = useState("");
   const [tokenDecimals, setTokenDecimals] = useState(0);
-  const { cosmosBankApiClient } = useApiClient();
+  const { cosmosBankApiClient, ibcAppTransferApiClient } = useApiClient();
   // const router = useRouter();
   // useEffect(() => {
   //   if (props.activeWallet?.counterPartyAddress === undefined) {
@@ -38,7 +38,10 @@ function WithdrawIbcAsset(props) {
           let b = res.balances;
           for (let i = 0; i < b.length; i++) {
             if (b[i]?.denom.includes("ibc")) {
-              let denom = await getDenomNameByHash(b[i]?.denom);
+              let denom = await getDenomNameByHash(
+                ibcAppTransferApiClient,
+                b[i]?.denom
+              );
               if (
                 denom ==
                 props.ibcAssets.chainInfo.asset.assets[0].denom_units[0].denom

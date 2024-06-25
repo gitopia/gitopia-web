@@ -13,6 +13,7 @@ import { coingeckoId } from "../../ibc-assets-config";
 import getRewardToken from "../../helpers/getRewardTokens";
 import getTokenValueInDollars from "../../helpers/getTotalTokenValueInDollars";
 import Link from "next/link";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function WalletInfo(props) {
   const [totalBalance, setTotalBalance] = useState(0);
@@ -23,10 +24,15 @@ function WalletInfo(props) {
   const [accountName, setAccountName] = useState("");
   const [accountLink, setAccountLink] = useState("");
   const [loadingChainInfo, setLoadingChainInfo] = useState(-1);
+  const { cosmosBankApiClient, ibcAppTransferApiClient } = useApiClient();
 
   useEffect(() => {
     async function getWalletbalance() {
-      let a = await getBalanceInDollars(props.selectedAddress);
+      let a = await getBalanceInDollars(
+        cosmosBankApiClient,
+        ibcAppTransferApiClient,
+        props.selectedAddress
+      );
       if (a) {
         setTotalBalance(a.totalPrice);
         setTokenBalances(a.TokenBalances);
