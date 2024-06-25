@@ -5,6 +5,7 @@ import { useApiClient } from "../context/ApiClientContext";
 const Providers = ({ selectedProvider, setSelectedProvider }) => {
   const { updateApiClient } = useApiClient();
   const [customProvider, setCustomProvider] = useState({
+    name: "Custom",
     apiEndpoint: "",
     rpcEndpoint: "",
   });
@@ -15,7 +16,7 @@ const Providers = ({ selectedProvider, setSelectedProvider }) => {
 
   const chooseProvider = (provider) => {
     setSelectedProvider(provider);
-    updateApiClient(provider.apiEndpoint, provider.rpcEndpoint);
+    updateApiClient(provider.name, provider.apiEndpoint, provider.rpcEndpoint);
   };
 
   const handleCustomProviderChange = (field, value) => {
@@ -97,7 +98,7 @@ const Providers = ({ selectedProvider, setSelectedProvider }) => {
         >
           <div className="ml-2 mr-2">
             <div className="text-xs text-left whitespace-nowrap">
-              {provider.apiEndpoint.replace(/^https:\/\//, "")}
+              {provider.name}
               {selectedProvider &&
                 selectedProvider.apiEndpoint === provider.apiEndpoint && (
                   <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>

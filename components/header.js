@@ -62,6 +62,7 @@ function Header(props) {
   const [openDeposit, setOpenDeposit] = useState(false);
   const [openWithdraw, setOpenWithdraw] = useState(false);
   const {
+    providerName,
     apiUrl,
     rpcUrl,
     apiClient,
@@ -70,6 +71,7 @@ function Header(props) {
     updateApiClient,
   } = useApiClient();
   const [selectedProvider, setSelectedProvider] = useState({
+    name: providerName,
     apiEndpoint: apiUrl,
     rpcEndpoint: rpcUrl,
   });
@@ -105,7 +107,7 @@ function Header(props) {
   const refreshProviders = async () => {
     const provider = await selectProvider();
     setSelectedProvider(provider);
-    updateApiClient(provider.apiEndpoint, provider.rpcEndpoint);
+    updateApiClient(provider.name, provider.apiEndpoint, provider.rpcEndpoint);
     props.notify("API provider reset successful", "info");
   };
 
@@ -237,20 +239,6 @@ function Header(props) {
           <div className="items-stretch">
             <a
               className="btn btn-ghost btn-sm rounded-btn"
-              href={process.env.NEXT_PUBLIC_EXPLORER_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Explorer
-            </a>
-          </div>
-        ) : (
-          ""
-        )}
-        {!isMobile ? (
-          <div className="items-stretch">
-            <a
-              className="btn btn-ghost btn-sm rounded-btn"
               href={process.env.NEXT_PUBLIC_DOCS_URL}
               target="_blank"
               rel="noreferrer"
@@ -293,7 +281,7 @@ function Header(props) {
                 >
                   {selectedProvider ? (
                     <>
-                      {selectedProvider.apiEndpoint.replace(/^https:\/\//, "")}
+                      {selectedProvider.name}
                       <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
                     </>
                   ) : (
