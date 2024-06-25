@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { useQuery, gql } from '@apollo/client';
-import dayjs from 'dayjs';
-import Head from 'next/head';
-import Header from '../../components/header';
-import Footer from '../../components/landingPageFooter';
-import BountyCard from '../../components/bountyCard';
-import client from '../../helpers/apolloClient';
-import { useApiClient } from '../../context/ApiClientContext';
-import getDenomNameByHash from '../../helpers/getDenomNameByHash';
-import getBountyValueInDollars from '../../helpers/getBountyValueInDollars';
+import { useState, useEffect } from "react";
+import { connect } from "react-redux";
+import { useQuery, gql } from "@apollo/client";
+import dayjs from "dayjs";
+import Head from "next/head";
+import Header from "../../components/header";
+import Footer from "../../components/landingPageFooter";
+import BountyCard from "../../components/bountyCard";
+import client from "../../helpers/apolloClient";
+import { useApiClient } from "../../context/ApiClientContext";
+import getDenomNameByHash from "../../helpers/getDenomNameByHash";
+import getBountyValueInDollars from "../../helpers/getBountyValueInDollars";
 
 const QUERY_BOUNTY = gql`
   query Bounties($skip: Int = 0, $bountyState: String, $issueState: String) {
@@ -72,21 +72,21 @@ const QUERY_BOUNTY = gql`
 const getStatuses = (tab, offset) => {
   let bountyState, issueState;
   switch (tab) {
-    case 'open':
-      bountyState = 'BOUNTY_STATE_SRCDEBITTED';
-      issueState = 'OPEN';
+    case "open":
+      bountyState = "BOUNTY_STATE_SRCDEBITTED";
+      issueState = "OPEN";
       break;
-    case 'closed':
-      bountyState = 'BOUNTY_STATE_REVERTEDBACK';
-      issueState = 'CLOSED';
+    case "closed":
+      bountyState = "BOUNTY_STATE_REVERTEDBACK";
+      issueState = "CLOSED";
       break;
-    case 'rewarded':
-      bountyState = 'BOUNTY_STATE_DESTCREDITED';
-      issueState = 'CLOSED';
+    case "rewarded":
+      bountyState = "BOUNTY_STATE_DESTCREDITED";
+      issueState = "CLOSED";
       break;
     default:
-      bountyState = 'BOUNTY_STATE_SRCDEBITTED';
-      issueState = 'OPEN';
+      bountyState = "BOUNTY_STATE_SRCDEBITTED";
+      issueState = "OPEN";
   }
   return { bountyState, issueState, skip: offset };
 };
@@ -95,7 +95,7 @@ function Bounties({ assetList }) {
   const [bounties, setBounties] = useState([]);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [currentTab, setCurrentTab] = useState('open');
+  const [currentTab, setCurrentTab] = useState("open");
   const [tokenPrice, setTokenPrice] = useState(0);
   const { ibcAppTransferApiClient } = useApiClient();
 
@@ -113,7 +113,9 @@ function Bounties({ assetList }) {
 
   useEffect(() => {
     const fetchTokenPrice = async () => {
-      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=gitopia&vs_currencies=usd');
+      const response = await fetch(
+        "https://api.coingecko.com/api/v3/simple/price?ids=gitopia&vs_currencies=usd"
+      );
       const data = await response.json();
       setTokenPrice(data.gitopia.usd);
     };
@@ -126,7 +128,7 @@ function Bounties({ assetList }) {
       bounties.map(async (bounty) => {
         const processedAmount = await Promise.all(
           bounty.bounty.amount.map(async (c) => {
-            const denomName = c.denom.includes('ibc')
+            const denomName = c.denom.includes("ibc")
               ? await getDenomNameByHash(ibcAppTransferApiClient, c.denom)
               : c.denom;
 
@@ -279,7 +281,11 @@ function Bounties({ assetList }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {bounties.map((bounty) => (
-              <BountyCard key={bounty.id} bounty={bounty} tokenPrice={tokenPrice} />
+              <BountyCard
+                key={bounty.id}
+                bounty={bounty}
+                tokenPrice={tokenPrice}
+              />
             ))}
           </div>
           {loading && <p>Loading...</p>}
