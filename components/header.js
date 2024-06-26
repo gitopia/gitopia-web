@@ -106,6 +106,7 @@ function Header(props) {
     const provider = await selectProvider();
     setSelectedProvider(provider);
     updateApiClient(provider.apiEndpoint, provider.rpcEndpoint);
+    props.notify("API provider reset successful", "info");
   };
 
   useEffect(() => {
@@ -209,6 +210,15 @@ function Header(props) {
           <div className="items-stretch">
             <a className="btn btn-ghost btn-sm rounded-btn" href="/rewards">
               Rewards
+            </a>
+          </div>
+        ) : (
+          ""
+        )}
+        {!isMobile ? (
+          <div className="items-stretch">
+            <a className="btn btn-ghost btn-sm rounded-btn" href="/leaderboard">
+              Leaderboard
             </a>
           </div>
         ) : (

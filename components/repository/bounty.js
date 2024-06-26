@@ -26,8 +26,12 @@ function CreateBounty(props) {
   const ref1 = useRef(null);
   const ref2 = useRef(null);
   // const ref3 = useRef("dd/mm/yyyy");
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    ibcAppTransferApiClient,
+  } = useApiClient();
 
   useEffect(() => {
     async function getBalance() {
@@ -36,7 +40,10 @@ function CreateBounty(props) {
       if (b) {
         for (let i = 0; i < b.balances.length; i++) {
           if (b.balances[i].denom.includes("ibc")) {
-            let denomName = await getDenomNameByHash(b.balances[i].denom);
+            let denomName = await getDenomNameByHash(
+              ibcAppTransferApiClient,
+              b.balances[i].denom
+            );
             if (denomName) {
               b.balances[i].showDenom = coingeckoId[denomName].coinDenom;
               b.balances[i].amount =

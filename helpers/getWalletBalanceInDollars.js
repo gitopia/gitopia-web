@@ -2,25 +2,27 @@
 
 import axios from "./axiosFetch";
 import { coingeckoId } from "../ibc-assets-config";
-import { Api } from "../store/cosmos.bank.v1beta1/module/rest";
-import { Api as ibcApi } from "../store/ibc.applications.transfer.v1/module/rest";
 
-export default async function getBalanceInDollars(apiNode, address) {
+export default async function getBalanceInDollars(
+  cosmosBankApiClient,
+  ibcAppTransferApiClient,
+  address
+) {
   if (!address) return {};
   try {
     let totalPrice = 0,
       TokenBalances = {},
       USDBalances = {};
-    const api = new Api({ baseUrl: apiNode });
-    const ibc = new ibcApi({ baseUrl: apiNode });
-    const res = await api.queryAllBalances(address);
+    const res = await cosmosBankApiClient.queryAllBalances(address);
     if (res.status === 200) {
       let balance = res.data.balances;
       for (let i = 0; i < balance.length; i++) {
         TokenBalances[balance[i].denom] = balance[i].amount;
         if (balance[i].denom.includes("ibc")) {
           const denomHash = balance[i].denom.slice(4, balance[i].denom.length);
-          const result = await ibc.queryDenomTrace(denomHash);
+          const result = await ibcAppTransferApiClient.queryDenomTrace(
+            denomHash
+          );
           if (result.ok) {
             let denom = result.data.denom_trace.base_denom;
             delete TokenBalances[balance[i].denom];

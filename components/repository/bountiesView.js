@@ -38,7 +38,10 @@ function IssueBountyView(props) {
           }
           for (let i = 0; i < res.amount.length; i++) {
             if (res.amount[i].denom.includes("ibc")) {
-              let denomName = await getDenomNameByHash(res.amount[i].denom);
+              let denomName = await getDenomNameByHash(
+                ibcAppTransferApiClient,
+                res.amount[i].denom
+              );
               res.amount[i].showDenom = denomName;
             }
           }
@@ -60,7 +63,10 @@ function IssueBountyView(props) {
 
       for (let i = 0; i < coinArray.length; i++) {
         if (coinArray[i].denom.includes("ibc")) {
-          let denomName = await getDenomNameByHash(coinArray[i].denom);
+          let denomName = await getDenomNameByHash(
+            ibcAppTransferApiClient,
+            coinArray[i].denom
+          );
           let dollarAmount = await getTokenValueInDollars(
             denomName,
             coinArray[i].amount

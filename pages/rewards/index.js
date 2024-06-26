@@ -7,7 +7,7 @@ import Head from "next/head";
 import Link from "next/link";
 import Header from "../../components/header";
 import Footer from "../../components/landingPageFooter";
-import getWhois from "../../helpers/getWhois";
+import showToken from "../../helpers/showToken";
 import { signMessageForRewards } from "../../store/actions/user";
 import axios from "../../helpers/axiosFetch";
 import { getBalance } from "../../store/actions/wallet";
@@ -28,15 +28,6 @@ const isRewardActive = (reward) => {
   const endDate = new Date(reward["end_date"]);
   return today >= startDate && today <= endDate;
 };
-
-function showToken(value, denom) {
-  if (denom === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN) {
-    return value.toLocaleString() + " " + denom;
-  } else {
-    let roundOff = Math.floor(value / 10000) / 100;
-    return roundOff.toLocaleString() + " " + denom;
-  }
-}
 
 function Rewards(props) {
   const [claimTokensLoading, setClaimTokensLoading] = useState(false);
@@ -104,14 +95,12 @@ function Rewards(props) {
     setSplits(data.splits);
     setXPost(
       encodeURIComponent(
-        `🎉 Excited to share that I earned ${Math.floor(
+        `Just claimed ${Math.floor(
           data["total_claimed_amount"] / 1e6
-        ).toLocaleString()} $LORE tokens by contributing to open source projects on Gitopia! 🌟
-
-Switch to Gitopia and earn rewards for your open source contributions! 💰
-#Gitopia #OpenSource
-
-`
+        ).toLocaleString()} $LORE for my #OpenSource contributions on @gitopiaDAO 🎉
+You can earn rewards too for your projects 💰
+Start building on #Gitopia today! 🚀
+#GitopiaRewards | Learn more: `
       )
     );
     setIsPlatformIncentivesTokensLoaded(true);
@@ -235,7 +224,9 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
         {totalClaimedPlatformIncentivesToken > 0 && (
           <Link
             className="btn btn-primary btn-base  mx-4 my-8 lg:w-48"
-            href={`https://twitter.com/intent/tweet?text=${xPost}`}
+            href={`https://twitter.com/intent/tweet?text=${xPost}&url=${encodeURI(
+              "https://gitopia.com/rewards"
+            )}`}
           >
             𝕏 Post
           </Link>
@@ -257,7 +248,7 @@ Switch to Gitopia and earn rewards for your open source contributions! 💰
               to increase your chances next time:
               <ul className="list-disc mx-4">
                 <li>
-                  Earn Gitopia{" "}
+                  Hunt Gitopia{" "}
                   <Link
                     href="https://gitopia.com/home"
                     className="text-xs link link-primary no-underline hover:underline"

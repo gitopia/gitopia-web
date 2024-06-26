@@ -61,8 +61,12 @@ function RepositoryBountiesView(props) {
   const [closeBountyLoading, setCloseBountyLoading] = useState(false);
   const [bountyAmount, setBountyAmount] = useState([]);
   const { isMobile } = useWindowSize();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    ibcAppTransferApiClient,
+  } = useApiClient();
 
   useEffect(() => {
     async function fetchBounty() {
@@ -101,7 +105,10 @@ function RepositoryBountiesView(props) {
   async function updateDenomName(bounty) {
     for (let i = 0; i < bounty.amount.length; i++) {
       if (bounty.amount[i].denom.includes("ibc")) {
-        let denomName = await getDenomNameByHash(bounty.amount[i].denom);
+        let denomName = await getDenomNameByHash(
+          ibcAppTransferApiClient,
+          bounty.amount[i].denom
+        );
         bounty.amount[i].denom = denomName;
         if (denomName) {
           bounty.amount[i].standardDenomName = coingeckoId[denomName].coinDenom;

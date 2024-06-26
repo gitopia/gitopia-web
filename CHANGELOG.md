@@ -1,12 +1,28 @@
 ## Changelog
 
+### v2.0.0 - 21st Jun 2024
+
+- Refactor the webapp to use the API client context across components
+- Decentralize API providers
+- New provider selector component in the header
+- Add a button to refresh the API provider
+- Remove WebSocket subscription
+- Poll for task completion in the case of fork repository and merge PR
+- Show platform incentives in Rewards view
+- Add a new Bounties Leaderboard view
+- Support highlighting of specific lines in the code view. URL format: `...<filename>#L10-L22`
+- Fix comments count in the issues list view
+- Fix user profile link in the DAO view
+- Fix 404 error in Repository view when tag name includes `-` in the url
+- Fix the size of Issue description component in the issue view
+
 ### v1.15.3 - 23rd Feb 2024
 
 - Fix graphql query in issue link field
 
 ### v1.15.2 - 18th Sep 2023
 
-- Changes in  rewards api
+- Changes in rewards api
 
 ### v1.15.1 - 16th Sep 2023
 
