@@ -14,6 +14,7 @@ import getRewardToken from "../../helpers/getRewardTokens";
 import getTokenValueInDollars from "../../helpers/getTotalTokenValueInDollars";
 import Link from "next/link";
 import { useApiClient } from "../../context/ApiClientContext";
+import axios from "../../helpers/axiosFetch";
 
 function WalletInfo(props) {
   const [totalBalance, setTotalBalance] = useState(0);
@@ -24,9 +25,20 @@ function WalletInfo(props) {
   const [accountName, setAccountName] = useState("");
   const [accountLink, setAccountLink] = useState("");
   const [loadingChainInfo, setLoadingChainInfo] = useState(-1);
+  const [tokenPrices, setTokenPrices] = useState({});
   const { cosmosBankApiClient, ibcAppTransferApiClient } = useApiClient();
 
   useEffect(() => {
+    // async function fetchTokenPrices() {
+    //   const denomIds = Object.values(coingeckoId)
+    //     .map((obj) => obj.id)
+    //     .join(",");
+    //   const response = await axios.get(
+    //     `https://api.coingecko.com/api/v3/simple/price?ids=${denomIds}&vs_currencies=usd`
+    //   );
+    //   setTokenPrices(response.data);
+    // }
+
     async function getWalletbalance() {
       let a = await getBalanceInDollars(
         cosmosBankApiClient,
@@ -52,9 +64,11 @@ function WalletInfo(props) {
       }
       if (totalDecayedAmount) {
         setRewards(totalDecayedAmount);
+        // await fetchTokenPrices();
         let dollar = await getTokenValueInDollars(
           process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN,
-          totalDecayedAmount
+          totalDecayedAmount,
+          tokenPrices
         );
         if (dollar) {
           setRewardsDollarValue(dollar);
@@ -63,7 +77,7 @@ function WalletInfo(props) {
     }
 
     getWalletbalance();
-    getRewards();
+    // getRewards();
   }, [props.selectedAddress]);
 
   useEffect(() => {

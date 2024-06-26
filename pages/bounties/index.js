@@ -18,10 +18,10 @@ const QUERY_BOUNTY = gql`
       }
     }
     issueBounties(
-      first: 9
+      first: 18
       skip: $skip
       orderDirection: desc
-      orderBy: issue__updatedAt
+      orderBy: bounty__updatedAt
       where: {
         bounty_: { repository_in: ["R5", "R6", "R7"], state: $bountyState }
         issue_: { state: $issueState }
@@ -136,7 +136,7 @@ function Bounties({ assetList }) {
       acc[issueId].bounty.amount.push(...bounty.bounty.amount);
       return acc;
     }, {});
-  
+
     // Process each grouped bounty
     const processedBounties = await Promise.all(
       Object.values(groupedBounties).map(async (bounty) => {
@@ -145,7 +145,7 @@ function Bounties({ assetList }) {
             const denomName = c.denom.includes("ibc")
               ? await getDenomNameByHash(ibcAppTransferApiClient, c.denom)
               : c.denom;
-  
+
             return {
               ...c,
               amount: parseFloat(c.amount) / Math.pow(10, 6),
@@ -153,7 +153,7 @@ function Bounties({ assetList }) {
             };
           })
         );
-  
+
         // Combine amounts by denom
         const combinedAmount = processedAmount.reduce((acc, amount) => {
           if (!acc[amount.denomName]) {
@@ -162,7 +162,7 @@ function Bounties({ assetList }) {
           acc[amount.denomName].amount += amount.amount;
           return acc;
         }, {});
-  
+
         return {
           ...bounty,
           bounty: {
@@ -172,10 +172,10 @@ function Bounties({ assetList }) {
         };
       })
     );
-  
+
     setBounties((prevBounties) => [...prevBounties, ...processedBounties]);
     setOffset((prevOffset) => prevOffset + bounties.length);
-    setHasMore(bounties.length === 9);
+    setHasMore(bounties.length === 18);
   };
 
   const loadMore = () => {

@@ -10,16 +10,30 @@ import { coingeckoId } from "../../ibc-assets-config";
 import getTokenValueInDollars from "../../helpers/getTotalTokenValueInDollars";
 import getBountyValueInDollars from "../../helpers/getBountyValueInDollars";
 import { useApiClient } from "../../context/ApiClientContext";
+import axios from "../../helpers/axiosFetch";
 
 function IssueBountyView(props) {
   const router = useRouter();
   const [bounties, setBounties] = useState([]);
   const [coins, setCoins] = useState([]);
   const [isHovering, setIsHovering] = useState(false);
+  const [tokenPrices, setTokenPrices] = useState({});
   const { apiClient, ibcAppTransferApiClient } = useApiClient();
 
   useEffect(() => {
+    async function fetchTokenPrices() {
+      const denomIds = Object.values(coingeckoId)
+        .map((obj) => obj.id)
+        .join(",");
+      const response = await axios.get(
+        `https://api.coingecko.com/api/v3/simple/price?ids=${denomIds}&vs_currencies=usd`
+      );
+      setTokenPrices(response.data);
+    }
+
     async function fetchBountyArray() {
+      await fetchTokenPrices();
+
       const bountyArray = [];
       const coin = {};
       const coinArray = [];
@@ -69,7 +83,8 @@ function IssueBountyView(props) {
           );
           let dollarAmount = await getTokenValueInDollars(
             denomName,
-            coinArray[i].amount
+            coinArray[i].amount,
+            tokenPrices
           );
           if (dollarAmount && denomName) {
             let standardDenomName = coingeckoId[denomName].coinDenom;
@@ -84,7 +99,8 @@ function IssueBountyView(props) {
         } else {
           let dollarAmount = await getTokenValueInDollars(
             coinArray[i].denom,
-            coinArray[i].amount
+            coinArray[i].amount,
+            tokenPrices
           );
           let standardDenomName = coingeckoId[coinArray[i].denom].coinDenom;
           coinArray[i].standardDenomName = standardDenomName;
@@ -99,6 +115,7 @@ function IssueBountyView(props) {
     }
     fetchBountyArray();
   }, [props.bounties.length]);
+
   return (
     <div
       className="pt-8 mb-4 ml-2"
