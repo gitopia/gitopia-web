@@ -77,6 +77,7 @@ function RepositoryIssueLinkedPullsView(props) {
       const array = [];
       for (var i = 0; i < issue.pullRequests.length; i++) {
         const res = await getPullRequest(
+          apiClient,
           repository.owner.id,
           repository.name,
           issue.pullRequests[i].iid
