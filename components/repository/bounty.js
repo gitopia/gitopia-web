@@ -117,8 +117,10 @@ function CreateBounty(props) {
     let price = tokenPrices[denom];
     if (!price) setDollarValue(0);
 
-    let perCoinAmount = amount / Math.pow(10, coingeckoId[denom].coinDecimals);
+    // let perCoinAmount = amount / Math.pow(10, coingeckoId[denom].coinDecimals);
+    console.log(1,coingeckoId[denom], price, amount)
     setDollarValue((amount * perCoinAmount).toFixed(2));
+    
   }
 
   const handleClick = () => {
