@@ -9,7 +9,6 @@ import BountyCard from "../../components/bountyCard";
 import client from "../../helpers/apolloClient";
 import { useApiClient } from "../../context/ApiClientContext";
 import getDenomNameByHash from "../../helpers/getDenomNameByHash";
-import getBountyValueInDollars from "../../helpers/getBountyValueInDollars";
 
 const QUERY_BOUNTY = gql`
   query Bounties($skip: Int = 0, $bountyState: String, $issueState: String) {
@@ -19,7 +18,7 @@ const QUERY_BOUNTY = gql`
       }
     }
     issueBounties(
-      first: 10
+      first: 9
       skip: $skip
       orderDirection: desc
       where: {
@@ -103,11 +102,15 @@ function Bounties({ assetList }) {
     client: client,
     variables: getStatuses(currentTab, offset),
     notifyOnNetworkStatusChange: true,
+    onCompleted: (data) => {
+      if (!bounties.length) {
+        processBounties(data.issueBounties);
+      }
+    },
   });
 
   useEffect(() => {
     if (data && data.issueBounties) {
-      processBounties(data.issueBounties);
     }
   }, [data]);
 
@@ -140,17 +143,11 @@ function Bounties({ assetList }) {
           })
         );
 
-        const dollarAmount = await getBountyValueInDollars(
-          ibcAppTransferApiClient,
-          bounty.bounty
-        );
-
         return {
           ...bounty,
           bounty: {
             ...bounty.bounty,
             amount: processedAmount,
-            dollarAmount: dollarAmount,
           },
         };
       })
@@ -158,7 +155,7 @@ function Bounties({ assetList }) {
 
     setBounties((prevBounties) => [...prevBounties, ...processedBounties]);
     setOffset((prevOffset) => prevOffset + bounties.length);
-    setHasMore(bounties.length === 10);
+    setHasMore(bounties.length === 9);
   };
 
   const loadMore = () => {
@@ -288,15 +285,17 @@ function Bounties({ assetList }) {
               />
             ))}
           </div>
-          {loading && <p>Loading...</p>}
-          {hasMore && !loading && (
-            <button
-              onClick={loadMore}
-              className="mt-8 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            >
-              Load More
-            </button>
-          )}
+          <div className="flex justify-center">
+            {loading && <p>Loading...</p>}
+            {hasMore && !loading && (
+              <button
+                onClick={loadMore}
+                className="mt-4 btn btn-primary btn-sm"
+              >
+                Load More
+              </button>
+            )}
+          </div>
         </div>
       </section>
       <Footer />

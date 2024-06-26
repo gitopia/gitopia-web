@@ -20,7 +20,7 @@ const BountyCard = ({ bounty, tokenPrice }) => {
   const isRewarded =
     bountyData.state === "BOUNTY_STATE_SRCDEBITTED" &&
     issueData.pullRequests.some((pr) => pr.pullRequest.state === "MERGED");
-  console.log(bounty);
+
   return (
     <Link
       href={`/${bountyData.repository.owner.owner.username}/${bountyData.repository.name}/issues/${issueData.iid}`}
