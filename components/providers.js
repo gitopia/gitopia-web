@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import providers from "../providers.json";
 import { useApiClient } from "../context/ApiClientContext";
+import { notify } from "reapop";
+import { connect } from "react-redux";
 
-const Providers = ({ selectedProvider, setSelectedProvider }) => {
+const Providers = ({ selectedProvider, setSelectedProvider, notify }) => {
   const { updateApiClient } = useApiClient();
   const [customProvider, setCustomProvider] = useState({
     name: "Custom",
@@ -80,6 +82,7 @@ const Providers = ({ selectedProvider, setSelectedProvider }) => {
     setProvidersWithCustom([...providersWithCustom, customProvider]);
     chooseProvider(customProvider);
     setValidationError("");
+    notify("Custom API Provider set successfully", "info");
   };
 
   return (
@@ -109,7 +112,7 @@ const Providers = ({ selectedProvider, setSelectedProvider }) => {
       ))}
       <button
         onClick={toggleCustomProviderInputs}
-        className="btn btn-ghost rounded-full px-4 mb-2 relative justify-start"
+        className="btn btn-sm btn-block bg-white text-black"
       >
         Set Custom Provider
       </button>
@@ -139,14 +142,9 @@ const Providers = ({ selectedProvider, setSelectedProvider }) => {
           )}
           <button
             onClick={addCustomProvider}
-            className={`btn rounded-full px-4 mb-2 relative justify-start ${
-              selectedProvider &&
-              selectedProvider.apiEndpoint === customProvider.apiEndpoint
-                ? "btn-primary"
-                : "btn-ghost"
-            }`}
+            className={"btn btn-primary btn-sm btn-block"}
           >
-            Use Custom Provider
+            Set Custom Provider
           </button>
         </div>
       )}
@@ -154,4 +152,6 @@ const Providers = ({ selectedProvider, setSelectedProvider }) => {
   );
 };
 
-export default Providers;
+export default connect(null, {
+  notify,
+})(Providers);
