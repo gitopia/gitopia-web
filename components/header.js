@@ -132,18 +132,28 @@ function Header(props) {
 
   useEffect(() => {
     const updateNetworkName = async () => {
-      if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
-        const info = await getNodeInfo(apiUrl);
-        setChainId(info.default_node_info.network);
+      try {
+        if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
+          const info = await getNodeInfo(apiUrl);
+          setChainId(info.default_node_info.network);
+        }
+      } catch (error) {
+        console.error('Error fetching node info:', error);
       }
     };
+  
     const getIbcAssets = async () => {
-      const assets = await getAssetList();
-      setAssets(assets);
+      try {
+        const assets = await getAssetList();
+        setAssets(assets);
+      } catch (error) {
+        console.error('Error fetching asset list:', error);
+      }
     };
+  
     getIbcAssets();
     updateNetworkName();
-  }, []);
+  }, [apiUrl]);
 
   useEffect(() => {
     window.addEventListener("keplr_keystorechange", kelprWalletChange);

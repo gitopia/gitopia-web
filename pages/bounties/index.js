@@ -21,6 +21,7 @@ const QUERY_BOUNTY = gql`
       first: 9
       skip: $skip
       orderDirection: desc
+      orderBy: issue__updatedAt
       where: {
         bounty_: { repository_in: ["R5", "R6", "R7"], state: $bountyState }
         issue_: { state: $issueState }
@@ -125,16 +126,26 @@ function Bounties({ assetList }) {
 
     fetchTokenPrice();
   }, []);
-
   const processBounties = async (bounties) => {
+    // Group bounties by issue ID
+    const groupedBounties = bounties.reduce((acc, bounty) => {
+      const issueId = bounty.issue.iid;
+      if (!acc[issueId]) {
+        acc[issueId] = { ...bounty, bounty: { ...bounty.bounty, amount: [] } };
+      }
+      acc[issueId].bounty.amount.push(...bounty.bounty.amount);
+      return acc;
+    }, {});
+  
+    // Process each grouped bounty
     const processedBounties = await Promise.all(
-      bounties.map(async (bounty) => {
+      Object.values(groupedBounties).map(async (bounty) => {
         const processedAmount = await Promise.all(
           bounty.bounty.amount.map(async (c) => {
             const denomName = c.denom.includes("ibc")
               ? await getDenomNameByHash(ibcAppTransferApiClient, c.denom)
               : c.denom;
-
+  
             return {
               ...c,
               amount: parseFloat(c.amount) / Math.pow(10, 6),
@@ -142,17 +153,26 @@ function Bounties({ assetList }) {
             };
           })
         );
-
+  
+        // Combine amounts by denom
+        const combinedAmount = processedAmount.reduce((acc, amount) => {
+          if (!acc[amount.denomName]) {
+            acc[amount.denomName] = { ...amount, amount: 0 };
+          }
+          acc[amount.denomName].amount += amount.amount;
+          return acc;
+        }, {});
+  
         return {
           ...bounty,
           bounty: {
             ...bounty.bounty,
-            amount: processedAmount,
+            amount: Object.values(combinedAmount),
           },
         };
       })
     );
-
+  
     setBounties((prevBounties) => [...prevBounties, ...processedBounties]);
     setOffset((prevOffset) => prevOffset + bounties.length);
     setHasMore(bounties.length === 9);
