@@ -20,12 +20,13 @@ export const ApiClientProvider = ({ children }) => {
   const [cosmosFeegrantApiClient, setCosmosFeegrantApiClient] = useState(null);
   const [cosmosGovApiClient, setCosmosGovApiClient] = useState(null);
   const [ibcAppTransferApiClient, setIbcAppTransferApiClient] = useState(null);
+  const [providerName, setProviderName] = useState(null);
   const [apiUrl, setApiUrl] = useState(null);
   const [rpcUrl, setRpcUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
-  const updateApiClient = (apiNode, rpcNode) => {
+  const updateApiClient = (name, apiNode, rpcNode) => {
     const newApiClient = new Api({ baseURL: apiNode });
     setApiClient(newApiClient);
 
@@ -45,30 +46,39 @@ export const ApiClientProvider = ({ children }) => {
     });
     setIbcAppTransferApiClient(newIbcAppTransferApiClient);
 
+    setProviderName(name);
     setApiUrl(apiNode);
     setRpcUrl(rpcNode);
 
-    localStorage.setItem("apiUrl", apiNode);
-    localStorage.setItem("rpcUrl", rpcNode);
+    const providerInfo = JSON.stringify({
+      name,
+      apiEndpoint: apiNode,
+      rpcEndpoint: rpcNode,
+    });
+    localStorage.setItem("providerInfo", providerInfo);
 
     dispatch(setConfig({ config: { apiNode, rpcNode } }));
   };
 
   useEffect(() => {
-    const cachedApiUrl = localStorage.getItem("apiUrl");
-    const cachedRpcUrl = localStorage.getItem("rpcUrl");
+    const cachedProviderInfo = localStorage.getItem("providerInfo");
 
     const initializeApiProviders = async () => {
-      if (cachedApiUrl) {
-        setApiUrl(cachedApiUrl);
-        setRpcUrl(cachedRpcUrl);
-        updateApiClient(cachedApiUrl, cachedRpcUrl);
+      if (cachedProviderInfo) {
+        const { name, apiEndpoint, rpcEndpoint } =
+          JSON.parse(cachedProviderInfo);
+        setProviderName(name);
+        setApiUrl(apiEndpoint);
+        setRpcUrl(rpcEndpoint);
+        updateApiClient(name, apiEndpoint, rpcEndpoint);
       } else {
         const bestApiProvider = await selectProvider();
         updateApiClient(
+          bestApiProvider.name,
           bestApiProvider.apiEndpoint,
           bestApiProvider.rpcEndpoint
         );
+        setProviderName(bestApiProvider.name);
         setApiUrl(bestApiProvider.apiEndpoint);
         setRpcUrl(bestApiProvider.rpcEndpoint);
       }
@@ -81,6 +91,7 @@ export const ApiClientProvider = ({ children }) => {
   return (
     <ApiClientContext.Provider
       value={{
+        providerName,
         apiUrl,
         rpcUrl,
         apiClient,

@@ -1,6 +1,6 @@
 ## Changelog
 
-### v2.0.0 - 21st Jun 2024
+### v2.0.0 - 26th Jun 2024
 
 - Refactor the webapp to use the API client context across components
 - Decentralize API providers
@@ -9,6 +9,7 @@
 - Remove WebSocket subscription
 - Poll for task completion in the case of fork repository and merge PR
 - Show platform incentives in Rewards view
+- Add a new Bounties page
 - Add a new Bounties Leaderboard view
 - Support highlighting of specific lines in the code view. URL format: `...<filename>#L10-L22`
 - Fix comments count in the issues list view

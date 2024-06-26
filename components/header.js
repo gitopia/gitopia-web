@@ -62,6 +62,7 @@ function Header(props) {
   const [openDeposit, setOpenDeposit] = useState(false);
   const [openWithdraw, setOpenWithdraw] = useState(false);
   const {
+    providerName,
     apiUrl,
     rpcUrl,
     apiClient,
@@ -70,6 +71,7 @@ function Header(props) {
     updateApiClient,
   } = useApiClient();
   const [selectedProvider, setSelectedProvider] = useState({
+    name: providerName,
     apiEndpoint: apiUrl,
     rpcEndpoint: rpcUrl,
   });
@@ -105,7 +107,7 @@ function Header(props) {
   const refreshProviders = async () => {
     const provider = await selectProvider();
     setSelectedProvider(provider);
-    updateApiClient(provider.apiEndpoint, provider.rpcEndpoint);
+    updateApiClient(provider.name, provider.apiEndpoint, provider.rpcEndpoint);
     props.notify("API provider reset successful", "info");
   };
 
@@ -208,6 +210,15 @@ function Header(props) {
         {!isMobile ? <SearchBar /> : ""}
         {!isMobile ? (
           <div className="items-stretch">
+            <a className="btn btn-ghost btn-sm rounded-btn" href="/bounties">
+              Bounties
+            </a>
+          </div>
+        ) : (
+          ""
+        )}
+        {!isMobile ? (
+          <div className="items-stretch">
             <a className="btn btn-ghost btn-sm rounded-btn" href="/rewards">
               Rewards
             </a>
@@ -219,20 +230,6 @@ function Header(props) {
           <div className="items-stretch">
             <a className="btn btn-ghost btn-sm rounded-btn" href="/leaderboard">
               Leaderboard
-            </a>
-          </div>
-        ) : (
-          ""
-        )}
-        {!isMobile ? (
-          <div className="items-stretch">
-            <a
-              className="btn btn-ghost btn-sm rounded-btn"
-              href={process.env.NEXT_PUBLIC_EXPLORER_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Explorer
             </a>
           </div>
         ) : (
@@ -284,7 +281,7 @@ function Header(props) {
                 >
                   {selectedProvider ? (
                     <>
-                      {selectedProvider.apiEndpoint.replace(/^https:\/\//, "")}
+                      {selectedProvider.name}
                       <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
                     </>
                   ) : (
@@ -314,9 +311,9 @@ function Header(props) {
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="white"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   className="w-4 h-4"
                 >
                   <path d="M21 2v6h-6" />
