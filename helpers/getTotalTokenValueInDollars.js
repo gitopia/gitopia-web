@@ -19,5 +19,5 @@ export default async function getTokenValueInDollars(
     console.error(err);
   }
 
-  return totalPrice.toFixed(2);
+  return totalPrice;
 }

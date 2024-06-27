@@ -9,6 +9,7 @@ import getTokenValueInDollars from "../../helpers/getTotalTokenValueInDollars";
 import { coingeckoId } from "../../ibc-assets-config";
 import { useApiClient } from "../../context/ApiClientContext";
 import axios from "../../helpers/axiosFetch";
+import { notify } from "reapop";
 
 function CreateBounty(props) {
   const router = useRouter();
@@ -109,7 +110,7 @@ function CreateBounty(props) {
       setTokenPrices(prices);
     } catch (err) {
       console.error(err);
-      notify("Unable to get prices", "error");
+      props.notify("Unable to get prices", "error");
     }
   }
 
@@ -712,4 +713,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   createBounty,
+  notify,
 })(CreateBounty);
