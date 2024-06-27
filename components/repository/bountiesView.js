@@ -11,6 +11,7 @@ import getTokenValueInDollars from "../../helpers/getTotalTokenValueInDollars";
 import getBountyValueInDollars from "../../helpers/getBountyValueInDollars";
 import { useApiClient } from "../../context/ApiClientContext";
 import axios from "../../helpers/axiosFetch";
+import { notify } from "reapop";
 
 function IssueBountyView(props) {
   const router = useRouter();
@@ -25,10 +26,15 @@ function IssueBountyView(props) {
       const denomIds = Object.values(coingeckoId)
         .map((obj) => obj.id)
         .join(",");
-      const response = await axios.get(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${denomIds}&vs_currencies=usd`
-      );
-      setTokenPrices(response.data);
+      try {
+        const response = await axios.get(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${denomIds}&vs_currencies=usd`
+        );
+        setTokenPrices(response.data);
+      } catch (err) {
+        console.error(err);
+        props.notify("Error fetching token prices", "error");
+      }
     }
 
     async function fetchBountyArray() {
@@ -244,4 +250,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(IssueBountyView);
+export default connect(mapStateToProps, { notify })(IssueBountyView);

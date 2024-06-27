@@ -29,28 +29,36 @@ function WalletInfo(props) {
   const { cosmosBankApiClient, ibcAppTransferApiClient } = useApiClient();
 
   useEffect(() => {
-    // async function fetchTokenPrices() {
-    //   const denomIds = Object.values(coingeckoId)
-    //     .map((obj) => obj.id)
-    //     .join(",");
-    //   const response = await axios.get(
-    //     `https://api.coingecko.com/api/v3/simple/price?ids=${denomIds}&vs_currencies=usd`
-    //   );
-    //   setTokenPrices(response.data);
-    // }
+    async function fetchTokenPrices() {
+      const denomIds = Object.values(coingeckoId)
+        .map((obj) => obj.id)
+        .join(",");
+      try {
+        const response = await axios.get(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${denomIds}&vs_currencies=usd`
+        );
+        return response.data;
+      } catch (err) {
+        console.error(err);
+        props.notify("Error fetching token prices", "error");
+        return null;
+      }
+    }
 
-    async function getWalletbalance() {
+    async function getWalletBalance(tokenPrices) {
       let a = await getBalanceInDollars(
         cosmosBankApiClient,
         ibcAppTransferApiClient,
-        props.selectedAddress
+        props.selectedAddress,
+        tokenPrices
       );
       if (a) {
         setTotalBalance(a.totalPrice);
         setTokenBalances(a.TokenBalances);
       }
     }
-    async function getRewards() {
+
+    async function getRewards(tokenPrices) {
       let res = await getRewardToken(props.selectedAddress),
         totalDecayedAmount = 0,
         denom = process.env.NEXT_PUBLIC_CURRENCY_TOKEN;
@@ -64,7 +72,6 @@ function WalletInfo(props) {
       }
       if (totalDecayedAmount) {
         setRewards(totalDecayedAmount);
-        // await fetchTokenPrices();
         let dollar = await getTokenValueInDollars(
           process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN,
           totalDecayedAmount,
@@ -76,8 +83,15 @@ function WalletInfo(props) {
       }
     }
 
-    getWalletbalance();
-    // getRewards();
+    async function fetchData() {
+      const tokenPrices = await fetchTokenPrices();
+      if (tokenPrices) {
+        await getWalletBalance(tokenPrices);
+        // await getRewards(tokenPrices);
+      }
+    }
+
+    fetchData();
   }, [props.selectedAddress]);
 
   useEffect(() => {
@@ -234,7 +248,7 @@ function WalletInfo(props) {
           </svg>
           <div className="text-sm text-type-primary ml-4">Total Balance</div>
           <div className="text-type-primary text-2xl font-bold mx-6 text-right flex-1">
-            ${totalBalance}
+            ${totalBalance.toFixed(2)}
           </div>
         </div>
         <div className="text-type-primary text-xs font-bold mt-6 mb-4">
@@ -436,7 +450,7 @@ function WalletInfo(props) {
             </div>
           );
         })}
-        <div className="text-type-primary text-xs font-bold mt-6 mb-4">
+        {/* <div className="text-type-primary text-xs font-bold mt-6 mb-4">
           Rewards
         </div>
         <div className="mt-1 p-4 box-content h-14 rounded-lg flex bg-rewards-grad items-center">
@@ -485,7 +499,7 @@ function WalletInfo(props) {
           <Link href="/rewards" className="btn btn-primary btn-sm px-4">
             {rewards ? "Claim Rewards" : "Check Eligibility"}
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );
