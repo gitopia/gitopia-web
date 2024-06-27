@@ -9,6 +9,7 @@ import BountyCard from "../../components/bountyCard";
 import client from "../../helpers/apolloClient";
 import { useApiClient } from "../../context/ApiClientContext";
 import getDenomNameByHash from "../../helpers/getDenomNameByHash";
+import { notify } from "reapop";
 
 const QUERY_BOUNTY = gql`
   query Bounties($skip: Int = 0, $bountyState: String, $issueState: String) {
@@ -21,7 +22,7 @@ const QUERY_BOUNTY = gql`
       first: 18
       skip: $skip
       orderDirection: desc
-      orderBy: bounty__updatedAt
+      orderBy: issue__updatedAt
       where: {
         bounty_: { repository_in: ["R5", "R6", "R7"], state: $bountyState }
         issue_: { state: $issueState }
@@ -91,7 +92,7 @@ const getStatuses = (tab, offset) => {
   return { bountyState, issueState, skip: offset };
 };
 
-function Bounties({ assetList }) {
+function Bounties(props) {
   const [bounties, setBounties] = useState([]);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -117,11 +118,16 @@ function Bounties({ assetList }) {
 
   useEffect(() => {
     const fetchTokenPrice = async () => {
-      const response = await fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=gitopia&vs_currencies=usd"
-      );
-      const data = await response.json();
-      setTokenPrice(data.gitopia.usd);
+      try {
+        const response = await fetch(
+          "https://api.coingecko.com/api/v3/simple/price?ids=gitopia&vs_currencies=usd"
+        );
+        const data = await response.json();
+        setTokenPrice(data.gitopia.usd);
+      } catch (err) {
+        console.error(err);
+        props.notify("Error fetching token prices", "error");
+      }
     };
 
     fetchTokenPrice();
@@ -323,13 +329,4 @@ function Bounties({ assetList }) {
   );
 }
 
-const showToken = (amount, denom) => {
-  return `${(parseFloat(amount) / Math.pow(10, 6)).toFixed(2)} ${denom}`;
-};
-
-const mapStateToProps = (state) => ({
-  connection: state.connection,
-  assetList: state.ibc ? state.ibc.assetList : [], // Ensure assetList is defined
-});
-
-export default connect(mapStateToProps)(Bounties);
+export default connect(null, { notify })(Bounties);

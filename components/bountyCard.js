@@ -17,9 +17,12 @@ const BountyCard = ({ bounty, tokenPrice }) => {
 
   const dollarAmount = bountyData.amount[0].amount * tokenPrice;
 
+  const isExpired = dayjs().isAfter(dayjs.unix(bountyData.expireAt));
+
   const isRewarded =
     bountyData.state === "BOUNTY_STATE_SRCDEBITTED" &&
-    issueData.pullRequests.some((pr) => pr.pullRequest.state === "MERGED");
+    (issueData.pullRequests.some((pr) => pr.pullRequest.state === "MERGED") ||
+      isExpired);
 
   return (
     <Link
