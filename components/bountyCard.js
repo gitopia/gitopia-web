@@ -31,7 +31,7 @@ const BountyCard = ({ bounty, tokenPrice }) => {
       passHref
     >
       <a target="_blank" rel="noopener noreferrer">
-        <div className="flex flex-col justify-between relative cursor-pointer w-full border-2 border-grey rounded-lg p-4">
+        <div className="flex flex-col justify-between relative cursor-pointer w-full h-full border-2 border-grey rounded-lg p-4">
           {isRewarded ? (
             <div className="w-36 sm:w-0">
               <div className="absolute top-2 right-2 items-center rounded-full px-4 w-24 py-0.5 bg-[#AD731D] text-xs uppercase mt-0.5">
