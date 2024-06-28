@@ -33,35 +33,54 @@ const QUERY_BOUNTY = gql`
         iid
         state
         title
+
+        repository {
+          id
+          repository {
+            id
+            name
+            owner {
+              owner {
+                address
+                avatarUrl
+                name
+                username
+              }
+            }
+          }
+        }
         description
         pullRequests {
           pullRequest {
             state
           }
         }
-      }
-      bounty {
-        id
-        state
-        amount {
-          amount
-          denom
-        }
-        updatedAt
-        expireAt
-        repository {
+        bounties {
           id
-          name
-          allowForking
-          forksCount
-          ownerId
-          owner {
-            owner {
-              address
-              avatarUrl
-              description
+          bounty {
+            id
+            state
+            amount {
+              amount
+              denom
+            }
+            updatedAt
+            expireAt
+            repository {
+              id
               name
-              username
+              allowForking
+              forksCount
+              ownerId
+              owner {
+                owner {
+                  address
+                  avatarUrl
+                  description
+                  name
+                  username
+                }
+              }
             }
           }
         }
@@ -128,59 +147,66 @@ function Bounties(props) {
     fetchTokenPrice();
   }, []);
 
-  const processBounties = async (bounties) => {
-    // Group bounties by repository ID and issue IID
-    const groupedBounties = bounties.reduce((acc, bounty) => {
-      const repositoryId = bounty.bounty.repository.id;
-      const issueIid = bounty.issue.iid;
-      const key = `${repositoryId}-${issueIid}`;
+  const processedIssueIds = new Set();
 
-      if (!acc[key]) {
-        acc[key] = { ...bounty, bounty: { ...bounty.bounty, amount: [] } };
+  const processBounties = async (issueBounties) => {
+    const groupedBounties = {};
+
+    for (const issueBounty of issueBounties) {
+      const issue = issueBounty.issue;
+      const issueId = issue.repository.repository.id + "-" + issue.iid;
+
+      if (processedIssueIds.has(issueId)) {
+        console.log(`Skipping duplicate issue with ID ${issueId}`);
+        continue; // Skip this issue because it has already been processed
       }
-      acc[key].bounty.amount.push(...bounty.bounty.amount);
-      return acc;
-    }, {});
 
-    // Process each grouped bounty
-    const processedBounties = await Promise.all(
-      Object.values(groupedBounties).map(async (bounty) => {
-        const processedAmount = await Promise.all(
-          bounty.bounty.amount.map(async (c) => {
-            const denomName = c.denom.includes("ibc")
-              ? await getDenomNameByHash(ibcAppTransferApiClient, c.denom)
-              : c.denom;
+      processedIssueIds.add(issueId); // Mark this issue as processed
 
-            return {
-              ...c,
-              amount: parseFloat(c.amount) / Math.pow(10, 6),
-              denomName: denomName,
-            };
-          })
-        );
-
-        // Combine amounts by denom
-        const combinedAmount = processedAmount.reduce((acc, amount) => {
-          if (!acc[amount.denomName]) {
-            acc[amount.denomName] = { ...amount, amount: 0 };
-          }
-          acc[amount.denomName].amount += amount.amount;
-          return acc;
-        }, {});
-
-        return {
-          ...bounty,
-          bounty: {
-            ...bounty.bounty,
-            amount: Object.values(combinedAmount),
-          },
+      if (!groupedBounties[issueId]) {
+        groupedBounties[issueId] = {
+          ...issue,
+          cumulativeAmount: [],
         };
-      })
-    );
+      }
 
-    setBounties((prevBounties) => [...prevBounties, ...processedBounties]);
-    setOffset((prevOffset) => prevOffset + bounties.length);
-    setHasMore(bounties.length === 14);
+      for (const bounty of issue.bounties) {
+        for (const amount of bounty.bounty.amount) {
+          const denomName = amount.denom.includes("ibc")
+            ? await getDenomNameByHash(ibcAppTransferApiClient, amount.denom)
+            : amount.denom;
+
+          const parsedAmount = parseFloat(amount.amount) / Math.pow(10, 6);
+
+          let existingAmount = groupedBounties[issueId].cumulativeAmount.find(
+            (a) => a.denomName === denomName
+          );
+
+          if (existingAmount) {
+            existingAmount.amount += parsedAmount;
+            console.log(
+              `Adding ${parsedAmount} to existing ${denomName} for issue ${issueId}. Total: ${existingAmount.amount}`
+            );
+          } else {
+            groupedBounties[issueId].cumulativeAmount.push({
+              amount: parsedAmount,
+              denomName: denomName,
+            });
+            console.log(
+              `Creating new entry for ${denomName} with amount ${parsedAmount} for issue ${issueId}`
+            );
+          }
+        }
+      }
+    }
+
+    console.log("Final grouped bounties:", groupedBounties);
+    setBounties((prevBounties) => [
+      ...prevBounties,
+      ...Object.values(groupedBounties),
+    ]);
+    setOffset((prevOffset) => prevOffset + issueBounties.length);
+    setHasMore(issueBounties.length === 14);
   };
 
   const loadMore = () => {
@@ -221,91 +247,15 @@ function Bounties(props) {
               Bounties
             </div>
           </div>
-          {/* <div className="border-grey-50 bg-base-200/70 relative mx-4 mt-12 max-w-2xl rounded-xl border text-sm lg:mx-auto lg:mt-16">
-            <div className="bg-base-200 border-grey-50 absolute -top-3 left-1/2 -ml-12 rounded-full border px-4 py-1 text-xs font-bold uppercase text-purple-50">
-              Stats
-            </div>
-            <div className="flex flex-col justify-evenly gap-8 p-8 pt-10 lg:flex-row">
-              <div className="lg:text-center">
-                <div className="-mr-2 inline-flex items-center">
-                  <span className="text-type-secondary font-bold">Total</span>
-                  <span
-                    className="tooltip ml-2 mt-px"
-                    data-tip="Based on total rewards"
-                  >
-                    <svg
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-3.5 w-3.5"
-                    >
-                      <circle cx="8" cy="8" r="7.5" stroke="#8D97A7" />
-                      <path d="M8 3L8 5" stroke="#8D97A7" strokeWidth="2" />
-                      <path d="M8 7L8 13" stroke="#8D97A7" strokeWidth="2" />
-                    </svg>
-                  </span>
-                </div>
-                <div className="my-2">
-                  <span className="text-4xl uppercase">
-                    {showToken(100, 'lore')}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div> */}
         </div>
 
         <div className="w-full px-4 sm:px-6 lg:px-8 mt-12 lg:mt-16 max-w-screen-lg">
-          <div className="flex justify-center mb-8">
-            {/* <button
-              onClick={() => {
-                setCurrentTab('open');
-                setOffset(0);
-                setBounties([]);
-              }}
-              className={`px-4 py-2 mx-2 ${
-                currentTab === 'open'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
-              } rounded-lg`}
-            >
-              Open
-            </button> */}
-            {/* <button
-              onClick={() => {
-                setCurrentTab('closed');
-                setOffset(0);
-                setBounties([]);
-              }}
-              className={`px-4 py-2 mx-2 ${
-                currentTab === 'closed'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
-              } rounded-lg`}
-            >
-              Closed
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTab('rewarded');
-                setOffset(0);
-                setBounties([]);
-              }}
-              className={`px-4 py-2 mx-2 ${
-                currentTab === 'rewarded'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
-              } rounded-lg`}
-            >
-              Rewarded
-            </button> */}
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bounties.map((bounty) => (
+            {bounties.map((issue) => (
               <BountyCard
-                key={bounty.id}
-                bounty={bounty}
+                key={issue.repository.repository.id + "-" + issue.iid}
+                bounty={issue.bounties[0].bounty}
+                issue={issue}
                 tokenPrice={tokenPrice}
               />
             ))}
