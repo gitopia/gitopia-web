@@ -154,7 +154,7 @@ function Bounties(props) {
   
     for (const issueBounty of issueBounties) {
       const issue = issueBounty.issue;
-      const issueId = issue.iid;
+      const issueId = issue.repository.repository.id +'-'+ issue.iid;
   
       if (processedIssueIds.has(issueId)) {
         console.log(`Skipping duplicate issue with ID ${issueId}`);
@@ -249,7 +249,7 @@ function Bounties(props) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {bounties.map((issue) => (
               <BountyCard
-                key={issue.iid}
+                key={issue.repository.repository.id +'-'+ issue.iid}
                 bounty={issue.bounties[0].bounty}
                 issue={issue}
                 tokenPrice={tokenPrice}
