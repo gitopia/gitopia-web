@@ -19,7 +19,7 @@ const QUERY_BOUNTY = gql`
       }
     }
     issueBounties(
-      first: 13
+      first: 14
       skip: $skip
       orderDirection: desc
       orderBy: issue__updatedAt
@@ -180,7 +180,7 @@ function Bounties(props) {
 
     setBounties((prevBounties) => [...prevBounties, ...processedBounties]);
     setOffset((prevOffset) => prevOffset + bounties.length);
-    setHasMore(bounties.length === 13);
+    setHasMore(bounties.length === 14);
   };
 
   const loadMore = () => {
