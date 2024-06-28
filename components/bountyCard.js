@@ -9,24 +9,22 @@ const truncateText = (text, length) => {
   return text.length > length ? `${text.substring(0, length)}...` : text;
 };
 
-const BountyCard = ({ bounty, tokenPrice }) => {
-  const bountyData = bounty.bounty;
-  const issueData = bounty.issue;
-  const repository = bountyData.repository;
+const BountyCard = ({ issue, bounty, tokenPrice }) => {
+  const repository = issue.repository.repository;
   const owner = repository.owner.owner;
 
-  const dollarAmount = bountyData.amount[0].amount * tokenPrice;
+  const dollarAmount = issue.cumulativeAmount[0].amount * tokenPrice;
 
-  const isExpired = dayjs().isAfter(dayjs.unix(bountyData.expireAt));
+  const isExpired = dayjs().isAfter(dayjs.unix(bounty.expireAt));
 
   const isRewarded =
-    bountyData.state === "BOUNTY_STATE_SRCDEBITTED" &&
-    (issueData.pullRequests.some((pr) => pr.pullRequest.state === "MERGED") ||
+    bounty.state === "BOUNTY_STATE_SRCDEBITTED" &&
+    (issue.pullRequests.some((pr) => pr.pullRequest.state === "MERGED") ||
       isExpired);
 
   return (
     <Link
-      href={`/${bountyData.repository.owner.owner.username}/${bountyData.repository.name}/issues/${issueData.iid}`}
+      href={`/${owner.username}/${repository.name}/issues/${issue.iid}`}
       legacyBehavior
       passHref
     >
@@ -38,7 +36,7 @@ const BountyCard = ({ bounty, tokenPrice }) => {
                 Rewarded
               </div>
             </div>
-          ) : bountyData.state === "BOUNTY_STATE_SRCDEBITTED" ? (
+          ) : bounty.state === "BOUNTY_STATE_SRCDEBITTED" ? (
             <div className="w-36 sm:w-0">
               <div className="absolute top-2 right-2 items-center rounded-full px-8 w-24 py-0.5 bg-purple text-xs uppercase mt-0.5">
                 Open
@@ -55,20 +53,20 @@ const BountyCard = ({ bounty, tokenPrice }) => {
             </div>
           )}
           <div className="mb-4">
-            {bountyData.amount.map((c, index) => (
+            {issue.cumulativeAmount.map((c, index) => (
               <div key={index} className="mb-2">
                 <div className="text-type-secondary">
                   <div className="flex text-sm items-center">
                     <div className="mr-1.5">
                       <img
-                        src={coingeckoId[c.denom]?.icon || ""}
+                        src={coingeckoId[c.denomName]?.icon || ""}
                         width={24}
                         height={24}
-                        alt={c.denom}
+                        alt={c.denomName}
                       />
                     </div>
                     <div className="uppercase ml-1 mr-3 text-xs">
-                      {coingeckoId[c.denom]?.coinDenom || c.denom}
+                      {coingeckoId[c.denomName]?.coinDenom || c.denomName}
                     </div>
                     <svg
                       width="1"
@@ -93,14 +91,14 @@ const BountyCard = ({ bounty, tokenPrice }) => {
 
           <div className="flex-1">
             <h6 className="mb-2 text-sm font-bold tracking-tight text-gray-900 dark:text-white">
-              {issueData.title}
+              {issue.title}
             </h6>
             <div
               className="text-xs font-normal text-gray-700 dark:text-gray-400"
               style={{ wordBreak: "break-word" }}
             >
               <ReactMarkdown>
-                {truncateText(issueData.description, 150)}
+                {truncateText(issue.description, 150)}
               </ReactMarkdown>
             </div>
           </div>
@@ -121,7 +119,7 @@ const BountyCard = ({ bounty, tokenPrice }) => {
                 </div>
               </div>
             </div>
-            <span>{dayjs.unix(bountyData.updatedAt).fromNow()}</span>
+            <span>{dayjs.unix(bounty.updatedAt).fromNow()}</span>
           </div>
         </div>
       </a>
