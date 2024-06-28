@@ -112,11 +112,6 @@ function Bounties(props) {
   });
 
   useEffect(() => {
-    if (data && data.issueBounties) {
-    }
-  }, [data]);
-
-  useEffect(() => {
     const fetchTokenPrice = async () => {
       try {
         const response = await fetch(
@@ -132,14 +127,18 @@ function Bounties(props) {
 
     fetchTokenPrice();
   }, []);
+
   const processBounties = async (bounties) => {
-    // Group bounties by issue ID
+    // Group bounties by repository ID and issue IID
     const groupedBounties = bounties.reduce((acc, bounty) => {
-      const issueId = bounty.issue.iid;
-      if (!acc[issueId]) {
-        acc[issueId] = { ...bounty, bounty: { ...bounty.bounty, amount: [] } };
+      const repositoryId = bounty.bounty.repository.id;
+      const issueIid = bounty.issue.iid;
+      const key = `${repositoryId}-${issueIid}`;
+
+      if (!acc[key]) {
+        acc[key] = { ...bounty, bounty: { ...bounty.bounty, amount: [] } };
       }
-      acc[issueId].bounty.amount.push(...bounty.bounty.amount);
+      acc[key].bounty.amount.push(...bounty.bounty.amount);
       return acc;
     }, {});
 
