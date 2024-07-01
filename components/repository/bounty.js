@@ -8,6 +8,8 @@ import getDenomNameByHash from "../../helpers/getDenomNameByHash";
 import getTokenValueInDollars from "../../helpers/getTotalTokenValueInDollars";
 import { coingeckoId } from "../../ibc-assets-config";
 import { useApiClient } from "../../context/ApiClientContext";
+import axios from "../../helpers/axiosFetch";
+import { notify } from "reapop";
 
 function CreateBounty(props) {
   const router = useRouter();
@@ -23,6 +25,7 @@ function CreateBounty(props) {
   const [tokenKV, setTokenKV] = useState({});
   const [isAddingNewToken, setIsAddingNewToken] = useState(false);
   const [dollarValue, setDollarValue] = useState(0);
+  const [tokenPrices, setTokenPrices] = useState({});
   const ref1 = useRef(null);
   const ref2 = useRef(null);
   // const ref3 = useRef("dd/mm/yyyy");
@@ -68,6 +71,7 @@ function CreateBounty(props) {
         }
         setTokenKV(kv);
         setBalances(b.balances);
+        await fetchTokenPrices(Object.keys(kv));
       }
     }
     getBalance();
@@ -82,15 +86,39 @@ function CreateBounty(props) {
     }
   }, [props.bountyAmount]);
 
-  async function getDollarValue(denom, amount) {
-    let dollar = await getTokenValueInDollars(
-      denom,
-      amount * Math.pow(10, coingeckoId[denom].coinDecimals)
-    );
+  async function fetchTokenPrices(denoms) {
+    let ids = denoms
+      .map((denom) => coingeckoId[denom]?.id)
+      .filter((id) => id !== "");
+    if (ids.length === 0) return;
 
-    if (dollar) {
-      setDollarValue(dollar);
+    try {
+      let { data } = await axios.get(
+        "https://api.coingecko.com/api/v3/simple/price?ids=" +
+          ids.join(",") +
+          "&vs_currencies=usd"
+      );
+
+      let prices = {};
+      denoms.forEach((denom) => {
+        let id = coingeckoId[denom]?.id;
+        if (id && data[id]) {
+          prices[denom] = data[id].usd;
+        }
+      });
+
+      setTokenPrices(prices);
+    } catch (err) {
+      console.error(err);
+      props.notify("Unable to get prices", "error");
     }
+  }
+
+  function getDollarValue(denom, amount) {
+    let price = tokenPrices[denom];
+    if (!price) setDollarValue(0);
+
+    setDollarValue((amount * price).toFixed(2));
   }
 
   const handleClick = () => {
@@ -685,4 +713,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   createBounty,
+  notify,
 })(CreateBounty);

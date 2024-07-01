@@ -1,12 +1,10 @@
-/* gitopia token price not included for now */
-
-import axios from "./axiosFetch";
 import { coingeckoId } from "../ibc-assets-config";
 
 export default async function getBalanceInDollars(
   cosmosBankApiClient,
   ibcAppTransferApiClient,
-  address
+  address,
+  tokenPrices
 ) {
   if (!address) return {};
   try {
@@ -18,61 +16,31 @@ export default async function getBalanceInDollars(
       let balance = res.data.balances;
       for (let i = 0; i < balance.length; i++) {
         TokenBalances[balance[i].denom] = balance[i].amount;
+        let denom = balance[i].denom;
         if (balance[i].denom.includes("ibc")) {
-          const denomHash = balance[i].denom.slice(4, balance[i].denom.length);
+          const denomHash = balance[i].denom.slice(4);
           const result = await ibcAppTransferApiClient.queryDenomTrace(
             denomHash
           );
           if (result.ok) {
-            let denom = result.data.denom_trace.base_denom;
+            denom = result.data.denom_trace.base_denom;
             delete TokenBalances[balance[i].denom];
             TokenBalances[denom] = balance[i].amount;
-            await axios
-              .get(
-                "https://api.coingecko.com/api/v3/simple/price?ids=" +
-                  coingeckoId[denom].id +
-                  "&vs_currencies=usd"
-              )
-              .then(({ data }) => {
-                let price = data[coingeckoId[denom].id]["usd"];
-                let perCoinPrice =
-                  balance[i].amount /
-                  Math.pow(10, coingeckoId[denom].coinDecimals);
-                totalPrice = totalPrice + price * perCoinPrice;
-                USDBalances[denom] = price * perCoinPrice;
-              })
-              .catch((err) => {
-                console.error(err);
-                notify("Unable to get price", "error");
-              });
           }
-        } else {
-          if (coingeckoId[balance[i].denom].id !== "") {
-            await axios
-              .get(
-                "https://api.coingecko.com/api/v3/simple/price?ids=" +
-                  coingeckoId[balance[i].denom].id +
-                  "&vs_currencies=usd"
-              )
-              .then(({ data }) => {
-                let price = data[coingeckoId[balance[i].denom].id]["usd"];
-                let perCoinPrice =
-                  balance[i].amount /
-                  Math.pow(10, coingeckoId[balance[i].denom].coinDecimals);
-                totalPrice = totalPrice + price * perCoinPrice;
-                USDBalances[balance[i].denom] = price * perCoinPrice;
-              })
-              .catch((err) => {
-                console.error(err);
-                notify("Unable to get price", "error");
-              });
-          }
+        }
+
+        if (tokenPrices[coingeckoId[denom]?.id]) {
+          const price = tokenPrices[coingeckoId[denom].id].usd;
+          const perCoinPrice =
+            price / Math.pow(10, coingeckoId[denom].coinDecimals);
+          totalPrice += balance[i].amount * perCoinPrice;
+          USDBalances[denom] = balance[i].amount * perCoinPrice;
         }
       }
     }
 
     return {
-      totalPrice: totalPrice === 0 ? 0 : totalPrice.toFixed(2),
+      totalPrice,
       TokenBalances,
       USDBalances,
     };

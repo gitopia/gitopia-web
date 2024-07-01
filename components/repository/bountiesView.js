@@ -10,95 +10,100 @@ import { coingeckoId } from "../../ibc-assets-config";
 import getTokenValueInDollars from "../../helpers/getTotalTokenValueInDollars";
 import getBountyValueInDollars from "../../helpers/getBountyValueInDollars";
 import { useApiClient } from "../../context/ApiClientContext";
+import axios from "../../helpers/axiosFetch";
+import { notify } from "reapop";
 
 function IssueBountyView(props) {
   const router = useRouter();
   const [bounties, setBounties] = useState([]);
   const [coins, setCoins] = useState([]);
   const [isHovering, setIsHovering] = useState(false);
+  const [tokenPrices, setTokenPrices] = useState({});
   const { apiClient, ibcAppTransferApiClient } = useApiClient();
 
   useEffect(() => {
+    async function fetchTokenPrices() {
+      const denomIds = Object.values(coingeckoId)
+        .map((obj) => obj.id)
+        .join(",");
+      try {
+        const response = await axios.get(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${denomIds}&vs_currencies=usd`
+        );
+        setTokenPrices(response.data);
+      } catch (err) {
+        console.error(err);
+        props.notify("Error fetching token prices", "error");
+      }
+    }
+
     async function fetchBountyArray() {
+      await fetchTokenPrices();
+
       const bountyArray = [];
       const coin = {};
       const coinArray = [];
-      for (var i = 0; i < props.bounties.length; i++) {
-        const res = await getBounty(apiClient, props.bounties[i]);
+
+      for (const bountyId of props.bounties) {
+        const res = await getBounty(apiClient, bountyId);
         if (
-          res.state == "BOUNTY_STATE_SRCDEBITTED" &&
+          res.state === "BOUNTY_STATE_SRCDEBITTED" &&
           res.expireAt > dayjs().unix()
         ) {
-          if (res) {
-            const bountyValueInDollars = await getBountyValueInDollars(
-              ibcAppTransferApiClient,
-              res
-            );
-            res.bountyValueInDollars = bountyValueInDollars;
-          }
-          for (let i = 0; i < res.amount.length; i++) {
-            if (res.amount[i].denom.includes("ibc")) {
-              let denomName = await getDenomNameByHash(
+          let totalBountyValueInDollars = 0;
+
+          for (const amount of res.amount) {
+            if (amount.denom.includes("ibc")) {
+              amount.showDenom = await getDenomNameByHash(
                 ibcAppTransferApiClient,
-                res.amount[i].denom
+                amount.denom
               );
-              res.amount[i].showDenom = denomName;
+            }
+            const denomName = amount.showDenom || amount.denom;
+            const dollarAmount = await getTokenValueInDollars(
+              denomName,
+              amount.amount,
+              tokenPrices
+            );
+            if (dollarAmount) {
+              totalBountyValueInDollars += dollarAmount;
+              coin[denomName] = coin[denomName]
+                ? {
+                    ...coin[denomName],
+                    amount: coin[denomName].amount + parseInt(amount.amount),
+                    dollarAmount: coin[denomName].dollarAmount + dollarAmount,
+                  }
+                : {
+                    amount: parseInt(amount.amount),
+                    denom: denomName,
+                    dollarAmount,
+                  };
             }
           }
+
+          res.bountyValueInDollars = totalBountyValueInDollars.toFixed(2);
           bountyArray.push(res);
-          res.amount.map((a) => {
-            coin[a.denom] !== undefined
-              ? (coin[a.denom].amount =
-                  coin[a.denom].amount + parseInt(a.amount))
-              : (coin[a.denom] = {
-                  amount: parseInt(a.amount),
-                  denom: a.denom,
-                });
-          });
         }
       }
+
       for (const property in coin) {
         coinArray.push(coin[property]);
       }
 
-      for (let i = 0; i < coinArray.length; i++) {
-        if (coinArray[i].denom.includes("ibc")) {
-          let denomName = await getDenomNameByHash(
-            ibcAppTransferApiClient,
-            coinArray[i].denom
-          );
-          let dollarAmount = await getTokenValueInDollars(
-            denomName,
-            coinArray[i].amount
-          );
-          if (dollarAmount && denomName) {
-            let standardDenomName = coingeckoId[denomName].coinDenom;
-            coinArray[i].standardDenomName = standardDenomName;
-            coinArray[i].denom = denomName;
-            coinArray[i].amount =
-              coinArray[i].amount /
-              Math.pow(10, coingeckoId[denomName].coinDecimals);
-
-            coinArray[i].dollarAmount = dollarAmount;
-          }
-        } else {
-          let dollarAmount = await getTokenValueInDollars(
-            coinArray[i].denom,
-            coinArray[i].amount
-          );
-          let standardDenomName = coingeckoId[coinArray[i].denom].coinDenom;
-          coinArray[i].standardDenomName = standardDenomName;
-          coinArray[i].amount =
-            coinArray[i].amount /
-            Math.pow(10, coingeckoId[coinArray[i].denom].coinDecimals);
-          coinArray[i].dollarAmount = dollarAmount;
-        }
+      for (const coin of coinArray) {
+        coin.standardDenomName = coingeckoId[coin.denom].coinDenom;
+        coin.amount =
+          coin.amount / Math.pow(10, coingeckoId[coin.denom].coinDecimals);
+        coin.dollarAmount = coin.dollarAmount.toFixed(2);
       }
+
       setCoins(coinArray);
       setBounties(bountyArray.slice(0, 4));
     }
+
     fetchBountyArray();
-  }, [props.bounties.length]);
+  }, [props.bounties]);
+
   return (
     <div
       className="pt-8 mb-4 ml-2"
@@ -245,4 +250,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(IssueBountyView);
+export default connect(mapStateToProps, { notify })(IssueBountyView);

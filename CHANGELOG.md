@@ -1,5 +1,10 @@
 ## Changelog
 
+### v2.1.0 - 1st July 2024
+
+- Cache token prices in components
+- Improve bounties page
+
 ### v2.0.0 - 26th Jun 2024
 
 - Refactor the webapp to use the API client context across components
