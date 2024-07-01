@@ -1,6 +1,6 @@
 ## Changelog
 
-### v2.1.0 - 27th Jun 2024
+### v2.1.0 - 1st July 2024
 
 - Cache token prices in components
 - Improve bounties page
