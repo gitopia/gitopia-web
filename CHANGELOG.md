@@ -1,5 +1,10 @@
 ## Changelog
 
+### v2.1.1 - 3rd July 2024
+
+- Fix offchain sign
+- Update bounty link in rewards page
+
 ### v2.1.0 - 1st July 2024
 
 - Cache token prices in components
