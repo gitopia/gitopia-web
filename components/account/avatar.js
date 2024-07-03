@@ -71,6 +71,9 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
       setImageUploading(1);
 
       const tx = await props.signUploadFileMessage(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
         imageFile.name,
         imageFile.size,
         imageFileHash
