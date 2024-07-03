@@ -66,7 +66,12 @@ export const sendTransaction = ({
   };
 };
 
-export const signMessage = ({ data = {} }) => {
+export const signMessage = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { data = {} }
+) => {
   return async (dispatch, getState) => {
     try {
       await setupTxClients(

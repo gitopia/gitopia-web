@@ -13,6 +13,7 @@ import axios from "../../helpers/axiosFetch";
 import { getBalance } from "../../store/actions/wallet";
 import { updateUserBalance } from "../../store/actions/wallet";
 import { claimRewards } from "../../store/actions/user";
+import { useApiClient } from "../../context/ApiClientContext";
 
 const dayjs = require("dayjs");
 const duration = require("dayjs/plugin/duration");
@@ -44,6 +45,8 @@ function Rewards(props) {
   ] = useState(false);
   const [xPost, setXPost] = useState("");
   const [splits, setSplits] = useState([]);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const claimPlatformIncentives = async (id, split) => {
     if (claimTokensLoading) return;
@@ -52,7 +55,13 @@ function Rewards(props) {
       return;
     }
     setClaimTokensLoading(true);
-    const res = await props.signMessageForRewards("platform incentives");
+    const res = await props.signMessageForRewards(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      "platform incentives"
+    );
+
     await axios
       .post(
         process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/platform-incentives",
@@ -250,7 +259,7 @@ Start building on #Gitopia today! 🚀
                 <li>
                   Hunt Gitopia{" "}
                   <Link
-                    href="https://gitopia.com/home"
+                    href="https://gitopia.com/bounties"
                     className="text-xs link link-primary no-underline hover:underline"
                   >
                     Bounties

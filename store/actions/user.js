@@ -523,7 +523,14 @@ export const updateAddressGrant = (
   };
 };
 
-export const signUploadFileMessage = (name, size, md5) => {
+export const signUploadFileMessage = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  name,
+  size,
+  md5
+) => {
   return async (dispatch, getState) => {
     const data = {
       // Any arbitrary object
@@ -534,7 +541,12 @@ export const signUploadFileMessage = (name, size, md5) => {
     try {
       let TxRaw = (await import("cosmjs-types/cosmos/tx/v1beta1/tx")).TxRaw;
       let toBase64 = (await import("@cosmjs/encoding")).toBase64;
-      let s = await signMessage({ data })(dispatch, getState);
+      let s = await signMessage(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        { data }
+      )(dispatch, getState);
       let raw = TxRaw.encode(s).finish();
       let msg = toBase64(raw);
       return msg;
@@ -546,7 +558,12 @@ export const signUploadFileMessage = (name, size, md5) => {
   };
 };
 
-export const signMessageForRewards = (code) => {
+export const signMessageForRewards = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  code
+) => {
   return async (dispatch, getState) => {
     const data = {
       // Any arbitrary object
@@ -555,7 +572,12 @@ export const signMessageForRewards = (code) => {
     try {
       let TxRaw = (await import("cosmjs-types/cosmos/tx/v1beta1/tx")).TxRaw;
       let toBase64 = (await import("@cosmjs/encoding")).toBase64;
-      let s = await signMessage({ data })(dispatch, getState);
+      let s = await signMessage(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        { data }
+      )(dispatch, getState);
       let raw = TxRaw.encode(s).finish();
       let msg = toBase64(raw);
       return msg;
