@@ -480,6 +480,7 @@ const updateWalletsList = async (
 // };
 
 export const updateAddressGrant = (
+  apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
   address,

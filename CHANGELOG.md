@@ -1,5 +1,10 @@
 ## Changelog
 
+### v2.1.2 - 8th July 2024
+
+- Fix side of readme in repository view
+- Fix settings page
+
 ### v2.1.1 - 3rd July 2024
 
 - Fix offchain sign

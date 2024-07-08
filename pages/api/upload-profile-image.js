@@ -88,7 +88,7 @@ handler.post(async (request, response) => {
         );
     }
     const txRaw = TxRaw.decode(fromBase64(tx));
-    const info = await getNodeInfo();
+    const info = await getNodeInfo(process.env.NEXT_PUBLIC_API_URL);
     const a = AuthInfo.decode(txRaw.authInfoBytes);
     const b = TxBody.decode(txRaw.bodyBytes);
     const memo = JSON.parse(b.memo);

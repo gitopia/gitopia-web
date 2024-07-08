@@ -2,14 +2,24 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { updateAddressGrant } from "../../store/actions/user";
 import getGitServerAuthStatus from "../../helpers/getGitServerAuthStatus";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function ToggleGitServerAuthorization({ address, onSuccess, ...props }) {
   const [currentState, setCurrentState] = useState(false);
   const [isToggling, setIsToggling] = useState(true);
+  const { apiClient, cosmosBankApiClient, cosmosFeeegrantApiClient } =
+    useApiClient();
 
   const toggleGrant = async () => {
     setIsToggling(true);
-    const res = await props.updateAddressGrant(address, 0, !currentState);
+    const res = await props.updateAddressGrant(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeeegrantApiClient,
+      address,
+      0,
+      !currentState
+    );
     if (res && res.code === 0) {
       if (onSuccess) await onSuccess(!currentState);
       setCurrentState(!currentState);
