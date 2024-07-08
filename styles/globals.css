@@ -936,28 +936,6 @@ ul.mde-suggestions li[aria-selected="true"] {
   border: 0;
 }
 
-/* markdown-body with pre code expands past parent container */
-@media (min-width: 320px) {
-  .markdown-body {
-    max-width: 180px;
-  }
-}
-@media (min-width: 375px) {
-  .markdown-body {
-    max-width: 237px;
-  }
-}
-@media (min-width: 375px) {
-  .markdown-body {
-    max-width: 252px;
-  }
-}
-@media (min-width: 430px) {
-  .markdown-body {
-    max-width: 292px;
-  }
-}
-
 /* ----- diff-viewer ----- */
 :root {
   --diff-background-color: transparent;
