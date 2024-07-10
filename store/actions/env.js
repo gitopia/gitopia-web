@@ -6,6 +6,7 @@ import {
   updateUserBalance,
   unlockKeplrWallet,
 } from "./wallet";
+import getNodeInfo from "../../helpers/getNodeInfo";
 
 export const sendTransaction = ({
   message,
@@ -97,9 +98,13 @@ export const signMessage = (
       notifId = msg.payload.id;
     }
     try {
+      const info = await getNodeInfo(env.apiNode);
+      const jsonString = JSON.stringify(data);
+      const buffer = Buffer.from(jsonString);
+      const base64String = buffer.toString("base64");
       const msg = await env.txClient.msgSignData({
         signer: wallet.selectedAddress,
-        data,
+        data: base64String,
       });
       const res = await env.txClient.sign(
         [msg],
@@ -112,11 +117,11 @@ export const signMessage = (
           ],
           gas: "0",
         },
-        JSON.stringify(data),
+        jsonString,
         {
           accountNumber: 0,
           sequence: 0,
-          chainId: "",
+          chainId: info.default_node_info.network,
         }
       );
       if (wallet.activeWallet?.isLedger) {
