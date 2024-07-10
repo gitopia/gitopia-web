@@ -1,5 +1,9 @@
 ## Changelog
 
+### v2.1.3 - 10th July 2024
+
+- Fix offchain sign for keplr and ledger wallet
+
 ### v2.1.2 - 8th July 2024
 
 - Fix side of readme in repository view
