@@ -41,6 +41,7 @@ function RepositoryReleasesView(props) {
   const getReleases = async () => {
     if (repository) {
       const release = await getRepositoryReleaseLatest(
+        apiClient,
         repository.owner.id,
         repository.name
       );

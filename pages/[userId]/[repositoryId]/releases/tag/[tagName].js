@@ -63,6 +63,7 @@ function RepositoryReleaseView(props) {
   const getRelease = async () => {
     if (repository) {
       const rel = await getRepositoryRelease(
+        apiClient,
         repository.owner.id,
         repository.name,
         router.query.tagName
