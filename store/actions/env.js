@@ -34,7 +34,7 @@ export const sendTransaction = ({
       console.log(msgArr);
       result = await env.txClient.signAndBroadcast(
         msgArr,
-        { fee: 1.6, memo },
+        { fee: 1.8, memo },
         wallet.allowance ? process.env.NEXT_PUBLIC_FEE_GRANTER : null
       );
       if (wallet.activeWallet?.isLedger) {

@@ -69,6 +69,8 @@ function CommentEditor({
         props.notify("Comment created", "info");
         setComment("");
         if (onSuccess) await onSuccess();
+      } else {
+        props.notify(res.rawLog, "error");
       }
     }
     setPostingComment(false);
