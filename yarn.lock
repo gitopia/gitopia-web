@@ -434,11 +434,12 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@gitopia/gitopia-js@1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@gitopia/gitopia-js/-/gitopia-js-1.9.0.tgz#340e132ce30edeaecc35e804584893e5ff4ace61"
-  integrity sha512-/WEA19FVLKKeKfyPCP2jOFiKO0oAN01XwuyfHZkJ72OrFzy0g4EAw7Hr4Hnouvhx0gVgY+mV8/I3ph4yb3wxEg==
+"@gitopia/gitopia-js@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@gitopia/gitopia-js/-/gitopia-js-2.0.0.tgz#c6ad5e87cec9c8f648a6af50bd42c32817ee748a"
+  integrity sha512-DtrKqufrX9bfeU6Ll/rsNgwKIM8gSCQPYiXTI8WGi3itR6o+2Vdg2atdzR+b0bLRPnVUE/XHAx7HhVIjIvExkA==
   dependencies:
+    axios "^1.7.3"
     lodash "^4.17.21"
     long "^5.2.1"
     protobufjs "^7.2.2"
