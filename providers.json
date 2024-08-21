@@ -1,10 +1,5 @@
 [
   {
-    "name": "AutoStake",
-    "apiEndpoint": "https://gitopia-mainnet-lcd.autostake.com",
-    "rpcEndpoint": "https://gitopia-mainnet-rpc.autostake.com"
-  },
-  {
     "name": "Decloud Nodes Lab",
     "apiEndpoint": "https://gitopia.declab.pro",
     "rpcEndpoint": "https://gitopia.declab.pro:26625"
@@ -13,11 +8,6 @@
     "name": "Inter Blockchain Services",
     "apiEndpoint": "https://gitopia-api.ibs.team",
     "rpcEndpoint": "https://gitopia-rpc.ibs.team"
-  },
-  {
-    "name": "Lavender.Five Nodes 🐝",
-    "apiEndpoint": "https://gitopia-api.lavenderfive.com",
-    "rpcEndpoint": "https://gitopia-rpc.lavenderfive.com"
   },
   {
     "name": "Polkachu",
