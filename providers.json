@@ -1,5 +1,10 @@
 [
   {
+    "name": "AutoStake",
+    "apiEndpoint": "https://gitopia-mainnet-lcd.autostake.com",
+    "rpcEndpoint": "https://gitopia-mainnet-rpc.autostake.com"
+  },
+  {
     "name": "Decloud Nodes Lab",
     "apiEndpoint": "https://gitopia.declab.pro",
     "rpcEndpoint": "https://gitopia.declab.pro:26625"
@@ -10,9 +15,9 @@
     "rpcEndpoint": "https://gitopia-rpc.ibs.team"
   },
   {
-    "name": "kjnodes",
-    "apiEndpoint": "https://gitopia.api.kjnodes.com",
-    "rpcEndpoint": "https://gitopia.rpc.kjnodes.com"
+    "name": "Lavender.Five Nodes 🐝",
+    "apiEndpoint": "https://gitopia-api.lavenderfive.com",
+    "rpcEndpoint": "https://gitopia-rpc.lavenderfive.com"
   },
   {
     "name": "Polkachu",
@@ -20,8 +25,8 @@
     "rpcEndpoint": "https://gitopia-rpc.polkachu.com"
   },
   {
-    "name": "WhisperNode",
-    "apiEndpoint": "https://lcd-gitopia.whispernode.com",
-    "rpcEndpoint": "https://rpc-gitopia.whispernode.com"
+    "name": "Staketab",
+    "apiEndpoint": "https://gitopia-rest.staketab.org",
+    "rpcEndpoint": "https://gitopia-rpc.staketab.org"
   }
 ]
