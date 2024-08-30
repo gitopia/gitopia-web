@@ -1,5 +1,12 @@
 ## Changelog
 
+### v2.2.0 - 30th Aug 2024
+
+- Upgrade cosmjs to v0.32.4 and gitopia-js to v2.0.0
+- Handle changes in events after sdk upgrade to v0.47.13
+- Increase the gas adjustment to 1.8
+- Update api providers
+
 ### v2.1.4 - 15th July 2024
 
 - Fix release page
