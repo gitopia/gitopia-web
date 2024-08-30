@@ -1390,8 +1390,8 @@ export const forkRepository = (
       if (result && result.code === 0) {
         const log = JSON.parse(result.rawLog);
         const taskId =
-          log[0].events[0].attributes[
-            log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
+          log[0].events[1].attributes[
+            log[0].events[1].attributes.findIndex((a) => a.key === "TaskId")
           ].value;
         try {
           const res = await watchTask(apiClient, taskId);
@@ -2041,8 +2041,8 @@ export const mergePullRequest = (
         // return result;
         const log = JSON.parse(result.rawLog);
         const taskId =
-          log[0].events[0].attributes[
-            log[0].events[0].attributes.findIndex((a) => a.key === "TaskId")
+          log[0].events[1].attributes[
+            log[0].events[1].attributes.findIndex((a) => a.key === "TaskId")
           ].value;
         try {
           const res = await watchTask(apiClient, taskId);

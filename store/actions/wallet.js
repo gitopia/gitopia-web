@@ -1149,7 +1149,7 @@ export const ibcDeposit = (
         const msg = await env.txClientSecondary.msgTransfer(send);
         const memo = "";
         const result = await env.txClientSecondary.signAndBroadcast([msg], {
-          fee: 1.5,
+          fee: 1.8,
           memo,
         });
         updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
