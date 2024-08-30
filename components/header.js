@@ -75,6 +75,7 @@ function Header(props) {
     apiEndpoint: apiUrl,
     rpcEndpoint: rpcUrl,
   });
+  const [explorerDropdownOpen, setExplorerDropdownOpen] = useState(false);
 
   const onUserMenuClose = () => {
     setMenuOpen(false);
@@ -138,19 +139,19 @@ function Header(props) {
           setChainId(info.default_node_info.network);
         }
       } catch (error) {
-        console.error('Error fetching node info:', error);
+        console.error("Error fetching node info:", error);
       }
     };
-  
+
     const getIbcAssets = async () => {
       try {
         const assets = await getAssetList();
         setAssets(assets);
       } catch (error) {
-        console.error('Error fetching asset list:', error);
+        console.error("Error fetching asset list:", error);
       }
     };
-  
+
     getIbcAssets();
     updateNetworkName();
   }, [apiUrl]);
@@ -204,11 +205,7 @@ function Header(props) {
           homeUrl={"/home"}
           chainId={chainId}
         ></Drawer>
-        <div
-          className={
-            "flex-none sm:px-6 transition-all ease-out delay-150 sm:w-42"
-          }
-        >
+        <div className="flex-none sm:px-6 transition-all ease-out delay-150 sm:w-42">
           <Link href={"/home"}>
             <img
               width={80}
@@ -219,57 +216,98 @@ function Header(props) {
         </div>
         {!isMobile ? <SearchBar /> : ""}
         {!isMobile ? (
-          <div className="items-stretch">
-            <a className="btn btn-ghost btn-sm rounded-btn" href="/bounties">
-              Bounties
-            </a>
-          </div>
-        ) : (
-          ""
-        )}
-        {!isMobile ? (
-          <div className="items-stretch">
-            <a className="btn btn-ghost btn-sm rounded-btn" href="/rewards">
-              Rewards
-            </a>
-          </div>
-        ) : (
-          ""
-        )}
-        {!isMobile ? (
-          <div className="items-stretch">
-            <a className="btn btn-ghost btn-sm rounded-btn" href="/leaderboard">
-              Leaderboard
-            </a>
-          </div>
-        ) : (
-          ""
-        )}
-        {!isMobile ? (
-          <div className="items-stretch">
-            <a
-              className="btn btn-ghost btn-sm rounded-btn"
-              href={process.env.NEXT_PUBLIC_DOCS_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Docs
-            </a>
-          </div>
-        ) : (
-          ""
-        )}
-        {!isMobile ? (
-          <div className="items-stretch">
-            <a
-              className="btn btn-ghost btn-sm rounded-btn"
-              href={process.env.NEXT_PUBLIC_FORUM_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Forum
-            </a>
-          </div>
+          <>
+            <div className="items-stretch">
+              <a className="btn btn-ghost btn-sm rounded-btn" href="/bounties">
+                Bounties
+              </a>
+            </div>
+            <div className="items-stretch">
+              <a className="btn btn-ghost btn-sm rounded-btn" href="/rewards">
+                Rewards
+              </a>
+            </div>
+            <div className="items-stretch">
+              <a
+                className="btn btn-ghost btn-sm rounded-btn"
+                href="/leaderboard"
+              >
+                Leaderboard
+              </a>
+            </div>
+            <div className="items-stretch">
+              <a
+                className="btn btn-ghost btn-sm rounded-btn"
+                href={process.env.NEXT_PUBLIC_DOCS_URL}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Docs
+              </a>
+            </div>
+            <div className="items-stretch">
+              <a
+                className="btn btn-ghost btn-sm rounded-btn"
+                href={process.env.NEXT_PUBLIC_FORUM_URL}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Forum
+              </a>
+            </div>
+            <div className="items-stretch">
+              <div className="dropdown dropdown-hover">
+                <label
+                  tabIndex={0}
+                  className="btn btn-ghost btn-sm rounded-btn"
+                >
+                  Explorers
+                </label>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                >
+                  <li>
+                    <a
+                      href="https://gitopia.exploreme.pro/"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      EXPLOREME
+                    </a>
+                  </li>
+
+                  <li>
+                    <a
+                      href="https://ping.pub/gitopia"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Ping.pub
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://explorer.stavr.tech/Gitopia-M"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      STAVR
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://explorer.kalia.network/gitopia"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Kalia Network
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </>
         ) : (
           ""
         )}

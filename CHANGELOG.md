@@ -1,5 +1,9 @@
 ## Changelog
 
+### v2.2.1 - 30th Aug 2024
+
+- Add explorer links in the header
+
 ### v2.2.0 - 30th Aug 2024
 
 - Upgrade cosmjs to v0.32.4 and gitopia-js to v2.0.0
