@@ -144,7 +144,7 @@ function RepositoryCompareView(props) {
         setForkedRepos(repos);
       }
       if (r.parent && r.parent !== "0") {
-        const repo = await getRepository(r.parent);
+        const repo = await getRepository(apiClient, r.parent);
         const ownerDetails = await getOwnerDetails(repo);
         setParentRepo({
           ...repo,

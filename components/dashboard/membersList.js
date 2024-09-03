@@ -34,7 +34,7 @@ function MembersList({ daoId, members = [], refreshDao, ...props }) {
       type: "error",
       message: "",
     });
-    const res = await getUser(collabAddress);
+    const res = await getUser(apiClient, collabAddress);
     if (!res) {
       setCollabHint({
         shown: true,
