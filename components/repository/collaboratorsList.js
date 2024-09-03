@@ -34,7 +34,7 @@ function CollaboratorsList({
     useApiClient();
 
   const validateCollaborator = async () => {
-    const res = await getUser(collabAddress);
+    const res = await getUser(apiClient, collabAddress);
     if (!res) {
       setCollabHint({
         shown: true,
