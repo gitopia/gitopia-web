@@ -1,5 +1,9 @@
 ## Changelog
 
+### v2.2.2 - 3rd Sep 2024
+
+- Fix missing apiClient in getUser and getRepository methods
+
 ### v2.2.1 - 30th Aug 2024
 
 - Add explorer links in the header

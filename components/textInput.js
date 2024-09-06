@@ -16,11 +16,27 @@ const TextInput = React.forwardRef(
       required: false,
       className: "",
       size: "md",
-      onEnter: () => { },
+      onEnter: () => {},
       autoFocus: false,
     },
     ref
   ) => {
+    const value = props.value ?? "";
+
+    const getInputClassName = () => {
+      let className =
+        "input input-bordered focus:outline-none focus:border-type ";
+      className += `input-${props.size} `;
+
+      if (props.hint.shown && props.hint.type === "error") {
+        className += "border-pink text-pink input-error ";
+      } else if (value.length > 0) {
+        className += "border-green-900 ";
+      }
+
+      return className.trim();
+    };
+
     return (
       <div className={"form-control " + props.className}>
         {props.label ? (
@@ -39,16 +55,8 @@ const TextInput = React.forwardRef(
             placeholder={props.placeholder}
             readOnly={props.readOnly}
             required={props.required}
-            className={
-              "input input-bordered h-24 py-2 focus:outline-none focus:border-type " +
-              (props.hint.shown && props.hint.type == "error"
-                ? "border-pink text-pink input-" + props.hint.type
-                : props.value.length > 0
-                ? "border-green"
-                : "") +
-              (" input-" + props.size)
-            }
-            value={props.value}
+            className={getInputClassName() + " h-24 py-2"}
+            value={value}
             onChange={(e) => {
               props.setValue(e.target.value);
             }}
@@ -61,17 +69,8 @@ const TextInput = React.forwardRef(
             name={props.name}
             placeholder={props.placeholder}
             readOnly={props.readOnly}
-            className={
-              "input input-bordered focus:outline-none focus:border-type " +
-              ("input-" + props.size) +
-              " " +
-              (props.hint.shown && props.hint.type == "error"
-                ? "border-pink text-pink input-" + props.hint.type
-                : props.value.length > 0
-                ? "border-green-900"
-                : "")
-            }
-            value={props.value}
+            className={getInputClassName()}
+            value={value}
             onKeyUp={(e) => {
               if (e.code === "Enter" || e.code === "NumpadEnter") {
                 if (props.onEnter) props.onEnter();
