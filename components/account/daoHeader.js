@@ -10,13 +10,13 @@ import DaoDescription from "../dao/description";
 import AccountAvatar from "../account/avatar";
 import DaoLocation from "../dao/location";
 import DaoWebsite from "../dao/website";
-import getDaoMember from "../../helpers/getUserDaoMember";
+import getGroupMembers from "../../helpers/getGroupMembers";
 import { useApiClient } from "../../context/ApiClientContext";
 
 function AccountDaoHeader(props) {
   const [isEditable, setIsEditable] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosGroupApiClient } = useApiClient();
 
   const refresh = async (updatedDaoName) => {
     await props.refresh(updatedDaoName);
@@ -25,7 +25,10 @@ function AccountDaoHeader(props) {
 
   useEffect(() => {
     async function getMembers() {
-      const members = await getDaoMember(props.dao.address);
+      const members = await getGroupMembers(
+        cosmosGroupApiClient,
+        props.dao.group_id
+      );
       setIsEditable(await props.isCurrentUserEligibleToUpdate(members));
     }
     getMembers();
