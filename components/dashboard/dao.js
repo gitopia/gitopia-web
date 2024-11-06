@@ -24,8 +24,7 @@ import DAOInformation from "./DAOInformation";
 import ProposalsSection from "./ProposalsSection";
 import CreateProposalView from "./CreateProposalView";
 import { notify } from "reapop";
-import { MsgUpdateGroupPolicyDecisionPolicy } from "cosmjs-types/cosmos/group/v1/tx";
-import { PercentageDecisionPolicy } from "@gitopia/gitopia-js/dist/types/cosmos/group/v1/types";
+import { voteGroupProposal } from "../../store/actions/dao";
 
 function DaoDashboard({ dao = {}, ...props }) {
   const [activeTab, setActiveTab] = useState("overview");
@@ -178,76 +177,12 @@ function DaoDashboard({ dao = {}, ...props }) {
 
   const handleCreateProposal = async (proposalData) => {
     try {
-      let messages = [];
-
-      // Generate appropriate messages based on proposal type
-      switch (proposalData.type) {
-        case "GROUP_MEMBER_UPDATE":
-          messages = proposalData.formData.map((member) => ({
-            typeUrl: "/cosmos.group.v1.MsgUpdateGroupMembers",
-            value: {
-              admin: groupInfo.admin,
-              groupId: dao.group_id,
-              memberUpdates: [
-                {
-                  address: member.address,
-                  weight: member.weight,
-                  metadata: "",
-                },
-              ],
-            },
-          }));
-          break;
-
-        case "DAO_METADATA_UPDATE":
-          messages = [
-            {
-              typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDao",
-              value: {
-                creator: props.selectedAddress,
-                id: dao.id,
-                ...proposalData.formData,
-              },
-            },
-          ];
-          break;
-
-        case "GOVERNANCE_PARAMS":
-          messages = [
-            {
-              typeUrl: "/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy",
-              value: MsgUpdateGroupPolicyDecisionPolicy.encode(
-                MsgUpdateGroupPolicyDecisionPolicy.fromPartial({
-                  admin: groupInfo.admin,
-                  groupPolicyAddress: policyInfo.info.address,
-                  decisionPolicy: {
-                    typeUrl: "/cosmos.group.v1.PercentageDecisionPolicy",
-                    value: PercentageDecisionPolicy.encode(
-                      PercentageDecisionPolicy.fromPartial({
-                        ...proposalData.formData,
-                      })
-                    ),
-                  },
-                })
-              ).finish(),
-            },
-          ];
-          break;
-      }
-
       const result = await dispatch(
         createGroupProposal(
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
-          {
-            groupPolicyAddress: groupInfo.admin,
-            messages,
-            title: proposalData.title,
-            summary: proposalData.description,
-            proposers: [props.selectedAddress],
-            exec: 1, // EXEC_TRY
-          }
+          proposalData
         )
       );
 
@@ -289,6 +224,7 @@ function DaoDashboard({ dao = {}, ...props }) {
             <CreateProposalView
               dao={dao}
               groupInfo={groupInfo}
+              groupMembers={groupMembers}
               policyInfo={policyInfo}
               onSubmit={handleCreateProposal}
               onCancel={() => setProposalView("list")}

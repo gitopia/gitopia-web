@@ -437,11 +437,9 @@ export const voteGroupProposal = (
           getState
         );
         const { env } = getState();
-        const longify = (
-          await import("@cosmjs/stargate/build/queryclient/utils")
-        ).longify;
+
         const send = {
-          proposalId: longify(proposalId),
+          proposalId: proposalId,
           voter: wallet.selectedAddress,
           option: choice,
         };

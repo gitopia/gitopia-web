@@ -408,7 +408,7 @@ function RepositoryPullView(props) {
                 })}
                 <MergePullRequestView
                   pullRequest={pullRequest}
-                  repositoryId={repository.id}
+                  repository={repository}
                   refreshPullRequest={refreshPullRequest}
                 />
                 <div className="flex w-full mt-8">

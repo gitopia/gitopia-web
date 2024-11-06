@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Vote,
   Clock,
@@ -10,7 +10,12 @@ import {
   Scale,
   Plus,
   ChevronRight,
+  Calendar,
+  Clock3,
 } from "lucide-react";
+import getTallyResult from "../../helpers/getTallyResult";
+import { useApiClient } from "../../context/ApiClientContext";
+import ProposalDetailsModal from "./ProposalDetailsModal";
 
 const ProposalStatusBadge = ({ status }) => {
   const getStatusConfig = (status) => {
@@ -47,21 +52,101 @@ const ProposalStatusBadge = ({ status }) => {
 
   return (
     <div
-      className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${config.className}`}
+      className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${config.className}`}
     >
-      <StatusIcon className="w-4 h-4 mr-1" />
+      <StatusIcon className="w-3 h-3 mr-1" />
       {config.text}
     </div>
   );
 };
 
-const VotingProgressBar = ({ proposal, groupInfo, policyInfo }) => {
+const TimeRemaining = ({ targetDate }) => {
+  const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft());
+
+  function calculateTimeLeft() {
+    const difference = +new Date(targetDate) - +new Date();
+    if (difference <= 0) return null;
+
+    return {
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((difference / 1000 / 60) % 60),
+    };
+  }
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 60000); // Update every minute
+
+    return () => clearInterval(timer);
+  }, [targetDate]);
+
+  if (!timeLeft)
+    return (
+      <span className="text-error flex items-center">
+        <Clock3 className="w-4 h-4 mr-1" />
+        Expired
+      </span>
+    );
+
+  const timeDisplay = [];
+  if (timeLeft.days > 0) timeDisplay.push(`${timeLeft.days}d`);
+  if (timeLeft.hours > 0) timeDisplay.push(`${timeLeft.hours}h`);
+  if (timeLeft.minutes > 0) timeDisplay.push(`${timeLeft.minutes}m`);
+
+  return (
+    <div className="flex items-center text-primary-content/70">
+      <Clock3 className="w-4 h-4 mr-1" />
+      <span>{timeDisplay.join(" ")}</span>
+    </div>
+  );
+};
+
+const VotingProgress = ({
+  proposal,
+  groupInfo,
+  policyInfo,
+  cosmosGroupApiClient,
+}) => {
+  const [tally, setTally] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchTally = async () => {
+      if (proposal.status === "PROPOSAL_STATUS_SUBMITTED") {
+        setLoading(true);
+        try {
+          const result = await getTallyResult(
+            cosmosGroupApiClient,
+            proposal.id
+          );
+          setTally(result);
+        } catch (error) {
+          console.error("Error fetching tally:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchTally();
+  }, [proposal.id, proposal.status, cosmosGroupApiClient]);
+
   const calculatePercentages = () => {
-    if (!proposal.final_tally_result || !groupInfo)
-      return { yes: 0, quorum: 0 };
+    if (!groupInfo) return { yes: 0, quorum: 0 };
 
     const totalWeight = parseInt(groupInfo.total_weight);
-    const yesVotes = parseInt(proposal.final_tally_result.yes_count);
+
+    // Use final tally for completed proposals, current tally for active ones
+    const tallyResult =
+      proposal.status === "PROPOSAL_STATUS_SUBMITTED"
+        ? tally
+        : proposal.final_tally_result;
+
+    if (!tallyResult) return { yes: 0, quorum: 0 };
+
+    const yesVotes = parseInt(tallyResult.yes_count || "0");
     const yesPercentage = (yesVotes / totalWeight) * 100;
 
     const quorumPercentage =
@@ -75,102 +160,30 @@ const VotingProgressBar = ({ proposal, groupInfo, policyInfo }) => {
 
   const { yes, quorum } = calculatePercentages();
 
-  return (
-    <div className="w-full">
-      <div className="flex justify-between text-sm mb-1">
-        <span>Yes Votes: {yes.toFixed(1)}%</span>
-        <span>Quorum: {quorum.toFixed(1)}%</span>
-      </div>
-      <div className="h-2 bg-base-300 rounded-full relative">
-        <div
-          className="h-full bg-primary rounded-full"
-          style={{ width: `${yes}%` }}
-        />
-        <div
-          className="absolute top-0 h-full border-r-2 border-red-500"
-          style={{ left: `${quorum}%` }}
-        />
-      </div>
-    </div>
-  );
-};
-
-const VoteButtons = ({ onVote, isVoting, hasVoted }) => {
-  if (hasVoted) {
+  if (loading) {
     return (
-      <div className="text-sm text-green-500 flex items-center">
-        <CheckCircle2 className="w-4 h-4 mr-1" />
-        Vote submitted
+      <div className="w-full mt-4">
+        <div className="h-1.5 bg-base-300 rounded-full animate-pulse" />
       </div>
     );
   }
 
   return (
-    <div className="flex space-x-2">
-      {["Yes", "No", "Abstain", "Veto"].map((option) => (
-        <button
-          key={option}
-          onClick={() => onVote(`VOTE_OPTION_${option.toUpperCase()}`)}
-          disabled={isVoting}
-          className={`btn btn-sm ${
-            option === "Yes"
-              ? "btn-primary"
-              : option === "No"
-              ? "btn-error"
-              : option === "Abstain"
-              ? "btn-secondary"
-              : "btn-warning"
-          }`}
-        >
-          {isVoting ? (
-            <span className="loading loading-spinner"></span>
-          ) : (
-            option
-          )}
-        </button>
-      ))}
-    </div>
-  );
-};
-
-const CountdownTimer = ({ targetDate }) => {
-  const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft());
-
-  function calculateTimeLeft() {
-    const difference = +new Date(targetDate) - +new Date();
-
-    if (difference <= 0) {
-      return null;
-    }
-
-    return {
-      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-      minutes: Math.floor((difference / 1000 / 60) % 60),
-      seconds: Math.floor((difference / 1000) % 60),
-    };
-  }
-
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [targetDate]);
-
-  if (!timeLeft) return <span className="text-error">Expired</span>;
-
-  return (
-    <div className="grid grid-cols-4 gap-2">
-      {Object.keys(timeLeft).map((interval) => (
-        <div key={interval} className="bg-base-300 rounded-lg p-2 text-center">
-          <div className="text-xl font-bold">
-            {timeLeft[interval].toString().padStart(2, "0")}
-          </div>
-          <div className="text-xs text-gray-400 uppercase">{interval}</div>
-        </div>
-      ))}
+    <div className="w-full mt-4">
+      <div className="flex justify-between text-xs mb-1">
+        <span>Yes: {yes.toFixed(1)}%</span>
+        <span className="text-primary">Required: {quorum.toFixed(1)}%</span>
+      </div>
+      <div className="h-1.5 bg-base-300 rounded-full relative">
+        <div
+          className="h-full bg-primary rounded-full transition-all duration-500"
+          style={{ width: `${yes}%` }}
+        />
+        <div
+          className="absolute top-0 h-full border-r border-primary/50"
+          style={{ left: `${quorum}%` }}
+        />
+      </div>
     </div>
   );
 };
@@ -182,73 +195,97 @@ const ProposalCard = ({
   onVote,
   isVoting,
   hasVoted,
+  cosmosGroupApiClient,
   selectedAddress,
-}) => (
-  <div className="bg-base-300 rounded-lg p-6 transition-all hover:shadow-lg">
-    <div className="flex justify-between items-start mb-4">
-      <div>
-        <h3 className="text-lg font-semibold mb-2">{proposal.title}</h3>
-        <div className="text-sm text-gray-400 mb-2">
-          Proposal #{proposal.id} • Created by {proposal.proposers.slice(0, 6)}
-          ...{proposal.proposers.slice(-4)}
+}) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  return (
+    <>
+      <div className="bg-base-300 rounded-lg p-4 hover:shadow-lg transition-all duration-300">
+        <div className="flex justify-between items-start mb-3">
+          <TimeRemaining targetDate={proposal.voting_period_end} />
+          <ProposalStatusBadge status={proposal.status} />
+        </div>
+
+        <h3 className="text-base font-semibold mb-2 line-clamp-2">
+          {proposal.title}
+        </h3>
+
+        <div className="text-xs text-gray-400 mb-3 flex items-center">
+          <Users className="w-3 h-3 mr-1" />
+          <span>
+            {proposal.proposers[0].slice(0, 4)}...
+            {proposal.proposers[0].slice(-4)}
+          </span>
+          <span className="mx-2">•</span>
+          <span>#{proposal.id}</span>
+        </div>
+
+        <VotingProgress
+          proposal={proposal}
+          groupInfo={groupInfo}
+          policyInfo={policyInfo}
+          cosmosGroupApiClient={cosmosGroupApiClient}
+        />
+
+        <div className="mt-4 flex flex-col gap-2">
+          {!hasVoted && proposal.status === "PROPOSAL_STATUS_SUBMITTED" && (
+            <div className="flex gap-2">
+              <button
+                onClick={() => onVote("VOTE_OPTION_YES")}
+                disabled={isVoting}
+                className="btn btn-xs btn-primary flex-1"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => onVote("VOTE_OPTION_NO")}
+                disabled={isVoting}
+                className="btn btn-xs btn-error flex-1"
+              >
+                No
+              </button>
+              <button
+                onClick={() => onVote("VOTE_OPTION_ABSTAIN")}
+                disabled={isVoting}
+                className="btn btn-xs btn-secondary flex-1"
+              >
+                Abstain
+              </button>
+            </div>
+          )}
+
+          {hasVoted && (
+            <div className="text-xs text-green-500 flex items-center justify-center bg-green-500/10 py-1 rounded">
+              <CheckCircle2 className="w-3 h-3 mr-1" />
+              Vote submitted
+            </div>
+          )}
+
+          <button
+            className="btn btn-xs btn-ghost w-full"
+            onClick={() => setIsModalOpen(true)}
+          >
+            View Details
+            <ChevronRight className="w-3 h-3 ml-1" />
+          </button>
         </div>
       </div>
-      <ProposalStatusBadge status={proposal.status} />
-    </div>
 
-    <div className="space-y-4">
-      {proposal.status === "PROPOSAL_STATUS_SUBMITTED" && (
-        <>
-          <div className="bg-base-200 rounded-lg p-4">
-            <h4 className="text-sm font-medium text-gray-400 mb-2">
-              Time Remaining
-            </h4>
-            <CountdownTimer targetDate={proposal.voting_period_end} />
-          </div>
-
-          <div className="bg-base-200 rounded-lg p-4">
-            <h4 className="text-sm font-medium text-gray-400 mb-2">
-              Voting Progress
-            </h4>
-            <VotingProgressBar
-              proposal={proposal}
-              groupInfo={groupInfo}
-              policyInfo={policyInfo}
-            />
-          </div>
-
-          <div className="bg-base-200 rounded-lg p-4">
-            <h4 className="text-sm font-medium text-gray-400 mb-2">
-              Your Vote
-            </h4>
-            <VoteButtons
-              onVote={onVote}
-              isVoting={isVoting}
-              hasVoted={hasVoted}
-            />
-          </div>
-        </>
-      )}
-
-      <div className="flex justify-between items-center mt-4">
-        <button className="btn btn-sm btn-ghost">
-          View Details
-          <ChevronRight className="w-4 h-4 ml-1" />
-        </button>
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center text-sm text-gray-400">
-            <Scale className="w-4 h-4 mr-1" />
-            {proposal.final_tally_result.total_count} votes
-          </div>
-          <div className="flex items-center text-sm text-gray-400">
-            <Users className="w-4 h-4 mr-1" />
-            {groupInfo?.total_weight} eligible
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
+      <ProposalDetailsModal
+        proposal={proposal}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onVote={onVote}
+        groupInfo={groupInfo}
+        policyInfo={policyInfo}
+        selectedAddress={selectedAddress}
+        cosmosGroupApiClient={cosmosGroupApiClient}
+      />
+    </>
+  );
+};
 
 export default function ProposalsSection({
   dao,
@@ -266,18 +303,18 @@ export default function ProposalsSection({
   const completedProposals = proposals.filter(
     (p) => p.status !== "PROPOSAL_STATUS_SUBMITTED"
   );
+  const { cosmosGroupApiClient } = useApiClient();
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="loading loading-spinner loading-lg"></div>
+        <div className="loading loading-spinner loading-lg" />
       </div>
     );
   }
 
   return (
     <div className="space-y-8">
-      {/* Header Section */}
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold mb-2">Governance Proposals</h2>
@@ -291,14 +328,13 @@ export default function ProposalsSection({
         </button>
       </div>
 
-      {/* Active Proposals Section */}
       <div>
         <h3 className="text-xl font-semibold mb-4 flex items-center">
           <Vote className="w-5 h-5 mr-2 text-primary" />
           Active Proposals
         </h3>
         {activeProposals.length > 0 ? (
-          <div className="grid gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {activeProposals.map((proposal) => (
               <ProposalCard
                 key={proposal.id}
@@ -306,11 +342,11 @@ export default function ProposalsSection({
                 groupInfo={groupInfo}
                 policyInfo={policyInfo}
                 onVote={(option) => onVote(proposal.id, option)}
-                isVoting={false} // Add proper loading state
+                isVoting={false}
                 hasVoted={proposal.votes?.some(
                   (v) => v.voter === selectedAddress
                 )}
-                selectedAddress={selectedAddress}
+                cosmosGroupApiClient={cosmosGroupApiClient}
               />
             ))}
           </div>
@@ -325,14 +361,13 @@ export default function ProposalsSection({
         )}
       </div>
 
-      {/* Past Proposals Section */}
       <div>
         <h3 className="text-xl font-semibold mb-4 flex items-center">
           <Clock className="w-5 h-5 mr-2 text-primary" />
           Past Proposals
         </h3>
         {completedProposals.length > 0 ? (
-          <div className="grid gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {completedProposals.map((proposal) => (
               <ProposalCard
                 key={proposal.id}
@@ -340,6 +375,7 @@ export default function ProposalsSection({
                 groupInfo={groupInfo}
                 policyInfo={policyInfo}
                 selectedAddress={selectedAddress}
+                cosmosGroupApiClient={cosmosGroupApiClient}
               />
             ))}
           </div>

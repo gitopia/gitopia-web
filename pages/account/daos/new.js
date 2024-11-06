@@ -17,6 +17,10 @@ import {
   PlusCircle,
   Trash2,
   Info,
+  Settings2,
+  GitPullRequest,
+  UsersRound,
+  Tag,
 } from "lucide-react";
 import {
   PieChart,
@@ -43,6 +47,14 @@ const DAO_STEPS = {
     icon: Settings,
     color: "text-purple-500",
     bgColor: "bg-purple-500/10",
+  },
+  CONFIG: {
+    id: "CONFIG",
+    title: "DAO Configuration",
+    description: "Set up governance requirements",
+    icon: Settings2,
+    color: "text-indigo-500",
+    bgColor: "bg-indigo-500/10",
   },
   MEMBERSHIP: {
     id: "MEMBERSHIP",
@@ -71,6 +83,12 @@ function NewDao({ selectedAddress, createDao }) {
     votingPeriod: "2",
     percentage: "50",
     members: [{ address: selectedAddress, weight: "1" }],
+    config: {
+      requirePullRequestProposal: false,
+      requireRepositoryDeletionProposal: false,
+      requireCollaboratorProposal: false,
+      requireReleaseProposal: false,
+    },
   });
 
   // Update first member's address if selectedAddress changes
@@ -260,6 +278,85 @@ function NewDao({ selectedAddress, createDao }) {
         );
 
       case 3:
+        return (
+          <div className="space-y-6">
+            <div className="bg-base-300 p-4 rounded-lg mb-6">
+              <div className="flex items-center">
+                <Settings2 className="w-5 h-5 mr-2 text-blue-400" />
+                <span className="text-sm text-gray-300">
+                  Configure which actions require DAO governance proposals
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {[
+                {
+                  icon: GitPullRequest,
+                  label: "Require proposal for merging pull requests",
+                  key: "requirePullRequestProposal",
+                  description: "Pull request merges will require DAO approval",
+                },
+                {
+                  icon: Trash2,
+                  label: "Require proposal for repository deletion",
+                  key: "requireRepositoryDeletionProposal",
+                  description: "Repository deletions will require DAO approval",
+                },
+                {
+                  icon: UsersRound,
+                  label: "Require proposal for managing collaborators",
+                  key: "requireCollaboratorProposal",
+                  description:
+                    "Adding or removing collaborators will require DAO approval",
+                },
+                {
+                  icon: Tag,
+                  label: "Require proposal for release management",
+                  key: "requireReleaseProposal",
+                  description:
+                    "Creating and managing releases will require DAO approval",
+                },
+              ].map((option, index) => (
+                <div key={index} className="bg-base-200 p-4 rounded-lg">
+                  <div className="form-control">
+                    <label className="cursor-pointer space-y-2">
+                      <div className="flex items-center space-x-4">
+                        <input
+                          type="checkbox"
+                          className="checkbox"
+                          checked={formData.config[option.key]}
+                          onChange={(e) => {
+                            const newConfig = { ...formData.config };
+                            newConfig[option.key] = e.target.checked;
+                            updateFormData("config", newConfig);
+                          }}
+                        />
+                        <div className="flex items-center">
+                          <option.icon
+                            className={`w-5 h-5 mr-2 ${
+                              formData.config[option.key]
+                                ? "text-primary"
+                                : "text-gray-400"
+                            }`}
+                          />
+                          <span className="label-text font-medium">
+                            {option.label}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="ml-10 text-sm text-gray-400">
+                        {option.description}
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 4:
         return (
           <div className="space-y-6">
             <div className="bg-base-300 p-4 rounded-lg mb-6">

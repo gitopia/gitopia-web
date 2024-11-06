@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 const TextInput = React.forwardRef(
   (
@@ -9,7 +9,7 @@ const TextInput = React.forwardRef(
       placeholder = "",
       value = "",
       setValue = () => {},
-      hint = { shown: false, type: "", message: "" }, // Provide default value
+      hint = { shown: false, type: "", message: "" },
       setHint = () => {},
       multiline = false,
       readOnly = false,
@@ -22,12 +22,23 @@ const TextInput = React.forwardRef(
     },
     ref
   ) => {
+    const textareaRef = useRef(null);
+
+    useEffect(() => {
+      if (multiline && textareaRef.current) {
+        // Reset height to auto to correctly calculate new height
+        textareaRef.current.style.height = "auto";
+        // Set new height based on scrollHeight with a small buffer for smooth typing
+        textareaRef.current.style.height =
+          Math.min(textareaRef.current.scrollHeight + 2, 400) + "px";
+      }
+    }, [value, multiline]);
+
     const getInputClassName = () => {
       let className =
         "input input-bordered focus:outline-none focus:border-type ";
       className += `input-${size} `;
 
-      // Safe access of hint properties
       if (hint?.shown && hint?.type === "error") {
         className += "border-pink text-pink input-error ";
       } else if (value?.length > 0) {
@@ -47,15 +58,19 @@ const TextInput = React.forwardRef(
 
         {multiline ? (
           <textarea
-            ref={ref}
-            rows={5}
+            ref={(el) => {
+              textareaRef.current = el;
+              if (typeof ref === "function") ref(el);
+              else if (ref) ref.current = el;
+            }}
+            rows={1}
             type={type}
             name={name}
             placeholder={placeholder}
             readOnly={readOnly}
             required={required}
             disabled={disabled}
-            className={getInputClassName() + " h-24 py-2"}
+            className={`${getInputClassName()} min-h-[80px] max-h-[400px] py-2 resize-none overflow-y-auto transition-height duration-100`}
             value={value}
             onChange={(e) => {
               setValue(e.target.value);
