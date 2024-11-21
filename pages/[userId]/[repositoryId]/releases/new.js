@@ -157,192 +157,196 @@ function RepositoryReleaseNewView(props) {
   return (
     <div
       data-theme="dark"
-      className="bg-base-100 text-base-content min-h-screen"
+      className="min-h-screen bg-base-100 text-base-content"
     >
       <Head>
-        <title>{repository.name}</title>
+        <title>{repository.name} - New Release</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
+
       <Header />
+
       <div className="flex bg-repo-grad-v">
-        <main className="container mx-auto max-w-screen-lg py-12 px-4">
+        <main className="container mx-auto max-w-screen-lg px-4 py-8">
           <RepositoryHeader repository={repository} />
           <RepositoryMainTabs repository={repository} active="code" />
-          <div className="mt-8">
-            {/* <div className="btn-group">
-              <button className="btn btn-sm btn-active">Releases</button>
-              <button className="btn btn-sm">Tags</button>
-            </div> */}
-            <div className="sm:flex mt-4 items-end">
-              {newTagOptionShown ? (
-                <div className="form-control mr-4">
-                  <label className="label">
-                    <span className="label-text">New Tag Name</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Tag Name"
-                    data-test="tag-name"
-                    className={
-                      "input input-sm input-bordered focus:outline-none focus:border-type " +
-                      (tagName.length > 0 ? "border-green" : "border-pink")
-                    }
-                    value={tagName}
-                    onChange={(e) => {
-                      setTagName(e.target.value);
-                    }}
-                  />
-                </div>
-              ) : (
-                <div className="form-control mr-4">
-                  <label className="label">
-                    <span className="label-text">Tag Name</span>
-                  </label>
-                  <BranchSelector
-                    branchName={tagName}
-                    tags={repository.tags}
-                    showTagsOnly={true}
-                    isTag={true}
-                    onChange={(tag) => {
-                      console.log(tag);
-                      setTagName(tag.name);
-                    }}
-                    onCreateTag={(name) => {
-                      setTagName(name);
-                      setNewTagOptionShown(true);
-                    }}
-                  />
-                </div>
-              )}
-              {newTagOptionShown ? (
-                <>
-                  <div className="form-control mr-4">
-                    <label className="label">
-                      <span className="label-text">Target Branch</span>
-                    </label>
+
+          {/* Breadcrumb */}
+          <div className="flex items-center space-x-2 mt-8 text-sm text-gray-500">
+            <span>Releases</span>
+            <span>/</span>
+            <span className="font-medium">New Release</span>
+          </div>
+
+          {/* Main Content */}
+          <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Main Form */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Tag Selection Section */}
+              <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-6">
+                <h2 className="text-lg font-medium mb-4">Choose a tag</h2>
+                <div className="space-y-4">
+                  {newTagOptionShown ? (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          New Tag Name
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="v1.0.0"
+                          data-test="tag-name"
+                          className={`w-full input input-sm input-bordered focus:outline-none ${
+                            tagName.length > 0
+                              ? "border-green-500"
+                              : "border-pink-500"
+                          }`}
+                          value={tagName}
+                          onChange={(e) => setTagName(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Target Branch
+                        </label>
+                        <BranchSelector
+                          branchName={target.name}
+                          branches={repository.branches}
+                          showBranchesOnly={true}
+                          onChange={(branch) => setTarget(branch)}
+                        />
+                      </div>
+                      <div className="flex space-x-3">
+                        <button
+                          className={`btn btn-primary btn-sm ${
+                            creatingTag ? "loading" : ""
+                          }`}
+                          onClick={async () => {
+                            setCreatingTag(true);
+                            const res = await props.createTag(
+                              apiClient,
+                              cosmosBankApiClient,
+                              cosmosFeegrantApiClient,
+                              {
+                                repoOwnerId: repository.owner.id,
+                                repositoryName: repository.name,
+                                name: tagName,
+                                sha: target.sha,
+                              }
+                            );
+                            if (res && res.code === 0) {
+                              setNewTagOptionShown(false);
+                              refreshRepository();
+                            }
+                            setCreatingTag(false);
+                          }}
+                          data-test="create-tag"
+                        >
+                          Create Tag
+                        </button>
+                        <button
+                          className="btn btn-ghost btn-sm"
+                          onClick={() => {
+                            setTagName(
+                              repository.tags.length
+                                ? repository.tags[repository.tags.length - 1]
+                                    .name
+                                : ""
+                            );
+                            setNewTagOptionShown(false);
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
                     <BranchSelector
-                      branchName={target.name}
-                      branches={repository.branches}
-                      showBranchesOnly={true}
-                      onChange={(branch) => {
-                        setTarget(branch);
+                      branchName={tagName}
+                      tags={repository.tags}
+                      showTagsOnly={true}
+                      isTag={true}
+                      onChange={(tag) => setTagName(tag.name)}
+                      onCreateTag={(name) => {
+                        setTagName(name);
+                        setNewTagOptionShown(true);
                       }}
                     />
-                  </div>
-                  <div className="flex mt-4 sm:mt-0">
-                    <div className="form-control mr-4">
-                      <button
-                        className={
-                          "btn btn-secondary btn-sm " +
-                          (creatingTag ? "loading" : "")
-                        }
-                        onClick={async () => {
-                          setCreatingTag(true);
-                          const res = await props.createTag(
-                            apiClient,
-                            cosmosBankApiClient,
-                            cosmosFeegrantApiClient,
-                            {
-                              repoOwnerId: repository.owner.id,
-                              repositoryName: repository.name,
-                              name: tagName,
-                              sha: target.sha,
-                            }
-                          );
-                          if (res && res.code === 0) {
-                            setNewTagOptionShown(false);
-                            refreshRepository();
-                          }
-                          setCreatingTag(false);
-                        }}
-                        data-test="create-tag"
-                      >
-                        Create Tag
-                      </button>
-                    </div>
-                    <div className="form-control">
-                      <button
-                        className={"btn btn-sm "}
-                        onClick={() => {
-                          setTagName(
-                            repository.tags.length
-                              ? repository.tags[repository.tags.length - 1].name
-                              : ""
-                          );
-                          setNewTagOptionShown(false);
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                ""
-              )}
-            </div>
-          </div>
-          <div className="sm:flex mt-8">
-            <div className="flex flex-1">
-              <div className="flex-none mr-4">
-                <AccountCard
-                  id={props.selectedAddress}
-                  showAvatar={true}
-                  showId={false}
-                />
-              </div>
-              <div className="border border-grey rounded flex-1 p-4">
-                <div className="form-control mb-4">
-                  <input
-                    type="text"
-                    data-test="release-title"
-                    placeholder="Release Title"
-                    className="input input-md input-bordered"
-                    value={title}
-                    onChange={(e) => {
-                      setTitle(e.target.value);
-                    }}
-                  />
+                  )}
                 </div>
-                <MarkdownEditor value={description} setValue={setDescription} />
-                <div className="my-4 divide-y divide-grey">
-                  {attachments.map((a, i) => {
-                    return (
-                      <div
-                        className={"flex py-2 items-center"}
-                        key={"attachment-" + i}
-                      >
-                        <div className="flex-1 text-sm">{a.file.name}</div>
-                        <div className="text-xs mr-2">
-                          {formatBytes(a.file.size)}
-                        </div>
-                        <div className="">
-                          <div className="text-xs flex items-center">
-                            <div
-                              className="mr-2 tooltip"
-                              data-tip={a.uploadResponse.data.sha}
-                            >
-                              <button
-                                className="btn btn-xs btn-ghost"
-                                onClick={(e) => {
-                                  if (navigator.clipboard) {
-                                    navigator.clipboard.writeText(
-                                      a.uploadResponse.data.sha
-                                    );
-                                  }
-                                  e.stopPropagation();
-                                  e.preventDefault();
-                                }}
-                              >
-                                {shrinkSha(a.uploadResponse.data.sha)}
-                              </button>
-                            </div>
+              </div>
+
+              {/* Release Information */}
+              <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-6">
+                <h2 className="text-lg font-medium mb-4">
+                  Release Information
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Title
+                    </label>
+                    <input
+                      type="text"
+                      data-test="release-title"
+                      placeholder="Release Title"
+                      className="input input-bordered w-full"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Description
+                    </label>
+                    <MarkdownEditor
+                      value={description}
+                      setValue={setDescription}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Attachments */}
+              <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-6">
+                <h2 className="text-lg font-medium mb-4">Attachments</h2>
+                <div className="space-y-4">
+                  {attachments.length > 0 && (
+                    <div className="divide-y divide-gray-700">
+                      {attachments.map((a, i) => (
+                        <div
+                          className="flex items-center py-3"
+                          key={`attachment-${i}`}
+                        >
+                          <div className="flex-1 text-sm truncate">
+                            {a.file.name}
+                          </div>
+                          <div className="text-xs text-gray-400 mx-4">
+                            {formatBytes(a.file.size)}
+                          </div>
+                          <div className="flex items-center space-x-2">
                             <button
-                              className="btn btn-square btn-xs"
+                              className="btn btn-ghost btn-xs tooltip"
+                              data-tip={a.uploadResponse.data.sha}
+                              onClick={(e) => {
+                                if (navigator.clipboard) {
+                                  navigator.clipboard.writeText(
+                                    a.uploadResponse.data.sha
+                                  );
+                                }
+                                e.stopPropagation();
+                                e.preventDefault();
+                              }}
+                            >
+                              {shrinkSha(a.uploadResponse.data.sha)}
+                            </button>
+                            <button
+                              className="btn btn-ghost btn-xs text-red-400 hover:text-red-300"
                               onClick={() => {
-                                let a = [...attachments];
-                                a.splice(i, 1);
-                                setAttachments(a);
+                                let updatedAttachments = [...attachments];
+                                updatedAttachments.splice(i, 1);
+                                setAttachments(updatedAttachments);
                               }}
                             >
                               <svg
@@ -360,87 +364,81 @@ function RepositoryReleaseNewView(props) {
                             </button>
                           </div>
                         </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {uploadingAttachment.file.name && (
+                    <div className="py-3">
+                      <div className="text-sm text-gray-400 mb-2">
+                        Uploading {uploadingAttachment.file.name}...{" "}
+                        {parseFloat(uploadingAttachment.completed).toFixed(2)}%
                       </div>
-                    );
-                  })}
-                  {uploadingAttachment.file.name ? (
-                    <div className="pt-2">
-                      <div className="text-xs text-type-secondary">
-                        {"Uploading " +
-                          uploadingAttachment.file.name +
-                          "... " +
-                          parseFloat(uploadingAttachment.completed).toFixed(2) +
-                          "%"}
-                      </div>
-                      <div className="flex mt-2">
-                        <progress
-                          className="progress progress-primary"
-                          value={uploadingAttachment.completed}
-                          max="100"
-                        ></progress>
+                      <div className="w-full bg-gray-700 rounded-full h-1.5">
+                        <div
+                          className="bg-primary h-1.5 rounded-full transition-all duration-300"
+                          style={{ width: `${uploadingAttachment.completed}%` }}
+                        />
                       </div>
                     </div>
-                  ) : (
-                    ""
                   )}
-                </div>
-                <div>
+
                   <Uploady
                     destination={{
                       url: process.env.NEXT_PUBLIC_OBJECTS_URL + "/upload",
                     }}
                   >
-                    <UploadDropZone
-                      className="flex items-center justify-center p-8 border border-grey border-dashed text-type-secondary"
-                      onDragOverClassName="drag-over"
-                    >
-                      <UploadButton>
-                        <span>Drag & Drop File(s) Here</span>
+                    <UploadDropZone className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-primary transition-colors duration-200">
+                      <UploadButton className="btn btn-ghost btn-sm">
+                        <span>Choose files or drag & drop here</span>
                       </UploadButton>
                     </UploadDropZone>
                     <LogProgress />
                   </Uploady>
                 </div>
-                <div className="text-right mt-4">
-                  <div className="inline-block w-36">
-                    <button
-                      className={
-                        "btn btn-sm btn-primary btn-block " +
-                        (postingIssue ? "loading" : "")
-                      }
-                      disabled={title.trim().length === 0 || postingIssue}
-                      onClick={createIssue}
-                      data-test="create-release"
-                    >
-                      Create Release
-                    </button>
-                  </div>
-                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-end">
+                <button
+                  className={`btn btn-primary ${postingIssue ? "loading" : ""}`}
+                  disabled={title.trim().length === 0 || postingIssue}
+                  onClick={createIssue}
+                  data-test="create-release"
+                >
+                  Create Release
+                </button>
               </div>
             </div>
-            <div className="flex-none sm:w-64 sm:pl-8 text-sm text-type-secondary mt-8 sm:mt-0">
-              <h5 className="text-xl">Tagging Suggestions</h5>
-              <p className="mt-4">
-                It’s common practice to prefix your version names with the
-                letter v. Some good tag names might be v1.0 or v2.3.4.
-              </p>
-              <p className="mt-2">
-                If the tag isn’t meant for production use, add a pre-release
-                version after the version name. Some good pre-release versions
-                might be v0.2-alpha or v5.9-beta.3.
-              </p>
-              <p className="mt-2">
-                If you’re new to releasing software, we highly recommend reading
-                about{" "}
-                <a
-                  href="semver.org"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="link link-primary no-underline hover:underline"
-                >
-                  semantic versioning.
-                </a>
-              </p>
+
+            {/* Right Column - Help & Suggestions */}
+            <div className="lg:col-span-1">
+              <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-6 sticky top-6">
+                <h2 className="text-lg font-medium mb-4">
+                  Tagging Suggestions
+                </h2>
+                <div className="space-y-4 text-sm text-gray-400">
+                  <p>
+                    It's common practice to prefix your version names with the
+                    letter v. Some good tag names might be v1.0 or v2.3.4.
+                  </p>
+                  <p>
+                    If the tag isn't meant for production use, add a pre-release
+                    version. Examples: v0.2-alpha or v5.9-beta.3.
+                  </p>
+                  <p>
+                    New to releasing software? Read about{" "}
+                    <a
+                      href="https://semver.org"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      semantic versioning
+                    </a>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </main>
@@ -449,12 +447,9 @@ function RepositoryReleaseNewView(props) {
   );
 }
 
-const mapStateToProps = (state) => {
-  return {
+export default connect(
+  (state) => ({
     selectedAddress: state.wallet.selectedAddress,
-  };
-};
-
-export default connect(mapStateToProps, { createRelease, createTag })(
-  RepositoryReleaseNewView
-);
+  }),
+  { createRelease, createTag }
+)(RepositoryReleaseNewView);

@@ -2,21 +2,76 @@ import React from "react";
 import { useState, useEffect } from "react";
 import {
   Users,
-  Clock3,
   CheckCircle2,
   XCircle,
   AlertCircle,
   Vote,
   Calendar,
   Info,
-  MessageSquare,
+  PlayCircle,
+  Loader2,
 } from "lucide-react";
+import { TimeRemaining } from "./ProposalCountdown";
+import getTallyResult from "../../helpers/getTallyResult";
+import ProposalMessages from "./ProposalMessages";
+import ProposalStatusBadge from "./ProposalStatusBadge";
+
+const VoteList = ({ votes }) => {
+  const getVoteOptionDisplay = (option) => {
+    switch (option) {
+      case "VOTE_OPTION_YES":
+        return { text: "Yes", color: "text-green-500", icon: CheckCircle2 };
+      case "VOTE_OPTION_NO":
+        return { text: "No", color: "text-red-500", icon: XCircle };
+      case "VOTE_OPTION_ABSTAIN":
+        return { text: "Abstain", color: "text-gray-500", icon: AlertCircle };
+      case "VOTE_OPTION_NO_WITH_VETO":
+        return { text: "Veto", color: "text-purple-500", icon: Vote };
+      default:
+        return { text: "Unknown", color: "text-gray-500", icon: AlertCircle };
+    }
+  };
+
+  return (
+    <div className="mt-6 bg-base-300 rounded-lg p-4">
+      <h5 className="font-semibold mb-4 flex items-center">
+        <Users className="w-4 h-4 mr-2" />
+        Votes Cast ({votes.length})
+      </h5>
+      <div className="space-y-3">
+        {votes.map((vote, index) => {
+          const voteDisplay = getVoteOptionDisplay(vote.option);
+          const VoteIcon = voteDisplay.icon;
+
+          return (
+            <div
+              key={index}
+              className="flex items-center justify-between bg-base-200 p-3 rounded-lg"
+            >
+              <div className="flex items-center space-x-2">
+                <div className="text-sm font-mono">
+                  {vote.voter.slice(0, 8)}...{vote.voter.slice(-8)}
+                </div>
+              </div>
+              <div className={`flex items-center ${voteDisplay.color}`}>
+                <VoteIcon className="w-4 h-4 mr-1" />
+                {voteDisplay.text}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 const ProposalDetailsModal = ({
   proposal,
   isOpen,
   onClose,
   onVote,
+  onExecute,
+  isExecuting,
   groupInfo,
   policyInfo,
   selectedAddress,
@@ -24,27 +79,43 @@ const ProposalDetailsModal = ({
 }) => {
   const [tally, setTally] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [votes, setVotes] = useState([]);
 
   useEffect(() => {
-    const fetchTally = async () => {
-      if (proposal?.status === "PROPOSAL_STATUS_SUBMITTED") {
+    const fetchData = async () => {
+      if (isOpen && proposal) {
+        setLoading(true);
         try {
-          const result = await getTallyResult(
-            cosmosGroupApiClient,
-            proposal.id
-          );
-          setTally(result);
+          // Fetch both tally and votes
+          const [tallyResult, votesResult] = await Promise.all([
+            getTallyResult(cosmosGroupApiClient, proposal.id),
+            cosmosGroupApiClient.queryVotesByProposal(proposal.id),
+          ]);
+
+          setTally(tallyResult);
+          setVotes(votesResult.data.votes || []);
         } catch (error) {
-          console.error("Error fetching tally:", error);
+          console.error("Error fetching proposal data:", error);
+        } finally {
+          setLoading(false);
         }
       }
-      setLoading(false);
     };
 
-    if (isOpen) {
-      fetchTally();
-    }
-  }, [proposal, isOpen]);
+    fetchData();
+  }, [proposal, isOpen, cosmosGroupApiClient]);
+
+  const canExecute = React.useMemo(() => {
+    return (
+      proposal?.status === "PROPOSAL_STATUS_ACCEPTED" &&
+      proposal?.executor_result === "PROPOSAL_EXECUTOR_RESULT_NOT_RUN" &&
+      proposal?.messages?.length > 0
+    );
+  }, [proposal]);
+
+  const isTextProposal = React.useMemo(() => {
+    return proposal?.messages?.length === 0;
+  }, [proposal]);
 
   if (!isOpen || !proposal) return null;
 
@@ -78,7 +149,7 @@ const ProposalDetailsModal = ({
   };
 
   const { yes, no, abstain, veto, quorum } = calculatePercentages();
-  const hasVoted = proposal.votes?.some((v) => v.voter === selectedAddress);
+  const hasVoted = votes.some((vote) => vote.voter === selectedAddress);
   const isActive = proposal.status === "PROPOSAL_STATUS_SUBMITTED";
 
   return (
@@ -105,10 +176,11 @@ const ProposalDetailsModal = ({
               </div>
             </div>
 
-            <div className="flex items-center">
+            <div className="flex items-center justify-between gap-2">
               {proposal.status === "PROPOSAL_STATUS_SUBMITTED" && (
-                <TimeRemaining targetDate={proposal.voting_period_end} />
+                <TimeRemaining endTime={proposal.voting_period_end} />
               )}
+              <ProposalStatusBadge status={proposal.status} />
               <button className="btn btn-sm btn-ghost ml-4" onClick={onClose}>
                 ✕
               </button>
@@ -124,6 +196,60 @@ const ProposalDetailsModal = ({
                 {proposal.summary}
               </p>
             </div>
+
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold mb-4">Proposal Messages</h3>
+              <ProposalMessages messages={proposal.messages} />
+            </div>
+
+            {/* Execution Status */}
+            {proposal.status === "PROPOSAL_STATUS_ACCEPTED" && (
+              <div
+                className={`p-4 rounded-lg ${
+                  canExecute ? "bg-warning/10" : "bg-success/10"
+                }`}
+              >
+                <div className="flex items-center">
+                  <Info className="w-5 h-5 mr-2 text-warning" />
+                  <div>
+                    <p className="font-medium">
+                      {isTextProposal
+                        ? "Text Proposal Passed"
+                        : canExecute
+                        ? "Proposal Execution Required"
+                        : "Proposal Executed"}
+                    </p>
+                    <p className="text-sm text-gray-400">
+                      {isTextProposal
+                        ? "This is a text-only proposal that required no execution."
+                        : canExecute
+                        ? "This proposal has passed but hasn't been executed yet. Execute it to apply the changes."
+                        : "This proposal has been executed successfully."}
+                    </p>
+                  </div>
+                </div>
+
+                {canExecute && (
+                  <button
+                    onClick={onExecute}
+                    disabled={isExecuting}
+                    className="btn btn-warning mt-3 w-full"
+                  >
+                    {isExecuting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Executing...
+                      </>
+                    ) : (
+                      <>
+                        <PlayCircle className="w-4 h-4 mr-2" />
+                        Execute Proposal
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+            )}
 
             {/* Voting Stats */}
             <div className="bg-base-300 rounded-lg p-4">
@@ -242,6 +368,9 @@ const ProposalDetailsModal = ({
                 You have already voted on this proposal
               </div>
             )}
+
+            {/* Vote List */}
+            <VoteList votes={votes} />
           </div>
         </div>
       </div>

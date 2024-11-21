@@ -51,7 +51,7 @@ const showProposalStatus = (proposal) => {
           </span>
         </div>
       );
-    case "PROPOSAL_STATUS_PASSED":
+    case "PROPOSAL_STATUS_ACCEPTED":
       return (
         <div className="flex text-green text-xs items-center">
           <svg

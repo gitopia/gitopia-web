@@ -1,188 +1,102 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Vote,
-  Clock,
   CheckCircle2,
-  XCircle,
-  AlertCircle,
   Users,
   Timer,
-  Scale,
   Plus,
   ChevronRight,
-  Calendar,
-  Clock3,
+  Filter,
+  Search,
+  GitPullRequest,
+  Trash2,
+  Settings2,
+  Tag,
+  ThumbsUp,
+  ThumbsDown,
+  MinusCircle,
+  Loader2,
+  AlertTriangle,
 } from "lucide-react";
-import getTallyResult from "../../helpers/getTallyResult";
 import { useApiClient } from "../../context/ApiClientContext";
 import ProposalDetailsModal from "./ProposalDetailsModal";
+import ProposalMessageSummary from "./ProposalMessageSummary";
+import { TimeRemainingBadge } from "./ProposalCountdown";
+import ProposalStatusBadge from "./ProposalStatusBadge";
+import getTallyResult from "../../helpers/getTallyResult";
+import { executeGroupProposal } from "../../store/actions/dao";
+import { useDispatch } from "react-redux";
 
-const ProposalStatusBadge = ({ status }) => {
-  const getStatusConfig = (status) => {
-    switch (status) {
-      case "PROPOSAL_STATUS_PASSED":
-        return {
-          icon: CheckCircle2,
-          text: "Passed",
-          className: "bg-green-900/20 text-green-500",
-        };
-      case "PROPOSAL_STATUS_REJECTED":
-        return {
-          icon: XCircle,
-          text: "Rejected",
-          className: "bg-red-900/20 text-red-500",
-        };
-      case "PROPOSAL_STATUS_SUBMITTED":
-        return {
-          icon: Timer,
-          text: "Active",
-          className: "bg-blue-900/20 text-blue-500",
-        };
-      default:
-        return {
-          icon: AlertCircle,
-          text: "Unknown",
-          className: "bg-gray-900/20 text-gray-500",
-        };
-    }
+const ProposalTypeIcon = ({ type }) => {
+  const iconMap = {
+    pull_request: GitPullRequest,
+    repository_delete: Trash2,
+    collaborator: Users,
+    release: Tag,
+    settings: Settings2,
+    default: Vote,
   };
 
-  const config = getStatusConfig(status);
-  const StatusIcon = config.icon;
-
-  return (
-    <div
-      className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${config.className}`}
-    >
-      <StatusIcon className="w-3 h-3 mr-1" />
-      {config.text}
-    </div>
-  );
+  const Icon = iconMap[type] || iconMap.default;
+  return <Icon className="w-4 h-4" />;
 };
 
-const TimeRemaining = ({ targetDate }) => {
-  const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft());
+const VotingProgress = ({ votes, quorum, total }) => {
+  const yesVotes = parseInt(votes.yes_count || 0);
+  const noVotes = parseInt(votes.no_count || 0);
+  const abstainVotes = parseInt(votes.abstain_count || 0);
+  const vetoVotes = parseInt(votes.veto_count || 0);
 
-  function calculateTimeLeft() {
-    const difference = +new Date(targetDate) - +new Date();
-    if (difference <= 0) return null;
-
-    return {
-      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-      minutes: Math.floor((difference / 1000 / 60) % 60),
-    };
-  }
-
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 60000); // Update every minute
-
-    return () => clearInterval(timer);
-  }, [targetDate]);
-
-  if (!timeLeft)
-    return (
-      <span className="text-error flex items-center">
-        <Clock3 className="w-4 h-4 mr-1" />
-        Expired
-      </span>
-    );
-
-  const timeDisplay = [];
-  if (timeLeft.days > 0) timeDisplay.push(`${timeLeft.days}d`);
-  if (timeLeft.hours > 0) timeDisplay.push(`${timeLeft.hours}h`);
-  if (timeLeft.minutes > 0) timeDisplay.push(`${timeLeft.minutes}m`);
+  const yesPercent = (yesVotes / total) * 100;
+  const noPercent = (noVotes / total) * 100;
+  const abstainPercent = (abstainVotes / total) * 100;
+  const vetoPercent = (vetoVotes / total) * 100;
 
   return (
-    <div className="flex items-center text-primary-content/70">
-      <Clock3 className="w-4 h-4 mr-1" />
-      <span>{timeDisplay.join(" ")}</span>
-    </div>
-  );
-};
-
-const VotingProgress = ({
-  proposal,
-  groupInfo,
-  policyInfo,
-  cosmosGroupApiClient,
-}) => {
-  const [tally, setTally] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchTally = async () => {
-      if (proposal.status === "PROPOSAL_STATUS_SUBMITTED") {
-        setLoading(true);
-        try {
-          const result = await getTallyResult(
-            cosmosGroupApiClient,
-            proposal.id
-          );
-          setTally(result);
-        } catch (error) {
-          console.error("Error fetching tally:", error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchTally();
-  }, [proposal.id, proposal.status, cosmosGroupApiClient]);
-
-  const calculatePercentages = () => {
-    if (!groupInfo) return { yes: 0, quorum: 0 };
-
-    const totalWeight = parseInt(groupInfo.total_weight);
-
-    // Use final tally for completed proposals, current tally for active ones
-    const tallyResult =
-      proposal.status === "PROPOSAL_STATUS_SUBMITTED"
-        ? tally
-        : proposal.final_tally_result;
-
-    if (!tallyResult) return { yes: 0, quorum: 0 };
-
-    const yesVotes = parseInt(tallyResult.yes_count || "0");
-    const yesPercentage = (yesVotes / totalWeight) * 100;
-
-    const quorumPercentage =
-      policyInfo?.info.decision_policy["@type"] ===
-      "/cosmos.group.v1.PercentageDecisionPolicy"
-        ? parseFloat(policyInfo.info.decision_policy.percentage) * 100
-        : 0;
-
-    return { yes: yesPercentage, quorum: quorumPercentage };
-  };
-
-  const { yes, quorum } = calculatePercentages();
-
-  if (loading) {
-    return (
-      <div className="w-full mt-4">
-        <div className="h-1.5 bg-base-300 rounded-full animate-pulse" />
+    <div className="space-y-2">
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <span>Total Votes: {total}</span>
+        <span>Required: {(quorum * 100).toFixed(1)}%</span>
       </div>
-    );
-  }
 
-  return (
-    <div className="w-full mt-4">
-      <div className="flex justify-between text-xs mb-1">
-        <span>Yes: {yes.toFixed(1)}%</span>
-        <span className="text-primary">Required: {quorum.toFixed(1)}%</span>
+      <div className="h-2 bg-base-200 rounded-full overflow-hidden">
+        <div className="h-full flex">
+          <div
+            className="bg-success transition-all duration-500"
+            style={{ width: `${yesPercent}%` }}
+          />
+          <div
+            className="bg-error transition-all duration-500"
+            style={{ width: `${noPercent}%` }}
+          />
+          <div
+            className="bg-warning transition-all duration-500"
+            style={{ width: `${vetoPercent}%` }}
+          />
+          <div
+            className="bg-muted transition-all duration-500"
+            style={{ width: `${abstainPercent}%` }}
+          />
+        </div>
       </div>
-      <div className="h-1.5 bg-base-300 rounded-full relative">
-        <div
-          className="h-full bg-primary rounded-full transition-all duration-500"
-          style={{ width: `${yes}%` }}
-        />
-        <div
-          className="absolute top-0 h-full border-r border-primary/50"
-          style={{ left: `${quorum}%` }}
-        />
+
+      <div className="grid grid-cols-4 gap-2 text-xs">
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded-full bg-success" />
+          <span>Yes ({yesPercent.toFixed(1)}%)</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded-full bg-error" />
+          <span>No ({noPercent.toFixed(1)}%)</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded-full bg-warning" />
+          <span>Veto ({vetoPercent.toFixed(1)}%)</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded-full bg-muted" />
+          <span>Abstain ({abstainPercent.toFixed(1)}%)</span>
+        </div>
       </div>
     </div>
   );
@@ -194,98 +108,220 @@ const ProposalCard = ({
   policyInfo,
   onVote,
   isVoting,
-  hasVoted,
-  cosmosGroupApiClient,
   selectedAddress,
+  votes,
+  onViewDetails,
+  proposalTallies,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const hasVoted = votes?.some((vote) => vote.voter === selectedAddress);
+  const latestVotes = votes?.slice(0, 3) || [];
+  const needsExecution =
+    proposal.status === "PROPOSAL_STATUS_ACCEPTED" &&
+    proposal.executor_result === "PROPOSAL_EXECUTOR_RESULT_NOT_RUN" &&
+    proposal.messages?.length > 0;
+
+  const renderVoteButton = (option, icon, label, className) => (
+    <button
+      onClick={() => onVote(proposal.id, option)}
+      disabled={isVoting || hasVoted}
+      className={`btn btn-sm ${className} gap-1 flex-1`}
+    >
+      {icon}
+      {label}
+    </button>
+  );
 
   return (
-    <>
-      <div className="bg-base-300 rounded-lg p-4 hover:shadow-lg transition-all duration-300">
-        <div className="flex justify-between items-start mb-3">
-          <TimeRemaining targetDate={proposal.voting_period_end} />
+    <div className="bg-base-200 rounded-xl p-5 hover:bg-base-300/70 transition-all duration-200">
+      <div className="flex justify-between items-start mb-4">
+        <div className="flex items-start gap-3">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <ProposalTypeIcon type={proposal.type} />
+          </div>
+          <div>
+            <h3 className="font-medium mb-1 line-clamp-2">{proposal.title}</h3>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Users className="w-3 h-3" />
+              <span>
+                {proposal.proposers[0].slice(0, 6)}...
+                {proposal.proposers[0].slice(-4)}
+              </span>
+              <span>•</span>
+              <span>#{proposal.id}</span>
+            </div>
+            <ProposalMessageSummary messages={proposal.messages} />
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {proposal.status === "PROPOSAL_STATUS_SUBMITTED" && (
+            <TimeRemainingBadge endTime={proposal.voting_period_end} />
+          )}
           <ProposalStatusBadge status={proposal.status} />
-        </div>
-
-        <h3 className="text-base font-semibold mb-2 line-clamp-2">
-          {proposal.title}
-        </h3>
-
-        <div className="text-xs text-gray-400 mb-3 flex items-center">
-          <Users className="w-3 h-3 mr-1" />
-          <span>
-            {proposal.proposers[0].slice(0, 4)}...
-            {proposal.proposers[0].slice(-4)}
-          </span>
-          <span className="mx-2">•</span>
-          <span>#{proposal.id}</span>
-        </div>
-
-        <VotingProgress
-          proposal={proposal}
-          groupInfo={groupInfo}
-          policyInfo={policyInfo}
-          cosmosGroupApiClient={cosmosGroupApiClient}
-        />
-
-        <div className="mt-4 flex flex-col gap-2">
-          {!hasVoted && proposal.status === "PROPOSAL_STATUS_SUBMITTED" && (
-            <div className="flex gap-2">
-              <button
-                onClick={() => onVote("VOTE_OPTION_YES")}
-                disabled={isVoting}
-                className="btn btn-xs btn-primary flex-1"
-              >
-                Yes
-              </button>
-              <button
-                onClick={() => onVote("VOTE_OPTION_NO")}
-                disabled={isVoting}
-                className="btn btn-xs btn-error flex-1"
-              >
-                No
-              </button>
-              <button
-                onClick={() => onVote("VOTE_OPTION_ABSTAIN")}
-                disabled={isVoting}
-                className="btn btn-xs btn-secondary flex-1"
-              >
-                Abstain
-              </button>
-            </div>
-          )}
-
-          {hasVoted && (
-            <div className="text-xs text-green-500 flex items-center justify-center bg-green-500/10 py-1 rounded">
-              <CheckCircle2 className="w-3 h-3 mr-1" />
-              Vote submitted
-            </div>
-          )}
-
-          <button
-            className="btn btn-xs btn-ghost w-full"
-            onClick={() => setIsModalOpen(true)}
-          >
-            View Details
-            <ChevronRight className="w-3 h-3 ml-1" />
-          </button>
         </div>
       </div>
 
-      <ProposalDetailsModal
-        proposal={proposal}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onVote={onVote}
-        groupInfo={groupInfo}
-        policyInfo={policyInfo}
-        selectedAddress={selectedAddress}
-        cosmosGroupApiClient={cosmosGroupApiClient}
+      {needsExecution && (
+        <div className="mb-4 p-3 bg-warning/10 border border-warning/20 rounded-lg">
+          <div className="flex items-center text-warning">
+            <AlertTriangle className="w-4 h-4 mr-2" />
+            <span className="text-sm">This proposal needs to be executed</span>
+          </div>
+        </div>
+      )}
+
+      <VotingProgress
+        votes={
+          proposal.status === "PROPOSAL_STATUS_SUBMITTED"
+            ? proposalTallies[proposal.id] || {}
+            : proposal.final_tally_result || {}
+        }
+        quorum={policyInfo?.info.decision_policy.percentage || 0}
+        total={parseInt(groupInfo?.total_weight || 0)}
       />
-    </>
+
+      {latestVotes.length > 0 && (
+        <div className="mt-4 pt-4 border-t border-base-300">
+          <div className="text-xs text-muted-foreground mb-2">Recent Votes</div>
+          <div className="space-y-2">
+            {latestVotes.map((vote, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between text-sm"
+              >
+                <span className="text-muted-foreground">
+                  {vote.voter.slice(0, 6)}...{vote.voter.slice(-4)}
+                </span>
+                <span
+                  className={
+                    vote.option === "VOTE_OPTION_YES"
+                      ? "text-success"
+                      : vote.option === "VOTE_OPTION_NO"
+                      ? "text-error"
+                      : vote.option === "VOTE_OPTION_NO_WITH_VETO"
+                      ? "text-warning"
+                      : "text-muted"
+                  }
+                >
+                  {vote.option.replace("VOTE_OPTION_", "")}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="mt-4 space-y-3">
+        {proposal.status === "PROPOSAL_STATUS_SUBMITTED" && !hasVoted && (
+          <div className="flex gap-2">
+            {renderVoteButton(
+              "VOTE_OPTION_YES",
+              <ThumbsUp className="w-4 h-4" />,
+              "Yes",
+              "btn-success"
+            )}
+            {renderVoteButton(
+              "VOTE_OPTION_NO",
+              <ThumbsDown className="w-4 h-4" />,
+              "No",
+              "btn-error"
+            )}
+            {renderVoteButton(
+              "VOTE_OPTION_ABSTAIN",
+              <MinusCircle className="w-4 h-4" />,
+              "Abstain",
+              "btn-ghost"
+            )}
+          </div>
+        )}
+
+        {hasVoted && (
+          <div className="bg-success/10 text-success rounded-lg p-2 text-sm text-center">
+            <CheckCircle2 className="w-4 h-4 inline mr-2" />
+            You have voted on this proposal
+          </div>
+        )}
+
+        <button
+          onClick={() => onViewDetails(proposal)}
+          className="btn btn-sm btn-ghost w-full"
+        >
+          View Details
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
   );
 };
+
+const ProposalFilters = ({ onFilter, activeFilter }) => (
+  <div className="flex items-center gap-4 bg-base-200 p-2 rounded-lg mb-6">
+    <div className="flex items-center gap-2 px-2">
+      <Filter className="w-4 h-4 text-muted-foreground" />
+      <span className="text-sm text-muted-foreground">Filter:</span>
+    </div>
+    {["All", "Active", "Passed", "Rejected"].map((filter) => (
+      <button
+        key={filter}
+        onClick={() => onFilter(filter.toLowerCase())}
+        className={`btn btn-sm ${
+          activeFilter === filter.toLowerCase() ? "btn-primary" : "btn-ghost"
+        }`}
+      >
+        {filter}
+      </button>
+    ))}
+    {/* <div className="flex-1">
+      <div className="relative">
+        <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+        <input
+          type="text"
+          placeholder="Search proposals..."
+          className="input input-sm w-full pl-9"
+        />
+      </div>
+    </div> */}
+  </div>
+);
+
+const ProposalsOverview = ({ proposals, totalVotes, quorum }) => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    {[
+      {
+        icon: Vote,
+        label: "Total Proposals",
+        value: proposals.length,
+        color: "primary",
+      },
+      {
+        icon: Timer,
+        label: "Active Proposals",
+        value: proposals.filter((p) => p.status === "PROPOSAL_STATUS_SUBMITTED")
+          .length,
+        color: "warning",
+      },
+      {
+        icon: CheckCircle2,
+        label: "Accepted Proposals",
+        value: proposals.filter((p) => p.status === "PROPOSAL_STATUS_ACCEPTED")
+          .length,
+        color: "success",
+      },
+    ].map((stat, index) => (
+      <div
+        key={index}
+        className="bg-base-200 rounded-xl p-4 hover:bg-base-300/70 transition-all duration-200"
+      >
+        <div
+          className={`w-10 h-10 rounded-lg bg-${stat.color}/10 flex items-center justify-center mb-3`}
+        >
+          <stat.icon className={`w-5 h-5 text-${stat.color}`} />
+        </div>
+        <div className="text-2xl font-bold mb-1">{stat.value}</div>
+        <div className="text-sm text-muted-foreground">{stat.label}</div>
+      </div>
+    ))}
+  </div>
+);
 
 export default function ProposalsSection({
   dao,
@@ -296,99 +332,199 @@ export default function ProposalsSection({
   onCreateProposal,
   onVote,
   selectedAddress,
+  onRefreshProposals,
 }) {
-  const activeProposals = proposals.filter(
-    (p) => p.status === "PROPOSAL_STATUS_SUBMITTED"
-  );
-  const completedProposals = proposals.filter(
-    (p) => p.status !== "PROPOSAL_STATUS_SUBMITTED"
-  );
-  const { cosmosGroupApiClient } = useApiClient();
+  const [filter, setFilter] = useState("all");
+  const [proposalTallies, setProposalTallies] = useState({});
+  const [proposalVotes, setProposalVotes] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProposal, setSelectedProposal] = useState(null);
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    cosmosGroupApiClient,
+  } = useApiClient();
+  const [isExecuting, setIsExecuting] = useState(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchVotesForProposals = async () => {
+      try {
+        const votesResults = await Promise.all(
+          proposals.map((proposal) =>
+            cosmosGroupApiClient.queryVotesByProposal(proposal.id)
+          )
+        );
+
+        const votesMap = {};
+        votesResults.forEach((result, index) => {
+          votesMap[proposals[index].id] = result.data.votes || [];
+        });
+
+        setProposalVotes(votesMap);
+      } catch (error) {
+        console.error("Error fetching votes:", error);
+      }
+    };
+
+    if (proposals.length > 0) {
+      fetchVotesForProposals();
+    }
+  }, [proposals, cosmosGroupApiClient]);
+
+  useEffect(() => {
+    const fetchTalliesForActiveProposals = async () => {
+      try {
+        const activeProposals = proposals.filter(
+          (p) => p.status === "PROPOSAL_STATUS_SUBMITTED"
+        );
+
+        const tallyResults = await Promise.all(
+          activeProposals.map((proposal) =>
+            getTallyResult(cosmosGroupApiClient, proposal.id)
+          )
+        );
+
+        const talliesMap = {};
+        activeProposals.forEach((proposal, index) => {
+          talliesMap[proposal.id] = tallyResults[index];
+        });
+
+        setProposalTallies(talliesMap);
+      } catch (error) {
+        console.error("Error fetching tallies:", error);
+      }
+    };
+
+    if (proposals.length > 0) {
+      fetchTalliesForActiveProposals();
+    }
+  }, [proposals, cosmosGroupApiClient]);
+
+  const handleExecuteProposal = async (proposalId) => {
+    setIsExecuting(true);
+    try {
+      const result = await dispatch(
+        executeGroupProposal(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          proposalId
+        )
+      );
+
+      if (result && result.code === 0) {
+        // Refresh proposals list after successful execution
+        await onRefreshProposals();
+      }
+    } catch (error) {
+      console.error("Error executing proposal:", error);
+    } finally {
+      setIsExecuting(false);
+    }
+  };
+
+  const filteredProposals = proposals.filter((proposal) => {
+    if (filter === "active")
+      return proposal.status === "PROPOSAL_STATUS_SUBMITTED";
+    if (filter === "passed")
+      return proposal.status === "PROPOSAL_STATUS_ACCEPTED";
+    if (filter === "rejected")
+      return proposal.status === "PROPOSAL_STATUS_REJECTED";
+    return true;
+  });
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="loading loading-spinner loading-lg" />
+      <div className="flex items-center justify-center h-64">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <div className="text-muted-foreground">Loading proposals...</div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold mb-2">Governance Proposals</h2>
-          <p className="text-gray-400">
+          <p className="text-muted-foreground">
             Participate in {dao.name}'s decision-making process
           </p>
         </div>
-        <button onClick={onCreateProposal} className="btn btn-primary">
-          <Plus className="w-4 h-4 mr-2" />
+        <button onClick={onCreateProposal} className="btn btn-primary gap-2">
+          <Plus className="w-4 h-4" />
           Create Proposal
         </button>
       </div>
 
-      <div>
-        <h3 className="text-xl font-semibold mb-4 flex items-center">
-          <Vote className="w-5 h-5 mr-2 text-primary" />
-          Active Proposals
-        </h3>
-        {activeProposals.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {activeProposals.map((proposal) => (
-              <ProposalCard
-                key={proposal.id}
-                proposal={proposal}
-                groupInfo={groupInfo}
-                policyInfo={policyInfo}
-                onVote={(option) => onVote(proposal.id, option)}
-                isVoting={false}
-                hasVoted={proposal.votes?.some(
-                  (v) => v.voter === selectedAddress
-                )}
-                cosmosGroupApiClient={cosmosGroupApiClient}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="bg-base-300 rounded-lg p-8 text-center">
-            <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h4 className="text-lg font-semibold mb-2">No Active Proposals</h4>
-            <p className="text-gray-400">
-              There are currently no proposals being voted on.
-            </p>
-          </div>
-        )}
-      </div>
+      <ProposalsOverview
+        proposals={proposals}
+        totalVotes={Object.values(proposalVotes).flat().length}
+        quorum={policyInfo?.info.decision_policy.percentage || 0}
+      />
 
-      <div>
-        <h3 className="text-xl font-semibold mb-4 flex items-center">
-          <Clock className="w-5 h-5 mr-2 text-primary" />
-          Past Proposals
-        </h3>
-        {completedProposals.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {completedProposals.map((proposal) => (
-              <ProposalCard
-                key={proposal.id}
-                proposal={proposal}
-                groupInfo={groupInfo}
-                policyInfo={policyInfo}
-                selectedAddress={selectedAddress}
-                cosmosGroupApiClient={cosmosGroupApiClient}
-              />
-            ))}
+      <ProposalFilters onFilter={setFilter} activeFilter={filter} />
+
+      {filteredProposals.length > 0 ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {filteredProposals.map((proposal) => (
+            <ProposalCard
+              key={proposal.id}
+              proposal={proposal}
+              groupInfo={groupInfo}
+              policyInfo={policyInfo}
+              onVote={onVote}
+              isVoting={false}
+              selectedAddress={selectedAddress}
+              proposalTallies={proposalTallies}
+              votes={proposalVotes[proposal.id]}
+              onViewDetails={(p) => {
+                setSelectedProposal(p);
+                setIsModalOpen(true);
+              }}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="bg-base-200 rounded-xl p-8 text-center">
+          <div className="w-16 h-16 rounded-full bg-base-300 mx-auto mb-4 flex items-center justify-center">
+            <Vote className="w-8 h-8 text-muted-foreground" />
           </div>
-        ) : (
-          <div className="bg-base-300 rounded-lg p-8 text-center">
-            <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h4 className="text-lg font-semibold mb-2">No Past Proposals</h4>
-            <p className="text-gray-400">
-              When proposals are completed, they will appear here.
-            </p>
-          </div>
-        )}
-      </div>
+          <h3 className="text-lg font-medium mb-2">No Proposals Found</h3>
+          <p className="text-muted-foreground max-w-md mx-auto mb-6">
+            {filter === "all"
+              ? "There are no proposals yet. Create a new proposal to get started."
+              : `No ${filter} proposals found. Try changing the filter or create a new proposal.`}
+          </p>
+          <button onClick={onCreateProposal} className="btn btn-primary gap-2">
+            <Plus className="w-4 h-4" />
+            Create First Proposal
+          </button>
+        </div>
+      )}
+
+      {selectedProposal && (
+        <ProposalDetailsModal
+          proposal={selectedProposal}
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedProposal(null);
+          }}
+          onVote={onVote}
+          onExecute={() => handleExecuteProposal(selectedProposal.id)}
+          isExecuting={isExecuting}
+          groupInfo={groupInfo}
+          policyInfo={policyInfo}
+          selectedAddress={selectedAddress}
+          votes={proposalVotes[selectedProposal.id]}
+          cosmosGroupApiClient={cosmosGroupApiClient}
+        />
+      )}
     </div>
   );
 }

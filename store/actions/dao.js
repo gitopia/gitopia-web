@@ -28,6 +28,12 @@ export const createDao = (
     votingPeriod = "2",
     percentage = "50",
     members = [],
+    config = {
+      requirePullRequestProposal: false,
+      requireRepositoryDeletionProposal: false,
+      requireCollaboratorProposal: false,
+      requireReleaseProposal: false,
+    },
   }
 ) => {
   return async (dispatch, getState) => {
@@ -44,6 +50,7 @@ export const createDao = (
       return null;
 
     const { wallet, env } = getState();
+
     const dao = {
       creator: wallet.selectedAddress,
       name,
@@ -54,14 +61,18 @@ export const createDao = (
       members,
       votingPeriod,
       percentage,
+      config,
     };
 
     try {
       const message = await env.txClient.msgCreateDao(dao);
       const result = await sendTransaction({ message })(dispatch, getState);
+
       if (result && result.code === 0) {
         await getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
         const daos = await getUserDaoAll(apiClient, wallet.selectedAddress);
+
+        // Update dashboards with new DAO information
         dispatch({
           type: userActions.INIT_DASHBOARDS,
           payload: {
@@ -70,10 +81,14 @@ export const createDao = (
             daos: daos,
           },
         });
+
+        // Update user's balance after DAO creation
         updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
           dispatch,
           getState
         );
+
+        // Find the new DAO's address from the list of DAOs
         let newDaoAddress;
         daos.every((d) => {
           if (d.name === name) {
@@ -82,7 +97,11 @@ export const createDao = (
           }
           return true;
         });
+
+        // Set the current dashboard to the new DAO
         setCurrentDashboard(newDaoAddress)(dispatch, getState);
+
+        // Return the URL for redirection
         return { url: "/daos/" + name + "/dashboard" };
       } else {
         dispatch(notify(result.rawLog, "error"));
@@ -301,9 +320,9 @@ export const renameDao = (
       proposers: [wallet.selectedAddress],
       metadata: "",
       messages: [{ typeUrl: msgTypeUrl, value: msgValue }],
-      exec: Exec.EXEC_TRY,
-      title: "Rename DAO proposal", // TODO: Use actual title
-      summary: "Change the DAO name", // TODO: Use actual summary
+      exec: Exec.EXEC_UNSPECIFIED,
+      title: "Rename DAO proposal",
+      summary: "Change the DAO name",
     });
 
     return await handlePostingTransaction(
@@ -324,80 +343,6 @@ export const fetchGroupInfo = (cosmosGroupApiClient, groupId) => {
     } catch (error) {
       console.error("Error fetching group info:", error);
       dispatch(notify("Failed to fetch group info", "error"));
-      return null;
-    }
-  };
-};
-
-export const updateGroupMembers = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  cosmosGroupApiClient,
-  { groupId, memberUpdates }
-) => {
-  return async (dispatch, getState) => {
-    if (
-      !(await validatePostingEligibility(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        dispatch,
-        getState,
-        "update group members"
-      ))
-    )
-      return null;
-
-    const { env, wallet } = getState();
-
-    try {
-      const groupInfo = await dispatch(
-        fetchGroupInfo(cosmosGroupApiClient, groupId)
-      );
-      if (!groupInfo) {
-        throw new Error("Failed to fetch group info");
-      }
-
-      const msg = MsgUpdateGroupMembers.fromPartial({
-        admin: groupInfo.admin,
-        groupId: groupId,
-        memberUpdates: memberUpdates.map((member) => ({
-          address: member.address,
-          weight: member.weight,
-          metadata: "",
-        })),
-      });
-
-      const msgValue = MsgUpdateGroupMembers.encode(msg).finish();
-      const msgTypeUrl = "/cosmos.group.v1.MsgUpdateGroupMembers";
-
-      const message = env.txClient.msgSubmitGroupProposal({
-        groupPolicyAddress: groupInfo.admin,
-        proposers: [wallet.selectedAddress],
-        metadata: "",
-        messages: [{ typeUrl: msgTypeUrl, value: msgValue }],
-        exec: Exec.EXEC_TRY,
-        title: "test proposal", // TODO: Use actual title
-        summary: "summary", // TODO: Use actual summary
-      });
-
-      const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-        dispatch,
-        getState
-      );
-
-      if (result && result.code === 0) {
-        dispatch(notify("Group members updated successfully", "success"));
-        return result;
-      } else {
-        dispatch(notify(result.rawLog, "error"));
-        return null;
-      }
-    } catch (e) {
-      console.error(e);
-      dispatch(notify(e.message, "error"));
       return null;
     }
   };
@@ -526,6 +471,55 @@ export const createGroupProposal = (
       return result;
     } catch (error) {
       console.error("Error submitting proposal:", error);
+      dispatch(notify(error.message, "error"));
+      return null;
+    }
+  };
+};
+
+export const executeGroupProposal = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  proposalId
+) => {
+  return async (dispatch, getState) => {
+    const { wallet, env } = getState();
+
+    if (!wallet.activeWallet) {
+      dispatch(notify("Wallet connection required", "error"));
+      return null;
+    }
+
+    try {
+      await setupTxClients(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState
+      );
+
+      const message = await env.txClient.msgExecGroup({
+        proposalId: proposalId,
+        executor: wallet.selectedAddress,
+      });
+
+      const result = await sendTransaction({ message })(dispatch, getState);
+
+      if (result && result.code === 0) {
+        dispatch(notify("Proposal executed successfully", "success"));
+        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+          dispatch,
+          getState
+        );
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+      }
+
+      return result;
+    } catch (error) {
+      console.error("Error executing proposal:", error);
       dispatch(notify(error.message, "error"));
       return null;
     }

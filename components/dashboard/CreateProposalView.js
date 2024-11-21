@@ -12,6 +12,7 @@ import {
   RefreshCw,
   UsersRound,
   Trash2,
+  Text,
 } from "lucide-react";
 import {
   PieChart,
@@ -27,14 +28,20 @@ import {
   MsgUpdateGroupMembers,
 } from "cosmjs-types/cosmos/group/v1/tx";
 import { PercentageDecisionPolicy } from "@gitopia/gitopia-js/dist/types/cosmos/group/v1/types";
-import { MsgDaoTreasurySpend } from "@gitopia/gitopia-js/dist/types/gitopia/tx";
+import {
+  MsgUpdateDaoConfig,
+  MsgDaoTreasurySpend,
+  MsgUpdateDaoMetadata,
+} from "@gitopia/gitopia-js/dist/types/gitopia/tx";
+import { DaoConfig } from "@gitopia/gitopia-js/dist/types/gitopia/dao";
+import AccountAvatar from "../account/avatar";
 
 // Proposal type definitions with icons and descriptions
 const PROPOSAL_TYPES = {
   GROUP_MEMBER_UPDATE: {
     id: "GROUP_MEMBER_UPDATE",
-    title: "Update Group Members",
-    description: "Add, remove, or update voting power of group members",
+    title: "Update Dao Members",
+    description: "Add, remove, or update voting power of DAO members",
     icon: Users,
     color: "text-blue-500",
     bgColor: "bg-blue-500/10",
@@ -70,6 +77,14 @@ const PROPOSAL_TYPES = {
     icon: Wallet,
     color: "text-yellow-500",
     bgColor: "bg-yellow-500/10",
+  },
+  TEXT_PROPOSAL: {
+    id: "TEXT_PROPOSAL",
+    title: "Text Proposal",
+    description: "Create a text-based proposal",
+    icon: Text,
+    color: "text-red-500",
+    bgColor: "bg-red-500/10",
   },
 };
 
@@ -473,16 +488,16 @@ const GroupMemberForm = ({ existingMembers = [], onSubmit, onStateChange }) => {
 
 const DaoConfigForm = ({ dao, onSubmit, onStateChange }) => {
   const [requirePullRequestProposal, setRequirePullRequestProposal] = useState(
-    dao.config?.requirePullRequestProposal || false
+    dao.config?.require_pull_request_proposal || false
   );
   const [
     requireRepositoryDeletionProposal,
     setRequireRepositoryDeletionProposal,
-  ] = useState(dao.config?.requireRepositoryDeletionProposal || false);
+  ] = useState(dao.config?.require_repository_deletion_proposal || false);
   const [requireCollaboratorProposal, setRequireCollaboratorProposal] =
-    useState(dao.config?.requireCollaboratorProposal || false);
+    useState(dao.config?.require_collaborator_proposal || false);
   const [requireReleaseProposal, setRequireReleaseProposal] = useState(
-    dao.config?.requireReleaseProposal || false
+    dao.config?.require_release_proposal || false
   );
 
   // Track if any changes have been made
@@ -492,12 +507,12 @@ const DaoConfigForm = ({ dao, onSubmit, onStateChange }) => {
   const checkForChanges = (newSettings) => {
     const originalSettings = {
       requirePullRequestProposal:
-        dao.config?.requirePullRequestProposal || false,
+        dao.config?.require_pull_request_proposal || false,
       requireRepositoryDeletionProposal:
-        dao.config?.requireRepositoryDeletionProposal || false,
+        dao.config?.require_repository_deletion_proposal || false,
       requireCollaboratorProposal:
-        dao.config?.requireCollaboratorProposal || false,
-      requireReleaseProposal: dao.config?.requireReleaseProposal || false,
+        dao.config?.require_collaborator_proposal || false,
+      requireReleaseProposal: dao.config?.require_release_proposal || false,
     };
 
     const hasChanged = Object.keys(newSettings).some(
@@ -613,14 +628,49 @@ const DaoConfigForm = ({ dao, onSubmit, onStateChange }) => {
   );
 };
 
-const MetadataForm = ({ dao, onSubmit }) => {
+const MetadataForm = ({ dao, onSubmit, onStateChange }) => {
   const [name, setName] = useState(dao.name || "");
   const [description, setDescription] = useState(dao.description || "");
   const [website, setWebsite] = useState(dao.website || "");
   const [location, setLocation] = useState(dao.location || "");
+  const [avatarUrl, setAvatarUrl] = useState(dao.avatarUrl || "");
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // Check for changes whenever any field updates
+  useEffect(() => {
+    const hasFieldChanges =
+      name !== (dao.name || "") ||
+      description !== (dao.description || "") ||
+      website !== (dao.website || "") ||
+      location !== (dao.location || "") ||
+      avatarUrl !== (dao.avatarUrl || "");
+
+    setHasChanges(hasFieldChanges);
+    onStateChange?.({ hasChanges: hasFieldChanges });
+
+    // If there are changes, submit the current values
+    if (hasFieldChanges) {
+      onSubmit?.({
+        name,
+        description,
+        website,
+        location,
+        avatarUrl,
+      });
+    }
+  }, [name, description, website, location, avatarUrl]);
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-center mb-8">
+        <AccountAvatar
+          isDao={true}
+          dao={{ name, avatarUrl }}
+          isEditable={true}
+          callback={(url) => setAvatarUrl(url)}
+        />
+      </div>
+
       <div className="form-control">
         <label className="label">
           <span className="label-text">DAO Name</span>
@@ -667,15 +717,66 @@ const MetadataForm = ({ dao, onSubmit }) => {
           onChange={(e) => setLocation(e.target.value)}
         />
       </div>
+
+      {hasChanges && (
+        <div className="bg-base-300 p-4 rounded-lg">
+          <div className="flex items-center">
+            <Info className="w-5 h-5 mr-2 text-blue-400" />
+            <span className="text-sm text-gray-300">
+              Changes to DAO metadata will take effect after proposal approval.
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-const GovernanceParamsForm = ({ currentParams, onSubmit }) => {
+const GovernanceParamsForm = ({ currentParams, onSubmit, onStateChange }) => {
   const [votingPeriod, setVotingPeriod] = useState(
-    currentParams?.windows.votingPeriod || ""
+    currentParams?.windows?.voting_period
+      ? parseInt(currentParams.windows.voting_period) / 3600 // Convert seconds to hours
+      : ""
   );
-  const [quorum, setQuorum] = useState(currentParams?.percentage || "");
+  const [quorum, setQuorum] = useState(
+    currentParams?.percentage ? parseFloat(currentParams.percentage) * 100 : ""
+  );
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // Helper to check if current values differ from original
+  const checkForChanges = (newVotingPeriod, newQuorum) => {
+    const originalVotingPeriod = currentParams?.windows?.voting_period
+      ? parseInt(currentParams.windows.voting_period) / 3600
+      : 0;
+    const originalQuorum = currentParams?.percentage
+      ? parseFloat(currentParams.percentage) * 100
+      : 0;
+
+    const hasChanged =
+      newVotingPeriod !== originalVotingPeriod || newQuorum !== originalQuorum;
+
+    setHasChanges(hasChanged);
+    onStateChange?.({ hasChanges: hasChanged });
+  };
+
+  // Validate and update form data whenever inputs change
+  useEffect(() => {
+    const isValid =
+      votingPeriod &&
+      quorum &&
+      parseFloat(votingPeriod) > 0 &&
+      parseFloat(quorum) > 0 &&
+      parseFloat(quorum) <= 100;
+
+    if (isValid) {
+      onSubmit?.({ votingPeriod, quorum });
+      checkForChanges(parseFloat(votingPeriod), parseFloat(quorum));
+    } else {
+      onSubmit?.(null);
+      setHasChanges(false);
+      onStateChange?.({ hasChanges: false });
+    }
+  }, [votingPeriod, quorum]);
 
   return (
     <div className="space-y-6">
@@ -688,6 +789,9 @@ const GovernanceParamsForm = ({ currentParams, onSubmit }) => {
           className="input input-bordered w-full"
           value={votingPeriod}
           onChange={(e) => setVotingPeriod(e.target.value)}
+          min="1"
+          step="1"
+          placeholder="Enter voting period in hours"
         />
       </div>
 
@@ -700,10 +804,25 @@ const GovernanceParamsForm = ({ currentParams, onSubmit }) => {
           className="input input-bordered w-full"
           min="0"
           max="100"
+          step="1"
           value={quorum}
           onChange={(e) => setQuorum(e.target.value)}
+          placeholder="Enter required quorum percentage"
         />
       </div>
+
+      {hasChanges && (
+        <div className="bg-base-300 p-4 rounded-lg">
+          <div className="flex items-center">
+            <Info className="w-5 h-5 mr-2 text-blue-400" />
+            <span className="text-sm text-gray-300">
+              Changes to governance parameters will take effect after proposal
+              approval. Make sure to consider the impact on future voting
+              procedures.
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -788,6 +907,30 @@ const TreasurySpendForm = ({ onSubmit, onStateChange }) => {
   );
 };
 
+const TextProposalForm = ({ onSubmit, onStateChange }) => {
+  const [hasChanges, setHasChanges] = useState(false);
+
+  useEffect(() => {
+    // Text proposals are always valid as long as title and description exist
+    setHasChanges(true);
+    onStateChange?.({ hasChanges: true });
+    onSubmit?.({});
+  }, []);
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-base-300 p-4 rounded-lg">
+        <div className="flex items-center">
+          <Info className="w-5 h-5 mr-2 text-blue-400" />
+          <span className="text-sm text-gray-300">
+            Create a general purpose proposal to discuss and vote on any topic.
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 function CreateProposalView({
   dao,
   groupInfo,
@@ -846,19 +989,11 @@ function CreateProposalView({
           messages = [
             {
               typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDaoConfig",
-              value: {
+              value: MsgUpdateDaoConfig.encode({
                 admin: groupInfo.admin,
-                id: dao.id,
-                config: {
-                  requirePullRequestProposal:
-                    formData.requirePullRequestProposal,
-                  requireRepositoryDeletionProposal:
-                    formData.requireRepositoryDeletionProposal,
-                  requireCollaboratorProposal:
-                    formData.requireCollaboratorProposal,
-                  requireReleaseProposal: formData.requireReleaseProposal,
-                },
-              },
+                id: dao.address,
+                config: DaoConfig.encode({ ...formData }).finish(),
+              }).finish(),
             },
           ];
           break;
@@ -866,27 +1001,48 @@ function CreateProposalView({
         case "DAO_METADATA_UPDATE":
           messages = [
             {
-              typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDao",
-              value: {
-                creator: selectedAddress,
-                id: dao.id,
+              typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDaoMetadata",
+              value: MsgUpdateDaoMetadata.encode({
+                admin: groupInfo.admin,
+                id: dao.address,
                 ...formData,
-              },
+              }).finish(),
             },
           ];
           break;
 
         case "GOVERNANCE_PARAMS":
+          // Convert voting period from hours to Duration format (in seconds and nanos)
+          const votingPeriodSeconds = Math.floor(formData.votingPeriod * 3600); // Convert hours to seconds
+
+          // Create DecisionPolicyWindows object
+          const windows = {
+            votingPeriod: {
+              seconds: votingPeriodSeconds,
+              nanos: 0,
+            },
+            minExecutionPeriod: {
+              seconds: 0,
+              nanos: 0,
+            },
+          };
+
+          // Convert quorum from percentage to decimal (e.g., 51% -> 0.51)
+          const percentageDecimal = (
+            parseFloat(formData.quorum) / 100
+          ).toString();
+
           messages = [
             {
               typeUrl: "/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy",
               value: MsgUpdateGroupPolicyDecisionPolicy.encode({
                 admin: groupInfo.admin,
-                address: policyInfo.address,
+                groupPolicyAddress: policyInfo.info.address,
                 decisionPolicy: {
                   typeUrl: "/cosmos.group.v1.PercentageDecisionPolicy",
                   value: PercentageDecisionPolicy.encode({
-                    ...formData,
+                    percentage: percentageDecimal,
+                    windows: windows,
                   }).finish(),
                 },
               }).finish(),
@@ -900,7 +1056,7 @@ function CreateProposalView({
               typeUrl: "/gitopia.gitopia.gitopia.MsgDaoTreasurySpend",
               value: MsgDaoTreasurySpend.encode({
                 admin: groupInfo.admin,
-                id: dao.id,
+                id: dao.address,
                 recipient: formData.recipient,
                 amount: [
                   {
@@ -912,6 +1068,10 @@ function CreateProposalView({
             },
           ];
           break;
+
+        case "TEXT_PROPOSAL":
+          messages = []; // Text proposals have no execution messages
+          break;
       }
 
       // Create the proposal with the generated messages
@@ -922,7 +1082,7 @@ function CreateProposalView({
         proposers: [selectedAddress],
         title,
         summary: description,
-        exec: 1, // EXEC_TRY
+        exec: 0, // EXEC_UNSPECIFIED
       };
 
       await onSubmit(proposalData);
@@ -955,38 +1115,6 @@ function CreateProposalView({
       case 2:
         return (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold mb-6">Proposal Details</h2>
-
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Title</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Enter proposal title"
-                className="input input-bordered w-full"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </div>
-
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Description</span>
-              </label>
-              <textarea
-                placeholder="Explain your proposal..."
-                className="textarea textarea-bordered h-32"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </div>
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-6">
             <h2 className="text-xl font-bold mb-6">Proposal Configuration</h2>
 
             {selectedType === "GROUP_MEMBER_UPDATE" && (
@@ -1006,13 +1134,18 @@ function CreateProposalView({
             )}
 
             {selectedType === "DAO_METADATA_UPDATE" && (
-              <MetadataForm dao={dao} onSubmit={setFormData} />
+              <MetadataForm
+                dao={dao}
+                onSubmit={setFormData}
+                onStateChange={setFormState}
+              />
             )}
 
             {selectedType === "GOVERNANCE_PARAMS" && (
               <GovernanceParamsForm
                 currentParams={policyInfo?.info.decision_policy}
                 onSubmit={setFormData}
+                onStateChange={setFormState}
               />
             )}
 
@@ -1022,6 +1155,57 @@ function CreateProposalView({
                 onStateChange={setFormState}
               />
             )}
+
+            {selectedType === "TEXT_PROPOSAL" && (
+              <TextProposalForm
+                onSubmit={setFormData}
+                onStateChange={setFormState}
+              />
+            )}
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold mb-6">Proposal Details</h2>
+
+            {formState.hasChanges && (
+              <div className="bg-base-300 p-4 rounded-lg mb-6">
+                <div className="flex items-center">
+                  <Info className="w-5 h-5 mr-2 text-blue-400" />
+                  <span className="text-sm text-gray-300">
+                    Review your changes and provide a clear title and
+                    description for the proposal.
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Title</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Enter a brief, descriptive title for your proposal"
+                className="input input-bordered w-full"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Description</span>
+              </label>
+              <textarea
+                placeholder="Provide a detailed explanation of your proposal and its implications..."
+                className="textarea textarea-bordered h-32"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
           </div>
         );
 
@@ -1044,10 +1228,10 @@ function CreateProposalView({
             Select Type
           </li>
           <li className={`step ${step >= 2 ? "step-primary" : ""}`}>
-            Add Details
+            Configure
           </li>
           <li className={`step ${step >= 3 ? "step-primary" : ""}`}>
-            Configure
+            Add Details
           </li>
         </ul>
       </div>
@@ -1065,7 +1249,7 @@ function CreateProposalView({
           <button
             className="btn btn-primary ml-auto"
             onClick={() => setStep(step + 1)}
-            disabled={step === 2 && (!title || !description)}
+            disabled={step === 2 && !formState.hasChanges}
           >
             Next
           </button>
@@ -1077,7 +1261,9 @@ function CreateProposalView({
               isSubmitting ? "loading" : ""
             }`}
             onClick={handleSubmit}
-            disabled={isSubmitting || !formState.hasChanges}
+            disabled={
+              isSubmitting || !formState.hasChanges || !title || !description
+            }
           >
             Create Proposal
           </button>

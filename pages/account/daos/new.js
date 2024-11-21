@@ -450,10 +450,10 @@ function NewDao({ selectedAddress, createDao }) {
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({ name, percent }) =>
+                    label={({ name, value }) =>
                       `${name.substring(0, 6)}...${name.substring(
                         name.length - 4
-                      )} (${percent.toFixed(0)}%)`
+                      )} (${value.toFixed(0)}%)`
                     }
                   >
                     {votingPowerData.map((entry, index) => (
@@ -489,6 +489,7 @@ function NewDao({ selectedAddress, createDao }) {
           votingPeriod: formData.votingPeriod,
           percentage: (Number(formData.percentage) / 100).toString(),
           members: formData.members,
+          config: formData.config, // Include the DAO configuration
         }
       );
       if (res?.url) {
@@ -575,7 +576,7 @@ function NewDao({ selectedAddress, createDao }) {
             </button>
           )}
 
-          {step < 3 ? (
+          {step < 4 ? (
             <button
               className="btn btn-primary ml-auto"
               onClick={() => setStep(step + 1)}

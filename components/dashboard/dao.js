@@ -2,10 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { connect, useDispatch } from "react-redux";
 import DAOMembersList from "./DAOMembersList";
-import {
-  getDaoDetailsForDashboard,
-  createGroupProposal,
-} from "../../store/actions/dao";
+import { createGroupProposal } from "../../store/actions/dao";
 import AccountGrants from "../account/grants";
 import GreetDao from "../greetDao";
 import {
@@ -25,6 +22,7 @@ import ProposalsSection from "./ProposalsSection";
 import CreateProposalView from "./CreateProposalView";
 import { notify } from "reapop";
 import { voteGroupProposal } from "../../store/actions/dao";
+import { Copy } from "lucide-react";
 
 function DaoDashboard({ dao = {}, ...props }) {
   const [activeTab, setActiveTab] = useState("overview");
@@ -91,7 +89,6 @@ function DaoDashboard({ dao = {}, ...props }) {
         const response = await cosmosGroupApiClient.queryProposalsByGroupPolicy(
           groupInfo.admin
         );
-        console.log("group proposals", response);
         setProposals(response.data.proposals);
       } else {
         console.error("Failed to fetch group info or admin address");
@@ -143,8 +140,13 @@ function DaoDashboard({ dao = {}, ...props }) {
   };
 
   const renderVotingPowerChart = () => (
-    <div className="bg-base-200 p-4 rounded-lg">
-      <h3 className="text-xl font-semibold mb-4">Voting Power Distribution</h3>
+    <div className="bg-base-200 p-6 rounded-lg space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">Voting Power Distribution</h3>
+        <div className="text-sm text-muted-foreground">
+          Total Members: {groupMembers.length}
+        </div>
+      </div>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
@@ -152,13 +154,14 @@ function DaoDashboard({ dao = {}, ...props }) {
             cx="50%"
             cy="50%"
             labelLine={false}
-            outerRadius={80}
+            outerRadius={100}
+            innerRadius={60}
             fill="#8884d8"
             dataKey="value"
-            label={({ name, percent }) =>
+            label={({ name, value }) =>
               `${name.substring(0, 6)}...${name.substring(
                 name.length - 4
-              )} (${percent.toFixed(0)}%)`
+              )} (${value.toFixed(1)}%)`
             }
           >
             {votingPowerData.map((entry, index) => (
@@ -168,7 +171,18 @@ function DaoDashboard({ dao = {}, ...props }) {
               />
             ))}
           </Pie>
-          <Tooltip />
+          <Tooltip
+            content={({ payload }) => {
+              if (!payload?.length) return null;
+              const { name, value } = payload[0].payload;
+              return (
+                <div className="bg-background p-2 rounded-md shadow-lg border">
+                  <div className="text-sm">{name}</div>
+                  <div className="font-semibold">{value.toFixed(2)}%</div>
+                </div>
+              );
+            }}
+          />
           <Legend />
         </PieChart>
       </ResponsiveContainer>
@@ -199,11 +213,85 @@ function DaoDashboard({ dao = {}, ...props }) {
     }
   };
 
+  const renderHeader = () => (
+    <div className="bg-base-200 rounded-lg p-6 mb-8 flex items-center justify-between">
+      <div className="flex items-center space-x-6">
+        <div className="avatar">
+          <div className="w-20 h-20 rounded-lg ring-2 ring-primary/10">
+            {dao?.avatarUrl ? (
+              <img
+                src={dao?.avatarUrl}
+                alt={dao?.name}
+                className="object-cover"
+              />
+            ) : (
+              <div className="bg-primary/10 flex items-center justify-center text-4xl uppercase h-full font-semibold text-primary">
+                {dao?.name?.[0]}
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Link
+            href={"/" + dao?.name?.toLowerCase()}
+            className="text-2xl font-bold hover:text-primary transition-colors"
+          >
+            {dao?.name}
+          </Link>
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <span>
+              {dao?.address?.slice(0, 8)}...{dao?.address?.slice(-8)}
+            </span>
+            <button
+              onClick={() => navigator.clipboard.writeText(dao?.address)}
+              className="p-1 hover:bg-primary/10 rounded-md transition-colors"
+            >
+              <Copy size={14} />
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center space-x-4">
+        <div className="text-right">
+          <div className="text-sm text-muted-foreground">Treasury Balance</div>
+          <div className="text-xl font-semibold"></div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderTabs = () => (
+    <div className="flex space-x-1 bg-base-200 p-1 rounded-lg mb-6">
+      {[
+        { id: "overview", label: "Overview" },
+        { id: "members", label: "Members" },
+        { id: "proposals", label: "Proposals" },
+        // { id: "authorizations", label: "Authorizations" },
+      ].map((tab) => (
+        <button
+          key={tab.id}
+          onClick={() => {
+            setActiveTab(tab.id);
+            if (tab.id === "proposals") setProposalView("list");
+          }}
+          className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all
+            ${
+              activeTab === tab.id
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-primary/10"
+            }`}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
+  );
+
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
         return (
-          <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <DAOInformation dao={dao} policyInfo={policyInfo} />
             {renderVotingPowerChart()}
           </div>
@@ -214,6 +302,7 @@ function DaoDashboard({ dao = {}, ...props }) {
             <DAOMembersList
               groupMembers={groupMembers}
               dao={dao}
+              groupInfo={groupInfo}
               refreshDao={props.refreshData}
             />
           </div>
@@ -242,6 +331,7 @@ function DaoDashboard({ dao = {}, ...props }) {
             onCreateProposal={() => setProposalView("create")}
             onVote={(proposalId, option) => handleVote(proposalId, option)}
             selectedAddress={props.selectedAddress}
+            onRefreshProposals={fetchProposals}
           />
         );
       case "authorizations":
@@ -257,63 +347,16 @@ function DaoDashboard({ dao = {}, ...props }) {
   };
 
   return (
-    <main className="container mx-auto max-w-screen-lg py-4 sm:py-12">
-      <div className="flex mb-12 mx-4">
-        <div className="avatar flex-none items-center">
-          <div className={"w-16 h-16 rounded-md"}>
-            {dao?.avatarUrl == "" ? (
-              <span className="bg-purple-900 flex items-center justify-center text-4xl uppercase h-full">
-                {dao?.name[0]}
-              </span>
-            ) : (
-              <img src={dao?.avatarUrl} alt={dao?.name} />
-            )}
-          </div>
+    <main className="container mx-auto max-w-screen-xl px-4 py-8">
+      {renderHeader()}
+      {renderTabs()}
+      {isLoading ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="loading loading-spinner loading-lg" />
         </div>
-        <div className="pl-4">
-          <Link
-            href={"/" + dao?.name?.toLowerCase()}
-            className="link link-primary text-2xl no-underline"
-          >
-            {dao?.name}
-          </Link>
-          <div className="text-type-secondary">{dao?.address}</div>
-        </div>
-      </div>
-
-      <div className="tabs tabs-boxed mb-6">
-        <a
-          className={`tab ${activeTab === "overview" ? "tab-active" : ""}`}
-          onClick={() => setActiveTab("overview")}
-        >
-          Overview
-        </a>
-        <a
-          className={`tab ${activeTab === "members" ? "tab-active" : ""}`}
-          onClick={() => setActiveTab("members")}
-        >
-          Members
-        </a>
-        <a
-          className={`tab ${activeTab === "proposals" ? "tab-active" : ""}`}
-          onClick={() => {
-            setActiveTab("proposals");
-            setProposalView("list"); // Reset to list view when switching to proposals tab
-          }}
-        >
-          Proposals
-        </a>
-        <a
-          className={`tab ${
-            activeTab === "authorizations" ? "tab-active" : ""
-          }`}
-          onClick={() => setActiveTab("authorizations")}
-        >
-          Authorizations
-        </a>
-      </div>
-
-      {renderContent()}
+      ) : (
+        renderContent()
+      )}
     </main>
   );
 }

@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
-import { updateGroupMembers } from "../../store/actions/dao";
-import TextInput from "../textInput";
-import { notify } from "reapop";
-import AccountCard from "../account/card";
-import { useApiClient } from "../../context/ApiClientContext";
+import { useDispatch, connect } from "react-redux";
+import {
+  Users,
+  UserPlus,
+  X,
+  AlertTriangle,
+  ChevronDown,
+  Check,
+  Loader2,
+} from "lucide-react";
 import {
   PieChart,
   Pie,
@@ -13,25 +17,173 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { notify } from "reapop";
+import AccountCard from "../account/card";
+import TextInput from "../textInput";
+import { useApiClient } from "../../context/ApiClientContext";
+import { MsgUpdateGroupMembers } from "cosmjs-types/cosmos/group/v1/tx";
+import { createGroupProposal } from "../../store/actions/dao";
 
 const COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#8884d8",
-  "#82ca9d",
+  "#3B82F6", // blue-500
+  "#10B981", // emerald-500
+  "#F59E0B", // amber-500
+  "#EC4899", // pink-500
+  "#8B5CF6", // violet-500
+  "#06B6D4", // cyan-500
 ];
 
-const DAOMembersList = ({ dao, groupMembers, refreshDao }) => {
+const MemberRow = ({ member, index, isEditing, onWeightChange, onRemove }) => (
+  <div
+    className={`flex items-center gap-4 p-4 ${
+      index !== 0 ? "border-t border-base-300" : ""
+    }`}
+  >
+    <div className="flex-1">
+      <AccountCard
+        id={member.address}
+        showAvatar={true}
+        avatarSize="sm"
+        dataTest={`member-${index}`}
+      />
+    </div>
+    <div className="w-32">
+      {isEditing ? (
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            value={member.weight}
+            onChange={(e) => onWeightChange(index, e.target.value)}
+            className="input input-bordered input-sm w-20"
+            min="1"
+          />
+          <button
+            onClick={() => onRemove(index)}
+            className="btn btn-ghost btn-sm btn-square text-error hover:text-error"
+          >
+            <X size={16} />
+          </button>
+        </div>
+      ) : (
+        <div className="text-right font-medium">{member.weight} votes</div>
+      )}
+    </div>
+  </div>
+);
+
+const AddMemberForm = ({ newMember, error, onChange, onAdd }) => (
+  <div className="border-t border-base-300 p-4">
+    <div className="flex items-end gap-3">
+      <div className="flex-1">
+        <label className="text-sm font-medium mb-1.5 block text-muted-foreground">
+          Member Address
+        </label>
+        <TextInput
+          value={newMember.address}
+          name="new-member-address"
+          placeholder="Enter wallet address"
+          setValue={(v) => onChange({ ...newMember, address: v })}
+          hint={error}
+          size="sm"
+        />
+      </div>
+      <div className="w-24">
+        <label className="text-sm font-medium mb-1.5 block text-muted-foreground">
+          Weight
+        </label>
+        <input
+          type="number"
+          value={newMember.weight}
+          onChange={(e) => onChange({ ...newMember, weight: e.target.value })}
+          className="input input-bordered input-sm w-full"
+          min="1"
+          placeholder="1"
+        />
+      </div>
+      <button
+        onClick={onAdd}
+        disabled={!newMember.address || !newMember.weight}
+        className="btn btn-primary btn-sm gap-2"
+      >
+        <UserPlus size={16} />
+        Add
+      </button>
+    </div>
+  </div>
+);
+
+const VotingDistributionChart = ({ votingData }) => (
+  <div className="bg-base-300/50 rounded-lg p-6 hover:bg-base-300/70 transition-colors">
+    <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center gap-3">
+        <div className="p-2 bg-primary/10 rounded-lg">
+          <Users className="w-5 h-5 text-primary" />
+        </div>
+        <h3 className="font-medium">Voting Distribution</h3>
+      </div>
+      <div className="text-sm text-muted-foreground">
+        Total Voting Power:{" "}
+        {votingData.reduce((sum, item) => sum + item.value, 0).toFixed(0)}
+      </div>
+    </div>
+
+    <ResponsiveContainer width="100%" height={300}>
+      <PieChart>
+        <Pie
+          data={votingData}
+          dataKey="value"
+          nameKey="name"
+          cx="50%"
+          cy="50%"
+          innerRadius={60}
+          outerRadius={100}
+          paddingAngle={2}
+        >
+          {votingData.map((entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={COLORS[index % COLORS.length]}
+              className="hover:opacity-80 transition-opacity"
+            />
+          ))}
+        </Pie>
+        <Tooltip
+          content={({ payload }) => {
+            if (!payload?.length) return null;
+            const { name, value } = payload[0].payload;
+            return (
+              <div className="bg-base-100 shadow-lg rounded-lg p-3 border border-base-300">
+                <p className="text-sm mb-1">{name}</p>
+                <p className="font-medium">
+                  {value.toFixed(2)}% of voting power
+                </p>
+              </div>
+            );
+          }}
+        />
+        <Legend
+          formatter={(value, entry, index) => (
+            <span className="text-sm">
+              {value.substring(0, 8)}...{value.substring(value.length - 4)}
+            </span>
+          )}
+        />
+      </PieChart>
+    </ResponsiveContainer>
+  </div>
+);
+
+function DAOMembersList({
+  dao,
+  groupInfo,
+  groupMembers,
+  refreshDao,
+  selectedAddress,
+}) {
   const [members, setMembers] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [newMember, setNewMember] = useState({ address: "", weight: "1" });
-  const [newMemberError, setNewMemberError] = useState({
-    shown: false,
-    type: "",
-    message: "",
-  });
+  const [error, setError] = useState({ shown: false, type: "", message: "" });
   const [isUpdating, setIsUpdating] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const dispatch = useDispatch();
@@ -46,6 +198,17 @@ const DAOMembersList = ({ dao, groupMembers, refreshDao }) => {
     setMembers(groupMembers.map((m) => ({ ...m.member })));
   }, [groupMembers]);
 
+  const votingDistribution = useMemo(() => {
+    const totalWeight = members.reduce(
+      (sum, member) => sum + Number(member.weight),
+      0
+    );
+    return members.map((member) => ({
+      name: member.address,
+      value: (Number(member.weight) / totalWeight) * 100,
+    }));
+  }, [members]);
+
   const handleWeightChange = (index, newWeight) => {
     const updatedMembers = [...members];
     updatedMembers[index].weight = newWeight;
@@ -54,14 +217,13 @@ const DAOMembersList = ({ dao, groupMembers, refreshDao }) => {
   };
 
   const handleRemoveMember = (index) => {
-    const updatedMembers = members.filter((_, i) => i !== index);
-    setMembers(updatedMembers);
+    setMembers(members.filter((_, i) => i !== index));
     setHasChanges(true);
   };
 
   const validateNewMember = () => {
     if (!newMember.address) {
-      setNewMemberError({
+      setError({
         shown: true,
         type: "error",
         message: "Address is required",
@@ -69,7 +231,7 @@ const DAOMembersList = ({ dao, groupMembers, refreshDao }) => {
       return false;
     }
     if (!newMember.weight || parseInt(newMember.weight) < 1) {
-      setNewMemberError({
+      setError({
         shown: true,
         type: "error",
         message: "Weight must be a positive number",
@@ -83,199 +245,166 @@ const DAOMembersList = ({ dao, groupMembers, refreshDao }) => {
     if (validateNewMember()) {
       setMembers([...members, newMember]);
       setNewMember({ address: "", weight: "1" });
-      setNewMemberError({ shown: false, type: "", message: "" });
+      setError({ shown: false, type: "", message: "" });
       setHasChanges(true);
     }
   };
 
-  const handleUpdateMembers = async () => {
+  const handleUpdate = async () => {
     setIsUpdating(true);
     try {
+      // Create member updates in the format expected by the message
       const memberUpdates = members.map((member) => ({
         address: member.address,
         weight: member.weight,
+        metadata: "",
       }));
 
-      await dispatch(
-        updateGroupMembers(
+      // Create the proposal message
+      const messages = [
+        {
+          typeUrl: "/cosmos.group.v1.MsgUpdateGroupMembers",
+          value: MsgUpdateGroupMembers.encode({
+            admin: groupInfo.admin,
+            groupId: dao.group_id,
+            memberUpdates,
+          }).finish(),
+        },
+      ];
+
+      // Create the proposal
+      const result = await dispatch(
+        createGroupProposal(
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
-          cosmosGroupApiClient,
           {
-            groupId: dao.group_id,
-            memberUpdates,
+            groupPolicyAddress: groupInfo.admin,
+            messages,
+            metadata: "",
+            proposers: [selectedAddress],
+            title: "Update DAO Members",
+            summary: `Update voting weights for DAO members`,
+            exec: 0, // EXEC_UNSPECIFIED
           }
         )
       );
 
-      notify("DAO members updated successfully", "success");
-      if (refreshDao) await refreshDao();
-      setEditMode(false);
-      setHasChanges(false);
+      if (result && result.code === 0) {
+        notify("Member update proposal created successfully", "success");
+        if (refreshDao) await refreshDao();
+        setEditMode(false);
+        setHasChanges(false);
+      } else {
+        throw new Error(result?.rawLog || "Failed to create proposal");
+      }
     } catch (error) {
-      console.error("Error updating DAO members:", error);
-      notify("Failed to update DAO members", "error");
+      console.error("Error creating member update proposal:", error);
+      notify("Failed to create proposal: " + error.message, "error");
     } finally {
-      setIsUpdating(false);
+      setIsUpdating(true);
     }
-  };
-
-  const votingDistribution = useMemo(() => {
-    const totalWeight = members.reduce(
-      (sum, member) => sum + parseInt(member.weight),
-      0
-    );
-    return members.map((member) => ({
-      name: member.address.substring(0, 10) + "...",
-      value: Number(((parseInt(member.weight) / totalWeight) * 100).toFixed(2)),
-    }));
-  }, [members]);
-
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-base-200 p-2 rounded shadow">
-          <p>{`${payload[0].name}: ${payload[0].value.toFixed(2)}%`}</p>
-        </div>
-      );
-    }
-    return null;
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-xl font-semibold">DAO Members</h3>
-        <button
-          onClick={() => setEditMode(!editMode)}
-          className={`btn btn-sm ${editMode ? "btn-secondary" : "btn-primary"}`}
-        >
-          {editMode ? "Cancel Edit" : "Edit Membership"}
-        </button>
-      </div>
+    <div className="space-y-6">
+      <div className="bg-base-300/50 rounded-lg">
+        <div className="p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <Users className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-medium">DAO Members</h3>
+              <p className="text-sm text-muted-foreground">
+                {members.length} member{members.length !== 1 ? "s" : ""}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setEditMode(!editMode)}
+            className={`btn btn-sm ${
+              editMode ? "btn-ghost" : "btn-primary"
+            } gap-2`}
+          >
+            {editMode ? (
+              <>
+                <X size={16} />
+                Cancel
+              </>
+            ) : (
+              <>
+                <UserPlus size={16} />
+                Manage Members
+              </>
+            )}
+          </button>
+        </div>
 
-      <table className="table w-full">
-        <thead>
-          <tr>
-            <th>Member</th>
-            <th>Weight</th>
-            {editMode && <th>Actions</th>}
-          </tr>
-        </thead>
-        <tbody>
+        <div className="divide-y divide-base-300">
           {members.map((member, index) => (
-            <tr key={index}>
-              <td>
-                <AccountCard
-                  id={member.address}
-                  showAvatar={true}
-                  avatarSize="xs"
-                  dataTest={`member-${index}`}
-                />
-              </td>
-              <td>
-                {editMode ? (
-                  <input
-                    type="number"
-                    value={member.weight}
-                    onChange={(e) => handleWeightChange(index, e.target.value)}
-                    className="input input-bordered input-sm w-24"
-                    min="1"
-                  />
-                ) : (
-                  member.weight
-                )}
-              </td>
-              {editMode && (
-                <td>
-                  <button
-                    onClick={() => handleRemoveMember(index)}
-                    className="btn btn-sm btn-outline btn-error"
-                  >
-                    Remove
-                  </button>
-                </td>
-              )}
-            </tr>
+            <MemberRow
+              key={member.address}
+              member={member}
+              index={index}
+              isEditing={editMode}
+              onWeightChange={handleWeightChange}
+              onRemove={handleRemoveMember}
+            />
           ))}
-        </tbody>
-      </table>
-
-      {editMode && (
-        <div className="flex space-x-2">
-          <TextInput
-            value={newMember.address}
-            name="new-member-address"
-            placeholder="New member address"
-            setValue={(v) => {
-              setNewMember({ ...newMember, address: v });
-              setNewMemberError({ shown: false, type: "", message: "" });
-            }}
-            hint={newMemberError}
-            size="sm"
-          />
-          <input
-            type="number"
-            value={newMember.weight}
-            onChange={(e) => {
-              setNewMember({ ...newMember, weight: e.target.value });
-              setNewMemberError({ shown: false, type: "", message: "" });
-            }}
-            placeholder="Weight"
-            className="input input-bordered input-sm w-24"
-            min="1"
-          />
-          <button
-            onClick={handleAddMember}
-            className="btn btn-sm btn-primary"
-            disabled={!newMember.address || !newMember.weight}
-          >
-            Add Member
-          </button>
         </div>
-      )}
 
-      {editMode && hasChanges && (
-        <div className="text-right">
-          <button
-            onClick={handleUpdateMembers}
-            className={`btn btn-primary ${isUpdating ? "loading" : ""}`}
-            disabled={isUpdating}
-          >
-            Update DAO Members
-          </button>
-        </div>
-      )}
+        {editMode && (
+          <>
+            <AddMemberForm
+              newMember={newMember}
+              error={error}
+              onChange={setNewMember}
+              onAdd={handleAddMember}
+            />
 
-      <div className="mt-8">
-        <h4 className="text-lg font-semibold mb-4">Voting Distribution</h4>
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={votingDistribution}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              fill="#8884d8"
-              label={({ name, value }) => `${name} (${value.toFixed(2)}%)`}
-            >
-              {votingDistribution.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+            {hasChanges && (
+              <div className="p-4 bg-warning/10 border-t border-warning/20">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-warning">
+                    <AlertTriangle size={16} />
+                    <span className="text-sm font-medium">
+                      You have unsaved changes
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleUpdate}
+                    className="btn btn-primary btn-sm gap-2"
+                    disabled={isUpdating}
+                  >
+                    {isUpdating ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      <>
+                        <Check size={16} />
+                        Save Changes
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
+
+      <VotingDistributionChart votingData={votingDistribution} />
     </div>
   );
+}
+
+const mapStateToProps = (state) => {
+  return {
+    selectedAddress: state.wallet.selectedAddress,
+  };
 };
 
-export default DAOMembersList;
+export default connect(mapStateToProps, {})(DAOMembersList);
