@@ -70,11 +70,11 @@ function Home(props) {
                         href={
                           "/" +
                           process.env.NEXT_PUBLIC_GITOPIA_ADDRESS +
-                          "?tab=proposals"
+                          "?tab=protocolproposals"
                         }
                         className={"link no-underline hover:underline mr-4"}
                       >
-                        Proposals
+                        Protocol Proposals
                       </Link>
                       <Link
                         href={"/" + process.env.NEXT_PUBLIC_GITOPIA_ADDRESS}

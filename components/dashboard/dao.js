@@ -5,14 +5,6 @@ import DAOMembersList from "./DAOMembersList";
 import { createGroupProposal } from "../../store/actions/dao";
 import AccountGrants from "../account/grants";
 import GreetDao from "../greetDao";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-} from "recharts";
 import { useApiClient } from "../../context/ApiClientContext";
 import getGroupInfo from "../../helpers/getGroupInfo";
 import getGroupMembers from "../../helpers/getGroupMembers";
@@ -22,16 +14,21 @@ import ProposalsSection from "./ProposalsSection";
 import CreateProposalView from "./CreateProposalView";
 import { notify } from "reapop";
 import { voteGroupProposal } from "../../store/actions/dao";
-import { Copy } from "lucide-react";
+import { Copy, Landmark } from "lucide-react";
+import VotingPowerChart from "./VotingPowerChart";
+import { useRouter } from "next/router";
 
-function DaoDashboard({ dao = {}, ...props }) {
-  const [activeTab, setActiveTab] = useState("overview");
+function DaoDashboard({ dao = {}, advanceUser, ...props }) {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState(router.query.tab || "overview");
   const [proposals, setProposals] = useState([]);
   const [groupInfo, setGroupInfo] = useState(null);
   const [policyInfo, setPolicyInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [groupMembers, setGroupMembers] = useState([]);
   const [proposalView, setProposalView] = useState("list");
+  const [treasuryBalance, setTreasuryBalance] = useState("0");
+
   const {
     cosmosGroupApiClient,
     apiClient,
@@ -40,15 +37,44 @@ function DaoDashboard({ dao = {}, ...props }) {
   } = useApiClient();
   const dispatch = useDispatch();
 
-  const COLORS = [
-    "#1880DE",
-    "#00C49F",
-    "#3CC23A",
-    "#FF8042",
-    "#EE9006",
-    "#82CA9D",
-    "#A4DE6C",
-  ];
+  useEffect(() => {
+    if (router.query.tab) {
+      setActiveTab(router.query.tab);
+    }
+  }, [router.query.tab]);
+
+  useEffect(() => {
+    if (dao.address) {
+      fetchTreasuryBalance();
+    }
+  }, [dao.address]);
+
+  const fetchTreasuryBalance = async () => {
+    try {
+      const response = await getBalance(dao.address);
+      const balance = response.data.balance;
+
+      // Find the token balance
+      const tokenBalance = balance.find(
+        (b) => b.denom === process.env.NEXT_PUBLIC_CURRENCY_DENOM
+      );
+
+      if (tokenBalance) {
+        const formattedBalance = advanceUser
+          ? tokenBalance.amount
+          : (parseInt(tokenBalance.amount) / 1000000).toString();
+
+        const currency = advanceUser
+          ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+          : process.env.NEXT_PUBLIC_CURRENCY_TOKEN;
+
+        setTreasuryBalance(`${formattedBalance} ${currency}`);
+      }
+    } catch (error) {
+      console.error("Error fetching treasury balance:", error);
+      setTreasuryBalance("0");
+    }
+  };
 
   useEffect(() => {
     if (dao.group_id) {
@@ -89,7 +115,7 @@ function DaoDashboard({ dao = {}, ...props }) {
         const response = await cosmosGroupApiClient.queryProposalsByGroupPolicy(
           groupInfo.admin
         );
-        setProposals(response.data.proposals);
+        setProposals(response.data.proposals.reverse());
       } else {
         console.error("Failed to fetch group info or admin address");
       }
@@ -120,6 +146,21 @@ function DaoDashboard({ dao = {}, ...props }) {
     }));
   }, [groupMembers]);
 
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    if (tabId === "proposals") setProposalView("list");
+
+    // Update URL without full page reload
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, tab: tabId },
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
+
   const handleVote = async (proposalId, option) => {
     try {
       const result = await dispatch(
@@ -138,56 +179,6 @@ function DaoDashboard({ dao = {}, ...props }) {
       console.error("Error voting on proposal:", error);
     }
   };
-
-  const renderVotingPowerChart = () => (
-    <div className="bg-base-200 p-6 rounded-lg space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Voting Power Distribution</h3>
-        <div className="text-sm text-muted-foreground">
-          Total Members: {groupMembers.length}
-        </div>
-      </div>
-      <ResponsiveContainer width="100%" height={300}>
-        <PieChart>
-          <Pie
-            data={votingPowerData}
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            outerRadius={100}
-            innerRadius={60}
-            fill="#8884d8"
-            dataKey="value"
-            label={({ name, value }) =>
-              `${name.substring(0, 6)}...${name.substring(
-                name.length - 4
-              )} (${value.toFixed(1)}%)`
-            }
-          >
-            {votingPowerData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
-          <Tooltip
-            content={({ payload }) => {
-              if (!payload?.length) return null;
-              const { name, value } = payload[0].payload;
-              return (
-                <div className="bg-background p-2 rounded-md shadow-lg border">
-                  <div className="text-sm">{name}</div>
-                  <div className="font-semibold">{value.toFixed(2)}%</div>
-                </div>
-              );
-            }}
-          />
-          <Legend />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
-  );
 
   const handleCreateProposal = async (proposalData) => {
     try {
@@ -251,10 +242,17 @@ function DaoDashboard({ dao = {}, ...props }) {
           </div>
         </div>
       </div>
-      <div className="flex items-center space-x-4">
-        <div className="text-right">
-          <div className="text-sm text-muted-foreground">Treasury Balance</div>
-          <div className="text-xl font-semibold"></div>
+      <div className="flex items-center space-x-4 bg-base-100 rounded-lg p-4 shadow-sm">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <Landmark className="text-primary" size={20} />
+          </div>
+          <div>
+            <div className="text-sm text-muted-foreground">
+              Treasury Balance
+            </div>
+            <div className="text-xl font-semibold">{treasuryBalance}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -266,20 +264,16 @@ function DaoDashboard({ dao = {}, ...props }) {
         { id: "overview", label: "Overview" },
         { id: "members", label: "Members" },
         { id: "proposals", label: "Proposals" },
-        // { id: "authorizations", label: "Authorizations" },
       ].map((tab) => (
         <button
           key={tab.id}
-          onClick={() => {
-            setActiveTab(tab.id);
-            if (tab.id === "proposals") setProposalView("list");
-          }}
+          onClick={() => handleTabChange(tab.id)}
           className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all
-            ${
-              activeTab === tab.id
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-primary/10"
-            }`}
+      ${
+        activeTab === tab.id
+          ? "bg-primary text-primary-foreground shadow-sm"
+          : "text-muted-foreground hover:bg-primary/10"
+      }`}
         >
           {tab.label}
         </button>
@@ -293,7 +287,7 @@ function DaoDashboard({ dao = {}, ...props }) {
         return (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <DAOInformation dao={dao} policyInfo={policyInfo} />
-            {renderVotingPowerChart()}
+            <VotingPowerChart data={votingPowerData} />
           </div>
         );
       case "members":
@@ -315,6 +309,7 @@ function DaoDashboard({ dao = {}, ...props }) {
               groupInfo={groupInfo}
               groupMembers={groupMembers}
               policyInfo={policyInfo}
+              treasuryBalance={treasuryBalance}
               onSubmit={handleCreateProposal}
               onCancel={() => setProposalView("list")}
             />
@@ -364,6 +359,7 @@ function DaoDashboard({ dao = {}, ...props }) {
 const mapStateToProps = (state) => {
   return {
     selectedAddress: state.wallet.selectedAddress,
+    advanceUser: state.user.advanceUser,
   };
 };
 

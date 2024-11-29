@@ -1,23 +1,28 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { useQuery, gql } from "@apollo/client";
+import client from "../../helpers/apolloClient";
 import getGroupMembers from "../../helpers/getGroupMembers";
-import getUser from "../../helpers/getUser";
+import Link from "next/link";
 import { useApiClient } from "../../context/ApiClientContext";
+import VotingPowerChart from "../dashboard/VotingPowerChart";
 
-const COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#8884d8",
-  "#82ca9d",
-];
+// Define the GraphQL query
+const GET_USERS = gql`
+  query GetUsers($addresses: [String!]) {
+    users(where: { address_in: $addresses }) {
+      id
+      username
+      name
+      avatarUrl
+    }
+  }
+`;
 
 const AccountPeople = ({ dao }) => {
   const [allMembers, setAllMembers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { cosmosGroupApiClient, apiClient } = useApiClient();
+  const { cosmosGroupApiClient } = useApiClient();
 
   const getAllMembers = useCallback(async () => {
     if (!dao.group_id) {
@@ -28,69 +33,48 @@ const AccountPeople = ({ dao }) => {
     try {
       setIsLoading(true);
       const members = await getGroupMembers(cosmosGroupApiClient, dao.group_id);
-      const membersWithDetails = await Promise.all(
-        members.map(async (member) => {
-          const userDetails = await getUser(apiClient, member.member.address);
-          return { ...member, userDetails };
-        })
-      );
-      setAllMembers(membersWithDetails);
+      setAllMembers(members);
     } catch (err) {
       console.error("Error fetching group members:", err);
       setError("Failed to load members. Please try again later.");
     } finally {
       setIsLoading(false);
     }
-  }, [dao.group_id, cosmosGroupApiClient, apiClient]);
+  }, [dao.group_id, cosmosGroupApiClient]);
 
   useEffect(() => {
     getAllMembers();
   }, [getAllMembers]);
+
+  // Extract member addresses for the GraphQL query
+  const memberAddresses = allMembers.map((member) => member.member.address);
+
+  // Fetch user data using GraphQL
+  const { data: userData } = useQuery(GET_USERS, {
+    variables: { addresses: memberAddresses },
+    client: client,
+    skip: memberAddresses.length === 0,
+  });
+
+  // Create a map of address to user data
+  const userDataMap =
+    userData?.users?.reduce((acc, user) => {
+      acc[user.id] = user;
+      return acc;
+    }, {}) || {};
 
   const totalWeight = allMembers.reduce(
     (sum, member) => sum + parseInt(member.member.weight),
     0
   );
 
-  const chartData = allMembers.map((member) => ({
-    name: member.userDetails?.username || member.member.address,
-    value: parseInt(member.member.weight),
-  }));
-
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      const member = allMembers.find(
-        (m) =>
-          m.userDetails?.username === data.name ||
-          m.member.address === data.name
-      );
-      const percentage = ((data.value / totalWeight) * 100).toFixed(2);
-      return (
-        <div className="bg-base-200 p-4 rounded shadow-lg">
-          <div className="flex items-center mb-2">
-            {member.userDetails?.avatarUrl && (
-              <img
-                src={member.userDetails.avatarUrl}
-                alt={data.name}
-                className="w-12 h-12 rounded-full mr-3"
-              />
-            )}
-            <div>
-              <p className="font-bold">{data.name}</p>
-              <p className="text-sm">{member.userDetails?.name}</p>
-            </div>
-          </div>
-          <p>Voting Power: {percentage}%</p>
-          <p>Weight: {data.value}</p>
-          {member.userDetails?.bio && (
-            <p className="mt-2 text-sm">{member.userDetails.bio}</p>
-          )}
-        </div>
-      );
-    }
-    return null;
-  };
+  const chartData = allMembers.map((member) => {
+    const user = userDataMap[member.member.address];
+    return {
+      name: user?.username || member.member.address,
+      value: (parseInt(member.member.weight) / totalWeight) * 100,
+    };
+  });
 
   if (isLoading) {
     return <div className="text-center py-4">Loading members...</div>;
@@ -102,73 +86,60 @@ const AccountPeople = ({ dao }) => {
 
   return (
     <div className="mt-8 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Voting Power Distribution</h2>
-      <div className="h-80 mb-8">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={chartData}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {chartData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-      <h2 className="text-2xl font-bold mb-4">Members</h2>
+      <VotingPowerChart
+        data={chartData}
+        height={400}
+        innerRadius={80}
+        outerRadius={120}
+      />
+
+      <h2 className="text-2xl font-bold mb-4 mt-8">Members</h2>
       {allMembers.length === 0 ? (
         <p className="text-center py-4">No members found.</p>
       ) : (
         <ul className="divide-y divide-grey">
-          {allMembers.map((m) => (
-            <li
-              key={m.member.address}
-              className="p-4 hover:bg-base-200 transition-colors duration-200"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  {m.userDetails?.avatarUrl && (
-                    <img
-                      src={m.userDetails.avatarUrl}
-                      alt={m.userDetails.username}
-                      className="w-10 h-10 rounded-full mr-4"
-                    />
-                  )}
-                  <div>
-                    <p className="font-medium">
-                      {m.userDetails?.username || m.member.address}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {m.userDetails?.name}
-                    </p>
+          {allMembers.map((m) => {
+            const userData = userDataMap[m.member.address];
+            return (
+              <li
+                key={m.member.address}
+                className="p-4 hover:bg-base-200 transition-colors duration-200"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    {userData?.avatarUrl && (
+                      <img
+                        src={userData.avatarUrl}
+                        alt={userData.username}
+                        className="w-10 h-10 rounded-full mr-4"
+                      />
+                    )}
+                    <div>
+                      <Link
+                        href={`/${m.member.address}`}
+                        className="font-medium hover:text-primary transition-colors"
+                      >
+                        {userData?.username || m.member.address}
+                      </Link>
+                      <p className="text-sm text-gray-500">{userData?.name}</p>
+                    </div>
+                  </div>
+                  <div className="text-sm font-medium">
+                    Weight: {m.member.weight}
+                    <br />
+                    Voting Power:{" "}
+                    {((parseInt(m.member.weight) / totalWeight) * 100).toFixed(
+                      2
+                    )}
+                    %
                   </div>
                 </div>
-                <div className="text-sm font-medium">
-                  Weight: {m.member.weight}
-                  <br />
-                  Voting Power:{" "}
-                  {((parseInt(m.member.weight) / totalWeight) * 100).toFixed(2)}
-                  %
-                </div>
-              </div>
-              {m.userDetails?.bio && (
-                <p className="mt-2 text-sm text-gray-600">
-                  {m.userDetails.bio}
-                </p>
-              )}
-            </li>
-          ))}
+                {userData?.bio && (
+                  <p className="mt-2 text-sm text-gray-600">{userData.bio}</p>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

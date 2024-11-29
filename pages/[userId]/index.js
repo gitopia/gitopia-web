@@ -15,11 +15,12 @@ import AccountRepositories from "../../components/account/repositories";
 import AccountTransactions from "../../components/account/transactions";
 import AccountPeople from "../../components/account/people";
 import AccountDaoHeader from "../../components/account/daoHeader";
-import DaoProposalList from "../../components/account/daoProposalList";
-import DaoProposalCreate from "../../components/account/daoProposalCreate";
-import DaoProposalDetails from "../../components/account/daoProposalDetails";
+import GitopiaProtocolProposalList from "../../components/account/GitopiaProtocolProposalList";
+import GitopiaProtocolProposalCreate from "../../components/account/GitopiaProtocolProposalCreate";
+import GitopiaProtocolProposalDetails from "../../components/account/GitopiaProtocolProposalDetails";
 import validAddress from "../../helpers/validAddress";
 import { useApiClient } from "../../context/ApiClientContext";
+import DaoProposals from "../../components/account/DaoProposals";
 
 export async function getStaticProps({ params }) {
   let data,
@@ -185,9 +186,11 @@ function AccountView({ user: initialUser, dao: initialDao, allRepos }) {
       case "transactions":
         return <AccountTransactions userId={user.creator || dao.address} />;
       case "proposals":
-        if (id === "new") return <DaoProposalCreate dao={dao} />;
-        if (id) return <DaoProposalDetails id={id} />;
-        return <DaoProposalList dao={dao} />;
+        return <DaoProposals dao={dao} />;
+      case "protocolproposals":
+        if (id === "new") return <GitopiaProtocolProposalCreate dao={dao} />;
+        if (id) return <GitopiaProtocolProposalDetails id={id} />;
+        return <GitopiaProtocolProposalList dao={dao} />;
       case "people":
         return <AccountPeople dao={dao} />;
       default:

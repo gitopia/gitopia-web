@@ -1,51 +1,81 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, connect } from "react-redux";
+import { useQuery, gql } from "@apollo/client";
+import client from "../../helpers/apolloClient";
 import {
   Users,
   UserPlus,
   X,
   AlertTriangle,
-  ChevronDown,
   Check,
   Loader2,
 } from "lucide-react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-} from "recharts";
 import { notify } from "reapop";
+import Link from "next/link";
 import AccountCard from "../account/card";
 import TextInput from "../textInput";
 import { useApiClient } from "../../context/ApiClientContext";
 import { MsgUpdateGroupMembers } from "cosmjs-types/cosmos/group/v1/tx";
 import { createGroupProposal } from "../../store/actions/dao";
+import VotingPowerChart from "./VotingPowerChart";
 
-const COLORS = [
-  "#3B82F6", // blue-500
-  "#10B981", // emerald-500
-  "#F59E0B", // amber-500
-  "#EC4899", // pink-500
-  "#8B5CF6", // violet-500
-  "#06B6D4", // cyan-500
-];
+// Define the GraphQL query
+const GET_USERS = gql`
+  query GetUsers($addresses: [String!]) {
+    users(where: { address_in: $addresses }) {
+      id
+      username
+      name
+      avatarUrl
+    }
+  }
+`;
 
-const MemberRow = ({ member, index, isEditing, onWeightChange, onRemove }) => (
+const MemberRow = ({
+  member,
+  index,
+  isEditing,
+  onWeightChange,
+  onRemove,
+  userData,
+}) => (
   <div
     className={`flex items-center gap-4 p-4 ${
       index !== 0 ? "border-t border-base-300" : ""
     }`}
   >
     <div className="flex-1">
-      <AccountCard
-        id={member.address}
-        showAvatar={true}
-        avatarSize="sm"
-        dataTest={`member-${index}`}
-      />
+      {userData ? (
+        <div className="flex items-center gap-3">
+          {userData.avatarUrl && (
+            <img
+              src={userData.avatarUrl}
+              alt={userData.username || member.address}
+              className="w-8 h-8 rounded-full"
+            />
+          )}
+          <div>
+            <Link
+              href={`/${member.address}`}
+              className="font-medium hover:text-primary transition-colors"
+            >
+              {userData.username || member.address}
+            </Link>
+            {userData.name && (
+              <div className="text-sm text-muted-foreground">
+                {userData.name}
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <AccountCard
+          id={member.address}
+          showAvatar={true}
+          avatarSize="sm"
+          dataTest={`member-${index}`}
+        />
+      )}
     </div>
     <div className="w-32">
       {isEditing ? (
@@ -112,67 +142,6 @@ const AddMemberForm = ({ newMember, error, onChange, onAdd }) => (
   </div>
 );
 
-const VotingDistributionChart = ({ votingData }) => (
-  <div className="bg-base-300/50 rounded-lg p-6 hover:bg-base-300/70 transition-colors">
-    <div className="flex items-center justify-between mb-6">
-      <div className="flex items-center gap-3">
-        <div className="p-2 bg-primary/10 rounded-lg">
-          <Users className="w-5 h-5 text-primary" />
-        </div>
-        <h3 className="font-medium">Voting Distribution</h3>
-      </div>
-      <div className="text-sm text-muted-foreground">
-        Total Voting Power:{" "}
-        {votingData.reduce((sum, item) => sum + item.value, 0).toFixed(0)}
-      </div>
-    </div>
-
-    <ResponsiveContainer width="100%" height={300}>
-      <PieChart>
-        <Pie
-          data={votingData}
-          dataKey="value"
-          nameKey="name"
-          cx="50%"
-          cy="50%"
-          innerRadius={60}
-          outerRadius={100}
-          paddingAngle={2}
-        >
-          {votingData.map((entry, index) => (
-            <Cell
-              key={`cell-${index}`}
-              fill={COLORS[index % COLORS.length]}
-              className="hover:opacity-80 transition-opacity"
-            />
-          ))}
-        </Pie>
-        <Tooltip
-          content={({ payload }) => {
-            if (!payload?.length) return null;
-            const { name, value } = payload[0].payload;
-            return (
-              <div className="bg-base-100 shadow-lg rounded-lg p-3 border border-base-300">
-                <p className="text-sm mb-1">{name}</p>
-                <p className="font-medium">
-                  {value.toFixed(2)}% of voting power
-                </p>
-              </div>
-            );
-          }}
-        />
-        <Legend
-          formatter={(value, entry, index) => (
-            <span className="text-sm">
-              {value.substring(0, 8)}...{value.substring(value.length - 4)}
-            </span>
-          )}
-        />
-      </PieChart>
-    </ResponsiveContainer>
-  </div>
-);
-
 function DAOMembersList({
   dao,
   groupInfo,
@@ -187,16 +156,29 @@ function DAOMembersList({
   const [isUpdating, setIsUpdating] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const dispatch = useDispatch();
-  const {
-    apiClient,
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-    cosmosGroupApiClient,
-  } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     setMembers(groupMembers.map((m) => ({ ...m.member })));
   }, [groupMembers]);
+
+  // Get the list of member addresses for GraphQL query
+  const memberAddresses = members.map((member) => member.address);
+
+  // Fetch user data using GraphQL
+  const { data: userData } = useQuery(GET_USERS, {
+    variables: { addresses: memberAddresses },
+    client: client,
+    skip: memberAddresses.length === 0,
+  });
+
+  // Create a map of address to user data
+  const userDataMap =
+    userData?.users?.reduce((acc, user) => {
+      acc[user.id] = user;
+      return acc;
+    }, {}) || {};
 
   const votingDistribution = useMemo(() => {
     const totalWeight = members.reduce(
@@ -204,10 +186,10 @@ function DAOMembersList({
       0
     );
     return members.map((member) => ({
-      name: member.address,
+      name: userDataMap[member.address]?.username || member.address,
       value: (Number(member.weight) / totalWeight) * 100,
     }));
-  }, [members]);
+  }, [members, userDataMap]);
 
   const handleWeightChange = (index, newWeight) => {
     const updatedMembers = [...members];
@@ -253,14 +235,12 @@ function DAOMembersList({
   const handleUpdate = async () => {
     setIsUpdating(true);
     try {
-      // Create member updates in the format expected by the message
       const memberUpdates = members.map((member) => ({
         address: member.address,
         weight: member.weight,
         metadata: "",
       }));
 
-      // Create the proposal message
       const messages = [
         {
           typeUrl: "/cosmos.group.v1.MsgUpdateGroupMembers",
@@ -272,7 +252,6 @@ function DAOMembersList({
         },
       ];
 
-      // Create the proposal
       const result = await dispatch(
         createGroupProposal(
           apiClient,
@@ -285,7 +264,7 @@ function DAOMembersList({
             proposers: [selectedAddress],
             title: "Update DAO Members",
             summary: `Update voting weights for DAO members`,
-            exec: 0, // EXEC_UNSPECIFIED
+            exec: 0,
           }
         )
       );
@@ -302,7 +281,7 @@ function DAOMembersList({
       console.error("Error creating member update proposal:", error);
       notify("Failed to create proposal: " + error.message, "error");
     } finally {
-      setIsUpdating(true);
+      setIsUpdating(false);
     }
   };
 
@@ -350,6 +329,7 @@ function DAOMembersList({
               isEditing={editMode}
               onWeightChange={handleWeightChange}
               onRemove={handleRemoveMember}
+              userData={userDataMap[member.address]}
             />
           ))}
         </div>
@@ -396,7 +376,7 @@ function DAOMembersList({
         )}
       </div>
 
-      <VotingDistributionChart votingData={votingDistribution} />
+      <VotingPowerChart data={votingDistribution} />
     </div>
   );
 }

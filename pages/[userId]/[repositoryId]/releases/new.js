@@ -9,11 +9,17 @@ import RepositoryHeader from "../../../../components/repository/header";
 import RepositoryMainTabs from "../../../../components/repository/mainTabs";
 import MarkdownEditor from "../../../../components/markdownEditor";
 
-import { createRelease, createTag } from "../../../../store/actions/repository";
+import {
+  createRelease,
+  createReleaseForDao,
+  createTag,
+} from "../../../../store/actions/repository";
 import BranchSelector from "../../../../components/repository/branchSelector";
 import AccountCard from "../../../../components/account/card";
 import formatBytes from "../../../../helpers/formatBytes";
 import shrinkSha from "../../../../helpers/shrinkSha";
+import { Info } from "lucide-react";
+import getDao from "../../../../helpers/getDao";
 
 import Uploady, {
   useItemProgressListener,
@@ -37,7 +43,12 @@ export async function getStaticPaths() {
   };
 }
 
-function RepositoryReleaseNewView(props) {
+const RepositoryReleaseView = ({
+  selectedAddress,
+  createRelease,
+  createReleaseForDao,
+  createTag,
+}) => {
   const router = useRouter();
   const { repository, refreshRepository } = useRepository();
 
@@ -45,22 +56,42 @@ function RepositoryReleaseNewView(props) {
   const [description, setDescription] = useState("");
   const [tagName, setTagName] = useState("");
   const [target, setTarget] = useState({ name: "", sha: null });
-  const [postingIssue, setPostingIssue] = useState(false);
   const [attachments, setAttachments] = useState([]);
   const [uploadingAttachment, setUploadingAttachment] = useState({ file: {} });
   const [newTagOptionShown, setNewTagOptionShown] = useState(false);
   const [creatingTag, setCreatingTag] = useState(false);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    cosmosGroupApiClient,
+  } = useApiClient();
+  const [isDao, setIsDao] = useState(false);
+  const [daoInfo, setDaoInfo] = useState(null);
+  const [requiresProposal, setRequiresProposal] = useState(false);
+  const [postingRelease, setPostingRelease] = useState(false);
 
-  const validateIssue = () => {
-    return true;
-  };
+  useEffect(() => {
+    const checkDaoStatus = async () => {
+      if (repository?.owner?.type === "DAO") {
+        const dao = await getDao(apiClient, repository.owner.id);
+        setIsDao(true);
+        setDaoInfo(dao);
+        setRequiresProposal(dao?.config?.require_release_proposal || false);
+        setRequiresProposal(true);
+      }
+    };
 
-  const createIssue = async () => {
-    setPostingIssue(true);
-    if (validateIssue()) {
-      const issue = {
+    if (repository) {
+      checkDaoStatus();
+    }
+  }, [repository]);
+
+  const handleCreateRelease = async () => {
+    setPostingRelease(true);
+
+    try {
+      const releaseData = {
         name: title,
         description,
         repoOwner: repository.owner.id,
@@ -68,33 +99,47 @@ function RepositoryReleaseNewView(props) {
         tagName,
         target: target.name,
         isTag: true,
-        attachments: attachments.map((a) => {
-          return {
-            name: a.file.name,
-            size: a.uploadResponse.data.size,
-            sha: a.uploadResponse.data.sha,
-            uploader: props.selectedAddress,
-          };
-        }),
+        attachments: attachments.map((a) => ({
+          name: a.file.name,
+          size: a.uploadResponse.data.size,
+          sha: a.uploadResponse.data.sha,
+          uploader: selectedAddress,
+        })),
       };
-      const res = await props.createRelease(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        issue
-      );
-      if (res && res.code === 0) {
-        router.push(
-          "/" +
-            repository.owner.id +
-            "/" +
-            repository.name +
-            "/releases/tag/" +
-            tagName
+
+      let result;
+      if (requiresProposal) {
+        result = await createReleaseForDao(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          cosmosGroupApiClient,
+          {
+            ...releaseData,
+            groupId: daoInfo.group_id,
+          }
+        );
+      } else {
+        result = await createRelease(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          releaseData
         );
       }
+
+      if (result) {
+        if (requiresProposal) {
+          router.push(`/daos/${daoInfo.name}/dashboard?tab=proposals`);
+        } else {
+          router.push(
+            `/${repository.owner.id}/${repository.name}/releases/tag/${tagName}`
+          );
+        }
+      }
+    } finally {
+      setPostingRelease(false);
     }
-    setPostingIssue(false);
   };
 
   const updateTags = () => {
@@ -182,6 +227,15 @@ function RepositoryReleaseNewView(props) {
           <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Column - Main Form */}
             <div className="lg:col-span-2 space-y-6">
+              {requiresProposal && (
+                <div className="alert alert-info">
+                  <Info className="w-4 h-4" />
+                  <span>
+                    This repository requires DAO approval for releases. Your
+                    release will be submitted as a proposal.
+                  </span>
+                </div>
+              )}
               {/* Tag Selection Section */}
               <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-6">
                 <h2 className="text-lg font-medium mb-4">Choose a tag</h2>
@@ -223,7 +277,7 @@ function RepositoryReleaseNewView(props) {
                           }`}
                           onClick={async () => {
                             setCreatingTag(true);
-                            const res = await props.createTag(
+                            const res = await createTag(
                               apiClient,
                               cosmosBankApiClient,
                               cosmosFeegrantApiClient,
@@ -401,12 +455,16 @@ function RepositoryReleaseNewView(props) {
               {/* Actions */}
               <div className="flex justify-end">
                 <button
-                  className={`btn btn-primary ${postingIssue ? "loading" : ""}`}
-                  disabled={title.trim().length === 0 || postingIssue}
-                  onClick={createIssue}
+                  className={`btn btn-primary ${
+                    postingRelease ? "loading" : ""
+                  }`}
+                  disabled={!title.trim() || postingRelease}
+                  onClick={handleCreateRelease}
                   data-test="create-release"
                 >
-                  Create Release
+                  {requiresProposal
+                    ? "Create Release Proposal"
+                    : "Create Release"}
                 </button>
               </div>
             </div>
@@ -445,11 +503,11 @@ function RepositoryReleaseNewView(props) {
       </div>
     </div>
   );
-}
+};
 
 export default connect(
   (state) => ({
     selectedAddress: state.wallet.selectedAddress,
   }),
-  { createRelease, createTag }
-)(RepositoryReleaseNewView);
+  { createRelease, createReleaseForDao, createTag }
+)(RepositoryReleaseView);

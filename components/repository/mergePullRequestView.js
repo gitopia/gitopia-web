@@ -5,16 +5,18 @@ import {
   updatePullRequestState,
   authorizeGitServer,
   mergePullRequest,
+  mergePullRequestForDao,
 } from "../../store/actions/repository";
-// import mergePullRequest from "../../helpers/mergePullRequest";
 import pullRequestStateClass from "../../helpers/pullRequestStateClass";
 import mergePullRequestCheck from "../../helpers/mergePullRequestCheck";
 import getPullRequestMergePermission from "../../helpers/getPullRequestMergePermission";
 import getGitServerAuthorization from "../../helpers/getGitServerAuthStatus";
+import getDao from "../../helpers/getDao";
 import { useApiClient } from "../../context/ApiClientContext";
+import { useRouter } from "next/router";
 
 function MergePullRequestView({
-  repositoryId,
+  repository,
   pullRequest,
   refreshPullRequest,
   ...props
@@ -27,8 +29,30 @@ function MergePullRequestView({
   const [pullMergeAccessDialogShown, setPullMergeAccessDialogShown] =
     useState(false);
   const [isGrantingAccess, setIsGrantingAccess] = useState(false);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const [requiresProposal, setRequiresProposal] = useState(false);
+  const [isCreatingProposal, setIsCreatingProposal] = useState(false);
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    cosmosGroupApiClient,
+  } = useApiClient();
+  const [daoInfo, setDaoInfo] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    checkIfDaoOwned();
+  }, [repository]);
+
+  const checkIfDaoOwned = async () => {
+    if (repository.owner.type === "DAO") {
+      const dao = await getDao(apiClient, repository.owner.id);
+      setDaoInfo(dao);
+      if (dao?.config?.require_pull_request_proposal) {
+        setRequiresProposal(true);
+      }
+    }
+  };
 
   const checkMerge = async () => {
     if (!props.selectedAddress) {
@@ -49,9 +73,13 @@ function MergePullRequestView({
       "<>",
       props.selectedAddress
     );
-    console.log("mergeCheck", res);
+
     if (res && res.data.is_mergeable) {
-      setMessage("This branch has no conflicts with base branch");
+      setMessage(
+        requiresProposal
+          ? "This branch has no conflicts and requires DAO approval to merge"
+          : "This branch has no conflicts with base branch"
+      );
       setStateClass(pullRequestStateClass(pullRequest.state));
       setIconType("check");
     } else {
@@ -64,14 +92,48 @@ function MergePullRequestView({
     setIsMerging(false);
   };
 
+  const createMergeProposal = async () => {
+    setIsCreatingProposal(true);
+    try {
+      const result = await props.mergePullRequestForDao(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        cosmosGroupApiClient,
+        {
+          repositoryId: repository.id,
+          iid: pullRequest.iid,
+          groupId: daoInfo.group_id,
+        }
+      );
+
+      if (result?.status === "PROPOSAL_SUBMITTED") {
+        refreshPullRequest();
+      }
+    } catch (error) {
+      console.error("Error creating merge proposal:", error);
+      props.notify("Failed to create merge proposal", "error");
+    } finally {
+      setIsCreatingProposal(false);
+    }
+  };
+
   const mergePull = async () => {
+    if (requiresProposal) {
+      await createMergeProposal();
+      router.push(`/daos/${daoInfo.name}/dashboard?tab=proposals`);
+
+      return;
+    }
+
     setIsMerging(true);
     const user = await getPullRequestMergePermission(
       apiClient,
       props.selectedAddress,
-      repositoryId,
+      repository.id,
       pullRequest.iid
     );
+
     if (user && user.havePermission) {
       let access = await getGitServerAuthorization(
         apiClient,
@@ -82,16 +144,18 @@ function MergePullRequestView({
         setIsMerging(false);
         return;
       }
+
       const res = await props.mergePullRequest(
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
         {
-          repositoryId: repositoryId,
+          repositoryId: repository.id,
           iid: pullRequest.iid,
           branchName: pullRequest.head.branch,
         }
       );
+
       if (res) {
         if (res.state === "TASK_STATE_SUCCESS") refreshPullRequest();
       } else {
@@ -117,7 +181,7 @@ function MergePullRequestView({
         setMessage("This pull request is closed");
         setIconType("warning");
     }
-  }, [pullRequest, props.selectedAddress]);
+  }, [pullRequest, props.selectedAddress, requiresProposal]);
 
   const refreshPullMergeAccess = async (mergeAfter = false) => {
     setPullMergeAccess(
@@ -125,18 +189,22 @@ function MergePullRequestView({
     );
     if (mergeAfter) setTimeout(mergePull, 0);
   };
+
   useEffect(() => {
     refreshPullMergeAccess();
   }, [props.selectedAddress]);
+
+  const getMergeButtonText = () => {
+    if (isCreatingProposal) return "Creating Proposal...";
+    if (isMerging) return "Merging...";
+    return requiresProposal ? "Create Merge Proposal" : "Merge Pull Request";
+  };
 
   return (
     <div className="flex w-full mt-8">
       <div className="flex-none mr-4">
         <div
-          className={
-            "flex items-center justify-center w-10 h-10 rounded-full bg-" +
-            stateClass
-          }
+          className={`flex items-center justify-center w-10 h-10 rounded-full bg-${stateClass}`}
         >
           <svg
             viewBox="0 0 24 24"
@@ -146,7 +214,7 @@ function MergePullRequestView({
             className="h-6 w-6"
           >
             <path
-              d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
+              d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 15 14V18.5"
               stroke="currentColor"
               strokeWidth="2"
               fill="none"
@@ -161,9 +229,7 @@ function MergePullRequestView({
         </div>
       </div>
       <div
-        className={
-          "flex flex-1 items-center border p-4 rounded-md border-" + stateClass
-        }
+        className={`flex flex-1 items-center border p-4 rounded-md border-${stateClass}`}
       >
         <div className="flex">
           {iconType === "check" ? (
@@ -201,24 +267,24 @@ function MergePullRequestView({
             {message}
           </div>
         </div>
-        {pullRequest.state === "OPEN" ? (
+        {pullRequest.state === "OPEN" && (
           <div className="sm:ml-auto flex-none">
             <button
-              className={
-                "btn btn-xs sm:btn-sm btn-primary sm:ml-4 m-0.5 h-10" +
-                (isMerging ? " loading" : "")
-              }
+              className={`btn btn-xs sm:btn-sm btn-primary sm:ml-4 m-0.5 h-10 ${
+                isMerging || isCreatingProposal ? "loading" : ""
+              }`}
               data-test="merge-pr"
               onClick={mergePull}
-              disabled={isMerging || stateClass === "warning"}
+              disabled={
+                isMerging || isCreatingProposal || stateClass === "warning"
+              }
             >
-              Merge Pull Request
+              {getMergeButtonText()}
             </button>
           </div>
-        ) : (
-          ""
         )}
       </div>
+
       <input
         type="checkbox"
         checked={pullMergeAccessDialogShown}
@@ -238,16 +304,14 @@ function MergePullRequestView({
           <div className="modal-action">
             <label
               className="btn btn-sm"
-              onClick={() => {
-                setPullMergeAccessDialogShown(false);
-              }}
+              onClick={() => setPullMergeAccessDialogShown(false)}
             >
               Cancel
             </label>
             <button
-              className={
-                "btn btn-sm btn-primary" + (isGrantingAccess ? " loading" : "")
-              }
+              className={`btn btn-sm btn-primary ${
+                isGrantingAccess ? "loading" : ""
+              }`}
               onClick={async () => {
                 setIsGrantingAccess(true);
                 const res = await props.authorizeGitServer(
@@ -285,4 +349,5 @@ export default connect(mapStateToProps, {
   updatePullRequestState,
   authorizeGitServer,
   mergePullRequest,
+  mergePullRequestForDao,
 })(MergePullRequestView);

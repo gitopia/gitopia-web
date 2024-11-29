@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import {
   Users,
-  Wallet,
+  Landmark,
   Settings,
   Settings2,
   Info,
@@ -35,12 +35,13 @@ import {
 } from "@gitopia/gitopia-js/dist/types/gitopia/tx";
 import { DaoConfig } from "@gitopia/gitopia-js/dist/types/gitopia/dao";
 import AccountAvatar from "../account/avatar";
+import { validAddress } from "../../helpers/validAddress";
 
 // Proposal type definitions with icons and descriptions
 const PROPOSAL_TYPES = {
   GROUP_MEMBER_UPDATE: {
     id: "GROUP_MEMBER_UPDATE",
-    title: "Update Dao Members",
+    title: "Update DAO Members",
     description: "Add, remove, or update voting power of DAO members",
     icon: Users,
     color: "text-blue-500",
@@ -74,7 +75,7 @@ const PROPOSAL_TYPES = {
     id: "TREASURY_SPEND",
     title: "Treasury Spend",
     description: "Propose spending from the DAO treasury",
-    icon: Wallet,
+    icon: Landmark,
     color: "text-yellow-500",
     bgColor: "bg-yellow-500/10",
   },
@@ -827,29 +828,83 @@ const GovernanceParamsForm = ({ currentParams, onSubmit, onStateChange }) => {
   );
 };
 
-const TreasurySpendForm = ({ onSubmit, onStateChange }) => {
+const TreasurySpendForm = ({ onSubmit, onStateChange, treasuryBalance }) => {
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
-  const [denom, setDenom] = useState("lore"); // Default to lore token
   const [hasChanges, setHasChanges] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+
+  // Convert microLORE to LORE for display (1 LORE = 1,000,000 ulore)
+  const formatLoreBalance = (microLore) => {
+    return (parseInt(microLore) / 1000000).toFixed(2);
+  };
+
+  const validateGitopiaAddress = (address) => {
+    if (!address.trim()) {
+      return false;
+    }
+    return validAddress.test(address);
+  };
+
+  const validateAmount = (amount) => {
+    if (!amount || isNaN(amount)) return false;
+    const microLoreAmount = parseFloat(amount) * 1000000; // Convert to microLORE
+    const balance = parseInt(treasuryBalance);
+    return microLoreAmount > 0 && microLoreAmount <= balance;
+  };
 
   // Validate form data and update parent component
   useEffect(() => {
-    const isValid = recipient && amount && parseFloat(amount) > 0;
+    const errors = {};
+
+    if (recipient && !validateGitopiaAddress(recipient)) {
+      errors.recipient = "Invalid Gitopia address format";
+    }
+
+    if (amount) {
+      if (!validateAmount(amount)) {
+        errors.amount =
+          "Amount must be greater than 0 and less than treasury balance";
+      }
+    }
+
+    setValidationErrors(errors);
+
+    const isValid =
+      recipient &&
+      amount &&
+      validateGitopiaAddress(recipient) &&
+      validateAmount(amount);
+
     setHasChanges(isValid);
     onStateChange?.({ hasChanges: isValid });
 
     if (isValid) {
+      // Convert to microLORE
+      const microLoreAmount = (parseFloat(amount) * 1000000).toString();
       onSubmit?.({
         recipient,
-        amount: amount.toString(),
-        denom,
+        amount: microLoreAmount,
+        denom: "ulore",
       });
     }
-  }, [recipient, amount, denom]);
+  }, [recipient, amount, treasuryBalance]);
 
   return (
     <div className="space-y-6">
+      {/* Treasury Balance Display */}
+      <div className="bg-base-200 p-4 rounded-lg flex items-center space-x-4">
+        <div className="p-2 bg-primary/10 rounded-full">
+          <Landmark className="w-6 h-6 text-primary" />
+        </div>
+        <div>
+          <div className="text-sm text-gray-400">Treasury Balance</div>
+          <div className="text-lg font-semibold">
+            {formatLoreBalance(treasuryBalance)} LORE
+          </div>
+        </div>
+      </div>
+
       <div className="form-control">
         <label className="label">
           <span className="label-text">Recipient Address</span>
@@ -857,40 +912,48 @@ const TreasurySpendForm = ({ onSubmit, onStateChange }) => {
         <input
           type="text"
           placeholder="gitopia1..."
-          className="input input-bordered w-full"
+          className={`input input-bordered w-full ${
+            validationErrors.recipient ? "input-error" : ""
+          }`}
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
         />
+        {validationErrors.recipient && (
+          <label className="label">
+            <span className="label-text-alt text-error">
+              {validationErrors.recipient}
+            </span>
+          </label>
+        )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Amount</span>
-          </label>
+      <div className="form-control">
+        <label className="label">
+          <span className="label-text">Amount (LORE)</span>
+        </label>
+        <div className="input-group">
           <input
             type="number"
-            className="input input-bordered w-full"
+            className={`input input-bordered w-full ${
+              validationErrors.amount ? "input-error" : ""
+            }`}
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             min="0"
             step="0.000001"
+            placeholder="0.000000"
           />
+          <span className="bg-base-300 px-4 flex items-center font-medium">
+            LORE
+          </span>
         </div>
-
-        <div className="form-control">
+        {validationErrors.amount && (
           <label className="label">
-            <span className="label-text">Token</span>
+            <span className="label-text-alt text-error">
+              {validationErrors.amount}
+            </span>
           </label>
-          <select
-            className="select select-bordered w-full"
-            value={denom}
-            onChange={(e) => setDenom(e.target.value)}
-          >
-            <option value="ulore">LORE</option>
-            <option value="uatom">ATOM</option>
-          </select>
-        </div>
+        )}
       </div>
 
       <div className="bg-base-300 p-4 rounded-lg">
@@ -898,8 +961,7 @@ const TreasurySpendForm = ({ onSubmit, onStateChange }) => {
           <Info className="w-5 h-5 mr-2 text-blue-400" />
           <span className="text-sm text-gray-300">
             Treasury spend proposals require approval from DAO members through
-            voting. Amounts should be specified in micro-units (1 LORE =
-            1,000,000 ulore).
+            voting. Enter the amount in LORE (1 LORE = 1,000,000 ulore).
           </span>
         </div>
       </div>
@@ -937,6 +999,7 @@ function CreateProposalView({
   groupMembers,
   policyInfo,
   selectedAddress,
+  treasuryBalance,
   onSubmit,
   onCancel,
 }) {
@@ -1153,6 +1216,7 @@ function CreateProposalView({
               <TreasurySpendForm
                 onSubmit={setFormData}
                 onStateChange={setFormState}
+                treasuryBalance={treasuryBalance}
               />
             )}
 

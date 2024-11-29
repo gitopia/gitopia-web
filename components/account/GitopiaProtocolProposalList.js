@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import getProposals from "../../helpers/getProposals";
-import ProposalItem from "../../components/dashboard/proposalItem";
+import ProposalItem from "../dashboard/proposalItem";
 import { useApiClient } from "../../context/ApiClientContext";
 
-function DaoProposalList({ dao, ...props }) {
+function GitopiaProtocolProposalList({ dao, ...props }) {
   const router = useRouter();
   // const [dao, setDao] = useState({
   //   name: "",
@@ -33,7 +33,7 @@ function DaoProposalList({ dao, ...props }) {
 
         <div className="flex-none">
           <Link
-            href={"/" + router.query.userId + "?tab=proposals&id=new"}
+            href={"/" + router.query.userId + "?tab=protocolproposals&id=new"}
             className="btn btn-primary btn-sm btn-wide"
           >
             New Proposal
@@ -47,7 +47,7 @@ function DaoProposalList({ dao, ...props }) {
             return (
               <ProposalItem
                 proposal={p}
-                hrefBase={"/" + router.query.userId + "?tab=proposals"}
+                hrefBase={"/" + router.query.userId + "?tab=protocolproposals"}
                 key={p.proposal_id}
               />
             );
@@ -69,4 +69,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(DaoProposalList);
+export default connect(mapStateToProps, {})(GitopiaProtocolProposalList);

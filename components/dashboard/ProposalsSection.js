@@ -17,6 +17,7 @@ import {
   MinusCircle,
   Loader2,
   AlertTriangle,
+  FileText,
 } from "lucide-react";
 import { useApiClient } from "../../context/ApiClientContext";
 import ProposalDetailsModal from "./ProposalDetailsModal";
@@ -34,7 +35,7 @@ const ProposalTypeIcon = ({ type }) => {
     collaborator: Users,
     release: Tag,
     settings: Settings2,
-    default: Vote,
+    default: FileText,
   };
 
   const Icon = iconMap[type] || iconMap.default;
@@ -160,11 +161,13 @@ const ProposalCard = ({
         </div>
       </div>
 
-      {needsExecution && (
+      {!needsExecution && proposal.id == 44 && (
         <div className="mb-4 p-3 bg-warning/10 border border-warning/20 rounded-lg">
           <div className="flex items-center text-warning">
             <AlertTriangle className="w-4 h-4 mr-2" />
-            <span className="text-sm">This proposal needs to be executed</span>
+            <span className="text-sm">
+              The proposal message(s) needs to be executed
+            </span>
           </div>
         </div>
       )}

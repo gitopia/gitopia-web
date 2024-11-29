@@ -1,11 +1,11 @@
 import React from "react";
 import {
   Users,
-  ArrowRight,
   Wallet,
   Settings2,
   RefreshCw,
   Tag,
+  Rocket,
   GitPullRequest,
   GitMerge,
   Trash2,
@@ -48,6 +48,12 @@ const MessageTypeConfig = {
     title: "Merge Pull Request",
     color: "text-pink-500",
     bgColor: "bg-pink-500/10",
+  },
+  "/gitopia.gitopia.gitopia.MsgDaoCreateRelease": {
+    icon: Rocket,
+    title: "Create Release",
+    color: "text-orange-500",
+    bgColor: "bg-orange-500/10",
   },
 };
 
@@ -158,6 +164,51 @@ const MergePullRequestMessage = ({ message }) => {
   );
 };
 
+const CreateReleaseMessage = ({ message }) => {
+  return (
+    <div className="space-y-4">
+      <div className="bg-base-300 p-3 rounded-lg">
+        <div className="flex flex-col space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-400">Repository:</span>
+            <span className="font-mono">
+              {message.repositoryId.id}/{message.repositoryId.name}
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-400">Tag:</span>
+            <span className="font-semibold">{message.tagName}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-400">Target:</span>
+            <span className="text-sm">{message.target}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-400">Name:</span>
+            <span className="text-sm font-medium">{message.name}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-400">Type:</span>
+            <div className="flex gap-2">
+              {message.draft && <span className="badge badge-sm">Draft</span>}
+              {message.preRelease && (
+                <span className="badge badge-sm">Pre-release</span>
+              )}
+              {message.isTag && <span className="badge badge-sm">Tag</span>}
+            </div>
+          </div>
+        </div>
+      </div>
+      {message.description && (
+        <div className="bg-base-300 p-3 rounded-lg">
+          <div className="text-sm text-gray-400 mb-2">Description:</div>
+          <div className="text-sm markdown-body">{message.description}</div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const MessageContent = ({ type, message }) => {
   switch (type) {
     case "/cosmos.group.v1.MsgUpdateGroupMembers":
@@ -168,6 +219,8 @@ const MessageContent = ({ type, message }) => {
       return <DaoConfigMessage message={message} />;
     case "/gitopia.gitopia.gitopia.MsgInvokeMergePullRequest":
       return <MergePullRequestMessage message={message} />;
+    case "/gitopia.gitopia.gitopia.MsgDaoCreateRelease":
+      return <CreateReleaseMessage message={message} />;
     default:
       return (
         <div className="bg-base-300 p-3 rounded-lg">

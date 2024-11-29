@@ -4,14 +4,14 @@ import { useRouter } from "next/router";
 import Link from "next/dist/client/link";
 import { submitGovernanceProposal } from "../../store/actions/proposals";
 import { chainUpgradeProposal } from "../../store/actions/proposals";
-import MarkdownEditor from "../../components/markdownEditor";
+import MarkdownEditor from "../markdownEditor";
 import { communityPoolSpendProposal } from "../../store/actions/proposals";
 import { paramChangeProposal } from "../../store/actions/proposals";
 import getUser from "../../helpers/getUser";
 import validAddress from "../../helpers/validAddress";
 import { useApiClient } from "../../context/ApiClientContext";
 
-function DaoProposalCreate({ dao, ...props }) {
+function GitopiaProtocolProposalCreate({ dao, ...props }) {
   const [validateAddressError, setValidateAddressError] = useState("");
   const [validateAmountError, setValidateAmountError] = useState("");
   const [validateInitialAmountError, setValidateInitialAmountError] =
@@ -147,7 +147,7 @@ function DaoProposalCreate({ dao, ...props }) {
     if (res && res.code === 0) {
       router.push(
         hrefBase +
-          "?tab=proposals&id=" +
+          "?tab=protocolproposals&id=" +
           result[0].events[4].attributes[0].value
       );
     }
@@ -156,7 +156,7 @@ function DaoProposalCreate({ dao, ...props }) {
   return (
     <div className="mt-4">
       <div className="">
-        <Link href={hrefBase + "?tab=proposals"}>
+        <Link href={hrefBase + "?tab=protocolproposals"}>
           <label className="flex link text-sm uppercase no-underline items-center hover:text-green mt-8">
             <svg
               width="8"
@@ -709,4 +709,4 @@ export default connect(mapStateToProps, {
   chainUpgradeProposal,
   communityPoolSpendProposal,
   paramChangeProposal,
-})(DaoProposalCreate);
+})(GitopiaProtocolProposalCreate);

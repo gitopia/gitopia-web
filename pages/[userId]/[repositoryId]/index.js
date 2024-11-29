@@ -1,11 +1,18 @@
 import Head from "next/head";
 import Header from "../../../components/header";
-
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Link from "next/link";
 import MarkdownWrapper from "../../../components/markdownWrapper";
 import { notify } from "reapop";
+import {
+  BookOpenText,
+  GitBranch,
+  Tag,
+  Plus,
+  Shield,
+  GitCommit,
+} from "lucide-react";
 
 import RepositoryHeader from "../../../components/repository/header";
 import RepositoryMainTabs from "../../../components/repository/mainTabs";
@@ -26,7 +33,6 @@ import getContent from "../../../helpers/getContent";
 import getCommitHistory from "../../../helpers/getCommitHistory";
 import pluralize from "../../../helpers/pluralize";
 import useWindowSize from "../../../hooks/useWindowSize";
-import find from "lodash/find";
 import getAnyRepository from "../../../helpers/getAnyRepository";
 import getAllRepositoryBranch from "../../../helpers/getAllRepositoryBranch";
 import getAllRepositoryTag from "../../../helpers/getAllRepositoryTag";
@@ -235,6 +241,22 @@ function RepositoryView(props) {
   const { isMobile } = useWindowSize();
   const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
     useApiClient();
+  const [daoData, setDaoData] = useState(null);
+
+  useEffect(() => {
+    const fetchDaoData = async () => {
+      if (repository?.owner?.type === "DAO") {
+        try {
+          const daoData = await getDao(apiClient, repository.owner.id);
+          setDaoData(daoData);
+        } catch (error) {
+          console.error("Error fetching DAO:", error);
+        }
+      }
+    };
+
+    fetchDaoData();
+  }, [repository?.owner]);
 
   const loadEntities = async (
     currentEntities = [],
@@ -400,8 +422,12 @@ function RepositoryView(props) {
       <Header />
       <div className="flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
-          <RepositoryHeader repository={repository} />
-          <RepositoryMainTabs repository={repository} active="code" />
+          <RepositoryHeader repository={repository} daoData={daoData} />
+          <RepositoryMainTabs
+            repository={repository}
+            active="code"
+            daoData={daoData}
+          />
           {firstFetchLoading ? (
             <div className="flex mt-8 items-center justify-center">
               <button className="btn btn-square btn-ghost loading" />
@@ -480,31 +506,7 @@ function RepositoryView(props) {
                         legacyBehavior
                       >
                         <a className="mt-6 flex items-center text-xs text-type-secondary font-semibold hover:text-green">
-                          <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 mr-2"
-                          >
-                            <rect
-                              x="4"
-                              y="5"
-                              width="8"
-                              height="14"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            />
-                            <rect
-                              x="12"
-                              y="5"
-                              width="8"
-                              height="14"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            />
-                          </svg>
+                          <BookOpenText className="h-4 w-4 mr-2" />
                           <span>README</span>
                         </a>
                       </Link>
@@ -519,7 +521,7 @@ function RepositoryView(props) {
                 <div className="py-8">
                   <div className="flex items-center">
                     <a
-                      className="flex-1 text-left"
+                      className="flex-1 text-left flex items-center gap-2"
                       data-test="releases"
                       href={
                         "/" +
@@ -530,6 +532,19 @@ function RepositoryView(props) {
                       }
                     >
                       <span>Releases</span>
+                      {daoData?.config?.require_release_proposal &&
+                        repository.owner.type === "DAO" && (
+                          <div className="group relative">
+                            <Shield
+                              size={14}
+                              className="text-green-400 fill-green-400/10 cursor-help"
+                            />
+                            <div className="hidden group-hover:block absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-800 text-xs text-white rounded whitespace-nowrap z-50">
+                              Creating releases requires DAO approval
+                              <div className="absolute top-1/2 right-full -translate-y-1/2 border-4 border-transparent border-r-gray-800"></div>
+                            </div>
+                          </div>
+                        )}
                     </a>
                     <a
                       href={
@@ -581,38 +596,14 @@ function RepositoryView(props) {
                         legacyBehavior
                       >
                         <a className="mt-6 flex items-center text-xs text-type-secondary font-semibold uppercase hover:text-green">
-                          <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="transparent"
-                            className="w-4 h-4 mr-2"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M12 7V17"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            />
-                            <path
-                              d="M17 12H7"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            />
-                            <circle
-                              cx="12"
-                              cy="12"
-                              r="11"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            />
-                          </svg>
+                          <Plus className="w-4 h-4 mr-2" />
                           <span>Create a release</span>
                         </a>
                       </Link>
                     )}
                   </div>
                 </div>
+
                 <div className="py-8">
                   <div className="flex items-center pb-2">
                     <div className="flex-1 text-left">
@@ -651,6 +642,7 @@ function RepositoryView(props) {
                   </div>
                 </div>
               </div>
+
               <div
                 className="flex-1 order-1 sm:order-2"
                 style={{ maxWidth: "calc(1024px - 18rem)" }}
@@ -687,38 +679,7 @@ function RepositoryView(props) {
                       }
                     >
                       <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          stroke="currentColor"
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 mr-1"
-                        >
-                          <g transform="scale(0.8)">
-                            <path
-                              d="M8.5 18.5V12M8.5 5.5V12M8.5 12H13C14.1046 12 15 12.8954 15 14V18.5"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              fill="none"
-                            />
-                            <circle
-                              cx="8.5"
-                              cy="18.5"
-                              r="2.5"
-                              fill="currentColor"
-                            />
-                            <circle
-                              cx="8.5"
-                              cy="5.5"
-                              r="2.5"
-                              fill="currentColor"
-                            />
-                            <path
-                              d="M17.5 18.5C17.5 19.8807 16.3807 21 15 21C13.6193 21 12.5 19.8807 12.5 18.5C12.5 17.1193 13.6193 16 15 16C16.3807 16 17.5 17.1193 17.5 18.5Z"
-                              fill="currentColor"
-                            />
-                          </g>
-                        </svg>
+                        <GitBranch className="h-5 w-5 mr-1" />
                         {repository.branches.length}
                         <span className="ml-1 uppercase">
                           {pluralize("branch", repository.branches.length)}
@@ -736,25 +697,7 @@ function RepositoryView(props) {
                       }
                     >
                       <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 mr-2"
-                        >
-                          <path
-                            d="M7.04297 19.0293V9.36084L12.043 4.4333L17.043 9.36084V19.0293H7.04297Z"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
-                          <path
-                            d="M12.043 11.5293V9.5293"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
-                        </svg>
+                        <Tag className="h-4 w-4 mr-2" />
                         {repository.tags.length}
                         <span className="ml-1 uppercase">
                           {pluralize("tag", repository.tags.length)}
@@ -774,18 +717,7 @@ function RepositoryView(props) {
                       }
                     >
                       <div className="p-2 text-type-secondary text-xs font-semibold uppercase flex">
-                        <svg
-                          className="w-4 h-4 mr-2"
-                          viewBox="0 0 25 25"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M12.9 4.0293L6.04297 4.0293L6.04297 20.0293L18.043 20.0293L18.043 9.80707M12.9 4.0293L18.043 9.80707M12.9 4.0293L12.9 9.80707L18.043 9.80707"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
-                        </svg>
+                        <GitCommit className="w-4 h-4 mr-2" />
                         {commitsLength}
                         <span className="ml-1 uppercase">
                           {pluralize("commit", commitsLength)}

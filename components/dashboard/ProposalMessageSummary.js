@@ -1,13 +1,11 @@
 import React from "react";
 import {
   Users,
-  ArrowRight,
   Wallet,
   Settings2,
   RefreshCw,
-  Tag,
+  Rocket,
   GitMerge,
-  Trash2,
   Text,
   AlertCircle,
 } from "lucide-react";
@@ -59,6 +57,13 @@ const MessageTypeConfig = {
     color: "text-pink-500",
     bgColor: "bg-pink-500/10",
     getSummary: (msg) => `Merge PR #${msg.iid}`,
+  },
+  "/gitopia.gitopia.gitopia.MsgDaoCreateRelease": {
+    icon: Rocket,
+    title: "Create Release",
+    color: "text-orange-500",
+    bgColor: "bg-orange-500/10",
+    getSummary: (msg) => `Create release ${msg.tagName}`,
   },
 };
 

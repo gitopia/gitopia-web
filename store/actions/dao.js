@@ -459,7 +459,7 @@ export const createGroupProposal = (
       const result = await sendTransaction({ message })(dispatch, getState);
 
       if (result && result.code === 0) {
-        dispatch(notify("Proposal submitted successfully", "success"));
+        dispatch(notify("Proposal submitted successfully", "info"));
         updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
           dispatch,
           getState
@@ -484,6 +484,18 @@ export const executeGroupProposal = (
   proposalId
 ) => {
   return async (dispatch, getState) => {
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "execute proposal"
+      ))
+    )
+      return null;
+
     const { wallet, env } = getState();
 
     if (!wallet.activeWallet) {
@@ -499,7 +511,7 @@ export const executeGroupProposal = (
         dispatch,
         getState
       );
-
+      console.log("txClient", env.txClient);
       const message = await env.txClient.msgExecGroup({
         proposalId: proposalId,
         executor: wallet.selectedAddress,
@@ -508,7 +520,7 @@ export const executeGroupProposal = (
       const result = await sendTransaction({ message })(dispatch, getState);
 
       if (result && result.code === 0) {
-        dispatch(notify("Proposal executed successfully", "success"));
+        dispatch(notify("Proposal executed successfully", "info"));
         updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
           dispatch,
           getState

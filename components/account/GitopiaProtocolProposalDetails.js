@@ -13,7 +13,7 @@ import getVoter from "../../helpers/getVoter";
 import ReactMarkdown from "react-markdown";
 import { useApiClient } from "../../context/ApiClientContext";
 
-function DaoProposalDetails({ id, ...props }) {
+function GitopiaProtocolProposalDetails({ id, ...props }) {
   const [amount, setAmount] = useState("");
   const [validateAmountError, setValidateAmountError] = useState(null);
   const [depositLoading, setDepositLoading] = useState(false);
@@ -48,7 +48,7 @@ function DaoProposalDetails({ id, ...props }) {
           setProposer(res.proposer);
           setInitialDeposit(res.initial_deposit);
         } else {
-          router.push(router.query.userId + "?tab=proposals");
+          router.push(router.query.userId + "?tab=protocolproposals");
         }
       });
     }
@@ -156,7 +156,7 @@ function DaoProposalDetails({ id, ...props }) {
   return (
     <>
       <div className="mt-8 pb-4">
-        <Link href={hrefBase + "?tab=proposals"}>
+        <Link href={hrefBase + "?tab=protocolproposals"}>
           <label className="flex link text-sm uppercase no-underline items-center hover:text-green">
             <svg
               width="8"
@@ -819,5 +819,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, { proposalDeposit, proposalVote })(
-  DaoProposalDetails
+  GitopiaProtocolProposalDetails
 );
