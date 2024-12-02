@@ -205,6 +205,7 @@ function GitopiaLive(props) {
         <div className="flex-1 order-1 sm:order-2 mt-4 max-w-3xl">
           <SupportOwner
             ownerAddress={props.repository.owner.address}
+            repository={props.repository}
             isMobile={isMobile}
           />
           <div className="mt-8 flex justify-start">
