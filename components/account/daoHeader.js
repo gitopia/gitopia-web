@@ -55,7 +55,7 @@ function AccountDaoHeader(props) {
             <a
               href={
                 process.env.NEXT_PUBLIC_EXPLORER_URL +
-                "/accounts/" +
+                "/account/" +
                 props.dao.address
               }
               target="_blank"

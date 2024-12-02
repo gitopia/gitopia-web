@@ -49,7 +49,7 @@ function UserHeader(props) {
           <a
             href={
               process.env.NEXT_PUBLIC_EXPLORER_URL +
-              "/accounts/" +
+              "/account/" +
               props.user.creator
             }
             target="_blank"
