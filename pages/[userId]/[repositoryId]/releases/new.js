@@ -78,7 +78,6 @@ const RepositoryReleaseView = ({
         setIsDao(true);
         setDaoInfo(dao);
         setRequiresProposal(dao?.config?.require_release_proposal || false);
-        setRequiresProposal(true);
       }
     };
 
