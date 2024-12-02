@@ -20,7 +20,7 @@ import { useRouter } from "next/router";
 import { getBalance } from "../../store/actions/wallet";
 import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
 import sortBy from "lodash/sortBy";
-import DaoRepositories from "./DAORepositories";
+import DaoRepositories from "./DaoRepositories";
 
 function DaoDashboard({ dao = {}, advanceUser, ...props }) {
   const router = useRouter();
