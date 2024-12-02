@@ -22,14 +22,7 @@ import {
   UsersRound,
   Tag,
 } from "lucide-react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Legend,
-  Tooltip,
-} from "recharts";
+import VotingPowerChart from "../../../components/dashboard/VotingPowerChart";
 
 const DAO_STEPS = {
   BASIC_INFO: {
@@ -72,7 +65,6 @@ function NewDao({ selectedAddress, createDao }) {
   const [daoCreating, setDaoCreating] = useState(false);
   const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
     useApiClient();
-  console.log("selected", selectedAddress);
   // Form state
   const [formData, setFormData] = useState({
     name: "",
@@ -373,7 +365,6 @@ function NewDao({ selectedAddress, createDao }) {
               {formData.members.map((member, index) => (
                 <div key={index} className="bg-base-300 p-4 rounded-lg">
                   <div className="grid grid-cols-12 gap-4">
-                    {/* Address Input Column - takes up 9 columns */}
                     <div className="col-span-9">
                       <TextInput
                         label={
@@ -399,7 +390,6 @@ function NewDao({ selectedAddress, createDao }) {
                       />
                     </div>
 
-                    {/* Weight Input Column - takes up 3 columns */}
                     <div className="col-span-3">
                       <TextInput
                         label="Voting Weight"
@@ -412,7 +402,6 @@ function NewDao({ selectedAddress, createDao }) {
                     </div>
                   </div>
 
-                  {/* Delete Button - Positioned below the inputs */}
                   {index !== 0 && (
                     <div className="flex justify-end mt-2">
                       <button
@@ -440,33 +429,15 @@ function NewDao({ selectedAddress, createDao }) {
               <h3 className="text-lg font-semibold mb-4">
                 Voting Power Distribution
               </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={votingPowerData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, value }) =>
-                      `${name.substring(0, 6)}...${name.substring(
-                        name.length - 4
-                      )} (${value.toFixed(0)}%)`
-                    }
-                  >
-                    {votingPowerData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
+              <div className="h-[300px]">
+                <VotingPowerChart
+                  data={votingPowerData}
+                  showHeader={false}
+                  height={300}
+                  innerRadius={60}
+                  outerRadius={100}
+                />
+              </div>
             </div>
           </div>
         );

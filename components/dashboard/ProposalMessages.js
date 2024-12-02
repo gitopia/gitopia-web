@@ -43,7 +43,7 @@ const MessageTypeConfig = {
     color: "text-yellow-500",
     bgColor: "bg-yellow-500/10",
   },
-  "/gitopia.gitopia.gitopia.MsgInvokeMergePullRequest": {
+  "/gitopia.gitopia.gitopia.MsgInvokeDaoMergePullRequest": {
     icon: GitMerge,
     title: "Merge Pull Request",
     color: "text-pink-500",
@@ -107,22 +107,22 @@ const DaoConfigMessage = ({ message }) => {
     {
       icon: GitPullRequest,
       label: "Pull Request Proposals",
-      value: message.config.requirePullRequestProposal,
+      value: message.config.require_pull_request_proposal,
     },
     {
       icon: Trash2,
       label: "Repository Deletion Proposals",
-      value: message.config.requireRepositoryDeletionProposal,
+      value: message.config.require_repository_deletion_proposal,
     },
     {
       icon: Users,
       label: "Collaborator Management",
-      value: message.config.requireCollaboratorProposal,
+      value: message.config.require_collaborator_proposal,
     },
     {
       icon: Tag,
       label: "Release Management",
-      value: message.config.requireReleaseProposal,
+      value: message.config.require_release_proposal,
     },
   ];
 
@@ -217,7 +217,7 @@ const MessageContent = ({ type, message }) => {
       return <TreasurySpendMessage message={message} />;
     case "/gitopia.gitopia.gitopia.MsgUpdateDaoConfig":
       return <DaoConfigMessage message={message} />;
-    case "/gitopia.gitopia.gitopia.MsgInvokeMergePullRequest":
+    case "/gitopia.gitopia.gitopia.MsgInvokeDaoMergePullRequest":
       return <MergePullRequestMessage message={message} />;
     case "/gitopia.gitopia.gitopia.MsgDaoCreateRelease":
       return <CreateReleaseMessage message={message} />;

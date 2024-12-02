@@ -9,6 +9,7 @@ import { notify } from "reapop";
 import formatBytes from "../../helpers/formatBytes";
 import debounce from "lodash/debounce";
 import { useApiClient } from "../../context/ApiClientContext";
+import { User, Users } from "lucide-react";
 
 function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
   const name = isDao
@@ -31,8 +32,12 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
   const [imageFileHash, setImageFileHash] = useState(null);
   const [imageUploading, setImageUploading] = useState(0);
   // var image = new Image();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    cosmosGroupApiClient,
+  } = useApiClient();
 
   useEffect(() => {
     setValidateImageUrlError("");
@@ -299,8 +304,10 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                           apiClient,
                           cosmosBankApiClient,
                           cosmosFeegrantApiClient,
+                          cosmosGroupApiClient,
                           {
                             id: props.dao.address,
+                            groupId: props.dao.group_id,
                             url: imageUrl,
                           }
                         )
@@ -313,8 +320,9 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                     if (res && res.code === 0) {
                       props.notify(
                         "Your " +
-                          (isDao ? "DAO" : "user") +
-                          " avatar is updated",
+                          (isDao
+                            ? "DAO avatar update proposal is submitted"
+                            : "user avatar is updated"),
                         "info"
                       );
                       if (props.refresh) await props.refresh();
@@ -372,18 +380,34 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
           >
             {isDao ? (
               props.dao?.avatarUrl == "" ? (
-                <span className="bg-purple-900 flex items-center justify-center text-8xl uppercase h-full">
-                  {name[0]}
-                </span>
+                <div className="relative bg-purple-900 flex items-center justify-center h-full">
+                  <span className="text-8xl uppercase">{name[0]}</span>
+                  <div className="absolute -bottom-2 -right-2 bg-base-100 rounded-full p-2 border-4 border-base-100 shadow-lg">
+                    <Users size={24} className="text-purple-900" />
+                  </div>
+                </div>
               ) : (
-                <img src={props.dao?.avatarUrl} />
+                <div className="relative">
+                  <img src={props.dao?.avatarUrl} />
+                  <div className="absolute -bottom-2 -right-2 bg-base-100 rounded-full p-2 border-4 border-base-100 shadow-lg">
+                    <Users size={24} className="text-purple-900" />
+                  </div>
+                </div>
               )
             ) : props.user.avatarUrl == "" ? (
-              <span className="bg-purple-900 flex items-center justify-center text-8xl uppercase h-full">
-                {name[0]}
-              </span>
+              <div className="relative bg-purple-900 flex items-center justify-center h-full">
+                <span className="text-8xl uppercase">{name[0]}</span>
+                {/* <div className="absolute -bottom-2 -right-2 bg-base-100 rounded-full p-2 border-4 border-base-100 shadow-lg">
+                  <User size={24} className="text-purple-900" />
+                </div> */}
+              </div>
             ) : (
-              <img src={props.user.avatarUrl} />
+              <div className="relative">
+                <img src={props.user.avatarUrl} />
+                <div className="absolute -bottom-2 -right-2 bg-base-100 rounded-full p-2 border-4 border-base-100 shadow-lg">
+                  <User size={24} className="text-purple-900" />
+                </div>
+              </div>
             )}
           </div>
         </div>

@@ -4,9 +4,11 @@ import { connect } from "react-redux";
 import {
   updateCollaborator,
   removeCollaborator,
+  updateDaoRepositoryCollaborator,
+  removeDaoRepositoryCollaborator,
 } from "../../store/actions/repository";
 import getUser from "../../helpers/getUser";
-import shrinkAddress from "../../helpers/shrinkAddress";
+import getDao from "../../helpers/getDao";
 import { notify } from "reapop";
 import AccountCard from "../account/card";
 import { useApiClient } from "../../context/ApiClientContext";
@@ -16,6 +18,7 @@ function CollaboratorsList({
   repoName,
   collaborators = [],
   refreshRepository,
+  repository,
   ...props
 }) {
   const [collabAddress, setCollabAddress] = useState("");
@@ -30,8 +33,34 @@ function CollaboratorsList({
   const [isRemoving, setIsRemoving] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [startUpdate, setStartUpdate] = useState("");
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const [daoData, setDaoData] = useState(null);
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    cosmosGroupApiClient,
+  } = useApiClient();
+
+  const isDAORepository = repository?.owner?.type === "DAO";
+
+  // Fetch DAO data including config when component mounts
+  useEffect(() => {
+    const fetchDaoData = async () => {
+      if (isDAORepository) {
+        try {
+          const daoData = await getDao(apiClient, repository.owner.id);
+          setDaoData(daoData);
+        } catch (error) {
+          console.error("Error fetching DAO:", error);
+        }
+      }
+    };
+
+    fetchDaoData();
+  }, [repository?.owner]);
+
+  const requiresProposal =
+    isDAORepository && daoData?.config?.require_collaborator_proposal;
 
   const validateCollaborator = async () => {
     const res = await getUser(apiClient, collabAddress);
@@ -39,63 +68,164 @@ function CollaboratorsList({
       setCollabHint({
         shown: true,
         type: "error",
-        message: "User dosen't exist",
+        message: "User doesn't exist",
       });
       return false;
     }
     return true;
   };
-  const addCollaborator = async () => {
+
+  const handleAddCollaborator = async () => {
     setIsAdding(true);
     if (await validateCollaborator()) {
-      const res = await props.updateCollaborator(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        {
-          repoName: repoName,
-          repoOwner: repoOwnerId,
-          user: collabAddress,
-          role: collabRole,
+      if (isDAORepository && requiresProposal) {
+        // Get DAO info to get group ID
+        const dao = await getDao(apiClient, repository.owner.id);
+        if (!dao) {
+          props.notify("Failed to fetch DAO info", "error");
+          setIsAdding(false);
+          return;
         }
-      );
+
+        const result = await props.updateDaoRepositoryCollaborator(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          cosmosGroupApiClient,
+          {
+            repositoryId: {
+              id: repoOwnerId,
+              name: repoName,
+            },
+            user: collabAddress,
+            role: collabRole,
+            groupId: daoData.group_id,
+          }
+        );
+
+        if (result?.proposalId) {
+          // props.notify(
+          //   `Collaborator add proposal #${result.proposalId} created`,
+          //   "info"
+          // );
+        }
+      } else {
+        await props.updateCollaborator(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          {
+            repoName: repoName,
+            repoOwner: repoOwnerId,
+            user: collabAddress,
+            role: collabRole,
+          }
+        );
+      }
     }
     if (refreshRepository) await refreshRepository();
     setCollabAddress("");
     setIsAdding(false);
   };
 
-  const removeCollaborator = async (address, index) => {
-    setIsRemoving(index);
-    await props.removeCollaborator(
-      apiClient,
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
-      {
-        repoName: repoName,
-        repoOwner: repoOwnerId,
-        user: address,
-      }
-    );
-    if (refreshRepository) await refreshRepository();
-    setIsRemoving(false);
-  };
-
-  const updateCollaborator = async (address, role, index) => {
+  const handleUpdateCollaborator = async (address, role, index) => {
     setIsUpdating(index);
-    await props.updateCollaborator(
-      apiClient,
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
-      {
-        repoName: repoName,
-        repoOwner: repoOwnerId,
-        user: address,
-        role: role,
+
+    if (requiresProposal) {
+      if (!daoData) {
+        props.notify("Failed to fetch DAO info", "error");
+        setIsUpdating(false);
+        return;
       }
-    );
+
+      const result = await props.updateDaoRepositoryCollaborator(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        cosmosGroupApiClient,
+        {
+          repositoryId: {
+            id: repoOwnerId,
+            name: repoName,
+          },
+          user: address,
+          role: role,
+          groupId: daoData.groupId,
+        }
+      );
+
+      if (result?.proposalId) {
+        // props.notify(
+        //   `Collaborator update proposal #${result.proposalId} created`,
+        //   "info"
+        // );
+      }
+    } else {
+      await props.updateCollaborator(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          repoName: repoName,
+          repoOwner: repoOwnerId,
+          user: address,
+          role: role,
+        }
+      );
+      props.notify("Updated collaborator role", "info");
+    }
+
     if (refreshRepository) await refreshRepository();
     setIsUpdating(false);
+  };
+
+  const handleRemoveCollaborator = async (address, index) => {
+    setIsRemoving(index);
+
+    if (requiresProposal) {
+      if (!daoData) {
+        props.notify("Failed to fetch DAO info", "error");
+        setIsRemoving(false);
+        return;
+      }
+
+      const result = await props.removeDaoRepositoryCollaborator(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        cosmosGroupApiClient,
+        {
+          repositoryId: {
+            id: repoOwnerId,
+            name: repoName,
+          },
+          user: address,
+          groupId: daoData.group_id,
+        }
+      );
+
+      if (result?.proposalId) {
+        // props.notify(
+        //   `Collaborator removal proposal #${result.proposalId} created`,
+        //   "info"
+        // );
+      }
+    } else {
+      await props.removeCollaborator(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          repoName: repoName,
+          repoOwner: repoOwnerId,
+          user: address,
+        }
+      );
+      props.notify("Removed collaborator", "info");
+    }
+
+    if (refreshRepository) await refreshRepository();
+    setIsRemoving(false);
   };
 
   return (
@@ -147,19 +277,18 @@ function CollaboratorsList({
                           }
                           disabled={isUpdating === i}
                           onClick={() =>
-                            updateCollaborator(c.id, updatedCollabRole, i).then(
-                              () => {
-                                props.notify("Updated member role", "info");
-                                setStartUpdate(false);
-                              }
-                            )
+                            handleUpdateCollaborator(
+                              c.id,
+                              updatedCollabRole,
+                              i
+                            ).then(() => setStartUpdate(false))
                           }
                         >
-                          Update
+                          {requiresProposal ? "Propose" : "Update"}
                         </button>
                         <button
                           className={
-                            "btn btn-sm btn-outline btn-block w-24 mr-2 "
+                            "btn btn-sm btn-outline btn-block w-24 mr-2"
                           }
                           onClick={() => setStartUpdate(false)}
                         >
@@ -170,7 +299,7 @@ function CollaboratorsList({
                       <div>
                         <button
                           className={
-                            "btn btn-sm btn-accent btn-outline btn-block w-24 mr-2 "
+                            "btn btn-sm btn-accent btn-outline btn-block w-24 mr-2"
                           }
                           onClick={() => {
                             setStartUpdate(c.id);
@@ -185,10 +314,10 @@ function CollaboratorsList({
                             (isRemoving === i ? "loading" : "")
                           }
                           disabled={isRemoving === i}
-                          onClick={() => removeCollaborator(c.id, i)}
+                          onClick={() => handleRemoveCollaborator(c.id, i)}
                           data-test="remove"
                         >
-                          Remove
+                          {requiresProposal ? "Propose Remove" : "Remove"}
                         </button>
                       </div>
                     )}
@@ -236,11 +365,11 @@ function CollaboratorsList({
                   "btn btn-sm btn-outline btn-block " +
                   (isAdding ? "loading" : "")
                 }
-                onClick={addCollaborator}
+                onClick={handleAddCollaborator}
                 disabled={collabAddress.trim() === "" || isAdding}
                 data-test="add"
               >
-                Add
+                {isDAORepository && requiresProposal ? "Propose Add" : "Add"}
               </button>
             </td>
           </tr>
@@ -259,5 +388,7 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   updateCollaborator,
   removeCollaborator,
+  updateDaoRepositoryCollaborator,
+  removeDaoRepositoryCollaborator,
   notify,
 })(CollaboratorsList);

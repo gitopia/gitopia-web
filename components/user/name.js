@@ -15,7 +15,8 @@ function UserName(props = { isEditable: false }) {
   const [savingName, setSavingName] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const input = useRef();
-  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     setNewName(props.user?.name || "");
@@ -36,6 +37,7 @@ function UserName(props = { isEditable: false }) {
   const updateName = async () => {
     setSavingName(true);
     const res = await props.updateUserName(
+      apiClient,
       cosmosBankApiClient,
       cosmosFeegrantApiClient,
       newName

@@ -51,7 +51,7 @@ const MessageTypeConfig = {
         .toUpperCase()}`;
     },
   },
-  "/gitopia.gitopia.gitopia.MsgInvokeMergePullRequest": {
+  "/gitopia.gitopia.gitopia.MsgInvokeDaoMergePullRequest": {
     icon: GitMerge,
     title: "Merge PR",
     color: "text-pink-500",

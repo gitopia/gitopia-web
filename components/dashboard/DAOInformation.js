@@ -5,138 +5,75 @@ import {
   Clock,
   Info,
   Percent,
-  Users,
-  Link as LinkIcon,
-  Wallet,
-  ExternalLink,
-  ArrowUpRight,
-  ArrowDownRight,
+  Settings2,
   GitPullRequest,
   Trash2,
   UsersRound,
   Tag,
-  Settings2,
+  ExternalLink,
   Copy,
+  Landmark,
 } from "lucide-react";
 
-const InfoCard = ({ icon: Icon, title, value, isLink, copyable }) => (
-  <div className="bg-base-300/50 rounded-lg p-4 hover:bg-base-300 transition-colors">
-    <div className="flex items-center space-x-3 mb-2">
-      <div className="p-2 bg-primary/10 rounded-lg">
-        <Icon className="w-4 h-4 text-primary" />
-      </div>
-      <h4 className="text-sm font-medium text-muted-foreground">{title}</h4>
-    </div>
-    <div className="min-h-[28px]">
+const InfoItem = ({ icon: Icon, title, value, isLink, copyable }) => (
+  <div className="flex items-center space-x-3 py-3 border-b border-base-300 last:border-0">
+    <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+    <div className="flex-grow">
+      <div className="text-sm text-muted-foreground">{title}</div>
       {isLink && value ? (
         <a
           href={value}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-primary hover:text-primary/80 flex items-center space-x-1 font-medium"
+          className="text-primary hover:text-primary/80 flex items-center space-x-1"
         >
           <span className="break-all">{value}</span>
-          <ExternalLink className="w-4 h-4" />
+          <ExternalLink className="w-3 h-3" />
         </a>
       ) : copyable && value ? (
         <div className="flex items-center justify-between">
-          <span className="font-medium">{value}</span>
+          <span>{value}</span>
           <button
             onClick={() => navigator.clipboard.writeText(value)}
             className="p-1 hover:bg-base-200 rounded-md transition-colors"
             title="Copy to clipboard"
           >
-            <Copy className="w-4 h-4" />
+            <Copy className="w-3 h-3" />
           </button>
         </div>
       ) : (
-        <p className="font-medium">
+        <div className="text-base">
           {value || (
-            <span className="text-muted-foreground">Not specified</span>
+            <span className="text-muted-foreground italic">Not specified</span>
           )}
-        </p>
+        </div>
       )}
     </div>
   </div>
 );
 
-const ConfigCard = ({ title, icon: Icon, value, description }) => (
-  <div className="bg-base-300/50 rounded-lg p-4 hover:bg-base-300 transition-colors">
-    <div className="flex items-start space-x-3">
-      <div className="p-2 bg-base-200 rounded-lg">
-        <Icon
-          className={`w-4 h-4 ${
-            value ? "text-primary" : "text-muted-foreground"
-          }`}
-        />
-      </div>
-      <div className="space-y-1">
-        <h5 className="font-medium">{title}</h5>
-        <p className="text-sm text-muted-foreground">{description}</p>
-        <div
-          className={`text-sm font-medium ${
-            value ? "text-primary" : "text-muted-foreground"
-          }`}
-        >
-          {value ? "Required" : "Not Required"}
-        </div>
-      </div>
+const GovernanceRequirement = ({ icon: Icon, title, value }) => (
+  <div className="flex items-center space-x-3 py-2">
+    <div
+      className={`p-1 rounded-md ${value ? "bg-primary/10" : "bg-base-200"}`}
+    >
+      <Icon
+        className={`w-4 h-4 ${
+          value ? "text-primary" : "text-muted-foreground"
+        }`}
+      />
     </div>
+    <span
+      className={`text-sm ${
+        value ? "text-primary font-medium" : "text-muted-foreground"
+      }`}
+    >
+      {title}
+    </span>
   </div>
 );
 
-const DaoConfigCard = ({ config }) => {
-  const configItems = [
-    {
-      icon: GitPullRequest,
-      title: "Pull Request Proposals",
-      value: config?.require_pull_request_proposal,
-      description: "DAO approval required for merging pull requests",
-    },
-    {
-      icon: Trash2,
-      title: "Repository Deletion",
-      value: config?.require_repository_deletion_proposal,
-      description: "DAO approval required for deleting repositories",
-    },
-    {
-      icon: UsersRound,
-      title: "Collaborator Management",
-      value: config?.require_collaborator_proposal,
-      description: "DAO approval required for managing collaborators",
-    },
-    {
-      icon: Tag,
-      title: "Release Management",
-      value: config?.require_release_proposal,
-      description: "DAO approval required for managing releases",
-    },
-  ];
-
-  return (
-    <div className="col-span-2 bg-base-300/50 rounded-lg p-6 hover:bg-base-300/70 transition-colors">
-      <div className="flex items-center space-x-4 mb-6">
-        <div className="p-3 bg-primary/10 rounded-lg">
-          <Settings2 className="w-6 h-6 text-primary" />
-        </div>
-        <div>
-          <h4 className="font-medium">DAO Configuration</h4>
-          <div className="text-sm text-muted-foreground">
-            Governance requirements
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {configItems.map((item, index) => (
-          <ConfigCard key={index} {...item} />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default function DAOInformation({ dao, policyInfo }) {
+export default function DAOInformation({ dao, policyInfo, treasuryBalance }) {
   const getQuorumPercentage = () => {
     if (
       policyInfo &&
@@ -159,32 +96,78 @@ export default function DAOInformation({ dao, policyInfo }) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <InfoCard icon={Info} title="Description" value={dao.description} />
-        <InfoCard icon={MapPin} title="Location" value={dao.location} />
-        <InfoCard
-          icon={Globe}
-          title="Website"
-          value={dao.website}
-          isLink={true}
-        />
-        <InfoCard
-          icon={Clock}
-          title="Voting Period"
-          value={getVotingPeriod()}
-        />
-        <InfoCard
-          icon={Percent}
-          title="Quorum Required"
-          value={
-            getQuorumPercentage()
-              ? `${getQuorumPercentage().toFixed(2)}%`
-              : null
-          }
-        />
-      </div>
+      <div className="bg-base-100 rounded-lg p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <div className="space-y-1">
+            <h3 className="text-lg font-medium">DAO Information</h3>
+            <p className="text-sm text-muted-foreground">
+              General information and settings
+            </p>
+          </div>
+          <div className="flex items-center space-x-3 bg-base-200/50 rounded-lg p-3">
+            <div className="p-2 rounded-full bg-primary/10">
+              <Landmark className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <div className="text-sm text-muted-foreground">Treasury</div>
+              <div className="font-medium uppercase">{treasuryBalance}</div>
+            </div>
+          </div>
+        </div>
 
-      <DaoConfigCard config={dao.config} />
+        <div className="divide-y divide-base-200">
+          <InfoItem icon={Info} title="Description" value={dao.description} />
+          <InfoItem
+            icon={Globe}
+            title="Website"
+            value={dao.website}
+            isLink={true}
+          />
+          <InfoItem
+            icon={Clock}
+            title="Voting Period"
+            value={getVotingPeriod()}
+          />
+          <InfoItem
+            icon={Percent}
+            title="Quorum Required"
+            value={
+              getQuorumPercentage()
+                ? `${getQuorumPercentage().toFixed(2)}%`
+                : null
+            }
+          />
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-base-200">
+          <div className="flex items-center space-x-2 mb-4">
+            <Settings2 className="w-4 h-4 text-muted-foreground" />
+            <h4 className="font-medium">Governance Requirements</h4>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <GovernanceRequirement
+              icon={GitPullRequest}
+              title="Pull Request Approval"
+              value={dao.config?.require_pull_request_proposal}
+            />
+            <GovernanceRequirement
+              icon={Trash2}
+              title="Repository Deletion"
+              value={dao.config?.require_repository_deletion_proposal}
+            />
+            <GovernanceRequirement
+              icon={UsersRound}
+              title="Collaborator Management"
+              value={dao.config?.require_collaborator_proposal}
+            />
+            <GovernanceRequirement
+              icon={Tag}
+              title="Release Management"
+              value={dao.config?.require_release_proposal}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

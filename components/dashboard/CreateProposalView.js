@@ -488,44 +488,35 @@ const GroupMemberForm = ({ existingMembers = [], onSubmit, onStateChange }) => {
 };
 
 const DaoConfigForm = ({ dao, onSubmit, onStateChange }) => {
+  // Initialize state from dao.config with snake_case format
   const [requirePullRequestProposal, setRequirePullRequestProposal] = useState(
-    dao.config?.require_pull_request_proposal || false
+    dao?.config?.require_pull_request_proposal || false
   );
   const [
     requireRepositoryDeletionProposal,
     setRequireRepositoryDeletionProposal,
-  ] = useState(dao.config?.require_repository_deletion_proposal || false);
+  ] = useState(dao?.config?.require_repository_deletion_proposal || false);
   const [requireCollaboratorProposal, setRequireCollaboratorProposal] =
-    useState(dao.config?.require_collaborator_proposal || false);
+    useState(dao?.config?.require_collaborator_proposal || false);
   const [requireReleaseProposal, setRequireReleaseProposal] = useState(
-    dao.config?.require_release_proposal || false
+    dao?.config?.require_release_proposal || false
   );
 
-  // Track if any changes have been made
   const [hasChanges, setHasChanges] = useState(false);
 
-  // Helper to check if current settings differ from original
-  const checkForChanges = (newSettings) => {
+  useEffect(() => {
+    // Original settings in snake_case
     const originalSettings = {
-      requirePullRequestProposal:
-        dao.config?.require_pull_request_proposal || false,
-      requireRepositoryDeletionProposal:
-        dao.config?.require_repository_deletion_proposal || false,
-      requireCollaboratorProposal:
-        dao.config?.require_collaborator_proposal || false,
-      requireReleaseProposal: dao.config?.require_release_proposal || false,
+      require_pull_request_proposal:
+        dao?.config?.require_pull_request_proposal || false,
+      require_repository_deletion_proposal:
+        dao?.config?.require_repository_deletion_proposal || false,
+      require_collaborator_proposal:
+        dao?.config?.require_collaborator_proposal || false,
+      require_release_proposal: dao?.config?.require_release_proposal || false,
     };
 
-    const hasChanged = Object.keys(newSettings).some(
-      (key) => newSettings[key] !== originalSettings[key]
-    );
-
-    setHasChanges(hasChanged);
-    onStateChange?.({ hasChanges: hasChanged });
-  };
-
-  // Update form data and check for changes whenever a setting changes
-  useEffect(() => {
+    // New settings in camelCase for submission
     const newSettings = {
       requirePullRequestProposal,
       requireRepositoryDeletionProposal,
@@ -533,13 +524,27 @@ const DaoConfigForm = ({ dao, onSubmit, onStateChange }) => {
       requireReleaseProposal,
     };
 
-    onSubmit(newSettings);
-    checkForChanges(newSettings);
+    // Check for changes comparing with snake_case format
+    const hasChanged = Object.keys(originalSettings).some(
+      (key) =>
+        originalSettings[key] !==
+        newSettings[key.replace(/_([a-z])/g, (g) => g[1].toUpperCase())]
+    );
+
+    setHasChanges(hasChanged);
+    onStateChange?.({ hasChanges: hasChanged });
+
+    if (hasChanged) {
+      onSubmit(newSettings);
+    }
   }, [
     requirePullRequestProposal,
     requireRepositoryDeletionProposal,
     requireCollaboratorProposal,
     requireReleaseProposal,
+    dao,
+    onSubmit,
+    onStateChange,
   ]);
 
   const configOptions = [
@@ -834,11 +839,6 @@ const TreasurySpendForm = ({ onSubmit, onStateChange, treasuryBalance }) => {
   const [hasChanges, setHasChanges] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
 
-  // Convert microLORE to LORE for display (1 LORE = 1,000,000 ulore)
-  const formatLoreBalance = (microLore) => {
-    return (parseInt(microLore) / 1000000).toFixed(2);
-  };
-
   const validateGitopiaAddress = (address) => {
     if (!address.trim()) {
       return false;
@@ -848,9 +848,8 @@ const TreasurySpendForm = ({ onSubmit, onStateChange, treasuryBalance }) => {
 
   const validateAmount = (amount) => {
     if (!amount || isNaN(amount)) return false;
-    const microLoreAmount = parseFloat(amount) * 1000000; // Convert to microLORE
     const balance = parseInt(treasuryBalance);
-    return microLoreAmount > 0 && microLoreAmount <= balance;
+    return amount > 0 && amount < balance;
   };
 
   // Validate form data and update parent component
@@ -899,8 +898,8 @@ const TreasurySpendForm = ({ onSubmit, onStateChange, treasuryBalance }) => {
         </div>
         <div>
           <div className="text-sm text-gray-400">Treasury Balance</div>
-          <div className="text-lg font-semibold">
-            {formatLoreBalance(treasuryBalance)} LORE
+          <div className="text-lg font-semibold uppercase">
+            {treasuryBalance}
           </div>
         </div>
       </div>
@@ -1055,7 +1054,7 @@ function CreateProposalView({
               value: MsgUpdateDaoConfig.encode({
                 admin: groupInfo.admin,
                 id: dao.address,
-                config: DaoConfig.encode({ ...formData }).finish(),
+                config: formData,
               }).finish(),
             },
           ];

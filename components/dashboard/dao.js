@@ -14,9 +14,13 @@ import ProposalsSection from "./ProposalsSection";
 import CreateProposalView from "./CreateProposalView";
 import { notify } from "reapop";
 import { voteGroupProposal } from "../../store/actions/dao";
-import { Copy, Landmark } from "lucide-react";
+import { Copy, Box } from "lucide-react";
 import VotingPowerChart from "./VotingPowerChart";
 import { useRouter } from "next/router";
+import { getBalance } from "../../store/actions/wallet";
+import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
+import sortBy from "lodash/sortBy";
+import DaoRepositories from "./DAORepositories";
 
 function DaoDashboard({ dao = {}, advanceUser, ...props }) {
   const router = useRouter();
@@ -28,6 +32,7 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
   const [groupMembers, setGroupMembers] = useState([]);
   const [proposalView, setProposalView] = useState("list");
   const [treasuryBalance, setTreasuryBalance] = useState("0");
+  const [repositories, setRepositories] = useState([]);
 
   const {
     cosmosGroupApiClient,
@@ -44,37 +49,16 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
   }, [router.query.tab]);
 
   useEffect(() => {
-    if (dao.address) {
-      fetchTreasuryBalance();
-    }
-  }, [dao.address]);
-
-  const fetchTreasuryBalance = async () => {
-    try {
-      const response = await getBalance(dao.address);
-      const balance = response.data.balance;
-
-      // Find the token balance
-      const tokenBalance = balance.find(
-        (b) => b.denom === process.env.NEXT_PUBLIC_CURRENCY_DENOM
+    async function initBalance() {
+      const balance = await props.getBalance(cosmosBankApiClient, dao.address);
+      setTreasuryBalance(
+        props.advanceUser === true
+          ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+          : balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
       );
-
-      if (tokenBalance) {
-        const formattedBalance = advanceUser
-          ? tokenBalance.amount
-          : (parseInt(tokenBalance.amount) / 1000000).toString();
-
-        const currency = advanceUser
-          ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-          : process.env.NEXT_PUBLIC_CURRENCY_TOKEN;
-
-        setTreasuryBalance(`${formattedBalance} ${currency}`);
-      }
-    } catch (error) {
-      console.error("Error fetching treasury balance:", error);
-      setTreasuryBalance("0");
     }
-  };
+    initBalance();
+  }, [dao.address]);
 
   useEffect(() => {
     if (dao.group_id) {
@@ -146,6 +130,22 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
     }));
   }, [groupMembers]);
 
+  useEffect(() => {
+    async function fetchRepositories() {
+      try {
+        const repos = await getAnyRepositoryAll(apiClient, dao.address);
+        const sortedRepos = sortBy(repos, (r) => -Number(r.updatedAt));
+        setRepositories(sortedRepos);
+      } catch (error) {
+        console.error("Error fetching repositories:", error);
+      }
+    }
+
+    if (dao.address) {
+      fetchRepositories();
+    }
+  }, [dao.address]);
+
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
     if (tabId === "proposals") setProposalView("list");
@@ -205,54 +205,39 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
   };
 
   const renderHeader = () => (
-    <div className="bg-base-200 rounded-lg p-6 mb-8 flex items-center justify-between">
-      <div className="flex items-center space-x-6">
-        <div className="avatar">
-          <div className="w-20 h-20 rounded-lg ring-2 ring-primary/10">
-            {dao?.avatarUrl ? (
-              <img
-                src={dao?.avatarUrl}
-                alt={dao?.name}
-                className="object-cover"
-              />
-            ) : (
-              <div className="bg-primary/10 flex items-center justify-center text-4xl uppercase h-full font-semibold text-primary">
-                {dao?.name?.[0]}
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Link
-            href={"/" + dao?.name?.toLowerCase()}
-            className="text-2xl font-bold hover:text-primary transition-colors"
-          >
-            {dao?.name}
-          </Link>
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <span>
-              {dao?.address?.slice(0, 8)}...{dao?.address?.slice(-8)}
-            </span>
-            <button
-              onClick={() => navigator.clipboard.writeText(dao?.address)}
-              className="p-1 hover:bg-primary/10 rounded-md transition-colors"
-            >
-              <Copy size={14} />
-            </button>
-          </div>
+    <div className="bg-base-200 rounded-lg p-6 mb-8 flex items-center space-x-6">
+      <div className="avatar">
+        <div className="w-20 h-20 rounded-lg ring-2 ring-primary/10">
+          {dao?.avatarUrl ? (
+            <img
+              src={dao?.avatarUrl}
+              alt={dao?.name}
+              className="object-cover"
+            />
+          ) : (
+            <div className="bg-primary/10 flex items-center justify-center text-4xl uppercase h-full font-semibold text-primary">
+              {dao?.name?.[0]}
+            </div>
+          )}
         </div>
       </div>
-      <div className="flex items-center space-x-4 bg-base-100 rounded-lg p-4 shadow-sm">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <Landmark className="text-primary" size={20} />
-          </div>
-          <div>
-            <div className="text-sm text-muted-foreground">
-              Treasury Balance
-            </div>
-            <div className="text-xl font-semibold">{treasuryBalance}</div>
-          </div>
+      <div className="space-y-2">
+        <Link
+          href={"/" + dao?.name?.toLowerCase()}
+          className="text-2xl font-bold hover:text-primary transition-colors"
+        >
+          {dao?.name}
+        </Link>
+        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+          <span>
+            {dao?.address?.slice(0, 8)}...{dao?.address?.slice(-8)}
+          </span>
+          <button
+            onClick={() => navigator.clipboard.writeText(dao?.address)}
+            className="p-1 hover:bg-primary/10 rounded-md transition-colors"
+          >
+            <Copy size={14} />
+          </button>
         </div>
       </div>
     </div>
@@ -262,19 +247,25 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
     <div className="flex space-x-1 bg-base-200 p-1 rounded-lg mb-6">
       {[
         { id: "overview", label: "Overview" },
+        {
+          id: "repositories",
+          label: "Repositories",
+          icon: <Box size={16} className="mr-2" />,
+        },
         { id: "members", label: "Members" },
         { id: "proposals", label: "Proposals" },
       ].map((tab) => (
         <button
           key={tab.id}
           onClick={() => handleTabChange(tab.id)}
-          className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all
-      ${
-        activeTab === tab.id
-          ? "bg-primary text-primary-foreground shadow-sm"
-          : "text-muted-foreground hover:bg-primary/10"
-      }`}
+          className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center
+            ${
+              activeTab === tab.id
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-primary/10"
+            }`}
         >
+          {tab.icon}
           {tab.label}
         </button>
       ))}
@@ -286,10 +277,17 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
       case "overview":
         return (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <DAOInformation dao={dao} policyInfo={policyInfo} />
+            <DAOInformation
+              dao={dao}
+              policyInfo={policyInfo}
+              treasuryBalance={treasuryBalance}
+            />
             <VotingPowerChart data={votingPowerData} />
           </div>
         );
+      case "repositories":
+        return <DaoRepositories repositories={repositories} dao={dao} />;
+
       case "members":
         return (
           <div className="bg-base-200 p-4 rounded-lg">
@@ -363,4 +361,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(DaoDashboard);
+export default connect(mapStateToProps, { getBalance })(DaoDashboard);

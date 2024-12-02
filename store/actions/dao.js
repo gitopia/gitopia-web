@@ -13,7 +13,10 @@ import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getGroupMembers from "../../helpers/getGroupMembers";
 import getGroupInfo from "../../helpers/getGroupInfo";
 import { MsgUpdateGroupMembers, Exec } from "cosmjs-types/cosmos/group/v1/tx";
-import { MsgRenameDao } from "@gitopia/gitopia-js/dist/types/gitopia/tx";
+import {
+  MsgRenameDao,
+  MsgUpdateDaoAvatar,
+} from "@gitopia/gitopia-js/dist/types/gitopia/tx";
 
 export const createDao = (
   apiClient,
@@ -145,7 +148,8 @@ export const updateDaoAvatar = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
-  { id, url }
+  cosmosGroupApiClient,
+  { id, groupId, url }
 ) => {
   return async (dispatch, getState) => {
     if (
@@ -160,12 +164,30 @@ export const updateDaoAvatar = (
     )
       return null;
     const { env, wallet } = getState();
-    const payload = {
-      creator: wallet.selectedAddress,
+
+    const groupInfo = await dispatch(
+      fetchGroupInfo(cosmosGroupApiClient, groupId)
+    );
+
+    const msg = MsgUpdateDaoAvatar.fromPartial({
+      admin: groupInfo.admin,
       id,
       url,
-    };
-    const message = await env.txClient.msgUpdateDaoAvatar(payload);
+    });
+
+    const msgValue = MsgUpdateDaoAvatar.encode(msg).finish();
+    const msgTypeUrl = "/gitopia.gitopia.gitopia.MsgUpdateDaoAvatar";
+
+    const message = env.txClient.msgSubmitGroupProposal({
+      groupPolicyAddress: groupInfo.admin,
+      proposers: [wallet.selectedAddress],
+      metadata: "",
+      messages: [{ typeUrl: msgTypeUrl, value: msgValue }],
+      exec: Exec.EXEC_UNSPECIFIED,
+      title: "Update DAO avatar proposal",
+      summary: "Update DAO avatar",
+    });
+
     return await handlePostingTransaction(
       cosmosBankApiClient,
       cosmosFeegrantApiClient,

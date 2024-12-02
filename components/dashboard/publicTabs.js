@@ -25,7 +25,7 @@ export default function PublicTabs({
         }
       >
         <span className="icon mr-2">
-          <Home size={16} stroke="#ADBECB" />
+          <Home size={24} stroke="#ADBECB" />
         </span>
         <span>Overview</span>
       </Link>
@@ -39,7 +39,7 @@ export default function PublicTabs({
         data-test="repositories_tab"
       >
         <span className="icon mr-2">
-          <Box size={16} stroke="#ADBECB" />
+          <Box size={24} stroke="#ADBECB" />
         </span>
         <span>Repositories</span>
       </Link>
@@ -53,7 +53,7 @@ export default function PublicTabs({
           }
         >
           <span className="icon mr-2">
-            <Database size={16} stroke="#ADBECB" />
+            <Database size={24} stroke="#ADBECB" />
           </span>
           <span>Transactions</span>
         </Link>
@@ -68,7 +68,7 @@ export default function PublicTabs({
           }
         >
           <span className="icon mr-2">
-            <Users size={16} stroke="#ADBECB" />
+            <Users size={24} stroke="#ADBECB" />
           </span>
           <span>People</span>
         </Link>
@@ -82,7 +82,7 @@ export default function PublicTabs({
         }
       >
         <span className="icon mr-2">
-          <FileText size={16} stroke="#ADBECB" />
+          <FileText size={24} stroke="#ADBECB" />
         </span>
         <span>Proposals</span>
       </Link>
@@ -96,7 +96,7 @@ export default function PublicTabs({
           }
         >
           <span className="icon mr-2">
-            <ClipboardCheck size={16} stroke="#ADBECB" />
+            <ClipboardCheck size={24} stroke="#ADBECB" />
           </span>
           <span>Protocol Proposals</span>
         </Link>
