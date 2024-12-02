@@ -3,6 +3,13 @@ import { sendTransaction, setupTxClients } from "./env";
 import { getUserDetailsForSelectedAddress } from "./user";
 import { updateUserBalance } from "./wallet";
 import getTask from "../../helpers/getTask";
+import { fetchGroupInfo } from "./dao";
+import {
+  MsgInvokeDaoMergePullRequest,
+  MsgDaoCreateRelease,
+  MsgUpdateDaoRepositoryCollaborator,
+  MsgRemoveDaoRepositoryCollaborator,
+} from "@gitopia/gitopia-js/dist/types/gitopia/tx";
 
 async function watchTask(apiClient, taskId) {
   const TIMEOUT = 15000; // 15 seconds
@@ -774,6 +781,209 @@ export const removeCollaborator = (
     } catch (e) {
       console.error(e);
       dispatch(notify(e.message, "error"));
+      return null;
+    }
+  };
+};
+
+export const updateDaoRepositoryCollaborator = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  cosmosGroupApiClient,
+  { repositoryId, user, role, groupId }
+) => {
+  return async (dispatch, getState) => {
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "collaborator"
+      ))
+    )
+      return null;
+
+    const { wallet, env } = getState();
+
+    try {
+      // Get the group info to get the admin address
+      const groupInfo = await dispatch(
+        fetchGroupInfo(cosmosGroupApiClient, groupId)
+      );
+
+      if (!groupInfo) {
+        throw new Error("Failed to fetch group info");
+      }
+
+      // Create the collaborator update message
+      const updateCollab = {
+        admin: groupInfo.admin,
+        repositoryId,
+        user,
+        role,
+      };
+
+      // Encode the message
+      const msgValue = MsgUpdateDaoRepositoryCollaborator.encode(
+        MsgUpdateDaoRepositoryCollaborator.fromPartial(updateCollab)
+      ).finish();
+      const msgTypeUrl =
+        "/gitopia.gitopia.gitopia.MsgUpdateDaoRepositoryCollaborator";
+
+      // Create the proposal message
+      const proposalMsg = {
+        groupPolicyAddress: groupInfo.admin,
+        proposers: [wallet.selectedAddress],
+        metadata: "",
+        messages: [
+          {
+            typeUrl: msgTypeUrl,
+            value: msgValue,
+          },
+        ],
+        exec: 0,
+        title: `Update Collaborator Role: ${user}`,
+        summary: `Proposal to update collaborator ${user} role to ${role} for repository ${repositoryId.id}/${repositoryId.name}`,
+      };
+
+      // Submit the proposal
+      const message = env.txClient.msgSubmitGroupProposal(proposalMsg);
+      const result = await sendTransaction({ message })(dispatch, getState);
+
+      if (result && result.code === 0) {
+        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+          dispatch,
+          getState
+        );
+
+        // Get proposal ID from the logs
+        const log = JSON.parse(result.rawLog);
+        const proposalId = log[0].events
+          .find((e) => e.type === "cosmos.group.v1.EventSubmitProposal")
+          .attributes.find((a) => a.key === "proposal_id").value;
+
+        dispatch(
+          notify(
+            `Collaborator update proposal #${proposalId} created. Waiting for approval.`,
+            "info"
+          )
+        );
+
+        return {
+          proposalId,
+          status: "PROPOSAL_SUBMITTED",
+        };
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (error) {
+      console.error("Error creating collaborator update proposal:", error);
+      dispatch(notify(error.message, "error"));
+      return null;
+    }
+  };
+};
+
+export const removeDaoRepositoryCollaborator = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  cosmosGroupApiClient,
+  { repositoryId, user, groupId }
+) => {
+  return async (dispatch, getState) => {
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "collaborator"
+      ))
+    )
+      return null;
+
+    const { wallet, env } = getState();
+
+    try {
+      // Get the group info to get the admin address
+      const groupInfo = await dispatch(
+        fetchGroupInfo(cosmosGroupApiClient, groupId)
+      );
+
+      if (!groupInfo) {
+        throw new Error("Failed to fetch group info");
+      }
+
+      // Create the collaborator removal message
+      const removeCollab = {
+        admin: groupInfo.admin,
+        repositoryId,
+        user,
+      };
+
+      // Encode the message
+      const msgValue = MsgRemoveDaoRepositoryCollaborator.encode(
+        MsgRemoveDaoRepositoryCollaborator.fromPartial(removeCollab)
+      ).finish();
+      const msgTypeUrl =
+        "/gitopia.gitopia.gitopia.MsgRemoveDaoRepositoryCollaborator";
+
+      // Create the proposal message
+      const proposalMsg = {
+        groupPolicyAddress: groupInfo.admin,
+        proposers: [wallet.selectedAddress],
+        metadata: "",
+        messages: [
+          {
+            typeUrl: msgTypeUrl,
+            value: msgValue,
+          },
+        ],
+        exec: 0,
+        title: `Remove Collaborator: ${user}`,
+        summary: `Proposal to remove collaborator ${user} from repository ${repositoryId.id}/${repositoryId.name}`,
+      };
+
+      // Submit the proposal
+      const message = env.txClient.msgSubmitGroupProposal(proposalMsg);
+      const result = await sendTransaction({ message })(dispatch, getState);
+
+      if (result && result.code === 0) {
+        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+          dispatch,
+          getState
+        );
+
+        // Get proposal ID from the logs
+        const log = JSON.parse(result.rawLog);
+        const proposalId = log[0].events
+          .find((e) => e.type === "cosmos.group.v1.EventSubmitProposal")
+          .attributes.find((a) => a.key === "proposal_id").value;
+
+        dispatch(
+          notify(
+            `Collaborator removal proposal #${proposalId} created. Waiting for approval.`,
+            "info"
+          )
+        );
+
+        return {
+          proposalId,
+          status: "PROPOSAL_SUBMITTED",
+        };
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (error) {
+      console.error("Error creating collaborator removal proposal:", error);
+      dispatch(notify(error.message, "error"));
       return null;
     }
   };
@@ -1560,6 +1770,127 @@ export const createRelease = (
   };
 };
 
+export const createReleaseForDao = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  cosmosGroupApiClient,
+  {
+    repoOwner = null,
+    repoName = null,
+    tagName = null,
+    target = null,
+    name = null,
+    description = null,
+    attachments = null,
+    draft = false,
+    preRelease = false,
+    isTag = false,
+    groupId = null,
+  }
+) => {
+  return async (dispatch, getState) => {
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "release"
+      ))
+    )
+      return null;
+
+    const { wallet, env } = getState();
+
+    try {
+      // Get the group info to get the admin address
+      const groupInfo = await dispatch(
+        fetchGroupInfo(cosmosGroupApiClient, groupId)
+      );
+
+      if (!groupInfo) {
+        throw new Error("Failed to fetch group info");
+      }
+
+      // Create the release message
+      const release = {
+        admin: groupInfo.admin,
+        repositoryId: { id: repoOwner, name: repoName },
+        tagName,
+        target,
+        name,
+        description,
+        attachments: JSON.stringify(attachments),
+        draft,
+        preRelease,
+        isTag,
+      };
+
+      // Encode the message
+      const msgValue = MsgDaoCreateRelease.encode(
+        MsgDaoCreateRelease.fromPartial(release)
+      ).finish();
+      const msgTypeUrl = "/gitopia.gitopia.gitopia.MsgDaoCreateRelease";
+
+      // Create the proposal message
+      const proposalMsg = {
+        groupPolicyAddress: groupInfo.admin,
+        proposers: [wallet.selectedAddress],
+        metadata: "",
+        messages: [
+          {
+            typeUrl: msgTypeUrl,
+            value: msgValue,
+          },
+        ],
+        exec: 0, // EXEC_UNSPECIFIED
+        title: `Create Release: ${name || tagName}`,
+        summary: `Proposal to create release ${
+          name || tagName
+        } for repository ${repoOwner}/${repoName}`,
+      };
+
+      // Submit the proposal
+      const message = env.txClient.msgSubmitGroupProposal(proposalMsg);
+      const result = await sendTransaction({ message })(dispatch, getState);
+
+      if (result && result.code === 0) {
+        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+          dispatch,
+          getState
+        );
+
+        // Get proposal ID from the logs
+        const log = JSON.parse(result.rawLog);
+        const proposalId = log[0].events
+          .find((e) => e.type === "cosmos.group.v1.EventSubmitProposal")
+          .attributes.find((a) => a.key === "proposal_id").value;
+
+        dispatch(
+          notify(
+            `Release proposal #${proposalId} created. Waiting for approval.`,
+            "info"
+          )
+        );
+
+        return {
+          proposalId,
+          status: "PROPOSAL_SUBMITTED",
+        };
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (error) {
+      console.error("Error creating release proposal:", error);
+      dispatch(notify(error.message, "error"));
+      return null;
+    }
+  };
+};
+
 export const deleteRelease = (
   apiClient,
   cosmosBankApiClient,
@@ -2064,6 +2395,107 @@ export const mergePullRequest = (
     } catch (e) {
       console.error(e);
       dispatch(notify(e.message, "error"));
+    }
+  };
+};
+
+export const mergePullRequestForDao = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  cosmosGroupApiClient,
+  { repositoryId, iid, groupId }
+) => {
+  return async (dispatch, getState) => {
+    if (
+      !(await validatePostingEligibility(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState,
+        "pull request"
+      ))
+    )
+      return null;
+
+    const { wallet, env } = getState();
+
+    try {
+      // First, get the group info to get the admin address
+      const groupInfo = await dispatch(
+        fetchGroupInfo(cosmosGroupApiClient, groupId)
+      );
+      if (!groupInfo) {
+        throw new Error("Failed to fetch group info");
+      }
+
+      // Create the merge pull request message
+      const mergePull = {
+        admin: groupInfo.admin,
+        repositoryId: repositoryId,
+        iid,
+        provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+      };
+
+      // Encode the message
+      const msgValue = MsgInvokeDaoMergePullRequest.encode(
+        MsgInvokeDaoMergePullRequest.fromPartial(mergePull)
+      ).finish();
+      const msgTypeUrl =
+        "/gitopia.gitopia.gitopia.MsgInvokeDaoMergePullRequest";
+
+      // Create the proposal message
+      const proposalMsg = {
+        groupPolicyAddress: groupInfo.admin,
+        proposers: [wallet.selectedAddress],
+        metadata: "",
+        messages: [
+          {
+            typeUrl: msgTypeUrl,
+            value: msgValue,
+          },
+        ],
+        exec: 0, // EXEC_UNSPECIFIED
+        title: "Merge Pull Request #" + iid,
+        summary: `Proposal to merge pull request #${iid} in repository ${repositoryId.id}/${repositoryId.name}`,
+      };
+
+      // Submit the proposal
+      const message = env.txClient.msgSubmitGroupProposal(proposalMsg);
+      const result = await sendTransaction({ message })(dispatch, getState);
+
+      if (result && result.code === 0) {
+        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+          dispatch,
+          getState
+        );
+
+        // After proposal is created, watch the task for completion
+        const log = JSON.parse(result.rawLog);
+        const proposalId = log[0].events
+          .find((e) => e.type === "cosmos.group.v1.EventSubmitProposal")
+          .attributes.find((a) => a.key === "proposal_id").value;
+
+        dispatch(
+          notify(
+            `Merge proposal #${proposalId} created. Waiting for approval.`,
+            "info"
+          )
+        );
+
+        return {
+          proposalId,
+          status: "PROPOSAL_SUBMITTED",
+        };
+      } else {
+        dispatch(notify(result.rawLog, "error"));
+        return null;
+      }
+    } catch (error) {
+      console.error("Error creating merge proposal:", error);
+      dispatch(notify(error.message, "error"));
+      return null;
     }
   };
 };

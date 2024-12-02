@@ -5,6 +5,7 @@ import { Api as CosmosBankApi } from "../store/cosmos.bank.v1beta1/module/rest";
 import { Api as CosmosFeegrantApi } from "../store/cosmos.feegrant.v1beta1/rest";
 import { Api as CosmosGovApi } from "../store/cosmos.gov.v1beta1/module/rest";
 import { Api as IbcAppTransferApi } from "../store/ibc.applications.transfer.v1/module/rest";
+import { Api as CosmosGroupApi } from "../store/cosmos.group.v1/rest";
 import selectProvider from "../helpers/providerSelector";
 import { setConfig } from "../store/actions/env";
 
@@ -20,6 +21,7 @@ export const ApiClientProvider = ({ children }) => {
   const [cosmosFeegrantApiClient, setCosmosFeegrantApiClient] = useState(null);
   const [cosmosGovApiClient, setCosmosGovApiClient] = useState(null);
   const [ibcAppTransferApiClient, setIbcAppTransferApiClient] = useState(null);
+  const [cosmosGroupApiClient, setCosmosGroupApiClient] = useState(null);
   const [providerName, setProviderName] = useState(null);
   const [apiUrl, setApiUrl] = useState(null);
   const [rpcUrl, setRpcUrl] = useState(null);
@@ -45,6 +47,11 @@ export const ApiClientProvider = ({ children }) => {
       baseUrl: apiNode,
     });
     setIbcAppTransferApiClient(newIbcAppTransferApiClient);
+
+    const newCosmosGroupApiClient = new CosmosGroupApi({
+      baseURL: apiNode,
+    });
+    setCosmosGroupApiClient(newCosmosGroupApiClient);
 
     setProviderName(name);
     setApiUrl(apiNode);
@@ -99,6 +106,7 @@ export const ApiClientProvider = ({ children }) => {
         cosmosFeegrantApiClient,
         cosmosGovApiClient,
         ibcAppTransferApiClient,
+        cosmosGroupApiClient,
         updateApiClient,
       }}
     >

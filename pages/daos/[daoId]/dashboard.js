@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import Dao from "../../../components/dashboard/dao";
 import Link from "next/link";
 import getDao from "../../../helpers/getDao";
-import getDaoMember from "../../../helpers/getUserDaoMember";
+import getGroupMembers from "../../../helpers/getGroupMembers";
 import { useErrorStatus } from "../../../hooks/errorHandler";
 import { useApiClient } from "../../../context/ApiClientContext";
 
@@ -31,17 +31,16 @@ function DaoDashboard(props) {
   const [dao, setDao] = useState({});
   const { setErrorStatusCode } = useErrorStatus();
   const router = useRouter();
-  const { apiClient } = useApiClient();
+  const { apiClient, cosmosGroupApiClient } = useApiClient();
 
   async function refreshData() {
-    const [dao, members] = await Promise.all([
-      getDao(apiClient, router.query.daoId),
-      getDaoMember(apiClient, router.query.daoId),
-    ]);
+    const dao = await getDao(apiClient, router.query.daoId);
+    const members = await getGroupMembers(cosmosGroupApiClient, dao.group_id);
+
     if (dao) {
       let isMember = false;
       members.forEach((m) => {
-        if (m.address == props.selectedAddress) {
+        if (m.member.address == props.selectedAddress) {
           isMember = true;
           return false;
         } else {

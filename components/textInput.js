@@ -1,94 +1,109 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 const TextInput = React.forwardRef(
   (
-    props = {
-      label: "",
-      type: "text",
-      name: "",
-      placeholder: "",
-      value: "",
-      setValue: () => {},
-      hint: { shown: false, type: "", message: "" },
-      setHint: () => {},
-      multiline: false,
-      readOnly: false,
-      required: false,
-      className: "",
-      size: "md",
-      onEnter: () => { },
-      autoFocus: false,
+    {
+      label = "",
+      type = "text",
+      name = "",
+      placeholder = "",
+      value = "",
+      setValue = () => {},
+      hint = { shown: false, type: "", message: "" },
+      setHint = () => {},
+      multiline = false,
+      readOnly = false,
+      required = false,
+      className = "",
+      size = "md",
+      onEnter = () => {},
+      autoFocus = false,
+      disabled = false,
     },
     ref
   ) => {
+    const textareaRef = useRef(null);
+
+    useEffect(() => {
+      if (multiline && textareaRef.current) {
+        // Reset height to auto to correctly calculate new height
+        textareaRef.current.style.height = "auto";
+        // Set new height based on scrollHeight with a small buffer for smooth typing
+        textareaRef.current.style.height =
+          Math.min(textareaRef.current.scrollHeight + 2, 400) + "px";
+      }
+    }, [value, multiline]);
+
+    const getInputClassName = () => {
+      let className =
+        "input input-bordered focus:outline-none focus:border-type ";
+      className += `input-${size} `;
+
+      if (hint?.shown && hint?.type === "error") {
+        className += "border-pink text-pink input-error ";
+      } else if (value?.length > 0) {
+        className += "border-green-900 ";
+      }
+
+      return className.trim();
+    };
+
     return (
-      <div className={"form-control " + props.className}>
-        {props.label ? (
+      <div className={"form-control " + className}>
+        {label && (
           <label className="label">
-            <span className="label-text">{props.label}</span>
+            <span className="label-text">{label}</span>
           </label>
-        ) : (
-          ""
         )}
-        {props.multiline ? (
+
+        {multiline ? (
           <textarea
-            ref={ref}
-            rows={5}
-            type={props.type}
-            name={props.name}
-            placeholder={props.placeholder}
-            readOnly={props.readOnly}
-            required={props.required}
-            className={
-              "input input-bordered h-24 py-2 focus:outline-none focus:border-type " +
-              (props.hint.shown && props.hint.type == "error"
-                ? "border-pink text-pink input-" + props.hint.type
-                : props.value.length > 0
-                ? "border-green"
-                : "") +
-              (" input-" + props.size)
-            }
-            value={props.value}
-            onChange={(e) => {
-              props.setValue(e.target.value);
+            ref={(el) => {
+              textareaRef.current = el;
+              if (typeof ref === "function") ref(el);
+              else if (ref) ref.current = el;
             }}
-            data-test={props.name?.replace(" ", "_")}
+            rows={1}
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            readOnly={readOnly}
+            required={required}
+            disabled={disabled}
+            className={`${getInputClassName()} min-h-[80px] max-h-[400px] py-2 resize-none overflow-y-auto transition-height duration-100`}
+            value={value}
+            onChange={(e) => {
+              setValue(e.target.value);
+            }}
+            data-test={name?.replace(" ", "_")}
           />
         ) : (
           <input
             ref={ref}
-            type={props.type}
-            name={props.name}
-            placeholder={props.placeholder}
-            readOnly={props.readOnly}
-            className={
-              "input input-bordered focus:outline-none focus:border-type " +
-              ("input-" + props.size) +
-              " " +
-              (props.hint.shown && props.hint.type == "error"
-                ? "border-pink text-pink input-" + props.hint.type
-                : props.value.length > 0
-                ? "border-green-900"
-                : "")
-            }
-            value={props.value}
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            readOnly={readOnly}
+            disabled={disabled}
+            className={getInputClassName()}
+            value={value}
             onKeyUp={(e) => {
               if (e.code === "Enter" || e.code === "NumpadEnter") {
-                if (props.onEnter) props.onEnter();
+                onEnter();
               }
             }}
             onChange={(e) => {
-              props.setValue(e.target.value);
+              setValue(e.target.value);
             }}
-            autoFocus={props.autoFocus}
-            data-test={props.name?.replace(" ", "_")}
+            autoFocus={autoFocus}
+            data-test={name?.replace(" ", "_")}
           />
         )}
 
-        {props.hint.shown && (
+        {hint?.shown && (
           <label className="label">
-            <span className={"label-text-alt text-" + props.hint.type}>
-              {props.hint.message}
+            <span className={`label-text-alt text-${hint.type}`}>
+              {hint.message}
             </span>
           </label>
         )}
@@ -96,5 +111,8 @@ const TextInput = React.forwardRef(
     );
   }
 );
+
+// Add display name for React DevTools
+TextInput.displayName = "TextInput";
 
 export default TextInput;
