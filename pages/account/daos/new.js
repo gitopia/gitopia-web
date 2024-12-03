@@ -207,14 +207,6 @@ function NewDao({ selectedAddress, createDao }) {
                 setValue={(v) => updateFormData("website", v)}
                 hint={hints.website}
               />
-
-              <TextInput
-                label="Location"
-                name="location"
-                placeholder="Optional"
-                value={formData.location}
-                setValue={(v) => updateFormData("location", v)}
-              />
             </div>
           </div>
         );
@@ -251,7 +243,7 @@ function NewDao({ selectedAddress, createDao }) {
 
               <div className="form-control">
                 <TextInput
-                  label="Required Approval Percentage"
+                  label="Quorum"
                   name="percentage"
                   type="number"
                   placeholder="50"

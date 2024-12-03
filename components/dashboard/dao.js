@@ -21,6 +21,20 @@ import { getBalance } from "../../store/actions/wallet";
 import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
 import sortBy from "lodash/sortBy";
 import DaoRepositories from "./DaoRepositories";
+import { useQuery, gql } from "@apollo/client";
+import client from "../../helpers/apolloClient";
+
+// Define the GraphQL query
+const GET_USERS = gql`
+  query GetUsers($addresses: [String!]) {
+    users(where: { address_in: $addresses }) {
+      id
+      username
+      name
+      avatarUrl
+    }
+  }
+`;
 
 function DaoDashboard({ dao = {}, advanceUser, ...props }) {
   const router = useRouter();
@@ -54,7 +68,9 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
       setTreasuryBalance(
         props.advanceUser === true
           ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-          : balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+          : (balance / 1000000).toFixed(2) +
+              " " +
+              process.env.NEXT_PUBLIC_CURRENCY_TOKEN
       );
     }
     initBalance();
@@ -119,16 +135,37 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
     }
   };
 
+  const memberAddresses = useMemo(
+    () => groupMembers.map((member) => member.member.address),
+    [groupMembers]
+  );
+
+  const { data: userData } = useQuery(GET_USERS, {
+    variables: { addresses: memberAddresses },
+    client: client,
+    skip: memberAddresses.length === 0,
+  });
+
+  const userDataMap = useMemo(
+    () =>
+      userData?.users?.reduce((acc, user) => {
+        acc[user.id] = user;
+        return acc;
+      }, {}),
+    [userData]
+  );
+
   const votingPowerData = useMemo(() => {
     const totalWeight = groupMembers.reduce(
       (sum, member) => sum + Number(member.member.weight),
       0
     );
     return groupMembers.map((member) => ({
-      name: member.member.address,
+      name:
+        userDataMap?.[member.member.address]?.username || member.member.address,
       value: (Number(member.member.weight) / totalWeight) * 100,
     }));
-  }, [groupMembers]);
+  }, [groupMembers, userDataMap]);
 
   useEffect(() => {
     async function fetchRepositories() {
@@ -296,6 +333,7 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
               dao={dao}
               groupInfo={groupInfo}
               refreshDao={props.refreshData}
+              userDataMap={userDataMap}
             />
           </div>
         );

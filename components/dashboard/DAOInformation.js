@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Globe,
-  MapPin,
   Clock,
   Info,
   Percent,
@@ -13,6 +12,8 @@ import {
   ExternalLink,
   Copy,
   Landmark,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 
 const InfoItem = ({ icon: Icon, title, value, isLink, copyable }) => (
@@ -53,23 +54,16 @@ const InfoItem = ({ icon: Icon, title, value, isLink, copyable }) => (
 );
 
 const GovernanceRequirement = ({ icon: Icon, title, value }) => (
-  <div className="flex items-center space-x-3 py-2">
-    <div
-      className={`p-1 rounded-md ${value ? "bg-primary/10" : "bg-base-200"}`}
-    >
-      <Icon
-        className={`w-4 h-4 ${
-          value ? "text-primary" : "text-muted-foreground"
-        }`}
-      />
+  <div className="flex items-center space-x-4 py-3">
+    <div className="bg-base-200 p-2 rounded-lg">
+      <Icon className="w-4 h-4 text-base-content" />
     </div>
-    <span
-      className={`text-sm ${
-        value ? "text-primary font-medium" : "text-muted-foreground"
-      }`}
-    >
-      {title}
-    </span>
+    <span className="flex-1 text-base-content">{title}</span>
+    {value ? (
+      <CheckCircle2 className="w-5 h-5 text-green-500" />
+    ) : (
+      <XCircle className="w-5 h-5 text-red-400" />
+    )}
   </div>
 );
 
