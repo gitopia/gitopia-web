@@ -10,6 +10,7 @@ import {
   GitMerge,
   Trash2,
   Text,
+  Clock,
 } from "lucide-react";
 
 const MessageTypeConfig = {
@@ -209,6 +210,41 @@ const CreateReleaseMessage = ({ message }) => {
   );
 };
 
+const DecisionPolicyMessage = ({ message }) => {
+  console.log("message", message);
+  const quorum = Math.round(
+    parseFloat(message.decision_policy.percentage) * 100
+  );
+  const votingPeriod =
+    parseInt(message.decision_policy.windows.voting_period) / (60 * 60 * 24); // Convert seconds to days
+
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <div className="bg-base-300 p-3 rounded-lg">
+        <div className="flex items-center space-x-2 mb-2">
+          <Users className="w-4 h-4 text-gray-400" />
+          <span className="text-sm text-gray-400">Quorum</span>
+        </div>
+        <div className="text-2xl font-semibold">{quorum}%</div>
+        <div className="text-xs text-gray-400 mt-1">
+          Minimum YES votes required
+        </div>
+      </div>
+
+      <div className="bg-base-300 p-3 rounded-lg">
+        <div className="flex items-center space-x-2 mb-2">
+          <Clock className="w-4 h-4 text-gray-400" />
+          <span className="text-sm text-gray-400">Voting Period</span>
+        </div>
+        <div className="text-2xl font-semibold">{votingPeriod} days</div>
+        <div className="text-xs text-gray-400 mt-1">
+          Time allowed for voting
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const MessageContent = ({ type, message }) => {
   switch (type) {
     case "/cosmos.group.v1.MsgUpdateGroupMembers":
@@ -221,6 +257,8 @@ const MessageContent = ({ type, message }) => {
       return <MergePullRequestMessage message={message} />;
     case "/gitopia.gitopia.gitopia.MsgDaoCreateRelease":
       return <CreateReleaseMessage message={message} />;
+    case "/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy":
+      return <DecisionPolicyMessage message={message} />;
     default:
       return (
         <div className="bg-base-300 p-3 rounded-lg">

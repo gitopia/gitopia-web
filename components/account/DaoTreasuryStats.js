@@ -29,7 +29,7 @@ function DaoTreasuryStats({ dao, className = "", getBalance, advanceUser }) {
           DAO Treasury
         </h3>
         <a
-          href={`${process.env.NEXT_PUBLIC_EXPLORER_URL}/accounts/${dao.address}`}
+          href={`${process.env.NEXT_PUBLIC_EXPLORER_URL}/account/${dao.address}`}
           target="_blank"
           rel="noreferrer"
           className="text-sm text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"

@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, connect } from "react-redux";
-import { useQuery, gql } from "@apollo/client";
-import client from "../../helpers/apolloClient";
 import {
   Users,
   UserPlus,
@@ -18,18 +16,6 @@ import { useApiClient } from "../../context/ApiClientContext";
 import { MsgUpdateGroupMembers } from "cosmjs-types/cosmos/group/v1/tx";
 import { createGroupProposal } from "../../store/actions/dao";
 import VotingPowerChart from "./VotingPowerChart";
-
-// Define the GraphQL query
-const GET_USERS = gql`
-  query GetUsers($addresses: [String!]) {
-    users(where: { address_in: $addresses }) {
-      id
-      username
-      name
-      avatarUrl
-    }
-  }
-`;
 
 const MemberRow = ({
   member,
@@ -148,6 +134,7 @@ function DAOMembersList({
   groupMembers,
   refreshDao,
   selectedAddress,
+  userDataMap,
 }) {
   const [members, setMembers] = useState([]);
   const [editMode, setEditMode] = useState(false);
@@ -163,30 +150,13 @@ function DAOMembersList({
     setMembers(groupMembers.map((m) => ({ ...m.member })));
   }, [groupMembers]);
 
-  // Get the list of member addresses for GraphQL query
-  const memberAddresses = members.map((member) => member.address);
-
-  // Fetch user data using GraphQL
-  const { data: userData } = useQuery(GET_USERS, {
-    variables: { addresses: memberAddresses },
-    client: client,
-    skip: memberAddresses.length === 0,
-  });
-
-  // Create a map of address to user data
-  const userDataMap =
-    userData?.users?.reduce((acc, user) => {
-      acc[user.id] = user;
-      return acc;
-    }, {}) || {};
-
   const votingDistribution = useMemo(() => {
     const totalWeight = members.reduce(
       (sum, member) => sum + Number(member.weight),
       0
     );
     return members.map((member) => ({
-      name: userDataMap[member.address]?.username || member.address,
+      name: userDataMap?.[member.address]?.username || member.address,
       value: (Number(member.weight) / totalWeight) * 100,
     }));
   }, [members, userDataMap]);
