@@ -444,7 +444,7 @@ function NewDao({ selectedAddress, createDao }) {
               <h3 className="text-lg font-semibold mb-4">
                 Voting Power Distribution
               </h3>
-              <div className="h-[400px]">
+              <div className="h-[500px]">
                 <VotingPowerChart
                   data={votingPowerData}
                   showHeader={false}
