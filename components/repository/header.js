@@ -7,11 +7,12 @@ import {
   Trash2,
   User,
   Users,
+  GitBranch,
 } from "lucide-react";
 import { useRouter } from "next/router";
 import shrinkAddress from "../../helpers/shrinkAddress";
-import getDao from "../../helpers/getDao";
 import { useApiClient } from "../../context/ApiClientContext";
+import getRepositoryById from "../../helpers/getRepositoryById";
 import DAOProtectionBadge from "./DaoProtectionBadge";
 
 const OwnershipBadge = ({ type }) => {
@@ -28,6 +29,43 @@ const OwnershipBadge = ({ type }) => {
     <div className="flex items-center gap-1.5 px-2 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-xs">
       <Users size={12} className="text-purple-400" />
       <span className="text-purple-400">DAO Repository</span>
+    </div>
+  );
+};
+
+const ForkParentInfo = ({ parentId }) => {
+  const [parentRepo, setParentRepo] = useState(null);
+  const { apiClient } = useApiClient();
+
+  useEffect(() => {
+    async function fetchParentRepo() {
+      try {
+        const parentRepo = await getRepositoryById(apiClient, parentId);
+        setParentRepo(parentRepo);
+      } catch (error) {
+        console.error("Error fetching parent repository:", error);
+      }
+    }
+
+    if (parentId) {
+      fetchParentRepo();
+    }
+  }, [parentId, apiClient]);
+
+  if (!parentRepo) return null;
+
+  return (
+    <div className="text-sm text-muted-foreground mt-2 flex items-center gap-2">
+      <GitBranch size={14} className="text-gray-400" />
+      <span>Forked from</span>
+      <Link
+        href={`/${parentRepo.owner.id}/${parentRepo.name}`}
+        className="text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5"
+      >
+        <span>{shrinkAddress(parentRepo.owner.id)}</span>
+        <span className="text-gray-500">/</span>
+        <span>{parentRepo.name}</span>
+      </Link>
     </div>
   );
 };
@@ -86,45 +124,51 @@ const RepositoryHeader = ({ repository, daoData, selectedAddress }) => {
     <div className="mb-6">
       <div className="flex flex-wrap items-start gap-4 mb-4">
         <div className="flex-1">
-          <div className="flex items-center gap-3 mb-3">
-            <h1 className="text-xl flex items-center gap-2">
-              <div className="flex items-center gap-2 group">
-                {isDAORepository ? (
-                  <Users size={16} className="text-purple-400" />
-                ) : (
-                  <User size={16} className="text-blue-400" />
-                )}
+          <div className="flex flex-col">
+            <div className="flex items-center gap-3 mb-3">
+              <h1 className="text-xl flex items-center gap-2">
+                <div className="flex items-center gap-2 group">
+                  {isDAORepository ? (
+                    <Users size={16} className="text-purple-400" />
+                  ) : (
+                    <User size={16} className="text-blue-400" />
+                  )}
+                  <Link
+                    href={`/${repository.owner.id}`}
+                    className="hover:text-primary transition-colors"
+                  >
+                    {shrinkAddress(repository.owner.id)}
+                  </Link>
+                </div>
+                <span className="text-gray-500">/</span>
                 <Link
-                  href={`/${repository.owner.id}`}
+                  href={`/${repository.owner.id}/${repository.name}`}
                   className="hover:text-primary transition-colors"
+                  data-test="repo_name"
                 >
-                  {shrinkAddress(repository.owner.id)}
+                  {repository.name}
                 </Link>
-              </div>
-              <span className="text-gray-500">/</span>
-              <Link
-                href={`/${repository.owner.id}/${repository.name}`}
-                className="hover:text-primary transition-colors"
-                data-test="repo_name"
-              >
-                {repository.name}
-              </Link>
-            </h1>
-          </div>
+              </h1>
+            </div>
 
-          <div className="flex flex-wrap items-center gap-2 mt-2">
-            <OwnershipBadge type={repository.owner.type} />
-            {isDAORepository && daoData && (
-              <DAOProtectionBadge
-                enabledFeatures={enabledFeatures}
-                governanceFeatures={governanceFeatures}
-              />
+            {repository.fork && repository.parent && (
+              <ForkParentInfo parentId={repository.parent} />
             )}
-            {repository.fork && (
-              <div className="badge badge-outline text-type-tertiary">
-                <GitFork className="h-3 w-3" />
-              </div>
-            )}
+
+            <div className="flex flex-wrap items-center gap-2 mt-2">
+              <OwnershipBadge type={repository.owner.type} />
+              {isDAORepository && daoData && (
+                <DAOProtectionBadge
+                  enabledFeatures={enabledFeatures}
+                  governanceFeatures={governanceFeatures}
+                />
+              )}
+              {repository.fork && (
+                <div className="badge badge-outline text-type-tertiary">
+                  <GitFork className="h-3 w-3" />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
