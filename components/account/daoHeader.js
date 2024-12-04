@@ -11,6 +11,8 @@ import AccountAvatar from "../account/avatar";
 import DaoWebsite from "../dao/website";
 import { useApiClient } from "../../context/ApiClientContext";
 import DaoTreasuryStats from "./DaoTreasuryStats";
+import Link from "next/link";
+import { Users2 } from "lucide-react";
 
 function AccountDaoHeader(props) {
   const [isEditable, setIsEditable] = useState(false);
@@ -49,7 +51,17 @@ function AccountDaoHeader(props) {
           </span>
         </div>
         <div className="flex-1 max-w-3xl sm:pl-12">
-          <div className="text-xl mb-4">About</div>
+          <div className="flex justify-between items-start">
+            <div className="text-xl mb-4">About</div>
+            {props.isMember && (
+              <Link href={`/daos/${props.dao.address}/dashboard`}>
+                <button className="btn btn-outline btn-primary">
+                  <Users2 className="w-4 h-4 mr-2" />
+                  Member Dashboard
+                </button>
+              </Link>
+            )}
+          </div>
           <DaoName dao={props.dao} isEditable={isEditing} refresh={refresh} />
           <div className="text-type-secondary mb-4">
             <a

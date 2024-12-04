@@ -205,41 +205,49 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
   };
 
   const renderHeader = () => (
-    <div className="bg-base-200 rounded-lg p-6 mb-8 flex items-center space-x-6">
-      <div className="avatar">
-        <div className="w-20 h-20 rounded-lg ring-2 ring-primary/10">
-          {dao?.avatarUrl ? (
-            <img
-              src={dao?.avatarUrl}
-              alt={dao?.name}
-              className="object-cover"
-            />
-          ) : (
-            <div className="bg-primary/10 flex items-center justify-center text-4xl uppercase h-full font-semibold text-primary">
-              {dao?.name?.[0]}
-            </div>
-          )}
+    <div className="bg-base-200 rounded-lg p-6 mb-8 flex items-center justify-between">
+      <div className="flex items-center space-x-6">
+        <div className="avatar">
+          <div className="w-20 h-20 rounded-lg ring-2 ring-primary/10">
+            {dao?.avatarUrl ? (
+              <img
+                src={dao?.avatarUrl}
+                alt={dao?.name}
+                className="object-cover"
+              />
+            ) : (
+              <div className="bg-primary/10 flex items-center justify-center text-4xl uppercase h-full font-semibold text-primary">
+                {dao?.name?.[0]}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-      <div className="space-y-2">
-        <Link
-          href={"/" + dao?.name?.toLowerCase()}
-          className="text-2xl font-bold hover:text-primary transition-colors"
-        >
-          {dao?.name}
-        </Link>
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <span>
-            {dao?.address?.slice(0, 8)}...{dao?.address?.slice(-8)}
-          </span>
-          <button
-            onClick={() => navigator.clipboard.writeText(dao?.address)}
-            className="p-1 hover:bg-primary/10 rounded-md transition-colors"
+        <div className="space-y-2">
+          <Link
+            href={"/" + dao?.name?.toLowerCase()}
+            className="text-2xl font-bold hover:text-primary transition-colors"
           >
-            <Copy size={14} />
-          </button>
+            {dao?.name}
+          </Link>
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <span>
+              {dao?.address?.slice(0, 8)}...{dao?.address?.slice(-8)}
+            </span>
+            <button
+              onClick={() => navigator.clipboard.writeText(dao?.address)}
+              className="p-1 hover:bg-primary/10 rounded-md transition-colors"
+            >
+              <Copy size={14} />
+            </button>
+          </div>
         </div>
       </div>
+      <Link href={`/${dao?.name?.toLowerCase()}`}>
+        <button className="btn btn-outline btn-primary">
+          <Box className="w-4 h-4 mr-2" />
+          Public View
+        </button>
+      </Link>
     </div>
   );
 

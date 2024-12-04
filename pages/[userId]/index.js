@@ -21,6 +21,7 @@ import GitopiaProtocolProposalDetails from "../../components/account/GitopiaProt
 import validAddress from "../../helpers/validAddress";
 import { useApiClient } from "../../context/ApiClientContext";
 import DaoProposalsList from "../../components/account/DaoProposalsList";
+import getGroupMembers from "../../helpers/getGroupMembers";
 
 export async function getStaticProps({ params }) {
   let data,
@@ -107,7 +108,12 @@ export async function getStaticPaths() {
   };
 }
 
-function AccountView({ user: initialUser, dao: initialDao, allRepos }) {
+function AccountView({
+  user: initialUser,
+  dao: initialDao,
+  allRepos,
+  selectedAddress,
+}) {
   const router = useRouter();
   const { setErrorStatusCode } = useErrorStatus();
   const [user, setUser] = useState({
@@ -117,9 +123,27 @@ function AccountView({ user: initialUser, dao: initialDao, allRepos }) {
   });
   const [dao, setDao] = useState({ name: "", repositories: [], ...initialDao });
   const [isLoading, setIsLoading] = useState(false);
-  const { apiClient } = useApiClient();
+  const [isMember, setIsMember] = useState(false);
+  const { apiClient, cosmosGroupApiClient } = useApiClient();
 
   const hrefBase = `/${router.query.userId}`;
+
+  const checkMembership = async (daoData) => {
+    console.log(selectedAddress, daoData.group_id);
+    if (!selectedAddress || !daoData.group_id) return;
+    try {
+      const members = await getGroupMembers(
+        cosmosGroupApiClient,
+        daoData.group_id
+      );
+      const isMember = members.some(
+        (m) => m.member.address === selectedAddress
+      );
+      setIsMember(isMember);
+    } catch (error) {
+      console.error("Error checking membership:", error);
+    }
+  };
 
   const getId = useCallback(
     async (updatedName) => {
@@ -148,6 +172,7 @@ function AccountView({ user: initialUser, dao: initialDao, allRepos }) {
           if ("group_id" in result) {
             setUser({ creator: "" });
             setDao(result);
+            await checkMembership(result);
           } else {
             setUser(result);
             setDao({ name: "" });
@@ -224,7 +249,13 @@ function AccountView({ user: initialUser, dao: initialDao, allRepos }) {
           ) : (
             <>
               {dao.address ? (
-                <AccountDaoHeader dao={dao} refresh={getId} />
+                <>
+                  <AccountDaoHeader
+                    dao={dao}
+                    refresh={getId}
+                    isMember={isMember}
+                  />
+                </>
               ) : (
                 <UserHeader user={user} refresh={getId} />
               )}
