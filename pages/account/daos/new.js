@@ -101,7 +101,7 @@ function NewDao({ selectedAddress, createDao }) {
   }, [selectedAddress]);
 
   const [hints, setHints] = useState({
-    name: { shown: false, type: "error", message: "" },
+    name: { shown: false, type: "info", message: "" },
     description: { shown: false, type: "error", message: "" },
     website: { shown: false, type: "error", message: "" },
     votingPeriod: { shown: false, type: "error", message: "" },
@@ -116,10 +116,32 @@ function NewDao({ selectedAddress, createDao }) {
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
   const updateFormData = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => {
+      const newData = { ...prev, [field]: value };
+
+      // Special handling for name field
+      if (field === "name") {
+        if (sanitizedNameTest.test(value)) {
+          setHints((prevHints) => ({
+            ...prevHints,
+            name: {
+              type: "info",
+              shown: true,
+              message:
+                "Your DAO would be named as " +
+                value.replace(sanitizedNameTest, "-"),
+            },
+          }));
+        } else {
+          setHints((prevHints) => ({
+            ...prevHints,
+            name: { shown: false, type: "info", message: "" },
+          }));
+        }
+      }
+
+      return newData;
+    });
   };
 
   const addMember = () => {
@@ -186,6 +208,7 @@ function NewDao({ selectedAddress, createDao }) {
               value={formData.name}
               setValue={(v) => updateFormData("name", v)}
               hint={hints.name}
+              helperText="Only letters, numbers, dots, and hyphens are allowed. Other characters will be converted to hyphens."
             />
 
             <TextInput
@@ -421,7 +444,7 @@ function NewDao({ selectedAddress, createDao }) {
               <h3 className="text-lg font-semibold mb-4">
                 Voting Power Distribution
               </h3>
-              <div className="h-[300px]">
+              <div className="h-[500px]">
                 <VotingPowerChart
                   data={votingPowerData}
                   showHeader={false}
@@ -452,7 +475,7 @@ function NewDao({ selectedAddress, createDao }) {
           votingPeriod: formData.votingPeriod,
           percentage: (Number(formData.percentage) / 100).toString(),
           members: formData.members,
-          config: formData.config, // Include the DAO configuration
+          config: formData.config,
         }
       );
       if (res?.url) {
