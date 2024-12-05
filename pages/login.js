@@ -27,13 +27,8 @@ Wizard Steps
 function Login(props) {
   const { query, push } = useRouter();
   const [step, setStep] = useState(Number(query.step) || 1);
-  const {
-    apiClient,
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-    apiUrl,
-    rpcUrl,
-  } = useApiClient();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     setStep(Number(query.step) || 1);
@@ -77,7 +72,11 @@ function Login(props) {
                 <button
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
                   onClick={async (e) => {
-                    const acc = await props.unlockKeplrWallet();
+                    const acc = await props.unlockKeplrWallet(
+                      apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient
+                    );
                     if (acc) {
                       push("/home");
                     }
@@ -89,7 +88,11 @@ function Login(props) {
                 <button
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
                   onClick={async (e) => {
-                    const acc = await props.unlockMetamaskWallet();
+                    const acc = await props.unlockMetamaskWallet(
+                      apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient
+                    );
                     if (acc) {
                       push("/home");
                     }

@@ -163,7 +163,7 @@ function Header(props) {
       </span>
     );
     return badge;
-  }
+  };
 
   useEffect(() => {
     const updateNetworkName = async () => {

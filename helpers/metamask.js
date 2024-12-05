@@ -40,7 +40,7 @@ async function isLeapSnapEnabled() {
   });
 }
 
-export default async function initMetamask() {
+export default async function initMetamask(apiUrl) {
   const leapSnapEnabled = await isLeapSnapEnabled();
   if (leapSnapEnabled) {
     const supportedChains =
@@ -53,8 +53,8 @@ export default async function initMetamask() {
           },
         },
       })) || {};
-    const info = await getNodeInfo();
 
+    const info = await getNodeInfo(apiUrl);
     if (supportedChains[info.default_node_info.network]) {
       return info;
     } else {

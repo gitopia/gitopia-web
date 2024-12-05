@@ -178,7 +178,11 @@ export const setupTxClients = async (
       } else if (wallet.activeWallet.isLeap) {
         await unlockLeapWallet(chainId)(dispatch, getState);
       } else if (wallet.activeWallet.isMetamask) {
-        await unlockMetamaskWallet(chainId)(dispatch, getState);
+        await unlockMetamaskWallet(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient
+        )(dispatch, getState);
       } else {
         return new Promise((resolve, reject) => {
           dispatch({

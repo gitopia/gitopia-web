@@ -13,6 +13,7 @@ import TextInput from "./textInput";
 import Link from "next/link";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { useApiClient } from "../context/ApiClientContext";
+import initKeplr from "../helpers/keplr";
 
 function CurrentWallet(props) {
   const [isUnlocking, setIsUnlocking] = useState(false);
@@ -306,7 +307,11 @@ function CurrentWallet(props) {
             <button
               className="btn btn-outline btn-circle border-grey rounded-full"
               onClick={async () => {
-                props.unlockMetamaskWallet();
+                props.unlockMetamaskWallet(
+                  apiClient,
+                  cosmosBankApiClient,
+                  cosmosFeegrantApiClient
+                );
               }}
             >
               <div className="rounded-full mask mask-circle w-10 h-10 bg-base-200 flex justify-center items-center">

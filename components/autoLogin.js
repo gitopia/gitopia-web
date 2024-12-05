@@ -13,6 +13,7 @@ import TextInput from "./textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
 import { notify } from "reapop";
 import { useApiClient } from "../context/ApiClientContext";
+import initKeplr from "../helpers/keplr";
 
 function AutoLogin(props) {
   const [password, setPassword] = useState("");
@@ -55,7 +56,11 @@ function AutoLogin(props) {
               cosmosFeegrantApiClient
             );
           } else if (lastWallet.isMetamask) {
-            await props.unlockMetamaskWallet();
+            await props.unlockMetamaskWallet(
+              apiClient,
+              cosmosBankApiClient,
+              cosmosFeegrantApiClient
+            );
           } else if (lastWallet.isLeap) {
             await props.unlockLeapWallet();
           } else {

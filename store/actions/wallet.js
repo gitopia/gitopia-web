@@ -165,7 +165,7 @@ export const unlockKeplrWallet = (
     if (window.keplr && window.getOfflineSigner) {
       try {
         const { env } = getState();
-        const info = await initKeplr();
+        const info = await initKeplr(env.apiNode, env.rpcNode);
         const chainId = info?.default_node_info?.network;
         const offlineSigner = await window.getOfflineSignerAuto(chainId);
         let accountSignerSecondary = null,
@@ -300,6 +300,9 @@ export const unlockLeapWallet = (secondaryChainId = null) => {
           },
         });
         await postWalletUnlocked(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
           offlineSigner,
           dispatch,
           getState,
@@ -316,11 +319,17 @@ export const unlockLeapWallet = (secondaryChainId = null) => {
   };
 };
 
-export const unlockMetamaskWallet = (secondaryChainId = null) => {
+export const unlockMetamaskWallet = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  secondaryChainId = null
+) => {
   return async (dispatch, getState) => {
     if (window.ethereum) {
       try {
-        const info = await initMetamask();
+        const { env } = getState();
+        const info = await initMetamask(env.apiNode);
         const { CosmjsOfflineSigner, getKey } = await import(
           "@leapwallet/cosmos-snap-provider"
         );
@@ -380,6 +389,9 @@ export const unlockMetamaskWallet = (secondaryChainId = null) => {
           },
         });
         await postWalletUnlocked(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
           offlineSigner,
           dispatch,
           getState,
