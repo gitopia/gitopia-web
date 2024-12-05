@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Decloud Nodes Lab",
+    "apiEndpoint": "https://gitopia.declab.pro",
+    "rpcEndpoint": "https://gitopia.declab.pro:26625"
+  },
+  {
+    "name": "Inter Blockchain Services",
+    "apiEndpoint": "https://gitopia-api.ibs.team",
+    "rpcEndpoint": "https://gitopia-rpc.ibs.team"
+  },
+  {
+    "name": "Polkachu",
+    "apiEndpoint": "https://gitopia-api.polkachu.com",
+    "rpcEndpoint": "https://gitopia-rpc.polkachu.com"
+  },
+  {
+    "name": "Staketab",
+    "apiEndpoint": "https://gitopia-rest.staketab.org",
+    "rpcEndpoint": "https://gitopia-rpc.staketab.org"
+  }
+]

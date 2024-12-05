@@ -7,6 +7,8 @@ import {
   toggleIssueState,
   updatePullRequestState,
 } from "../../store/actions/repository";
+import { useApiClient } from "../../context/ApiClientContext";
+import { notify } from "reapop";
 
 function CommentEditor({
   commentIid = null,
@@ -25,6 +27,8 @@ function CommentEditor({
   const [postingComment, setPostingComment] = useState(false);
   const [togglingIssue, setTogglingIssue] = useState(false);
   const [commentHint, setCommentHint] = useState({ shown: false });
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const validateComment = () => {
     setCommentHint({ shown: false });
@@ -50,15 +54,23 @@ function CommentEditor({
   const createComment = async () => {
     setPostingComment(true);
     if (validateComment()) {
-      const res = await props.createComment({
-        repositoryId: repositoryId,
-        parentIid: parentIid,
-        parent: parent,
-        body: comment,
-      });
+      const res = await props.createComment(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          repositoryId: repositoryId,
+          parentIid: parentIid,
+          parent: parent,
+          body: comment,
+        }
+      );
       if (res && res.code === 0) {
+        props.notify("Comment created", "info");
         setComment("");
         if (onSuccess) await onSuccess();
+      } else {
+        props.notify(res.rawLog, "error");
       }
     }
     setPostingComment(false);
@@ -67,14 +79,20 @@ function CommentEditor({
   const updateComment = async () => {
     setPostingComment(true);
     if (validateComment()) {
-      const res = await props.updateComment({
-        repositoryId: repositoryId,
-        parentIid: parentIid,
-        parent: parent,
-        commentIid: commentIid,
-        body: comment,
-      });
+      const res = await props.updateComment(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          repositoryId: repositoryId,
+          parentIid: parentIid,
+          parent: parent,
+          commentIid: commentIid,
+          body: comment,
+        }
+      );
       if (res && res.code === 0) {
+        props.notify("Comment updated", "info");
         setComment("");
         if (onSuccess) await onSuccess(commentIid);
       }
@@ -110,12 +128,20 @@ function CommentEditor({
                 disabled={togglingIssue || postingComment}
                 onClick={async () => {
                   setTogglingIssue(true);
-                  const res = await props.toggleIssueState({
-                    repositoryId: repositoryId,
-                    iid: parentIid,
-                    commentBody: comment,
-                  });
+                  const res = await props.toggleIssueState(
+                    apiClient,
+                    cosmosBankApiClient,
+                    cosmosFeegrantApiClient,
+                    {
+                      repositoryId: repositoryId,
+                      iid: parentIid,
+                      commentBody: comment,
+                    }
+                  );
                   if (res && res.code === 0) {
+                    issueState === "OPEN"
+                      ? props.notify("Issue closed", "info")
+                      : props.notify("Issue re-opened", "info");
                     if (onSuccess) {
                       await onSuccess();
                     }
@@ -126,7 +152,9 @@ function CommentEditor({
               >
                 {issueState === "OPEN" ? "Close" : "Re-Open"}
                 {" issue"}
-                {(issueState === "OPEN" && comment.trim().length !== 0) ? " with comment" : ""}
+                {issueState === "OPEN" && comment.trim().length !== 0
+                  ? " with comment"
+                  : ""}
               </button>
             </div>
           ) : issueState === "OPEN" ? (
@@ -139,12 +167,17 @@ function CommentEditor({
                 disabled={togglingIssue || postingComment}
                 onClick={async () => {
                   setTogglingIssue(true);
-                  const res = await props.updatePullRequestState({
-                    repositoryId: repositoryId,
-                    iid: parentIid,
-                    state: "CLOSED",
-                    commentBody: comment,
-                  });
+                  const res = await props.updatePullRequestState(
+                    apiClient,
+                    cosmosBankApiClient,
+                    cosmosFeegrantApiClient,
+                    {
+                      repositoryId: repositoryId,
+                      iid: parentIid,
+                      state: "CLOSED",
+                      commentBody: comment,
+                    }
+                  );
                   if (res && res.code === 0) {
                     if (onSuccess) {
                       await onSuccess();
@@ -203,4 +236,5 @@ export default connect(mapStateToProps, {
   updateComment,
   toggleIssueState,
   updatePullRequestState,
+  notify,
 })(CommentEditor);

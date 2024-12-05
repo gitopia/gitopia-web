@@ -185,6 +185,7 @@ function RepositorySettingsView(props) {
                       ...repository.collaborators,
                     ]}
                     refreshRepository={refreshRepository}
+                    repository={repository}
                   />
                 </div>
               </div>

@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import axios from "../helpers/axiosFetch";
 import { updateUserBalance } from "../store/actions/wallet";
 import { notify } from "reapop";
+import { useApiClient } from "../context/ApiClientContext";
 
 function CreateWallet(props) {
   const [mnemonic, setMnemonic] = useState(bip39.generateMnemonic(256));
@@ -37,6 +38,8 @@ function CreateWallet(props) {
   });
   const [walletCreated, setWalletCreated] = useState(false);
   const router = useRouter();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const hideHints = () => {
     setNameHint({ ...nameHint, shown: false });
@@ -112,11 +115,16 @@ function CreateWallet(props) {
 
   const createWallet = async () => {
     if (validateWallet()) {
-      let res = await props.createWalletWithMnemonic({
-        name,
-        mnemonic,
-        password,
-      });
+      let res = await props.createWalletWithMnemonic(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          name,
+          mnemonic,
+          password,
+        }
+      );
       setWalletCreated(true);
     }
   };
@@ -196,7 +204,7 @@ function CreateWallet(props) {
                 value={password}
                 setValue={setPassword}
                 hint={passwordHint}
-                autoFocus={true}  
+                autoFocus={true}
               />
             </div>
             <div className="mb-8">

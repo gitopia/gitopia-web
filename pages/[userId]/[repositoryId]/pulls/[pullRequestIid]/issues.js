@@ -20,6 +20,7 @@ import dayjs from "dayjs";
 import { ApolloProvider } from "@apollo/client";
 import client from "../../../../../helpers/apolloClient";
 import QueryIssues from "../../../../../helpers/gql/queryIssuesByTitleGql";
+import { useApiClient } from "../../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -40,12 +41,15 @@ function RepositoryPullIssuesView(props) {
   const [textEntered, setEnteredText] = useState("");
   const [issueList, setIssueList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function fetchIssues() {
       const array = [];
       for (var i = 0; i < pullRequest.issues.length; i++) {
         const res = await getIssue(
+          apiClient,
           repository.owner.id,
           repository.name,
           pullRequest.issues[i].iid
@@ -134,7 +138,7 @@ function RepositoryPullIssuesView(props) {
                   <ApolloProvider client={client}>
                     <QueryIssues
                       substr={textEntered}
-                      repoId={Number(repository.id)}
+                      repoId={repository.id}
                       setIssueList={setIssueList}
                     />
                   </ApolloProvider>
@@ -221,7 +225,13 @@ function RepositoryPullIssuesView(props) {
               onClick={() => {
                 setLoading(true);
                 props
-                  .linkPullIssuebyIid(repository.id, pullRequest.iid, issue.iid)
+                  .linkPullIssuebyIid(
+                    cosmosBankApiClient,
+                    cosmosFeegrantApiClient,
+                    repository.id,
+                    pullRequest.iid,
+                    issue.iid
+                  )
                   .then(() => {
                     setIssue({ title: "", iid: "" });
                     refreshPullRequest();
@@ -447,6 +457,8 @@ function RepositoryPullIssuesView(props) {
                         onClick={() => {
                           props
                             .unlinkPullIssuebyIid(
+                              cosmosBankApiClient,
+                              cosmosFeegrantApiClient,
                               repository.id,
                               pullRequest.iid,
                               i.iid

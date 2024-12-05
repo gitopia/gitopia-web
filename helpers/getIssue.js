@@ -1,8 +1,15 @@
-import api from "./getApi";
-
-export default async function getIssue(id, repositoryName, issueIid) {
+export default async function getIssue(
+  apiClient,
+  id,
+  repositoryName,
+  issueIid
+) {
   try {
-    const res = await api.queryRepositoryIssue(id, repositoryName, issueIid);
+    const res = await apiClient.queryRepositoryIssue(
+      id,
+      repositoryName,
+      issueIid
+    );
     if (res.status === 200) {
       let i = res.data.Issue;
       return i;

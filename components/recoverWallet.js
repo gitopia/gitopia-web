@@ -4,6 +4,7 @@ import * as bip39 from "bip39";
 import { createWalletWithMnemonic } from "../store/actions/wallet";
 import TextInput from "./textInput";
 import { useRouter } from "next/router";
+import { useApiClient } from "../context/ApiClientContext";
 
 function RecoverWallet(props) {
   const [mnemonic, setMnemonic] = useState("");
@@ -32,6 +33,8 @@ function RecoverWallet(props) {
   });
   const [mnemonicValidated, setMnemonicValidated] = useState(false);
   const router = useRouter();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const hideHints = () => {
     setMnemonicHint({ ...mnemonicHint, shown: false });
@@ -112,11 +115,16 @@ function RecoverWallet(props) {
 
   const createWallet = async () => {
     if (validateWallet()) {
-      let res = await props.createWalletWithMnemonic({
-        name,
-        mnemonic,
-        password,
-      });
+      let res = await props.createWalletWithMnemonic(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          name,
+          mnemonic,
+          password,
+        }
+      );
       router.push("/home");
     }
   };

@@ -1,8 +1,11 @@
-import api from "./getApi";
-
-export default async function getPullRequest(id, repositoryName, pullIid) {
+export default async function getPullRequest(
+  apiClient,
+  id,
+  repositoryName,
+  pullIid
+) {
   try {
-    const res = await api.queryRepositoryPullRequest(
+    const res = await apiClient.queryRepositoryPullRequest(
       id,
       repositoryName,
       pullIid

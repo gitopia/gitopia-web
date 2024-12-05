@@ -12,6 +12,7 @@ import {
   deleteTag,
   isCurrentUserEligibleToUpdate,
 } from "../../../store/actions/repository";
+import { useApiClient } from "../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -31,6 +32,8 @@ function RepositoryTagsView(props) {
     useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function updatePermissions() {
@@ -223,11 +226,16 @@ function RepositoryTagsView(props) {
                               setIsDeleting(true);
 
                               props
-                                .deleteTag({
-                                  repoOwnerId: repository.owner.id,
-                                  repositoryName: repository.name,
-                                  name: t.name,
-                                })
+                                .deleteTag(
+                                  apiClient,
+                                  cosmosBankApiClient,
+                                  cosmosFeegrantApiClient,
+                                  {
+                                    repoOwnerId: repository.owner.id,
+                                    repositoryName: repository.name,
+                                    name: t.name,
+                                  }
+                                )
                                 .then((res) => {
                                   if (res.code == 0) {
                                     refreshRepository();

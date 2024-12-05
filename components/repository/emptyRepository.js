@@ -6,6 +6,7 @@ import { useRef } from "react";
 import { useEffect, useState } from "react";
 import { updateRepositoryDescription } from "../../store/actions/repository";
 import { isCurrentUserEligibleToUpdate } from "../../store/actions/repository";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function EmptyRepository(props) {
   const { repository } = props;
@@ -24,6 +25,8 @@ function EmptyRepository(props) {
   });
   const [savingDescription, setSavingDescription] = useState(false);
   const input = useRef();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   if (activeWallet) {
     if (
@@ -66,13 +69,19 @@ function EmptyRepository(props) {
     setSavingDescription(true);
     if (validateDescription(newDescription)) {
       console.log(repository);
-      const res = await props.updateRepositoryDescription({
-        name: repository.name,
-        ownerId: repository.owner.id,
-        description: newDescription,
-      });
+      const res = await props.updateRepositoryDescription(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          name: repository.name,
+          ownerId: repository.owner.id,
+          description: newDescription,
+        }
+      );
 
       if (res && res.code === 0) {
+        dispatch(notify("Repository description updated", "info"));
         if (props.refreshRepository) await props.refreshRepository();
         setEditDescription(false);
       } else {

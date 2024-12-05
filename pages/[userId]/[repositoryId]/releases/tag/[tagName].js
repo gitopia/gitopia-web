@@ -17,6 +17,7 @@ import getRepositoryRelease from "../../../../../helpers/getRepositoryRelease";
 import ReleaseView from "../../../../../components/repository/releaseView";
 import useRepository from "../../../../../hooks/useRepository";
 import { useErrorStatus } from "../../../../../hooks/errorHandler";
+import { useApiClient } from "../../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -39,9 +40,10 @@ function RepositoryReleaseView(props) {
     attachments: [],
   });
   const [isLatest, setIsLatest] = useState(false);
-  const [currentUserEditPermission, setCurrentUserEditPermission] = useState(
-    false
-  );
+  const [currentUserEditPermission, setCurrentUserEditPermission] =
+    useState(false);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function initLatest() {
@@ -61,6 +63,7 @@ function RepositoryReleaseView(props) {
   const getRelease = async () => {
     if (repository) {
       const rel = await getRepositoryRelease(
+        apiClient,
         repository.owner.id,
         repository.name,
         router.query.tagName
@@ -109,7 +112,14 @@ function RepositoryReleaseView(props) {
               latest={isLatest}
               showEditControls={currentUserEditPermission}
               onDelete={async (id) => {
-                const res = await props.deleteRelease({ releaseId: id });
+                const res = await props.deleteRelease(
+                  apiClient,
+                  cosmosBankApiClient,
+                  cosmosFeegrantApiClient,
+                  {
+                    releaseId: id,
+                  }
+                );
                 if (res && res.code === 0) {
                   router.push(
                     "/" +

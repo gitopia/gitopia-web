@@ -4,13 +4,14 @@ import { useRouter } from "next/router";
 import Link from "next/dist/client/link";
 import { submitGovernanceProposal } from "../../store/actions/proposals";
 import { chainUpgradeProposal } from "../../store/actions/proposals";
-import MarkdownEditor from "../../components/markdownEditor";
+import MarkdownEditor from "../markdownEditor";
 import { communityPoolSpendProposal } from "../../store/actions/proposals";
 import { paramChangeProposal } from "../../store/actions/proposals";
 import getUser from "../../helpers/getUser";
 import validAddress from "../../helpers/validAddress";
+import { useApiClient } from "../../context/ApiClientContext";
 
-function DaoProposalCreate({ dao, ...props }) {
+function GitopiaProtocolProposalCreate({ dao, ...props }) {
   const [validateAddressError, setValidateAddressError] = useState("");
   const [validateAmountError, setValidateAmountError] = useState("");
   const [validateInitialAmountError, setValidateInitialAmountError] =
@@ -31,6 +32,8 @@ function DaoProposalCreate({ dao, ...props }) {
   const [menuState, setMenuState] = useState(1);
   const [counter, setCounter] = useState(1);
   const [initialDeposit, setInitialDeposit] = useState(0);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
   // const [dao, setDao] = useState({
   //   name: "",
   //   repositories: [],
@@ -53,7 +56,7 @@ function DaoProposalCreate({ dao, ...props }) {
 
   const validateUserAddress = async (address) => {
     if (address.trim() !== "" && validAddress.test(address)) {
-      const res = await getUser(address);
+      const res = await getUser(apiClient, address);
       setValidateAddressError(null);
     } else {
       setValidateAddressError("Enter a valid address");
@@ -144,7 +147,7 @@ function DaoProposalCreate({ dao, ...props }) {
     if (res && res.code === 0) {
       router.push(
         hrefBase +
-          "?tab=proposals&id=" +
+          "?tab=protocolproposals&id=" +
           result[0].events[4].attributes[0].value
       );
     }
@@ -153,7 +156,7 @@ function DaoProposalCreate({ dao, ...props }) {
   return (
     <div className="mt-4">
       <div className="">
-        <Link href={hrefBase + "?tab=proposals"}>
+        <Link href={hrefBase + "?tab=protocolproposals"}>
           <label className="flex link text-sm uppercase no-underline items-center hover:text-green mt-8">
             <svg
               width="8"
@@ -391,6 +394,8 @@ function DaoProposalCreate({ dao, ...props }) {
                     setLoading(true);
                     props
                       .communityPoolSpendProposal(
+                        cosmosBankApiClient,
+                        cosmosFeegrantApiClient,
                         title,
                         description,
                         proposalType,
@@ -486,6 +491,8 @@ function DaoProposalCreate({ dao, ...props }) {
                     setLoading(true);
                     props
                       .chainUpgradeProposal(
+                        cosmosBankApiClient,
+                        cosmosFeegrantApiClient,
                         title,
                         description,
                         proposalType,
@@ -611,6 +618,8 @@ function DaoProposalCreate({ dao, ...props }) {
                     setLoading(true);
                     props
                       .paramChangeProposal(
+                        cosmosBankApiClient,
+                        cosmosFeegrantApiClient,
                         title,
                         description,
                         proposalType,
@@ -656,6 +665,8 @@ function DaoProposalCreate({ dao, ...props }) {
                   setLoading(true);
                   props
                     .submitGovernanceProposal(
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient,
                       title,
                       description,
                       proposalType,
@@ -698,4 +709,4 @@ export default connect(mapStateToProps, {
   chainUpgradeProposal,
   communityPoolSpendProposal,
   paramChangeProposal,
-})(DaoProposalCreate);
+})(GitopiaProtocolProposalCreate);

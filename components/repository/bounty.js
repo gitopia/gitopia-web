@@ -7,6 +7,9 @@ import dayjs from "dayjs";
 import getDenomNameByHash from "../../helpers/getDenomNameByHash";
 import getTokenValueInDollars from "../../helpers/getTotalTokenValueInDollars";
 import { coingeckoId } from "../../ibc-assets-config";
+import { useApiClient } from "../../context/ApiClientContext";
+import axios from "../../helpers/axiosFetch";
+import { notify } from "reapop";
 
 function CreateBounty(props) {
   const router = useRouter();
@@ -22,18 +25,28 @@ function CreateBounty(props) {
   const [tokenKV, setTokenKV] = useState({});
   const [isAddingNewToken, setIsAddingNewToken] = useState(false);
   const [dollarValue, setDollarValue] = useState(0);
+  const [tokenPrices, setTokenPrices] = useState({});
   const ref1 = useRef(null);
   const ref2 = useRef(null);
   // const ref3 = useRef("dd/mm/yyyy");
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    ibcAppTransferApiClient,
+  } = useApiClient();
 
   useEffect(() => {
     async function getBalance() {
-      const b = await getBalances(props.selectedAddress);
+      const b = await getBalances(cosmosBankApiClient, props.selectedAddress);
       let kv = {};
       if (b) {
         for (let i = 0; i < b.balances.length; i++) {
           if (b.balances[i].denom.includes("ibc")) {
-            let denomName = await getDenomNameByHash(b.balances[i].denom);
+            let denomName = await getDenomNameByHash(
+              ibcAppTransferApiClient,
+              b.balances[i].denom
+            );
             if (denomName) {
               b.balances[i].showDenom = coingeckoId[denomName].coinDenom;
               b.balances[i].amount =
@@ -58,6 +71,7 @@ function CreateBounty(props) {
         }
         setTokenKV(kv);
         setBalances(b.balances);
+        await fetchTokenPrices(Object.keys(kv));
       }
     }
     getBalance();
@@ -72,15 +86,39 @@ function CreateBounty(props) {
     }
   }, [props.bountyAmount]);
 
-  async function getDollarValue(denom, amount) {
-    let dollar = await getTokenValueInDollars(
-      denom,
-      amount * Math.pow(10, coingeckoId[denom].coinDecimals)
-    );
+  async function fetchTokenPrices(denoms) {
+    let ids = denoms
+      .map((denom) => coingeckoId[denom]?.id)
+      .filter((id) => id !== "");
+    if (ids.length === 0) return;
 
-    if (dollar) {
-      setDollarValue(dollar);
+    try {
+      let { data } = await axios.get(
+        "https://api.coingecko.com/api/v3/simple/price?ids=" +
+          ids.join(",") +
+          "&vs_currencies=usd"
+      );
+
+      let prices = {};
+      denoms.forEach((denom) => {
+        let id = coingeckoId[denom]?.id;
+        if (id && data[id]) {
+          prices[denom] = data[id].usd;
+        }
+      });
+
+      setTokenPrices(prices);
+    } catch (err) {
+      console.error(err);
+      props.notify("Unable to get prices", "error");
     }
+  }
+
+  function getDollarValue(denom, amount) {
+    let price = tokenPrices[denom];
+    if (!price) setDollarValue(0);
+
+    setDollarValue((amount * price).toFixed(2));
   }
 
   const handleClick = () => {
@@ -617,6 +655,9 @@ function CreateBounty(props) {
                   props.issue
                     ? props
                         .createBounty(
+                          apiClient,
+                          cosmosBankApiClient,
+                          cosmosFeegrantApiClient,
                           props.bountyAmount,
                           dayjs(expiry.toString()).unix(),
                           props.issue.iid,
@@ -672,4 +713,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   createBounty,
+  notify,
 })(CreateBounty);

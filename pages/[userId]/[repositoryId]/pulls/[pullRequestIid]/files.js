@@ -22,6 +22,8 @@ import getPullDiffStats from "../../../../../helpers/getPullDiffStats";
 import Sticky from "react-stickynode";
 import CommentView from "../../../../../components/repository/commentView";
 import getPullRequestComment from "../../../../../helpers/getPullRequestComment";
+import { useApiClient } from "../../../../../context/ApiClientContext";
+import { notify } from "reapop";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -41,6 +43,8 @@ function RepositoryPullFilesView(props) {
   const [viewType, setViewType] = useState("unified");
   const [allComments, setAllComments] = useState(props.comments || []);
   const [showFile, setShowFile] = useState(null);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   useEffect(() => {
     async function initDiff() {
@@ -58,6 +62,7 @@ function RepositoryPullFilesView(props) {
   useEffect(() => {
     const getAllComments = async () => {
       const comments = await getPullRequestCommentAll(
+        apiClient,
         repository.id,
         pullRequest.iid
       );
@@ -92,13 +97,19 @@ function RepositoryPullFilesView(props) {
           setAllComments(newAllComments);
         }}
         onDelete={async (iid) => {
-          const res = await props.deleteComment({
-            repositoryId: repository.id,
-            parentIid: pullRequest.iid,
-            parent: "COMMENT_PARENT_PULL_REQUEST",
-            commentIid: iid,
-          });
+          const res = await props.deleteComment(
+            apiClient,
+            cosmosBankApiClient,
+            cosmosFeegrantApiClient,
+            {
+              repositoryId: repository.id,
+              parentIid: pullRequest.iid,
+              parent: "COMMENT_PARENT_PULL_REQUEST",
+              commentIid: iid,
+            }
+          );
           if (res && res.code === 0) {
+            props.notify("Comment deleted", "info");
             const newAllComments = [...allComments];
             let index = allComments.findIndex((c) => c.id === comment.id);
             if (index > -1) newAllComments.splice(index, 1);
@@ -112,6 +123,7 @@ function RepositoryPullFilesView(props) {
   const refreshComments = async () => {
     const getAllComments = async () => {
       const comments = await getPullRequestCommentAll(
+        apiClient,
         repository.id,
         pullRequest.iid
       );
@@ -205,4 +217,5 @@ export default connect(mapStateToProps, {
   deleteComment,
   updateIssueAssignees,
   updateIssueLabels,
+  notify,
 })(RepositoryPullFilesView);

@@ -1,8 +1,9 @@
-import api from "./getApi";
+import { useApiClient } from "../context/ApiClientContext";
 
 export default async function getUserAll() {
   try {
-    const res = await api.queryUserAll();
+    const { apiClient } = useApiClient();
+    const res = await apiClient.queryUserAll();
     if (res.status === 200) {
       let u = res.data.User;
       return u;

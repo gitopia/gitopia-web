@@ -1,9 +1,71 @@
 ## Changelog
 
-### v1.15.1 - 13th Oct 2023
+### v2.2.2 - 3rd Sep 2024
 
-- Add metamask support with leap wallet snap
-- Add leap wallet support
+- Fix missing apiClient in getUser and getRepository methods
+
+### v2.2.1 - 30th Aug 2024
+
+- Add explorer links in the header
+
+### v2.2.0 - 30th Aug 2024
+
+- Upgrade cosmjs to v0.32.4 and gitopia-js to v2.0.0
+- Handle changes in events after sdk upgrade to v0.47.13
+- Increase the gas adjustment to 1.8
+- Update api providers
+
+### v2.1.4 - 15th July 2024
+
+- Fix release page
+
+### v2.1.3 - 10th July 2024
+
+- Fix offchain sign for keplr and ledger wallet
+
+### v2.1.2 - 8th July 2024
+
+- Fix side of readme in repository view
+- Fix settings page
+
+### v2.1.1 - 3rd July 2024
+
+- Fix offchain sign
+- Update bounty link in rewards page
+
+### v2.1.0 - 1st July 2024
+
+- Cache token prices in components
+- Improve bounties page
+
+### v2.0.0 - 26th Jun 2024
+
+- Refactor the webapp to use the API client context across components
+- Decentralize API providers
+- New provider selector component in the header
+- Add a button to refresh the API provider
+- Remove WebSocket subscription
+- Poll for task completion in the case of fork repository and merge PR
+- Show platform incentives in Rewards view
+- Add a new Bounties page
+- Add a new Bounties Leaderboard view
+- Support highlighting of specific lines in the code view. URL format: `...<filename>#L10-L22`
+- Fix comments count in the issues list view
+- Fix user profile link in the DAO view
+- Fix 404 error in Repository view when tag name includes `-` in the url
+- Fix the size of Issue description component in the issue view
+
+### v1.15.3 - 23rd Feb 2024
+
+- Fix graphql query in issue link field
+
+### v1.15.2 - 18th Sep 2023
+
+- Changes in rewards api
+
+### v1.15.1 - 16th Sep 2023
+
+- Fix arbitrary message signing in Keplr
 
 ### v1.15.0 - 14th Sep 2023
 
@@ -13,7 +75,7 @@
 ### v1.14.0 - 17th Aug 2023
 
 - Updated homepage with activity feed
-- Changed designs of dao / user settings page 
+- Changed designs of dao / user settings page
 
 ### v1.13.4 - 5th Jul 2023
 

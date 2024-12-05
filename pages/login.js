@@ -14,6 +14,7 @@ import {
 } from "../store/actions/wallet";
 import { connect } from "react-redux";
 import FundWallet from "../components/fundWallet";
+import { useApiClient } from "../context/ApiClientContext";
 
 /*
 Wizard Steps
@@ -26,6 +27,13 @@ Wizard Steps
 function Login(props) {
   const { query, push } = useRouter();
   const [step, setStep] = useState(Number(query.step) || 1);
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    apiUrl,
+    rpcUrl,
+  } = useApiClient();
 
   useEffect(() => {
     setStep(Number(query.step) || 1);

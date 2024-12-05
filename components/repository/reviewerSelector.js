@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import getUser from "../../helpers/getUser";
 import { validUserAddress } from "../../helpers/validAddress";
 import AccountCard from "../../components/account/card";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function ReviewerSelector({ collaborators = [], reviewers = [], onChange }) {
   const [newReviewers, setNewReviewers] = useState([]);
@@ -12,6 +13,7 @@ function ReviewerSelector({ collaborators = [], reviewers = [], onChange }) {
   const [isSaving, setIsSaving] = useState(false);
   const [searchText, setSearchText] = useState("");
   const reviewersModal = useRef();
+  const { apiClient } = useApiClient();
 
   const collabAddresses = collaborators
     .filter((x) => x.permission !== "READ")
@@ -22,7 +24,7 @@ function ReviewerSelector({ collaborators = [], reviewers = [], onChange }) {
     if (validUserAddress.test(addressOrUsername)) {
       foundAddress = addressOrUsername;
     } else if (addressOrUsername.trim() !== "") {
-      const res = await getUser(addressOrUsername);
+      const res = await getUser(apiClient, addressOrUsername);
       if (res) {
         foundAddress = res.creator;
         setValidateAddressError(null);

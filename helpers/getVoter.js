@@ -1,11 +1,9 @@
 import axios from "../helpers/axiosFetch";
 
-export default async function getVoter(id) {
+export default async function getVoter(apiNode, id) {
   let obj = {};
   const baseUrl =
-    process.env.NEXT_PUBLIC_API_URL +
-    "/cosmos/tx/v1beta1/txs?events=proposal_vote.proposal_id=" +
-    id;
+    apiNode + "/cosmos/tx/v1beta1/txs?events=proposal_vote.proposal_id=" + id;
   await axios
     .get(baseUrl)
     .then(({ data }) => {

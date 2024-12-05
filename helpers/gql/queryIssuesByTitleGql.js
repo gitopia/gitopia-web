@@ -1,7 +1,7 @@
 import { useQuery, gql } from "@apollo/client";
 import { connect } from "react-redux";
 const QUERY_ISSUES = gql`
-  query issuesByTitle($substr: String!, $repoId: Int!) {
+  query issuesByTitle($substr: String!, $repoId: String!) {
     issues(
       where: {
         title_contains_nocase: $substr

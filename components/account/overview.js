@@ -9,15 +9,17 @@ import ReactTooltip from "react-tooltip";
 import dayjs from "dayjs";
 import sortBy from "lodash/sortBy";
 import getAnyRepositoryAll from "../../helpers/getAnyRepositoryAll";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function AccountOverview(props) {
   const [allRepos, setAllRepos] = useState(props.allRepos || []);
   const [contributions, setContributions] = useState([{}]);
   const [totalContributions, setTotalContributions] = useState(0);
+  const { apiClient } = useApiClient();
 
   const getAllRepos = async () => {
     let letter = "x";
-    const pr = await getAnyRepositoryAll(props.userId);
+    const pr = await getAnyRepositoryAll(apiClient, props.userId);
     const r = sortBy(pr, (r) => -Number(r.updatedAt));
     const repos = r.slice(0, 4);
     setAllRepos(repos);

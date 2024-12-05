@@ -6,17 +6,20 @@ import dayjs from "dayjs";
 import debounce from "lodash/debounce";
 import { notify } from "reapop";
 import { useRouter } from "next/router";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function PullRequestIssueView(props) {
   const [issues, setIssues] = useState([]);
   const [isHovering, setIsHovering] = useState({ id: null });
   const router = useRouter();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function fetchIssues() {
       const array = [];
       for (var i = 0; i < props.issues.length; i++) {
         const res = await getIssue(
+          apiClient,
           props.repoOwner,
           props.repositoryName,
           props.issues[i].iid

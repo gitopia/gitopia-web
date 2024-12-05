@@ -19,6 +19,7 @@ import parseFilters from "../../../../helpers/parseFilters";
 import renderPagination from "../../../../helpers/renderPagination";
 import Label from "../../../../components/repository/label";
 import useWindowSize from "../../../../hooks/useWindowSize";
+import { useApiClient } from "../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -43,6 +44,7 @@ function RepositoryIssueView(props) {
     countTotal: true,
   });
   const { isMobile } = useWindowSize();
+  const { apiClient } = useApiClient();
 
   const getAllIssues = async () => {
     if (repository) {
@@ -83,6 +85,7 @@ function RepositoryIssueView(props) {
       }
       console.log(option);
       const data = await getRepositoryIssueAll(
+        apiClient,
         repository.owner.id,
         repository.name,
         option,
@@ -96,6 +99,7 @@ function RepositoryIssueView(props) {
         if (data.Issue) {
           for (let i = 0; i < data.Issue.length; i++) {
             const c = await getIssueCommentAll(
+              apiClient,
               repository.id,
               data.Issue[i].iid
             );
@@ -312,9 +316,7 @@ function RepositoryIssueView(props) {
                               }}
                               key={"author" + i}
                             >
-                              <a>
-                                {shrinkAddress(c.id)}
-                              </a>
+                              <a>{shrinkAddress(c.id)}</a>
                             </li>
                           );
                         })}
@@ -432,9 +434,7 @@ function RepositoryIssueView(props) {
                               }}
                               key={"assignee" + i}
                             >
-                              <a>
-                                {shrinkAddress(c.id)}
-                              </a>
+                              <a>{shrinkAddress(c.id)}</a>
                             </li>
                           );
                         })}
@@ -632,7 +632,7 @@ function RepositoryIssueView(props) {
                             d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
                           />
                         </svg>
-                        {i.comments.length}
+                        {i.comments.filter((c) => !c.system).length}
                       </div>
                     </div>
                   </div>

@@ -1,0 +1,21 @@
+.midScreen {
+  align-items: center;
+}
+.midScreenImage img {
+  height: auto;
+  max-height: 100%;
+  width: auto;
+  max-width: 100%;
+}
+.flex-col.items-start {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+}
+.midScreenImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}

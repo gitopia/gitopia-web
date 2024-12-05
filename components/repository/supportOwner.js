@@ -7,12 +7,17 @@ import {
   updateUserBalance,
 } from "../../store/actions/wallet";
 import shrinkAddress from "../../helpers/shrinkAddress";
+import { Users, User, Wallet, Landmark, HeartHandshake } from "lucide-react";
+import Link from "next/link";
+import { useApiClient } from "../../context/ApiClientContext";
 
-function SupportOwner({ ownerAddress, isMobile, ...props }) {
+function SupportOwner({ repository, ownerAddress, isMobile, ...props }) {
+  const isDAORepository = repository.owner.type === "DAO";
   const [ownerBalance, setOwnerBalance] = useState(0);
   const [validateAmountError, setValidateAmountError] = useState(null);
   const [amount, setAmount] = useState(0);
   const amountRef = useRef(null);
+  const { cosmosBankApiClient } = useApiClient();
 
   function isNaturalNumber(n) {
     n = n.toString();
@@ -47,7 +52,7 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
 
   useEffect(() => {
     async function initBalance() {
-      const balance = await props.getBalance(ownerAddress);
+      const balance = await props.getBalance(cosmosBankApiClient, ownerAddress);
       setOwnerBalance(
         props.advanceUser === true
           ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
@@ -64,31 +69,18 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
           className="border rounded-full w-7 h-7 mr-2 flex items-center justify-center"
           style={{ borderColor: "#66CE67" }}
         >
-          <svg
-            width="12"
-            height="14"
-            viewBox="0 0 12 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M5.99915 8.99353C8.30597 8.99353 10.176 7.20848 10.176 5.00651C10.176 2.80454 8.30597 1.01949 5.99915 1.01949C3.69232 1.01949 1.82227 2.80454 1.82227 5.00651C1.82227 7.20848 3.69232 8.99353 5.99915 8.99353Z"
-              stroke="#66CE67"
-              strokeWidth="1.5"
-            />
-            <path
-              d="M10.178 12.9806C10.178 10.7786 8.30791 8.99358 6.00109 8.99358C3.69426 8.99358 1.82422 10.7786 1.82422 12.9806"
-              stroke="#66CE67"
-              strokeWidth="1.5"
-            />
-          </svg>
+          {isDAORepository ? (
+            <Users size={12} className="text-[#66CE67]" />
+          ) : (
+            <User size={12} className="text-[#66CE67]" />
+          )}
         </div>
         <div>
           <div
             className="text-type-tertiary font-semibold uppercase"
             style={{ fontSize: "0.5rem" }}
           >
-            Owner Address
+            {isDAORepository ? "Treasury Address" : "Owner Address"}
           </div>
           <div className="text-xs">{shrinkAddress(ownerAddress)}</div>
         </div>
@@ -98,54 +90,43 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
           className="border rounded-full w-7 h-7 mr-2 sm:ml-4 flex items-center justify-center"
           style={{ borderColor: "#883BE6" }}
         >
-          <svg
-            width="10"
-            height="17"
-            viewBox="0 0 10 17"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M5.00061 8.51845C6.33523 8.51845 7.41715 7.43653 7.41715 6.10192C7.41715 4.7673 6.33523 3.68538 5.00061 3.68538C3.666 3.68538 2.58408 4.7673 2.58408 6.10192C2.58408 7.43653 3.666 8.51845 5.00061 8.51845ZM5.00061 10.2314C7.28128 10.2314 9.13013 8.38259 9.13013 6.10192C9.13013 3.82125 7.28128 1.9724 5.00061 1.9724C2.71994 1.9724 0.871094 3.82125 0.871094 6.10192C0.871094 8.38259 2.71994 10.2314 5.00061 10.2314Z"
-              fill="#883BE6"
-            />
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M2.58408 11.1195C2.58408 11.7593 2.84059 12.3714 3.29468 12.8215C3.74849 13.2713 4.36229 13.5225 5.00061 13.5225C5.63893 13.5225 6.25273 13.2713 6.70655 12.8215C7.16063 12.3714 7.41715 11.7593 7.41715 11.1195H9.13013C9.13013 12.2004 8.69698 13.2386 7.92343 14.0053C7.14962 14.7723 6.09841 15.2046 5.00061 15.2046C3.90281 15.2046 2.8516 14.7723 2.07779 14.0053C1.30425 13.2386 0.871094 12.2004 0.871094 11.1195H2.58408Z"
-              fill="#883BE6"
-            />
-            <path
-              d="M4.19727 0.743828H5.8455V2.39206H4.19727V0.743828Z"
-              fill="#883BE6"
-            />
-            <path
-              d="M4.19727 14.7537H5.8455V16.4019H4.19727V14.7537Z"
-              fill="#883BE6"
-            />
-          </svg>
+          {isDAORepository ? (
+            <Landmark size={12} className="text-[#883BE6]" />
+          ) : (
+            <Wallet size={12} className="text-[#883BE6]" />
+          )}
         </div>
         <div className="">
           <div
             className="text-type-tertiary font-semibold uppercase"
             style={{ fontSize: "0.5rem" }}
           >
-            Owner Balance
+            {isDAORepository ? "Treasury Balance" : "Owner Balance"}
           </div>
           <div className="text-xs uppercase">{ownerBalance}</div>
         </div>
       </div>
 
-      <div className="sm:ml-auto self-center">
+      <div className="sm:ml-auto flex gap-2">
+        {isDAORepository && (
+          <Link
+            href={`/${repository.owner.id}?tab=proposals`}
+            className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-transparent border border-gray-600 hover:border-gray-500 rounded-md text-gray-300 hover:text-white transition-colors"
+          >
+            <Users size={16} />
+            Governance
+          </Link>
+        )}
         <label
           htmlFor="my-modal-2"
-          className="link link-primary modal-button text-xs uppercase no-underline"
+          className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-green-700 hover:bg-green-600 rounded-md text-white transition-colors cursor-pointer"
         >
-          SUPPORT PROJECT
+          <HeartHandshake size={16} />
+          Support Project
         </label>
       </div>
+
+      {/* Modal */}
       <input type="checkbox" id="my-modal-2" className="modal-toggle" />
       <div className="modal">
         <div className="modal-box">
@@ -160,7 +141,7 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
               {props.advanceUser === true
                 ? process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
                 : process.env.NEXT_PUBLIC_CURRENCY_TOKEN}{" "}
-              to its DAO or creator.
+              to its {isDAORepository ? "DAO" : "creator"}.
             </div>
             <div className="text-xs">
               To do it you just need to send your funds to the address below.
@@ -175,7 +156,7 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
           </div>
           <label className="label">
             <span className="label-text text-xs font-bold text-gray-400">
-              TREASURY ADDRESS
+              {isDAORepository ? "TREASURY ADDRESS" : "OWNER ADDRESS"}
             </span>
           </label>
           <div className="flex border border-gray-700 rounded-lg p-3 text-xs">
@@ -325,7 +306,7 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
             <div className="w-28 sm:w-36">
               <label
                 htmlFor="my-modal-2"
-                className="btn btn-sm btn-primary flex-1 bg-green-900  btn-block"
+                className="btn btn-sm btn-primary flex-1 bg-green-900 btn-block"
                 onClick={(e) => {
                   props
                     .transferToWallet(
@@ -339,7 +320,10 @@ function SupportOwner({ ownerAddress, isMobile, ...props }) {
                       amountRef.current.value = "";
                       setAmount("");
                       setValidateAmountError(null);
-                      const balance = await props.getBalance(ownerAddress);
+                      const balance = await props.getBalance(
+                        cosmosBankApiClient,
+                        ownerAddress
+                      );
                       setOwnerBalance(
                         props.advanceUser === true
                           ? balance +

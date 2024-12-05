@@ -102,14 +102,14 @@ function CommentView({
               )}
             </div>
           </div>
-          <div className={isReviewComment ? "p-3" : "p-6"}>
-            <div className="text-white font-normal mb-3 markdown-body">
+          <div className={isReviewComment ? "p-3  overflow-scroll" : "p-6  overflow-scroll"}>
+	    <div className="text-white font-normal mb-3 markdown-body min-w=0 max-w-[252px] sm:max-w-[229px] md:max-w-[386px] lg:max-w-[598px] xl:max-w-[598px] 2xl:max-w-[598px]">
               {comment.body.length ? (
                 <ReactMarkdown linkTarget="_blank">
                   {comment.body}
                 </ReactMarkdown>
               ) : (
-                <ReactMarkdown>{"*No description given*"}</ReactMarkdown>
+                <ReactMarkdown>{"*No comment given*"}</ReactMarkdown>
               )}
             </div>
             <div className="flex-1 text-xs text-type-tertiary">

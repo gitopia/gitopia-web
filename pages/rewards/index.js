@@ -7,15 +7,13 @@ import Head from "next/head";
 import Link from "next/link";
 import Header from "../../components/header";
 import Footer from "../../components/landingPageFooter";
-import getWhois from "../../helpers/getWhois";
+import showToken from "../../helpers/showToken";
 import { signMessageForRewards } from "../../store/actions/user";
 import axios from "../../helpers/axiosFetch";
 import { getBalance } from "../../store/actions/wallet";
 import { updateUserBalance } from "../../store/actions/wallet";
 import { claimRewards } from "../../store/actions/user";
-import { tasksToMessage } from "../../helpers/tasksTypes";
-import getTasks from "../../helpers/getTasks";
-import getRewardToken from "../../helpers/getRewardTokens";
+import { useApiClient } from "../../context/ApiClientContext";
 
 const dayjs = require("dayjs");
 const duration = require("dayjs/plugin/duration");
@@ -24,388 +22,135 @@ const customParseFormat = require("dayjs/plugin/customParseFormat");
 dayjs.extend(duration);
 dayjs.extend(customParseFormat);
 
-function showToken(value, denom) {
-  if (denom === process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN) {
-    return value + " " + denom;
-  } else {
-    let roundOff = Math.floor(value / 10000) / 100;
-    return roundOff + " " + denom;
-  }
-}
+const isRewardActive = (reward) => {
+  const today = new Date();
+
+  const startDate = new Date(reward["start_date"]);
+  const endDate = new Date(reward["end_date"]);
+  return today >= startDate && today <= endDate;
+};
 
 function Rewards(props) {
-  const [calculatingRewardsLoading, setCalculatingRewardsLoading] =
-    useState(false);
-  const [getEcosystemRewardsLoading, setGetEcosystemRewardsLoading] =
-    useState(false);
   const [claimTokensLoading, setClaimTokensLoading] = useState(false);
-  const [githubCalculationStatus, setGithubCalculationStatus] = useState(0);
-  const [code, setCode] = useState(null);
-  const router = useRouter();
   const [token, setToken] = useState(process.env.NEXT_PUBLIC_CURRENCY_TOKEN);
-  const [claimedGithubToken, setClaimedGithubToken] = useState(0);
-  const [unclaimedGithubToken, setUnclaimedGithubToken] = useState(0);
-  const [claimedEcosystemToken, setClaimedEcosystemToken] = useState(0);
-  const [unclaimedEcosystemToken, setUnclaimedEcosystemToken] = useState(0);
-  const [days, setDays] = useState(0);
-  const [hours, setHours] = useState(0);
-  const [minutes, setMinutes] = useState(0);
-  const [tasks, setTasks] = useState([
-    {
-      type: "CREATE_USER",
-      isComplete: false,
-      weight: 5,
-    },
-    {
-      type: "CREATE_NON_EMPTY_REPO",
-      isComplete: false,
-      weight: 10,
-    },
-    {
-      type: "CREATE_ISSUE",
-      isComplete: false,
-      weight: 5,
-    },
-    {
-      type: "CREATE_ISSUE_WITH_BOUNTY",
-      isComplete: false,
-      weight: 10,
-    },
-    {
-      type: "CREATE_ISSUE_WITH_BOUNTY_VERIFIED",
-      isComplete: false,
-      weight: 10,
-    },
-    {
-      type: "PR_TO_REPO_MERGED",
-      isComplete: false,
-      weight: 20,
-    },
-    {
-      type: "PR_TO_VERIFIED_REPO_MERGED",
-      isComplete: false,
-      weight: 10,
-    },
-    {
-      type: "PR_TO_VERIFIED_REPO_MERGED_WITH_BOUNTY",
-      isComplete: false,
-      weight: 10,
-    },
-    {
-      type: "LORE_STAKED",
-      isComplete: false,
-      weight: 10,
-    },
-    {
-      type: "VOTE_PROPOSAL",
-      isComplete: false,
-      weight: 10,
-    },
-  ]);
-  const [tasksTotal, setTasksTotal] = useState(100);
-  const [tasksCompleted, setTasksCompleted] = useState(0);
-  const [
-    remainingClaimableEcosystemToken,
-    setRemainingClaimableEcosystemToken,
-  ] = useState(0);
-  const [remainingClaimableGithubToken, setRemainingClaimableGithubToken] =
+  const [totalPlatformIncentivesToken, setTotalPlatformIncentivesToken] =
     useState(0);
-  const [totalGithubToken, setTotalGithubToken] = useState(150000000);
-  const [totalEcosystemToken, setTotalEcosystemToken] = useState(500000000);
-  const [isEcosystemTokensLoaded, setIsEcosystemTokensLoaded] = useState(false);
-  const [githubCalculationError, setGithubCalculationError] = useState(null);
+  const [
+    totalClaimedPlatformIncentivesToken,
+    setTotalClaimedPlatformIncentivesToken,
+  ] = useState(0);
+  const [
+    isPlatformIncentivesTokensLoaded,
+    setIsPlatformIncentivesTokensLoaded,
+  ] = useState(false);
+  const [xPost, setXPost] = useState("");
+  const [splits, setSplits] = useState([]);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
-  const deadlineUnix = process.env.NEXT_PUBLIC_REWARD_DEADLINE;
-  let pollingIntervalId;
-
-  const getTime = () => {
-    const deadline = dayjs.unix(deadlineUnix);
-    const start = dayjs.unix(process.env.NEXT_PUBLIC_REWARD_START);
-    const now = dayjs();
-    if (now.isAfter(start)) {
-      const diff = dayjs.duration(deadline.diff(now));
-      setDays(parseInt(diff.asDays()));
-      setHours(diff.hours());
-      setMinutes(diff.minutes());
-    } else {
-      setDays("-");
-      setHours("-");
-      setMinutes("-");
-    }
-  };
-
-  const calculateTasksPercentage = (t) => {
-    let count = 0;
-    let total = 0;
-    if (t.length > 0) {
-      for (let i = 0; i < t?.length; i++) {
-        total = total + t[i].weight;
-        if (t[i].isComplete) {
-          count = count + t[i].weight;
-        }
-      }
-    }
-    setTasksTotal(total);
-    return count;
-  };
-
-  async function fetchTasks() {
-    const t = await getTasks(props.selectedAddress);
-    if (Array.isArray(t)) {
-      setTasks(t);
-      const percentage = await calculateTasksPercentage(t);
-      setTasksCompleted(percentage);
-    } else {
-      let newTasks = tasks.map((t) => {
-        return {
-          ...t,
-          isComplete: false,
-        };
-      });
-      setTasks(newTasks);
-      const percentage = await calculateTasksPercentage(newTasks);
-      setTasksCompleted(percentage);
-    }
-  }
-
-  useEffect(() => {
-    let i1, i2, i3;
-    if (typeof window !== "undefined") {
-      fetchTasks();
-      getTime();
-      getTokens();
-      i1 = setInterval(getTime, 60000);
-      i2 = setInterval(getTokens, 60000);
-      i3 = setInterval(fetchTasks, 60000);
-    }
-    return () => {
-      if (typeof window !== "undefined") {
-        clearInterval(i1);
-        clearInterval(i2);
-        clearInterval(i3);
-      }
-    };
-  }, [, props.selectedAddress]);
-
-  async function getTokens() {
-    let res = await getRewardToken(props.selectedAddress);
-    if (res) {
-      for (let i = 0; i < res.length; i++) {
-        if (res[i].series === "ONE") {
-          setTotalGithubToken(res[i].amount.amount);
-          setClaimedGithubToken(res[i].claimed_amount?.amount || 0);
-          setUnclaimedGithubToken(res[i].claimable_amount?.amount || 0);
-          setRemainingClaimableGithubToken(
-            res[i].remaining_claimable_amount?.amount || 0
-          );
-        }
-        if (res[i].series === "COSMOS") {
-          setTotalEcosystemToken(res[i].amount.amount);
-          setClaimedEcosystemToken(res[i].claimed_amount?.amount || 0);
-          setUnclaimedEcosystemToken(res[i].claimable_amount?.amount || 0);
-          setRemainingClaimableEcosystemToken(
-            res[i].remaining_claimable_amount?.amount || 0
-          );
-          setIsEcosystemTokensLoaded(true);
-        }
-      }
-    }
-  }
-  const claimTokens = async () => {
-    if (process.env.NEXT_PUBLIC_REWARD_DEADLINE < dayjs().unix()) {
-      props.notify("Claim airdrop period ended", "error");
-    } else if (
-      parseInt(unclaimedGithubToken) + parseInt(unclaimedEcosystemToken) <=
-      0
-    ) {
-      props.notify("You don't have any unclaimed tokens", "error");
-    }
+  const claimPlatformIncentives = async (id, split) => {
     if (claimTokensLoading) return;
     if (!props.selectedAddress) {
       props.notify("Please sign in before claiming tokens", "error");
       return;
     }
     setClaimTokensLoading(true);
-    const res = await props.claimRewards();
-    if (res) {
-      getTokens();
-      props.notify("Reward claimed successfully", "info");
-    }
+    const res = await props.signMessageForRewards(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      "platform incentives"
+    );
+
+    await axios
+      .post(
+        process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/platform-incentives",
+        {
+          id,
+          split,
+          payload: res,
+        }
+      )
+      .then(({ data }) => {
+        consumePlatformIncentivesData(data);
+        props.notify("Reward claimed successfully", "info");
+      })
+      .catch(({ err }) => {});
+
     setClaimTokensLoading(false);
   };
 
   async function fetchStatus() {
     if (!props.selectedAddress) return;
-    const githubData = await axios
+    const platformIncentivesData = await axios
       .get(
         process.env.NEXT_PUBLIC_REWARD_SERVICE_URL +
-          "/rewards?addr=" +
-          props.selectedAddress +
-          "&series=1"
+          "/platform-incentives?addr=" +
+          props.selectedAddress
       )
       .then(({ data }) => {
-        consumeGithubRewardData(data);
+        consumePlatformIncentivesData(data);
       })
-      .catch((e) => {
-        setGithubCalculationStatus(0);
-        setGithubCalculationError(null);
-      });
-
-    const ecosystemData = await axios
-      .get(
-        process.env.NEXT_PUBLIC_REWARD_SERVICE_URL +
-          "/rewards?addr=" +
-          props.selectedAddress +
-          "&series=8"
-      )
-      .then(({ data }) => {
-        consumeEcosystemData(data);
-      })
-      .catch((e) => {
-        setGithubCalculationStatus(0);
-      });
+      .catch((e) => {});
   }
 
   useEffect(() => {
     fetchStatus();
   }, [, props.selectedAddress]);
 
-  useEffect(() => {
-    const query = window.location.search;
-    const urlParameters = new URLSearchParams(query);
-    const codeValue = urlParameters.get("code");
-    if (codeValue) {
-      setCode(codeValue);
-      router.push("/rewards");
-    }
-  }, []);
-
-  const getGithubRewards = async () => {
-    if (calculatingRewardsLoading) return;
-    if (!props.selectedAddress) {
-      props.notify("Please sign in before claiming tokens", "error");
-      return;
-    }
-    setCalculatingRewardsLoading(true);
-    const res = await props.signMessageForRewards(code);
-    await axios
-      .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/rewards", {
-        series: 1,
-        payload: res,
-      })
-      .then(({ data }) => {
-        consumeGithubRewardData(data);
-      })
-      .catch(({ err }) => {
-        setGithubCalculationStatus(0);
-        setGithubCalculationError(null);
-      });
-    setCalculatingRewardsLoading(false);
-  };
-
-  const consumeGithubRewardData = (data) => {
-    if (data?.error) {
-      setCode(null);
-      setGithubCalculationError(data.error);
-    } else {
-      setGithubCalculationError(null);
-    }
-    setGithubCalculationStatus(data.status);
-    if (data.status == 1) {
-      if (!pollingIntervalId)
-        pollingIntervalId = setInterval(fetchStatus, 5000);
-    } else {
-      clearTimeout(pollingIntervalId);
-    }
-    if (data.status == 2) {
-      setTotalGithubToken(data.total_amount);
-      console.log("Getting final tally, consumeGithubRewardData");
-      getTokens();
-    }
-  };
-
-  const consumeEcosystemData = (data) => {
-    setTotalEcosystemToken(data.total_amount);
-    setIsEcosystemTokensLoaded(data.status == 2 ? true : false);
-    if (data.status == 2) {
-      console.log("Getting final tally, consumeEcosystemData");
-      getTokens();
-    }
-  };
-
-  const getEcosystemRewards = async () => {
-    if (getEcosystemRewardsLoading) return;
-    if (!props.selectedAddress) {
-      props.notify("Please sign in before claiming tokens", "error");
-      return;
-    }
-    setGetEcosystemRewardsLoading(true);
-    await axios
-      .post(process.env.NEXT_PUBLIC_REWARD_SERVICE_URL + "/rewards", {
-        series: 8,
-        payload: props.selectedAddress,
-      })
-      .then(({ data }) => {
-        consumeEcosystemData(data);
-      })
-      .catch(({ err }) => {
-        console.error(err);
-      });
-    setGetEcosystemRewardsLoading(false);
-  };
-
-  function githubLogin() {
-    window.location.assign(
-      "https://github.com/login/oauth/authorize?client_id=" +
-        process.env.NEXT_PUBLIC_GITHUB_OAUTH_CLIENT_ID
+  const consumePlatformIncentivesData = (data) => {
+    setTotalPlatformIncentivesToken(data["total_amount"]);
+    setTotalClaimedPlatformIncentivesToken(data["total_claimed_amount"]);
+    setSplits(data.splits);
+    setXPost(
+      encodeURIComponent(
+        `Just claimed ${Math.floor(
+          data["total_claimed_amount"] / 1e6
+        ).toLocaleString()} $LORE for my #OpenSource contributions on @gitopiaDAO 🎉
+You can earn rewards too for your projects 💰
+Start building on #Gitopia today! 🚀
+#GitopiaRewards | Learn more: `
+      )
     );
-  }
-
-  let totalEcosystemDecayedAmount =
-      parseFloat(unclaimedEcosystemToken) +
-      parseFloat(claimedEcosystemToken) +
-      parseFloat(remainingClaimableEcosystemToken),
-    totalGithubDecayedAmount =
-      parseFloat(unclaimedGithubToken) +
-      parseFloat(claimedGithubToken) +
-      parseFloat(remainingClaimableGithubToken);
+    setIsPlatformIncentivesTokensLoaded(true);
+  };
 
   return (
     <>
       <Head>
         <title>Gitopia - Code Collaboration for Web3</title>
         <link rel="icon" href="/favicon.png" />
+        <script
+          async
+          src="https://platform.twitter.com/widgets.js"
+          charset="utf-8"
+        ></script>
       </Head>
       <Header />
-      <section className={"flex flex-col items-center mt-12 lg:mt-16 relative"}>
-        <div className="items-center max-w-screen-lg w-full">
+      <section className={"relative mt-12 flex flex-col items-center lg:mt-16"}>
+        <div className="w-full max-w-screen-lg items-center">
           <div className="p-4 pt-8 lg:p-0">
-            <div className="text-4xl lg:text-7xl font-bold tracking-tight lg:text-center">
-              Claim Airdrop
-            </div>
-            <div className="text-xl lg:text-3xl font-bold text-type-tertiary mt-4 lg:text-center">
-              {`${days} Days ${hours} Hours ${minutes} Minutes Left`}
+            <div className="text-4xl lg:text-5xl font-bold tracking-tight lg:text-center">
+              Rewards - Round 1
             </div>
           </div>
           <div className="border border-grey-50 rounded-xl bg-base-200/70 max-w-2xl text-sm relative mx-4 lg:mx-auto mt-12 lg:mt-16">
-            <div className="font-bold text-xs uppercase bg-base-200 border border-grey-50 text-purple-50 rounded-full px-4 py-1 absolute -top-3 left-1/2 -ml-36">
-              Available Rewards (Reduces 1% every day)
+            <div className="font-bold text-xs uppercase bg-base-200 border border-grey-50 text-purple-50 rounded-full px-4 py-1 absolute -top-3 left-1/2 -ml-24">
+              Platform Incentives
             </div>
-            <div className="flex flex-col lg:flex-row gap-8 justify-evenly p-8 pt-10">
+            <div className="flex flex-col justify-evenly gap-8 px-8 pt-10 pb-4 lg:flex-row">
               <div className="lg:text-center">
                 <div className="inline-flex items-center -mr-2">
-                  <span className="text-type-secondary font-bold">
-                    Ecosystem Staking
-                  </span>
+                  <span className="text-type-secondary font-bold">Total</span>
                   <span
                     className="tooltip ml-2 mt-px"
-                    data-tip="Based on staking on Cosmos, Osmosis and Akash chain spanshots on 14th April 2023"
+                    data-tip="Based on Gitopia platfrom activity til Feb 9th"
                   >
                     <svg
                       viewBox="0 0 16 16"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-3.5 h-3.5"
+                      className="h-3.5 w-3.5"
                     >
                       <circle cx="8" cy="8" r="7.5" stroke="#8D97A7" />
                       <path d="M8 3L8 5" stroke="#8D97A7" strokeWidth="2" />
@@ -414,73 +159,29 @@ function Rewards(props) {
                   </span>
                 </div>
                 <div className="my-2">
-                  {isEcosystemTokensLoaded ? (
+                  {isPlatformIncentivesTokensLoaded ? (
                     <span className="text-4xl uppercase">
-                      {showToken(totalEcosystemDecayedAmount, token)}
+                      {showToken(totalPlatformIncentivesToken, token)}
                     </span>
                   ) : (
                     <>
-                      <span className="text-4xl mr-2 text-type-tertiary">
-                        ~
-                      </span>
-                      <span className="text-4xl uppercase">
-                        {showToken(totalEcosystemToken, token)}
-                      </span>
+                      <span className="text-4xl uppercase">-</span>
                     </>
                   )}
                 </div>
-                {props.selectedAddress ? (
-                  !isEcosystemTokensLoaded ? (
-                    <button
-                      className={
-                        "btn btn-secondary btn-sm mt-2 " +
-                        (getEcosystemRewardsLoading ? "loading" : "")
-                      }
-                      onClick={() => {
-                        if (!props.selectedAddress) {
-                          props.notify("Please login first", "error");
-                        } else if (
-                          process.env.NEXT_PUBLIC_REWARD_DEADLINE <
-                          dayjs().unix()
-                        ) {
-                          props.notify("Claim airdrop period ended", "error");
-                        } else {
-                          getEcosystemRewards();
-                        }
-                      }}
-                    >
-                      Calculate Reward
-                    </button>
-                  ) : (
-                    ""
-                  )
-                ) : (
-                  <Link
-                    className={
-                      "btn btn-secondary btn-sm mt-2 " +
-                      (getEcosystemRewardsLoading ? "loading" : "")
-                    }
-                    disabled={getEcosystemRewardsLoading}
-                    href="/login"
-                  >
-                    Login with staking wallet
-                  </Link>
-                )}
               </div>
               <div className="lg:text-center">
                 <div className="inline-flex items-center -mr-2">
-                  <span className="text-type-secondary font-bold">
-                    Open Source Contribution
-                  </span>
+                  <span className="text-type-secondary font-bold">Claimed</span>
                   <span
                     className="tooltip ml-2 mt-px"
-                    data-tip="Based on contributions to open source repositories on Github till 14th April 2023"
+                    data-tip="Based on Gitopia platfrom activity til Feb 9th"
                   >
                     <svg
                       viewBox="0 0 16 16"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-3.5 h-3.5"
+                      className="h-3.5 w-3.5"
                     >
                       <circle cx="8" cy="8" r="7.5" stroke="#8D97A7" />
                       <path d="M8 3L8 5" stroke="#8D97A7" strokeWidth="2" />
@@ -488,248 +189,156 @@ function Rewards(props) {
                     </svg>
                   </span>
                 </div>
-                {githubCalculationStatus === 1 ? (
-                  <div className="flex justify-center mt-4 ">
-                    <div className="mr-2 text-2xl font-bold text-base">
-                      Calculating
-                    </div>
-                    <div
-                      class="inline-block mt-2 h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                      role="status"
-                    >
-                      <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-                        Loading...
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="my-2 py-1">
-                    {githubCalculationStatus === 2 ? (
-                      <span className="text-4xl uppercase">
-                        {showToken(totalGithubDecayedAmount, token)}
-                      </span>
-                    ) : (
-                      <>
-                        <span className="text-2xl mr-2 text-type-tertiary">
-                          Coming Soon
-                        </span>
-
-                        {/* <span className="text-4xl mr-2 text-type-tertiary">
-                          ~
-                        </span>
-                        <span className="text-4xl uppercase">
-                          {showToken(totalGithubToken, token)}
-                        </span> */}
-                      </>
-                    )}
-                  </div>
-                )}
-
-                {githubCalculationStatus === 0 ? (
-                  code === null ? (
-                    <button
-                      className={
-                        "btn btn-secondary btn-sm mt-2 " +
-                        (calculatingRewardsLoading ? "loading" : "")
-                      }
-                      onClick={() => {
-                        if (!props.selectedAddress) {
-                          props.notify("Please login first", "error");
-                        } else if (
-                          process.env.NEXT_PUBLIC_REWARD_DEADLINE <
-                          dayjs().unix()
-                        ) {
-                          props.notify("Claim airdrop period ended", "error");
-                        } else {
-                          githubLogin();
-                        }
-                      }}
-                      disabled={true}
-                    >
-                      Connect with Github profile
-                    </button>
+                <div className="my-2">
+                  {isPlatformIncentivesTokensLoaded ? (
+                    <span className="text-4xl uppercase">
+                      {showToken(totalClaimedPlatformIncentivesToken, token)}
+                    </span>
                   ) : (
-                    <button
-                      className={
-                        "btn btn-secondary btn-sm mt-2 " +
-                        (calculatingRewardsLoading ? "loading" : "")
-                      }
-                      onClick={() => {
-                        if (!props.selectedAddress) {
-                          props.notify("Please login first", "error");
-                        } else if (
-                          process.env.NEXT_PUBLIC_REWARD_DEADLINE <
-                          dayjs().unix()
-                        ) {
-                          props.notify("Claim airdrop period ended", "error");
-                        } else {
-                          getGithubRewards();
-                        }
-                      }}
-                      disabled={true}
-                    >
-                      Calculate Reward
-                    </button>
-                  )
-                ) : (
-                  ""
-                )}
-                {githubCalculationError ? (
-                  <div className="text-error text-xs mt-2 flex">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 mr-2 mt-px"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                      />
-                    </svg>
-                    {githubCalculationError}
-                  </div>
-                ) : (
-                  ""
-                )}
+                    <>
+                      <span className="text-4xl uppercase">-</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="flex my-4 mx-4 px-3 pb-4 w-full">
+              <div className="flex mx-auto">
+                <div className="text-xs opacity-60 font-bold mr-2">
+                  {totalPlatformIncentivesToken != 0
+                    ? (
+                        (totalClaimedPlatformIncentivesToken /
+                          totalPlatformIncentivesToken) *
+                        100
+                      ).toFixed(2)
+                    : 0 + "%"}{" "}
+                  Claimed
+                </div>
+                <progress
+                  className="progress progress-primary w-56 sm:w-80 mt-1"
+                  value={
+                    totalPlatformIncentivesToken != 0
+                      ? (totalClaimedPlatformIncentivesToken /
+                          totalPlatformIncentivesToken) *
+                        100
+                      : 0
+                  }
+                  max="100"
+                ></progress>
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center mt-12 lg:mt-16">
-            {parseInt(unclaimedGithubToken) +
-              parseInt(unclaimedEcosystemToken) >
-            0 ? (
-              <button
-                className="btn btn-primary btn-lg mx-4 lg:w-96"
-                onClick={claimTokens}
-              >
-                <span>Claim</span>
-                <span className="ml-1 uppercase">
-                  {showToken(
-                    parseInt(unclaimedGithubToken) +
-                      parseInt(unclaimedEcosystemToken),
-                    token
-                  )}
-                </span>
-              </button>
-            ) : (
-              <Link
-                className="btn btn-primary btn-lg  mx-4 lg:w-96"
-                href="#missions"
-              >
-                Complete missions to unlock more
-              </Link>
-            )}
-
-            {parseInt(claimedGithubToken) + parseInt(claimedEcosystemToken) >
-            0 ? (
-              <div className="text-xs text-type-secondary mt-4">
-                <span>Already claimed</span>
-                <span className="ml-1 uppercase">
-                  {showToken(
-                    parseInt(claimedGithubToken) +
-                      parseInt(claimedEcosystemToken),
-                    token
-                  )}
-                </span>
-              </div>
-            ) : (
-              ""
-            )}
-          </div>
         </div>
 
-        <div className="flex my-8 mx-4 px-6 max-w-screen-lg w-full lg:mt-16">
-          <div id="missions" className="text-4xl">
-            Missions
-          </div>
-          <div className="flex ml-auto">
-            <div className="text-xs opacity-60 mt-4 font-bold mr-2">
-              {tasksCompleted + "%"} Complete
+        {totalClaimedPlatformIncentivesToken > 0 && (
+          <Link
+            className="btn btn-primary btn-base  mx-4 my-8 lg:w-48"
+            href={`https://twitter.com/intent/tweet?text=${xPost}&url=${encodeURI(
+              "https://gitopia.com/rewards"
+            )}`}
+          >
+            𝕏 Post
+          </Link>
+        )}
+
+        <div className="flex flex-col bg-info/30 rounded-xl mx-4 p-6 my-8 text-xs sm:text-base w-full max-w-screen-lg">
+          {totalPlatformIncentivesToken > 0 ? (
+            <div>
+              🎉 Congratulations! You have earned{" "}
+              <span className="uppercase">
+                {showToken(totalPlatformIncentivesToken, token)}
+              </span>{" "}
+              as platform incentives for your open source contributions. 🎉
             </div>
-            <progress
-              className="progress progress-primary w-56 sm:w-80 mt-5"
-              value={tasksCompleted}
-              max="100"
-            ></progress>
-          </div>
+          ) : (
+            <div>
+              🌟 Hello! While you didn't qualify for platform incentives in this
+              round, there are still many ways to earn rewards! Try these tips
+              to increase your chances next time:
+              <ul className="list-disc mx-4">
+                <li>
+                  Hunt Gitopia{" "}
+                  <Link
+                    href="https://gitopia.com/bounties"
+                    className="text-xs link link-primary no-underline hover:underline"
+                  >
+                    Bounties
+                  </Link>
+                </li>
+                <li>
+                  Contribute to verified repositories in verified DAOs like{" "}
+                  <Link
+                    href="https://gitopia.com/Gitopia"
+                    className="text-xs link link-primary no-underline hover:underline"
+                  >
+                    Gitopia
+                  </Link>
+                </li>
+                <li>
+                  Push your own repositories to Gitopia and make contributions
+                </li>
+              </ul>
+            </div>
+          )}
+          <br />
+          <ul className="list-disc mx-4">
+            <li>Round 1 Total Distribution: 2,250,000 LORE</li>
+            <li>
+              Cutoff Date: Contributions up to Feb 9th 2024 are taken into
+              account for this round of distribution
+            </li>
+          </ul>
         </div>
-        {tasks?.map((t, i = 0) => {
-          // if (t.isComplete) {
-          //   if (isEcosystemTokensLoaded) {
-          //     claimedEcosystemTokenCounter -=
-          //       (t.weight / tasksTotal) * totalEcosystemToken;
-          //   }
-          // }
+
+        {splits?.map((t, i = 0) => {
           return (
             <div
-              className="flex bg-base-200/70 rounded-xl mt-4 mx-4 p-2 text-xs sm:text-base w-full max-w-screen-lg"
+              className="bg-base-200/70 mx-4 mt-4 flex w-full max-w-screen-lg rounded-xl p-2 text-xs sm:text-base"
               key={i}
             >
-              <div className="lg:flex gap-4">
+              <div className="gap-4 lg:flex">
                 <div
-                  className={"my-3 ml-4 " + (t.isComplete ? "text-green" : "")}
+                  className={
+                    "my-3 ml-4 " + (isRewardActive(t) ? "text-green" : "")
+                  }
                 >
-                  {tasksToMessage[t.type]}
+                  {t["start_date"]} - {t["end_date"]}
                 </div>
                 <div
                   className={
                     "rounded-full px-2 py-px text-xs h-5 mt-3.5 tooltip cursor-default border" +
-                    (isEcosystemTokensLoaded
+                    (isPlatformIncentivesTokensLoaded
                       ? " bg-purple-900 text-purple-50 border-transparent"
                       : " text-purple-50 border-purple-900")
                   }
-                  data-tip={
-                    isEcosystemTokensLoaded
-                      ? "Ecosystem staking rewards"
-                      : "Estimated staking rewards - login to calculate exact amount"
-                  }
+                  data-tip="Platform incentives"
                 >
-                  <span>{isEcosystemTokensLoaded ? "" : "~"}</span>
                   <span className="uppercase">
-                    {showToken(
-                      (t.weight / tasksTotal) * totalEcosystemDecayedAmount,
-                      token
-                    )}
+                    {showToken(t["amount"], token)}
                   </span>
                 </div>
-                {/* <div
-                  className={
-                    "rounded-full px-2 py-px text-xs h-5 mt-3.5 tooltip cursor-default border" +
-                    (githubCalculationStatus === 2
-                      ? " bg-purple-900 text-purple-50 border-transparent"
-                      : " text-purple-50 border-purple-900")
-                  }
-                  data-tip={
-                    githubCalculationStatus === 2
-                      ? "Open source contribution rewards"
-                      : "Estimated open source contribution rewards - connect Github to calculate exact amount"
-                  }
-                >
-                  <span>{githubCalculationStatus === 2 ? "" : "~"}</span>
-                  <span className="uppercase">
-                    {showToken(
-                      (t.weight / tasksTotal) * totalGithubDecayedAmount,
-                      token
-                    )}
-                  </span>
-                </div> */}
               </div>
-              {t.isComplete ? (
-                <img
-                  className="ml-auto mr-3 sm:mt-2"
-                  src="/rewards/checkmark.svg"
-                />
+              {isRewardActive(t) ? (
+                t["claimed"] ? (
+                  <img
+                    className="ml-auto mr-3 sm:mt-2"
+                    src="/rewards/checkmark.svg"
+                  />
+                ) : (
+                  <button
+                    className="btn btn-primary btn-sm mx-4 ml-auto mr-3 sm:mt-2 px-12"
+                    onClick={() => claimPlatformIncentives(1, i)}
+                  >
+                    <span>Claim</span>
+                  </button>
+                )
               ) : (
                 <div className="ml-auto mr-6 sm:mt-4">
                   <svg
                     viewBox="0 0 12 16"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    className="w-3 h-4"
+                    className="h-4 w-3"
                   >
                     <path
                       fillRule="evenodd"
@@ -744,40 +353,9 @@ function Rewards(props) {
           );
         })}
 
-        <div className="flex flex-col items-center mt-12">
-          {parseInt(unclaimedGithubToken) + parseInt(unclaimedEcosystemToken) >
-          0 ? (
-            <button
-              className={
-                "btn btn-primary btn-lg mx-4 lg:w-96" +
-                (claimTokensLoading ? " loading" : "")
-              }
-              onClick={claimTokens}
-            >
-              <span>Claim</span>
-              <span className="ml-1 uppercase">
-                {showToken(
-                  parseInt(unclaimedGithubToken) +
-                    parseInt(unclaimedEcosystemToken),
-                  token
-                )}
-              </span>
-            </button>
-          ) : (
-            <Link
-              className="btn btn-primary btn-lg  mx-4 lg:w-96"
-              href="#missions"
-            >
-              Complete missions to unlock more
-            </Link>
-          )}
-          <div className="text-xs text-type-secondary mt-4">
-            If you have any issues, contact us at contact@gitopia.com
-          </div>
-        </div>
         <img
           className={
-            "absolute pointer-events-none -z-30 left-1/3 -top-20 opacity-30 lg:opacity-50 invisible lg:visible"
+            "pointer-events-none invisible absolute -top-20 left-1/3 -z-30 opacity-30 lg:visible lg:opacity-50"
           }
           src="/rewards/drop-mid.svg"
           width={"622"}
@@ -785,62 +363,62 @@ function Rewards(props) {
         />
         <img
           className={
-            "absolute pointer-events-none -z-10 -left-16 sm:left-5 lg:left-60 top-10 sm:top-28 lg:top-44 opacity-50"
+            "pointer-events-none absolute -left-16 top-10 -z-10 opacity-50 sm:left-5 sm:top-28 lg:left-60 lg:top-44"
           }
           src="/rewards/drop-1.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-10 right-0 sm:right-16 lg:right-36 top-36 sm:top-28 lg:top-40 opacity-50"
+            "pointer-events-none absolute right-0 top-36 -z-10 opacity-50 sm:right-16 sm:top-28 lg:right-36 lg:top-40"
           }
           src="/rewards/drop-2.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-10 w-3/4 right-10 bottom-2/3 sm:mb-14 opacity-50"
+            "pointer-events-none absolute bottom-2/3 right-10 -z-10 w-3/4 opacity-50 sm:mb-14"
           }
           src="/rewards/objects.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 w-full bottom-1/3 mb-96 lg:mb-48 2xl:mb-10 opacity-50"
+            "pointer-events-none absolute bottom-1/3 -z-20 mb-96 w-full opacity-50 lg:mb-48 2xl:mb-10"
           }
           src="/rewards/ellipse.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 w-full bottom-2/3 lg:bottom-1/3 lg:mb-48 invisible sm:visible opacity-50"
+            "pointer-events-none invisible absolute bottom-2/3 -z-20 w-full opacity-50 sm:visible lg:bottom-1/3 lg:mb-48"
           }
           src="/rewards/stars-3.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 left-5 bottom-3/4 mt-20 invisible lg:visible opacity-30"
+            "pointer-events-none invisible absolute bottom-3/4 left-5 -z-20 mt-20 opacity-30 lg:visible"
           }
           src="/rewards/coin-1.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 right-0 -top-36 lg:-top-20 invisible sm:visible opacity-30"
+            "pointer-events-none invisible absolute -top-36 right-0 -z-20 opacity-30 sm:visible lg:-top-20"
           }
           src="/rewards/coin-2.svg"
         />
         <img
           className={
-            "absolute pointer-events-none -z-20 bottom-2/3 left-36 invisible lg:visible opacity-30"
+            "pointer-events-none invisible absolute bottom-2/3 left-36 -z-20 opacity-30 lg:visible"
           }
           src="/rewards/coin-3.png"
         />
         <img
           className={
-            "absolute pointer-events-none bottom-1/2 mb-28 right-36 -z-20 invisible lg:visible opacity-30"
+            "pointer-events-none invisible absolute bottom-1/2 right-36 -z-20 mb-28 opacity-30 lg:visible"
           }
           src="/rewards/coin-4.svg"
         />
       </section>
       <img
         className={
-          "absolute pointer-events-none -z-20 w-full top-40 lg:top-28 invisible sm:visible opacity-50"
+          "pointer-events-none invisible absolute top-40 -z-20 w-full opacity-50 sm:visible lg:top-28"
         }
         src="/rewards/stars-1.svg"
       />

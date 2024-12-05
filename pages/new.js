@@ -8,6 +8,16 @@ import TextInput from "../components/textInput";
 import shrinkAddress from "../helpers/shrinkAddress";
 import Footer from "../components/footer";
 import isRepositoryNameTaken from "../helpers/isRepositoryNameTaken";
+import { useApiClient } from "../context/ApiClientContext";
+import { notify } from "reapop";
+import {
+  Users,
+  User,
+  Lock,
+  Globe,
+  AlertCircle,
+  FolderGit2,
+} from "lucide-react";
 
 function NewRepository(props) {
   const router = useRouter();
@@ -28,6 +38,8 @@ function NewRepository(props) {
   const [accountsList, setAccountsList] = useState([
     { value: "", display: "" },
   ]);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
@@ -55,11 +67,15 @@ function NewRepository(props) {
       setNameHint({
         type: "error",
         shown: true,
-        message: "Repository name must have atleat 3 characters",
+        message: "Repository name must have at least 3 characters",
       });
       return false;
     }
-    const alreadyAvailable = await isRepositoryNameTaken(name, ownerId);
+    const alreadyAvailable = await isRepositoryNameTaken(
+      apiClient,
+      name,
+      ownerId
+    );
 
     if (alreadyAvailable) {
       setNameHint({
@@ -72,7 +88,7 @@ function NewRepository(props) {
     return true;
   };
 
-  const createRepository = async () => {
+  const createRepo = async () => {
     setRepositoryCreating(true);
     if (await validateRepository()) {
       let ownerName = ownerId;
@@ -83,22 +99,85 @@ function NewRepository(props) {
         }
         return true;
       });
-      console.log("create Repo", {
-        name: name.replace(sanitizedNameTest, "-"),
-        description,
-        ownerName,
-      });
-      let res = await props.createRepository({
-        name: name.replace(sanitizedNameTest, "-"),
-        description,
-        ownerId: ownerName,
-      });
+
+      let res = await props.createRepository(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        {
+          name: name.replace(sanitizedNameTest, "-"),
+          description,
+          ownerId: ownerName,
+        }
+      );
       if (res && res.url) {
+        props.notify("Repository created", "info");
         router.push(res.url);
       }
     }
     setRepositoryCreating(false);
   };
+
+  const CustomSelect = ({ value, onChange, options }) => (
+    <div className="relative">
+      <div
+        className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center`}
+      >
+        {options.map((account) => {
+          if (account.id === value) {
+            return (
+              <div key={account.id} className="flex items-center">
+                {account.type === "Dao" ? (
+                  <div className="bg-purple-500/10 p-1 rounded">
+                    <Users className="w-4 h-4 text-purple-500" />
+                  </div>
+                ) : (
+                  <div className="bg-primary/10 p-1 rounded">
+                    <User className="w-4 h-4 text-primary" />
+                  </div>
+                )}
+              </div>
+            );
+          }
+          return null;
+        })}
+      </div>
+      <select
+        className="select select-bordered w-full pl-12 pr-4 focus:outline-none focus:border-primary text-base"
+        value={value}
+        onChange={onChange}
+      >
+        {options.map((account, i) => (
+          <option key={i} value={account.id} className="flex items-center">
+            <span>
+              {account.name} {shrinkAddress(account.id)}
+            </span>
+          </option>
+        ))}
+      </select>
+      {options.map((account) => {
+        if (account.id === value) {
+          return (
+            <div
+              key={account.id}
+              className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+            >
+              <span
+                className={`px-4 py-0.5 text-xs rounded-full ${
+                  account.type === "Dao"
+                    ? "bg-purple-500/10 text-purple-500"
+                    : "bg-primary/10 text-primary"
+                }`}
+              >
+                {account.type}
+              </span>
+            </div>
+          );
+        }
+        return null;
+      })}
+    </div>
+  );
 
   return (
     <div
@@ -110,56 +189,62 @@ function NewRepository(props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Header />
-      <div className="flex flex-1">
-        <main className="container mx-auto max-w-screen-lg min-h-full py-12 px-4 sm:px-0">
-          <div className="text-2xl">Create a new repository</div>
-          <div className="flex justify-between mt-4">
-            <div className="w-3/4 text-sm">
-              Your repository will be created on the blockchain, meaning it will
-              outlive even you once it’s created. You can archive repositories,
-              but they will still be visible to the public.
+
+      <div className="flex flex-1 bg-repo-grad-v">
+        <main className="container mx-auto max-w-screen-lg min-h-full py-12 px-4">
+          <div className="flex items-center space-x-3 mb-6">
+            <FolderGit2 className="w-8 h-8 text-primary" />
+            <h1 className="text-3xl font-bold">Create a new repository</h1>
+          </div>
+
+          <div className="bg-base-200 rounded-lg p-8 mb-8">
+            <div className="flex flex-col space-y-8">
+              <div className="max-w-3xl">
+                <p className="text-base text-gray-300 mb-4">
+                  Your repository will be created on the blockchain, meaning it
+                  will outlive even you once it's created. You can archive
+                  repositories, but they will still be visible to the public.
+                </p>
+                <div className="flex items-center space-x-2 text-sm text-gray-400">
+                  <Globe className="w-4 h-4" />
+                  <span>
+                    All repositories on Gitopia are public and transparent
+                  </span>
+                </div>
+              </div>
+              <div className="w-full flex justify-center bg-box-grad-v rounded-lg p-8">
+                <img
+                  src="new-repository.svg"
+                  className="w-full max-w-2xl h-auto object-contain"
+                  alt="New Repository"
+                />
+              </div>
             </div>
-            {/* <div className="w-96 text-sm text-right">
-              Already have a repository? You can{" "}
-              <a className="text-primary">import it </a>
-              here.
-            </div> */}
           </div>
-          <div className="bg-box-grad-v rounded-md mt-4 flex justify-center">
-            <img src="new-repository.svg" className="h-58" />
-          </div>
-          <div className="mt-4">
-            <div className="flex items-top">
-              <div className="form-control flex-1 sm:mr-12">
+
+          <div className="bg-base-200 rounded-lg p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Repository Owner</span>
+                  <span className="label-text font-medium">
+                    Repository Owner
+                  </span>
+                  <span className="label-text-alt text-gray-400">
+                    Choose who will own this repository
+                  </span>
                 </label>
-                <select
-                  className={
-                    "select select-bordered select-md mr-2 sm:mr-0 focus:outline-none focus:border-type " +
-                    (ownerId?.length > 0 ? "border-green" : "")
-                  }
+                <CustomSelect
                   value={ownerId}
-                  onChange={(e) => {
-                    console.log("onchange");
-                    setOwnerId(e.target.value);
-                  }}
-                >
-                  {accountsList.map((a, i) => {
-                    return (
-                      <option value={a.id} key={i}>
-                        {a.name + " - " + shrinkAddress(a.id)}
-                      </option>
-                    );
-                  })}
-                </select>
+                  onChange={(e) => setOwnerId(e.target.value)}
+                  options={accountsList}
+                />
               </div>
 
               <TextInput
                 type="text"
                 label="Repository Name"
                 name="repository_name"
-                placeholder="Repository Name"
+                placeholder="awesome-project"
                 value={name}
                 setValue={(v) => {
                   if (sanitizedNameTest.test(v)) {
@@ -176,31 +261,32 @@ function NewRepository(props) {
                   setName(v);
                 }}
                 hint={nameHint}
-                className="flex-1 w-10"
               />
             </div>
-            <div className="mt-4">
+
+            <div className="mt-6">
               <TextInput
                 type="text"
                 label="Repository Description"
                 name="repository_description"
-                placeholder="Description"
+                placeholder="Optional description of your repository"
                 multiline={true}
                 value={description}
                 setValue={setDescription}
                 hint={descriptionHint}
               />
             </div>
-            <div className="flex justify-end mt-4">
+
+            <div className="mt-6 flex justify-end">
               <button
-                className={
-                  "flex-none btn btn-primary btn-wide " +
-                  (repositoryCreating ? "loading " : "")
-                }
+                className={`btn btn-primary btn-wide ${
+                  repositoryCreating ? "loading" : ""
+                }`}
                 disabled={repositoryCreating}
-                onClick={createRepository}
+                onClick={createRepo}
                 data-test="create-repo-button"
               >
+                <FolderGit2 className="w-4 h-4 mr-2" />
                 Create Repository
               </button>
             </div>
@@ -212,13 +298,11 @@ function NewRepository(props) {
   );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    dashboards: state.user.dashboards,
-    currentDashboard: state.user.currentDashboard,
-  };
-};
+const mapStateToProps = (state) => ({
+  dashboards: state.user.dashboards,
+  currentDashboard: state.user.currentDashboard,
+});
 
-export default connect(mapStateToProps, {
-  createRepository,
-})(NewRepository);
+export default connect(mapStateToProps, { createRepository, notify })(
+  NewRepository
+);

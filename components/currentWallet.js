@@ -12,6 +12,7 @@ import {
 import TextInput from "./textInput";
 import Link from "next/link";
 import shrinkAddress from "../helpers/shrinkAddress";
+import { useApiClient } from "../context/ApiClientContext";
 
 function CurrentWallet(props) {
   const [isUnlocking, setIsUnlocking] = useState(false);
@@ -24,6 +25,13 @@ function CurrentWallet(props) {
     message: "",
   });
   const inputEl = useRef();
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    apiUrl,
+    rpcUrl,
+  } = useApiClient();
 
   const unlockWallet = async () => {
     if (password === "") {
@@ -34,7 +42,15 @@ function CurrentWallet(props) {
       });
       return;
     }
-    let res = await props.unlockWallet({ name: selectedWallet, password });
+    let res = await props.unlockWallet(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      {
+        name: selectedWallet,
+        password,
+      }
+    );
     if (res) {
       resetWallet(false);
     } else {
@@ -63,7 +79,12 @@ function CurrentWallet(props) {
     const wallet =
       props.wallets[props.wallets.findIndex((x) => x.name === walletName)];
     if (wallet && wallet.isLedger) {
-      props.unlockLedgerWallet({ name: wallet.name, justUnlock: true });
+      props.unlockLedgerWallet(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        { name: wallet.name, justUnlock: true }
+      );
       setExternalWalletMsg("Please open Cosmos app on your ledger to verify");
     } else {
       setExternalWalletMsg(null);
@@ -143,9 +164,14 @@ function CurrentWallet(props) {
                 <button
                   className="btn btn-sm btn-block btn-primary flex-1"
                   onClick={async () => {
-                    const res = await props.unlockLedgerWallet({
-                      name: selectedWallet,
-                    });
+                    const res = await props.unlockLedgerWallet(
+                      apiClient,
+                      cosmosBankApiClient,
+                      cosmosFeegrantApiClient,
+                      {
+                        name: selectedWallet,
+                      }
+                    );
                     if (res?.message) {
                       setExternalWalletMsg(res.message);
                     }
@@ -264,7 +290,12 @@ function CurrentWallet(props) {
             <button
               className="btn btn-outline btn-circle border-grey rounded-full"
               onClick={async () => {
-                props.unlockKeplrWallet();
+                await initKeplr(apiUrl, rpcUrl);
+                props.unlockKeplrWallet(
+                  apiClient,
+                  cosmosBankApiClient,
+                  cosmosFeegrantApiClient
+                );
               }}
             >
               <div className="rounded-full mask mask-circle w-10 h-10 bg-primary flex justify-center items-center">

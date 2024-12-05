@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { updateUserBio } from "../../store/actions/user";
 import { notify } from "reapop";
 import TextInput from "../textInput";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function UserBio(props = { isEditable: false }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -14,6 +15,7 @@ function UserBio(props = { isEditable: false }) {
   });
   const [savingBio, setSavingBio] = useState(false);
   const input = useRef();
+  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
 
   const validateBio = (bio) => {
     setNewBioHint({
@@ -35,7 +37,11 @@ function UserBio(props = { isEditable: false }) {
   const updateBio = async () => {
     setSavingBio(true);
     if (validateBio(newBio)) {
-      const res = await props.updateUserBio(newBio);
+      const res = await props.updateUserBio(
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        newBio
+      );
 
       if (res && res.code === 0) {
         if (props.refresh) await props.refresh();

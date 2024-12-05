@@ -19,6 +19,7 @@ import AccountCard from "../../../../components/account/card";
 import useRepository from "../../../../hooks/useRepository";
 import CreateBounty from "../../../../components/repository/bounty";
 import { createBounty } from "../../../../store/actions/bounties";
+import { useApiClient } from "../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -43,6 +44,8 @@ function RepositoryIssueCreateView(props) {
   const [allLabels, setAllLabels] = useState([]);
   const [bountyAmount, setBountyAmount] = useState([]);
   const [bountyExpiry, setBountyExpiry] = useState(0);
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   const validateIssue = () => {
     return true;
@@ -61,8 +64,14 @@ function RepositoryIssueCreateView(props) {
         bountyAmount,
         bountyExpiry,
       };
-      const res = await props.createIssue(issue);
+      const res = await props.createIssue(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        issue
+      );
       if (res && res.code === 0) {
+        props.notify("Issue created", "info");
         router.push(
           "/" +
             repository.owner.id +

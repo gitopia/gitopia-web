@@ -25,6 +25,10 @@ import WalletInfo from "./dashboard/walletInfo";
 import SearchBar from "./searchBar";
 import DepositIbcAsset from "./assets/deposit";
 import WithdrawIbcAsset from "./assets/withdraw";
+import Providers from "./providers";
+import selectProvider from "../helpers/providerSelector";
+import { useApiClient } from "../context/ApiClientContext";
+
 // const NotificationsCard = dynamic(() =>
 //   import("./dashboard/notificationsButton")
 // );
@@ -44,6 +48,7 @@ Menu States
 function Header(props) {
   const [menuState, setMenuState] = useState(1);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpenProvider, setMenuOpenProvider] = useState(false);
   const [chainId, setChainId] = useState("");
   const [assets, setAssets] = useState([]);
   const [unread, setUnread] = useState(false);
@@ -57,6 +62,21 @@ function Header(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [openDeposit, setOpenDeposit] = useState(false);
   const [openWithdraw, setOpenWithdraw] = useState(false);
+  const {
+    providerName,
+    apiUrl,
+    rpcUrl,
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    updateApiClient,
+  } = useApiClient();
+  const [selectedProvider, setSelectedProvider] = useState({
+    name: providerName,
+    apiEndpoint: apiUrl,
+    rpcEndpoint: rpcUrl,
+  });
+  const [explorerDropdownOpen, setExplorerDropdownOpen] = useState(false);
 
   const onUserMenuClose = () => {
     setMenuOpen(false);
@@ -64,7 +84,9 @@ function Header(props) {
       menuRef.current.blur();
     }
   };
-
+  const handleClickAway = () => {
+    setMenuOpenProvider(false);
+  };
   let addressToShow = "";
   if (props.selectedAddress) {
     addressToShow = "gitopia" + shrinkAddress(props.selectedAddress);
@@ -84,6 +106,13 @@ function Header(props) {
 
   useEffect(unreadNotification, [props.userNotification]);
 
+  const refreshProviders = async () => {
+    const provider = await selectProvider();
+    setSelectedProvider(provider);
+    updateApiClient(provider.name, provider.apiEndpoint, provider.rpcEndpoint);
+    props.notify("API provider reset successful", "info");
+  };
+
   useEffect(() => {
     onUserMenuClose();
     if (props.activeWallet) setMenuState(1);
@@ -95,7 +124,11 @@ function Header(props) {
   const kelprWalletChange = async () => {
     console.log("Keplr wallet change", props.activeWallet);
     if (props.activeWallet && props.activeWallet.isKeplr) {
-      await props.unlockKeplrWallet();
+      await props.unlockKeplrWallet(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient
+      );
     }
   };
 
@@ -134,18 +167,28 @@ function Header(props) {
 
   useEffect(() => {
     const updateNetworkName = async () => {
-      if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
-        const info = await getNodeInfo();
-        setChainId(info.default_node_info.network);
+      try {
+        if (process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES) {
+          const info = await getNodeInfo(apiUrl);
+          setChainId(info.default_node_info.network);
+        }
+      } catch (error) {
+        console.error("Error fetching node info:", error);
       }
     };
+
     const getIbcAssets = async () => {
-      const assets = await getAssetList();
-      setAssets(assets);
+      try {
+        const assets = await getAssetList();
+        setAssets(assets);
+      } catch (error) {
+        console.error("Error fetching asset list:", error);
+      }
     };
+
     getIbcAssets();
     updateNetworkName();
-  }, []);
+  }, [apiUrl]);
 
   useEffect(() => {
     window.addEventListener("keplr_keystorechange", kelprWalletChange);
@@ -199,11 +242,7 @@ function Header(props) {
           homeUrl={"/home"}
           chainId={chainId}
         ></Drawer>
-        <div
-          className={
-            "flex-none sm:px-6 transition-all ease-out delay-150 sm:w-42"
-          }
-        >
+        <div className="flex-none sm:px-6 transition-all ease-out delay-150 sm:w-42">
           <Link href={"/home"}>
             <img
               width={80}
@@ -214,65 +253,159 @@ function Header(props) {
         </div>
         {!isMobile ? <SearchBar /> : ""}
         {!isMobile ? (
-          <div className="items-stretch">
-            <a
-              className="btn btn-ghost btn-sm rounded-btn"
-              href={process.env.NEXT_PUBLIC_EXPLORER_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Explorer
-            </a>
-          </div>
-        ) : (
-          ""
-        )}
-        {!isMobile ? (
-          <div className="items-stretch">
-            <a
-              className="btn btn-ghost btn-sm rounded-btn"
-              href={process.env.NEXT_PUBLIC_DOCS_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Docs
-            </a>
-          </div>
-        ) : (
-          ""
-        )}
-        {!isMobile ? (
-          <div className="items-stretch">
-            <a
-              className="btn btn-ghost btn-sm rounded-btn"
-              href={process.env.NEXT_PUBLIC_FORUM_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Forum
-            </a>
-          </div>
+          <>
+            <div className="items-stretch">
+              <a className="btn btn-ghost btn-sm rounded-btn" href="/bounties">
+                Bounties
+              </a>
+            </div>
+            <div className="items-stretch">
+              <a className="btn btn-ghost btn-sm rounded-btn" href="/rewards">
+                Rewards
+              </a>
+            </div>
+            <div className="items-stretch">
+              <a
+                className="btn btn-ghost btn-sm rounded-btn"
+                href="/leaderboard"
+              >
+                Leaderboard
+              </a>
+            </div>
+            <div className="items-stretch">
+              <a
+                className="btn btn-ghost btn-sm rounded-btn"
+                href={process.env.NEXT_PUBLIC_DOCS_URL}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Docs
+              </a>
+            </div>
+            <div className="items-stretch">
+              <a
+                className="btn btn-ghost btn-sm rounded-btn"
+                href={process.env.NEXT_PUBLIC_FORUM_URL}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Forum
+              </a>
+            </div>
+            <div className="items-stretch">
+              <div className="dropdown dropdown-hover">
+                <label
+                  tabIndex={0}
+                  className="btn btn-ghost btn-sm rounded-btn"
+                >
+                  Explorers
+                </label>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                >
+                  <li>
+                    <a
+                      href="https://gitopia.exploreme.pro/"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      EXPLOREME
+                    </a>
+                  </li>
+
+                  <li>
+                    <a
+                      href="https://ping.pub/gitopia"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Ping.pub
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://explorer.stavr.tech/Gitopia-M"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      STAVR
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://explorer.kalia.network/gitopia"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Kalia Network
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </>
         ) : (
           ""
         )}
         <div className="flex-1"></div>
-        {process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES && !isMobile ? (
-          <div className="flex-col mr-8 items-end">
-            <div
-              className="uppercase text-type-secondary"
-              style={{ fontSize: "0.6rem", lineHeight: "1rem" }}
-            >
-              {chainId}
-            </div>
-            <div style={{ fontSize: "0.6rem", lineHeight: "1rem" }}>
-              <a
-                className="link link-primary no-underline"
-                target="_blank"
-                rel="noreferrer"
-                href={process.env.NEXT_PUBLIC_NETWORK_RELEASE_NOTES}
+        {!isMobile ? (
+          <div className="flex-row mr-8 items-end">
+            <ClickAwayListener onClickAway={handleClickAway}>
+              <div
+                className={
+                  "dropdown dropdown-end " +
+                  (menuOpenProvider ? "dropdown-open" : "")
+                }
+                ref={menuRef}
               >
-                SEE WHATS NEW
-              </a>
+                <button
+                  tabIndex="0"
+                  className="btn btn-ghost rounded-btn normal-case text-xs"
+                  onClick={() => setMenuOpenProvider(!menuOpenProvider)}
+                >
+                  {selectedProvider ? (
+                    <>
+                      {selectedProvider.name}
+                      <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
+                    </>
+                  ) : (
+                    "Select Provider"
+                  )}
+                </button>
+                {menuOpenProvider && (
+                  <div className="shadow-xl dropdown-content bg-base-300 rounded mt-1">
+                    <Providers
+                      selectedProvider={selectedProvider}
+                      setSelectedProvider={(provider) => {
+                        setSelectedProvider(provider);
+                        setMenuOpenProvider(false);
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            </ClickAwayListener>
+            <div
+              className="tooltip tooltip-bottom tooltip-secondary"
+              data-tip="Reset API provider"
+            >
+              <button className="btn btn-ghost ml-2" onClick={refreshProviders}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-4 h-4"
+                >
+                  <path d="M21 2v6h-6" />
+                  <path d="M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6" />
+                  <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+                </svg>
+              </button>
             </div>
           </div>
         ) : (

@@ -51,7 +51,7 @@ const showProposalStatus = (proposal) => {
           </span>
         </div>
       );
-    case "PROPOSAL_STATUS_PASSED":
+    case "PROPOSAL_STATUS_ACCEPTED":
       return (
         <div className="flex text-green text-xs items-center">
           <svg
@@ -109,7 +109,9 @@ export default function ProposalItem({
         </div>
         <div className="mt-2 text-xs text-type-secondary markdown-body">
           <ReactMarkdown linkTarget="_blank">
-            {proposal.content.description.slice(0, 250)}
+            {proposal.content.description
+              ? proposal.content.description.slice(0, 250)
+              : JSON.stringify(proposal.content)}
           </ReactMarkdown>
         </div>
         <div className="mt-4 flex justify-start items-center">

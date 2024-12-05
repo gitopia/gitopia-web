@@ -36,7 +36,7 @@ export const sendTransaction = ({
       console.log(msgArr);
       result = await env.txClient.signAndBroadcast(
         msgArr,
-        { fee: 1.5, memo },
+        { fee: 1.8, memo },
         wallet.allowance ? process.env.NEXT_PUBLIC_FEE_GRANTER : null
       );
       if (wallet.activeWallet?.isLedger) {
@@ -69,10 +69,21 @@ export const sendTransaction = ({
   };
 };
 
-export const signMessage = ({ data = {} }) => {
+export const signMessage = (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  { data = {} }
+) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(dispatch, getState);
+      await setupTxClients(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        dispatch,
+        getState
+      );
     } catch (e) {
       console.error(e);
       return null;
@@ -89,11 +100,14 @@ export const signMessage = ({ data = {} }) => {
       notifId = msg.payload.id;
     }
     try {
+      const info = await getNodeInfo(env.apiNode);
+      const jsonString = JSON.stringify(data);
+      const buffer = Buffer.from(jsonString);
+      const base64String = buffer.toString("base64");
       const msg = await env.txClient.msgSignData({
         signer: wallet.selectedAddress,
-        data,
+        data: base64String,
       });
-      const info = await getNodeInfo();
       const res = await env.txClient.sign(
         [msg],
         {
@@ -105,11 +119,11 @@ export const signMessage = ({ data = {} }) => {
           ],
           gas: "0",
         },
-        JSON.stringify(data),
+        jsonString,
         {
           accountNumber: 0,
           sequence: 0,
-          chainId: "",
+          chainId: info.default_node_info.network,
         }
       );
       if (wallet.activeWallet?.isLedger) {
@@ -142,13 +156,25 @@ export const signMessage = ({ data = {} }) => {
   };
 };
 
-export const setupTxClients = async (dispatch, getState, chainId = null) => {
+export const setupTxClients = async (
+  apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  dispatch,
+  getState,
+  chainId = null
+) => {
   const { env, wallet } = getState();
 
   if (wallet.activeWallet) {
     if (!env.txClient || chainId != wallet.activeWallet.counterPartyChain) {
       if (wallet.activeWallet.isKeplr) {
-        await unlockKeplrWallet(chainId)(dispatch, getState);
+        await unlockKeplrWallet(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          chainId
+        )(dispatch, getState);
       } else if (wallet.activeWallet.isLeap) {
         await unlockLeapWallet(chainId)(dispatch, getState);
       } else if (wallet.activeWallet.isMetamask) {
@@ -182,10 +208,21 @@ export const setupTxClients = async (dispatch, getState, chainId = null) => {
   }
 };
 
-export const handlePostingTransaction = async (dispatch, getState, message) => {
+export const handlePostingTransaction = async (
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  dispatch,
+  getState,
+  message
+) => {
+  const { env } = getState();
+
   try {
     const result = await sendTransaction({ message })(dispatch, getState);
-    updateUserBalance()(dispatch, getState);
+    updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+      dispatch,
+      getState
+    );
     if (result?.code === 0) {
       return result;
     } else {
@@ -197,4 +234,18 @@ export const handlePostingTransaction = async (dispatch, getState, message) => {
     dispatch(notify(e.message, "error"));
     return null;
   }
+};
+
+export const setConfig = ({ config }) => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: envActions.SET_CONFIG,
+      payload: {
+        config: {
+          apiNode: config.apiNode,
+          rpcNode: config.rpcNode,
+        },
+      },
+    });
+  };
 };

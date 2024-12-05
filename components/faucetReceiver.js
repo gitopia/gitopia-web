@@ -3,12 +3,14 @@ import { connect } from "react-redux";
 import axios from "../helpers/axiosFetch";
 import { updateUserBalance } from "../store/actions/wallet";
 import { notify } from "reapop";
+import { useApiClient } from "../context/ApiClientContext";
 
 function FaucetReceiver(props) {
   const [loading, setLoading] = useState(0);
   const [tokenReceived, setTokenReceived] = useState(
     parseFloat(props.balance) !== 0
   );
+  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
 
   useEffect(() => {
     setTokenReceived(parseFloat(props.balance) !== 0);
@@ -44,7 +46,11 @@ function FaucetReceiver(props) {
           setLoading(0);
         } else {
           setTimeout(() => {
-            props.updateUserBalance(true);
+            props.updateUserBalance(
+              cosmosBankApiClient,
+              cosmosFeegrantApiClient,
+              true
+            );
             setLoading(0);
           }, 2000);
         }

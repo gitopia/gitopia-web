@@ -6,6 +6,8 @@ import getAllRepositoryBranch from "../../helpers/getAllRepositoryBranch";
 import { useEffect } from "react";
 import useRepository from "../../hooks/useRepository";
 import dayjs from "dayjs";
+import { useApiClient } from "../../context/ApiClientContext";
+import { notify } from "reapop";
 
 function ChangeDefaultBranch({ onSuccess, ...props }) {
   const [name, setName] = useState("");
@@ -19,8 +21,9 @@ function ChangeDefaultBranch({ onSuccess, ...props }) {
   const [startChange, setStartChange] = useState(false);
   const [isChanging, setIsChanging] = useState(false);
   const [repoBranch, setRepoBranch] = useState([]);
-
   const { repository, refreshRepository } = useRepository();
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+    useApiClient();
 
   function getBranches(branch, substring) {
     const matchingBranches = branch.filter(
@@ -34,6 +37,7 @@ function ChangeDefaultBranch({ onSuccess, ...props }) {
   useEffect(() => {
     const getRepoBranch = async () => {
       const repoBranch = await getAllRepositoryBranch(
+        apiClient,
         repository.owner.id,
         repository.name
       );
@@ -45,12 +49,18 @@ function ChangeDefaultBranch({ onSuccess, ...props }) {
   const changeName = async () => {
     setIsChanging(true);
 
-    const res = await props.changeDefaultBranch({
-      repoOwner: repository.owner.id,
-      repoName: repository.name,
-      branchName: name,
-    });
+    const res = await props.changeDefaultBranch(
+      apiClient,
+      cosmosBankApiClient,
+      cosmosFeegrantApiClient,
+      {
+        repoOwner: repository.owner.id,
+        repoName: repository.name,
+        branchName: name,
+      }
+    );
     if (res) {
+      props.notify("Default branch updated");
       setStartChange(false);
       setName("");
       setEnteredText("");
@@ -263,4 +273,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   changeDefaultBranch,
+  notify,
 })(ChangeDefaultBranch);
