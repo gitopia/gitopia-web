@@ -33,16 +33,11 @@ function GitopiaProtocolProposalDetails({ id, ...props }) {
   const amountRef = useRef(null);
   var localizedFormat = require("dayjs/plugin/localizedFormat");
   dayjs.extend(localizedFormat);
-  const {
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-    cosmosGovApiClient,
-    apiUrl,
-  } = useApiClient();
+  const { apiClient, apiUrl } = useApiClient();
 
   const refreshProposal = async () => {
     if (id !== undefined) {
-      await getProposal(apiUrl, cosmosGovApiClient, id).then((res) => {
+      await getProposal(apiUrl, apiClient, id).then((res) => {
         if (res !== undefined) {
           setProposal(res.msg);
           setProposer(res.proposer);
@@ -374,12 +369,7 @@ function GitopiaProtocolProposalDetails({ id, ...props }) {
                     onClick={(e) => {
                       setVoteYesLoading(true);
                       props
-                        .proposalVote(
-                          cosmosBankApiClient,
-                          cosmosFeegrantApiClient,
-                          id,
-                          "VOTE_OPTION_YES"
-                        )
+                        .proposalVote(apiClient, id, "VOTE_OPTION_YES")
                         .then((res) => {
                           setVoteYesLoading(false);
                           refreshTally();
@@ -416,12 +406,7 @@ function GitopiaProtocolProposalDetails({ id, ...props }) {
                     onClick={(e) => {
                       setVoteNoLoading(true);
                       props
-                        .proposalVote(
-                          cosmosBankApiClient,
-                          cosmosFeegrantApiClient,
-                          id,
-                          "VOTE_OPTION_NO"
-                        )
+                        .proposalVote(apiClient, id, "VOTE_OPTION_NO")
                         .then((res) => {
                           setVoteNoLoading(false);
                           refreshTally();
@@ -458,12 +443,7 @@ function GitopiaProtocolProposalDetails({ id, ...props }) {
                     onClick={(e) => {
                       setVoteAbstainLoading(true);
                       props
-                        .proposalVote(
-                          cosmosBankApiClient,
-                          cosmosFeegrantApiClient,
-                          id,
-                          "VOTE_OPTION_ABSTAIN"
-                        )
+                        .proposalVote(apiClient, id, "VOTE_OPTION_ABSTAIN")
                         .then((res) => {
                           setVoteAbstainLoading(false);
                           refreshTally();
@@ -500,12 +480,7 @@ function GitopiaProtocolProposalDetails({ id, ...props }) {
                     onClick={(e) => {
                       setVoteNoWithVetoLoading(true);
                       props
-                        .proposalVote(
-                          cosmosBankApiClient,
-                          cosmosFeegrantApiClient,
-                          id,
-                          "VOTE_OPTION_NO_WITH_VETO"
-                        )
+                        .proposalVote(apiClient, id, "VOTE_OPTION_NO_WITH_VETO")
                         .then((res) => {
                           setVoteNoWithVetoLoading(false);
                           refreshTally();
@@ -580,8 +555,7 @@ function GitopiaProtocolProposalDetails({ id, ...props }) {
                         setDepositLoading(true);
                         props
                           .proposalDeposit(
-                            cosmosBankApiClient,
-                            cosmosFeegrantApiClient,
+                            apiClient,
                             id,
                             props.advanceUser === true
                               ? amount.toString()

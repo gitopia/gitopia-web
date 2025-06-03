@@ -1,11 +1,8 @@
-export default async function getBalances(cosmosBankApiClient, address) {
+export default async function getBalances(apiClient, address) {
   if (!address) return null;
   try {
-    const res = await cosmosBankApiClient.queryAllBalances(address);
-    if (res.status === 200) {
-      let u = res.data;
-      return u;
-    }
+    const res = await apiClient.cosmos.bank.v1beta1.allBalances({ address });
+    return res;
   } catch (e) {
     console.error(e);
   }

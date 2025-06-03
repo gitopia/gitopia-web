@@ -70,8 +70,7 @@ function RepositoryCompareView(props) {
   const [textEntered, setEnteredText] = useState("");
   const [issueList, setIssueList] = useState([]);
   const [issueArray, setIssueArray] = useState([]);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const setDefaultBranches = (r) => {
     if (r.branches.length) {
@@ -627,8 +626,6 @@ function RepositoryCompareView(props) {
                                   setCreatingPull(true);
                                   const res = await props.createPullRequest(
                                     apiClient,
-                                    cosmosBankApiClient,
-                                    cosmosFeegrantApiClient,
                                     {
                                       title,
                                       description,

@@ -5,14 +5,13 @@ export default async function getPullRequestMergePermission(
   pullIid
 ) {
   try {
-    const res = await apiClient.queryPullRequestMergePermission(
-      userAddress,
-      repositoryId,
-      pullIid
-    );
-    if (res.status === 200) {
-      return res.data;
-    }
+    const res =
+      await apiClient.gitopia.gitopia.gitopia.pullRequestMergePermission({
+        userAddress,
+        repositoryId,
+        pullIid,
+      });
+    return res;
   } catch (e) {
     console.error(e);
   }

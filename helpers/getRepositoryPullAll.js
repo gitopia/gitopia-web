@@ -14,6 +14,7 @@ export default async function getRepositoryPullAll(
       query[`pagination.${p}`] = pagination[p];
     }
     console.log(query);
+    // TODO: check option and pagination
     const res = await apiClient.queryRepositoryPullRequestAll(
       id,
       repoName,

@@ -75,7 +75,7 @@ const ProposalDetailsModal = ({
   groupInfo,
   policyInfo,
   selectedAddress,
-  cosmosGroupApiClient,
+  apiClient,
 }) => {
   const [tally, setTally] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -88,12 +88,14 @@ const ProposalDetailsModal = ({
         try {
           // Fetch both tally and votes
           const [tallyResult, votesResult] = await Promise.all([
-            getTallyResult(cosmosGroupApiClient, proposal.id),
-            cosmosGroupApiClient.queryVotesByProposal(proposal.id),
+            getTallyResult(apiClient, proposal.id),
+            apiClient.cosmos.group.v1.votesByProposal({
+              proposalId: proposal.id,
+            }),
           ]);
 
           setTally(tallyResult);
-          setVotes(votesResult.data.votes || []);
+          setVotes(votesResult.votes || []);
         } catch (error) {
           console.error("Error fetching proposal data:", error);
         } finally {
@@ -103,7 +105,7 @@ const ProposalDetailsModal = ({
     };
 
     fetchData();
-  }, [proposal, isOpen, cosmosGroupApiClient]);
+  }, [proposal, isOpen, apiClient]);
 
   const canExecute = React.useMemo(() => {
     return (

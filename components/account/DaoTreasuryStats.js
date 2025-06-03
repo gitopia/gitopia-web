@@ -7,11 +7,11 @@ import { connect } from "react-redux";
 
 function DaoTreasuryStats({ dao, className = "", getBalance, advanceUser }) {
   const [treasuryBalance, setTreasuryBalance] = useState(0);
-  const { cosmosBankApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function initBalance() {
-      const balance = await getBalance(cosmosBankApiClient, dao.address);
+      const balance = await getBalance(apiClient, dao.address);
       setTreasuryBalance(
         advanceUser === true
           ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN

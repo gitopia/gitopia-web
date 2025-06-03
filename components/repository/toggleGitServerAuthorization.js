@@ -7,15 +7,12 @@ import { useApiClient } from "../../context/ApiClientContext";
 function ToggleGitServerAuthorization({ address, onSuccess, ...props }) {
   const [currentState, setCurrentState] = useState(false);
   const [isToggling, setIsToggling] = useState(true);
-  const { apiClient, cosmosBankApiClient, cosmosFeeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const toggleGrant = async () => {
     setIsToggling(true);
     const res = await props.updateAddressGrant(
       apiClient,
-      cosmosBankApiClient,
-      cosmosFeeegrantApiClient,
       address,
       0,
       !currentState

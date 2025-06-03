@@ -22,7 +22,7 @@ const AccountPeople = ({ dao }) => {
   const [allMembers, setAllMembers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { cosmosGroupApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   const getAllMembers = useCallback(async () => {
     if (!dao.group_id) {
@@ -32,7 +32,7 @@ const AccountPeople = ({ dao }) => {
 
     try {
       setIsLoading(true);
-      const members = await getGroupMembers(cosmosGroupApiClient, dao.group_id);
+      const members = await getGroupMembers(apiClient, dao.group_id);
       setAllMembers(members);
     } catch (err) {
       console.error("Error fetching group members:", err);
@@ -40,7 +40,7 @@ const AccountPeople = ({ dao }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [dao.group_id, cosmosGroupApiClient]);
+  }, [dao.group_id, apiClient]);
 
   useEffect(() => {
     getAllMembers();

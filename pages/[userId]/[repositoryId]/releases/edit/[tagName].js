@@ -59,8 +59,7 @@ function RepositoryReleaseEditView(props) {
   const [uploadingAttachment, setUploadingAttachment] = useState({ file: {} });
   const [newTagOptionShown, setNewTagOptionShown] = useState(false);
   const [creatingTag, setCreatingTag] = useState(false);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const validateIssue = () => {
     return true;
@@ -90,13 +89,7 @@ function RepositoryReleaseEditView(props) {
         releaseId: parseInt(release.id),
       };
       console.log("before call", issue);
-      const res = await props.createRelease(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        issue,
-        true
-      );
+      const res = await props.createRelease(apiClient, issue, true);
       if (res && res.code === 0) {
         router.push(
           "/" +
@@ -250,17 +243,12 @@ function RepositoryReleaseEditView(props) {
                         }
                         onClick={async () => {
                           setCreatingTag(true);
-                          const res = await props.createTag(
-                            apiClient,
-                            cosmosBankApiClient,
-                            cosmosFeegrantApiClient,
-                            {
-                              repoOwnerId: repository.owner.id,
-                              repositoryName: repository.name,
-                              name: tagName,
-                              sha: target.sha,
-                            }
-                          );
+                          const res = await props.createTag(apiClient, {
+                            repoOwnerId: repository.owner.id,
+                            repositoryName: repository.name,
+                            name: tagName,
+                            sha: target.sha,
+                          });
                           if (res && res.code === 0) {
                             setNewTagOptionShown(false);
                             refreshRepository();

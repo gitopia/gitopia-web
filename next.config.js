@@ -48,6 +48,17 @@ module.exports = withBundleAnalyzer({
     }
     config.cache.buildDependencies.mydeps = ["./yarn.lock"];
 
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@gitopia/gitopiajs": require.resolve("../gitopiajs/packages/gitopiajs"),
+    };
+
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      bufferutil: false,
+      "utf-8-validate": false,
+    };
+
     return config;
   },
   poweredByHeader: false,
@@ -112,7 +123,7 @@ module.exports = withBundleAnalyzer({
       {
         source: "/api/commits/:path*",
         destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/commits/:path*",
-      }
+      },
     ];
   },
   async headers() {

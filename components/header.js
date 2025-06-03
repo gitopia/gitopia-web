@@ -62,15 +62,8 @@ function Header(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [openDeposit, setOpenDeposit] = useState(false);
   const [openWithdraw, setOpenWithdraw] = useState(false);
-  const {
-    providerName,
-    apiUrl,
-    rpcUrl,
-    apiClient,
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-    updateApiClient,
-  } = useApiClient();
+  const { providerName, apiUrl, rpcUrl, apiClient, updateApiClient } =
+    useApiClient();
   const [selectedProvider, setSelectedProvider] = useState({
     name: providerName,
     apiEndpoint: apiUrl,
@@ -121,14 +114,10 @@ function Header(props) {
 
   const headerMessage = process.env.NEXT_PUBLIC_HEADER_MESSAGE;
 
-  const kelprWalletChange = async () => {
+  const keplrWalletChange = async () => {
     console.log("Keplr wallet change", props.activeWallet);
     if (props.activeWallet && props.activeWallet.isKeplr) {
-      await props.unlockKeplrWallet(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient
-      );
+      await props.unlockKeplrWallet(apiClient);
     }
   };
 
@@ -191,11 +180,11 @@ function Header(props) {
   }, [apiUrl]);
 
   useEffect(() => {
-    window.addEventListener("keplr_keystorechange", kelprWalletChange);
+    window.addEventListener("keplr_keystorechange", keplrWalletChange);
     window.addEventListener("leap_keystorechange", leapWalletChange);
 
     return () => {
-      window.removeEventListener("keplr_keystorechange", kelprWalletChange);
+      window.removeEventListener("keplr_keystorechange", keplrWalletChange);
       window.removeEventListener("leap_keystorechange", leapWalletChange);
     };
   }, [null, props.activeWallet]);
@@ -451,7 +440,7 @@ function Header(props) {
                           />
                         ) : (
                           <span className="bg-purple-900 flex items-center justify-center text-xl uppercase h-full">
-                            {props.activeWallet.name[0]}
+                            {props.activeWallet.name?.[0]}
                           </span>
                         )
                       ) : (

@@ -32,12 +32,7 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
   const [imageFileHash, setImageFileHash] = useState(null);
   const [imageUploading, setImageUploading] = useState(0);
   // var image = new Image();
-  const {
-    apiClient,
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-    cosmosGroupApiClient,
-  } = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     setValidateImageUrlError("");
@@ -77,8 +72,6 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
 
       const tx = await props.signUploadFileMessage(
         apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
         imageFile.name,
         imageFile.size,
         imageFileHash
@@ -300,23 +293,12 @@ function AccountAvatar({ isEditable = false, isDao = false, ...props }) {
                   } else {
                     setLoading(true);
                     const res = isDao
-                      ? await props.updateDaoAvatar(
-                          apiClient,
-                          cosmosBankApiClient,
-                          cosmosFeegrantApiClient,
-                          cosmosGroupApiClient,
-                          {
-                            id: props.dao.address,
-                            groupId: props.dao.group_id,
-                            url: imageUrl,
-                          }
-                        )
-                      : await props.updateUserAvatar(
-                          apiClient,
-                          cosmosBankApiClient,
-                          cosmosFeegrantApiClient,
-                          imageUrl
-                        );
+                      ? await props.updateDaoAvatar(apiClient, {
+                          id: props.dao.address,
+                          groupId: props.dao.group_id,
+                          url: imageUrl,
+                        })
+                      : await props.updateUserAvatar(apiClient, imageUrl);
                     if (res && res.code === 0) {
                       props.notify(
                         "Your " +

@@ -61,12 +61,7 @@ function RepositoryBountiesView(props) {
   const [closeBountyLoading, setCloseBountyLoading] = useState(false);
   const [bountyAmount, setBountyAmount] = useState([]);
   const { isMobile } = useWindowSize();
-  const {
-    apiClient,
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-    ibcAppTransferApiClient,
-  } = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function fetchBounty() {
@@ -106,7 +101,7 @@ function RepositoryBountiesView(props) {
     for (let i = 0; i < bounty.amount.length; i++) {
       if (bounty.amount[i].denom.includes("ibc")) {
         let denomName = await getDenomNameByHash(
-          ibcAppTransferApiClient,
+          apiClient,
           bounty.amount[i].denom
         );
         bounty.amount[i].denom = denomName;
@@ -398,12 +393,7 @@ function RepositoryBountiesView(props) {
                               }
                               onClick={() => {
                                 props
-                                  .closeBounty(
-                                    apiClient,
-                                    cosmosBankApiClient,
-                                    cosmosFeegrantApiClient,
-                                    b.id
-                                  )
+                                  .closeBounty(apiClient, b.id)
                                   .then(refreshBounty);
                               }}
                               data-test="bounty_close_button"

@@ -29,22 +29,17 @@ function CreateBounty(props) {
   const ref1 = useRef(null);
   const ref2 = useRef(null);
   // const ref3 = useRef("dd/mm/yyyy");
-  const {
-    apiClient,
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-    ibcAppTransferApiClient,
-  } = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function getBalance() {
-      const b = await getBalances(cosmosBankApiClient, props.selectedAddress);
+      const b = await getBalances(apiClient, props.selectedAddress);
       let kv = {};
       if (b) {
         for (let i = 0; i < b.balances.length; i++) {
           if (b.balances[i].denom.includes("ibc")) {
             let denomName = await getDenomNameByHash(
-              ibcAppTransferApiClient,
+              apiClient,
               b.balances[i].denom
             );
             if (denomName) {
@@ -656,8 +651,6 @@ function CreateBounty(props) {
                     ? props
                         .createBounty(
                           apiClient,
-                          cosmosBankApiClient,
-                          cosmosFeegrantApiClient,
                           props.bountyAmount,
                           dayjs(expiry.toString()).unix(),
                           props.issue.iid,

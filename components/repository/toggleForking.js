@@ -12,20 +12,14 @@ function ToggleForking({
 }) {
   const [currentState, setCurrentState] = useState(!!allowForking);
   const [isToggling, setIsToggling] = useState(false);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const toggleForking = async () => {
     setIsToggling(true);
-    const res = await props.toggleRepositoryForking(
-      apiClient,
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
-      {
-        repoOwner: repoOwner,
-        repoName: repoName,
-      }
-    );
+    const res = await props.toggleRepositoryForking(apiClient, {
+      repoOwner: repoOwner,
+      repoName: repoName,
+    });
     if (res && res.code === 0) {
       if (onSuccess) await onSuccess();
     }

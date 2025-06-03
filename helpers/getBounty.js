@@ -1,10 +1,7 @@
 export default async function getBounty(apiClient, id) {
   try {
-    const res = await apiClient.queryBounty(id);
-    if (res.status === 200) {
-      let b = res.data.Bounty;
-      return b;
-    }
+    const res = await apiClient.gitopia.gitopia.gitopia.bounty(id);
+    return res.Bounty;
   } catch (e) {
     console.error(e);
   }

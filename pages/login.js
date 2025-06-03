@@ -8,31 +8,51 @@ import ConnectLedger from "../components/connectLedger";
 import CreateUser from "../components/createUser";
 import { useRouter } from "next/router";
 import {
-  unlockKeplrWallet,
+  unlockLedgerWallet,
   unlockMetamaskWallet,
-  unlockLeapWallet,
 } from "../store/actions/wallet";
-import { connect } from "react-redux";
 import FundWallet from "../components/fundWallet";
 import { useApiClient } from "../context/ApiClientContext";
+import { useChain, useWalletClient } from "@cosmos-kit/react";
+import { Wallet } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { walletActions } from "../store/actions/actionTypes";
+import { LedgerClient } from "@cosmos-kit/ledger/cjs/web-usb-hid";
 
-/*
-Wizard Steps
-1 - Default selection screen
-2 - Connect ledger
-3 - Create new wallet
-4 - Recover existing wallet
-*/
-
-function Login(props) {
+function Login() {
   const { query, push } = useRouter();
   const [step, setStep] = useState(Number(query.step) || 1);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient, apiUrl } = useApiClient();
+  const dispatch = useDispatch();
+
+  // Initialize Gitopia chain context
+  const { connect, openView, status, address } = useChain("gitopia");
+  const { client } = useWalletClient();
 
   useEffect(() => {
     setStep(Number(query.step) || 1);
   }, [query.step]);
+
+  // Watch for successful connections
+  useEffect(() => {
+    if (status === "Connected" && address && client) {
+      console.log("login: client", client);
+      if (client instanceof LedgerClient) {
+        dispatch(unlockLedgerWallet(apiClient, client));
+      } else {
+        dispatch(unlockMetamaskWallet(apiClient, client));
+      }
+      // push("/home");
+    }
+  }, [status, address, client]);
+
+  const handleWalletConnection = async (walletName) => {
+    try {
+      await connect(walletName);
+    } catch (error) {
+      console.error("Failed to connect wallet:", error);
+    }
+  };
 
   return (
     <div
@@ -51,71 +71,40 @@ function Login(props) {
               Access Gitopia
             </div>
             <div className="text-xs text-type-secondary mb-8">
-              Please select a type of wallet to store your login information
+              Please select how you would like to access your wallet
             </div>
             <div className="max-w-lg w-full p-4">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-4">
                 <button
-                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost w-full focus:outline-none flex items-center"
-                  onClick={(e) => {
-                    push("/login?step=2");
-                  }}
+                  className="relative w-full h-16 rounded-lg overflow-hidden px-8 py-2 focus:outline-none"
+                  onClick={openView}
                 >
-                  <img src="/new-wallet-ledger.svg" className="w-20 h-20" />
-                  <div className="ml-8">
-                    <span>Connect Ledger</span>{" "}
-                    <span className="badge badge-priamry ml-2">
-                      Recommended
-                    </span>
+                  {/* Gradient background */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(109.6deg, rgba(157,75,199,1) 11.2%, rgba(119,81,204,1) 83.1%)",
+                      opacity: 1,
+                    }}
+                  />
+
+                  {/* Content */}
+                  <div className="relative flex items-center justify-center text-white gap-4">
+                    <Wallet size={24} />
+                    <span className="text-lg font-medium">Connect Wallet</span>
                   </div>
                 </button>
+
+                <div className="flex flex-row items-center gap-4 my-4">
+                  <div className="flex-1 h-px bg-gray-700"></div>
+                  <span className="text-sm text-gray-400">or</span>
+                  <div className="flex-1 h-px bg-gray-700"></div>
+                </div>
+
                 <button
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
-                  onClick={async (e) => {
-                    const acc = await props.unlockKeplrWallet(
-                      apiClient,
-                      cosmosBankApiClient,
-                      cosmosFeegrantApiClient
-                    );
-                    if (acc) {
-                      push("/home");
-                    }
-                  }}
-                >
-                  <img src="/keplr-logo.svg" className="w-20 h-20 p-2" />
-                  <div className="ml-8">Connect Keplr</div>
-                </button>
-                <button
-                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
-                  onClick={async (e) => {
-                    const acc = await props.unlockMetamaskWallet(
-                      apiClient,
-                      cosmosBankApiClient,
-                      cosmosFeegrantApiClient
-                    );
-                    if (acc) {
-                      push("/home");
-                    }
-                  }}
-                >
-                  <img src="/metamask-fox.svg" className="w-20 h-20 p-2" />
-                  <div className="ml-8">Connect Metamask</div>
-                </button>
-                <button
-                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
-                  onClick={async (e) => {
-                    const acc = await props.unlockLeapWallet();
-                    if (acc) {
-                      push("/home");
-                    }
-                  }}
-                >
-                  <img src="/leap-wallet.svg" className="w-20 h-20 p-2" />
-                  <div className="ml-8">Connect Leap</div>
-                </button>
-                <button
-                  className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
-                  onClick={(e) => {
+                  onClick={() => {
                     push("/login?step=3");
                   }}
                   data-test="create-new-local-wallet"
@@ -125,13 +114,13 @@ function Login(props) {
                 </button>
                 <button
                   className="flex-1 border-2 border-grey rounded-md bg-base-100 overflow-hidden px-8 py-2 btn-ghost focus:outline-none flex items-center"
-                  onClick={(e) => {
+                  onClick={() => {
                     push("/login?step=4");
                   }}
                   data-test="recover-local-wallet"
                 >
                   <img src="/existing-wallet.svg" className="w-20 h-20" />
-                  <div className="ml-8">Recover exisiting local wallet</div>
+                  <div className="ml-8">Recover existing local wallet</div>
                 </button>
               </div>
             </div>
@@ -140,7 +129,7 @@ function Login(props) {
           <div>
             <button
               className="btn btn-ghost btn-circle absolute left-4 top-0"
-              onClick={(e) => {
+              onClick={() => {
                 if (step === 6) {
                   push("/login?step=5");
                 } else {
@@ -165,7 +154,6 @@ function Login(props) {
             </button>
           </div>
         )}
-        {step === 2 && <ConnectLedger />}
         {step === 3 && <CreateWallet />}
         {step === 4 && <RecoverWallet />}
         {step === 5 && <FundWallet />}
@@ -176,12 +164,4 @@ function Login(props) {
   );
 }
 
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(mapStateToProps, {
-  unlockKeplrWallet,
-  unlockMetamaskWallet,
-  unlockLeapWallet,
-})(Login);
+export default Login;

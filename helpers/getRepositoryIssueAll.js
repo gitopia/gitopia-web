@@ -1,7 +1,7 @@
 export default async function getRepositoryIssueAll(
   apiClient,
   id,
-  repoName,
+  repositoryName,
   option,
   pagination
 ) {
@@ -14,7 +14,12 @@ export default async function getRepositoryIssueAll(
       query[`pagination.${p}`] = pagination[p];
     }
     console.log(query);
-    const res = await apiClient.queryRepositoryIssueAll(id, repoName, query);
+    // TODO: check option and pagination
+    const res = await apiClient.queryRepositoryIssueAll(
+      id,
+      repositoryName,
+      query
+    );
     if (res.status === 200) {
       return res.data;
     }

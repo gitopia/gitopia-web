@@ -1,10 +1,7 @@
-export default async function getProposals(cosmosGovApiClient) {
+export default async function getProposals(apiClient) {
   try {
-    const res = await cosmosGovApiClient.queryProposals();
-    if (res.status === 200) {
-      let u = res.data.proposals;
-      return u;
-    }
+    const res = await apiClient.cosmos.gov.v1beta1.proposals({});
+    return res.proposals;
   } catch (e) {
     console.error(e);
   }

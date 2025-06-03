@@ -143,8 +143,7 @@ function DAOMembersList({
   const [isUpdating, setIsUpdating] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const dispatch = useDispatch();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     setMembers(groupMembers.map((m) => ({ ...m.member })));
@@ -223,20 +222,15 @@ function DAOMembersList({
       ];
 
       const result = await dispatch(
-        createGroupProposal(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          {
-            groupPolicyAddress: groupInfo.admin,
-            messages,
-            metadata: "",
-            proposers: [selectedAddress],
-            title: "Update DAO Members",
-            summary: `Update voting weights for DAO members`,
-            exec: 0,
-          }
-        )
+        createGroupProposal(apiClient, {
+          groupPolicyAddress: groupInfo.admin,
+          messages,
+          metadata: "",
+          proposers: [selectedAddress],
+          title: "Update DAO Members",
+          summary: `Update voting weights for DAO members`,
+          exec: 0,
+        })
       );
 
       if (result && result.code === 0) {

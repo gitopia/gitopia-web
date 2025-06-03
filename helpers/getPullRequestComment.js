@@ -6,15 +6,12 @@ export default async function getPullRequestComment(
 ) {
   if (!repositoryId || !pullRequestIid || !commentIid) return null;
   try {
-    const res = await apiClient.queryPullRequestComment(
+    const res = await apiClient.gitopia.gitopia.gitopia.pullRequestComment({
       repositoryId,
       pullRequestIid,
-      commentIid
-    );
-    if (res.status === 200) {
-      let c = res.data.Comment;
-      return c;
-    }
+      commentIid,
+    });
+    return res.Comment;
   } catch (e) {
     console.error(e);
   }

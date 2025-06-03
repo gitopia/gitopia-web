@@ -5,11 +5,11 @@ export default async function getAllRepositoryTag(
 ) {
   if (!repositoryName || !id) return null;
   try {
-    const res = await apiClient.queryRepositoryTagAll(id, repositoryName);
-    if (res.status === 200) {
-      let t = res.data.Tag;
-      return t;
-    }
+    const res = await apiClient.gitopia.gitopia.gitopia.repositoryTagAll(
+      id,
+      repositoryName
+    );
+    return res.Tag;
   } catch (e) {
     console.error(e);
   }

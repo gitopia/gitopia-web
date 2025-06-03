@@ -28,8 +28,7 @@ function ConnectLedger(props) {
   const [addressVerified, setAddressVerified] = useState(false);
   const [verifyError, setVerifyError] = useState(null);
   const [walletCreated, setWalletCreated] = useState(false);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const router = useRouter();
   useEffect(() => {
@@ -61,8 +60,6 @@ function ConnectLedger(props) {
           setAddressVerified(true);
           const a = await props.addLedgerWallet(
             apiClient,
-            cosmosBankApiClient,
-            cosmosFeegrantApiClient,
             name,
             s.addr,
             s.signer

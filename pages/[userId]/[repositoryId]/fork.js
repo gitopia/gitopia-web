@@ -69,8 +69,7 @@ function RepositoryInvokeForkView(props) {
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
   const router = useRouter();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const hideHints = () => {
     setForkRepositoryNameHint({ ...forkRepositoryNameHint, shown: false });
@@ -137,22 +136,14 @@ function RepositoryInvokeForkView(props) {
     let validate = await validateRepository();
     console.log(validate);
     if (validate) {
-      const res = await props.forkRepository(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        {
-          ownerId,
-          repoOwner: repository.owner.address,
-          repoName: repository.name,
-          repoBranch: forkOnlyOneBranch ? forkOnlyOneBranchName : null,
-          forkRepositoryName: forkRepositoryName.replace(
-            sanitizedNameTest,
-            "-"
-          ),
-          forkRepositoryDescription,
-        }
-      );
+      const res = await props.forkRepository(apiClient, {
+        ownerId,
+        repoOwner: repository.owner.address,
+        repoName: repository.name,
+        repoBranch: forkOnlyOneBranch ? forkOnlyOneBranchName : null,
+        forkRepositoryName: forkRepositoryName.replace(sanitizedNameTest, "-"),
+        forkRepositoryDescription,
+      });
       if (res?.url) {
         router.push(res.url);
       }
@@ -390,11 +381,7 @@ function RepositoryInvokeForkView(props) {
                   }
                   onClick={async () => {
                     setIsGrantingAccess(true);
-                    const res = await props.authorizeGitServer(
-                      apiClient,
-                      cosmosBankApiClient,
-                      cosmosFeegrantApiClient
-                    );
+                    const res = await props.authorizeGitServer(apiClient);
                     setIsGrantingAccess(false);
                     if (res && res.code === 0) {
                       // let access = await refreshForkingAccess();

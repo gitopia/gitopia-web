@@ -17,7 +17,7 @@ import { Users2 } from "lucide-react";
 function AccountDaoHeader(props) {
   const [isEditable, setIsEditable] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const { apiClient, cosmosGroupApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   const refresh = async (updatedDaoName) => {
     await props.refresh(updatedDaoName);

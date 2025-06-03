@@ -3,6 +3,7 @@ import { notify } from "reapop";
 import { connect } from "react-redux";
 import { updateUserBalance } from "../../store/actions/wallet";
 import validAddress from "../../helpers/validAddress";
+import { useApiClient } from "../../context/ApiClientContext";
 
 function SendTlore(props) {
   const [validateAddressError, setValidateAddressError] = useState(null);
@@ -10,6 +11,8 @@ function SendTlore(props) {
   const [receiverAddress, setReceiverAddress] = useState("");
   const [amount, setAmount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const { apiClient } = useApiClient;
+
   const validateUserAddress = (address) => {
     if (address.trim() !== "" && validAddress.test(address)) {
       setValidateAddressError(null);
@@ -142,6 +145,7 @@ function SendTlore(props) {
               validateAmount(amount)
             ) {
               const res = await props.transferToWallet(
+                apiClient,
                 props.selectedAddress,
                 receiverAddress,
                 props.advanceUser === true

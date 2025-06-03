@@ -151,8 +151,7 @@ function RepositoryPullView(props) {
   );
   const [allComments, setAllComments] = useState(props.comments || []);
   const [files, setFiles] = useState([]);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const getAllComments = async () => {
     const comments = await getPullRequestCommentAll(
@@ -211,17 +210,12 @@ function RepositoryPullView(props) {
           setAllComments(newAllComments);
         }}
         onDelete={async (iid) => {
-          const res = await props.deleteComment(
-            apiClient,
-            cosmosBankApiClient,
-            cosmosFeegrantApiClient,
-            {
-              repositoryId: repository.id,
-              parentIid: pullRequest.iid,
-              parent: "COMMENT_PARENT_PULL_REQUEST",
-              commentIid: iid,
-            }
-          );
+          const res = await props.deleteComment(apiClient, {
+            repositoryId: repository.id,
+            parentIid: pullRequest.iid,
+            parent: "COMMENT_PARENT_PULL_REQUEST",
+            commentIid: iid,
+          });
           if (res && res.code === 0) {
             props.notify("Comment deleted", "info");
             const newAllComments = [...allComments];
@@ -462,8 +456,6 @@ function RepositoryPullView(props) {
 
                     const res = await props.updatePullRequestReviewers(
                       apiClient,
-                      cosmosBankApiClient,
-                      cosmosFeegrantApiClient,
                       {
                         repositoryId: repository.id,
                         pullIid: pullRequest.iid,
@@ -519,8 +511,6 @@ function RepositoryPullView(props) {
 
                     const res = await props.updatePullRequestAssignees(
                       apiClient,
-                      cosmosBankApiClient,
-                      cosmosFeegrantApiClient,
                       {
                         repositoryId: repository.id,
                         pullIid: pullRequest.iid,
@@ -564,17 +554,12 @@ function RepositoryPullView(props) {
                         )
                     );
 
-                    const res = await props.updatePullRequestLabels(
-                      apiClient,
-                      cosmosBankApiClient,
-                      cosmosFeegrantApiClient,
-                      {
-                        repositoryId: repository.id,
-                        pullIid: pullRequest.iid,
-                        addedLabels,
-                        removedLabels,
-                      }
-                    );
+                    const res = await props.updatePullRequestLabels(apiClient, {
+                      repositoryId: repository.id,
+                      pullIid: pullRequest.iid,
+                      addedLabels,
+                      removedLabels,
+                    });
 
                     if (res) refreshPullRequest();
                   }}

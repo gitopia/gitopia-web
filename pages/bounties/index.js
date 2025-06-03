@@ -117,7 +117,7 @@ function Bounties(props) {
   const [hasMore, setHasMore] = useState(true);
   const [currentTab, setCurrentTab] = useState("open");
   const [tokenPrice, setTokenPrice] = useState(0);
-  const { ibcAppTransferApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   const { data, error, loading, fetchMore } = useQuery(QUERY_BOUNTY, {
     client: client,
@@ -173,7 +173,7 @@ function Bounties(props) {
       for (const bounty of issue.bounties) {
         for (const amount of bounty.bounty.amount) {
           const denomName = amount.denom.includes("ibc")
-            ? await getDenomNameByHash(ibcAppTransferApiClient, amount.denom)
+            ? await getDenomNameByHash(apiClient, amount.denom)
             : amount.denom;
 
           const parsedAmount = parseFloat(amount.amount) / Math.pow(10, 6);

@@ -38,8 +38,7 @@ function NewRepository(props) {
   const [accountsList, setAccountsList] = useState([
     { value: "", display: "" },
   ]);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
 
@@ -100,16 +99,11 @@ function NewRepository(props) {
         return true;
       });
 
-      let res = await props.createRepository(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        {
-          name: name.replace(sanitizedNameTest, "-"),
-          description,
-          ownerId: ownerName,
-        }
-      );
+      let res = await props.createRepository(apiClient, {
+        name: name.replace(sanitizedNameTest, "-"),
+        description,
+        ownerId: ownerName,
+      });
       if (res && res.url) {
         props.notify("Repository created", "info");
         router.push(res.url);

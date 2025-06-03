@@ -60,12 +60,7 @@ const RepositoryReleaseView = ({
   const [uploadingAttachment, setUploadingAttachment] = useState({ file: {} });
   const [newTagOptionShown, setNewTagOptionShown] = useState(false);
   const [creatingTag, setCreatingTag] = useState(false);
-  const {
-    apiClient,
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-    cosmosGroupApiClient,
-  } = useApiClient();
+  const { apiClient } = useApiClient();
   const [isDao, setIsDao] = useState(false);
   const [daoInfo, setDaoInfo] = useState(null);
   const [requiresProposal, setRequiresProposal] = useState(false);
@@ -108,23 +103,12 @@ const RepositoryReleaseView = ({
 
       let result;
       if (requiresProposal) {
-        result = await createReleaseForDao(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          cosmosGroupApiClient,
-          {
-            ...releaseData,
-            groupId: daoInfo.group_id,
-          }
-        );
+        result = await createReleaseForDao(apiClient, {
+          ...releaseData,
+          groupId: daoInfo.group_id,
+        });
       } else {
-        result = await createRelease(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          releaseData
-        );
+        result = await createRelease(apiClient, releaseData);
       }
 
       if (result) {
@@ -276,17 +260,12 @@ const RepositoryReleaseView = ({
                           }`}
                           onClick={async () => {
                             setCreatingTag(true);
-                            const res = await createTag(
-                              apiClient,
-                              cosmosBankApiClient,
-                              cosmosFeegrantApiClient,
-                              {
-                                repoOwnerId: repository.owner.id,
-                                repositoryName: repository.name,
-                                name: tagName,
-                                sha: target.sha,
-                              }
-                            );
+                            const res = await createTag(apiClient, {
+                              repoOwnerId: repository.owner.id,
+                              repositoryName: repository.name,
+                              name: tagName,
+                              sha: target.sha,
+                            });
                             if (res && res.code === 0) {
                               setNewTagOptionShown(false);
                               refreshRepository();

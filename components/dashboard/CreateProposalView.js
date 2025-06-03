@@ -1027,8 +1027,8 @@ function CreateProposalView({
             .filter((member) => member && member.address && member.weight)
             .map((member) => ({
               address: member.address,
-              weight: member.weight,
               metadata: "",
+              weight: member.weight,
             }));
 
           if (memberUpdates.length === 0) {
@@ -1066,8 +1066,12 @@ function CreateProposalView({
               typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDaoMetadata",
               value: MsgUpdateDaoMetadata.encode({
                 admin: groupInfo.admin,
+                avatarUrl: formData.avatarUrl,
+                description: formData.description,
                 id: dao.address,
-                ...formData,
+                location: formData.location,
+                name: formData.name,
+                website: formData.website,
               }).finish(),
             },
           ];
@@ -1118,14 +1122,14 @@ function CreateProposalView({
               typeUrl: "/gitopia.gitopia.gitopia.MsgDaoTreasurySpend",
               value: MsgDaoTreasurySpend.encode({
                 admin: groupInfo.admin,
-                id: dao.address,
-                recipient: formData.recipient,
                 amount: [
                   {
-                    denom: formData.denom,
                     amount: formData.amount,
+                    denom: formData.denom,
                   },
                 ],
+                id: dao.address,
+                recipient: formData.recipient,
               }).finish(),
             },
           ];

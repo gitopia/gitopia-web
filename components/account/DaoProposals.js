@@ -81,24 +81,26 @@ export default function DaoProposals({ dao }) {
   const [policyInfo, setPolicyInfo] = useState(null);
   const [tallies, setTallies] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const { cosmosGroupApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     const fetchData = async () => {
       if (dao.group_id) {
         try {
           // Fetch group info
-          const info = await getGroupInfo(cosmosGroupApiClient, dao.group_id);
+          const info = await getGroupInfo(apiClient, dao.group_id);
           setGroupInfo(info);
 
           // Fetch policy info
-          const policy = await getPolicyInfo(cosmosGroupApiClient, info.admin);
+          const policy = await getPolicyInfo(apiClient, info.admin);
           setPolicyInfo(policy);
 
           // Fetch proposals
           const response =
-            await cosmosGroupApiClient.queryProposalsByGroupPolicy(info.admin);
-          const proposalsList = response.data.proposals.reverse();
+            await apiClient.cosmos.group.v1.proposalsByGroupPolicy({
+              address: info.admin,
+            });
+          const proposalsList = response.proposals.reverse();
           setProposals(proposalsList);
 
           // Fetch tallies for active proposals
@@ -108,7 +110,7 @@ export default function DaoProposals({ dao }) {
           const talliesData = {};
           for (const proposal of activeProposals) {
             talliesData[proposal.id] = await getTallyResult(
-              cosmosGroupApiClient,
+              apiClient,
               proposal.id
             );
           }
@@ -122,7 +124,7 @@ export default function DaoProposals({ dao }) {
     };
 
     fetchData();
-  }, [dao.group_id, cosmosGroupApiClient]);
+  }, [dao.group_id, apiClient]);
 
   if (isLoading) {
     return (

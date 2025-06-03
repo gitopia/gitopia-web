@@ -15,7 +15,7 @@ function UserBio(props = { isEditable: false }) {
   });
   const [savingBio, setSavingBio] = useState(false);
   const input = useRef();
-  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   const validateBio = (bio) => {
     setNewBioHint({
@@ -37,11 +37,7 @@ function UserBio(props = { isEditable: false }) {
   const updateBio = async () => {
     setSavingBio(true);
     if (validateBio(newBio)) {
-      const res = await props.updateUserBio(
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        newBio
-      );
+      const res = await props.updateUserBio(apiClient, newBio);
 
       if (res && res.code === 0) {
         if (props.refresh) await props.refresh();

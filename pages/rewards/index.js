@@ -45,8 +45,7 @@ function Rewards(props) {
   ] = useState(false);
   const [xPost, setXPost] = useState("");
   const [splits, setSplits] = useState([]);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const claimPlatformIncentives = async (id, split) => {
     if (claimTokensLoading) return;
@@ -57,8 +56,6 @@ function Rewards(props) {
     setClaimTokensLoading(true);
     const res = await props.signMessageForRewards(
       apiClient,
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
       "platform incentives"
     );
 

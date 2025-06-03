@@ -1,13 +1,8 @@
 import React, { createContext, useEffect, useState, useContext } from "react";
 import { useDispatch } from "react-redux";
-import { Api } from "@gitopia/gitopia-js/dist/rest";
-import { Api as CosmosBankApi } from "../store/cosmos.bank.v1beta1/module/rest";
-import { Api as CosmosFeegrantApi } from "../store/cosmos.feegrant.v1beta1/rest";
-import { Api as CosmosGovApi } from "../store/cosmos.gov.v1beta1/module/rest";
-import { Api as IbcAppTransferApi } from "../store/ibc.applications.transfer.v1/module/rest";
-import { Api as CosmosGroupApi } from "../store/cosmos.group.v1/rest";
 import selectProvider from "../helpers/providerSelector";
 import { setConfig } from "../store/actions/env";
+import { gitopia } from "@gitopia/gitopiajs";
 
 const ApiClientContext = createContext();
 
@@ -17,41 +12,17 @@ export const useApiClient = () => {
 
 export const ApiClientProvider = ({ children }) => {
   const [apiClient, setApiClient] = useState(null);
-  const [cosmosBankApiClient, setCosmosBankApiClient] = useState(null);
-  const [cosmosFeegrantApiClient, setCosmosFeegrantApiClient] = useState(null);
-  const [cosmosGovApiClient, setCosmosGovApiClient] = useState(null);
-  const [ibcAppTransferApiClient, setIbcAppTransferApiClient] = useState(null);
-  const [cosmosGroupApiClient, setCosmosGroupApiClient] = useState(null);
   const [providerName, setProviderName] = useState(null);
   const [apiUrl, setApiUrl] = useState(null);
   const [rpcUrl, setRpcUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
-  const updateApiClient = (name, apiNode, rpcNode) => {
-    const newApiClient = new Api({ baseURL: apiNode });
+  const updateApiClient = async (name, apiNode, rpcNode) => {
+    const newApiClient = await gitopia.ClientFactory.createCustomLCDClient({
+      restEndpoint: apiNode,
+    });
     setApiClient(newApiClient);
-
-    const newCosmosBankApiClient = new CosmosBankApi({ baseUrl: apiNode });
-    setCosmosBankApiClient(newCosmosBankApiClient);
-
-    const newCosmosFeegrantApiClient = new CosmosFeegrantApi({
-      baseURL: apiNode,
-    });
-    setCosmosFeegrantApiClient(newCosmosFeegrantApiClient);
-
-    const newCosmosGovApiClient = new CosmosGovApi({ baseUrl: apiNode });
-    setCosmosGovApiClient(newCosmosGovApiClient);
-
-    const newIbcAppTransferApiClient = new IbcAppTransferApi({
-      baseUrl: apiNode,
-    });
-    setIbcAppTransferApiClient(newIbcAppTransferApiClient);
-
-    const newCosmosGroupApiClient = new CosmosGroupApi({
-      baseURL: apiNode,
-    });
-    setCosmosGroupApiClient(newCosmosGroupApiClient);
 
     setProviderName(name);
     setApiUrl(apiNode);
@@ -77,10 +48,10 @@ export const ApiClientProvider = ({ children }) => {
         setProviderName(name);
         setApiUrl(apiEndpoint);
         setRpcUrl(rpcEndpoint);
-        updateApiClient(name, apiEndpoint, rpcEndpoint);
+        await updateApiClient(name, apiEndpoint, rpcEndpoint);
       } else {
         const bestApiProvider = await selectProvider();
-        updateApiClient(
+        await updateApiClient(
           bestApiProvider.name,
           bestApiProvider.apiEndpoint,
           bestApiProvider.rpcEndpoint
@@ -102,11 +73,6 @@ export const ApiClientProvider = ({ children }) => {
         apiUrl,
         rpcUrl,
         apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        cosmosGovApiClient,
-        ibcAppTransferApiClient,
-        cosmosGroupApiClient,
         updateApiClient,
       }}
     >

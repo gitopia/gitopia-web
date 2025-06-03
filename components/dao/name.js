@@ -15,12 +15,7 @@ function DaoName(props = { isEditable: false }) {
   const [savingName, setSavingName] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const input = useRef();
-  const {
-    apiClient,
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-    cosmosGroupApiClient,
-  } = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     setNewName(props.dao?.name || "");
@@ -40,13 +35,11 @@ function DaoName(props = { isEditable: false }) {
 
   const updateName = async () => {
     setSavingName(true);
-    const res = await props.renameDao(
-      apiClient,
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
-      cosmosGroupApiClient,
-      { id: props.dao.address, groupId: props.dao.group_id, name: newName }
-    );
+    const res = await props.renameDao(apiClient, {
+      id: props.dao.address,
+      groupId: props.dao.group_id,
+      name: newName,
+    });
     if (res && res.code === 0) {
       props.notify("Your DAO name is updated", "info");
       if (props.refresh) await props.refresh(newName);

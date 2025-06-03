@@ -33,8 +33,7 @@ function RecoverWallet(props) {
   });
   const [mnemonicValidated, setMnemonicValidated] = useState(false);
   const router = useRouter();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const hideHints = () => {
     setMnemonicHint({ ...mnemonicHint, shown: false });
@@ -115,16 +114,11 @@ function RecoverWallet(props) {
 
   const createWallet = async () => {
     if (validateWallet()) {
-      let res = await props.createWalletWithMnemonic(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        {
-          name,
-          mnemonic,
-          password,
-        }
-      );
+      let res = await props.createWalletWithMnemonic(apiClient, {
+        name,
+        mnemonic,
+        password,
+      });
       router.push("/home");
     }
   };

@@ -83,19 +83,21 @@ export default function DaoProposalsList({ dao }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProposal, setSelectedProposal] = useState(null);
   const [groupInfo, setGroupInfo] = useState(null);
-  const { cosmosGroupApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     const fetchProposals = async () => {
       if (!dao.group_id) return;
       try {
-        const info = await getGroupInfo(cosmosGroupApiClient, dao.group_id);
+        const info = await getGroupInfo(apiClient, dao.group_id);
         setGroupInfo(info);
 
-        const response = await cosmosGroupApiClient.queryProposalsByGroupPolicy(
-          info.admin
+        const response = await apiClient.cosmos.group.v1.proposalsByGroupPolicy(
+          {
+            address: info.admin,
+          }
         );
-        const proposalsList = response.data.proposals.reverse();
+        const proposalsList = response.proposals.reverse();
         setProposals(proposalsList);
 
         const stats = proposalsList.reduce(

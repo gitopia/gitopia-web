@@ -10,7 +10,7 @@ function FaucetReceiver(props) {
   const [tokenReceived, setTokenReceived] = useState(
     parseFloat(props.balance) !== 0
   );
-  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     setTokenReceived(parseFloat(props.balance) !== 0);
@@ -46,11 +46,7 @@ function FaucetReceiver(props) {
           setLoading(0);
         } else {
           setTimeout(() => {
-            props.updateUserBalance(
-              cosmosBankApiClient,
-              cosmosFeegrantApiClient,
-              true
-            );
+            props.updateUserBalance(apiClient, true);
             setLoading(0);
           }, 2000);
         }

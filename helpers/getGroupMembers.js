@@ -1,11 +1,8 @@
-export default async function getGroupMembers(cosmosGroupApiClient, groupId) {
+export default async function getGroupMembers(apiClient, groupId) {
   if (!groupId) return null;
   try {
-    const res = await cosmosGroupApiClient.queryGroupMembers(groupId);
-    if (res.status === 200) {
-      let m = res.data.members;
-      return m;
-    } else return [];
+    const res = await apiClient.cosmos.group.v1.groupMembers({ groupId });
+    return res.members;
   } catch (e) {
     console.error(e);
   }

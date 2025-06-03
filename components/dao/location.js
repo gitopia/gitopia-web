@@ -15,8 +15,7 @@ function DaoLocation(props = { isEditable: false }) {
   const [savingLocation, setSavingLocation] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const input = useRef();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     setNewLocation(props.dao?.location || "");
@@ -36,15 +35,10 @@ function DaoLocation(props = { isEditable: false }) {
 
   const updateLocation = async () => {
     setSavingLocation(true);
-    const res = await props.updateDaoLocation(
-      apiClient,
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
-      {
-        id: props.dao.address,
-        location: newLocation,
-      }
-    );
+    const res = await props.updateDaoLocation(apiClient, {
+      id: props.dao.address,
+      location: newLocation,
+    });
     if (res && res.code === 0) {
       props.notify(props.dao.name + " location is updated", "info");
       if (props.refresh) await props.refresh();

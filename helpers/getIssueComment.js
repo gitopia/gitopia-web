@@ -6,15 +6,12 @@ export default async function getIssueComment(
 ) {
   if (!repositoryId || !issueIid || !commentIid) return null;
   try {
-    const res = await apiClient.queryIssueComment(
+    const res = await apiClient.gitopia.gitopia.gitopia.issueComment({
       repositoryId,
       issueIid,
-      commentIid
-    );
-    if (res.status === 200) {
-      let c = res.data.Comment;
-      return c;
-    }
+      commentIid,
+    });
+    return res.Comment;
   } catch (e) {
     console.error(e);
   }

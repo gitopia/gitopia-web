@@ -1,14 +1,16 @@
 export default async function getRepositoryRelease(
   apiClient,
   id,
-  repoName,
+  repositoryName,
   tagName
 ) {
   try {
-    const res = await apiClient.queryRepositoryRelease(id, repoName, tagName);
-    if (res.status === 200) {
-      return res.data.Release;
-    }
+    const res = await apiClient.gitopia.gitopia.gitopia.repositoryRelease({
+      id,
+      repositoryName,
+      tagName,
+    });
+    return res.Release;
   } catch (e) {
     console.error(e);
   }

@@ -5,18 +5,11 @@ export default async function getAnyRepository(
 ) {
   if (!usernameOrAddress || !repositoryName) return null;
   try {
-    const res = await apiClient.queryAnyRepository(
-      usernameOrAddress,
-      repositoryName
-    );
-    if (res.status === 200) {
-      return res.data.Repository;
-    }
-    return {
-      id: "",
-      name: "",
-      owner: { id: "" },
-    };
+    const res = await apiClient.gitopia.gitopia.gitopia.anyRepository({
+      id: usernameOrAddress,
+      repositoryName,
+    });
+    return res.Repository;
   } catch (e) {
     console.error(e);
   }

@@ -124,18 +124,14 @@ function AccountView({
   const [dao, setDao] = useState({ name: "", repositories: [], ...initialDao });
   const [isLoading, setIsLoading] = useState(false);
   const [isMember, setIsMember] = useState(false);
-  const { apiClient, cosmosGroupApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   const hrefBase = `/${router.query.userId}`;
 
   const checkMembership = async (daoData) => {
-    console.log(selectedAddress, daoData.group_id);
     if (!selectedAddress || !daoData.group_id) return;
     try {
-      const members = await getGroupMembers(
-        cosmosGroupApiClient,
-        daoData.group_id
-      );
+      const members = await getGroupMembers(apiClient, daoData.group_id);
       const isMember = members.some(
         (m) => m.member.address === selectedAddress
       );

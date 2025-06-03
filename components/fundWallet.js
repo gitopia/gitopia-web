@@ -15,7 +15,7 @@ function FundWallet(props) {
   const isBalanceLow =
     Number(props.balance) <= 500 && Number(props.allowance) <= 500;
   const router = useRouter();
-  const { cosmosBankApiClient, cosmosFeegrantApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   const getTokens = () => {
     if (!props.selectedAddress) {
@@ -47,11 +47,7 @@ function FundWallet(props) {
           setGettingFaucetTokens(false);
         } else {
           setTimeout(() => {
-            props.updateUserBalance(
-              cosmosBankApiClient,
-              cosmosFeegrantApiClient,
-              true
-            );
+            props.updateUserBalance(apiClient, true);
             setGettingFaucetTokens(false);
           }, 2000);
         }
@@ -69,7 +65,7 @@ function FundWallet(props) {
 
   useEffect(() => {
     getTokens();
-    props.updateUserAllowance(cosmosFeegrantApiClient);
+    props.updateUserAllowance(apiClient);
   }, []);
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
-  createUser,
+  createNewUser,
   getUserDetailsForSelectedAddress,
 } from "../store/actions/user";
 import Link from "next/link";
@@ -10,6 +10,7 @@ import TextInput from "./textInput";
 import AccountAvatar from "./account/avatar";
 import { useRouter } from "next/router";
 import { useApiClient } from "../context/ApiClientContext";
+import { useWalletClient } from "@cosmos-kit/react";
 
 function CreateUser(props) {
   const [loading, setLoading] = useState(false);
@@ -33,11 +34,11 @@ function CreateUser(props) {
     type: "error",
     message: "",
   });
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const usernameRegex = /^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$/;
   const router = useRouter();
+  const { client } = useWalletClient();
 
   useEffect(() => {
     setUserCreated(props.user.creator);
@@ -109,17 +110,12 @@ function CreateUser(props) {
   const createProfile = async () => {
     setLoading(true);
     if (await validateProfile()) {
-      let res = await props.createUser(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        {
-          username,
-          name,
-          bio,
-          avatarUrl,
-        }
-      );
+      let res = await props.createNewUser(apiClient, client, {
+        username,
+        name,
+        bio,
+        avatarUrl,
+      });
       if (res && res.code === 0) {
         await props.getUserDetailsForSelectedAddress(apiClient);
         router.push("/home");
@@ -207,7 +203,7 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  createUser,
+  createNewUser,
   getUserDetailsForSelectedAddress,
   notify,
 })(CreateUser);

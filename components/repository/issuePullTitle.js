@@ -24,8 +24,7 @@ function IssuePullTitle({
     message: "",
   });
   const [savingTitle, setSavingTitle] = useState(false);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     setNewTitle(issuePullObj.title);
@@ -60,26 +59,16 @@ function IssuePullTitle({
     setSavingTitle(true);
     if (validateTitle(newTitle)) {
       const res = isPull
-        ? await props.updatePullRequestTitle(
-            apiClient,
-            cosmosBankApiClient,
-            cosmosFeegrantApiClient,
-            {
-              title: newTitle,
-              repositoryId: repository.id,
-              iid: issuePullObj.iid,
-            }
-          )
-        : await props.updateIssueTitle(
-            apiClient,
-            cosmosBankApiClient,
-            cosmosFeegrantApiClient,
-            {
-              title: newTitle,
-              repositoryId: repository.id,
-              iid: issuePullObj.iid,
-            }
-          );
+        ? await props.updatePullRequestTitle(apiClient, {
+            title: newTitle,
+            repositoryId: repository.id,
+            iid: issuePullObj.iid,
+          })
+        : await props.updateIssueTitle(apiClient, {
+            title: newTitle,
+            repositoryId: repository.id,
+            iid: issuePullObj.iid,
+          });
       if (res && res.code === 0) {
         if (onUpdate) await onUpdate(newTitle);
         setIsEditing(false);

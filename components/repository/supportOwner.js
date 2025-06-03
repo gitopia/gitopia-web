@@ -17,7 +17,7 @@ function SupportOwner({ repository, ownerAddress, isMobile, ...props }) {
   const [validateAmountError, setValidateAmountError] = useState(null);
   const [amount, setAmount] = useState(0);
   const amountRef = useRef(null);
-  const { cosmosBankApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   function isNaturalNumber(n) {
     n = n.toString();
@@ -52,7 +52,7 @@ function SupportOwner({ repository, ownerAddress, isMobile, ...props }) {
 
   useEffect(() => {
     async function initBalance() {
-      const balance = await props.getBalance(cosmosBankApiClient, ownerAddress);
+      const balance = await props.getBalance(apiClient, ownerAddress);
       setOwnerBalance(
         props.advanceUser === true
           ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
@@ -310,6 +310,7 @@ function SupportOwner({ repository, ownerAddress, isMobile, ...props }) {
                 onClick={(e) => {
                   props
                     .transferToWallet(
+                      apiClient,
                       props.selectedAddress,
                       ownerAddress,
                       props.advanceUser === true
@@ -321,7 +322,7 @@ function SupportOwner({ repository, ownerAddress, isMobile, ...props }) {
                       setAmount("");
                       setValidateAmountError(null);
                       const balance = await props.getBalance(
-                        cosmosBankApiClient,
+                        apiClient,
                         ownerAddress
                       );
                       setOwnerBalance(

@@ -63,8 +63,7 @@ function NewDao({ selectedAddress, createDao }) {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [daoCreating, setDaoCreating] = useState(false);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
   // Form state
   const [formData, setFormData] = useState({
     name: "",
@@ -462,22 +461,17 @@ function NewDao({ selectedAddress, createDao }) {
   const handleCreateDao = async () => {
     setDaoCreating(true);
     try {
-      const res = await createDao(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        {
-          name: formData.name.replace(sanitizedNameTest, "-"),
-          description: formData.description,
-          avatarUrl: formData.avatarUrl,
-          location: formData.location,
-          website: formData.website,
-          votingPeriod: formData.votingPeriod,
-          percentage: (Number(formData.percentage) / 100).toString(),
-          members: formData.members,
-          config: formData.config,
-        }
-      );
+      const res = await createDao(apiClient, {
+        name: formData.name.replace(sanitizedNameTest, "-"),
+        description: formData.description,
+        avatarUrl: formData.avatarUrl,
+        location: formData.location,
+        website: formData.website,
+        votingPeriod: formData.votingPeriod,
+        percentage: (Number(formData.percentage) / 100).toString(),
+        members: formData.members,
+        config: formData.config,
+      });
       if (res?.url) {
         router.push(res.url);
       }

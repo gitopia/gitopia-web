@@ -3,8 +3,7 @@ import { sendTransaction, setupTxClients } from "./env";
 import { updateUserBalance } from "./wallet";
 
 export const submitGovernanceProposal = (
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
+  apiClient,
   title,
   description,
   proposalType,
@@ -14,13 +13,7 @@ export const submitGovernanceProposal = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          dispatch,
-          getState
-        );
+        await setupTxClients(apiClient, dispatch, getState);
         const { env } = getState();
         const TextProposal = (
           await import("cosmjs-types/cosmos/gov/v1beta1/gov")
@@ -54,10 +47,7 @@ export const submitGovernanceProposal = (
         };
         const message = await env.txClient.msgSubmitProposal(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-          dispatch,
-          getState
-        );
+        updateUserBalance(apiClient)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Submitted", "info"));
@@ -75,8 +65,7 @@ export const submitGovernanceProposal = (
 };
 
 export const chainUpgradeProposal = (
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
+  apiClient,
   title,
   description,
   proposalType,
@@ -88,13 +77,7 @@ export const chainUpgradeProposal = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          dispatch,
-          getState
-        );
+        await setupTxClients(apiClient, dispatch, getState);
         const { env } = getState();
         const Any = (await import("cosmjs-types/google/protobuf/any")).Any;
         const { SoftwareUpgradeProposal, Plan } = await import(
@@ -135,10 +118,7 @@ export const chainUpgradeProposal = (
         };
         const message = await env.txClient.msgSubmitProposal(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-          dispatch,
-          getState
-        );
+        updateUserBalance(apiClient)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Submitted", "info"));
@@ -156,8 +136,7 @@ export const chainUpgradeProposal = (
 };
 
 export const communityPoolSpendProposal = (
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
+  apiClient,
   title,
   description,
   proposalType,
@@ -169,13 +148,7 @@ export const communityPoolSpendProposal = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          dispatch,
-          getState
-        );
+        await setupTxClients(apiClient, dispatch, getState);
         const { env } = getState();
         const Any = (await import("cosmjs-types/google/protobuf/any")).Any;
         const CommunityPoolSpendProposal = (
@@ -216,10 +189,7 @@ export const communityPoolSpendProposal = (
         };
         const message = await env.txClient.msgSubmitProposal(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-          dispatch,
-          getState
-        );
+        updateUserBalance(apiClient)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Submitted", "info"));
@@ -237,8 +207,7 @@ export const communityPoolSpendProposal = (
 };
 
 export const paramChangeProposal = (
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
+  apiClient,
   title,
   description,
   proposalType,
@@ -251,13 +220,7 @@ export const paramChangeProposal = (
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          dispatch,
-          getState
-        );
+        await setupTxClients(apiClient, dispatch, getState);
         const { env } = getState();
         const Any = (await import("cosmjs-types/google/protobuf/any")).Any;
         const { ParameterChangeProposal, ParamChange } = await import(
@@ -298,10 +261,7 @@ export const paramChangeProposal = (
         };
         const message = await env.txClient.msgSubmitProposal(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-          dispatch,
-          getState
-        );
+        updateUserBalance(apiClient)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Submitted", "info"));
@@ -318,23 +278,12 @@ export const paramChangeProposal = (
   };
 };
 
-export const proposalDeposit = (
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  proposalId,
-  amount
-) => {
+export const proposalDeposit = (apiClient, proposalId, amount) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          dispatch,
-          getState
-        );
+        await setupTxClients(apiClient, dispatch, getState);
         const { env } = getState();
         const longify = (
           await import("@cosmjs/stargate/build/queryclient/utils")
@@ -352,10 +301,7 @@ export const proposalDeposit = (
 
         const message = await env.txClient.msgDeposit(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-          dispatch,
-          getState
-        );
+        updateUserBalance(apiClient)(dispatch, getState);
         if (result) {
           if (result.code === 0) {
             dispatch(notify("Proposal Deposit Submitted", "info"));
@@ -372,12 +318,7 @@ export const proposalDeposit = (
   };
 };
 
-export const proposalVote = (
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  proposalId,
-  option
-) => {
+export const proposalVote = (apiClient, proposalId, option) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     const VoteOption = (await import("cosmjs-types/cosmos/gov/v1beta1/gov"))
@@ -397,13 +338,7 @@ export const proposalVote = (
     }
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          dispatch,
-          getState
-        );
+        await setupTxClients(apiClient, dispatch, getState);
         const { env } = getState();
         const longify = (
           await import("@cosmjs/stargate/build/queryclient/utils")
@@ -415,10 +350,7 @@ export const proposalVote = (
         };
         const message = await env.txClient.msgVote(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-          dispatch,
-          getState
-        );
+        updateUserBalance(apiClient)(dispatch, getState);
         if (result && result.code === 0) {
           if (result.code === 0) {
             dispatch(notify("Proposal Vote Submitted", "info"));

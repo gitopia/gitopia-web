@@ -14,6 +14,7 @@ const initialState = {
   getTXApi: process.env.NEXT_PUBLIC_API_URL + "/tx?hash=0x",
   initialized: false,
   txClient: null,
+  txClientCosmos: null,
   queryClient: null,
   txClientSecondary: null,
   queryClientSecondary: null,
@@ -96,11 +97,17 @@ const reducer = (state = initialState, action) => {
     }
 
     case envActions.SET_CLIENTS: {
-      const { txClient, queryClient, txClientSecondary, queryClientSecondary } =
-        action.payload;
+      const {
+        txClient,
+        txClientCosmos,
+        queryClient,
+        txClientSecondary,
+        queryClientSecondary,
+      } = action.payload;
       return {
         ...state,
         txClient,
+        txClientCosmos,
         queryClient,
         txClientSecondary,
         queryClientSecondary,

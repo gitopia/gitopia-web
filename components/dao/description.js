@@ -15,8 +15,7 @@ function DaoDescription(props = { isEditable: false }) {
   });
   const [savingDescription, setSavingDescription] = useState(false);
   const input = useRef();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const validateDescription = (description) => {
     setNewDescriptionHint({
@@ -38,15 +37,10 @@ function DaoDescription(props = { isEditable: false }) {
   const updateDescription = async () => {
     setSavingDescription(true);
     if (validateDescription(newDescription)) {
-      const res = await props.updateDaoDescription(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        {
-          id: props.dao.address,
-          description: newDescription,
-        }
-      );
+      const res = await props.updateDaoDescription(apiClient, {
+        id: props.dao.address,
+        description: newDescription,
+      });
 
       if (res && res.code === 0) {
         if (props.refresh) await props.refresh();

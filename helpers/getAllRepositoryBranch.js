@@ -5,11 +5,11 @@ export default async function getAllRepositoryBranch(
 ) {
   if (!repositoryName || !id) return null;
   try {
-    const res = await apiClient.queryRepositoryBranchAll(id, repositoryName);
-    if (res.status === 200) {
-      let b = res.data.Branch;
-      return b;
-    }
+    const res = await apiClient.gitopia.gitopia.gitopia.repositoryBranchAll({
+      id,
+      repositoryName,
+    });
+    return res.Branch;
   } catch (e) {
     console.error(e);
   }

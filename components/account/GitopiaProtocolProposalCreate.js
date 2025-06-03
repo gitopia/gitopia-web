@@ -32,8 +32,7 @@ function GitopiaProtocolProposalCreate({ dao, ...props }) {
   const [menuState, setMenuState] = useState(1);
   const [counter, setCounter] = useState(1);
   const [initialDeposit, setInitialDeposit] = useState(0);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
   // const [dao, setDao] = useState({
   //   name: "",
   //   repositories: [],
@@ -394,8 +393,7 @@ function GitopiaProtocolProposalCreate({ dao, ...props }) {
                     setLoading(true);
                     props
                       .communityPoolSpendProposal(
-                        cosmosBankApiClient,
-                        cosmosFeegrantApiClient,
+                        apiClient,
                         title,
                         description,
                         proposalType,
@@ -491,8 +489,7 @@ function GitopiaProtocolProposalCreate({ dao, ...props }) {
                     setLoading(true);
                     props
                       .chainUpgradeProposal(
-                        cosmosBankApiClient,
-                        cosmosFeegrantApiClient,
+                        apiClient,
                         title,
                         description,
                         proposalType,
@@ -618,8 +615,7 @@ function GitopiaProtocolProposalCreate({ dao, ...props }) {
                     setLoading(true);
                     props
                       .paramChangeProposal(
-                        cosmosBankApiClient,
-                        cosmosFeegrantApiClient,
+                        apiClient,
                         title,
                         description,
                         proposalType,
@@ -665,8 +661,7 @@ function GitopiaProtocolProposalCreate({ dao, ...props }) {
                   setLoading(true);
                   props
                     .submitGovernanceProposal(
-                      cosmosBankApiClient,
-                      cosmosFeegrantApiClient,
+                      apiClient,
                       title,
                       description,
                       proposalType,

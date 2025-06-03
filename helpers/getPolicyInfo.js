@@ -1,15 +1,10 @@
-export default async function getPolicyInfo(
-  cosmosGroupApiClient,
-  groupPolicyAddress
-) {
+export default async function getPolicyInfo(apiClient, groupPolicyAddress) {
   if (!groupPolicyAddress) return null;
   try {
-    const response = await cosmosGroupApiClient.queryGroupPolicyInfo(
-      groupPolicyAddress
-    );
-    if (response.status === 200) {
-      return response.data;
-    }
+    const response = await apiClient.cosmos.group.v1.groupPolicyInfo({
+      address: groupPolicyAddress,
+    });
+    return response;
   } catch (error) {
     console.error("Error fetching group policy info:", error);
   }

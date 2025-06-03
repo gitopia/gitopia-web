@@ -1,11 +1,8 @@
-export default async function getTallyResult(cosmosGroupApiClient, proposalId) {
+export default async function getTallyResult(apiClient, proposalId) {
   if (!proposalId) return null;
   try {
-    const res = await cosmosGroupApiClient.queryTallyResult(proposalId);
-    if (res.status === 200) {
-      let m = res.data.tally;
-      return m;
-    } else return [];
+    const res = await apiClient.cosmos.group.v1.tallyResult({ proposalId });
+    return res.tally;
   } catch (e) {
     console.error(e);
   }

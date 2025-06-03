@@ -342,12 +342,7 @@ export default function ProposalsSection({
   const [proposalVotes, setProposalVotes] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProposal, setSelectedProposal] = useState(null);
-  const {
-    apiClient,
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-    cosmosGroupApiClient,
-  } = useApiClient();
+  const { apiClient } = useApiClient();
   const [isExecuting, setIsExecuting] = useState(false);
   const dispatch = useDispatch();
 
@@ -356,13 +351,15 @@ export default function ProposalsSection({
       try {
         const votesResults = await Promise.all(
           proposals.map((proposal) =>
-            cosmosGroupApiClient.queryVotesByProposal(proposal.id)
+            apiClient.cosmos.group.v1.votesByProposal({
+              proposalId: proposal.id,
+            })
           )
         );
 
         const votesMap = {};
         votesResults.forEach((result, index) => {
-          votesMap[proposals[index].id] = result.data.votes || [];
+          votesMap[proposals[index].id] = result.votes || [];
         });
 
         setProposalVotes(votesMap);
@@ -374,7 +371,7 @@ export default function ProposalsSection({
     if (proposals.length > 0) {
       fetchVotesForProposals();
     }
-  }, [proposals, cosmosGroupApiClient]);
+  }, [proposals, apiClient]);
 
   useEffect(() => {
     const fetchTalliesForActiveProposals = async () => {
@@ -385,7 +382,7 @@ export default function ProposalsSection({
 
         const tallyResults = await Promise.all(
           activeProposals.map((proposal) =>
-            getTallyResult(cosmosGroupApiClient, proposal.id)
+            getTallyResult(apiClient, proposal.id)
           )
         );
 
@@ -403,18 +400,13 @@ export default function ProposalsSection({
     if (proposals.length > 0) {
       fetchTalliesForActiveProposals();
     }
-  }, [proposals, cosmosGroupApiClient]);
+  }, [proposals, apiClient]);
 
   const handleExecuteProposal = async (proposalId) => {
     setIsExecuting(true);
     try {
       const result = await dispatch(
-        executeGroupProposal(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          proposalId
-        )
+        executeGroupProposal(apiClient, proposalId)
       );
 
       if (result && result.code === 0) {
@@ -525,7 +517,7 @@ export default function ProposalsSection({
           policyInfo={policyInfo}
           selectedAddress={selectedAddress}
           votes={proposalVotes[selectedProposal.id]}
-          cosmosGroupApiClient={cosmosGroupApiClient}
+          apiClient={apiClient}
         />
       )}
     </div>

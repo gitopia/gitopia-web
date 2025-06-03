@@ -6,8 +6,7 @@ import { useApiClient } from "../../context/ApiClientContext";
 
 function ExtendExpiry(props) {
   const ref1 = useRef("dd/mm/yyyy");
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   return (
     <div>
@@ -54,8 +53,6 @@ function ExtendExpiry(props) {
                 props
                   .updateBountyExpiry(
                     apiClient,
-                    cosmosBankApiClient,
-                    cosmosFeegrantApiClient,
                     props.bountyId,
                     dayjs(props.updatedExpiry.toString()).unix()
                   )

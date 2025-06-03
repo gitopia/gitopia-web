@@ -13,14 +13,14 @@ function GitopiaProtocolProposalList({ dao, ...props }) {
   //   repositories: [],
   // });
   const [proposals, setProposals] = useState([]);
-  const { cosmosGovApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function initProposals() {
       if (router.query.userId !== process.env.NEXT_PUBLIC_GITOPIA_ADDRESS) {
         router.push("/" + router.query.userId);
       }
-      const p = await getProposals(cosmosGovApiClient);
+      const p = await getProposals(apiClient);
       setProposals(p);
     }
     initProposals();

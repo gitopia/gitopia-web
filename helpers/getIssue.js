@@ -5,15 +5,12 @@ export default async function getIssue(
   issueIid
 ) {
   try {
-    const res = await apiClient.queryRepositoryIssue(
+    const res = await apiClient.gitopia.gitopia.gitopia.repositoryIssue({
       id,
       repositoryName,
-      issueIid
-    );
-    if (res.status === 200) {
-      let i = res.data.Issue;
-      return i;
-    }
+      issueIid,
+    });
+    return res.Issue;
   } catch (e) {
     console.error(e);
   }

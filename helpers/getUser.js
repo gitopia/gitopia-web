@@ -1,11 +1,8 @@
 export default async function getUser(apiClient, userId) {
   if (!userId) return null;
   try {
-    const res = await apiClient.queryUser(userId);
-    if (res.status === 200) {
-      let u = res.data.User;
-      return u;
-    }
+    const res = await apiClient.gitopia.gitopia.gitopia.user({ id: userId });
+    return res.User;
   } catch (e) {
     console.log("Not found User", userId);
   }

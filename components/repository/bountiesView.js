@@ -19,7 +19,7 @@ function IssueBountyView(props) {
   const [coins, setCoins] = useState([]);
   const [isHovering, setIsHovering] = useState(false);
   const [tokenPrices, setTokenPrices] = useState({});
-  const { apiClient, ibcAppTransferApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function fetchTokenPrices() {
@@ -55,7 +55,7 @@ function IssueBountyView(props) {
           for (const amount of res.amount) {
             if (amount.denom.includes("ibc")) {
               amount.showDenom = await getDenomNameByHash(
-                ibcAppTransferApiClient,
+                apiClient,
                 amount.denom
               );
             }

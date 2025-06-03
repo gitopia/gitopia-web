@@ -1,13 +1,11 @@
-export default async function getAllowance(cosmosFeegrantApiClient, address) {
+export default async function getAllowance(apiClient, address) {
   if (!address) return null;
   try {
-    const res = await cosmosFeegrantApiClient.queryAllowance(
-      process.env.NEXT_PUBLIC_FEE_GRANTER,
-      address
-    );
-    if (res.status === 200) {
-      return res.data?.allowance;
-    }
+    const res = await apiClient.cosmos.feegrant.v1beta1.allowance({
+      granter: process.env.NEXT_PUBLIC_FEE_GRANTER,
+      grantee: address,
+    });
+    return res.allowance;
   } catch (e) {
     console.error(e);
   }

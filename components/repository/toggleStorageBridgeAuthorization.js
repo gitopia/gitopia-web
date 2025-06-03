@@ -7,15 +7,12 @@ import { useApiClient } from "../../context/ApiClientContext";
 function ToggleStorageBridgeAuthorization({ address, onSuccess, ...props }) {
   const [currentState, setCurrentState] = useState(false);
   const [isToggling, setIsToggling] = useState(true);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const toggleGrant = async () => {
     setIsToggling(true);
     const res = await props.updateAddressGrant(
       apiClient,
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
       address,
       1,
       !currentState

@@ -1,11 +1,12 @@
 export default async function getGitServerAuthStatus(apiClient, userAddress) {
   if (!userAddress) return null;
   try {
-    const res = await apiClient.queryCheckGitServerAuthorization(
-      userAddress,
-      process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS
-    );
-    if (res.status === 200 && res.data.haveAuthorization) {
+    const res =
+      await apiClient.gitopia.gitopia.gitopia.checkGitServerAuthorization({
+        userAddress,
+        providerAddress: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+      });
+    if (res.haveAuthorization) {
       return true;
     } else {
       return false;

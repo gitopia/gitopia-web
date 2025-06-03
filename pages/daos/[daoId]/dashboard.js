@@ -31,11 +31,11 @@ function DaoDashboard(props) {
   const [dao, setDao] = useState({});
   const { setErrorStatusCode } = useErrorStatus();
   const router = useRouter();
-  const { apiClient, cosmosGroupApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   async function refreshData() {
     const dao = await getDao(apiClient, router.query.daoId);
-    const members = await getGroupMembers(cosmosGroupApiClient, dao.group_id);
+    const members = await getGroupMembers(apiClient, dao.group_id);
 
     if (dao) {
       let isMember = false;

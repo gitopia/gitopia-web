@@ -18,18 +18,21 @@ export default function CompactDaoProposals({ dao }) {
     passed: 0,
     rejected: 0,
   });
-  const { cosmosGroupApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     const fetchProposals = async () => {
       if (!dao.group_id) return;
       try {
-        const response = await cosmosGroupApiClient.queryProposalsByGroupPolicy(
-          (
-            await cosmosGroupApiClient.queryGroupInfo(dao.group_id)
-          ).data.info.admin
+        const groupInfo = await apiClient.cosmos.group.v1.groupInfo({
+          groupId: dao.group_id,
+        });
+        const response = await apiClient.cosmos.group.v1.proposalsByGroupPolicy(
+          {
+            address: groupInfo.info.admin,
+          }
         );
-        const proposalsList = response.data.proposals;
+        const proposalsList = response.proposals;
         setProposals(proposalsList);
 
         // Calculate statistics

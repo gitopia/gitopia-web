@@ -24,8 +24,7 @@ function RenameRepository({
   const [renaming, setRenaming] = useState(false);
   const [startRename, setStartRename] = useState(false);
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     setName(currentName);
@@ -60,16 +59,11 @@ function RenameRepository({
   const changeName = async () => {
     setIsChanging(true);
     if (await validateName()) {
-      const res = await props.renameRepository(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        {
-          repoOwner: repoOwner,
-          repoName: repoName,
-          name: name.replace(sanitizedNameTest, "-"),
-        }
-      );
+      const res = await props.renameRepository(apiClient, {
+        repoOwner: repoOwner,
+        repoName: repoName,
+        name: name.replace(sanitizedNameTest, "-"),
+      });
       if (res) {
         props.notify("Repository name changed", "info");
         if (onSuccess) await onSuccess(name.replace(sanitizedNameTest, "-"));

@@ -21,8 +21,7 @@ function LabelSelector({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [labelId, setLabelId] = useState(null);
   const labelsModal = useRef();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const updateLabels = async () => {
     setIsSaving(true);
@@ -530,16 +529,11 @@ function LabelSelector({
               }
               onClick={async () => {
                 setIsDeleting(true);
-                const res = await props.deleteRepositoryLabel(
-                  apiClient,
-                  cosmosBankApiClient,
-                  cosmosFeegrantApiClient,
-                  {
-                    repoOwner: repository?.owner?.id,
-                    repoName: repository?.name,
-                    labelId: labelId,
-                  }
-                );
+                const res = await props.deleteRepositoryLabel(apiClient, {
+                  repoOwner: repository?.owner?.id,
+                  repoName: repository?.name,
+                  labelId: labelId,
+                });
                 if (res && res.code === 0) {
                   await refreshRepository();
                   console.log(repository);

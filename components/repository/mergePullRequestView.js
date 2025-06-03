@@ -31,12 +31,7 @@ function MergePullRequestView({
   const [isGrantingAccess, setIsGrantingAccess] = useState(false);
   const [requiresProposal, setRequiresProposal] = useState(false);
   const [isCreatingProposal, setIsCreatingProposal] = useState(false);
-  const {
-    apiClient,
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-    cosmosGroupApiClient,
-  } = useApiClient();
+  const { apiClient } = useApiClient();
   const [daoInfo, setDaoInfo] = useState(null);
   const router = useRouter();
 
@@ -95,17 +90,11 @@ function MergePullRequestView({
   const createMergeProposal = async () => {
     setIsCreatingProposal(true);
     try {
-      const result = await props.mergePullRequestForDao(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        cosmosGroupApiClient,
-        {
-          repositoryId: repository.id,
-          iid: pullRequest.iid,
-          groupId: daoInfo.group_id,
-        }
-      );
+      const result = await props.mergePullRequestForDao(apiClient, {
+        repositoryId: repository.id,
+        iid: pullRequest.iid,
+        groupId: daoInfo.group_id,
+      });
 
       if (result?.status === "PROPOSAL_SUBMITTED") {
         refreshPullRequest();
@@ -145,16 +134,11 @@ function MergePullRequestView({
         return;
       }
 
-      const res = await props.mergePullRequest(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        {
-          repositoryId: repository.id,
-          iid: pullRequest.iid,
-          branchName: pullRequest.head.branch,
-        }
-      );
+      const res = await props.mergePullRequest(apiClient, {
+        repositoryId: repository.id,
+        iid: pullRequest.iid,
+        branchName: pullRequest.head.branch,
+      });
 
       if (res) {
         if (res.state === "TASK_STATE_SUCCESS") refreshPullRequest();
@@ -314,11 +298,7 @@ function MergePullRequestView({
               }`}
               onClick={async () => {
                 setIsGrantingAccess(true);
-                const res = await props.authorizeGitServer(
-                  apiClient,
-                  cosmosBankApiClient,
-                  cosmosFeegrantApiClient
-                );
+                const res = await props.authorizeGitServer(apiClient);
                 setIsGrantingAccess(false);
                 if (res && res.code !== 0) {
                   props.notify(res.rawLog, "error");

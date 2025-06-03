@@ -9,35 +9,31 @@ import { updateUserBalance, refreshCurrentDashboard } from "./wallet";
 import { notify } from "reapop";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getNodeInfo from "../../helpers/getNodeInfo";
+import { gitopia } from "@gitopia/gitopiajs";
+
+const { createUserMsg } = gitopia.gitopia.gitopia.MessageComposer.withTypeUrl;
 
 export const createUser = (
   apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
+  txClient,
   { username, name, bio, avatarUrl }
 ) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        dispatch,
-        getState
-      );
+      // await setupTxClients(apiClient, client, dispatch, getState);
       const { env, wallet } = getState();
-      const message = await env.txClient.msgCreateUser({
+      const message = await createUserMsg({
         creator: wallet.selectedAddress,
         username,
         name,
         bio,
         avatarUrl,
       });
-      const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
+      const result = await sendTransaction({ txClient: env.txClient, message })(
         dispatch,
         getState
       );
+      updateUserBalance(apiClient)(dispatch, getState);
       if (result && result.code === 0) {
         console.log("User created successfully.. renaming wallet");
         let oldWalletName = wallet.activeWallet.name,
@@ -169,10 +165,12 @@ export const getUserDetailsForSelectedAddress = (apiClient) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     try {
-      const result = await apiClient.queryUser(wallet.selectedAddress);
+      const result = await apiClient.gitopia.gitopia.gitopia.user({
+        id: wallet.selectedAddress,
+      });
       dispatch({
         type: userActions.SET_USER,
-        payload: { user: result.data.User },
+        payload: { user: result.User },
       });
     } catch (e) {
       dispatch({
@@ -191,30 +189,17 @@ export const setCurrentDashboard = (id) => {
   };
 };
 
-export const updateUserBio = (
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  bio
-) => {
+export const updateUserBio = (apiClient, bio) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        dispatch,
-        getState
-      );
+      await setupTxClients(apiClient, dispatch, getState);
       const { env, wallet } = getState();
       const message = await env.txClient.msgUpdateUserBio({
         creator: wallet.selectedAddress,
         bio: bio,
       });
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-        dispatch,
-        getState
-      );
+      updateUserBalance(apiClient)(dispatch, getState);
       return result;
     } catch (e) {
       dispatch(notify(e.message, "error"));
@@ -223,31 +208,17 @@ export const updateUserBio = (
   };
 };
 
-export const updateUserAvatar = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  avatarUrl
-) => {
+export const updateUserAvatar = (apiClient, avatarUrl) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        dispatch,
-        getState
-      );
+      await setupTxClients(apiClient, dispatch, getState);
       const { env, wallet } = getState();
       const message = await env.txClient.msgUpdateUserAvatar({
         creator: wallet.selectedAddress,
         url: avatarUrl,
       });
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-        dispatch,
-        getState
-      );
+      updateUserBalance(apiClient)(dispatch, getState);
       if (result?.code === 0) {
         let newWallet = await updateWalletsList(
           apiClient,
@@ -266,30 +237,17 @@ export const updateUserAvatar = (
   };
 };
 
-export const updateUserName = (
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  name
-) => {
+export const updateUserName = (apiClient, name) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        dispatch,
-        getState
-      );
+      await setupTxClients(apiClient, dispatch, getState);
       const { env, wallet } = getState();
       const message = await env.txClient.msgUpdateUserName({
         creator: wallet.selectedAddress,
         name,
       });
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-        dispatch,
-        getState
-      );
+      updateUserBalance(apiClient)(dispatch, getState);
       if (result?.code === 0) {
         await getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
       }
@@ -301,31 +259,17 @@ export const updateUserName = (
   };
 };
 
-export const updateUserUsername = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  username
-) => {
+export const updateUserUsername = (apiClient, username) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        dispatch,
-        getState
-      );
+      await setupTxClients(apiClient, dispatch, getState);
       const { env, wallet, user } = getState();
       const message = await env.txClient.msgUpdateUserUsername({
         creator: wallet.selectedAddress,
         username,
       });
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-        dispatch,
-        getState
-      );
+      updateUserBalance(apiClient)(dispatch, getState);
       if (result?.code === 0) {
         let newWallet = await updateWalletsList(
           apiClient,
@@ -395,7 +339,7 @@ const updateWalletsList = async (
       },
     });
   } else if (newWallet.isLeap) {
-    const info = await getNodeInfo();
+    const info = await getNodeInfo(env.apiNode);
     const chainId = info.default_node_info.network;
     const offlineSigner = await window.leap.getOfflineSignerAuto(chainId);
     const accounts = await offlineSigner.getAccounts();
@@ -409,8 +353,8 @@ const updateWalletsList = async (
         },
       },
     });
-    await getUserDetailsForSelectedAddress()(dispatch, getState);
-    const daos = await getUserDaoAll(newWallet.accounts[0].address);
+    await getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+    const daos = await getUserDaoAll(apiClient, newWallet.accounts[0].address);
     await dispatch({
       type: userActions.INIT_DASHBOARDS,
       payload: {
@@ -420,7 +364,7 @@ const updateWalletsList = async (
       },
     });
   } else if (newWallet.isMetamask) {
-    const info = await getNodeInfo();
+    const info = await getNodeInfo(env.apiNode);
     const chainId = info.default_node_info.network;
     const { CosmjsOfflineSigner, getKey } = await import(
       "@leapwallet/cosmos-snap-provider"
@@ -437,8 +381,8 @@ const updateWalletsList = async (
         },
       },
     });
-    await getUserDetailsForSelectedAddress()(dispatch, getState);
-    const daos = await getUserDaoAll(newWallet.accounts[0].address);
+    await getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+    const daos = await getUserDaoAll(apiClient, newWallet.accounts[0].address);
     await dispatch({
       type: userActions.INIT_DASHBOARDS,
       payload: {
@@ -520,7 +464,7 @@ const updateWalletsList = async (
 
 // export const updateStorageGrant = (allow) => {
 //   return async (dispatch, getState) => {
-//     await setupTxClients(apiClient,cosmosBankApiClient, cosmosFeegrantApiClient, apiNode, rpcNode,dispatch, getState);
+//     await setupTxClients(apiClient, apiNode, rpcNode,dispatch, getState);
 //     const { env, wallet } = getState();
 //     let fn = allow ? env.txClient.msgGrant : env.txClient.msgRevoke;
 //     console.log(fn);
@@ -539,23 +483,10 @@ const updateWalletsList = async (
 //   };
 // };
 
-export const updateAddressGrant = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  address,
-  permission,
-  allow
-) => {
+export const updateAddressGrant = (apiClient, address, permission, allow) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        dispatch,
-        getState
-      );
+      await setupTxClients(apiClient, dispatch, getState);
     } catch (e) {
       console.error(e);
       return null;
@@ -575,8 +506,7 @@ export const updateAddressGrant = (
       permission,
     });
     return await handlePostingTransaction(
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
+      apiClient,
       dispatch,
       getState,
       message
@@ -584,14 +514,7 @@ export const updateAddressGrant = (
   };
 };
 
-export const signUploadFileMessage = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  name,
-  size,
-  md5
-) => {
+export const signUploadFileMessage = (apiClient, name, size, md5) => {
   return async (dispatch, getState) => {
     const data = {
       // Any arbitrary object
@@ -602,12 +525,7 @@ export const signUploadFileMessage = (
     try {
       let TxRaw = (await import("cosmjs-types/cosmos/tx/v1beta1/tx")).TxRaw;
       let toBase64 = (await import("@cosmjs/encoding")).toBase64;
-      let s = await signMessage(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        { data }
-      )(dispatch, getState);
+      let s = await signMessage(apiClient, { data })(dispatch, getState);
       let raw = TxRaw.encode(s).finish();
       let msg = toBase64(raw);
       return msg;
@@ -619,12 +537,7 @@ export const signUploadFileMessage = (
   };
 };
 
-export const signMessageForRewards = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  code
-) => {
+export const signMessageForRewards = (apiClient, code) => {
   return async (dispatch, getState) => {
     const data = {
       // Any arbitrary object
@@ -633,12 +546,7 @@ export const signMessageForRewards = (
     try {
       let TxRaw = (await import("cosmjs-types/cosmos/tx/v1beta1/tx")).TxRaw;
       let toBase64 = (await import("@cosmjs/encoding")).toBase64;
-      let s = await signMessage(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        { data }
-      )(dispatch, getState);
+      let s = await signMessage(apiClient, { data })(dispatch, getState);
       let raw = TxRaw.encode(s).finish();
       let msg = toBase64(raw);
       return msg;
@@ -649,16 +557,10 @@ export const signMessageForRewards = (
   };
 };
 
-export const claimRewards = (cosmosBankApiClient, cosmosFeegrantApiClient) => {
+export const claimRewards = (apiClient) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        dispatch,
-        getState
-      );
+      await setupTxClients(apiClient, dispatch, getState);
     } catch (e) {
       console.error(e);
       return null;
@@ -670,10 +572,7 @@ export const claimRewards = (cosmosBankApiClient, cosmosFeegrantApiClient) => {
     try {
       const message = await env.txClient.msgClaim(msg);
       const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-        dispatch,
-        getState
-      );
+      updateUserBalance(apiClient)(dispatch, getState);
       if (result && result.code === 0) {
         return result;
       } else {

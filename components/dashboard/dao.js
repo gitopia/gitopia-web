@@ -23,6 +23,7 @@ import sortBy from "lodash/sortBy";
 import DaoRepositories from "./DaoRepositories";
 import { useQuery, gql } from "@apollo/client";
 import client from "../../helpers/apolloClient";
+import { useWalletClient } from "@cosmos-kit/react";
 
 // Define the GraphQL query
 const GET_USERS = gql`
@@ -48,13 +49,9 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
   const [treasuryBalance, setTreasuryBalance] = useState("0");
   const [repositories, setRepositories] = useState([]);
 
-  const {
-    cosmosGroupApiClient,
-    apiClient,
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-  } = useApiClient();
+  const { apiClient } = useApiClient();
   const dispatch = useDispatch();
+  const { walletClient } = useWalletClient();
 
   useEffect(() => {
     if (router.query.tab) {
@@ -64,7 +61,7 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
 
   useEffect(() => {
     async function initBalance() {
-      const balance = await props.getBalance(cosmosBankApiClient, dao.address);
+      const balance = await props.getBalance(apiClient, dao.address);
       setTreasuryBalance(
         props.advanceUser === true
           ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
@@ -93,7 +90,7 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
 
   const fetchGroupInfo = async () => {
     try {
-      const info = await getGroupInfo(cosmosGroupApiClient, dao.group_id);
+      const info = await getGroupInfo(apiClient, dao.group_id);
       setGroupInfo(info);
     } catch (error) {
       console.error("Error fetching group info:", error);
@@ -102,7 +99,7 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
 
   const fetchPolicyInfo = async () => {
     try {
-      const info = await getPolicyInfo(cosmosGroupApiClient, groupInfo.admin);
+      const info = await getPolicyInfo(apiClient, groupInfo.admin);
       setPolicyInfo(info);
     } catch (error) {
       console.error("Error fetching policy info:", error);
@@ -112,10 +109,12 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
   const fetchProposals = async () => {
     try {
       if (groupInfo && groupInfo.admin) {
-        const response = await cosmosGroupApiClient.queryProposalsByGroupPolicy(
-          groupInfo.admin
+        const response = await apiClient.cosmos.group.v1.proposalsByGroupPolicy(
+          {
+            address: groupInfo.admin,
+          }
         );
-        setProposals(response.data.proposals.reverse());
+        setProposals(response.proposals.reverse());
       } else {
         console.error("Failed to fetch group info or admin address");
       }
@@ -126,7 +125,7 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
 
   const fetchGroupMembers = async () => {
     try {
-      const members = await getGroupMembers(cosmosGroupApiClient, dao.group_id);
+      const members = await getGroupMembers(apiClient, dao.group_id);
       setGroupMembers(members);
     } catch (error) {
       console.error("Error fetching group members:", error);
@@ -201,13 +200,7 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
   const handleVote = async (proposalId, option) => {
     try {
       const result = await dispatch(
-        voteGroupProposal(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          proposalId,
-          option
-        )
+        voteGroupProposal(apiClient, proposalId, option)
       );
       if (result && result.code === 0) {
         await fetchProposals();
@@ -220,12 +213,7 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
   const handleCreateProposal = async (proposalData) => {
     try {
       const result = await dispatch(
-        createGroupProposal(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          proposalData
-        )
+        createGroupProposal(apiClient, walletClient, proposalData)
       );
 
       if (result && result.code === 0) {

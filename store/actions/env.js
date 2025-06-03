@@ -9,15 +9,17 @@ import {
   unlockLeapWallet,
 } from "./wallet";
 import getNodeInfo from "../../helpers/getNodeInfo";
+import { calculateFee } from "@cosmjs/stargate";
 
 export const sendTransaction = ({
+  txClient,
   message,
   memo,
   denom = process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN,
 }) => {
   return async (dispatch, getState) => {
-    const { env, wallet } = getState();
-    let notifId, result;
+    const { wallet } = getState();
+    let notifId;
     if (wallet.activeWallet?.isLedger) {
       const msg = dispatch(
         notify(
@@ -34,11 +36,40 @@ export const sendTransaction = ({
     try {
       const msgArr = Array.isArray(message) ? message : [message];
       console.log(msgArr);
-      result = await env.txClient.signAndBroadcast(
+
+      const gasEstimation = await txClient.simulate(
+        wallet.selectedAddress,
         msgArr,
-        { fee: 1.8, memo },
-        wallet.allowance ? process.env.NEXT_PUBLIC_FEE_GRANTER : null
+        ""
       );
+      const multiplier = 1.8;
+      let usedFee = calculateFee(
+        Math.round(gasEstimation * multiplier),
+        wallet.gasPrice
+      );
+      console.log("usedFee", usedFee);
+      const granter = wallet.allowance
+        ? process.env.NEXT_PUBLIC_FEEGRANTER_ADDRESS
+        : null;
+      if (granter) {
+        usedFee.granter = granter;
+        usedFee.payer = address;
+      }
+
+      const result = await txClient.signAndBroadcast(
+        wallet.selectedAddress,
+        msgArr,
+        usedFee,
+        ""
+      );
+
+      console.log("result", result);
+
+      // result = await env.txClient.signAndBroadcast(
+      //   msgArr,
+      //   { fee: 1.8, memo },
+      //   wallet.allowance ? process.env.NEXT_PUBLIC_FEE_GRANTER : null
+      // );
       if (wallet.activeWallet?.isLedger) {
         dispatch(dismissNotification(notifId));
         await closeLedgerTransport()(dispatch, getState);
@@ -69,21 +100,10 @@ export const sendTransaction = ({
   };
 };
 
-export const signMessage = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  { data = {} }
-) => {
+export const signMessage = (apiClient, { data = {} }) => {
   return async (dispatch, getState) => {
     try {
-      await setupTxClients(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        dispatch,
-        getState
-      );
+      await setupTxClients(apiClient, dispatch, getState);
     } catch (e) {
       console.error(e);
       return null;
@@ -158,31 +178,23 @@ export const signMessage = (
 
 export const setupTxClients = async (
   apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
+  client,
   dispatch,
   getState,
   chainId = null
 ) => {
   const { env, wallet } = getState();
 
+  console.log("wallet", wallet);
+
   if (wallet.activeWallet) {
     if (!env.txClient || chainId != wallet.activeWallet.counterPartyChain) {
       if (wallet.activeWallet.isKeplr) {
-        await unlockKeplrWallet(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          chainId
-        )(dispatch, getState);
+        await unlockKeplrWallet(apiClient, chainId)(dispatch, getState);
       } else if (wallet.activeWallet.isLeap) {
         await unlockLeapWallet(chainId)(dispatch, getState);
       } else if (wallet.activeWallet.isMetamask) {
-        await unlockMetamaskWallet(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient
-        )(dispatch, getState);
+        await unlockMetamaskWallet(apiClient, client)(dispatch, getState);
       } else {
         return new Promise((resolve, reject) => {
           dispatch({
@@ -213,8 +225,7 @@ export const setupTxClients = async (
 };
 
 export const handlePostingTransaction = async (
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
+  apiClient,
   dispatch,
   getState,
   message
@@ -223,10 +234,7 @@ export const handlePostingTransaction = async (
 
   try {
     const result = await sendTransaction({ message })(dispatch, getState);
-    updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-      dispatch,
-      getState
-    );
+    updateUserBalance(apiClient)(dispatch, getState);
     if (result?.code === 0) {
       return result;
     } else {

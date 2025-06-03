@@ -1,10 +1,7 @@
 import axios from "./axiosFetch";
 import { coingeckoId } from "../ibc-assets-config";
 
-export default async function getBountyValueInDollars(
-  ibcAppTransferApiClient,
-  bounty
-) {
+export default async function getBountyValueInDollars(apiClient, bounty) {
   if (!bounty) return null;
   let totalPrice = 0;
   try {
@@ -12,9 +9,11 @@ export default async function getBountyValueInDollars(
     for (let i = 0; i < amount.length; i++) {
       if (amount[i].denom.includes("ibc")) {
         const denomHash = amount[i].denom.slice(4, amount[i].denom.length);
-        const result = await ibcAppTransferApiClient.queryDenomTrace(denomHash);
+        const result = await apiClient.ibc.applications.transfer.v1.denomTrace({
+          hash: denomHash,
+        });
         if (result.ok) {
-          let denom = result.data.denom_trace.base_denom;
+          let denom = result.denom_trace.base_denom;
           await axios
             .get(
               "https://api.coingecko.com/api/v3/simple/price?ids=" +

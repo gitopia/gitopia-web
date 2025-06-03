@@ -239,8 +239,7 @@ function RepositoryView(props) {
   const [currentUserEditPermission, setCurrentUserEditPermission] =
     useState(false);
   const { isMobile } = useWindowSize();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
   const [daoData, setDaoData] = useState(null);
 
   useEffect(() => {
@@ -378,16 +377,11 @@ function RepositoryView(props) {
     setSavingDescription(true);
     if (validateDescription(newDescription)) {
       console.log(repository);
-      const res = await props.updateRepositoryDescription(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        {
-          name: repository.name,
-          ownerId: repository.owner.id,
-          description: newDescription,
-        }
-      );
+      const res = await props.updateRepositoryDescription(apiClient, {
+        name: repository.name,
+        ownerId: repository.owner.id,
+        description: newDescription,
+      });
 
       if (res && res.code === 0) {
         props.notify("Repository description updated");

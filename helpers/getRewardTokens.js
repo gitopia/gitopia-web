@@ -1,12 +1,11 @@
-import { Api } from "../store/gitopia.gitopia.rewards/rest";
-
-export default async function getRewardToken(apiNode, address) {
+export default async function getRewardToken(apiClient, address) {
   if (!address) return null;
   try {
-    const api = new Api({ baseURL: apiNode });
-    const res = await api.queryReward(address);
+    const res = await apiClient.gitopia.gitopia.rewards.reward({
+      recipient: address,
+    });
     if (res) {
-      return res.data.rewards;
+      return res.rewards;
     }
   } catch (e) {
     console.error(e);

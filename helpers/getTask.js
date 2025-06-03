@@ -1,11 +1,8 @@
 export default async function getTask(apiClient, taskId) {
   if (!taskId) return null;
   try {
-    const res = await apiClient.queryTask(taskId);
-    if (res.status === 200) {
-      let u = res.data.Task;
-      return u;
-    }
+    const res = await apiClient.gitopia.gitopia.gitopia.task({ id: taskId });
+    return res.Task;
   } catch (e) {
     console.log("Not found task", taskId);
     throw e;

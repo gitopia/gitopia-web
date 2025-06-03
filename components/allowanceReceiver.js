@@ -10,7 +10,7 @@ function AllowanceReceiver(props) {
   const [isBalanceLow, setIsBalanceLow] = useState(
     Number(props.balance) <= 500 && Number(props.allowance) <= 500
   );
-  const { cosmosFeegrantApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     setIsBalanceLow(
@@ -25,7 +25,7 @@ function AllowanceReceiver(props) {
       return;
     }
     setLoading(true);
-    await props.updateUserAllowance(cosmosFeegrantApiClient);
+    await props.updateUserAllowance(apiClient);
     setLoading(false);
   };
 

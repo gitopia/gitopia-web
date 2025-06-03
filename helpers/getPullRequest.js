@@ -5,15 +5,12 @@ export default async function getPullRequest(
   pullIid
 ) {
   try {
-    const res = await apiClient.queryRepositoryPullRequest(
+    const res = await apiClient.gitopia.gitopia.gitopia.repositoryPullRequest({
       id,
       repositoryName,
-      pullIid
-    );
-    if (res.status === 200) {
-      let i = res.data.PullRequest;
-      return i;
-    }
+      pullIid,
+    });
+    return res.PullRequest;
   } catch (e) {
     console.error(e);
   }

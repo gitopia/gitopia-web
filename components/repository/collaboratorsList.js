@@ -34,12 +34,7 @@ function CollaboratorsList({
   const [isUpdating, setIsUpdating] = useState(false);
   const [startUpdate, setStartUpdate] = useState("");
   const [daoData, setDaoData] = useState(null);
-  const {
-    apiClient,
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-    cosmosGroupApiClient,
-  } = useApiClient();
+  const { apiClient } = useApiClient();
 
   const isDAORepository = repository?.owner?.type === "DAO";
 
@@ -87,21 +82,15 @@ function CollaboratorsList({
           return;
         }
 
-        const result = await props.updateDaoRepositoryCollaborator(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          cosmosGroupApiClient,
-          {
-            repositoryId: {
-              id: repoOwnerId,
-              name: repoName,
-            },
-            user: collabAddress,
-            role: collabRole,
-            groupId: daoData.group_id,
-          }
-        );
+        const result = await props.updateDaoRepositoryCollaborator(apiClient, {
+          repositoryId: {
+            id: repoOwnerId,
+            name: repoName,
+          },
+          user: collabAddress,
+          role: collabRole,
+          groupId: daoData.group_id,
+        });
 
         if (result?.proposalId) {
           // props.notify(
@@ -110,17 +99,12 @@ function CollaboratorsList({
           // );
         }
       } else {
-        await props.updateCollaborator(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          {
-            repoName: repoName,
-            repoOwner: repoOwnerId,
-            user: collabAddress,
-            role: collabRole,
-          }
-        );
+        await props.updateCollaborator(apiClient, {
+          repoName: repoName,
+          repoOwner: repoOwnerId,
+          user: collabAddress,
+          role: collabRole,
+        });
       }
     }
     if (refreshRepository) await refreshRepository();
@@ -138,21 +122,15 @@ function CollaboratorsList({
         return;
       }
 
-      const result = await props.updateDaoRepositoryCollaborator(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        cosmosGroupApiClient,
-        {
-          repositoryId: {
-            id: repoOwnerId,
-            name: repoName,
-          },
-          user: address,
-          role: role,
-          groupId: daoData.groupId,
-        }
-      );
+      const result = await props.updateDaoRepositoryCollaborator(apiClient, {
+        repositoryId: {
+          id: repoOwnerId,
+          name: repoName,
+        },
+        user: address,
+        role: role,
+        groupId: daoData.groupId,
+      });
 
       if (result?.proposalId) {
         // props.notify(
@@ -161,17 +139,12 @@ function CollaboratorsList({
         // );
       }
     } else {
-      await props.updateCollaborator(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        {
-          repoName: repoName,
-          repoOwner: repoOwnerId,
-          user: address,
-          role: role,
-        }
-      );
+      await props.updateCollaborator(apiClient, {
+        repoName: repoName,
+        repoOwner: repoOwnerId,
+        user: address,
+        role: role,
+      });
       props.notify("Updated collaborator role", "info");
     }
 
@@ -189,20 +162,14 @@ function CollaboratorsList({
         return;
       }
 
-      const result = await props.removeDaoRepositoryCollaborator(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        cosmosGroupApiClient,
-        {
-          repositoryId: {
-            id: repoOwnerId,
-            name: repoName,
-          },
-          user: address,
-          groupId: daoData.group_id,
-        }
-      );
+      const result = await props.removeDaoRepositoryCollaborator(apiClient, {
+        repositoryId: {
+          id: repoOwnerId,
+          name: repoName,
+        },
+        user: address,
+        groupId: daoData.group_id,
+      });
 
       if (result?.proposalId) {
         // props.notify(
@@ -211,16 +178,11 @@ function CollaboratorsList({
         // );
       }
     } else {
-      await props.removeCollaborator(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        {
-          repoName: repoName,
-          repoOwner: repoOwnerId,
-          user: address,
-        }
-      );
+      await props.removeCollaborator(apiClient, {
+        repoName: repoName,
+        repoOwner: repoOwnerId,
+        user: address,
+      });
       props.notify("Removed collaborator", "info");
     }
 

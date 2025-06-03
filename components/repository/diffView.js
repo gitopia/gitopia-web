@@ -38,8 +38,7 @@ function DiffView({
   const [loading, setLoading] = useState(false);
   const [scrollingToFile, setScrollingToFile] = useState(false);
   const paginationLimit = 10;
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const { apiClient } = useApiClient();
 
   const renderGutter = ({
     side,
@@ -179,21 +178,16 @@ function DiffView({
                     onClick={() => {
                       setLoading(true);
                       props
-                        .createComment(
-                          apiClient,
-                          cosmosBankApiClient,
-                          cosmosFeegrantApiClient,
-                          {
-                            repositoryId: baseRepoId,
-                            parentIid: parentIid,
-                            parent: "COMMENT_PARENT_PULLREQUEST",
-                            body: comment,
-                            diffHunk: diffHunk.content,
-                            path: filename,
-                            position: position,
-                            commentType: 15,
-                          }
-                        )
+                        .createComment(apiClient, {
+                          repositoryId: baseRepoId,
+                          parentIid: parentIid,
+                          parent: "COMMENT_PARENT_PULLREQUEST",
+                          body: comment,
+                          diffHunk: diffHunk.content,
+                          path: filename,
+                          position: position,
+                          commentType: 15,
+                        })
                         .then(() => {
                           setLoading(false);
                           setComment("");

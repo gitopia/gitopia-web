@@ -26,7 +26,7 @@ function WalletInfo(props) {
   const [accountLink, setAccountLink] = useState("");
   const [loadingChainInfo, setLoadingChainInfo] = useState(-1);
   const [tokenPrices, setTokenPrices] = useState({});
-  const { cosmosBankApiClient, ibcAppTransferApiClient } = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     async function fetchTokenPrices() {
@@ -47,8 +47,7 @@ function WalletInfo(props) {
 
     async function getWalletBalance(tokenPrices) {
       let a = await getBalanceInDollars(
-        cosmosBankApiClient,
-        ibcAppTransferApiClient,
+        apiClient,
         props.selectedAddress,
         tokenPrices
       );
@@ -59,7 +58,7 @@ function WalletInfo(props) {
     }
 
     async function getRewards(tokenPrices) {
-      let res = await getRewardToken(props.selectedAddress),
+      let res = await getRewardToken(apiClient, props.selectedAddress),
         totalDecayedAmount = 0,
         denom = process.env.NEXT_PUBLIC_CURRENCY_TOKEN;
       if (res) {

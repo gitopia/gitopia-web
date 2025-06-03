@@ -17,11 +17,14 @@ import {
   MsgRenameDao,
   MsgUpdateDaoAvatar,
 } from "@gitopia/gitopia-js/dist/types/gitopia/tx";
+import { cosmos, gitopia } from "@gitopia/gitopiajs";
+
+const { submitProposal } = cosmos.group.v1.MessageComposer.withTypeUrl;
+const { createDao: createDaoMsg } =
+  gitopia.gitopia.gitopia.MessageComposer.withTypeUrl;
 
 export const createDao = (
   apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
   {
     name = null,
     description = null,
@@ -41,14 +44,7 @@ export const createDao = (
 ) => {
   return async (dispatch, getState) => {
     if (
-      !(await validatePostingEligibility(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        dispatch,
-        getState,
-        "dao"
-      ))
+      !(await validatePostingEligibility(apiClient, dispatch, getState, "dao"))
     )
       return null;
 
@@ -68,8 +64,11 @@ export const createDao = (
     };
 
     try {
-      const message = await env.txClient.msgCreateDao(dao);
-      const result = await sendTransaction({ message })(dispatch, getState);
+      const message = await createDaoMsg(dao);
+      const result = await sendTransaction({ txClient: env.txClient, message })(
+        dispatch,
+        getState
+      );
 
       if (result && result.code === 0) {
         await getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
@@ -86,10 +85,7 @@ export const createDao = (
         });
 
         // Update user's balance after DAO creation
-        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-          dispatch,
-          getState
-        );
+        updateUserBalance(apiClient)(dispatch, getState);
 
         // Find the new DAO's address from the list of DAOs
         let newDaoAddress;
@@ -118,13 +114,15 @@ export const createDao = (
   };
 };
 
-export const getDaoDetailsForDashboard = (apiClient, cosmosGroupApiClient) => {
+export const getDaoDetailsForDashboard = (apiClient) => {
   return async (dispatch, getState) => {
     const { user } = getState();
     try {
-      const daoRes = await apiClient.queryDao(user.currentDashboard);
-      let dao = daoRes.data.dao;
-      const members = await getGroupMembers(cosmosGroupApiClient, dao.group_id);
+      const daoRes = await apiClient.gitopia.gitopia.gitopia.dao({
+        id: user.currentDashboard,
+      });
+      let dao = daoRes.dao;
+      const members = await getGroupMembers(apiClient, dao.group_id);
       dispatch({
         type: daoActions.SET_DAO,
         payload: {
@@ -144,19 +142,11 @@ export const getDaoDetailsForDashboard = (apiClient, cosmosGroupApiClient) => {
   };
 };
 
-export const updateDaoAvatar = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  cosmosGroupApiClient,
-  { id, groupId, url }
-) => {
+export const updateDaoAvatar = (apiClient, { id, groupId, url }) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(
         apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
         dispatch,
         getState,
         "update avatar"
@@ -165,9 +155,7 @@ export const updateDaoAvatar = (
       return null;
     const { env, wallet } = getState();
 
-    const groupInfo = await dispatch(
-      fetchGroupInfo(cosmosGroupApiClient, groupId)
-    );
+    const groupInfo = await dispatch(fetchGroupInfo(apiClient, groupId));
 
     const msg = MsgUpdateDaoAvatar.fromPartial({
       admin: groupInfo.admin,
@@ -178,7 +166,7 @@ export const updateDaoAvatar = (
     const msgValue = MsgUpdateDaoAvatar.encode(msg).finish();
     const msgTypeUrl = "/gitopia.gitopia.gitopia.MsgUpdateDaoAvatar";
 
-    const message = env.txClient.msgSubmitGroupProposal({
+    const message = submitProposal({
       groupPolicyAddress: groupInfo.admin,
       proposers: [wallet.selectedAddress],
       metadata: "",
@@ -189,8 +177,7 @@ export const updateDaoAvatar = (
     });
 
     return await handlePostingTransaction(
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
+      apiClient,
       dispatch,
       getState,
       message
@@ -198,18 +185,11 @@ export const updateDaoAvatar = (
   };
 };
 
-export const updateDaoDescription = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  { id, description }
-) => {
+export const updateDaoDescription = (apiClient, { id, description }) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(
         apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
         dispatch,
         getState,
         "update location"
@@ -224,8 +204,7 @@ export const updateDaoDescription = (
     };
     const message = await env.txClient.msgUpdateDaoDescription(payload);
     return await handlePostingTransaction(
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
+      apiClient,
       dispatch,
       getState,
       message
@@ -233,18 +212,11 @@ export const updateDaoDescription = (
   };
 };
 
-export const updateDaoLocation = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  { id, location }
-) => {
+export const updateDaoLocation = (apiClient, { id, location }) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(
         apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
         dispatch,
         getState,
         "update location"
@@ -259,8 +231,7 @@ export const updateDaoLocation = (
     };
     const message = await env.txClient.msgUpdateDaoLocation(payload);
     return await handlePostingTransaction(
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
+      apiClient,
       dispatch,
       getState,
       message
@@ -268,18 +239,11 @@ export const updateDaoLocation = (
   };
 };
 
-export const updateDaoWebsite = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  { id, website }
-) => {
+export const updateDaoWebsite = (apiClient, { id, website }) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(
         apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
         dispatch,
         getState,
         "update website"
@@ -294,8 +258,7 @@ export const updateDaoWebsite = (
     };
     const message = await env.txClient.msgUpdateDaoWebsite(payload);
     return await handlePostingTransaction(
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
+      apiClient,
       dispatch,
       getState,
       message
@@ -303,19 +266,11 @@ export const updateDaoWebsite = (
   };
 };
 
-export const renameDao = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  cosmosGroupApiClient,
-  { id, groupId, name }
-) => {
+export const renameDao = (apiClient, { id, groupId, name }) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(
         apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
         dispatch,
         getState,
         "update name"
@@ -324,9 +279,7 @@ export const renameDao = (
       return null;
     const { env, wallet } = getState();
 
-    const groupInfo = await dispatch(
-      fetchGroupInfo(cosmosGroupApiClient, groupId)
-    );
+    const groupInfo = await dispatch(fetchGroupInfo(apiClient, groupId));
 
     const msg = MsgRenameDao.fromPartial({
       admin: groupInfo.admin,
@@ -348,8 +301,7 @@ export const renameDao = (
     });
 
     return await handlePostingTransaction(
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
+      apiClient,
       dispatch,
       getState,
       message
@@ -357,10 +309,10 @@ export const renameDao = (
   };
 };
 
-export const fetchGroupInfo = (cosmosGroupApiClient, groupId) => {
+export const fetchGroupInfo = (apiClient, groupId) => {
   return async (dispatch) => {
     try {
-      const groupInfo = await getGroupInfo(cosmosGroupApiClient, groupId);
+      const groupInfo = await getGroupInfo(apiClient, groupId);
       return groupInfo;
     } catch (error) {
       console.error("Error fetching group info:", error);
@@ -370,13 +322,7 @@ export const fetchGroupInfo = (cosmosGroupApiClient, groupId) => {
   };
 };
 
-export const voteGroupProposal = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  proposalId,
-  option
-) => {
+export const voteGroupProposal = (apiClient, proposalId, option) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
     const VoteOption = (await import("cosmjs-types/cosmos/group/v1/types"))
@@ -396,13 +342,7 @@ export const voteGroupProposal = (
     }
     if (wallet.activeWallet) {
       try {
-        await setupTxClients(
-          apiClient,
-          cosmosBankApiClient,
-          cosmosFeegrantApiClient,
-          dispatch,
-          getState
-        );
+        await setupTxClients(apiClient, dispatch, getState);
         const { env } = getState();
 
         const send = {
@@ -412,10 +352,7 @@ export const voteGroupProposal = (
         };
         const message = await env.txClient.msgVoteGroup(send);
         const result = await sendTransaction({ message })(dispatch, getState);
-        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-          dispatch,
-          getState
-        );
+        updateUserBalance(apiClient)(dispatch, getState);
         if (result && result.code === 0) {
           if (result.code === 0) {
             dispatch(notify("Proposal Vote Submitted", "info"));
@@ -449,16 +386,14 @@ export const isCurrentUserEligibleToUpdate = (members) => {
 
 export const createGroupProposal = (
   apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
+  client,
   { groupPolicyAddress, messages, title, summary, proposers, exec }
 ) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(
         apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
+        client,
         dispatch,
         getState,
         "create proposal"
@@ -469,7 +404,7 @@ export const createGroupProposal = (
     const { env } = getState();
 
     try {
-      const message = await env.txClient.msgSubmitGroupProposal({
+      const message = submitProposal({
         groupPolicyAddress,
         proposers,
         title,
@@ -478,14 +413,14 @@ export const createGroupProposal = (
         exec,
       });
 
-      const result = await sendTransaction({ message })(dispatch, getState);
+      const result = await sendTransaction({
+        txClient: env.txClientCosmos,
+        message,
+      })(dispatch, getState);
 
       if (result && result.code === 0) {
         dispatch(notify("Proposal submitted successfully", "info"));
-        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-          dispatch,
-          getState
-        );
+        updateUserBalance(apiClient)(dispatch, getState);
       } else {
         dispatch(notify(result.rawLog, "error"));
       }
@@ -499,18 +434,11 @@ export const createGroupProposal = (
   };
 };
 
-export const executeGroupProposal = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  proposalId
-) => {
+export const executeGroupProposal = (apiClient, proposalId) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(
         apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
         dispatch,
         getState,
         "execute proposal"
@@ -526,13 +454,7 @@ export const executeGroupProposal = (
     }
 
     try {
-      await setupTxClients(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        dispatch,
-        getState
-      );
+      await setupTxClients(apiClient, dispatch, getState);
       console.log("txClient", env.txClient);
       const message = await env.txClient.msgExecGroup({
         proposalId: proposalId,
@@ -543,10 +465,7 @@ export const executeGroupProposal = (
 
       if (result && result.code === 0) {
         dispatch(notify("Proposal executed successfully", "info"));
-        updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-          dispatch,
-          getState
-        );
+        updateUserBalance(apiClient)(dispatch, getState);
       } else {
         dispatch(notify(result.rawLog, "error"));
       }

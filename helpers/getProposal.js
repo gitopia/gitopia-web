@@ -1,6 +1,6 @@
 import axios from "../helpers/axiosFetch";
 
-export default async function getProposal(apiNode, cosmosGovApiClient, id) {
+export default async function getProposal(apiNode, apiClient, id) {
   let proposer = "";
   let initialDeposit = "";
   const baseUrl =
@@ -22,18 +22,14 @@ export default async function getProposal(apiNode, cosmosGovApiClient, id) {
     });
 
   try {
-    const res = await cosmosGovApiClient.queryProposal(id);
-    if (res.status === 200) {
-      let u = res.data.proposal;
-      let obj = {
-        msg: u,
-        proposer: proposer,
-        initial_deposit: initialDeposit,
-      };
-      return obj;
-    } else {
-      return null;
-    }
+    const res = await apiClient.cosmos.gov.v1beta1.proposal({ proposalId: id });
+    let u = res.proposal;
+    let obj = {
+      msg: u,
+      proposer: proposer,
+      initial_deposit: initialDeposit,
+    };
+    return obj;
   } catch (e) {
     console.error(e);
   }

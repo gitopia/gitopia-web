@@ -14,6 +14,7 @@ import shrinkAddress from "../helpers/shrinkAddress";
 import { notify } from "reapop";
 import { useApiClient } from "../context/ApiClientContext";
 import initKeplr from "../helpers/keplr";
+import { useWalletClient } from "@cosmos-kit/react";
 
 function AutoLogin(props) {
   const [password, setPassword] = useState("");
@@ -28,62 +29,73 @@ function AutoLogin(props) {
   const [externalWalletMsg, setExternalWalletMsg] = useState(null);
   const inputEl = useRef();
   const okayRef = useRef();
-  const {
-    apiClient,
-    cosmosBankApiClient,
-    cosmosFeegrantApiClient,
-    apiUrl,
-    rpcUrl,
-  } = useApiClient();
+  const { apiClient } = useApiClient();
+  const { client, status, message } = useWalletClient();
 
   useEffect(() => {
-    async function setWallet() {
-      let lastWallet;
+    async function handleMetaMaskConnection() {
+      if (!client) return;
+
       try {
-        const data = localStorage["lastWallet"];
-        if (data) lastWallet = JSON.parse(data);
-      } catch (e) {
-        console.error(e);
-      }
-      if (lastWallet) {
-        if (!props.activeWallet) {
-          console.log("Last wallet found.. ", lastWallet.name);
-          if (lastWallet.isKeplr) {
-            await initKeplr(apiUrl, rpcUrl);
-            await props.unlockKeplrWallet(
-              apiClient,
-              cosmosBankApiClient,
-              cosmosFeegrantApiClient
-            );
-          } else if (lastWallet.isMetamask) {
-            await props.unlockMetamaskWallet(
-              apiClient,
-              cosmosBankApiClient,
-              cosmosFeegrantApiClient
-            );
-          } else if (lastWallet.isLeap) {
-            await props.unlockLeapWallet();
-          } else {
-            setWalletName(lastWallet.name);
-            setAddress(lastWallet.accounts[0].address);
-            let res = await props.setWallet(
-              apiClient,
-              cosmosBankApiClient,
-              cosmosFeegrantApiClient,
-              {
-                wallet: lastWallet,
-              }
-            );
-          }
-        } else {
-          console.log("Wallet active");
-        }
-      } else {
-        console.log("Last wallet not found");
+        await props.unlockMetamaskWallet(apiClient, client);
+      } catch (error) {
+        console.error("Failed to unlock MetaMask wallet:", error);
       }
     }
-    setWallet();
-  }, []);
+
+    handleMetaMaskConnection();
+  }, [client]);
+
+  // useEffect(() => {
+  //   async function setWallet() {
+  //     let lastWallet;
+  //     try {
+  //       const data = localStorage["lastWallet"];
+  //       if (data) lastWallet = JSON.parse(data);
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //     if (lastWallet) {
+  //       if (!props.activeWallet) {
+  //         console.log("Last wallet found.. ", lastWallet.name);
+  //         if (lastWallet.isKeplr) {
+  //           await initKeplr(apiUrl, rpcUrl);
+  //           await props.unlockKeplrWallet(
+  //             apiClient,
+  //             cosmosBankApiClient,
+  //             cosmosFeegrantApiClient
+  //           );
+  //         } else if (lastWallet.isMetamask && client) {
+  //           console.log("metamask client", client);
+  //           await props.unlockMetamaskWallet(
+  //             apiClient,
+  //             cosmosBankApiClient,
+  //             cosmosFeegrantApiClient,
+  //             client
+  //           );
+  //         } else if (lastWallet.isLeap) {
+  //           await props.unlockLeapWallet();
+  //         } else {
+  //           setWalletName(lastWallet.name);
+  //           setAddress(lastWallet.accounts[0].address);
+  //           let res = await props.setWallet(
+  //             apiClient,
+  //             cosmosBankApiClient,
+  //             cosmosFeegrantApiClient,
+  //             {
+  //               wallet: lastWallet,
+  //             }
+  //           );
+  //         }
+  //       } else {
+  //         console.log("Wallet active");
+  //       }
+  //     } else {
+  //       console.log("Last wallet not found");
+  //     }
+  //   }
+  //   setWallet();
+  // }, []);
 
   useEffect(() => {
     if (props.getPassword) {
@@ -115,24 +127,14 @@ function AutoLogin(props) {
   const unlockLocalWallet = async () => {
     let res;
     if (props.getPassword === "Unlock" || props.getPassword === "Approve") {
-      res = await props.unlockWallet(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        {
-          name: walletName,
-          password: password,
-        }
-      );
+      res = await props.unlockWallet(apiClient, {
+        name: walletName,
+        password: password,
+      });
     } else if (props.getPassword === "Download") {
       res = await props.downloadWallet(password);
     } else if (props.getPassword === "Connect") {
-      res = await props.unlockLedgerWallet(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        { name: walletName }
-      );
+      res = await props.unlockLedgerWallet(apiClient, { name: walletName });
       if (res?.message) {
         props.notify(res.message, "error");
         if (props.getPasswordPromise.reject) {
