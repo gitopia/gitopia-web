@@ -10,7 +10,6 @@ import {
 import pullRequestStateClass from "../../helpers/pullRequestStateClass";
 import mergePullRequestCheck from "../../helpers/mergePullRequestCheck";
 import getPullRequestMergePermission from "../../helpers/getPullRequestMergePermission";
-import getGitServerAuthorization from "../../helpers/getGitServerAuthStatus";
 import getDao from "../../helpers/getDao";
 import { useApiClient } from "../../context/ApiClientContext";
 import { useRouter } from "next/router";
@@ -135,16 +134,6 @@ function MergePullRequestView({
     );
 
     if (user && user.havePermission) {
-      let access = await getGitServerAuthorization(
-        apiClient,
-        props.selectedAddress
-      );
-      if (!access) {
-        setPullMergeAccessDialogShown(true);
-        setIsMerging(false);
-        return;
-      }
-
       const res = await props.mergePullRequest(
         apiClient,
         cosmosBankApiClient,
