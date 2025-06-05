@@ -422,7 +422,11 @@ function RepositoryView(props) {
       <Header />
       <div className="flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
-          <RepositoryHeader repository={repository} daoData={daoData} />
+          <RepositoryHeader
+            repository={repository}
+            daoData={daoData}
+            selectedAddress={props.selectedAddress}
+          />
           <RepositoryMainTabs
             repository={repository}
             active="code"

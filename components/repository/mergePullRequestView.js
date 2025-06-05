@@ -24,10 +24,6 @@ function MergePullRequestView({
   const [stateClass, setStateClass] = useState("");
   const [iconType, setIconType] = useState("check");
   const [message, setMessage] = useState("");
-  const [pullMergeAccess, setPullMergeAccess] = useState(false);
-  const [pullMergeAccessDialogShown, setPullMergeAccessDialogShown] =
-    useState(false);
-  const [isGrantingAccess, setIsGrantingAccess] = useState(false);
   const [requiresProposal, setRequiresProposal] = useState(false);
   const [isCreatingProposal, setIsCreatingProposal] = useState(false);
   const {
@@ -172,17 +168,6 @@ function MergePullRequestView({
     }
   }, [pullRequest, props.selectedAddress, requiresProposal]);
 
-  const refreshPullMergeAccess = async (mergeAfter = false) => {
-    setPullMergeAccess(
-      await getGitServerAuthorization(apiClient, props.selectedAddress)
-    );
-    if (mergeAfter) setTimeout(mergePull, 0);
-  };
-
-  useEffect(() => {
-    refreshPullMergeAccess();
-  }, [props.selectedAddress]);
-
   const getMergeButtonText = () => {
     if (isCreatingProposal) return "Creating Proposal...";
     if (isMerging) return "Merging...";
@@ -272,56 +257,6 @@ function MergePullRequestView({
             </button>
           </div>
         )}
-      </div>
-
-      <input
-        type="checkbox"
-        checked={pullMergeAccessDialogShown}
-        readOnly
-        className="modal-toggle"
-      />
-      <div className="modal">
-        <div className="modal-box max-w-sm">
-          <p>
-            Gitopia data server does not have repository merge access on behalf
-            of your account.
-          </p>
-          <p className="text-xs mt-4">Server Address:</p>
-          <p className="text-xs">
-            {process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS}
-          </p>
-          <div className="modal-action">
-            <label
-              className="btn btn-sm"
-              onClick={() => setPullMergeAccessDialogShown(false)}
-            >
-              Cancel
-            </label>
-            <button
-              className={`btn btn-sm btn-primary ${
-                isGrantingAccess ? "loading" : ""
-              }`}
-              onClick={async () => {
-                setIsGrantingAccess(true);
-                const res = await props.authorizeGitServer(
-                  apiClient,
-                  cosmosBankApiClient,
-                  cosmosFeegrantApiClient
-                );
-                setIsGrantingAccess(false);
-                if (res && res.code !== 0) {
-                  props.notify(res.rawLog, "error");
-                } else {
-                  refreshPullMergeAccess(true);
-                  setPullMergeAccessDialogShown(false);
-                }
-              }}
-              disabled={isGrantingAccess}
-            >
-              Grant Access
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

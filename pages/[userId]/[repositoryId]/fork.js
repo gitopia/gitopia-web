@@ -12,10 +12,8 @@ import useRepository from "../../../hooks/useRepository";
 import TextInput from "../../../components/textInput";
 import {
   forkRepository,
-  authorizeGitServer,
 } from "../../../store/actions/repository";
 import { useRouter } from "next/router";
-import getGitServerAuthorization from "../../../helpers/getGitServerAuthStatus";
 import { useApiClient } from "../../../context/ApiClientContext";
 
 export async function getStaticProps() {
@@ -63,9 +61,6 @@ function RepositoryInvokeForkView(props) {
   );
   const [isForking, setIsForking] = useState(false);
   const [forkingSuccess, setForkingSuccess] = useState(false);
-  const [forkingAccess, setForkingAccess] = useState(false);
-  const [grantAccessDialogShown, setGrantAccessDialogShown] = useState(false);
-  const [isGrantingAccess, setIsGrantingAccess] = useState(false);
 
   const sanitizedNameTest = new RegExp(/[^\w.-]/g);
   const router = useRouter();
@@ -125,14 +120,6 @@ function RepositoryInvokeForkView(props) {
   };
 
   const invokeForkRepository = async () => {
-    let forkingAccess = await getGitServerAuthorization(
-      apiClient,
-      props.selectedAddress
-    );
-    if (!forkingAccess) {
-      setGrantAccessDialogShown(true);
-      return;
-    }
     setIsForking(true);
     let validate = await validateRepository();
     console.log(validate);
@@ -163,11 +150,7 @@ function RepositoryInvokeForkView(props) {
   useEffect(() => {
     setForkRepositoryName(repository?.name || "");
     setForkRepositoryDescription(repository?.description || "");
-    if (repository?.owner?.address === props.currentDashboard) {
-      setOwnerId("");
-    } else {
-      setOwnerId(props.currentDashboard);
-    }
+    setOwnerId(props.currentDashboard);
     setForkOnlyOneBranchName(repository?.defaultBranch);
   }, [repository, props.currentDashboard]);
 
@@ -358,68 +341,6 @@ function RepositoryInvokeForkView(props) {
               </div>
             </div>
           </div>
-          <input
-            type="checkbox"
-            checked={grantAccessDialogShown}
-            readOnly
-            className="modal-toggle"
-          />
-          <div className="modal">
-            <div className="modal-box max-w-sm">
-              <p>
-                Gitopia data server does not have repository forking access on
-                behalf of your account.
-              </p>
-              <p className="text-xs mt-4">Server Address:</p>
-              <p className="text-xs">
-                {process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS}
-              </p>
-              <div className="modal-action">
-                <label
-                  className="btn btn-sm"
-                  onClick={() => {
-                    setGrantAccessDialogShown(false);
-                  }}
-                >
-                  Cancel
-                </label>
-                <button
-                  className={
-                    "btn btn-sm btn-primary" +
-                    (isGrantingAccess ? " loading" : "")
-                  }
-                  onClick={async () => {
-                    setIsGrantingAccess(true);
-                    const res = await props.authorizeGitServer(
-                      apiClient,
-                      cosmosBankApiClient,
-                      cosmosFeegrantApiClient
-                    );
-                    setIsGrantingAccess(false);
-                    if (res && res.code === 0) {
-                      // let access = await refreshForkingAccess();
-                      // console.log (props.selectedAddress,
-                      //   access,
-                      //   repository?.allowForking)
-                      // if (
-                      //   props.selectedAddress &&
-                      //   access &&
-                      //   repository?.allowForking
-                      // ) {
-                      //   setTimeout(invokeForkRepository,100);
-                      // }
-                      setGrantAccessDialogShown(false);
-                      invokeForkRepository();
-                    }
-                  }}
-                  disabled={isGrantingAccess}
-                  data-test="grant-access"
-                >
-                  Grant Access
-                </button>
-              </div>
-            </div>
-          </div>
         </main>
       </div>
       <Footer />
@@ -435,6 +356,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { forkRepository, authorizeGitServer })(
+export default connect(mapStateToProps, { forkRepository })(
   RepositoryInvokeForkView
 );

@@ -1592,31 +1592,14 @@ export const forkRepository = (
     if (repoBranch) {
       repository.branch = repoBranch;
     }
-    console.log("forking", repository);
 
     try {
-      const message = await env.txClient.msgInvokeForkRepository(repository);
+      const message = await env.txClient.msgForkRepository(repository);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
-        const log = JSON.parse(result.rawLog);
-        const taskId =
-          log[0].events[1].attributes[
-            log[0].events[1].attributes.findIndex((a) => a.key === "TaskId")
-          ].value;
-        try {
-          const res = await watchTask(apiClient, taskId);
-          if (res.state === "TASK_STATE_SUCCESS") {
             getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
             let url = "/" + ownerId + "/" + repository.forkRepositoryName;
             return { url };
-          } else if (res.state === "TASK_STATE_FAILURE") {
-            dispatch(notify(res.message, "error"));
-            return null;
-          }
-        } catch (e) {
-          dispatch(notify(e.message, "error"));
-          return null;
-        }
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
