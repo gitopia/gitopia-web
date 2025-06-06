@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { notify } from "reapop";
 import {
   updatePullRequestState,
-  authorizeGitServer,
   mergePullRequest,
   mergePullRequestForDao,
 } from "../../store/actions/repository";
@@ -271,7 +270,6 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   notify,
   updatePullRequestState,
-  authorizeGitServer,
   mergePullRequest,
   mergePullRequestForDao,
 })(MergePullRequestView);
