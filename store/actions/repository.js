@@ -1592,31 +1592,14 @@ export const forkRepository = (
     if (repoBranch) {
       repository.branch = repoBranch;
     }
-    console.log("forking", repository);
 
     try {
-      const message = await env.txClient.msgInvokeForkRepository(repository);
+      const message = await env.txClient.msgForkRepository(repository);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
-        const log = JSON.parse(result.rawLog);
-        const taskId =
-          log[0].events[1].attributes[
-            log[0].events[1].attributes.findIndex((a) => a.key === "TaskId")
-          ].value;
-        try {
-          const res = await watchTask(apiClient, taskId);
-          if (res.state === "TASK_STATE_SUCCESS") {
             getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
             let url = "/" + ownerId + "/" + repository.forkRepositoryName;
             return { url };
-          } else if (res.state === "TASK_STATE_FAILURE") {
-            dispatch(notify(res.message, "error"));
-            return null;
-          }
-        } catch (e) {
-          dispatch(notify(e.message, "error"));
-          return null;
-        }
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
@@ -2528,51 +2511,6 @@ export const toggleRepositoryForking = (
     try {
       const message = await env.txClient.msgToggleRepositoryForking(repo);
       const result = await sendTransaction({ message })(dispatch, getState);
-      if (result && result.code === 0) {
-        return result;
-      } else {
-        dispatch(notify(result.rawLog, "error"));
-        return null;
-      }
-    } catch (e) {
-      console.error(e);
-      dispatch(notify(e.message, "error"));
-    }
-  };
-};
-
-export const authorizeGitServer = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient
-) => {
-  return async (dispatch, getState) => {
-    if (
-      !(await validatePostingEligibility(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        dispatch,
-        getState,
-        "grant access"
-      ))
-    )
-      return null;
-
-    const { wallet, env } = getState();
-    try {
-      const message = await env.txClient.msgAuthorizeProvider({
-        creator: wallet.selectedAddress,
-        granter: wallet.selectedAddress,
-        provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
-        permission: 0,
-      });
-      const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance(cosmosBankApiClient, cosmosFeegrantApiClient)(
-        dispatch,
-        getState
-      );
-      console.log(result);
       if (result && result.code === 0) {
         return result;
       } else {

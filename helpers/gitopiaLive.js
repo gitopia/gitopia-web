@@ -289,6 +289,7 @@ function GitopiaLive(props) {
                     "/" +
                     props.repository.name
                   }
+                  repositoryId={props.repository.id}
                 />
               </div>
             ) : (
