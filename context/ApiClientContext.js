@@ -6,6 +6,7 @@ import { Api as CosmosFeegrantApi } from "../store/cosmos.feegrant.v1beta1/rest"
 import { Api as CosmosGovApi } from "../store/cosmos.gov.v1beta1/module/rest";
 import { Api as IbcAppTransferApi } from "../store/ibc.applications.transfer.v1/module/rest";
 import { Api as CosmosGroupApi } from "../store/cosmos.group.v1/rest";
+import { Api as StorageApi } from "../store/gitopia.gitopia.storage/rest";
 import selectProvider from "../helpers/providerSelector";
 import { setConfig } from "../store/actions/env";
 
@@ -22,6 +23,7 @@ export const ApiClientProvider = ({ children }) => {
   const [cosmosGovApiClient, setCosmosGovApiClient] = useState(null);
   const [ibcAppTransferApiClient, setIbcAppTransferApiClient] = useState(null);
   const [cosmosGroupApiClient, setCosmosGroupApiClient] = useState(null);
+  const [storageApiClient, setStorageApiClient] = useState(null);
   const [providerName, setProviderName] = useState(null);
   const [apiUrl, setApiUrl] = useState(null);
   const [rpcUrl, setRpcUrl] = useState(null);
@@ -52,6 +54,11 @@ export const ApiClientProvider = ({ children }) => {
       baseURL: apiNode,
     });
     setCosmosGroupApiClient(newCosmosGroupApiClient);
+
+    const newStorageApiClient = new StorageApi({
+      baseURL: apiNode,
+    });
+    setStorageApiClient(newStorageApiClient);
 
     setProviderName(name);
     setApiUrl(apiNode);
@@ -107,6 +114,7 @@ export const ApiClientProvider = ({ children }) => {
         cosmosGovApiClient,
         ibcAppTransferApiClient,
         cosmosGroupApiClient,
+        storageApiClient,
         updateApiClient,
       }}
     >
