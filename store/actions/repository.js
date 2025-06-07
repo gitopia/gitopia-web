@@ -1729,6 +1729,7 @@ export const createRelease = (
       draft,
       preRelease,
       isTag,
+      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
     };
 
     if (edit) {
@@ -1809,6 +1810,7 @@ export const createReleaseForDao = (
         draft,
         preRelease,
         isTag,
+        provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
       };
 
       // Encode the message
@@ -1897,6 +1899,7 @@ export const deleteRelease = (
     const release = {
       creator: wallet.selectedAddress,
       id: releaseId,
+      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
     };
 
     try {
