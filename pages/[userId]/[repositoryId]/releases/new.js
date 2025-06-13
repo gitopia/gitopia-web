@@ -31,6 +31,7 @@ import UploadDropZone from "@rpldy/upload-drop-zone";
 import getBranchSha from "../../../../helpers/getBranchSha";
 import useRepository from "../../../../hooks/useRepository";
 import { useApiClient } from "../../../../context/ApiClientContext";
+import { signUploadFileMessage } from "../../../../store/actions/user";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -48,6 +49,7 @@ const RepositoryReleaseView = ({
   createRelease,
   createReleaseForDao,
   createTag,
+  signUploadFileMessage,
 }) => {
   const router = useRouter();
   const { repository, refreshRepository } = useRepository();
@@ -70,6 +72,7 @@ const RepositoryReleaseView = ({
   const [daoInfo, setDaoInfo] = useState(null);
   const [requiresProposal, setRequiresProposal] = useState(false);
   const [postingRelease, setPostingRelease] = useState(false);
+  const [uploadSignature, setUploadSignature] = useState(null);
 
   useEffect(() => {
     const checkDaoStatus = async () => {
@@ -196,6 +199,29 @@ const RepositoryReleaseView = ({
     });
 
     return null;
+  };
+
+  const handleFileUpload = async (file) => {
+    const CryptoJS = (await import("crypto-js")).default;
+    const reader = new FileReader();
+    
+    reader.onload = async function(event) {
+      const binary = event.target.result;
+      const sha256 = CryptoJS.SHA256(CryptoJS.enc.Latin1.parse(binary)).toString();
+      
+      const signature = await signUploadFileMessage(
+        apiClient,
+        cosmosBankApiClient,
+        cosmosFeegrantApiClient,
+        file.name,
+        file.size,
+        sha256
+      );
+      
+      setUploadSignature(signature);
+    };
+    
+    reader.readAsBinaryString(file);
   };
 
   return (
@@ -440,9 +466,25 @@ const RepositoryReleaseView = ({
                     destination={{
                       url: process.env.NEXT_PUBLIC_OBJECTS_URL + "/upload",
                     }}
+                    params={{
+                      tx: uploadSignature
+                    }}
                   >
-                    <UploadDropZone className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-primary transition-colors duration-200">
-                      <UploadButton className="btn btn-ghost btn-sm">
+                    <UploadDropZone 
+                      className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-primary transition-colors duration-200"
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const file = e.dataTransfer.files[0];
+                        if (file) {
+                          handleFileUpload(file);
+                        }
+                      }}
+                    >
+                      <UploadButton 
+                        className="btn btn-ghost btn-sm"
+                        onFileSelect={(file) => handleFileUpload(file)}
+                      >
                         <span>Choose files or drag & drop here</span>
                       </UploadButton>
                     </UploadDropZone>
@@ -508,5 +550,5 @@ export default connect(
   (state) => ({
     selectedAddress: state.wallet.selectedAddress,
   }),
-  { createRelease, createReleaseForDao, createTag }
+  { createRelease, createReleaseForDao, createTag, signUploadFileMessage }
 )(RepositoryReleaseView);
