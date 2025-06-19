@@ -189,16 +189,22 @@ const RepositoryReleaseView = ({
         // Convert hash to hex string
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         const sha256 = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        const data = {
+          action: "new-release",
+          repositoryId: repository.id,
+          tagName,
+          name: items[0].file.name,
+          size: items[0].file.size,
+          sha256,
+        };
         
         // Generate signature
         const signature = await signUploadFileMessage(
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
-          repository.id,
-          items[0].file.name,
-          items[0].file.size,
-          sha256
+          data
         );
                 
         return {

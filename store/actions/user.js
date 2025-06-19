@@ -483,19 +483,9 @@ export const signUploadFileMessage = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
-  repositoryId,
-  name,
-  size,
-  sha256
+  data
 ) => {
   return async (dispatch, getState) => {
-    const data = {
-      // Any arbitrary object
-      repositoryId,
-      name,
-      size,
-      sha256,
-    };
     try {
       let TxRaw = (await import("cosmjs-types/cosmos/tx/v1beta1/tx")).TxRaw;
       let toBase64 = (await import("@cosmjs/encoding")).toBase64;
