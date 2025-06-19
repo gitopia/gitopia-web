@@ -25,6 +25,7 @@ import Uploady, {
   useItemProgressListener,
   useItemStartListener,
   useItemFinishListener,
+  useRequestPreSend,
 } from "@rpldy/uploady";
 import UploadButton from "@rpldy/upload-button";
 import UploadDropZone from "@rpldy/upload-drop-zone";
@@ -72,7 +73,6 @@ const RepositoryReleaseView = ({
   const [daoInfo, setDaoInfo] = useState(null);
   const [requiresProposal, setRequiresProposal] = useState(false);
   const [postingRelease, setPostingRelease] = useState(false);
-  const [uploadSignature, setUploadSignature] = useState(null);
 
   useEffect(() => {
     const checkDaoStatus = async () => {
@@ -178,7 +178,43 @@ const RepositoryReleaseView = ({
   useEffect(updateTags, [repository]);
 
   const LogProgress = () => {
-    useItemStartListener((item) => {
+    useRequestPreSend(async ({items, options}) => {
+      try {
+        // Read file as ArrayBuffer using modern async/await approach
+        const arrayBuffer = await items[0].file.arrayBuffer();
+        
+        // Calculate SHA256 using native Web Crypto API
+        const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+        
+        // Convert hash to hex string
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const sha256 = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        
+        // Generate signature
+        const signature = await signUploadFileMessage(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          repository.id,
+          items[0].file.name,
+          items[0].file.size,
+          sha256
+        );
+                
+        return {
+          options: {
+            params: {
+              signature: signature,
+            },
+          }
+        };
+      } catch (error) {
+        console.error('Error processing file:', error);
+        throw error;
+      }
+    });
+
+    useItemStartListener(async (item) => {
       console.log("started", item);
       setUploadingAttachment(item);
     });
@@ -199,29 +235,6 @@ const RepositoryReleaseView = ({
     });
 
     return null;
-  };
-
-  const handleFileUpload = async (file) => {
-    const CryptoJS = (await import("crypto-js")).default;
-    const reader = new FileReader();
-    
-    reader.onload = async function(event) {
-      const binary = event.target.result;
-      const sha256 = CryptoJS.SHA256(CryptoJS.enc.Latin1.parse(binary)).toString();
-      
-      const signature = await signUploadFileMessage(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        file.name,
-        file.size,
-        sha256
-      );
-      
-      setUploadSignature(signature);
-    };
-    
-    reader.readAsBinaryString(file);
   };
 
   return (
@@ -466,24 +479,12 @@ const RepositoryReleaseView = ({
                     destination={{
                       url: process.env.NEXT_PUBLIC_OBJECTS_URL + "/upload",
                     }}
-                    params={{
-                      tx: uploadSignature
-                    }}
                   >
                     <UploadDropZone 
                       className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-primary transition-colors duration-200"
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        const file = e.dataTransfer.files[0];
-                        if (file) {
-                          handleFileUpload(file);
-                        }
-                      }}
                     >
                       <UploadButton 
                         className="btn btn-ghost btn-sm"
-                        onFileSelect={(file) => handleFileUpload(file)}
                       >
                         <span>Choose files or drag & drop here</span>
                       </UploadButton>
