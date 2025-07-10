@@ -93,8 +93,8 @@ function DeleteRepository({
                     }
                   )
                   .then(async (res) => {
-                    if (res.code == 0) {
-                      if (onSuccess) await onSuccess;
+                    if (res && res.code == 0) {
+                      if (onSuccess) await onSuccess();
                       setConfirmDelete(false);
                       setIsDeleting(false);
                       setTypedData("");

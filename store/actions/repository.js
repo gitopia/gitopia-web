@@ -202,6 +202,7 @@ export const deleteRepository = (
       );
       if (result && result.code === 0) {
         getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+        return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
