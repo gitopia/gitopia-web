@@ -190,6 +190,7 @@ export const deleteRepository = (
         id: ownerId,
         name: name,
       },
+      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
     };
     const { env } = getState();
     try {
@@ -1585,7 +1586,6 @@ export const forkRepository = (
       creator: wallet.selectedAddress,
       repositoryId: { id: repoOwner, name: repoName },
       owner: ownerId,
-      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
       forkRepositoryName,
       forkRepositoryDescription,
     };
@@ -1597,9 +1597,9 @@ export const forkRepository = (
       const message = await env.txClient.msgForkRepository(repository);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
-            getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
-            let url = "/" + ownerId + "/" + repository.forkRepositoryName;
-            return { url };
+        getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+        let url = "/" + ownerId + "/" + repository.forkRepositoryName;
+        return { url };
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
@@ -1832,9 +1832,8 @@ export const createReleaseForDao = (
         ],
         exec: 0, // EXEC_UNSPECIFIED
         title: `Create Release: ${name || tagName}`,
-        summary: `Proposal to create release ${
-          name || tagName
-        } for repository ${repoOwner}/${repoName}`,
+        summary: `Proposal to create release ${name || tagName
+          } for repository ${repoOwner}/${repoName}`,
       };
 
       // Submit the proposal

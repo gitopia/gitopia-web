@@ -27,7 +27,7 @@ function DeleteRepository({
         <button
           className="btn btn-sm btn-block btn-accent btn-outline"
           onClick={() => setConfirmDelete(true)}
-          disabled={true}
+          disabled={false}
         >
           Delete
         </button>
