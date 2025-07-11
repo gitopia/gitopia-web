@@ -1,9 +1,7 @@
 import checkLatency from "./checkLatency";
 
-const selectStorageProvider = async (storageApiClient) => {
+const selectStorageProvider = async (providers) => {
     try {
-        const res = await storageApiClient.queryGetActiveProviders();
-        const providers = res.data.provider ?? [];
         if (providers.length === 0) {
             return null;
         }
@@ -20,3 +18,11 @@ const selectStorageProvider = async (storageApiClient) => {
 }
 
 export default selectStorageProvider;
+
+export const getSavedStorageProvider = () => {
+  const providerInfo = localStorage.getItem("storageProviderInfo");
+  if (providerInfo) {
+    return JSON.parse(providerInfo);
+  }
+  return null;
+};

@@ -3,9 +3,11 @@ import providers from "../providers.json";
 import { useApiClient } from "../context/ApiClientContext";
 import { notify } from "reapop";
 import { connect } from "react-redux";
+import { CircleStackIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
 
 const Providers = ({ selectedProvider, setSelectedProvider, notify }) => {
-  const { updateApiClient } = useApiClient();
+  const { updateApiClient, allStorageProviders, setActiveStorageProvider, storageProviderName } = useApiClient();
+  const [activeTab, setActiveTab] = useState("api");
   const [customProvider, setCustomProvider] = useState({
     name: "Custom",
     apiEndpoint: "",
@@ -86,66 +88,100 @@ const Providers = ({ selectedProvider, setSelectedProvider, notify }) => {
   };
 
   return (
-    <div className="flex flex-col p-4">
-      <div className="text-sm font-semibold mb-2">API Provider</div>
-      {providersWithCustom.map((provider, i) => (
-        <button
-          key={i}
-          onClick={() => chooseProvider(provider)}
-          className={`btn rounded-full px-4 mb-2 relative justify-start ${
-            selectedProvider &&
-            selectedProvider.apiEndpoint === provider.apiEndpoint
-              ? "btn-primary"
-              : "btn-ghost"
-          }`}
-        >
-          <div className="ml-2 mr-2">
-            <div className="text-xs text-left whitespace-nowrap">
-              {provider.name}
-              {selectedProvider &&
-                selectedProvider.apiEndpoint === provider.apiEndpoint && (
-                  <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
-                )}
-            </div>
-          </div>
-        </button>
-      ))}
-      <button
-        onClick={toggleCustomProviderInputs}
-        className="btn btn-sm btn-block bg-white text-black"
-      >
-        Set Custom Provider
-      </button>
-      {showCustomProviderInputs && (
-        <div className="mt-4">
-          <div className="text-sm font-semibold mb-2">Custom Provider</div>
-          <input
-            type="text"
-            placeholder="https://api.gitopia.com"
-            value={customProvider.apiEndpoint}
-            onChange={(e) =>
-              handleCustomProviderChange("apiEndpoint", e.target.value)
-            }
-            className="input input-bordered w-full mb-2"
-          />
-          <input
-            type="text"
-            placeholder="https://rpc.gitopia.com"
-            value={customProvider.rpcEndpoint}
-            onChange={(e) =>
-              handleCustomProviderChange("rpcEndpoint", e.target.value)
-            }
-            className="input input-bordered w-full mb-2"
-          />
-          {validationError && (
-            <div className="text-red-500 text-xs mb-2">{validationError}</div>
-          )}
+    <div className="flex flex-col p-4 w-64">
+      <div className="tabs">
+        <a className={`tab tab-lifted ${activeTab === 'api' ? 'tab-active' : ''}`} onClick={() => setActiveTab('api')}><GlobeAltIcon className="h-5 w-5 mr-2" /> API</a>
+        <a className={`tab tab-lifted ${activeTab === 'storage' ? 'tab-active' : ''}`} onClick={() => setActiveTab('storage')}><CircleStackIcon className="h-5 w-5 mr-2" /> Storage</a>
+      </div>
+
+      {activeTab === 'api' && (
+        <div className="pt-4">
+          {providersWithCustom.map((provider, i) => (
+            <button
+              key={i}
+              onClick={() => chooseProvider(provider)}
+              className={`btn rounded-full px-4 mb-2 relative justify-start w-full ${selectedProvider &&
+                selectedProvider.apiEndpoint === provider.apiEndpoint
+                ? "btn-primary"
+                : "btn-ghost"
+                }`}
+            >
+              <div className="ml-2 mr-2">
+                <div className="text-xs text-left whitespace-nowrap">
+                  {provider.name}
+                  {selectedProvider &&
+                    selectedProvider.apiEndpoint === provider.apiEndpoint && (
+                      <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
+                    )}
+                </div>
+              </div>
+            </button>
+          ))}
           <button
-            onClick={addCustomProvider}
-            className={"btn btn-primary btn-sm btn-block"}
+            onClick={toggleCustomProviderInputs}
+            className="btn btn-sm btn-block bg-white text-black mt-4"
           >
             Set Custom Provider
           </button>
+          {showCustomProviderInputs && (
+            <div className="mt-4">
+              <div className="text-sm font-semibold mb-2">Custom Provider</div>
+              <input
+                type="text"
+                placeholder="https://api.gitopia.com"
+                value={customProvider.apiEndpoint}
+                onChange={(e) =>
+                  handleCustomProviderChange("apiEndpoint", e.target.value)
+                }
+                className="input input-bordered w-full mb-2"
+              />
+              <input
+                type="text"
+                placeholder="https://rpc.gitopia.com"
+                value={customProvider.rpcEndpoint}
+                onChange={(e) =>
+                  handleCustomProviderChange("rpcEndpoint", e.target.value)
+                }
+                className="input input-bordered w-full mb-2"
+              />
+              {validationError && (
+                <div className="text-red-500 text-xs mb-2">{validationError}</div>
+              )}
+              <button
+                onClick={addCustomProvider}
+                className={"btn btn-primary btn-sm btn-block"}
+              >
+                Set Custom Provider
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'storage' && (
+        <div className="pt-4">
+          {allStorageProviders.map((provider, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                setActiveStorageProvider(provider);
+                notify("Storage Provider set successfully", "info");
+              }}
+              className={`btn rounded-full px-4 mb-2 relative justify-start w-full ${storageProviderName === provider.description
+                ? "btn-primary"
+                : "btn-ghost"
+                }`}
+            >
+              <div className="ml-2 mr-2">
+                <div className="text-xs text-left whitespace-nowrap">
+                  {provider.description}
+                  {storageProviderName === provider.description && (
+                    <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
+                  )}
+                </div>
+              </div>
+            </button>
+          ))}
         </div>
       )}
     </div>

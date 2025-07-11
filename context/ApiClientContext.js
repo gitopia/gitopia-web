@@ -8,7 +8,9 @@ import { Api as IbcAppTransferApi } from "../store/ibc.applications.transfer.v1/
 import { Api as CosmosGroupApi } from "../store/cosmos.group.v1/rest";
 import { Api as StorageApi } from "../store/gitopia.gitopia.storage/rest";
 import selectProvider from "../helpers/providerSelector";
-import selectStorageProvider from "../helpers/storageProviderSelector";
+import selectStorageProvider, {
+  getSavedStorageProvider,
+} from "../helpers/storageProviderSelector";
 import { setConfig } from "../store/actions/env";
 
 const ApiClientContext = createContext();
@@ -30,6 +32,8 @@ export const ApiClientProvider = ({ children }) => {
   const [rpcUrl, setRpcUrl] = useState(null);
   const [storageApiUrl, setStorageApiUrl] = useState(null);
   const [storageProviderAddress, setStorageProviderAddress] = useState(null);
+  const [storageProviderName, setStorageProviderName] = useState(null);
+  const [allStorageProviders, setAllStorageProviders] = useState([]);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
@@ -63,12 +67,7 @@ export const ApiClientProvider = ({ children }) => {
     });
     setStorageApiClient(newStorageApiClient);
 
-    selectStorageProvider(newStorageApiClient).then((provider) => {
-      if (provider) {
-        setStorageApiUrl(provider.apiUrl.replace(/\/$/, "")); // trim trailing slash
-        setStorageProviderAddress(provider.creator);
-      }
-    });
+    updateStorageProvider(newStorageApiClient);
 
     setProviderName(name);
     setApiUrl(apiNode);
@@ -82,6 +81,39 @@ export const ApiClientProvider = ({ children }) => {
     localStorage.setItem("providerInfo", providerInfo);
 
     dispatch(setConfig({ config: { apiNode, rpcNode } }));
+  };
+
+  const updateStorageProvider = async () => {
+    const res = await storageApiClient.queryActiveProviders();
+    const providers = res.data.provider ?? [];
+    setAllStorageProviders(providers);
+
+    if (providers.length > 0) {
+      const savedProvider = getSavedStorageProvider();
+      if (
+        savedProvider &&
+        providers.some((p) => p.creator === savedProvider.creator)
+      ) {
+        setActiveStorageProvider(savedProvider);
+        return savedProvider;
+      }
+
+      const provider = await selectStorageProvider(providers);
+      if (provider) {
+        setActiveStorageProvider(provider);
+        return provider;
+      }
+    }
+    return null;
+  };
+
+  const setActiveStorageProvider = (provider) => {
+    if (provider) {
+      setStorageApiUrl(provider.apiUrl.replace(/\/$/, "")); // trim trailing slash
+      setStorageProviderAddress(provider.creator);
+      setStorageProviderName(provider.description);
+      localStorage.setItem("storageProviderInfo", JSON.stringify(provider));
+    }
   };
 
   useEffect(() => {
@@ -127,7 +159,11 @@ export const ApiClientProvider = ({ children }) => {
         storageApiClient,
         storageApiUrl,
         storageProviderAddress,
+        storageProviderName,
+        allStorageProviders,
         updateApiClient,
+        updateStorageProvider,
+        setActiveStorageProvider,
       }}
     >
       {!loading && children}
