@@ -169,6 +169,7 @@ export const deleteRepository = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  storageProviderAddress,
   { name = null, ownerId = null }
 ) => {
   return async (dispatch, getState) => {
@@ -190,7 +191,7 @@ export const deleteRepository = (
         id: ownerId,
         name: name,
       },
-      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+      provider: storageProviderAddress,
     };
     const { env } = getState();
     try {
@@ -1690,6 +1691,7 @@ export const createRelease = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  storageProviderAddress,
   {
     repoOwner = null,
     repoName = null,
@@ -1703,7 +1705,7 @@ export const createRelease = (
     isTag = null,
     releaseId = null,
   },
-  edit = false
+  edit = false,
 ) => {
   return async (dispatch, getState) => {
     if (
@@ -1730,7 +1732,7 @@ export const createRelease = (
       draft,
       preRelease,
       isTag,
-      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+      provider: storageProviderAddress,
     };
 
     if (edit) {
@@ -1760,6 +1762,7 @@ export const createReleaseForDao = (
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
   cosmosGroupApiClient,
+  storageProviderAddress,
   {
     repoOwner = null,
     repoName = null,
@@ -1811,7 +1814,7 @@ export const createReleaseForDao = (
         draft,
         preRelease,
         isTag,
-        provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+        provider: storageProviderAddress,
       };
 
       // Encode the message
@@ -1880,6 +1883,7 @@ export const deleteRelease = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  storageProviderAddress,
   { releaseId }
 ) => {
   return async (dispatch, getState) => {
@@ -1899,7 +1903,7 @@ export const deleteRelease = (
     const release = {
       creator: wallet.selectedAddress,
       id: releaseId,
-      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+      provider: storageProviderAddress,
     };
 
     try {
@@ -2328,6 +2332,7 @@ export const mergePullRequest = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  storageProviderAddress,
   { repositoryId, iid, branchName }
 ) => {
   return async (dispatch, getState) => {
@@ -2348,7 +2353,7 @@ export const mergePullRequest = (
       creator: wallet.selectedAddress,
       repositoryId: repositoryId,
       iid,
-      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+      provider: storageProviderAddress,
     };
 
     try {
@@ -2390,6 +2395,7 @@ export const mergePullRequestForDao = (
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
   cosmosGroupApiClient,
+  storageProviderAddress,
   { repositoryId, iid, groupId }
 ) => {
   return async (dispatch, getState) => {
@@ -2421,7 +2427,7 @@ export const mergePullRequestForDao = (
         admin: groupInfo.admin,
         repositoryId: repositoryId,
         iid,
-        provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+        provider: storageProviderAddress,
       };
 
       // Encode the message

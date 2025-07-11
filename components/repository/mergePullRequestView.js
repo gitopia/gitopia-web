@@ -30,6 +30,7 @@ function MergePullRequestView({
     cosmosBankApiClient,
     cosmosFeegrantApiClient,
     cosmosGroupApiClient,
+    storageProviderAddress,
   } = useApiClient();
   const [daoInfo, setDaoInfo] = useState(null);
   const router = useRouter();
@@ -94,6 +95,7 @@ function MergePullRequestView({
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
         cosmosGroupApiClient,
+        storageProviderAddress,
         {
           repositoryId: repository.id,
           iid: pullRequest.iid,
@@ -133,6 +135,7 @@ function MergePullRequestView({
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
+        storageProviderAddress,
         {
           repositoryId: repository.id,
           iid: pullRequest.iid,
@@ -243,9 +246,8 @@ function MergePullRequestView({
         {pullRequest.state === "OPEN" && (
           <div className="sm:ml-auto flex-none">
             <button
-              className={`btn btn-xs sm:btn-sm btn-primary sm:ml-4 m-0.5 h-10 ${
-                isMerging || isCreatingProposal ? "loading" : ""
-              }`}
+              className={`btn btn-xs sm:btn-sm btn-primary sm:ml-4 m-0.5 h-10 ${isMerging || isCreatingProposal ? "loading" : ""
+                }`}
               data-test="merge-pr"
               onClick={mergePull}
               disabled={

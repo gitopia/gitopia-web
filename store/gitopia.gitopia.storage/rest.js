@@ -108,6 +108,19 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryActiveProviders
+         * @request GET:/gitopia/gitopia/storage/active-providers
+         */
+        this.queryActiveProviders = (params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/active-providers`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryChallenge
          * @summary Challenge queries a challenge by id
          * @request GET:/gitopia/gitopia/storage/challenge/{id}
@@ -127,6 +140,33 @@ export class Api extends HttpClient {
          */
         this.queryChallenges = (query, params = {}) => this.request({
             path: `/gitopia/gitopia/storage/challenges`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryCidReferenceCount
+         * @request GET:/gitopia/gitopia/storage/cid-reference-count/{cid}
+         */
+        this.queryCidReferenceCount = (cid, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/cid-reference-count/${cid}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryCidReferenceCounts
+         * @request GET:/gitopia/gitopia/storage/cid-reference-counts
+         */
+        this.queryCidReferenceCounts = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/cid-reference-counts`,
             method: "GET",
             query: query,
             format: "json",
@@ -257,6 +297,48 @@ export class Api extends HttpClient {
          */
         this.queryRepositoryReleaseAsset = (repositoryId, tag, name, params = {}) => this.request({
             path: `/gitopia/gitopia/storage/repository/${repositoryId}/release-asset/${tag}/${name}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRepositoryReleaseAssetsByRepositoryId
+         * @summary RepositoryReleaseAssetsByRepositoryId queries all release assets for a repository by repository id
+         * @request GET:/gitopia/gitopia/storage/repository/{repository_id}/release-assets
+         */
+        this.queryRepositoryReleaseAssetsByRepositoryId = (repositoryId, query, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/repository/${repositoryId}/release-assets`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRepositoryReleaseAssets
+         * @summary RepositoryReleaseAssets queries all release assets for a repository by repository id and tag
+         * @request GET:/gitopia/gitopia/storage/repository/{repository_id}/release-assets/{tag}
+         */
+        this.queryRepositoryReleaseAssets = (repositoryId, tag, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/repository/${repositoryId}/release-assets/${tag}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryTotalStorage
+         * @request GET:/gitopia/gitopia/storage/total-storage
+         */
+        this.queryTotalStorage = (params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/total-storage`,
             method: "GET",
             format: "json",
             ...params,

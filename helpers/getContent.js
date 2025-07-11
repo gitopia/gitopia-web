@@ -2,6 +2,7 @@ const validSha = new RegExp(/^[a-f0-9]{40}$/);
 import axios from "../helpers/axiosFetch";
 
 export default async function getContent(
+  storageApiUrl,
   repoId = null,
   commitSha = null,
   path = null,
@@ -16,7 +17,7 @@ export default async function getContent(
   const baseUrl =
     process.env.NODE_ENV === "development"
       ? "/api/content"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/content";
+      : storageApiUrl + "/content";
   let params = {
     repository_id: Number(repoId),
     ref_id: commitSha,

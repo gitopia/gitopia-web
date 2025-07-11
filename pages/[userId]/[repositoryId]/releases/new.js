@@ -68,6 +68,7 @@ const RepositoryReleaseView = ({
     cosmosBankApiClient,
     cosmosFeegrantApiClient,
     cosmosGroupApiClient,
+    storageProviderAddress,
   } = useApiClient();
   const [isDao, setIsDao] = useState(false);
   const [daoInfo, setDaoInfo] = useState(null);
@@ -116,6 +117,7 @@ const RepositoryReleaseView = ({
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
           cosmosGroupApiClient,
+          storageProviderAddress,
           {
             ...releaseData,
             groupId: daoInfo.group_id,
@@ -126,6 +128,7 @@ const RepositoryReleaseView = ({
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
+          storageProviderAddress,
           releaseData
         );
       }
@@ -178,14 +181,14 @@ const RepositoryReleaseView = ({
   useEffect(updateTags, [repository]);
 
   const LogProgress = () => {
-    useRequestPreSend(async ({items, options}) => {
+    useRequestPreSend(async ({ items, options }) => {
       try {
         // Read file as ArrayBuffer using modern async/await approach
         const arrayBuffer = await items[0].file.arrayBuffer();
-        
+
         // Calculate SHA256 using native Web Crypto API
         const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-        
+
         // Convert hash to hex string
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         const sha256 = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
@@ -198,7 +201,7 @@ const RepositoryReleaseView = ({
           size: items[0].file.size,
           sha256,
         };
-        
+
         // Generate signature
         const signature = await signUploadFileMessage(
           apiClient,
@@ -206,7 +209,7 @@ const RepositoryReleaseView = ({
           cosmosFeegrantApiClient,
           data
         );
-                
+
         return {
           options: {
             params: {
@@ -294,11 +297,10 @@ const RepositoryReleaseView = ({
                           type="text"
                           placeholder="v1.0.0"
                           data-test="tag-name"
-                          className={`w-full input input-sm input-bordered focus:outline-none ${
-                            tagName.length > 0
+                          className={`w-full input input-sm input-bordered focus:outline-none ${tagName.length > 0
                               ? "border-green-500"
                               : "border-pink-500"
-                          }`}
+                            }`}
                           value={tagName}
                           onChange={(e) => setTagName(e.target.value)}
                         />
@@ -316,9 +318,8 @@ const RepositoryReleaseView = ({
                       </div>
                       <div className="flex space-x-3">
                         <button
-                          className={`btn btn-primary btn-sm ${
-                            creatingTag ? "loading" : ""
-                          }`}
+                          className={`btn btn-primary btn-sm ${creatingTag ? "loading" : ""
+                            }`}
                           onClick={async () => {
                             setCreatingTag(true);
                             const res = await createTag(
@@ -348,7 +349,7 @@ const RepositoryReleaseView = ({
                             setTagName(
                               repository.tags.length
                                 ? repository.tags[repository.tags.length - 1]
-                                    .name
+                                  .name
                                 : ""
                             );
                             setNewTagOptionShown(false);
@@ -486,10 +487,10 @@ const RepositoryReleaseView = ({
                       url: process.env.NEXT_PUBLIC_OBJECTS_URL + "/upload",
                     }}
                   >
-                    <UploadDropZone 
+                    <UploadDropZone
                       className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-primary transition-colors duration-200"
                     >
-                      <UploadButton 
+                      <UploadButton
                         className="btn btn-ghost btn-sm"
                       >
                         <span>Choose files or drag & drop here</span>
@@ -503,9 +504,8 @@ const RepositoryReleaseView = ({
               {/* Actions */}
               <div className="flex justify-end">
                 <button
-                  className={`btn btn-primary ${
-                    postingRelease ? "loading" : ""
-                  }`}
+                  className={`btn btn-primary ${postingRelease ? "loading" : ""
+                    }`}
                   disabled={!title.trim() || postingRelease}
                   onClick={handleCreateRelease}
                   data-test="create-release"

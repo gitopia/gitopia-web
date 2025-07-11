@@ -27,6 +27,7 @@ import extensionMap from "../../../../helpers/extensionMap";
 import { AutoSizer, List } from "react-virtualized";
 import { createElement } from "react-syntax-highlighter";
 import atob from "../../../../helpers/atob";
+import { useApiClient } from "../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -80,6 +81,7 @@ function RepositoryTreeView(props) {
   const router = useRouter();
   const { repository } = useRepository();
   const { setErrorStatusCode } = useErrorStatus();
+  const { storageApiUrl } = useApiClient();
 
   const [entityList, setEntityList] = useState([]);
   const [hasMoreEntities, setHasMoreEntities] = useState(null);
@@ -187,10 +189,11 @@ function RepositoryTreeView(props) {
     if (typeof window !== "undefined") {
       setLoadingEntities(true);
       const res = await getContent(
+        storageApiUrl,
         repository.id,
         getBranchSha(branchName, repository.branches, repository.tags),
         repoPath.join("/"),
-        firstTime ? null : hasMoreEntities,
+        firstTime ? null : hasMoreEntities
       );
       if (res) {
         if (res.content) {
@@ -256,13 +259,14 @@ function RepositoryTreeView(props) {
             for (let i = 0; i < res.content.length; i++) {
               if (readmeRegex.test(res.content[i].name)) {
                 const readme = await getContent(
+                  storageApiUrl,
                   repository.id,
                   getBranchSha(
                     branchName,
                     repository.branches,
-                    repository.tags,
+                    repository.tags
                   ),
-                  res.content[i].name,
+                  res.content[i].name
                 );
 
                 if (readme) {
@@ -321,12 +325,13 @@ function RepositoryTreeView(props) {
 
   const downloadFile = async () => {
     const res = await getContent(
+      storageApiUrl,
       repository.id,
       getBranchSha(branchName, repository.branches, repository.tags),
       repoPath.join("/"),
       null,
       1,
-      true,
+      true
     );
     if (
       res?.content?.length &&

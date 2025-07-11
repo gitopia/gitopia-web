@@ -12,8 +12,12 @@ function DeleteRepository({
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [typedData, setTypedData] = useState("");
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    storageProviderAddress,
+  } = useApiClient();
 
   return (
     <div className="flex items-center">
@@ -87,6 +91,7 @@ function DeleteRepository({
                     apiClient,
                     cosmosBankApiClient,
                     cosmosFeegrantApiClient,
+                    storageProviderAddress,
                     {
                       ownerId: currentOwnerId,
                       name: repoName,

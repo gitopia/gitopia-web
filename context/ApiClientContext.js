@@ -8,6 +8,7 @@ import { Api as IbcAppTransferApi } from "../store/ibc.applications.transfer.v1/
 import { Api as CosmosGroupApi } from "../store/cosmos.group.v1/rest";
 import { Api as StorageApi } from "../store/gitopia.gitopia.storage/rest";
 import selectProvider from "../helpers/providerSelector";
+import selectStorageProvider from "../helpers/storageProviderSelector";
 import { setConfig } from "../store/actions/env";
 
 const ApiClientContext = createContext();
@@ -27,6 +28,8 @@ export const ApiClientProvider = ({ children }) => {
   const [providerName, setProviderName] = useState(null);
   const [apiUrl, setApiUrl] = useState(null);
   const [rpcUrl, setRpcUrl] = useState(null);
+  const [storageApiUrl, setStorageApiUrl] = useState(null);
+  const [storageProviderAddress, setStorageProviderAddress] = useState(null);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
@@ -59,6 +62,13 @@ export const ApiClientProvider = ({ children }) => {
       baseURL: apiNode,
     });
     setStorageApiClient(newStorageApiClient);
+
+    selectStorageProvider(newStorageApiClient).then((provider) => {
+      if (provider) {
+        setStorageApiUrl(provider.apiUrl);
+        setStorageProviderAddress(provider.creator);
+      }
+    });
 
     setProviderName(name);
     setApiUrl(apiNode);
@@ -115,6 +125,8 @@ export const ApiClientProvider = ({ children }) => {
         ibcAppTransferApiClient,
         cosmosGroupApiClient,
         storageApiClient,
+        storageApiUrl,
+        storageProviderAddress,
         updateApiClient,
       }}
     >

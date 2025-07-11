@@ -171,7 +171,7 @@ export default function Landing() {
   const [mobile, setMobile] = useState(false);
   const [isVisible, setVisible] = useState(true);
   const domRef = useRef();
-  const { apiClient } = useApiClient();
+  const { apiClient, storageApiUrl } = useApiClient();
 
   useEffect(() => {
     let domRefValue = null;
@@ -251,7 +251,7 @@ export default function Landing() {
       ) {
         setCommitDetail(commitHistory.commits[0]);
       }
-      const res = await getContent(repo.id, branchSha, null, null, 1000);
+      const res = await getContent(storageApiUrl, repo.id, branchSha, null, null, 1000);
       if (res) {
         if (res.content) {
           setEntityList(res.content);

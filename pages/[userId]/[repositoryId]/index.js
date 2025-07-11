@@ -239,7 +239,7 @@ function RepositoryView(props) {
   const [currentUserEditPermission, setCurrentUserEditPermission] =
     useState(false);
   const { isMobile } = useWindowSize();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, storageApiUrl } =
     useApiClient();
   const [daoData, setDaoData] = useState(null);
 
@@ -272,6 +272,7 @@ function RepositoryView(props) {
       );
     }
     const res = await getContent(
+      storageApiUrl,
       repository.id,
       branchSha,
       null,
@@ -287,6 +288,7 @@ function RepositoryView(props) {
         for (let i = 0; i < res.content.length; i++) {
           if (readmeRegex.test(res.content[i].name)) {
             const readme = await getContent(
+              storageApiUrl,
               repository.id,
               branchSha,
               res.content[i].name
