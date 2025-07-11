@@ -31,6 +31,7 @@ function MergePullRequestView({
     cosmosFeegrantApiClient,
     cosmosGroupApiClient,
     storageProviderAddress,
+    storageApiUrl,
   } = useApiClient();
   const [daoInfo, setDaoInfo] = useState(null);
   const router = useRouter();
@@ -58,6 +59,7 @@ function MergePullRequestView({
     }
     setIsMerging(true);
     const res = await mergePullRequestCheck(
+      storageApiUrl,
       pullRequest.iid,
       pullRequest.base.repositoryId,
       pullRequest.head.repositoryId,

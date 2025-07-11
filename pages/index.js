@@ -242,7 +242,7 @@ export default function Landing() {
         tags: tags,
       });
       let branchSha = getBranchSha(repo.defaultBranch, branches);
-      const commitHistory = await getCommitHistory(repo.id, branchSha, null, 1);
+      const commitHistory = await getCommitHistory(storageApiUrl, repo.id, branchSha, null, 1);
 
       if (
         commitHistory &&

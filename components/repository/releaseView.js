@@ -12,7 +12,7 @@ export default function ReleaseView({
   repository,
   latest = false,
   showEditControls = false,
-  onDelete = () => {},
+  onDelete = () => { },
   noLink = false,
   ...props
 }) {

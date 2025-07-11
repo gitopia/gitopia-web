@@ -335,6 +335,7 @@ function RepositoryView(props) {
         }
         loadEntities([], true, branchSha);
         const commitHistory = await getCommitHistory(
+          storageApiUrl,
           repository.id,
           branchSha,
           null,
@@ -622,7 +623,7 @@ function RepositoryView(props) {
                         {pluralize(
                           "person",
                           repository.collaborators.length +
-                            (repository.owner.type === "USER" ? 1 : 0)
+                          (repository.owner.type === "USER" ? 1 : 0)
                         )}
                       </span>
                     </span>

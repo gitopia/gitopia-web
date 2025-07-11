@@ -23,9 +23,9 @@ function DiffView({
   commentsAllowed = true,
   comments = [],
   refreshComments,
-  onViewTypeChange = () => {},
+  onViewTypeChange = () => { },
   showFile = null,
-  getCommentView = () => {},
+  getCommentView = () => { },
   isPullDiff = false,
   ...props
 }) {
@@ -38,7 +38,7 @@ function DiffView({
   const [loading, setLoading] = useState(false);
   const [scrollingToFile, setScrollingToFile] = useState(false);
   const paginationLimit = 10;
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, storageApiUrl } =
     useApiClient();
 
   const renderGutter = ({
@@ -329,6 +329,7 @@ function DiffView({
     let data;
     if (isPullDiff) {
       data = await getPullDiff(
+        storageApiUrl,
         baseRepoId,
         repoId,
         previousSha,
@@ -337,7 +338,7 @@ function DiffView({
         limit
       );
     } else {
-      data = await getDiff(repoId, currentSha, previousSha, offset, limit);
+      data = await getDiff(storageApiUrl, repoId, currentSha, previousSha, offset, limit);
     }
 
     let newFiles = [...oldFiles];

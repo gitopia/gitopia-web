@@ -69,6 +69,7 @@ const RepositoryReleaseView = ({
     cosmosFeegrantApiClient,
     cosmosGroupApiClient,
     storageProviderAddress,
+    storageApiUrl,
   } = useApiClient();
   const [isDao, setIsDao] = useState(false);
   const [daoInfo, setDaoInfo] = useState(null);
@@ -298,8 +299,8 @@ const RepositoryReleaseView = ({
                           placeholder="v1.0.0"
                           data-test="tag-name"
                           className={`w-full input input-sm input-bordered focus:outline-none ${tagName.length > 0
-                              ? "border-green-500"
-                              : "border-pink-500"
+                            ? "border-green-500"
+                            : "border-pink-500"
                             }`}
                           value={tagName}
                           onChange={(e) => setTagName(e.target.value)}
@@ -484,7 +485,7 @@ const RepositoryReleaseView = ({
 
                   <Uploady
                     destination={{
-                      url: process.env.NEXT_PUBLIC_OBJECTS_URL + "/upload",
+                      url: storageApiUrl + "/upload",
                     }}
                   >
                     <UploadDropZone

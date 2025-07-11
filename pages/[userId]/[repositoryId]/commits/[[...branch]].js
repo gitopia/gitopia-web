@@ -16,6 +16,7 @@ import CommitDetailRow from "../../../../components/repository/commitDetailRow";
 import getCommitHistory from "../../../../helpers/getCommitHistory";
 import { useErrorStatus } from "../../../../hooks/errorHandler";
 import pluralize from "../../../../helpers/pluralize";
+import { useApiClient } from "../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -38,6 +39,7 @@ function RepositoryCommitTreeView(props) {
   const [loadingMore, setLoadingMore] = useState(false);
   const [branchName, setBranchName] = useState("");
   const [commitsLength, setCommitsLength] = useState(0);
+  const { storageApiUrl } = useApiClient();
 
   useEffect(() => {
     async function initBranch() {
@@ -73,6 +75,7 @@ function RepositoryCommitTreeView(props) {
     if (branchName === "") return;
     setLoadingMore(true);
     const res = await getCommitHistory(
+      storageApiUrl,
       repository.id,
       getBranchSha(branchName, repository.branches, repository.tags),
       null,

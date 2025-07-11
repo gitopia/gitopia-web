@@ -14,10 +14,7 @@ export default async function getContent(
   if (!validSha.test(commitSha)) {
     return obj;
   }
-  const baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "/api/content"
-      : storageApiUrl + "/content";
+  const baseUrl = storageApiUrl + "/content";
   let params = {
     repository_id: Number(repoId),
     ref_id: commitSha,

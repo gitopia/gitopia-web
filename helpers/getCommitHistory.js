@@ -3,6 +3,7 @@ import axios from "../helpers/axiosFetch";
 const validSha = new RegExp(/^[a-f0-9]{40}$/);
 
 export default async function getCommitHistory(
+  storageApiUrl,
   repoId = null,
   initCommitSha = null,
   path = null,
@@ -14,7 +15,7 @@ export default async function getCommitHistory(
   if (!validSha.test(initCommitSha)) {
     return obj;
   }
-  let baseUrl = process.env.NEXT_PUBLIC_OBJECTS_URL + "/commits";
+  let baseUrl = storageApiUrl + "/commits";
   let params = {
     repository_id: Number(repoId),
     init_commit_id: initCommitSha,

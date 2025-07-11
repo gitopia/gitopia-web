@@ -43,12 +43,13 @@ function RepositoryPullFilesView(props) {
   const [viewType, setViewType] = useState("unified");
   const [allComments, setAllComments] = useState(props.comments || []);
   const [showFile, setShowFile] = useState(null);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, storageApiUrl } =
     useApiClient();
 
   useEffect(() => {
     async function initDiff() {
       const diff = await getPullDiffStats(
+        storageApiUrl,
         pullRequest.base.repositoryId,
         pullRequest.head.repositoryId,
         pullRequest.base.sha,

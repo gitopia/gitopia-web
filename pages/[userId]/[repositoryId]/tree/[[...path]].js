@@ -351,6 +351,7 @@ function RepositoryTreeView(props) {
       if (repository.branches.length) {
         loadEntities([], true);
         const commitHistory = await getCommitHistory(
+          storageApiUrl,
           repository.id,
           getBranchSha(branchName, repository.branches, repository.tags),
           repoPath.join("/"),

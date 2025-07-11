@@ -14,6 +14,7 @@ import CommitDetailRow from "../../../../components/repository/commitDetailRow";
 import DiffView from "../../../../components/repository/diffView";
 import getCommit from "../../../../helpers/getCommit";
 import { useErrorStatus } from "../../../../hooks/errorHandler";
+import { useApiClient } from "../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -30,6 +31,7 @@ function RepositoryCommitDiffView(props) {
   const router = useRouter();
   const { repository } = useRepository();
   const { setErrorStatusCode } = useErrorStatus();
+  const { storageApiUrl } = useApiClient();
 
   const [viewType, setViewType] = useState("unified");
 
@@ -44,9 +46,10 @@ function RepositoryCommitDiffView(props) {
   useEffect(() => {
     async function initDiff() {
       if (repository.id) {
-        const c = await getCommit(repository.id, router.query.commitId);
+        const c = await getCommit(storageApiUrl, repository.id, router.query.commitId);
         if (c && c.id) {
           const data = await getDiffStats(
+            storageApiUrl,
             Number(repository.id),
             router.query.commitId
           );
