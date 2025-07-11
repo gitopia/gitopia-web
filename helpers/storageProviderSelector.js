@@ -1,29 +1,29 @@
 import checkLatency from "./checkLatency";
 
 const selectStorageProvider = async (storageApiClient) => {
-  if (process.env.NODE_ENV === "production") {
-    try {
-      const res = await storageApiClient.queryGetActiveProviders();
-      const providers = res.data.provider ?? [];
-      if (providers.length === 0) {
-        return null;
-      }
+    if (process.env.NODE_ENV === "production") {
+        try {
+            const res = await storageApiClient.queryGetActiveProviders();
+            const providers = res.data.provider ?? [];
+            if (providers.length === 0) {
+                return null;
+            }
 
-      const latencies = await Promise.all(
-        providers.map((p) => checkLatency({ apiEndpoint: p.apiUrl }))
-      );
-      const lowestLatencyIndex = latencies.indexOf(Math.min(...latencies));
-      return providers[lowestLatencyIndex];
-    } catch (error) {
-      console.error("Failed to select storage provider:", error);
-      return null;
+            const latencies = await Promise.all(
+                providers.map((p) => checkLatency(p.apiUrl))
+            );
+            const lowestLatencyIndex = latencies.indexOf(Math.min(...latencies));
+            return providers[lowestLatencyIndex];
+        } catch (error) {
+            console.error("Failed to select storage provider:", error);
+            return null;
+        }
     }
-  }
 
-  return {
-    apiUrl: process.env.NEXT_PUBLIC_OBJECTS_URL,
-    creator: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
-  };
+    return {
+        apiUrl: process.env.NEXT_PUBLIC_OBJECTS_URL,
+        creator: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+    };
 };
 
 export default selectStorageProvider;
