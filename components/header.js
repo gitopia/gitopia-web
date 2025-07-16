@@ -68,6 +68,7 @@ function Header(props) {
     apiClient,
     cosmosBankApiClient,
     cosmosFeegrantApiClient,
+    storageApiClient,
     updateApiClient,
     updateStorageProvider,
   } = useApiClient();
@@ -110,7 +111,7 @@ function Header(props) {
     const provider = await selectProvider();
     setSelectedProvider(provider);
     updateApiClient(provider.name, provider.apiEndpoint, provider.rpcEndpoint);
-    updateStorageProvider();
+    updateStorageProvider(storageApiClient);
     props.notify("API provider reset successful", "info");
   };
 

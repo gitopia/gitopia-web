@@ -83,8 +83,8 @@ export const ApiClientProvider = ({ children }) => {
     dispatch(setConfig({ config: { apiNode, rpcNode } }));
   };
 
-  const updateStorageProvider = async () => {
-    const res = await storageApiClient.queryActiveProviders();
+  const updateStorageProvider = async (client) => {
+    const res = await client.queryActiveProviders();
     const providers = res.data.provider ?? [];
     setAllStorageProviders(providers);
 
