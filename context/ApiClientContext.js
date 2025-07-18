@@ -85,7 +85,7 @@ export const ApiClientProvider = ({ children }) => {
 
   const updateStorageProvider = async (client) => {
     const res = await client.queryActiveProviders();
-    const providers = res.data.provider ?? [];
+    const providers = res.data.providers ?? [];
     setAllStorageProviders(providers);
 
     if (providers.length > 0) {
@@ -109,7 +109,7 @@ export const ApiClientProvider = ({ children }) => {
 
   const setActiveStorageProvider = (provider) => {
     if (provider) {
-      setStorageApiUrl(provider.apiUrl.replace(/\/$/, "")); // trim trailing slash
+      setStorageApiUrl(provider.api_url.replace(/\/$/, "")); // trim trailing slash
       setStorageProviderAddress(provider.creator);
       setStorageProviderName(provider.description);
       localStorage.setItem("storageProviderInfo", JSON.stringify(provider));
