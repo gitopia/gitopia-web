@@ -111,7 +111,7 @@ export const ApiClientProvider = ({ children }) => {
     if (provider) {
       setStorageApiUrl(provider.api_url.replace(/\/$/, "")); // trim trailing slash
       setStorageProviderAddress(provider.creator);
-      setStorageProviderName(provider.description);
+      setStorageProviderName(provider.moniker);
       localStorage.setItem("storageProviderInfo", JSON.stringify(provider));
     }
   };

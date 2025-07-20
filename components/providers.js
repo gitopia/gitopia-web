@@ -167,15 +167,15 @@ const Providers = ({ selectedProvider, setSelectedProvider, notify }) => {
                 setActiveStorageProvider(provider);
                 notify("Storage Provider set successfully", "info");
               }}
-              className={`btn rounded-full px-4 mb-2 relative justify-start w-full ${storageProviderName === provider.description
+              className={`btn rounded-full px-4 mb-2 relative justify-start w-full ${storageProviderName === provider.moniker
                 ? "btn-primary"
                 : "btn-ghost"
                 }`}
             >
               <div className="ml-2 mr-2">
                 <div className="text-xs text-left whitespace-nowrap">
-                  {provider.description}
-                  {storageProviderName === provider.description && (
+                  {provider.moniker}
+                  {storageProviderName === provider.moniker && (
                     <span className="ml-2 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
                   )}
                 </div>
