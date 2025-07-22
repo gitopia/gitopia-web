@@ -239,7 +239,7 @@ function RepositoryView(props) {
   const [currentUserEditPermission, setCurrentUserEditPermission] =
     useState(false);
   const { isMobile } = useWindowSize();
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, storageApiUrl } =
     useApiClient();
   const [daoData, setDaoData] = useState(null);
 
@@ -272,6 +272,7 @@ function RepositoryView(props) {
       );
     }
     const res = await getContent(
+      storageApiUrl,
       repository.id,
       branchSha,
       null,
@@ -287,6 +288,7 @@ function RepositoryView(props) {
         for (let i = 0; i < res.content.length; i++) {
           if (readmeRegex.test(res.content[i].name)) {
             const readme = await getContent(
+              storageApiUrl,
               repository.id,
               branchSha,
               res.content[i].name
@@ -333,6 +335,7 @@ function RepositoryView(props) {
         }
         loadEntities([], true, branchSha);
         const commitHistory = await getCommitHistory(
+          storageApiUrl,
           repository.id,
           branchSha,
           null,
@@ -422,7 +425,11 @@ function RepositoryView(props) {
       <Header />
       <div className="flex-1 bg-repo-grad-v">
         <main className="container mx-auto max-w-screen-lg py-12 px-4">
-          <RepositoryHeader repository={repository} daoData={daoData} />
+          <RepositoryHeader
+            repository={repository}
+            daoData={daoData}
+            selectedAddress={props.selectedAddress}
+          />
           <RepositoryMainTabs
             repository={repository}
             active="code"
@@ -616,7 +623,7 @@ function RepositoryView(props) {
                         {pluralize(
                           "person",
                           repository.collaborators.length +
-                            (repository.owner.type === "USER" ? 1 : 0)
+                          (repository.owner.type === "USER" ? 1 : 0)
                         )}
                       </span>
                     </span>
@@ -734,7 +741,7 @@ function RepositoryView(props) {
                           "/" +
                           repository.name
                         }
-                        backups={repository.backups}
+                        repositoryId={repository.id}
                       />
                     </div>
                   ) : (

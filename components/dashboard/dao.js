@@ -3,7 +3,6 @@ import Link from "next/link";
 import { connect, useDispatch } from "react-redux";
 import DAOMembersList from "./DAOMembersList";
 import { createGroupProposal } from "../../store/actions/dao";
-import AccountGrants from "../account/grants";
 import GreetDao from "../greetDao";
 import { useApiClient } from "../../context/ApiClientContext";
 import getGroupInfo from "../../helpers/getGroupInfo";
@@ -372,13 +371,6 @@ function DaoDashboard({ dao = {}, advanceUser, ...props }) {
             selectedAddress={props.selectedAddress}
             onRefreshProposals={fetchProposals}
           />
-        );
-      case "authorizations":
-        return (
-          <div className="bg-base-200 p-4 rounded-lg">
-            <h3 className="text-xl font-semibold mb-4">Authorizations</h3>
-            <AccountGrants address={dao.address} />
-          </div>
         );
       default:
         return null;

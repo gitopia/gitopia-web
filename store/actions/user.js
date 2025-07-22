@@ -479,66 +479,13 @@ const updateWalletsList = async (
 //   };
 // };
 
-export const updateAddressGrant = (
-  apiClient,
-  cosmosBankApiClient,
-  cosmosFeegrantApiClient,
-  address,
-  permission,
-  allow
-) => {
-  return async (dispatch, getState) => {
-    try {
-      await setupTxClients(
-        apiClient,
-        cosmosBankApiClient,
-        cosmosFeegrantApiClient,
-        dispatch,
-        getState
-      );
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
-    const { wallet, env } = getState();
-    let fn = allow
-      ? env.txClient.msgAuthorizeProvider
-      : env.txClient.msgRevokeProviderPermission;
-    let provider =
-      permission === 1
-        ? process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS
-        : process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS;
-    const message = await fn({
-      creator: wallet.selectedAddress,
-      granter: address,
-      provider,
-      permission,
-    });
-    return await handlePostingTransaction(
-      cosmosBankApiClient,
-      cosmosFeegrantApiClient,
-      dispatch,
-      getState,
-      message
-    );
-  };
-};
-
 export const signUploadFileMessage = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
-  name,
-  size,
-  md5
+  data
 ) => {
   return async (dispatch, getState) => {
-    const data = {
-      // Any arbitrary object
-      name,
-      size,
-      md5,
-    };
     try {
       let TxRaw = (await import("cosmjs-types/cosmos/tx/v1beta1/tx")).TxRaw;
       let toBase64 = (await import("@cosmjs/encoding")).toBase64;

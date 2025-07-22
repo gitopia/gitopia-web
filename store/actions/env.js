@@ -121,7 +121,7 @@ export const signMessage = (
         {
           accountNumber: 0,
           sequence: 0,
-          chainId: info.default_node_info.network,
+          chainId: "gitopia",
         }
       );
       if (wallet.activeWallet?.isLedger) {

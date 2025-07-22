@@ -1,40 +1,51 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { notify } from "reapop";
+import { useApiClient } from "../../context/ApiClientContext";
 
-function CloneRepoInfo({ remoteUrl, backups, ...props }) {
+function CloneRepoInfo({ remoteUrl, repositoryId, ...props }) {
   const [tab, setTab] = useState("gitopia");
   const [cloneCmd, setCloneCmd] = useState("git clone " + remoteUrl);
-  const [isIpfsEnabled, setIsIpfsEnabled] = useState(false);
-  const [ipfsLatestCid, setIpfsLatestCid] = useState("");
-  const [isArweaveEnabled, setIsArweaveEnabled] = useState(false);
-  const [arweaveLatestCid, setArweaveLatestCid] = useState("");
+  const [storageInfo, setStorageInfo] = useState(null);
+  const { storageApiClient } = useApiClient();
 
   useEffect(() => {
     if (tab === "gitopia") {
       setCloneCmd("git clone " + remoteUrl);
-    } else if (tab === "ipfs") {
-      setCloneCmd("ipfs_clone " + remoteUrl);
-    } else if (tab === "arweave") {
-      setCloneCmd("arweave_clone " + remoteUrl);
     }
   }, [tab, remoteUrl]);
 
   useEffect(() => {
-    setIsIpfsEnabled(false);
-    setIsArweaveEnabled(false);
-    if (backups) {
-      backups.map((b) => {
-        if (b.store === "IPFS" && b.refs?.length) {
-          setIsIpfsEnabled(true);
-          setIpfsLatestCid(b.refs[b.refs.length - 1]);
-        } else if (b.store === "ARWEAVE" && b.refs?.length) {
-          setIsArweaveEnabled(true);
-          setArweaveLatestCid(b.refs[b.refs.length - 1]);
+    const fetchStorageInfo = async () => {
+      if (repositoryId && storageApiClient) {
+        try {
+          const response = await storageApiClient.queryRepositoryPackfile(repositoryId);
+          // log response
+          console.log(response);
+          setStorageInfo(response.data.packfile);
+        } catch (error) {
+          console.error("Error fetching storage info:", error);
         }
-      });
+      }
+    };
+
+    if (tab === "storage") {
+      fetchStorageInfo();
     }
-  }, [backups]);
+  }, [tab, repositoryId, storageApiClient]);
+
+  const formatSize = (bytes) => {
+    const units = ['B', 'KB', 'MB', 'GB'];
+    let size = bytes;
+    let unitIndex = 0;
+    
+    while (size >= 1024 && unitIndex < units.length - 1) {
+      size /= 1024;
+      unitIndex++;
+    }
+    
+    return `${size.toFixed(2)} ${units[unitIndex]}`;
+  };
 
   return (
     <div className="dropdown dropdown-end outline-none" tabIndex="0">
@@ -66,36 +77,17 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
           >
             Gitopia Server
           </button>
-          {isIpfsEnabled ? (
-            <button
-              className={
-                "tab tab-sm tab-bordered" +
-                (tab === "ipfs" ? " tab-active" : "")
-              }
-              onClick={() => {
-                setTab("ipfs");
-              }}
-            >
-              IPFS
-            </button>
-          ) : (
-            ""
-          )}
-          {isArweaveEnabled ? (
-            <button
-              className={
-                "tab tab-sm tab-bordered" +
-                (tab === "arweave" ? " tab-active" : "")
-              }
-              onClick={() => {
-                setTab("arweave");
-              }}
-            >
-              Arweave
-            </button>
-          ) : (
-            ""
-          )}
+          <button
+            className={
+              "tab tab-sm tab-bordered" +
+              (tab === "storage" ? " tab-active" : "")
+            }
+            onClick={() => {
+              setTab("storage");
+            }}
+          >
+            Storage Info
+          </button>
         </div>
         {tab === "gitopia" ? (
           <>
@@ -130,95 +122,80 @@ function CloneRepoInfo({ remoteUrl, backups, ...props }) {
                 Learn more
               </a>
             </div>
-          </>
-        ) : (
-          ""
-        )}
-        <div className="mt-6">
-          {tab === "ipfs" || tab === "arweave" ? (
-            <div className="relative w-full mt-4">
-              <div className="absolute left-0 top-0 btn btn-disabled btn-md">
-                {tab === "ipfs" ? (
-                  <img src="/ipfs-logo.png" />
-                ) : (
-                  <img src="/arweave-logo.png" />
-                )}
+            <div className="mt-6">
+              <div className="relative w-full mt-4">
+                <input
+                  rows={2}
+                  cols={120}
+                  name="repository-url"
+                  type="text"
+                  value={cloneCmd}
+                  readOnly={true}
+                  className="w-full input input-ghost input-md input-bordered py-2 pr-14"
+                />
+                <button
+                  className="absolute right-0 top-0 btn btn-ghost btn-md"
+                  onClick={(e) => {
+                    navigator.clipboard.writeText(cloneCmd);
+                    props.notify("Copied to clipboard", "info");
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
               </div>
-              <input
-                rows={2}
-                cols={120}
-                name="repository-url"
-                type="text"
-                value={tab === "ipfs" ? ipfsLatestCid : arweaveLatestCid}
-                readOnly={true}
-                className="w-full input input-ghost input-md input-bordered py-2 pl-14 pr-14"
-              />
-              <button
-                className="absolute right-0 top-0 btn btn-ghost btn-md"
-                onClick={(e) => {
-                  navigator.clipboard.writeText(
-                    tab === "ipfs" ? ipfsLatestCid : arweaveLatestCid
-                  );
-                  props.notify("Copied to clipboard", "info");
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                </svg>
-              </button>
             </div>
-          ) : (
-            ""
-          )}
-          {tab === "gitopia" ? (
-            <div className="relative w-full mt-4">
-              <input
-                rows={2}
-                cols={120}
-                name="repository-url"
-                type="text"
-                value={cloneCmd}
-                readOnly={true}
-                className="w-full input input-ghost input-md input-bordered py-2 pr-14"
-              />
-              <button
-                className="absolute right-0 top-0 btn btn-ghost btn-md"
-                onClick={(e) => {
-                  navigator.clipboard.writeText(cloneCmd);
-                  props.notify("Copied to clipboard", "info");
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                </svg>
-              </button>
-            </div>
-          ) : (
-            ""
-          )}
-        </div>
+          </>
+        ) : tab === "storage" ? (
+          <div className="mt-4">
+            {storageInfo ? (
+              <div className="bg-base-200 rounded-lg p-4 shadow space-y-4 border border-base-300">
+                <div className="flex items-center space-x-3 mb-2">
+                  <img src="/ipfs-logo.png" alt="IPFS" className="w-7 h-7" />
+                  <span className="text-lg font-semibold text-base-content">Storage Information</span>
+                </div>
+                <div className="divide-y divide-base-300">
+                  <div className="py-2 flex justify-between items-center">
+                    <span className="text-gray-500">Provider:</span>
+                    <span className="font-mono text-base-content truncate max-w-[220px]" title={storageInfo.creator}>
+                      {storageInfo.creator}
+                    </span>
+                  </div>
+                  <div className="py-2 flex justify-between items-center">
+                    <span className="text-gray-500">Size:</span>
+                    <span className="font-mono text-base-content">{formatSize(parseInt(storageInfo.size))}</span>
+                  </div>
+                  <div className="py-2 flex justify-between items-center">
+                    <span className="text-gray-500">IPFS CID:</span>
+                    <span className="font-mono text-xs truncate max-w-[220px]" title={storageInfo.cid}>
+                      {storageInfo.cid}
+                    </span>
+                  </div>
+                  <div className="py-2 flex justify-between items-center">
+                    <span className="text-gray-500">Root Hash:</span>
+                    <span className="font-mono text-xs truncate max-w-[220px]" title={storageInfo.root_hash}>
+                      {storageInfo.root_hash}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500">Loading storage information...</div>
+            )}
+          </div>
+        ) : null}
       </div>
     </div>
   );

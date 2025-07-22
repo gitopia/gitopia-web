@@ -1,6 +1,7 @@
 const validSha = new RegExp(/^[a-f0-9]{40}$/);
 
 export default async function getPullRequestCommits(
+  storageApiUrl,
   baseRepoId = null,
   headRepoId = null,
   baseBranch = null,
@@ -18,10 +19,7 @@ export default async function getPullRequestCommits(
     return obj;
   }
 
-  const baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "/api/pull/commits"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/commits";
+  const baseUrl = storageApiUrl + "/pull/commits";
   let params = {
     base_repository_id: Number(baseRepoId),
     head_repository_id: Number(headRepoId),

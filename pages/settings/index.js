@@ -2,7 +2,6 @@ import Head from "next/head";
 import Header from "../../components/header";
 import { connect } from "react-redux";
 import Footer from "../../components/footer";
-import AccountGrants from "../../components/account/grants";
 import Link from "next/link";
 
 export async function getStaticProps() {
@@ -46,18 +45,6 @@ function AccountView(props) {
                 {props.user.name ? props.user.name : props.user.username}
               </Link>
               <div className="">{props.user.creator}</div>
-            </div>
-          </div>
-          <div className="mt-12">
-            <div className="divide-y divide-grey">
-              <div
-                className="text-lg sm:text-2xl py-4 sm:py-6"
-                id="authorizations"
-              >
-                Authorizations
-              </div>
-
-              <AccountGrants address={props.selectedAddress} />
             </div>
           </div>
         </main>

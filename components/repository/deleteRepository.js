@@ -12,8 +12,12 @@ function DeleteRepository({
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [typedData, setTypedData] = useState("");
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
-    useApiClient();
+  const {
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    storageProviderAddress,
+  } = useApiClient();
 
   return (
     <div className="flex items-center">
@@ -27,7 +31,7 @@ function DeleteRepository({
         <button
           className="btn btn-sm btn-block btn-accent btn-outline"
           onClick={() => setConfirmDelete(true)}
-          disabled={true}
+          disabled={false}
         >
           Delete
         </button>
@@ -87,14 +91,15 @@ function DeleteRepository({
                     apiClient,
                     cosmosBankApiClient,
                     cosmosFeegrantApiClient,
+                    storageProviderAddress,
                     {
                       ownerId: currentOwnerId,
                       name: repoName,
                     }
                   )
                   .then(async (res) => {
-                    if (res.code == 0) {
-                      if (onSuccess) await onSuccess;
+                    if (res && res.code == 0) {
+                      if (onSuccess) await onSuccess();
                       setConfirmDelete(false);
                       setIsDeleting(false);
                       setTypedData("");

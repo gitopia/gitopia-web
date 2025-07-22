@@ -68,7 +68,9 @@ function Header(props) {
     apiClient,
     cosmosBankApiClient,
     cosmosFeegrantApiClient,
+    storageApiClient,
     updateApiClient,
+    updateStorageProvider,
   } = useApiClient();
   const [selectedProvider, setSelectedProvider] = useState({
     name: providerName,
@@ -109,6 +111,7 @@ function Header(props) {
     const provider = await selectProvider();
     setSelectedProvider(provider);
     updateApiClient(provider.name, provider.apiEndpoint, provider.rpcEndpoint);
+    updateStorageProvider(storageApiClient);
     props.notify("API provider reset successful", "info");
   };
 
@@ -505,7 +508,7 @@ function Header(props) {
                             {props.activeWallet.name}
                           </span>
                           {props.activeWallet.isLedger ||
-                          props.activeWallet.isKeplr ? (
+                            props.activeWallet.isKeplr ? (
                             <span
                               className={
                                 "ml-1 border rounded-md pl-1.5 pr-2 py-px relative -top-px " +

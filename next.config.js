@@ -63,55 +63,19 @@ module.exports = withBundleAnalyzer({
   },
   ...(process.env.NODE_ENV === "production"
     ? {
-        compiler: {
-          removeConsole: {
-            exclude: ["error"],
-          },
-          reactRemoveProperties: { properties: ["^data-test$"] },
+      compiler: {
+        removeConsole: {
+          exclude: ["error"],
         },
-      }
+        reactRemoveProperties: { properties: ["^data-test$"] },
+      },
+    }
     : {}),
   async rewrites() {
     return [
       {
         source: "/api/faucet",
         destination: process.env.NEXT_PUBLIC_FAUCET_URL,
-      },
-      {
-        source: "/api/objects/:path*",
-        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/objects/:path*",
-      },
-      {
-        source: "/api/diff",
-        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/diff",
-      },
-      {
-        source: "/api/pull/diff",
-        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/diff",
-      },
-      {
-        source: "/api/fork",
-        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/fork",
-      },
-      {
-        source: "/api/pull/merge",
-        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/merge",
-      },
-      {
-        source: "/api/pull/commits",
-        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/commits",
-      },
-      {
-        source: "/api/pull/check",
-        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/check",
-      },
-      {
-        source: "/api/content",
-        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/content",
-      },
-      {
-        source: "/api/commits/:path*",
-        destination: process.env.NEXT_PUBLIC_OBJECTS_URL + "/commits/:path*",
       }
     ];
   },

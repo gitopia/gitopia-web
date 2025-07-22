@@ -1,7 +1,7 @@
 const validSha = new RegExp(/^[a-f0-9]{40}$/);
 import axios from "../helpers/axiosFetch";
 
-export default async function getCommit(repoId = null, commitSha = null) {
+export default async function getCommit(storageApiUrl, repoId = null, commitSha = null) {
   let obj = {};
   if (repoId === null) {
     return obj;
@@ -9,10 +9,7 @@ export default async function getCommit(repoId = null, commitSha = null) {
   if (!validSha.test(commitSha)) {
     return obj;
   }
-  let baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "/api/commits"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/commits";
+  let baseUrl = storageApiUrl + "/commits";
   let params = {
     repository_id: Number(repoId),
   };
