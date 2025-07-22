@@ -1,5 +1,23 @@
 ## Changelog
 
+### Unreleased
+
+- Don't show proposals tab in user profile
+- Show treasury balance upto two decimal places only
+- Don't re-render header everytime we switch tab
+- Show link to parent repo in case of fork repo
+
+### v3.1.0 - 2nd Dec 2024
+
+- Add button for Member Dashboard in public view (if member) and public view in Member dashboard
+- Improve the dao dashboard and some other minor improvements
+- Fix overflow of voting chart in dao creation step
+- Sanitize dao names before posting the transaction
+
+### v3.0.0 - 2nd Dec 2024
+
+- Implement the new dao creation and proposal workflows
+
 ### v2.2.2 - 3rd Sep 2024
 
 - Fix missing apiClient in getUser and getRepository methods

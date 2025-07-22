@@ -53,10 +53,15 @@ function SupportOwner({ repository, ownerAddress, isMobile, ...props }) {
   useEffect(() => {
     async function initBalance() {
       const balance = await props.getBalance(cosmosBankApiClient, ownerAddress);
+      // In the initBalance function inside useEffect
       setOwnerBalance(
         props.advanceUser === true
-          ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-          : balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+          ? balance.toFixed(2) +
+              " " +
+              process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+          : (balance / 1000000).toFixed(2) +
+              " " +
+              process.env.NEXT_PUBLIC_CURRENCY_TOKEN
       );
     }
     initBalance();

@@ -60,32 +60,34 @@ export default function PublicTabs({
       ) : null}
 
       {showPeople ? (
-        <Link
-          href={hrefBase + "?tab=people"}
-          className={
-            "tab tab-md tab-bordered" +
-            (active === "people" ? " tab-active" : "")
-          }
-        >
-          <span className="icon mr-2">
-            <Users size={24} stroke="#ADBECB" />
-          </span>
-          <span>People</span>
-        </Link>
-      ) : null}
+        <>
+          <Link
+            href={hrefBase + "?tab=people"}
+            className={
+              "tab tab-md tab-bordered" +
+              (active === "people" ? " tab-active" : "")
+            }
+          >
+            <span className="icon mr-2">
+              <Users size={24} stroke="#ADBECB" />
+            </span>
+            <span>People</span>
+          </Link>
 
-      <Link
-        href={hrefBase + "?tab=proposals"}
-        className={
-          "tab tab-md tab-bordered" +
-          (active === "proposals" ? " tab-active" : "")
-        }
-      >
-        <span className="icon mr-2">
-          <FileText size={24} stroke="#ADBECB" />
-        </span>
-        <span>Proposals</span>
-      </Link>
+          <Link
+            href={hrefBase + "?tab=proposals"}
+            className={
+              "tab tab-md tab-bordered" +
+              (active === "proposals" ? " tab-active" : "")
+            }
+          >
+            <span className="icon mr-2">
+              <FileText size={24} stroke="#ADBECB" />
+            </span>
+            <span>Proposals</span>
+          </Link>
+        </>
+      ) : null}
 
       {showProposal ? (
         <Link
