@@ -14,8 +14,12 @@ function DaoTreasuryStats({ dao, className = "", getBalance, advanceUser }) {
       const balance = await getBalance(cosmosBankApiClient, dao.address);
       setTreasuryBalance(
         advanceUser === true
-          ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-          : balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+          ? balance.toFixed(2) +
+              " " +
+              process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+          : (balance / 1000000).toFixed(2) +
+              " " +
+              process.env.NEXT_PUBLIC_CURRENCY_TOKEN
       );
     }
     initBalance();
