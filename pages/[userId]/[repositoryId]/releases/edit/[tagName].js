@@ -61,7 +61,7 @@ function RepositoryReleaseEditView(props) {
   const [uploadingAttachment, setUploadingAttachment] = useState({ file: {} });
   const [newTagOptionShown, setNewTagOptionShown] = useState(false);
   const [creatingTag, setCreatingTag] = useState(false);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, storageProviderAddress } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, storageProviderAddress, storageApiUrl } =
     useApiClient();
 
   const validateIssue = () => {
@@ -434,7 +434,7 @@ function RepositoryReleaseEditView(props) {
                 <div>
                   <Uploady
                     destination={{
-                      url: process.env.NEXT_PUBLIC_OBJECTS_URL + "/upload",
+                      url: storageApiUrl + "/upload",
                     }}
                   >
                     <UploadDropZone
