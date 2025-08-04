@@ -1744,7 +1744,48 @@ export const createRelease = (
         ? await env.txClient.msgUpdateRelease(release)
         : await env.txClient.msgCreateRelease(release);
       const result = await sendTransaction({ message })(dispatch, getState);
+
       if (result && result.code === 0) {
+        // If there are attachments, poll for queryReleaseAssetsUpdateProposal and execute msgApproveReleaseAssetsUpdate
+        if (attachments && attachments.length > 0) {
+          // Poll for the proposal
+          let proposal;
+          const maxRetries = 15; // 15 seconds max wait time
+          let retries = 0;
+
+          while (retries < maxRetries) {
+            try {
+              proposal = await apiClient.queryReleaseAssetsUpdateProposal(repoOwner, tagName, wallet.selectedAddress);
+              if (proposal && proposal.id) {
+                break;
+              }
+            } catch (e) {
+              console.log("Proposal not found yet, retrying...");
+            }
+
+            retries++;
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+          }
+
+          // If we found the proposal, approve it
+          if (proposal && proposal.id) {
+            const approveMessage = await env.txClient.msgApproveReleaseAssetsUpdate({
+              creator: wallet.selectedAddress,
+              id: proposal.id
+            });
+
+            const approveResult = await sendTransaction({ message: approveMessage })(dispatch, getState);
+
+            if (approveResult && approveResult.code === 0) {
+              console.log("Release assets update proposal approved");
+            } else {
+              dispatch(notify(approveResult.rawLog, "error"));
+            }
+          } else {
+            dispatch(notify("Timeout waiting for release assets update proposal", "error"));
+          }
+        }
+
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
@@ -1862,6 +1903,52 @@ export const createReleaseForDao = (
             "info"
           )
         );
+
+        // If there are attachments, poll for queryReleaseAssetsUpdateProposal and execute msgApproveReleaseAssetsUpdate
+        if (attachments && attachments.length > 0) {
+          // Poll for the proposal
+          let proposal;
+          const maxRetries = 15; // 15 seconds max wait time
+          let retries = 0;
+
+          while (retries < maxRetries) {
+            try {
+              proposal = await apiClient.queryReleaseAssetsUpdateProposal(repoOwner, tagName, wallet.selectedAddress);
+              if (proposal && proposal.id) {
+                break;
+              }
+            } catch (e) {
+              console.log("Proposal not found yet, retrying...");
+            }
+
+            retries++;
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+          }
+
+          // If we found the proposal, approve it
+          if (proposal && proposal.id) {
+            const approveMessage = await env.txClient.msgApproveReleaseAssetsUpdate({
+              creator: wallet.selectedAddress,
+              id: proposal.id
+            });
+
+            const approveResult = await sendTransaction({ message: approveMessage })(dispatch, getState);
+
+            if (approveResult && approveResult.code === 0) {
+              console.log("Release assets update proposal approved");
+              dispatch(
+                notify(
+                  `Release assets update proposal approved.`,
+                  "success"
+                )
+              );
+            } else {
+              dispatch(notify(approveResult.rawLog, "error"));
+            }
+          } else {
+            dispatch(notify("Timeout waiting for release assets update proposal", "error"));
+          }
+        }
 
         return {
           proposalId,
@@ -2398,14 +2485,14 @@ export const mergePullRequest = (
                 dispatch(notify(batchResult.rawLog, "error"));
                 reject(new Error(batchResult.rawLog));
               }
-            } else if (retries < 10) {
+            } else if (retries < 15) {
               // Retry after 1 second
               setTimeout(() => pollProposal(resolve, reject, retries + 1), 1000);
             } else {
               reject(new Error("Timeout waiting for packfile update proposal"));
             }
           } catch (error) {
-            if (retries < 10) {
+            if (retries < 15) {
               setTimeout(() => pollProposal(resolve, reject, retries + 1), 1000);
             } else {
               reject(error);
