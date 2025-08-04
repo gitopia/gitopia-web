@@ -2360,25 +2360,62 @@ export const mergePullRequest = (
       const message = await env.txClient.msgInvokeMergePullRequest(mergePull);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
-        // return result;
-        const log = JSON.parse(result.rawLog);
-        const taskId =
-          log[0].events[1].attributes[
-            log[0].events[1].attributes.findIndex((a) => a.key === "TaskId")
-          ].value;
-        try {
-          const res = await watchTask(apiClient, taskId);
-          if (res.state === "TASK_STATE_SUCCESS") {
-            getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
-            return res;
-          } else if (res.state === "TASK_STATE_FAILURE") {
-            dispatch(notify(res.message, "error"));
-            return null;
+        const pollProposal = async (resolve, reject, retries = 0) => {
+          try {
+            const proposalRes = await apiClient.queryPackfileUpdateProposal(
+              repositoryId,
+              wallet.selectedAddress
+            );
+
+            if (proposalRes.data && proposalRes.data.id) {
+              // Proposal found, execute batch transaction
+              const proposalId = proposalRes.data.id;
+
+              // Create approve message
+              const approveMsg = await env.txClient.msgApproveRepositoryPackfileUpdate({
+                creator: wallet.selectedAddress,
+                id: proposalId
+              });
+
+              // Create merge message
+              const mergeMsg = await env.txClient.msgMergePullRequest({
+                creator: wallet.selectedAddress,
+                repositoryId: repositoryId,
+                pullRequestIid: iid,
+                mergeCommitSha: proposalRes.data.mergeCommitSha,
+                packfileCid: proposalRes.data.packfileCid,
+              });
+
+              // Execute batch transaction
+              const batchResult = await sendTransaction({
+                message: [approveMsg, mergeMsg]
+              })(dispatch, getState);
+
+              if (batchResult && batchResult.code === 0) {
+                getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+                resolve(batchResult);
+              } else {
+                dispatch(notify(batchResult.rawLog, "error"));
+                reject(new Error(batchResult.rawLog));
+              }
+            } else if (retries < 10) {
+              // Retry after 1 second
+              setTimeout(() => pollProposal(resolve, reject, retries + 1), 1000);
+            } else {
+              reject(new Error("Timeout waiting for packfile update proposal"));
+            }
+          } catch (error) {
+            if (retries < 10) {
+              setTimeout(() => pollProposal(resolve, reject, retries + 1), 1000);
+            } else {
+              reject(error);
+            }
           }
-        } catch (e) {
-          dispatch(notify(e.message, "error"));
-          return null;
-        }
+        };
+
+        return new Promise((resolve, reject) => {
+          pollProposal(resolve, reject);
+        });
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
