@@ -103,7 +103,6 @@ function MergePullRequestView({
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
         cosmosGroupApiClient,
-        storageApiClient,
         storageProviderAddress,
         {
           repositoryId: repository.id,

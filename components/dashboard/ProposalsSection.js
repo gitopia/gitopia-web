@@ -199,10 +199,10 @@ const ProposalCard = ({
                     vote.option === "VOTE_OPTION_YES"
                       ? "text-success"
                       : vote.option === "VOTE_OPTION_NO"
-                      ? "text-error"
-                      : vote.option === "VOTE_OPTION_NO_WITH_VETO"
-                      ? "text-warning"
-                      : "text-muted"
+                        ? "text-error"
+                        : vote.option === "VOTE_OPTION_NO_WITH_VETO"
+                          ? "text-warning"
+                          : "text-muted"
                   }
                 >
                   {vote.option.replace("VOTE_OPTION_", "")}
@@ -266,9 +266,8 @@ const ProposalFilters = ({ onFilter, activeFilter }) => (
       <button
         key={filter}
         onClick={() => onFilter(filter.toLowerCase())}
-        className={`btn btn-sm ${
-          activeFilter === filter.toLowerCase() ? "btn-primary" : "btn-ghost"
-        }`}
+        className={`btn btn-sm ${activeFilter === filter.toLowerCase() ? "btn-primary" : "btn-ghost"
+          }`}
       >
         {filter}
       </button>
@@ -347,6 +346,7 @@ export default function ProposalsSection({
     cosmosBankApiClient,
     cosmosFeegrantApiClient,
     cosmosGroupApiClient,
+    storageApiClient,
   } = useApiClient();
   const [isExecuting, setIsExecuting] = useState(false);
   const dispatch = useDispatch();
@@ -405,7 +405,7 @@ export default function ProposalsSection({
     }
   }, [proposals, cosmosGroupApiClient]);
 
-  const handleExecuteProposal = async (proposalId) => {
+  const handleExecuteProposal = async (proposal) => {
     setIsExecuting(true);
     try {
       const result = await dispatch(
@@ -413,7 +413,8 @@ export default function ProposalsSection({
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
-          proposalId
+          storageApiClient,
+          proposal
         )
       );
 
@@ -519,13 +520,14 @@ export default function ProposalsSection({
             setSelectedProposal(null);
           }}
           onVote={onVote}
-          onExecute={() => handleExecuteProposal(selectedProposal.id)}
+          onExecute={() => handleExecuteProposal(selectedProposal)}
           isExecuting={isExecuting}
           groupInfo={groupInfo}
           policyInfo={policyInfo}
           selectedAddress={selectedAddress}
           votes={proposalVotes[selectedProposal.id]}
           cosmosGroupApiClient={cosmosGroupApiClient}
+          storageApiClient={storageApiClient}
         />
       )}
     </div>

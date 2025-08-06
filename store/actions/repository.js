@@ -2521,7 +2521,6 @@ export const mergePullRequestForDao = (
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
   cosmosGroupApiClient,
-  storageApiClient,
   storageProviderAddress,
   { repositoryId, iid, groupId, baseCommitSha }
 ) => {

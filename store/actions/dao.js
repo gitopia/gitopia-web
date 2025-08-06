@@ -8,11 +8,10 @@ import { getUserDetailsForSelectedAddress, setCurrentDashboard } from "./user";
 import { userActions, daoActions } from "./actionTypes";
 import { validatePostingEligibility } from "./repository";
 import { updateUserBalance } from "./wallet";
-import { MemberRole } from "@gitopia/gitopia-js/dist/types/gitopia/member";
 import getUserDaoAll from "../../helpers/getUserDaoAll";
 import getGroupMembers from "../../helpers/getGroupMembers";
 import getGroupInfo from "../../helpers/getGroupInfo";
-import { MsgUpdateGroupMembers, Exec } from "cosmjs-types/cosmos/group/v1/tx";
+import { Exec } from "cosmjs-types/cosmos/group/v1/tx";
 import {
   MsgRenameDao,
   MsgUpdateDaoAvatar,
@@ -503,7 +502,8 @@ export const executeGroupProposal = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
-  proposalId
+  storageApiClient,
+  proposal
 ) => {
   return async (dispatch, getState) => {
     if (
@@ -533,13 +533,16 @@ export const executeGroupProposal = (
         dispatch,
         getState
       );
-      console.log("txClient", env.txClient);
-      const message = await env.txClient.msgExecGroup({
-        proposalId: proposalId,
+
+      const execMsg = await env.txClient.msgExecGroup({
+        proposalId: proposal.id,
         executor: wallet.selectedAddress,
       });
 
-      const result = await sendTransaction({ message })(dispatch, getState);
+      const result = await sendTransaction({ message: execMsg })(
+        dispatch,
+        getState
+      );
 
       if (result && result.code === 0) {
         dispatch(notify("Proposal executed successfully", "info"));
@@ -547,6 +550,94 @@ export const executeGroupProposal = (
           dispatch,
           getState
         );
+
+        const isMergePullRequestProposal = proposal.messages.some(
+          (msg) =>
+            msg["@type"] ===
+            "/gitopia.gitopia.gitopia.MsgInvokeDaoMergePullRequest"
+        );
+
+        if (isMergePullRequestProposal) {
+          const mergeMsg = proposal.messages.find(
+            (msg) =>
+              msg["@type"] ===
+              "/gitopia.gitopia.gitopia.MsgInvokeDaoMergePullRequest"
+          );
+
+          const pollProposal = async (resolve, reject, retries = 0) => {
+            try {
+              const proposalRes =
+                await storageApiClient.queryPackfileUpdateProposal(
+                  mergeMsg,
+                  wallet.selectedAddress
+                );
+
+              if (proposalRes.status === 200) {
+                const proposalId =
+                  proposalRes.data.packfile_update_proposal.id;
+                const { repositoryId, iid } = mergeMsg;
+
+                const approveMsg =
+                  await env.txClient.msgApproveRepositoryPackfileUpdate({
+                    creator: wallet.selectedAddress,
+                    proposalId: proposalId,
+                  });
+
+                const mergePullRequestMsg =
+                  await env.txClient.msgMergePullRequest({
+                    creator: wallet.selectedAddress,
+                    repositoryId: repositoryId,
+                    pullRequestIid: iid,
+                    mergeCommitSha:
+                      proposalRes.data.packfile_update_proposal
+                        .merge_commit_sha,
+                    packfileCid:
+                      proposalRes.data.packfile_update_proposal.cid,
+                  });
+
+                const batchResult = await sendTransaction({
+                  message: [approveMsg, mergePullRequestMsg],
+                })(dispatch, getState);
+
+                if (batchResult && batchResult.code === 0) {
+                  dispatch(
+                    notify("Pull request merged successfully", "info")
+                  );
+                  updateUserBalance(
+                    cosmosBankApiClient,
+                    cosmosFeegrantApiClient
+                  )(dispatch, getState);
+                  resolve(batchResult);
+                } else {
+                  dispatch(notify(batchResult.rawLog, "error"));
+                  reject(new Error(batchResult.rawLog));
+                }
+              } else if (retries < 15) {
+                setTimeout(
+                  () => pollProposal(resolve, reject, retries + 1),
+                  1000
+                );
+              } else {
+                reject(
+                  new Error("Timeout waiting for packfile update proposal")
+                );
+              }
+            } catch (error) {
+              if (retries < 15) {
+                setTimeout(
+                  () => pollProposal(resolve, reject, retries + 1),
+                  1000
+                );
+              } else {
+                reject(error);
+              }
+            }
+          };
+
+          return new Promise((resolve, reject) => {
+            pollProposal(resolve, reject);
+          });
+        }
       } else {
         dispatch(notify(result.rawLog, "error"));
       }
