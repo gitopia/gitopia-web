@@ -94,16 +94,22 @@ function MergePullRequestView({
   const createMergeProposal = async () => {
     setIsCreatingProposal(true);
     try {
+      const baseCommitSha = getBranchSha(
+        pullRequest.base.branch,
+        repository.branches,
+      );
       const result = await props.mergePullRequestForDao(
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
         cosmosGroupApiClient,
+        storageApiClient,
         storageProviderAddress,
         {
           repositoryId: repository.id,
           iid: pullRequest.iid,
           groupId: daoInfo.group_id,
+          baseCommitSha,
         }
       );
 

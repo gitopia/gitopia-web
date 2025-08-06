@@ -2521,8 +2521,9 @@ export const mergePullRequestForDao = (
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
   cosmosGroupApiClient,
+  storageApiClient,
   storageProviderAddress,
-  { repositoryId, iid, groupId }
+  { repositoryId, iid, groupId, baseCommitSha }
 ) => {
   return async (dispatch, getState) => {
     if (
@@ -2551,9 +2552,10 @@ export const mergePullRequestForDao = (
       // Create the merge pull request message
       const mergePull = {
         admin: groupInfo.admin,
-        repositoryId: repositoryId,
+        repositoryId,
         iid,
         provider: storageProviderAddress,
+        baseCommitSha,
       };
 
       // Encode the message
