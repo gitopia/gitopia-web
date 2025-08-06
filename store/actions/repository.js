@@ -2419,8 +2419,9 @@ export const mergePullRequest = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  storageApiClient,
   storageProviderAddress,
-  { repositoryId, iid, branchName }
+  { repositoryId, iid, baseCommitSha }
 ) => {
   return async (dispatch, getState) => {
     if (
@@ -2441,6 +2442,7 @@ export const mergePullRequest = (
       repositoryId: repositoryId,
       iid,
       provider: storageProviderAddress,
+      baseCommitSha,
     };
 
     try {
@@ -2449,19 +2451,19 @@ export const mergePullRequest = (
       if (result && result.code === 0) {
         const pollProposal = async (resolve, reject, retries = 0) => {
           try {
-            const proposalRes = await apiClient.queryPackfileUpdateProposal(
+            const proposalRes = await storageApiClient.queryPackfileUpdateProposal(
               repositoryId,
               wallet.selectedAddress
             );
 
-            if (proposalRes.data && proposalRes.data.id) {
+            if (proposalRes.status === 200) {
               // Proposal found, execute batch transaction
-              const proposalId = proposalRes.data.id;
+              const proposalId = proposalRes.data.packfile_update_proposal.id;
 
               // Create approve message
               const approveMsg = await env.txClient.msgApproveRepositoryPackfileUpdate({
                 creator: wallet.selectedAddress,
-                id: proposalId
+                proposalId: proposalId
               });
 
               // Create merge message
@@ -2469,8 +2471,8 @@ export const mergePullRequest = (
                 creator: wallet.selectedAddress,
                 repositoryId: repositoryId,
                 pullRequestIid: iid,
-                mergeCommitSha: proposalRes.data.mergeCommitSha,
-                packfileCid: proposalRes.data.packfileCid,
+                mergeCommitSha: proposalRes.data.packfile_update_proposal.merge_commit_sha,
+                packfileCid: proposalRes.data.packfile_update_proposal.cid,
               });
 
               // Execute batch transaction
