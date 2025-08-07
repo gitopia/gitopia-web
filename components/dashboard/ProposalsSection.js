@@ -421,6 +421,16 @@ export default function ProposalsSection({
       if (result && result.code === 0) {
         // Refresh proposals list after successful execution
         await onRefreshProposals();
+
+        // Fetch updated proposal data to update the modal UI
+        try {
+          const updatedProposalRes = await cosmosGroupApiClient.queryProposal(proposal.id);
+          if (updatedProposalRes && updatedProposalRes.data && updatedProposalRes.data.proposal) {
+            setSelectedProposal(updatedProposalRes.data.proposal);
+          }
+        } catch (error) {
+          console.error("Error fetching updated proposal:", error);
+        }
       }
     } catch (error) {
       console.error("Error executing proposal:", error);

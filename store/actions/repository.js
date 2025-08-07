@@ -2551,6 +2551,7 @@ export const mergePullRequestForDao = (
       // Create the merge pull request message
       const mergePull = {
         admin: groupInfo.admin,
+        creator: wallet.selectedAddress,
         repositoryId,
         iid,
         provider: storageProviderAddress,

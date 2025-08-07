@@ -564,11 +564,13 @@ export const executeGroupProposal = (
               "/gitopia.gitopia.gitopia.MsgInvokeDaoMergePullRequest"
           );
 
+          dispatch(notify("Merging pull request...", "info"));
+
           const pollProposal = async (resolve, reject, retries = 0) => {
             try {
               const proposalRes =
                 await storageApiClient.queryPackfileUpdateProposal(
-                  mergeMsg,
+                  mergeMsg.repositoryId,
                   wallet.selectedAddress
                 );
 
