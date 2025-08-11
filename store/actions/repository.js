@@ -1693,6 +1693,7 @@ export const createRelease = (
   cosmosFeegrantApiClient,
   storageProviderAddress,
   {
+    repositoryId = null,
     repoOwner = null,
     repoName = null,
     tagName = null,
@@ -1755,7 +1756,7 @@ export const createRelease = (
 
           while (retries < maxRetries) {
             try {
-              proposal = await apiClient.queryReleaseAssetsUpdateProposal(repoOwner, tagName, wallet.selectedAddress);
+              proposal = await apiClient.queryReleaseAssetsUpdateProposal(repositoryId, tagName, wallet.selectedAddress);
               if (proposal && proposal.id) {
                 break;
               }

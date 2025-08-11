@@ -98,6 +98,7 @@ const RepositoryReleaseView = ({
       const releaseData = {
         name: title,
         description,
+        repositoryId: repository.id,
         repoOwner: repository.owner.id,
         repoName: repository.name,
         tagName,

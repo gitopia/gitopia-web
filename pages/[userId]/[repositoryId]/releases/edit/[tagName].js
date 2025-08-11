@@ -68,12 +68,13 @@ function RepositoryReleaseEditView(props) {
     return true;
   };
 
-  const createIssue = async () => {
+  const handleUpdateRelease = async () => {
     setPostingIssue(true);
     if (validateIssue()) {
-      const issue = {
+      const releaseData = {
         name: title,
         description,
+        repositoryId: repository.id,
         repoOwner: repository.owner.id,
         repoName: repository.name,
         tagName,
@@ -97,7 +98,7 @@ function RepositoryReleaseEditView(props) {
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
         storageProviderAddress,
-        issue,
+        releaseData,
         true
       );
       if (res && res.code === 0) {
@@ -456,7 +457,7 @@ function RepositoryReleaseEditView(props) {
                         (postingIssue ? "loading" : "")
                       }
                       disabled={title.trim().length === 0 || postingIssue}
-                      onClick={createIssue}
+                      onClick={handleUpdateRelease}
                       data-test="update-release"
                     >
                       Update Release
