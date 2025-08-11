@@ -1972,7 +1972,7 @@ export const deleteRelease = (
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
   storageProviderAddress,
-  { releaseId }
+  { releaseId, repositoryId, tagName }
 ) => {
   return async (dispatch, getState) => {
     if (
@@ -1998,6 +1998,43 @@ export const deleteRelease = (
       const message = await env.txClient.msgDeleteRelease(release);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
+        // Poll for the proposal
+        let proposal;
+        const maxRetries = 15; // 15 seconds max wait time
+        let retries = 0;
+
+        while (retries < maxRetries) {
+          try {
+            proposal = await apiClient.queryReleaseAssetsUpdateProposal(repositoryId, tagName, wallet.selectedAddress);
+            if (proposal && proposal.id) {
+              break;
+            }
+          } catch (e) {
+            console.log("Proposal not found yet, retrying...");
+          }
+
+          retries++;
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+        }
+
+        // If we found the proposal, approve it
+        if (proposal && proposal.id) {
+          const approveMessage = await env.txClient.msgApproveReleaseAssetsUpdate({
+            creator: wallet.selectedAddress,
+            id: proposal.id
+          });
+
+          const approveResult = await sendTransaction({ message: approveMessage })(dispatch, getState);
+
+          if (approveResult && approveResult.code === 0) {
+            console.log("Release assets update proposal approved");
+          } else {
+            dispatch(notify(approveResult.rawLog, "error"));
+          }
+        } else {
+          dispatch(notify("Timeout waiting for release assets update proposal", "error"));
+        }
+
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));

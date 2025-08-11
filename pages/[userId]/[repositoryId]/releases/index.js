@@ -100,6 +100,8 @@ function RepositoryReleasesView(props) {
                     cosmosFeegrantApiClient,
                     {
                       releaseId: id,
+                      repositoryId: repository.id,
+                      tagName: latestRelease.tagName,
                     }
                   );
                   await refreshRepository();

@@ -118,15 +118,17 @@ function RepositoryReleaseView(props) {
                   cosmosFeegrantApiClient,
                   {
                     releaseId: id,
+                    repositoryId: repository.id,
+                    tagName: release.tagName,
                   }
                 );
                 if (res && res.code === 0) {
                   router.push(
                     "/" +
-                      repository.owner.id +
-                      "/" +
-                      repository.name +
-                      "/releases"
+                    repository.owner.id +
+                    "/" +
+                    repository.name +
+                    "/releases"
                   );
                 }
               }}
