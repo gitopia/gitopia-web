@@ -61,7 +61,7 @@ function RepositoryReleaseEditView(props) {
   const [uploadingAttachment, setUploadingAttachment] = useState({ file: {} });
   const [newTagOptionShown, setNewTagOptionShown] = useState(false);
   const [creatingTag, setCreatingTag] = useState(false);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, storageProviderAddress, storageApiUrl } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, storageApiClient, storageProviderAddress, storageApiUrl } =
     useApiClient();
 
   const validateIssue = () => {
@@ -97,6 +97,7 @@ function RepositoryReleaseEditView(props) {
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
+        storageApiClient,
         storageProviderAddress,
         releaseData,
         true

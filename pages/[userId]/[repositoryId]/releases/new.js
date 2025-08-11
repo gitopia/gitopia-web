@@ -68,6 +68,7 @@ const RepositoryReleaseView = ({
     cosmosBankApiClient,
     cosmosFeegrantApiClient,
     cosmosGroupApiClient,
+    storageApiClient,
     storageProviderAddress,
     storageApiUrl,
   } = useApiClient();
@@ -130,6 +131,7 @@ const RepositoryReleaseView = ({
           apiClient,
           cosmosBankApiClient,
           cosmosFeegrantApiClient,
+          storageApiClient,
           storageProviderAddress,
           releaseData
         );

@@ -1691,6 +1691,7 @@ export const createRelease = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  storageApiClient,
   storageProviderAddress,
   {
     repositoryId = null,
@@ -1756,8 +1757,8 @@ export const createRelease = (
 
           while (retries < maxRetries) {
             try {
-              proposal = await apiClient.queryReleaseAssetsUpdateProposal(repositoryId, tagName, wallet.selectedAddress);
-              if (proposal && proposal.id) {
+              proposal = await storageApiClient.queryReleaseAssetsUpdateProposal(repositoryId, tagName, wallet.selectedAddress);
+              if (proposal.data.release_assets_proposal) {
                 break;
               }
             } catch (e) {
@@ -1769,10 +1770,10 @@ export const createRelease = (
           }
 
           // If we found the proposal, approve it
-          if (proposal && proposal.id) {
+          if (proposal.data.release_assets_proposal) {
             const approveMessage = await env.txClient.msgApproveReleaseAssetsUpdate({
               creator: wallet.selectedAddress,
-              id: proposal.id
+              id: proposal.data.release_assets_proposal.id
             });
 
             const approveResult = await sendTransaction({ message: approveMessage })(dispatch, getState);
@@ -2007,7 +2008,7 @@ export const deleteRelease = (
         while (retries < maxRetries) {
           try {
             proposal = await storageApiClient.queryReleaseAssetsUpdateProposal(repositoryId, tagName, wallet.selectedAddress);
-            if (proposal && proposal.id) {
+            if (proposal.data.release_assets_proposal) {
               break;
             }
           } catch (e) {
@@ -2019,10 +2020,10 @@ export const deleteRelease = (
         }
 
         // If we found the proposal, approve it
-        if (proposal && proposal.id) {
+        if (proposal.data.release_assets_proposal) {
           const approveMessage = await env.txClient.msgApproveReleaseAssetsUpdate({
             creator: wallet.selectedAddress,
-            id: proposal.id
+            id: proposal.data.release_assets_proposal.id
           });
 
           const approveResult = await sendTransaction({ message: approveMessage })(dispatch, getState);
