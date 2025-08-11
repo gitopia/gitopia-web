@@ -1971,6 +1971,7 @@ export const deleteRelease = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  storageApiClient,
   storageProviderAddress,
   { releaseId, repositoryId, tagName }
 ) => {
@@ -2005,7 +2006,7 @@ export const deleteRelease = (
 
         while (retries < maxRetries) {
           try {
-            proposal = await apiClient.queryReleaseAssetsUpdateProposal(repositoryId, tagName, wallet.selectedAddress);
+            proposal = await storageApiClient.queryReleaseAssetsUpdateProposal(repositoryId, tagName, wallet.selectedAddress);
             if (proposal && proposal.id) {
               break;
             }
