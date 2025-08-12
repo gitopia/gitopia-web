@@ -56,7 +56,7 @@ function RepositoryReleaseEditView(props) {
   const [description, setDescription] = useState("");
   const [tagName, setTagName] = useState("");
   const [target, setTarget] = useState({ name: "", sha: null });
-  const [postingIssue, setPostingIssue] = useState(false);
+  const [postingRelease, setPostingRelease] = useState(false);
   const [attachments, setAttachments] = useState([]);
   const [uploadingAttachment, setUploadingAttachment] = useState({ file: {} });
   const [newTagOptionShown, setNewTagOptionShown] = useState(false);
@@ -64,13 +64,13 @@ function RepositoryReleaseEditView(props) {
   const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, storageApiClient, storageProviderAddress, storageApiUrl } =
     useApiClient();
 
-  const validateIssue = () => {
+  const validateRelease = () => {
     return true;
   };
 
   const handleUpdateRelease = async () => {
-    setPostingIssue(true);
-    if (validateIssue()) {
+    setPostingRelease(true);
+    if (validateRelease()) {
       const releaseData = {
         name: title,
         description,
@@ -92,7 +92,6 @@ function RepositoryReleaseEditView(props) {
         }),
         releaseId: parseInt(release.id),
       };
-      console.log("before call", issue);
       const res = await props.createRelease(
         apiClient,
         cosmosBankApiClient,
@@ -113,7 +112,7 @@ function RepositoryReleaseEditView(props) {
         );
       }
     }
-    setPostingIssue(false);
+    setPostingRelease(false);
   };
 
   const getRelease = async () => {
@@ -455,9 +454,9 @@ function RepositoryReleaseEditView(props) {
                     <button
                       className={
                         "btn btn-sm btn-primary btn-block " +
-                        (postingIssue ? "loading" : "")
+                        (postingRelease ? "loading" : "")
                       }
-                      disabled={title.trim().length === 0 || postingIssue}
+                      disabled={title.trim().length === 0 || postingRelease}
                       onClick={handleUpdateRelease}
                       data-test="update-release"
                     >
