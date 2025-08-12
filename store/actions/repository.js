@@ -1773,7 +1773,7 @@ export const createRelease = (
           if (proposal.data.release_assets_proposal) {
             const approveMessage = await env.txClient.msgApproveReleaseAssetsUpdate({
               creator: wallet.selectedAddress,
-              id: proposal.data.release_assets_proposal.id
+              proposalId: proposal.data.release_assets_proposal.id
             });
 
             const approveResult = await sendTransaction({ message: approveMessage })(dispatch, getState);
@@ -1931,7 +1931,7 @@ export const createReleaseForDao = (
           if (proposal && proposal.id) {
             const approveMessage = await env.txClient.msgApproveReleaseAssetsUpdate({
               creator: wallet.selectedAddress,
-              id: proposal.id
+              proposalId: proposal.id
             });
 
             const approveResult = await sendTransaction({ message: approveMessage })(dispatch, getState);
@@ -2023,7 +2023,7 @@ export const deleteRelease = (
         if (proposal.data.release_assets_proposal) {
           const approveMessage = await env.txClient.msgApproveReleaseAssetsUpdate({
             creator: wallet.selectedAddress,
-            id: proposal.data.release_assets_proposal.id
+            proposalId: proposal.data.release_assets_proposal.id
           });
 
           const approveResult = await sendTransaction({ message: approveMessage })(dispatch, getState);
