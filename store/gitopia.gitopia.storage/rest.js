@@ -207,12 +207,11 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryLfsObjectUpdateProposal
-         * @request GET:/gitopia/gitopia/storage/lfs-object-update-proposal/{repository_id}/{user}
+         * @request GET:/gitopia/gitopia/storage/lfs-object-update-proposal/{repository_id}/{oid}/{user}
          */
-        this.queryLFSObjectUpdateProposal = (repositoryId, user, query, params = {}) => this.request({
-            path: `/gitopia/gitopia/storage/lfs-object-update-proposal/${repositoryId}/${user}`,
+        this.queryLFSObjectUpdateProposal = (repositoryId, oid, user, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/lfs-object-update-proposal/${repositoryId}/${oid}/${user}`,
             method: "GET",
-            query: query,
             format: "json",
             ...params,
         });
@@ -227,6 +226,19 @@ export class Api extends HttpClient {
             path: `/gitopia/gitopia/storage/lfs-object-update-proposals`,
             method: "GET",
             query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryLfsObjectUpdateProposalsByRepositoryId
+         * @request GET:/gitopia/gitopia/storage/lfs-object-update-proposals/{repository_id}/{user}
+         */
+        this.queryLFSObjectUpdateProposalsByRepositoryId = (repositoryId, user, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/lfs-object-update-proposals/${repositoryId}/${user}`,
+            method: "GET",
             format: "json",
             ...params,
         });
@@ -503,6 +515,33 @@ export class Api extends HttpClient {
          */
         this.queryReleaseAssetsUpdateProposals = (query, params = {}) => this.request({
             path: `/gitopia/gitopia/storage/release-assets-update-proposals`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRepositoryDeleteProposal
+         * @request GET:/gitopia/gitopia/storage/repository-delete-proposal/{repository_id}/{user}
+         */
+        this.queryRepositoryDeleteProposal = (repositoryId, user, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/repository-delete-proposal/${repositoryId}/${user}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRepositoryDeleteProposals
+         * @request GET:/gitopia/gitopia/storage/repository-delete-proposals
+         */
+        this.queryRepositoryDeleteProposals = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/repository-delete-proposals`,
             method: "GET",
             query: query,
             format: "json",
