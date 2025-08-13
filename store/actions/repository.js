@@ -169,8 +169,9 @@ export const deleteRepository = (
   apiClient,
   cosmosBankApiClient,
   cosmosFeegrantApiClient,
+  storageApiClient,
   storageProviderAddress,
-  { name = null, ownerId = null }
+  { repositoryId = null, name = null, ownerId = null }
 ) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
@@ -203,6 +204,47 @@ export const deleteRepository = (
       );
       if (result && result.code === 0) {
         getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+
+        // Poll for the proposal
+        let proposal;
+        const maxRetries = 15; // 15 seconds max wait time
+        let retries = 0;
+
+        while (retries < maxRetries) {
+          try {
+            proposal = await storageApiClient.queryRepositoryDeleteProposal(
+              repositoryId,
+              wallet.selectedAddress
+            );
+            if (proposal.data.repository_delete_proposal) {
+              break;
+            }
+          } catch (e) {
+            console.log("Proposal not found yet, retrying...");
+          }
+
+          retries++;
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+        }
+
+        // If we found the proposal, approve it
+        if (proposal.data.repository_delete_proposal) {
+          const approveMessage = await env.txClient.msgApproveRepositoryDelete({
+            creator: wallet.selectedAddress,
+            proposalId: proposal.data.repository_delete_proposal.id
+          });
+
+          const approveResult = await sendTransaction({ message: approveMessage })(dispatch, getState);
+
+          if (approveResult && approveResult.code === 0) {
+            console.log("Repository delete proposal approved");
+          } else {
+            dispatch(notify(approveResult.rawLog, "error"));
+          }
+        } else {
+          dispatch(notify("Timeout waiting for repository delete proposal", "error"));
+        }
+
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));

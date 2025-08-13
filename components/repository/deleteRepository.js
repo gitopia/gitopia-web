@@ -4,6 +4,7 @@ import { deleteRepository } from "../../store/actions/repository";
 import { useApiClient } from "../../context/ApiClientContext";
 
 function DeleteRepository({
+  repositoryId = null,
   repoName = "",
   currentOwnerId = "",
   onSuccess,
@@ -16,6 +17,7 @@ function DeleteRepository({
     apiClient,
     cosmosBankApiClient,
     cosmosFeegrantApiClient,
+    storageApiClient,
     storageProviderAddress,
   } = useApiClient();
 
@@ -91,8 +93,10 @@ function DeleteRepository({
                     apiClient,
                     cosmosBankApiClient,
                     cosmosFeegrantApiClient,
+                    storageApiClient,
                     storageProviderAddress,
                     {
+                      repositoryId,
                       ownerId: currentOwnerId,
                       name: repoName,
                     }
