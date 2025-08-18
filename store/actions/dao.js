@@ -557,6 +557,82 @@ export const executeGroupProposal = (
             "/gitopia.gitopia.gitopia.MsgInvokeDaoMergePullRequest"
         );
 
+        const isCreateReleaseProposal = proposal.messages.some(
+          (msg) =>
+            msg["@type"] === "/gitopia.gitopia.gitopia.MsgDaoCreateRelease"
+        );
+
+        if (isCreateReleaseProposal) {
+          const createReleaseMsg = proposal.messages.find(
+            (msg) =>
+              msg["@type"] === "/gitopia.gitopia.gitopia.MsgDaoCreateRelease"
+          );
+
+          const attachments = JSON.parse(createReleaseMsg.attachments);
+          if (attachments && attachments.length > 0) {
+            // Poll for the proposal
+            let proposal;
+            const maxRetries = 15; // 15 seconds max wait time
+            let retries = 0;
+
+            const repo = await apiClient.queryAnyRepository(
+              createReleaseMsg.repositoryId.id,
+              createReleaseMsg.repositoryId.name
+            );
+            if (repo.status !== 200) {
+              dispatch(notify("Repository not found", "error"));
+              return null;
+            }
+
+            while (retries < maxRetries) {
+              try {
+                proposal = await storageApiClient.queryReleaseAssetsUpdateProposal(
+                  repo.data.Repository.id,
+                  createReleaseMsg.tagName,
+                  wallet.selectedAddress
+                );
+                if (proposal.data.release_assets_proposal) {
+                  break;
+                }
+              } catch (e) {
+                console.log("Proposal not found yet, retrying...");
+              }
+
+              retries++;
+              await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
+            }
+
+            // If we found the proposal, approve it
+            if (proposal.data.release_assets_proposal) {
+              const approveMessage =
+                await env.txClient.msgApproveReleaseAssetsUpdate({
+                  creator: wallet.selectedAddress,
+                  proposalId: proposal.data.release_assets_proposal.id,
+                });
+
+              const approveResult = await sendTransaction({
+                message: approveMessage,
+              })(dispatch, getState);
+
+              if (approveResult && approveResult.code === 0) {
+                console.log("Release assets update proposal approved");
+                dispatch(
+                  notify("Release assets update proposal approved.", "success")
+                );
+              } else {
+                dispatch(notify(approveResult.rawLog, "error"));
+              }
+            } else {
+              dispatch(
+                notify(
+                  "Timeout waiting for release assets update proposal",
+                  "error"
+                )
+              );
+            }
+          }
+        }
+
         if (isMergePullRequestProposal) {
           const mergeMsg = proposal.messages.find(
             (msg) =>
