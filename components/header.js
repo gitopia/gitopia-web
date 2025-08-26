@@ -272,6 +272,15 @@ function Header(props) {
                 >
                   <li>
                     <a
+                      href="https://explorer.chainroot.io/gitopia"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      ChainRoot
+                    </a>
+                  </li>
+                  <li>
+                    <a
                       href="https://gitopia.exploreme.pro/"
                       target="_blank"
                       rel="noreferrer"
