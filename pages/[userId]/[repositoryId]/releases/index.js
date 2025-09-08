@@ -35,7 +35,7 @@ function RepositoryReleasesView(props) {
   const [olderReleases, setOlderReleases] = useState([]);
   const [currentUserEditPermission, setCurrentUserEditPermission] =
     useState(false);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, storageApiClient, storageProviderAddress } =
     useApiClient();
 
   const getReleases = async () => {
@@ -98,8 +98,12 @@ function RepositoryReleasesView(props) {
                     apiClient,
                     cosmosBankApiClient,
                     cosmosFeegrantApiClient,
+                    storageApiClient,
+                    storageProviderAddress,
                     {
                       releaseId: id,
+                      repositoryId: repository.id,
+                      tagName: latestRelease.tagName,
                     }
                   );
                   await refreshRepository();

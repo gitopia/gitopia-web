@@ -1,11 +1,28 @@
 ## Changelog
 
-### Unreleased
+### v4.0.0 - 8th Sep 2025
 
+- Upgrade to gitopia-js v3.0.0
+- Implement new storage provider architecture with automatic provider selection based on latency
+- Add storage information display in repository clone info with dedicated "Storage Info" tab
+- Introduce storage provider dropdown with separate tabs for API and storage providers
+- Complete rewrite of create and update release workflows with authenticated file upload
+- Implement new fork workflow with updated fork messages
+- Update pull request merge flow with new merge steps for both user and DAO repositories
+- Handle DAO create release proposals in group proposal execution
+- Update merge proposals for DAO repositories
+- Add storage update proposal handling for release asset management
+- Remove deprecated fork merge access dialogs and authorization flows
+- Remove `authorizeGitServer` function and related authorization components
+- Remove deprecated `AccountGrants` component and related authorization functionalities
+- Fix redirect handling on repository deletion
+- Implement storage queries across the application
+- Replace hardcoded storage URLs with dynamic provider selection
 - Don't show proposals tab in user profile
-- Show treasury balance upto two decimal places only
-- Don't re-render header everytime we switch tab
-- Show link to parent repo in case of fork repo
+- Show treasury balance limited to two decimal places
+- Prevent header re-rendering when switching tabs
+- Display link to parent repository in forked repository views
+- Add ChainRoot link in the explorers dropdown
 
 ### v3.1.0 - 2nd Dec 2024
 

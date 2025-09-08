@@ -56,24 +56,25 @@ function RepositoryReleaseEditView(props) {
   const [description, setDescription] = useState("");
   const [tagName, setTagName] = useState("");
   const [target, setTarget] = useState({ name: "", sha: null });
-  const [postingIssue, setPostingIssue] = useState(false);
+  const [postingRelease, setPostingRelease] = useState(false);
   const [attachments, setAttachments] = useState([]);
   const [uploadingAttachment, setUploadingAttachment] = useState({ file: {} });
   const [newTagOptionShown, setNewTagOptionShown] = useState(false);
   const [creatingTag, setCreatingTag] = useState(false);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, storageProviderAddress } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, storageApiClient, storageProviderAddress, storageApiUrl } =
     useApiClient();
 
-  const validateIssue = () => {
+  const validateRelease = () => {
     return true;
   };
 
-  const createIssue = async () => {
-    setPostingIssue(true);
-    if (validateIssue()) {
-      const issue = {
+  const handleUpdateRelease = async () => {
+    setPostingRelease(true);
+    if (validateRelease()) {
+      const releaseData = {
         name: title,
         description,
+        repositoryId: repository.id,
         repoOwner: repository.owner.id,
         repoName: repository.name,
         tagName,
@@ -91,13 +92,13 @@ function RepositoryReleaseEditView(props) {
         }),
         releaseId: parseInt(release.id),
       };
-      console.log("before call", issue);
       const res = await props.createRelease(
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
+        storageApiClient,
         storageProviderAddress,
-        issue,
+        releaseData,
         true
       );
       if (res && res.code === 0) {
@@ -111,7 +112,7 @@ function RepositoryReleaseEditView(props) {
         );
       }
     }
-    setPostingIssue(false);
+    setPostingRelease(false);
   };
 
   const getRelease = async () => {
@@ -434,7 +435,7 @@ function RepositoryReleaseEditView(props) {
                 <div>
                   <Uploady
                     destination={{
-                      url: process.env.NEXT_PUBLIC_OBJECTS_URL + "/upload",
+                      url: storageApiUrl + "/upload",
                     }}
                   >
                     <UploadDropZone
@@ -453,10 +454,10 @@ function RepositoryReleaseEditView(props) {
                     <button
                       className={
                         "btn btn-sm btn-primary btn-block " +
-                        (postingIssue ? "loading" : "")
+                        (postingRelease ? "loading" : "")
                       }
-                      disabled={title.trim().length === 0 || postingIssue}
-                      onClick={createIssue}
+                      disabled={title.trim().length === 0 || postingRelease}
+                      onClick={handleUpdateRelease}
                       data-test="update-release"
                     >
                       Update Release

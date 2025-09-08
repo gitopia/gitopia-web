@@ -76,6 +76,7 @@ const ProposalDetailsModal = ({
   policyInfo,
   selectedAddress,
   cosmosGroupApiClient,
+  storageApiClient,
 }) => {
   const [tally, setTally] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -142,7 +143,7 @@ const ProposalDetailsModal = ({
       veto: (vetoVotes / totalWeight) * 100,
       quorum:
         policyInfo?.info.decision_policy["@type"] ===
-        "/cosmos.group.v1.PercentageDecisionPolicy"
+          "/cosmos.group.v1.PercentageDecisionPolicy"
           ? parseFloat(policyInfo.info.decision_policy.percentage) * 100
           : 0,
     };
@@ -205,9 +206,8 @@ const ProposalDetailsModal = ({
             {/* Execution Status */}
             {proposal.status === "PROPOSAL_STATUS_ACCEPTED" && (
               <div
-                className={`p-4 rounded-lg ${
-                  canExecute ? "bg-warning/10" : "bg-success/10"
-                }`}
+                className={`p-4 rounded-lg ${canExecute ? "bg-warning/10" : "bg-success/10"
+                  }`}
               >
                 <div className="flex items-center">
                   <Info className="w-5 h-5 mr-2 text-warning" />
@@ -216,15 +216,15 @@ const ProposalDetailsModal = ({
                       {isTextProposal
                         ? "Text Proposal Passed"
                         : canExecute
-                        ? "Proposal Execution Required"
-                        : "Proposal Executed"}
+                          ? "Proposal Execution Required"
+                          : "Proposal Executed"}
                     </p>
                     <p className="text-sm text-gray-400">
                       {isTextProposal
                         ? "This is a text-only proposal that required no execution."
                         : canExecute
-                        ? "This proposal has passed but hasn't been executed yet. Execute it to apply the changes."
-                        : "This proposal has been executed successfully."}
+                          ? "This proposal has passed but hasn't been executed yet. Execute it to apply the changes."
+                          : "This proposal has been executed successfully."}
                     </p>
                   </div>
                 </div>

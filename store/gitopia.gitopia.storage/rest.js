@@ -8,6 +8,21 @@
  * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
  * ---------------------------------------------------------------
  */
+/**
+* BondStatus is the status of a storage provider.
+
+ - BOND_STATUS_UNSPECIFIED: UNSPECIFIED defines an invalid provider status.
+ - BOND_STATUS_UNBONDED: UNBONDED defines a provider that is not bonded.
+ - BOND_STATUS_UNBONDING: UNBONDING defines a provider that is unbonding.
+ - BOND_STATUS_BONDED: BONDED defines a provider that is bonded.
+*/
+export var StorageBondStatus;
+(function (StorageBondStatus) {
+    StorageBondStatus["BOND_STATUS_UNSPECIFIED"] = "BOND_STATUS_UNSPECIFIED";
+    StorageBondStatus["BOND_STATUS_UNBONDED"] = "BOND_STATUS_UNBONDED";
+    StorageBondStatus["BOND_STATUS_UNBONDING"] = "BOND_STATUS_UNBONDING";
+    StorageBondStatus["BOND_STATUS_BONDED"] = "BOND_STATUS_BONDED";
+})(StorageBondStatus || (StorageBondStatus = {}));
 export var StorageChallengeStatus;
 (function (StorageChallengeStatus) {
     StorageChallengeStatus["CHALLENGE_STATUS_UNSPECIFIED"] = "CHALLENGE_STATUS_UNSPECIFIED";
@@ -21,15 +36,16 @@ export var StorageChallengeType;
     StorageChallengeType["CHALLENGE_TYPE_UNSPECIFIED"] = "CHALLENGE_TYPE_UNSPECIFIED";
     StorageChallengeType["CHALLENGE_TYPE_PACKFILE"] = "CHALLENGE_TYPE_PACKFILE";
     StorageChallengeType["CHALLENGE_TYPE_RELEASE_ASSET"] = "CHALLENGE_TYPE_RELEASE_ASSET";
+    StorageChallengeType["CHALLENGE_TYPE_LFS_OBJECT"] = "CHALLENGE_TYPE_LFS_OBJECT";
 })(StorageChallengeType || (StorageChallengeType = {}));
-export var StorageProviderStatus;
-(function (StorageProviderStatus) {
-    StorageProviderStatus["PROVIDER_STATUS_UNSPECIFIED"] = "PROVIDER_STATUS_UNSPECIFIED";
-    StorageProviderStatus["PROVIDER_STATUS_ACTIVE"] = "PROVIDER_STATUS_ACTIVE";
-    StorageProviderStatus["PROVIDER_STATUS_INACTIVE"] = "PROVIDER_STATUS_INACTIVE";
-    StorageProviderStatus["PROVIDER_STATUS_SUSPENDED"] = "PROVIDER_STATUS_SUSPENDED";
-    StorageProviderStatus["PROVIDER_STATUS_UNREGISTERING"] = "PROVIDER_STATUS_UNREGISTERING";
-})(StorageProviderStatus || (StorageProviderStatus = {}));
+export var StorageProposalStatus;
+(function (StorageProposalStatus) {
+    StorageProposalStatus["PROPOSAL_STATUS_UNSPECIFIED"] = "PROPOSAL_STATUS_UNSPECIFIED";
+    StorageProposalStatus["PROPOSAL_STATUS_PENDING"] = "PROPOSAL_STATUS_PENDING";
+    StorageProposalStatus["PROPOSAL_STATUS_APPROVED"] = "PROPOSAL_STATUS_APPROVED";
+    StorageProposalStatus["PROPOSAL_STATUS_REJECTED"] = "PROPOSAL_STATUS_REJECTED";
+    StorageProposalStatus["PROPOSAL_STATUS_EXPIRED"] = "PROPOSAL_STATUS_EXPIRED";
+})(StorageProposalStatus || (StorageProposalStatus = {}));
 import axios from "axios";
 export var ContentType;
 (function (ContentType) {
@@ -176,6 +192,128 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryJailedProviders
+         * @request GET:/gitopia/gitopia/storage/jailed-providers
+         */
+        this.queryJailedProviders = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/jailed-providers`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryLfsObjectUpdateProposal
+         * @request GET:/gitopia/gitopia/storage/lfs-object-update-proposal/{repository_id}/{oid}/{user}
+         */
+        this.queryLFSObjectUpdateProposal = (repositoryId, oid, user, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/lfs-object-update-proposal/${repositoryId}/${oid}/${user}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryLfsObjectUpdateProposals
+         * @request GET:/gitopia/gitopia/storage/lfs-object-update-proposals
+         */
+        this.queryLFSObjectUpdateProposals = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/lfs-object-update-proposals`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryLfsObjectUpdateProposalsByRepositoryId
+         * @request GET:/gitopia/gitopia/storage/lfs-object-update-proposals/{repository_id}/{user}
+         */
+        this.queryLFSObjectUpdateProposalsByRepositoryId = (repositoryId, user, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/lfs-object-update-proposals/${repositoryId}/${user}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryLfsObject
+         * @request GET:/gitopia/gitopia/storage/lfs-object/{id}
+         */
+        this.queryLFSObject = (id, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/lfs-object/${id}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryLfsObjects
+         * @request GET:/gitopia/gitopia/storage/lfs-objects
+         */
+        this.queryLFSObjects = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/lfs-objects`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryLivenessViolations
+         * @request GET:/gitopia/gitopia/storage/liveness-violations
+         */
+        this.queryLivenessViolations = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/liveness-violations`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryPackfileUpdateProposal
+         * @request GET:/gitopia/gitopia/storage/packfile-update-proposal/{repository_id}/{user}
+         */
+        this.queryPackfileUpdateProposal = (repositoryId, user, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/packfile-update-proposal/${repositoryId}/${user}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryPackfileUpdateProposals
+         * @request GET:/gitopia/gitopia/storage/packfile-update-proposals
+         */
+        this.queryPackfileUpdateProposals = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/packfile-update-proposals`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryPackfile
          * @summary Packfile queries a packfile by id
          * @request GET:/gitopia/gitopia/storage/packfile/{id}
@@ -219,6 +357,74 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryProviderLiveness
+         * @summary Liveness queries
+         * @request GET:/gitopia/gitopia/storage/provider-liveness/{address}
+         */
+        this.queryProviderLiveness = (address, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/provider-liveness/${address}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryProviderRewardsAll
+         * @request GET:/gitopia/gitopia/storage/provider-rewards
+         */
+        this.queryProviderRewardsAll = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/provider-rewards`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryProviderRewards
+         * @request GET:/gitopia/gitopia/storage/provider-rewards/{address}
+         */
+        this.queryProviderRewards = (address, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/provider-rewards/${address}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryProviderStake
+         * @request GET:/gitopia/gitopia/storage/provider-stake/{address}
+         */
+        this.queryProviderStake = (address, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/provider-stake/${address}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryProviderStakes
+         * @request GET:/gitopia/gitopia/storage/provider-stakes
+         */
+        this.queryProviderStakes = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/provider-stakes`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryProvider
          * @summary Provider queries a storage provider by address
          * @request GET:/gitopia/gitopia/storage/provider/{address}
@@ -239,6 +445,20 @@ export class Api extends HttpClient {
          */
         this.queryProviders = (query, params = {}) => this.request({
             path: `/gitopia/gitopia/storage/providers`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryProvidersLiveness
+         * @request GET:/gitopia/gitopia/storage/providers-liveness
+         */
+        this.queryProvidersLiveness = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/providers-liveness`,
             method: "GET",
             query: query,
             format: "json",
@@ -270,6 +490,86 @@ export class Api extends HttpClient {
             path: `/gitopia/gitopia/storage/release-assets`,
             method: "GET",
             query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryReleaseAssetsUpdateProposal
+         * @request GET:/gitopia/gitopia/storage/release-assets-update-proposal/{repository_id}/{tag}/{user}
+         */
+        this.queryReleaseAssetsUpdateProposal = (repositoryId, tag, user, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/release-assets-update-proposal/${repositoryId}/${tag}/${user}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryReleaseAssetsUpdateProposals
+         * @request GET:/gitopia/gitopia/storage/release-assets-update-proposals
+         */
+        this.queryReleaseAssetsUpdateProposals = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/release-assets-update-proposals`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRepositoryDeleteProposal
+         * @request GET:/gitopia/gitopia/storage/repository-delete-proposal/{repository_id}/{user}
+         */
+        this.queryRepositoryDeleteProposal = (repositoryId, user, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/repository-delete-proposal/${repositoryId}/${user}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRepositoryDeleteProposals
+         * @request GET:/gitopia/gitopia/storage/repository-delete-proposals
+         */
+        this.queryRepositoryDeleteProposals = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/repository-delete-proposals`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryLfsObjectByRepositoryIdAndOid
+         * @request GET:/gitopia/gitopia/storage/repository/{repository_id}/lfs-object/{oid}
+         */
+        this.queryLFSObjectByRepositoryIdAndOid = (repositoryId, oid, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/repository/${repositoryId}/lfs-object/${oid}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryLfsObjectsByRepositoryId
+         * @request GET:/gitopia/gitopia/storage/repository/{repository_id}/lfs-objects
+         */
+        this.queryLFSObjectsByRepositoryId = (repositoryId, params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/repository/${repositoryId}/lfs-objects`,
+            method: "GET",
             format: "json",
             ...params,
         });
@@ -334,11 +634,11 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryTotalStorage
-         * @request GET:/gitopia/gitopia/storage/total-storage
+         * @name QueryStorageStats
+         * @request GET:/gitopia/gitopia/storage/stats
          */
-        this.queryTotalStorage = (params = {}) => this.request({
-            path: `/gitopia/gitopia/storage/total-storage`,
+        this.queryStorageStats = (params = {}) => this.request({
+            path: `/gitopia/gitopia/storage/stats`,
             method: "GET",
             format: "json",
             ...params,

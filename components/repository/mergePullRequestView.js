@@ -12,6 +12,7 @@ import getPullRequestMergePermission from "../../helpers/getPullRequestMergePerm
 import getDao from "../../helpers/getDao";
 import { useApiClient } from "../../context/ApiClientContext";
 import { useRouter } from "next/router";
+import getBranchSha from "../../helpers/getBranchSha";
 
 function MergePullRequestView({
   repository,
@@ -30,6 +31,7 @@ function MergePullRequestView({
     cosmosBankApiClient,
     cosmosFeegrantApiClient,
     cosmosGroupApiClient,
+    storageApiClient,
     storageProviderAddress,
     storageApiUrl,
   } = useApiClient();
@@ -92,6 +94,10 @@ function MergePullRequestView({
   const createMergeProposal = async () => {
     setIsCreatingProposal(true);
     try {
+      const baseCommitSha = getBranchSha(
+        pullRequest.base.branch,
+        repository.branches,
+      );
       const result = await props.mergePullRequestForDao(
         apiClient,
         cosmosBankApiClient,
@@ -102,6 +108,7 @@ function MergePullRequestView({
           repositoryId: repository.id,
           iid: pullRequest.iid,
           groupId: daoInfo.group_id,
+          baseCommitSha,
         }
       );
 
@@ -133,20 +140,25 @@ function MergePullRequestView({
     );
 
     if (user && user.havePermission) {
+      const baseCommitSha = getBranchSha(
+        pullRequest.base.branch,
+        repository.branches,
+      );
       const res = await props.mergePullRequest(
         apiClient,
         cosmosBankApiClient,
         cosmosFeegrantApiClient,
+        storageApiClient,
         storageProviderAddress,
         {
           repositoryId: repository.id,
           iid: pullRequest.iid,
-          branchName: pullRequest.head.branch,
+          baseCommitSha,
         }
       );
 
       if (res) {
-        if (res.state === "TASK_STATE_SUCCESS") refreshPullRequest();
+        if (res.code === 0) refreshPullRequest();
       } else {
         props.notify("Unknown error", "error");
       }

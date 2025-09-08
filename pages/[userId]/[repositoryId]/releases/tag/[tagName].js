@@ -42,7 +42,7 @@ function RepositoryReleaseView(props) {
   const [isLatest, setIsLatest] = useState(false);
   const [currentUserEditPermission, setCurrentUserEditPermission] =
     useState(false);
-  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient } =
+  const { apiClient, cosmosBankApiClient, cosmosFeegrantApiClient, storageApiClient, storageProviderAddress } =
     useApiClient();
 
   useEffect(() => {
@@ -116,17 +116,21 @@ function RepositoryReleaseView(props) {
                   apiClient,
                   cosmosBankApiClient,
                   cosmosFeegrantApiClient,
+                  storageApiClient,
+                  storageProviderAddress,
                   {
                     releaseId: id,
+                    repositoryId: repository.id,
+                    tagName: release.tagName,
                   }
                 );
                 if (res && res.code === 0) {
                   router.push(
                     "/" +
-                      repository.owner.id +
-                      "/" +
-                      repository.name +
-                      "/releases"
+                    repository.owner.id +
+                    "/" +
+                    repository.name +
+                    "/releases"
                   );
                 }
               }}
