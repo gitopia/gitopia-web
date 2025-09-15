@@ -150,7 +150,8 @@ export const createRepository = (
 
 export const deleteRepository = (
   apiClient,
-  { name = null, ownerId = null }
+  storageProviderAddress,
+  { repositoryId = null, name = null, ownerId = null }
 ) => {
   return async (dispatch, getState) => {
     const { wallet } = getState();
@@ -169,6 +170,7 @@ export const deleteRepository = (
         id: ownerId,
         name: name,
       },
+      provider: storageProviderAddress,
     };
     const { env } = getState();
     try {
@@ -177,6 +179,48 @@ export const deleteRepository = (
       updateUserBalance(apiClient)(dispatch, getState);
       if (result && result.code === 0) {
         getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+
+        // Poll for the proposal
+        let proposal;
+        const maxRetries = 15; // 15 seconds max wait time
+        let retries = 0;
+
+        while (retries < maxRetries) {
+          try {
+            proposal = await storageApiClient.queryRepositoryDeleteProposal(
+              repositoryId,
+              wallet.selectedAddress
+            );
+            if (proposal.data.repository_delete_proposal) {
+              break;
+            }
+          } catch (e) {
+            console.log("Proposal not found yet, retrying...");
+          }
+
+          retries++;
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+        }
+
+        // If we found the proposal, approve it
+        if (proposal.data.repository_delete_proposal) {
+          const approveMessage = await env.txClient.msgApproveRepositoryDelete({
+            creator: wallet.selectedAddress,
+            proposalId: proposal.data.repository_delete_proposal.id
+          });
+
+          const approveResult = await sendTransaction({ message: approveMessage })(dispatch, getState);
+
+          if (approveResult && approveResult.code === 0) {
+            console.log("Repository delete proposal approved");
+          } else {
+            dispatch(notify(approveResult.rawLog, "error"));
+          }
+        } else {
+          dispatch(notify("Timeout waiting for repository delete proposal", "error"));
+        }
+
+        return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
@@ -1390,38 +1434,20 @@ export const forkRepository = (
       creator: wallet.selectedAddress,
       repositoryId: { id: repoOwner, name: repoName },
       owner: ownerId,
-      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
       forkRepositoryName,
       forkRepositoryDescription,
     };
     if (repoBranch) {
       repository.branch = repoBranch;
     }
-    console.log("forking", repository);
 
     try {
-      const message = await env.txClient.msgInvokeForkRepository(repository);
+      const message = await env.txClient.msgForkRepository(repository);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
-        const log = JSON.parse(result.rawLog);
-        const taskId =
-          log[0].events[1].attributes[
-            log[0].events[1].attributes.findIndex((a) => a.key === "TaskId")
-          ].value;
-        try {
-          const res = await watchTask(apiClient, taskId);
-          if (res.state === "TASK_STATE_SUCCESS") {
-            getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
-            let url = "/" + ownerId + "/" + repository.forkRepositoryName;
-            return { url };
-          } else if (res.state === "TASK_STATE_FAILURE") {
-            dispatch(notify(res.message, "error"));
-            return null;
-          }
-        } catch (e) {
-          dispatch(notify(e.message, "error"));
-          return null;
-        }
+        getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+        let url = "/" + ownerId + "/" + repository.forkRepositoryName;
+        return { url };
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
@@ -1505,7 +1531,12 @@ export const createPullRequest = (
 
 export const createRelease = (
   apiClient,
+  cosmosBankApiClient,
+  cosmosFeegrantApiClient,
+  storageApiClient,
+  storageProviderAddress,
   {
+    repositoryId = null,
     repoOwner = null,
     repoName = null,
     tagName = null,
@@ -1518,7 +1549,7 @@ export const createRelease = (
     isTag = null,
     releaseId = null,
   },
-  edit = false
+  edit = false,
 ) => {
   return async (dispatch, getState) => {
     if (
@@ -1543,6 +1574,7 @@ export const createRelease = (
       draft,
       preRelease,
       isTag,
+      provider: storageProviderAddress,
     };
 
     if (edit) {
@@ -1554,7 +1586,48 @@ export const createRelease = (
         ? await env.txClient.msgUpdateRelease(release)
         : await env.txClient.msgCreateRelease(release);
       const result = await sendTransaction({ message })(dispatch, getState);
+
       if (result && result.code === 0) {
+        // If there are attachments, poll for queryReleaseAssetsUpdateProposal and execute msgApproveReleaseAssetsUpdate
+        if (attachments && attachments.length > 0) {
+          // Poll for the proposal
+          let proposal;
+          const maxRetries = 15; // 15 seconds max wait time
+          let retries = 0;
+
+          while (retries < maxRetries) {
+            try {
+              proposal = await storageApiClient.queryReleaseAssetsUpdateProposal(repositoryId, tagName, wallet.selectedAddress);
+              if (proposal.data.release_assets_proposal) {
+                break;
+              }
+            } catch (e) {
+              console.log("Proposal not found yet, retrying...");
+            }
+
+            retries++;
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+          }
+
+          // If we found the proposal, approve it
+          if (proposal.data.release_assets_proposal) {
+            const approveMessage = await env.txClient.msgApproveReleaseAssetsUpdate({
+              creator: wallet.selectedAddress,
+              proposalId: proposal.data.release_assets_proposal.id
+            });
+
+            const approveResult = await sendTransaction({ message: approveMessage })(dispatch, getState);
+
+            if (approveResult && approveResult.code === 0) {
+              console.log("Release assets update proposal approved");
+            } else {
+              dispatch(notify(approveResult.rawLog, "error"));
+            }
+          } else {
+            dispatch(notify("Timeout waiting for release assets update proposal", "error"));
+          }
+        }
+
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
@@ -1569,6 +1642,7 @@ export const createRelease = (
 
 export const createReleaseForDao = (
   apiClient,
+  storageProviderAddress,
   {
     repoOwner = null,
     repoName = null,
@@ -1616,6 +1690,7 @@ export const createReleaseForDao = (
         draft,
         preRelease,
         isTag,
+        provider: storageProviderAddress,
       };
 
       // Encode the message
@@ -1637,9 +1712,8 @@ export const createReleaseForDao = (
         ],
         exec: 0, // EXEC_UNSPECIFIED
         title: `Create Release: ${name || tagName}`,
-        summary: `Proposal to create release ${
-          name || tagName
-        } for repository ${repoOwner}/${repoName}`,
+        summary: `Proposal to create release ${name || tagName
+          } for repository ${repoOwner}/${repoName}`,
       };
 
       // Submit the proposal
@@ -1678,7 +1752,11 @@ export const createReleaseForDao = (
   };
 };
 
-export const deleteRelease = (apiClient, { releaseId }) => {
+export const deleteRelease = (
+  apiClient,
+  storageProviderAddress,
+  { releaseId, repositoryId, tagName }
+) => {
   return async (dispatch, getState) => {
     if (
       !(await validatePostingEligibility(
@@ -1694,12 +1772,50 @@ export const deleteRelease = (apiClient, { releaseId }) => {
     const release = {
       creator: wallet.selectedAddress,
       id: releaseId,
+      provider: storageProviderAddress,
     };
 
     try {
       const message = await env.txClient.msgDeleteRelease(release);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
+        // Poll for the proposal
+        let proposal;
+        const maxRetries = 15; // 15 seconds max wait time
+        let retries = 0;
+
+        while (retries < maxRetries) {
+          try {
+            proposal = await storageApiClient.queryReleaseAssetsUpdateProposal(repositoryId, tagName, wallet.selectedAddress);
+            if (proposal.data.release_assets_proposal) {
+              break;
+            }
+          } catch (e) {
+            console.log("Proposal not found yet, retrying...");
+          }
+
+          retries++;
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+        }
+
+        // If we found the proposal, approve it
+        if (proposal.data.release_assets_proposal) {
+          const approveMessage = await env.txClient.msgApproveReleaseAssetsUpdate({
+            creator: wallet.selectedAddress,
+            proposalId: proposal.data.release_assets_proposal.id
+          });
+
+          const approveResult = await sendTransaction({ message: approveMessage })(dispatch, getState);
+
+          if (approveResult && approveResult.code === 0) {
+            console.log("Release assets update proposal approved");
+          } else {
+            dispatch(notify(approveResult.rawLog, "error"));
+          }
+        } else {
+          dispatch(notify("Timeout waiting for release assets update proposal", "error"));
+        }
+
         return result;
       } else {
         dispatch(notify(result.rawLog, "error"));
@@ -2075,7 +2191,8 @@ export const updatePullRequestState = (
 
 export const mergePullRequest = (
   apiClient,
-  { repositoryId, iid, branchName }
+  storageProviderAddress,
+  { repositoryId, iid, baseCommitSha }
 ) => {
   return async (dispatch, getState) => {
     if (
@@ -2093,32 +2210,70 @@ export const mergePullRequest = (
       creator: wallet.selectedAddress,
       repositoryId: repositoryId,
       iid,
-      provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+      provider: storageProviderAddress,
+      baseCommitSha,
     };
 
     try {
       const message = await env.txClient.msgInvokeMergePullRequest(mergePull);
       const result = await sendTransaction({ message })(dispatch, getState);
       if (result && result.code === 0) {
-        // return result;
-        const log = JSON.parse(result.rawLog);
-        const taskId =
-          log[0].events[1].attributes[
-            log[0].events[1].attributes.findIndex((a) => a.key === "TaskId")
-          ].value;
-        try {
-          const res = await watchTask(apiClient, taskId);
-          if (res.state === "TASK_STATE_SUCCESS") {
-            getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
-            return res;
-          } else if (res.state === "TASK_STATE_FAILURE") {
-            dispatch(notify(res.message, "error"));
-            return null;
+        const pollProposal = async (resolve, reject, retries = 0) => {
+          try {
+            const proposalRes = await storageApiClient.queryPackfileUpdateProposal(
+              repositoryId,
+              wallet.selectedAddress
+            );
+
+            if (proposalRes.status === 200) {
+              // Proposal found, execute batch transaction
+              const proposalId = proposalRes.data.packfile_update_proposal.id;
+
+              // Create approve message
+              const approveMsg = await env.txClient.msgApproveRepositoryPackfileUpdate({
+                creator: wallet.selectedAddress,
+                proposalId: proposalId
+              });
+
+              // Create merge message
+              const mergeMsg = await env.txClient.msgMergePullRequest({
+                creator: wallet.selectedAddress,
+                repositoryId: repositoryId,
+                pullRequestIid: iid,
+                mergeCommitSha: proposalRes.data.packfile_update_proposal.merge_commit_sha,
+                packfileCid: proposalRes.data.packfile_update_proposal.cid,
+              });
+
+              // Execute batch transaction
+              const batchResult = await sendTransaction({
+                message: [approveMsg, mergeMsg]
+              })(dispatch, getState);
+
+              if (batchResult && batchResult.code === 0) {
+                getUserDetailsForSelectedAddress(apiClient)(dispatch, getState);
+                resolve(batchResult);
+              } else {
+                dispatch(notify(batchResult.rawLog, "error"));
+                reject(new Error(batchResult.rawLog));
+              }
+            } else if (retries < 15) {
+              // Retry after 1 second
+              setTimeout(() => pollProposal(resolve, reject, retries + 1), 1000);
+            } else {
+              reject(new Error("Timeout waiting for packfile update proposal"));
+            }
+          } catch (error) {
+            if (retries < 15) {
+              setTimeout(() => pollProposal(resolve, reject, retries + 1), 1000);
+            } else {
+              reject(error);
+            }
           }
-        } catch (e) {
-          dispatch(notify(e.message, "error"));
-          return null;
-        }
+        };
+
+        return new Promise((resolve, reject) => {
+          pollProposal(resolve, reject);
+        });
       } else {
         dispatch(notify(result.rawLog, "error"));
         return null;
@@ -2132,7 +2287,8 @@ export const mergePullRequest = (
 
 export const mergePullRequestForDao = (
   apiClient,
-  { repositoryId, iid, groupId }
+  storageProviderAddress,
+  { repositoryId, iid, groupId, baseCommitSha }
 ) => {
   return async (dispatch, getState) => {
     if (
@@ -2157,9 +2313,11 @@ export const mergePullRequestForDao = (
       // Create the merge pull request message
       const mergePull = {
         admin: groupInfo.admin,
-        repositoryId: repositoryId,
+        creator: wallet.selectedAddress,
+        repositoryId,
         iid,
-        provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
+        provider: storageProviderAddress,
+        baseCommitSha,
       };
 
       // Encode the message
@@ -2242,42 +2400,6 @@ export const toggleRepositoryForking = (apiClient, { repoOwner, repoName }) => {
     try {
       const message = await env.txClient.msgToggleRepositoryForking(repo);
       const result = await sendTransaction({ message })(dispatch, getState);
-      if (result && result.code === 0) {
-        return result;
-      } else {
-        dispatch(notify(result.rawLog, "error"));
-        return null;
-      }
-    } catch (e) {
-      console.error(e);
-      dispatch(notify(e.message, "error"));
-    }
-  };
-};
-
-export const authorizeGitServer = (apiClient) => {
-  return async (dispatch, getState) => {
-    if (
-      !(await validatePostingEligibility(
-        apiClient,
-        dispatch,
-        getState,
-        "grant access"
-      ))
-    )
-      return null;
-
-    const { wallet, env } = getState();
-    try {
-      const message = await env.txClient.msgAuthorizeProvider({
-        creator: wallet.selectedAddress,
-        granter: wallet.selectedAddress,
-        provider: process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS,
-        permission: 0,
-      });
-      const result = await sendTransaction({ message })(dispatch, getState);
-      updateUserBalance(apiClient)(dispatch, getState);
-      console.log(result);
       if (result && result.code === 0) {
         return result;
       } else {

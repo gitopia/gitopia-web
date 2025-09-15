@@ -55,8 +55,12 @@ function SupportOwner({ repository, ownerAddress, isMobile, ...props }) {
       const balance = await props.getBalance(apiClient, ownerAddress);
       setOwnerBalance(
         props.advanceUser === true
-          ? balance + " " + process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
-          : balance / 1000000 + " " + process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+          ? balance.toFixed(2) +
+          " " +
+          process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+          : (balance / 1000000).toFixed(2) +
+          " " +
+          process.env.NEXT_PUBLIC_CURRENCY_TOKEN
       );
     }
     initBalance();
@@ -218,8 +222,8 @@ function SupportOwner({ repository, ownerAddress, isMobile, ...props }) {
                   (validateAmountError
                     ? "border-pink text-pink focus:border-pink"
                     : amount.length > 0
-                    ? "border-green"
-                    : "")
+                      ? "border-green"
+                      : "")
                 }
               />
             </div>
@@ -328,11 +332,11 @@ function SupportOwner({ repository, ownerAddress, isMobile, ...props }) {
                       setOwnerBalance(
                         props.advanceUser === true
                           ? balance +
-                              " " +
-                              process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
+                          " " +
+                          process.env.NEXT_PUBLIC_ADVANCE_CURRENCY_TOKEN
                           : balance / 1000000 +
-                              " " +
-                              process.env.NEXT_PUBLIC_CURRENCY_TOKEN
+                          " " +
+                          process.env.NEXT_PUBLIC_CURRENCY_TOKEN
                       );
                     });
                 }}

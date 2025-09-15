@@ -1,6 +1,9 @@
 import React, { createContext, useEffect, useState, useContext } from "react";
 import { useDispatch } from "react-redux";
 import selectProvider from "../helpers/providerSelector";
+import selectStorageProvider, {
+  getSavedStorageProvider,
+} from "../helpers/storageProviderSelector";
 import { setConfig } from "../store/actions/env";
 import { gitopia } from "@gitopia/gitopiajs";
 
@@ -15,6 +18,10 @@ export const ApiClientProvider = ({ children }) => {
   const [providerName, setProviderName] = useState(null);
   const [apiUrl, setApiUrl] = useState(null);
   const [rpcUrl, setRpcUrl] = useState(null);
+  const [storageApiUrl, setStorageApiUrl] = useState(null);
+  const [storageProviderAddress, setStorageProviderAddress] = useState(null);
+  const [storageProviderName, setStorageProviderName] = useState(null);
+  const [allStorageProviders, setAllStorageProviders] = useState([]);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
@@ -36,6 +43,39 @@ export const ApiClientProvider = ({ children }) => {
     localStorage.setItem("providerInfo", providerInfo);
 
     dispatch(setConfig({ config: { apiNode, rpcNode } }));
+  };
+
+  const updateStorageProvider = async (client) => {
+    const res = await client.queryActiveProviders();
+    const providers = res.data.providers ?? [];
+    setAllStorageProviders(providers);
+
+    if (providers.length > 0) {
+      const savedProvider = getSavedStorageProvider();
+      if (
+        savedProvider &&
+        providers.some((p) => p.creator === savedProvider.creator)
+      ) {
+        setActiveStorageProvider(savedProvider);
+        return savedProvider;
+      }
+
+      const provider = await selectStorageProvider(providers);
+      if (provider) {
+        setActiveStorageProvider(provider);
+        return provider;
+      }
+    }
+    return null;
+  };
+
+  const setActiveStorageProvider = (provider) => {
+    if (provider) {
+      setStorageApiUrl(provider.api_url.replace(/\/$/, "")); // trim trailing slash
+      setStorageProviderAddress(provider.creator);
+      setStorageProviderName(provider.moniker);
+      localStorage.setItem("storageProviderInfo", JSON.stringify(provider));
+    }
   };
 
   useEffect(() => {
@@ -73,7 +113,12 @@ export const ApiClientProvider = ({ children }) => {
         apiUrl,
         rpcUrl,
         apiClient,
+        storageProviderAddress,
+        storageProviderName,
+        allStorageProviders,
         updateApiClient,
+        updateStorageProvider,
+        setActiveStorageProvider,
       }}
     >
       {!loading && children}

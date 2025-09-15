@@ -43,11 +43,12 @@ function RepositoryPullFilesView(props) {
   const [viewType, setViewType] = useState("unified");
   const [allComments, setAllComments] = useState(props.comments || []);
   const [showFile, setShowFile] = useState(null);
-  const { apiClient } = useApiClient();
+  const { apiClient, storageApiUrl } = useApiClient();
 
   useEffect(() => {
     async function initDiff() {
       const diff = await getPullDiffStats(
+        storageApiUrl,
         pullRequest.base.repositoryId,
         pullRequest.head.repositoryId,
         pullRequest.base.sha,

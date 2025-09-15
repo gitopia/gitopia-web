@@ -3,6 +3,8 @@ import getAnyRepository from "../../../../../helpers/getAnyRepository";
 import getAllRepositoryBranch from "../../../../../helpers/getAllRepositoryBranch";
 import getAllRepositoryTag from "../../../../../helpers/getAllRepositoryTag";
 import { Api } from "@gitopia/gitopia-js/dist/rest";
+import { Api as StorageApi } from "../../../../../store/gitopia.gitopia.storage/rest";
+import selectStorageProvider from "../../../../../helpers/storageProviderSelector";
 
 export default async function handler(req, res) {
   if (!req.query?.path) {
@@ -70,7 +72,13 @@ export default async function handler(req, res) {
     return null;
   }
 
+  const storageApiClient = new StorageApi({
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
+  });
+  const storageProvider = await selectStorageProvider(storageApiClient);
+
   const file = await getContent(
+    storageProvider.apiUrl,
     repository.id,
     branchSha,
     repoPath.join("/"),

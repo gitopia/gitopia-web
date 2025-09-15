@@ -483,45 +483,11 @@ const updateWalletsList = async (
 //   };
 // };
 
-export const updateAddressGrant = (apiClient, address, permission, allow) => {
+export const signUploadFileMessage = (
+  apiClient,
+  data
+) => {
   return async (dispatch, getState) => {
-    try {
-      await setupTxClients(apiClient, dispatch, getState);
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
-    const { wallet, env } = getState();
-    let fn = allow
-      ? env.txClient.msgAuthorizeProvider
-      : env.txClient.msgRevokeProviderPermission;
-    let provider =
-      permission === 1
-        ? process.env.NEXT_PUBLIC_STORAGE_BRIDGE_WALLET_ADDRESS
-        : process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS;
-    const message = await fn({
-      creator: wallet.selectedAddress,
-      granter: address,
-      provider,
-      permission,
-    });
-    return await handlePostingTransaction(
-      apiClient,
-      dispatch,
-      getState,
-      message
-    );
-  };
-};
-
-export const signUploadFileMessage = (apiClient, name, size, md5) => {
-  return async (dispatch, getState) => {
-    const data = {
-      // Any arbitrary object
-      name,
-      size,
-      md5,
-    };
     try {
       let TxRaw = (await import("cosmjs-types/cosmos/tx/v1beta1/tx")).TxRaw;
       let toBase64 = (await import("@cosmjs/encoding")).toBase64;

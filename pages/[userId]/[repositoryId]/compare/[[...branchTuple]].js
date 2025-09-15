@@ -70,7 +70,8 @@ function RepositoryCompareView(props) {
   const [textEntered, setEnteredText] = useState("");
   const [issueList, setIssueList] = useState([]);
   const [issueArray, setIssueArray] = useState([]);
-  const { apiClient } = useApiClient();
+  const { apiClient, storageApiUrl } =
+    useApiClient();
 
   const setDefaultBranches = (r) => {
     if (r.branches.length) {
@@ -289,12 +290,14 @@ function RepositoryCompareView(props) {
     async function initStats() {
       const [diff, commits] = await Promise.all([
         getPullDiffStats(
+          storageApiUrl,
           compare.target.repository.id,
           compare.source.repository.id,
           compare.target.sha,
           compare.source.sha
         ),
         await getPullRequestCommits(
+          storageApiUrl,
           compare.target.repository.id,
           compare.source.repository.id,
           compare.target.name,
@@ -557,7 +560,7 @@ function RepositoryCompareView(props) {
                         >
                           {issue.title.split(" ").length > 4
                             ? issue.title.split(" ").splice(0, 4).join(" ") +
-                              "..."
+                            "..."
                             : issue.title}
                           <div
                             className="link ml-4 mt-1 no-underline"
@@ -650,11 +653,11 @@ function RepositoryCompareView(props) {
                                   if (res && res.code === 0) {
                                     router.push(
                                       "/" +
-                                        repository.owner.id +
-                                        "/" +
-                                        repository.name +
-                                        "/pulls/" +
-                                        (Number(repository.pullsCount) + 1)
+                                      repository.owner.id +
+                                      "/" +
+                                      repository.name +
+                                      "/pulls/" +
+                                      (Number(repository.pullsCount) + 1)
                                     );
                                   }
                                   setCreatingPull(false);
@@ -676,11 +679,11 @@ function RepositoryCompareView(props) {
                               ...(() =>
                                 repository.owner.type === "USER"
                                   ? [
-                                      {
-                                        id: repository.owner.address,
-                                        permission: "CREATOR",
-                                      },
-                                    ]
+                                    {
+                                      id: repository.owner.address,
+                                      permission: "CREATOR",
+                                    },
+                                  ]
                                   : [])(),
                               ...repository.collaborators,
                             ]}
@@ -691,14 +694,14 @@ function RepositoryCompareView(props) {
                           <div className="text-xs px-3 mt-2 flex gap-2">
                             {reviewers.length
                               ? reviewers.map((a, i) => (
-                                  <div key={"reviewers" + i}>
-                                    <AccountCard
-                                      id={a}
-                                      showAvatar={true}
-                                      showId={false}
-                                    />
-                                  </div>
-                                ))
+                                <div key={"reviewers" + i}>
+                                  <AccountCard
+                                    id={a}
+                                    showAvatar={true}
+                                    showId={false}
+                                  />
+                                </div>
+                              ))
                               : "No one"}
                           </div>
                         </div>
@@ -709,11 +712,11 @@ function RepositoryCompareView(props) {
                               ...(() =>
                                 repository.owner.type === "USER"
                                   ? [
-                                      {
-                                        id: repository.owner.address,
-                                        permission: "CREATOR",
-                                      },
-                                    ]
+                                    {
+                                      id: repository.owner.address,
+                                      permission: "CREATOR",
+                                    },
+                                  ]
                                   : [])(),
                               ...repository.collaborators,
                             ]}
@@ -724,14 +727,14 @@ function RepositoryCompareView(props) {
                           <div className="text-xs px-3 mt-2 flex gap-2">
                             {assignees.length
                               ? assignees.map((a, i) => (
-                                  <div key={"assignee" + i}>
-                                    <AccountCard
-                                      id={a}
-                                      showAvatar={true}
-                                      showId={false}
-                                    />
-                                  </div>
-                                ))
+                                <div key={"assignee" + i}>
+                                  <AccountCard
+                                    id={a}
+                                    showAvatar={true}
+                                    showId={false}
+                                  />
+                                </div>
+                              ))
                               : "No one"}
                           </div>
                         </div>
@@ -748,24 +751,24 @@ function RepositoryCompareView(props) {
                           <div className="text-xs px-3 mt-2 flex flex-wrap">
                             {labels.length
                               ? labels.map((l, i) => {
-                                  let label = find(repository.labels, {
-                                    id: l,
-                                  }) || {
-                                    name: "",
-                                    color: "",
-                                  };
-                                  return (
-                                    <span
-                                      className="pr-2 pb-2 whitespace-nowrap"
-                                      key={"label" + i}
-                                    >
-                                      <Label
-                                        color={label.color}
-                                        name={label.name}
-                                      />
-                                    </span>
-                                  );
-                                })
+                                let label = find(repository.labels, {
+                                  id: l,
+                                }) || {
+                                  name: "",
+                                  color: "",
+                                };
+                                return (
+                                  <span
+                                    className="pr-2 pb-2 whitespace-nowrap"
+                                    key={"label" + i}
+                                  >
+                                    <Label
+                                      color={label.color}
+                                      name={label.name}
+                                    />
+                                  </span>
+                                );
+                              })
                               : "None yet"}
                           </div>
                         </div>
@@ -816,17 +819,17 @@ function RepositoryCompareView(props) {
                       </svg>
                       <span>
                         {compare.source.repository.id ===
-                        compare.target.repository.id
+                          compare.target.repository.id
                           ? compare.target.name +
-                            " is ahead of  " +
-                            compare.source.name
+                          " is ahead of  " +
+                          compare.source.name
                           : shrinkAddress(compare.target.repository.owner.id) +
-                            "/" +
-                            compare.target.name +
-                            " is ahead of " +
-                            shrinkAddress(compare.source.repository.owner.id) +
-                            "/" +
-                            compare.source.name}
+                          "/" +
+                          compare.target.name +
+                          " is ahead of " +
+                          shrinkAddress(compare.source.repository.owner.id) +
+                          "/" +
+                          compare.source.name}
                       </span>
                     </div>
                   </div>
@@ -850,21 +853,21 @@ function RepositoryCompareView(props) {
                     </svg>
                     <span>
                       {compare.source.repository.id ===
-                      compare.target.repository.id
+                        compare.target.repository.id
                         ? "There isn't anything to compare. " +
-                          compare.source.name +
-                          " and " +
-                          compare.target.name +
-                          " are the same."
+                        compare.source.name +
+                        " and " +
+                        compare.target.name +
+                        " are the same."
                         : "There isn't anything to compare. " +
-                          shrinkAddress(compare.source.repository.owner.id) +
-                          "/" +
-                          compare.source.name +
-                          " and " +
-                          shrinkAddress(compare.target.repository.owner.id) +
-                          "/" +
-                          compare.target.name +
-                          " are the same."}
+                        shrinkAddress(compare.source.repository.owner.id) +
+                        "/" +
+                        compare.source.name +
+                        " and " +
+                        shrinkAddress(compare.target.repository.owner.id) +
+                        "/" +
+                        compare.target.name +
+                        " are the same."}
                     </span>
                   </div>
                 </div>

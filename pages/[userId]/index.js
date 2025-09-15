@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Header from "../../components/header";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import Footer from "../../components/footer";
@@ -185,14 +185,14 @@ function AccountView({
         setIsLoading(false);
       }
     },
-    [router, apiClient, setErrorStatusCode]
+    [apiClient, setErrorStatusCode, router.query.userId, selectedAddress]
   );
 
   useEffect(() => {
     getId();
   }, [getId]);
 
-  const renderContent = () => {
+  const content = useMemo(() => {
     const { tab, id } = router.query;
     switch (tab) {
       case "repositories":
@@ -224,7 +224,14 @@ function AccountView({
           />
         );
     }
-  };
+  }, [
+    router.query.tab,
+    router.query.id,
+    user,
+    dao,
+    allRepos,
+    router.query.userId,
+  ]);
 
   const title = user.id ? user.username || user.creator : dao.name;
 
@@ -245,13 +252,11 @@ function AccountView({
           ) : (
             <>
               {dao.address ? (
-                <>
-                  <AccountDaoHeader
-                    dao={dao}
-                    refresh={getId}
-                    isMember={isMember}
-                  />
-                </>
+                <AccountDaoHeader
+                  dao={dao}
+                  refresh={getId}
+                  isMember={isMember}
+                />
               ) : (
                 <UserHeader user={user} refresh={getId} />
               )}
@@ -266,7 +271,7 @@ function AccountView({
                   }
                 />
               </div>
-              {renderContent()}
+              {content}
             </>
           )}
         </main>

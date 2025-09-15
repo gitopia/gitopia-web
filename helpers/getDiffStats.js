@@ -2,6 +2,7 @@ import isNumber from "lodash/isNumber";
 const validSha = new RegExp(/^[a-f0-9]{40}$/);
 
 export default async function getDiffStats(
+  storageApiUrl,
   repoId = null,
   commitSha = null,
   prevCommitSha,
@@ -14,10 +15,7 @@ export default async function getDiffStats(
   if (!isNumber(numRepoId)) {
     return obj;
   }
-  const baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "/api/diff"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/diff";
+  const baseUrl = storageApiUrl + "/diff";
   let params = {
     repository_id: numRepoId,
     commit_sha: commitSha,

@@ -151,7 +151,7 @@ function RepositoryPullView(props) {
   );
   const [allComments, setAllComments] = useState(props.comments || []);
   const [files, setFiles] = useState([]);
-  const { apiClient } = useApiClient();
+  const { apiClient, storageApiUrl } = useApiClient();
 
   const getAllComments = async () => {
     const comments = await getPullRequestCommentAll(
@@ -270,6 +270,7 @@ function RepositoryPullView(props) {
 
   const loadDiff = async () => {
     let data = await getPullDiff(
+      storageApiUrl,
       pullRequest.base.repository.id,
       pullRequest.head.repository.id,
       pullRequest.base.sha,
@@ -433,11 +434,11 @@ function RepositoryPullView(props) {
                     ...(() =>
                       repository.owner.type === "USER"
                         ? [
-                            {
-                              id: repository.owner.address,
-                              permission: "CREATOR",
-                            },
-                          ]
+                          {
+                            id: repository.owner.address,
+                            permission: "CREATOR",
+                          },
+                        ]
                         : [])(),
                     ...repository.collaborators,
                   ]}
@@ -470,14 +471,14 @@ function RepositoryPullView(props) {
                 <div className="text-xs px-3 mt-2 flex gap-2">
                   {pullRequest.reviewers.length
                     ? pullRequest.reviewers.map((a, i) => (
-                        <div key={"reviewer" + i}>
-                          <AccountCard
-                            id={a}
-                            showAvatar={true}
-                            showId={false}
-                          />
-                        </div>
-                      ))
+                      <div key={"reviewer" + i}>
+                        <AccountCard
+                          id={a}
+                          showAvatar={true}
+                          showId={false}
+                        />
+                      </div>
+                    ))
                     : "No one"}
                 </div>
               </div>
@@ -488,11 +489,11 @@ function RepositoryPullView(props) {
                     ...(() =>
                       repository.owner.type === "USER"
                         ? [
-                            {
-                              id: repository.owner.address,
-                              permission: "CREATOR",
-                            },
-                          ]
+                          {
+                            id: repository.owner.address,
+                            permission: "CREATOR",
+                          },
+                        ]
                         : [])(),
                     ...repository.collaborators,
                   ]}
@@ -525,14 +526,14 @@ function RepositoryPullView(props) {
                 <div className="text-xs px-3 mt-2 flex gap-2">
                   {pullRequest.assignees.length
                     ? pullRequest.assignees.map((a, i) => (
-                        <div key={"assignee" + i}>
-                          <AccountCard
-                            id={a}
-                            showAvatar={true}
-                            showId={false}
-                          />
-                        </div>
-                      ))
+                      <div key={"assignee" + i}>
+                        <AccountCard
+                          id={a}
+                          showAvatar={true}
+                          showId={false}
+                        />
+                      </div>
+                    ))
                     : "No one"}
                 </div>
               </div>
@@ -567,19 +568,19 @@ function RepositoryPullView(props) {
                 <div className="text-xs px-3 mt-2 flex flex-wrap">
                   {pullRequest.labels.length
                     ? pullRequest.labels.map((l, i) => {
-                        let label = find(repository.labels, { id: l }) || {
-                          name: "",
-                          color: "",
-                        };
-                        return (
-                          <span
-                            className="pr-2 pb-2 whitespace-nowrap"
-                            key={"label" + i}
-                          >
-                            <Label color={label.color} name={label.name} />
-                          </span>
-                        );
-                      })
+                      let label = find(repository.labels, { id: l }) || {
+                        name: "",
+                        color: "",
+                      };
+                      return (
+                        <span
+                          className="pr-2 pb-2 whitespace-nowrap"
+                          key={"label" + i}
+                        >
+                          <Label color={label.color} name={label.name} />
+                        </span>
+                      );
+                    })
                     : "None yet"}
                 </div>
               </div>

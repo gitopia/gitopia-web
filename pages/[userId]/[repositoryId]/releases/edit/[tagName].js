@@ -22,6 +22,7 @@ import Uploady, {
   useItemProgressListener,
   useItemStartListener,
   useItemFinishListener,
+  useRequestPreSend,
 } from "@rpldy/uploady";
 import UploadButton from "@rpldy/upload-button";
 import UploadDropZone from "@rpldy/upload-drop-zone";
@@ -29,6 +30,7 @@ import getBranchSha from "../../../../../helpers/getBranchSha";
 import getRepositoryRelease from "../../../../../helpers/getRepositoryRelease";
 import useRepository from "../../../../../hooks/useRepository";
 import { useApiClient } from "../../../../../context/ApiClientContext";
+import { signUploadFileMessage } from "../../../../../store/actions/user";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -54,23 +56,25 @@ function RepositoryReleaseEditView(props) {
   const [description, setDescription] = useState("");
   const [tagName, setTagName] = useState("");
   const [target, setTarget] = useState({ name: "", sha: null });
-  const [postingIssue, setPostingIssue] = useState(false);
+  const [postingRelease, setPostingRelease] = useState(false);
   const [attachments, setAttachments] = useState([]);
   const [uploadingAttachment, setUploadingAttachment] = useState({ file: {} });
   const [newTagOptionShown, setNewTagOptionShown] = useState(false);
   const [creatingTag, setCreatingTag] = useState(false);
-  const { apiClient } = useApiClient();
+  const { apiClient, storageProviderAddress, storageApiUrl } =
+    useApiClient();
 
-  const validateIssue = () => {
+  const validateRelease = () => {
     return true;
   };
 
-  const createIssue = async () => {
-    setPostingIssue(true);
-    if (validateIssue()) {
-      const issue = {
+  const handleUpdateRelease = async () => {
+    setPostingRelease(true);
+    if (validateRelease()) {
+      const releaseData = {
         name: title,
         description,
+        repositoryId: repository.id,
         repoOwner: repository.owner.id,
         repoName: repository.name,
         tagName,
@@ -88,20 +92,24 @@ function RepositoryReleaseEditView(props) {
         }),
         releaseId: parseInt(release.id),
       };
-      console.log("before call", issue);
-      const res = await props.createRelease(apiClient, issue, true);
+      const res = await props.createRelease(
+        apiClient,
+        storageProviderAddress,
+        releaseData,
+        true
+      );
       if (res && res.code === 0) {
         router.push(
           "/" +
-            repository.owner.id +
-            "/" +
-            repository.name +
-            "/releases/tag/" +
-            tagName
+          repository.owner.id +
+          "/" +
+          repository.name +
+          "/releases/tag/" +
+          tagName
         );
       }
     }
-    setPostingIssue(false);
+    setPostingRelease(false);
   };
 
   const getRelease = async () => {
@@ -137,6 +145,48 @@ function RepositoryReleaseEditView(props) {
   }, [repository]);
 
   const LogProgress = () => {
+    useRequestPreSend(async ({ items, options }) => {
+      try {
+        // Read file as ArrayBuffer using modern async/await approach
+        const arrayBuffer = await items[0].file.arrayBuffer();
+
+        // Calculate SHA256 using native Web Crypto API
+        const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+
+        // Convert hash to hex string
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const sha256 = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        const data = {
+          action: "edit-release",
+          repositoryId: repository.id,
+          tagName,
+          name: items[0].file.name,
+          size: items[0].file.size,
+          sha256,
+        };
+
+        // Generate signature
+        const signature = await props.signUploadFileMessage(
+          apiClient,
+          cosmosBankApiClient,
+          cosmosFeegrantApiClient,
+          data
+        );
+
+        return {
+          options: {
+            params: {
+              signature: signature,
+            },
+          }
+        };
+      } catch (error) {
+        console.error('Error processing file:', error);
+        throw error;
+      }
+    });
+
     useItemStartListener((item) => {
       console.log("started", item);
       setUploadingAttachment(item);
@@ -377,7 +427,7 @@ function RepositoryReleaseEditView(props) {
                 <div>
                   <Uploady
                     destination={{
-                      url: process.env.NEXT_PUBLIC_OBJECTS_URL + "/upload",
+                      url: storageApiUrl + "/upload",
                     }}
                   >
                     <UploadDropZone
@@ -396,10 +446,10 @@ function RepositoryReleaseEditView(props) {
                     <button
                       className={
                         "btn btn-sm btn-primary btn-block " +
-                        (postingIssue ? "loading" : "")
+                        (postingRelease ? "loading" : "")
                       }
-                      disabled={title.trim().length === 0 || postingIssue}
-                      onClick={createIssue}
+                      disabled={title.trim().length === 0 || postingRelease}
+                      onClick={handleUpdateRelease}
                       data-test="update-release"
                     >
                       Update Release
@@ -446,6 +496,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { createRelease, createTag })(
+export default connect(mapStateToProps, { createRelease, createTag, signUploadFileMessage })(
   RepositoryReleaseEditView
 );

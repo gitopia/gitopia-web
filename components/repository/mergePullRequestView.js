@@ -3,17 +3,16 @@ import { useEffect, useState } from "react";
 import { notify } from "reapop";
 import {
   updatePullRequestState,
-  authorizeGitServer,
   mergePullRequest,
   mergePullRequestForDao,
 } from "../../store/actions/repository";
 import pullRequestStateClass from "../../helpers/pullRequestStateClass";
 import mergePullRequestCheck from "../../helpers/mergePullRequestCheck";
 import getPullRequestMergePermission from "../../helpers/getPullRequestMergePermission";
-import getGitServerAuthorization from "../../helpers/getGitServerAuthStatus";
 import getDao from "../../helpers/getDao";
 import { useApiClient } from "../../context/ApiClientContext";
 import { useRouter } from "next/router";
+import getBranchSha from "../../helpers/getBranchSha";
 
 function MergePullRequestView({
   repository,
@@ -25,13 +24,9 @@ function MergePullRequestView({
   const [stateClass, setStateClass] = useState("");
   const [iconType, setIconType] = useState("check");
   const [message, setMessage] = useState("");
-  const [pullMergeAccess, setPullMergeAccess] = useState(false);
-  const [pullMergeAccessDialogShown, setPullMergeAccessDialogShown] =
-    useState(false);
-  const [isGrantingAccess, setIsGrantingAccess] = useState(false);
   const [requiresProposal, setRequiresProposal] = useState(false);
   const [isCreatingProposal, setIsCreatingProposal] = useState(false);
-  const { apiClient } = useApiClient();
+  const { apiClient, storageProviderAddress, storageApiUrl } = useApiClient();
   const [daoInfo, setDaoInfo] = useState(null);
   const router = useRouter();
 
@@ -58,6 +53,7 @@ function MergePullRequestView({
     }
     setIsMerging(true);
     const res = await mergePullRequestCheck(
+      storageApiUrl,
       pullRequest.iid,
       pullRequest.base.repositoryId,
       pullRequest.head.repositoryId,
@@ -90,10 +86,15 @@ function MergePullRequestView({
   const createMergeProposal = async () => {
     setIsCreatingProposal(true);
     try {
-      const result = await props.mergePullRequestForDao(apiClient, {
+      const baseCommitSha = getBranchSha(
+        pullRequest.base.branch,
+        repository.branches,
+      );
+      const result = await props.mergePullRequestForDao(apiClient, storageProviderAddress, {
         repositoryId: repository.id,
         iid: pullRequest.iid,
         groupId: daoInfo.group_id,
+        baseCommitSha,
       });
 
       if (result?.status === "PROPOSAL_SUBMITTED") {
@@ -124,24 +125,22 @@ function MergePullRequestView({
     );
 
     if (user && user.havePermission) {
-      let access = await getGitServerAuthorization(
-        apiClient,
-        props.selectedAddress
+      const baseCommitSha = getBranchSha(
+        pullRequest.base.branch,
+        repository.branches,
       );
-      if (!access) {
-        setPullMergeAccessDialogShown(true);
-        setIsMerging(false);
-        return;
-      }
-
-      const res = await props.mergePullRequest(apiClient, {
-        repositoryId: repository.id,
-        iid: pullRequest.iid,
-        branchName: pullRequest.head.branch,
-      });
+      const res = await props.mergePullRequest(
+        apiClient,
+        storageProviderAddress,
+        {
+          repositoryId: repository.id,
+          iid: pullRequest.iid,
+          baseCommitSha,
+        }
+      );
 
       if (res) {
-        if (res.state === "TASK_STATE_SUCCESS") refreshPullRequest();
+        if (res.code === 0) refreshPullRequest();
       } else {
         props.notify("Unknown error", "error");
       }
@@ -166,17 +165,6 @@ function MergePullRequestView({
         setIconType("warning");
     }
   }, [pullRequest, props.selectedAddress, requiresProposal]);
-
-  const refreshPullMergeAccess = async (mergeAfter = false) => {
-    setPullMergeAccess(
-      await getGitServerAuthorization(apiClient, props.selectedAddress)
-    );
-    if (mergeAfter) setTimeout(mergePull, 0);
-  };
-
-  useEffect(() => {
-    refreshPullMergeAccess();
-  }, [props.selectedAddress]);
 
   const getMergeButtonText = () => {
     if (isCreatingProposal) return "Creating Proposal...";
@@ -254,9 +242,8 @@ function MergePullRequestView({
         {pullRequest.state === "OPEN" && (
           <div className="sm:ml-auto flex-none">
             <button
-              className={`btn btn-xs sm:btn-sm btn-primary sm:ml-4 m-0.5 h-10 ${
-                isMerging || isCreatingProposal ? "loading" : ""
-              }`}
+              className={`btn btn-xs sm:btn-sm btn-primary sm:ml-4 m-0.5 h-10 ${isMerging || isCreatingProposal ? "loading" : ""
+                }`}
               data-test="merge-pr"
               onClick={mergePull}
               disabled={
@@ -268,53 +255,7 @@ function MergePullRequestView({
           </div>
         )}
       </div>
-
-      <input
-        type="checkbox"
-        checked={pullMergeAccessDialogShown}
-        readOnly
-        className="modal-toggle"
-      />
-      <div className="modal">
-        <div className="modal-box max-w-sm">
-          <p>
-            Gitopia data server does not have repository merge access on behalf
-            of your account.
-          </p>
-          <p className="text-xs mt-4">Server Address:</p>
-          <p className="text-xs">
-            {process.env.NEXT_PUBLIC_GIT_SERVER_WALLET_ADDRESS}
-          </p>
-          <div className="modal-action">
-            <label
-              className="btn btn-sm"
-              onClick={() => setPullMergeAccessDialogShown(false)}
-            >
-              Cancel
-            </label>
-            <button
-              className={`btn btn-sm btn-primary ${
-                isGrantingAccess ? "loading" : ""
-              }`}
-              onClick={async () => {
-                setIsGrantingAccess(true);
-                const res = await props.authorizeGitServer(apiClient);
-                setIsGrantingAccess(false);
-                if (res && res.code !== 0) {
-                  props.notify(res.rawLog, "error");
-                } else {
-                  refreshPullMergeAccess(true);
-                  setPullMergeAccessDialogShown(false);
-                }
-              }}
-              disabled={isGrantingAccess}
-            >
-              Grant Access
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    </div >
   );
 }
 
@@ -327,7 +268,6 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   notify,
   updatePullRequestState,
-  authorizeGitServer,
   mergePullRequest,
   mergePullRequestForDao,
 })(MergePullRequestView);

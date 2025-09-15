@@ -122,6 +122,7 @@ function RepositorySettingsView(props) {
                   </div>
                   <div className="mt-6">
                     <DeleteRepository
+                      repositoryId={repository.id}
                       currentOwnerId={repository.owner.id}
                       repoName={repository.name}
                       onSuccess={async () => {

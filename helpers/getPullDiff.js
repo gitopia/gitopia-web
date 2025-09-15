@@ -2,6 +2,7 @@ import isNumber from "lodash/isNumber";
 const validSha = new RegExp(/^[a-f0-9]{40}$/);
 
 export default async function getPullDiff(
+  storageApiUrl,
   baseRepoId = null,
   headRepoId = null,
   baseCommitSha = null,
@@ -18,10 +19,7 @@ export default async function getPullDiff(
   if (!isNumber(baseRepoIdNum) || !isNumber(headRepoIdNum)) {
     return obj;
   }
-  const baseUrl =
-    process.env.NODE_ENV === "development"
-      ? "/api/pull/diff"
-      : process.env.NEXT_PUBLIC_OBJECTS_URL + "/pull/diff";
+  const baseUrl = storageApiUrl + "/pull/diff";
   let params = {
     base_repository_id: baseRepoIdNum,
     head_repository_id: headRepoIdNum,

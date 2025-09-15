@@ -4,6 +4,7 @@ import { deleteRepository } from "../../store/actions/repository";
 import { useApiClient } from "../../context/ApiClientContext";
 
 function DeleteRepository({
+  repositoryId = null,
   repoName = "",
   currentOwnerId = "",
   onSuccess,
@@ -12,7 +13,7 @@ function DeleteRepository({
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [typedData, setTypedData] = useState("");
-  const { apiClient } = useApiClient();
+  const { apiClient, storageProviderAddress } = useApiClient();
 
   return (
     <div className="flex items-center">
@@ -26,7 +27,7 @@ function DeleteRepository({
         <button
           className="btn btn-sm btn-block btn-accent btn-outline"
           onClick={() => setConfirmDelete(true)}
-          disabled={true}
+          disabled={false}
         >
           Delete
         </button>
@@ -82,13 +83,16 @@ function DeleteRepository({
               onClick={async () => {
                 setIsDeleting(true);
                 props
-                  .deleteRepository(apiClient, {
-                    ownerId: currentOwnerId,
-                    name: repoName,
-                  })
+                  .deleteRepository(apiClient,
+                    storageProviderAddress,
+                    {
+                      repositoryId,
+                      ownerId: currentOwnerId,
+                      name: repoName,
+                    })
                   .then(async (res) => {
-                    if (res.code == 0) {
-                      if (onSuccess) await onSuccess;
+                    if (res && res.code == 0) {
+                      if (onSuccess) await onSuccess();
                       setConfirmDelete(false);
                       setIsDeleting(false);
                       setTypedData("");

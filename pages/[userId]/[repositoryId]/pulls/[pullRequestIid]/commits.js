@@ -20,6 +20,7 @@ import { useRouter } from "next/router";
 import CommitDetailRow from "../../../../../components/repository/commitDetailRow";
 import getCommitHistory from "../../../../../helpers/getCommitHistory";
 import pluralize from "../../../../../helpers/pluralize";
+import { useApiClient } from "../../../../../context/ApiClientContext";
 
 export async function getStaticProps() {
   return { props: {} };
@@ -42,10 +43,12 @@ function RepositoryPullCommitsView(props) {
   const [hasMore, setHasMore] = useState(false);
   const [loadedTill, setLoadedTill] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
+  const { storageApiUrl } = useApiClient();
 
   useEffect(() => {
     async function initCommits() {
       const shas = await getPullRequestCommits(
+        storageApiUrl,
         pullRequest.base.repositoryId,
         pullRequest.head.repositoryId,
         pullRequest.base.branch,
@@ -75,6 +78,7 @@ function RepositoryPullCommitsView(props) {
       }
     }
     const res = await getCommitHistory(
+      storageApiUrl,
       pullRequest.head.repositoryId,
       commitShas[loadedTill],
       null,
@@ -82,7 +86,6 @@ function RepositoryPullCommitsView(props) {
       null,
       false
     );
-    console.log("getCommitHistory", res);
     if (res.commits && res.commits.length) {
       if (clearEarlier) {
         setCommits(res.commits);

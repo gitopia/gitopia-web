@@ -5,18 +5,20 @@ import shrinkSha from "../../helpers/shrinkSha";
 import { useState } from "react";
 import MarkdownWrapper from "../markdownWrapper";
 import AccountCard from "../account/card";
+import { useApiClient } from "../../context/ApiClientContext";
 
 export default function ReleaseView({
   release,
   repository,
   latest = false,
   showEditControls = false,
-  onDelete = () => {},
+  onDelete = () => { },
   noLink = false,
   ...props
 }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const { storageApiUrl } = useApiClient();
 
   return (
     <div className="p-4">
@@ -140,7 +142,7 @@ export default function ReleaseView({
                   target="_blank"
                   rel="noreferrer"
                   href={
-                    process.env.NEXT_PUBLIC_OBJECTS_URL +
+                    storageApiUrl +
                     "/releases/" +
                     repository.owner.id +
                     "/" +

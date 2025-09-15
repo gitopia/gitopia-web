@@ -117,7 +117,6 @@ function AccountDaoHeader(props) {
         )}
       </div>
 
-      {/* Add the treasury stats component */}
       <DaoTreasuryStats dao={props.dao} className="mb-8" />
     </>
   );

@@ -62,8 +62,17 @@ function Header(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [openDeposit, setOpenDeposit] = useState(false);
   const [openWithdraw, setOpenWithdraw] = useState(false);
-  const { providerName, apiUrl, rpcUrl, apiClient, updateApiClient } =
-    useApiClient();
+  const {
+    providerName,
+    apiUrl,
+    rpcUrl,
+    apiClient,
+    cosmosBankApiClient,
+    cosmosFeegrantApiClient,
+    storageApiClient,
+    updateApiClient,
+    updateStorageProvider,
+  } = useApiClient();
   const [selectedProvider, setSelectedProvider] = useState({
     name: providerName,
     apiEndpoint: apiUrl,
@@ -103,6 +112,7 @@ function Header(props) {
     const provider = await selectProvider();
     setSelectedProvider(provider);
     updateApiClient(provider.name, provider.apiEndpoint, provider.rpcEndpoint);
+    updateStorageProvider(storageApiClient);
     props.notify("API provider reset successful", "info");
   };
 
@@ -295,6 +305,15 @@ function Header(props) {
                 >
                   <li>
                     <a
+                      href="https://explorer.chainroot.io/gitopia"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      ChainRoot
+                    </a>
+                  </li>
+                  <li>
+                    <a
                       href="https://gitopia.exploreme.pro/"
                       target="_blank"
                       rel="noreferrer"
@@ -462,7 +481,24 @@ function Header(props) {
                           <span data-test="current_wallet_name">
                             {props.activeWallet.name}
                           </span>
-                          {getWalletBadge(props.activeWallet)}
+                          {props.activeWallet.isLedger ||
+                            props.activeWallet.isKeplr ? (
+                            <span
+                              className={
+                                "ml-1 border rounded-md pl-1.5 pr-2 py-px relative -top-px " +
+                                (props.activeWallet.isLedger
+                                  ? "text-purple-50 border-purple"
+                                  : "text-teal-50 border-teal")
+                              }
+                              style={{ fontSize: "0.75em" }}
+                            >
+                              {props.activeWallet.isLedger
+                                ? " Ledger"
+                                : " Keplr"}
+                            </span>
+                          ) : (
+                            ""
+                          )}
                         </div>
                         <div
                           className="text-xs text-left text-type-tertiary"

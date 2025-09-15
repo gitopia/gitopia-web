@@ -26,7 +26,7 @@
     "@cosmos-kit/leap-metamask-cosmos-snap": "^0.14.2",
     "@cosmos-kit/ledger": "^2.13.1",
     "@cosmos-kit/react": "^2.21.1",
-    "@gitopia/gitopia-js": "2.1.0",
+    "@gitopia/gitopia-js": "3.0.0",
     "@heroicons/react": "^2.1.5",
     "@interchain-ui/react": "^1.26.1",
     "@leapwallet/cosmos-snap-provider": "^0.1.23",
