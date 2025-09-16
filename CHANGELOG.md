@@ -1,5 +1,9 @@
 ## Changelog
 
+### v4.1.0 - 16th Sep 2025
+
+- Implement fallback storage provider
+
 ### v4.0.0 - 8th Sep 2025
 
 - Upgrade to gitopia-js v3.0.0

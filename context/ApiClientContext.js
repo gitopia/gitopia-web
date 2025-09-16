@@ -104,6 +104,22 @@ export const ApiClientProvider = ({ children }) => {
         return provider;
       }
     }
+
+    // Fallback to specific storage provider when no active provider is found
+    try {
+      const fallbackAddress = process.env.NEXT_PUBLIC_FALLBACK_STORAGE_PROVIDER;
+      if (fallbackAddress) {
+        const fallbackRes = await client.queryProvider(fallbackAddress);
+        if (fallbackRes.data.provider) {
+          const fallbackProvider = fallbackRes.data.provider;
+          setActiveStorageProvider(fallbackProvider);
+          return fallbackProvider;
+        }
+      }
+    } catch (error) {
+      console.warn("Failed to query fallback storage provider:", error);
+    }
+
     return null;
   };
 
