@@ -5,8 +5,23 @@
     "rpcEndpoint": "https://gitopia.declab.pro:26625"
   },
   {
+    "name": "MZONDER",
+    "apiEndpoint": "https://api-gitopia.mzonder.com",
+    "rpcEndpoint": "https://rpc-gitopia.mzonder.com"
+  },
+  {
     "name": "Polkachu",
     "apiEndpoint": "https://gitopia-api.polkachu.com",
     "rpcEndpoint": "https://gitopia-rpc.polkachu.com"
+  },
+  {
+    "name": "Stake Village",
+    "apiEndpoint": "https://gitopia.api.stakevillage.net",
+    "rpcEndpoint": "https://gitopia.rpc.stakevillage.net"
+  },
+  {
+    "name": "STAVR",
+    "apiEndpoint": "https://gitopia.api.m.stavr.tech",
+    "rpcEndpoint": "https://gitopia.rpc.m.stavr.tech"
   }
 ]
